@@ -18,7 +18,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "user")
 public class User extends BaseEntity {
 
-
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
