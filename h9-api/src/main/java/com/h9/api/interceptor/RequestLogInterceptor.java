@@ -37,7 +37,6 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         logger.info("请求头: " + JSONObject.toJSONString(headers));
         logger.infov("---------------------------------------------");
         logger.info("");
-
         return true;
     }
 
