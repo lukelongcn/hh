@@ -25,4 +25,9 @@ public class UserController {
     public String putTest() {
         return "putTest";
     }
+
+    @PostMapping("zeroTest")
+    public void zeroTest(){
+        int i = 1/0;
+    }
 }
