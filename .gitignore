@@ -76,5 +76,7 @@ hs_err_pid*
 ### TortoiseGit template
 # Project-level settings
 /.tgitconfig
+*/*/.idea
 
 *.iml
+.idea

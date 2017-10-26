@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/h9-api/api.iml" filepath="$PROJECT_DIR$/h9-api/api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/h9-admin/h9-admin.iml" filepath="$PROJECT_DIR$/h9-admin/h9-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/h9-api.iml" filepath="$PROJECT_DIR$/.idea/h9-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/h9-common/h9-common.iml" filepath="$PROJECT_DIR$/h9-common/h9-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/h9-parent/h9-parent.iml" filepath="$PROJECT_DIR$/h9-parent/h9-parent.iml" />
+    </modules>
+  </component>
+</project>
