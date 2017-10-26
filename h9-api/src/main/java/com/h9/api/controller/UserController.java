@@ -1,6 +1,8 @@
 package com.h9.api.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -12,5 +14,15 @@ public class UserController {
     @GetMapping("/hello")
     public String hello(){
         return "hello";
+    }
+
+    @PostMapping("postTest")
+    public String postTest(){
+        return "postRest";
+    }
+
+    @PutMapping("putTest")
+    public String putTest() {
+        return "putTest";
     }
 }
