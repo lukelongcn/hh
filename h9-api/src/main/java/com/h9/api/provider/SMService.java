@@ -29,7 +29,7 @@ public class SMService {
     private static final String appId = "cf_tianlitai";
     private static final String appKey = "1a4772f6b6eee0a3600921a56d13e139";
     private static final String lastSendKey = "h9:sms:lastSend:%s";
-    private static final String smsCodeKey = "h9:sms:code:%s";
+    public static final String smsCodeKey = "h9:sms:code:%s";
 
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
