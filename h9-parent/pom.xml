@@ -112,6 +112,18 @@
                 <version>2.7.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.wedo.server.common.sdk</groupId>
+                <artifactId>common_api_sdk</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+            <dependency>
+                <groupId>com.squareup.okhttp</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>2.7.5</version>
+            </dependency>
 
 
 

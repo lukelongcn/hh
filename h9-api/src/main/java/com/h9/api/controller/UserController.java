@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/user/sms/register/{phone}")
-    public Result sendRegistSMS(String phone){
+    public Result sendRegistSMS(@PathVariable String phone){
         return smService.sendSMS(phone);
     }
 
