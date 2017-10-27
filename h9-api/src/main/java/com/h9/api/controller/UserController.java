@@ -3,10 +3,7 @@ package com.h9.api.controller;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import org.hibernate.annotations.Source;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -16,10 +13,14 @@ import javax.annotation.Resource;
 @RestController
 public class UserController {
 
+
     @Resource
     private UserService userService;
-    @PostMapping("/user/login")
+
+    @PostMapping("/user/phone/login")
     public Result phoneLogin(){
-        return null;
+        return Result.success();
     }
+
+
 }
