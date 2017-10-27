@@ -6,6 +6,9 @@ import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
+import com.wedo.server.api.sdk.Service;
+import com.wedo.server.api.sdk.rest.model.AuthUser;
+import com.wedo.server.api.sdk.rest.model.PostResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,8 +50,13 @@ public class ApiApplicationTests {
     private RedisBean redisBean;
     @Test
     public void redisTest(){
-        String key = String.format("h9:sms:lastSend:%s", "17673140753");
-        String stringValue = redisBean.getStringValue(key);
-        System.out.println(stringValue);
+        String key = String.format("h9:sms:count:%s", "17673140753");
+        redisBean.setStringValue(key,"0");
+    }
+
+    @Test
+    public void test(){
+        PostResult<AuthUser> postResult = Service.getInstance().loginFromNoPassword("17673140753");
+        System.out.println(postResult);
     }
 }
