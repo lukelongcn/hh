@@ -23,7 +23,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("cn.h9.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.h9.api"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -32,8 +32,8 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("徽酒api文档")
                 .description("版权所有翻版必究")
-//                .termsOfServiceUrl("http://blog.csdn.net/saytime")
-                .termsOfServiceUrl("https://api-dev-h9.thy360.com/")
+                .termsOfServiceUrl("http://http://localhost:6305/")
+//                .termsOfServiceUrl("https://api-dev-h9.thy360.com/")
                 .version("1.0")
                 .build();
     }

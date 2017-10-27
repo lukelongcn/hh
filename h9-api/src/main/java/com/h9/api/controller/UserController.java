@@ -1,9 +1,14 @@
 package com.h9.api.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.h9.api.model.dto.UserLoginDTO;
+import com.h9.api.provider.SMService;
+import com.h9.api.service.UserService;
+import com.h9.common.base.Result;
+import org.hibernate.annotations.Source;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -11,23 +16,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    @GetMapping("/hello")
-    public String hello(){
-        return "hello";
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private SMService smService;
+
+    @PostMapping("/user/phone/login")
+    public Result phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO){
+
+        return userService.loginFromPhone(userLoginDTO);
     }
 
-    @PostMapping("postTest")
-    public String postTest(){
-        return "postRest";
+    @PostMapping("/user/sms/register/{phone}")
+    public Result sendRegistSMS(String phone){
+        return smService.sendSMS(phone);
     }
 
-    @PutMapping("putTest")
-    public String putTest() {
-        return "putTest";
-    }
-
-    @PostMapping("zeroTest")
-    public void zeroTest(){
-        int i = 1/0;
-    }
 }
