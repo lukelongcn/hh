@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * Created by itservice on 2017/10/26.
+ * description: 响应日志切面
  */
 @Aspect
 @Component
