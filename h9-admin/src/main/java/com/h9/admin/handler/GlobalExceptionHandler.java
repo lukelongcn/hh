@@ -1,4 +1,4 @@
-package com.h9.admin.handle;
+package com.h9.admin.handler;
 
 import com.h9.common.base.Result;
 import org.jboss.logging.Logger;

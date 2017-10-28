@@ -9,6 +9,7 @@ import com.h9.common.utils.MD5Util;
 import com.mysql.jdbc.TimeUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -29,8 +30,10 @@ public class SMService {
     private static final String appId = "cf_tianlitai";
     private static final String appKey = "1a4772f6b6eee0a3600921a56d13e139";
     private static final String lastSendKey = "h9:sms:lastSend:%s";
+    private static final String sendCountKey = "h9:sms:count:%s";
     public static final String smsCodeKey = "h9:sms:code:%s";
 
+    private Logger logger = Logger.getLogger(this.getClass());
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
     @Resource
@@ -39,7 +42,7 @@ public class SMService {
     private RedisBean redisBean;
 
     /**
-     * description:发送短信
+     * description:发送短信 一分钟一次 / 一天最多十次
      */
     public Result sendSMS(String mobile) {
 
@@ -65,9 +68,29 @@ public class SMService {
         if (!StringUtils.isBlank(value)) {
             return new Result(1, "系统繁忙,请稍后再试~");
         }
+        //短信限制 一天最多十次
+        String countKey = String.format(sendCountKey, mobile);
+        String countStr = redisBean.getStringValue(countKey);
+        int count = 0;
+        if (countStr != null) {
+            try {
+                count = Integer.valueOf(countStr);
+                if (count > 9) return new Result(1, "系统繁忙,请稍后再试~");
+            } catch (NumberFormatException e) {
+                logger.info(e.getMessage(), e);
+                redisBean.setStringValue(countKey, 0 + "", 1, TimeUnit.DAYS);
+            }
+        } else {
+            redisBean.setStringValue(countKey, 0 + "", 1, TimeUnit.DAYS);
+        }
 
-        String res = restTemplate.getForObject(uri, String.class);
-        ReturnMsg returnMsg = JSONObject.parseObject(res, ReturnMsg.class);
+        logger.info("今天已发送次: "+count);
+//        String res = restTemplate.getForObject(uri, String.class);
+//        ReturnMsg returnMsg = JSONObject.parseObject(res, ReturnMsg.class);
+        ReturnMsg returnMsg = new ReturnMsg();
+        returnMsg.setCode(2);
+        returnMsg.setMsg("成功");
+        returnMsg.setSmsid("0");
         //处理结果
         if (returnMsg != null && returnMsg.getCode() != 2) {
             //失败
@@ -79,8 +102,11 @@ public class SMService {
             SMSLog smsLog = new SMSLog(content, mobile, true);
             smsLogReposiroty.save(smsLog);
             redisBean.setStringValue(key, System.currentTimeMillis() + "", 60, TimeUnit.SECONDS);
+            //发送次数加1,1天超时
+            redisBean.setStringValue(countKey, ((++count))+"",1,TimeUnit.DAYS);
             String codeKey = String.format(smsCodeKey, mobile);
-            redisBean.setStringValue(codeKey,code,10, TimeUnit.MINUTES);
+            logger.info("用户:"+mobile+" code:"+code);
+            redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
             return new Result(0, returnMsg.getMsg());
         }
     }

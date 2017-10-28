@@ -4,6 +4,8 @@ import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
+import com.wedo.server.api.sdk.rest.model.AuthUser;
+import com.wedo.server.api.sdk.rest.model.PostResult;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +27,10 @@ public class UserService {
         String redisCode = redisBean.getStringValue(String.format(SMService.smsCodeKey, phone));
         if (!code.equals(redisCode)) return Result.fail("验证码不在确");
 
-        return null;
+        PostResult<AuthUser> postResult = com.wedo.server.api.sdk.Service.getInstance().loginFromNoPassword(phone);
+        if (postResult == null || postResult.getStatusCode() == 0) {
+            return Result.fail("登录异常,请稍后再试");
+        }
+        return Result.success(postResult);
     }
 }
