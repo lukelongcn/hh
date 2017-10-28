@@ -29,9 +29,10 @@ public class UserController {
         return userService.loginFromPhone(userLoginDTO);
     }
 
-    @PostMapping("/user/sms/register/{phone}")
-    public Result sendRegistSMS(@PathVariable String phone){
-        return smService.sendSMS(phone);
-    }
+//    @PostMapping("/user/sms/register/{phone}")
+//    public Result sendRegistSMS(@PathVariable String phone){
+//        return userService.smsRegister(phone);
+//
+//    }
 
 }

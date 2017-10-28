@@ -6,9 +6,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
-import com.wedo.server.api.sdk.Service;
-import com.wedo.server.api.sdk.rest.model.AuthUser;
-import com.wedo.server.api.sdk.rest.model.PostResult;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,12 +36,12 @@ public class ApiApplicationTests {
     private RestTemplate restTemplate;
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
-    @Test
-    public void TestMsm() {
-        String mobile = "17673140753";
-        Result result = smService.sendSMS(mobile);
-        System.out.println(result);
-    }
+//    @Test
+//    public void TestMsm() {
+//        String mobile = "17673140753";
+//        Result result = smService.sendSMS(mobile);
+//        System.out.println(result);
+//    }
 
 
     @Resource
@@ -56,7 +54,6 @@ public class ApiApplicationTests {
 
     @Test
     public void test(){
-        PostResult<AuthUser> postResult = Service.getInstance().loginFromNoPassword("17673140753");
-        System.out.println(postResult);
+
     }
 }

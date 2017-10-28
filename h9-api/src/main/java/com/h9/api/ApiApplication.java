@@ -6,10 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
@@ -21,6 +19,14 @@ public class ApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApplication.class, args);
+		printBanner();
+	}
+	@Bean
+	public RestTemplate restTemplate(){
+		return new RestTemplate();
+	}
+
+	private static void printBanner() {
 		Logger logger = Logger.getLogger(ApiApplication.class);
 		logger.info("\n" +
 				"                                        _ooOoo_\n" +
@@ -46,8 +52,5 @@ public class ApiApplication {
 	}
 
 
-	@Bean
-	public RestTemplate restTemplate(){
-		return new RestTemplate();
-	}
+
 }
