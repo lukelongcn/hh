@@ -10,22 +10,48 @@ import org.apache.commons.lang3.StringUtils;
  * Time: 9:31
  */
 public class RedisKey {
-    private static final String lastSendKey = "h9:sms:lastSend:%s";
-    private static final String sendCountKey = "h9:sms:count:%s";
-    private static final String smsCodeKey = "h9:sms:code:%s";
+    /**
+     * description: %s 占位符为手机号码
+     */
+    private static String lastSendKey = "h9:sms:lastSend:%s";
+    /**
+     * description: %s 占位符为手机号码
+     */
+    private static String sendCountKey = "h9:sms:count:%s";
+    /**
+     * description: %s 占位符为手机号码
+     */
+    private static String smsCodeKey = "h9:sms:code:%s";
+    /**
+     * description: %s 占位符为手机号码
+     */
+    private static String tokenKey ="h9:token:%s";
+    /**
+     * description: %s 占位符为token
+     */
+    private static String tokenUserIdKey = "h9:userId:%s";
 
+    public static String getTokenUserIdKey(String token){
+        if(StringUtils.isBlank(token)) return null;
+        return String.format(tokenUserIdKey,token);
+    }
     public static String getLastSendKey(String phone) {
-        if(StringUtils.isBlank(phone)) return null;
-        return String.format(lastSendKey,phone);
+        if (StringUtils.isBlank(phone)) return null;
+        return String.format(lastSendKey, phone);
     }
 
     public static String getSendCountKey(String phone) {
-        if(StringUtils.isBlank(phone)) return null;
-        return String.format(sendCountKey,phone);
+        if (StringUtils.isBlank(phone)) return null;
+        return String.format(sendCountKey, phone);
     }
 
     public static String getSmsCodeKey(String phone) {
-        if(StringUtils.isBlank(phone)) return null;
-        return String.format(smsCodeKey,phone);
+        if (StringUtils.isBlank(phone)) return null;
+        return String.format(smsCodeKey, phone);
+    }
+
+    public static String getTokenKey(String phone) {
+        if (StringUtils.isBlank(phone)) return null;
+        return String.format(tokenKey,phone);
     }
 }

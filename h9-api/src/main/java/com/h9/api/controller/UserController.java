@@ -1,5 +1,6 @@
 package com.h9.api.controller;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.provider.SMService;
 import com.h9.api.service.UserService;
@@ -15,24 +16,38 @@ import javax.validation.Valid;
  */
 @RestController
 public class UserController {
-
-
     @Resource
     private UserService userService;
-
     @Resource
     private SMService smService;
 
+    /**
+     * description: 手机号登录
+     */
     @PostMapping("/user/phone/login")
     public Result phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO){
 
         return userService.loginFromPhone(userLoginDTO);
     }
 
-//    @PostMapping("/user/sms/register/{phone}")
-//    public Result sendRegistSMS(@PathVariable String phone){
-//        return userService.smsRegister(phone);
-//
-//    }
+    /**
+     * description: 发送验证码
+     */
+    @PostMapping("/user/sms/register/{phone}")
+    public Result sendRegistSMS(@PathVariable String phone){
 
+        return userService.smsRegister(phone);
+
+    }
+
+    @Secured
+    @GetMapping("/test")
+    public Result test(){
+        return Result.success();
+    }
+
+    @GetMapping("/test2")
+    public Result test2(){
+        return Result.success();
+    }
 }

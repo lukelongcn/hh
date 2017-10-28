@@ -5,6 +5,8 @@ import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName: UserRepository
  * @Description: User 的查询
@@ -14,5 +16,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends BaseRepository<User> {
 
-
+    List<User> findByPhone(String phone);
 }

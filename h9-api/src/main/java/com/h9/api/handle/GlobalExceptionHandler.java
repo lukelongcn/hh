@@ -33,7 +33,9 @@ public class GlobalExceptionHandler {
             return new Result(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase());
         } else if (e instanceof MethodArgumentNotValidException) {
             String msg = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError().getDefaultMessage();
-            return new Result(0, msg);
+            return new Result(1, msg);
+        }else if(e instanceof UnAuthException){
+            return new Result(1, e.getMessage());
         } else {
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }

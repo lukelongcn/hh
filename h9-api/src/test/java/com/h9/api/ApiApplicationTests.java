@@ -1,9 +1,11 @@
 package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
 
@@ -20,6 +22,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -52,8 +55,14 @@ public class ApiApplicationTests {
         redisBean.setStringValue(key,"0");
     }
 
+    @Resource
+    private LoginAuthInterceptor loginAuthInterceptor;
     @Test
     public void test(){
+        String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
+        String stringValue = redisBean.getStringValue(key);
+        redisBean.setStringValue(key,"");
 
+        System.out.println(stringValue);
     }
 }
