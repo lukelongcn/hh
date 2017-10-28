@@ -17,7 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "balanceFlow")
+@Table(name = "balance_flow")
 public class BalanceFlow extends BaseEntity {
 
 
@@ -36,7 +36,7 @@ public class BalanceFlow extends BaseEntity {
     @JoinColumn(name = "flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
     private FlowType flowType;
 
-    @Column(name = "balance_type",nullable = false,columnDefinition = "int default 0 COMMENT '金额类型 ： 0 余额 1V 币'")
+    @Column(name = "balance_type",nullable = false,columnDefinition = "int default 0 COMMENT '金额类型 ： 1 余额 2 V 币'")
     private Integer balanceType;
 
     @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
@@ -47,6 +47,9 @@ public class BalanceFlow extends BaseEntity {
 
     @Column(name = "order_id", columnDefinition = "bigint(20) default null COMMENT '订单id'")
     private Long orderId;
+
+    @Column(name = "order_no", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '订单号'")
+    private String orderNo;
 
 
     public Long getId() {

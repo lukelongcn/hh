@@ -42,12 +42,6 @@ public class User extends BaseEntity {
     @Column(name = "open_id",  columnDefinition = "varchar(64) default null COMMENT '微信openId'")
     private String openId;
 
-    @Column(name = "balance",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '用户余额'")
-    private BigDecimal balance = new BigDecimal(0);
-
-    @Column(name = "v_coins",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT 'v币个数'")
-    private BigDecimal vCoins = new BigDecimal(0);
-
     @Temporal(TIMESTAMP)
     @Column(name = "regist_time", columnDefinition = "datetime COMMENT '注册时间'")
     private Date registTime;
@@ -58,10 +52,6 @@ public class User extends BaseEntity {
 
     @Column(name = "login_count",nullable = false,columnDefinition = "int default 0 COMMENT '登录次数'")
     private Integer loginCount;
-
-
-
-
 
 
 
@@ -128,4 +118,5 @@ public class User extends BaseEntity {
     public void setLoginCount(Integer loginCount) {
         this.loginCount = loginCount;
     }
+
 }
