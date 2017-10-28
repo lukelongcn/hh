@@ -34,7 +34,7 @@ public class Banner extends BaseEntity {
     @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")
     private String title;
 
-    @Column(name = "content", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '标题内容'")
+    @Column(name = "content", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '内容'")
     private String content;
 
     @Column(name = "url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
@@ -53,6 +53,9 @@ public class Banner extends BaseEntity {
     @Temporal(TIMESTAMP)
     @Column(name = "end_time", columnDefinition = "datetime COMMENT '结束时间'")
     private Date endTime;
+
+    @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
+    private Integer sort = 1;
 
 
 
@@ -126,5 +129,13 @@ public class Banner extends BaseEntity {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 }

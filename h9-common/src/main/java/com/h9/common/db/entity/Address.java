@@ -48,6 +48,12 @@ public class Address extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 整常，2已删除'")
     private Integer status = 1;
 
+    @Column(name = "city_path", nullable = false, columnDefinition = "varchar(25) default '' COMMENT '城市路径'")
+    private String cityPath;
+
+    @Column(name = "an_int",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址'")
+    private Integer defaultAddress = 1;
+
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
     private Long userId;
 
@@ -134,5 +140,21 @@ public class Address extends BaseEntity {
 
     public String getAddressDetail() {
         return province+city+district+address;
+    }
+
+    public String getCityPath() {
+        return cityPath;
+    }
+
+    public void setCityPath(String cityPath) {
+        this.cityPath = cityPath;
+    }
+
+    public Integer getDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public void setDefaultAddress(Integer defaultAddress) {
+        this.defaultAddress = defaultAddress;
     }
 }

@@ -1,10 +1,14 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -59,6 +63,11 @@ public class Orders extends BaseEntity {
     
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
     private Integer status = 1;
+    
+    @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OrderBy(" id desc")
+    @Fetch(FetchMode.SUBSELECT)
+    private List<OrderItems> orderItems = new ArrayList<>();
 
 
 
