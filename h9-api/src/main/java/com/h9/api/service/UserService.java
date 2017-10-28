@@ -1,6 +1,8 @@
 package com.h9.api.service;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.api.model.dto.UserLoginDTO;
+import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
@@ -16,6 +18,8 @@ import com.h9.common.utils.MD5Util;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -157,4 +161,8 @@ public class UserService {
     }
 
 
+    public Result updatePersonInfo(UserPersonInfoDTO personInfoDTO) {
+//        BeanUtils.copyProperties(personInfoDTO,);
+        return null;
+    }
 }

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by itservice on 2017/10/26.
+ * description: 请求日志打印拦截器
  */
 public class RequestLogInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());

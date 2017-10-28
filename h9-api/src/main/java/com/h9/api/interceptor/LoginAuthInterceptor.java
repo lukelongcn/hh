@@ -6,6 +6,7 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,12 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by itservice on 2017/10/26.
+ * description: 登录权限认证拦截器
  */
 @Component
 public class LoginAuthInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
-
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -38,6 +38,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 if (StringUtils.isBlank(userId)) {
                     throw new UnAuthException("请重新登录");
                 }
+                MDC.put("userId",userId);
             }
 
         }
