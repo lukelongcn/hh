@@ -33,8 +33,8 @@ public class BalanceFlow extends BaseEntity {
     private BigDecimal money = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
-    private FlowType flowType;
+    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
+    private BalanceFlowType balanceFlowType;
 
     @Column(name = "balance_type",nullable = false,columnDefinition = "int default 0 COMMENT '金额类型 ： 1 余额 2 V 币'")
     private Integer balanceType;
@@ -76,12 +76,12 @@ public class BalanceFlow extends BaseEntity {
         this.money = money;
     }
 
-    public FlowType getFlowType() {
-        return flowType;
+    public BalanceFlowType getBalanceFlowType() {
+        return balanceFlowType;
     }
 
-    public void setFlowType(FlowType flowType) {
-        this.flowType = flowType;
+    public void setBalanceFlowType(BalanceFlowType balanceFlowType) {
+        this.balanceFlowType = balanceFlowType;
     }
 
     public Integer getBalanceType() {
@@ -114,5 +114,13 @@ public class BalanceFlow extends BaseEntity {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

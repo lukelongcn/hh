@@ -15,8 +15,8 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "flowType")
-public class FlowType extends BaseEntity {
+@Table(name = "balance_flow_type")
+public class BalanceFlowType extends BaseEntity {
 
 
     @Id
@@ -38,5 +38,19 @@ public class FlowType extends BaseEntity {
         this.id = id;
     }
 
+    public String getFlowName() {
+        return flowName;
+    }
 
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
+
+    public Integer getBalanceType() {
+        return balanceType;
+    }
+
+    public void setBalanceType(Integer balanceType) {
+        this.balanceType = balanceType;
+    }
 }

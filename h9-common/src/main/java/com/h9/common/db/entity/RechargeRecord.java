@@ -15,33 +15,40 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Description:
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/28
- * Time: 10:21
+ * Time: 14:52
  */
 
 @Entity
-@Table(name = "reward_flow")
-public class RewardFlow extends BaseEntity {
+@Table(name = "rechargeRecord")
+public class RechargeRecord extends BaseEntity {
+
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '奖励领取用户id'")
-    private Long userId;
-
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '奖励条码'")
-    private String code;
-
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "reward_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励id'")
-    private Reward reward;
-
-    @Column(name = "first_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 第一个用户 '")
-    private Integer firstUser = 1;
-
-    @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励领取金额'")
+    @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '提现金额'")
     private BigDecimal money = new BigDecimal(0);
+
+    @Column(name = "surplus_balance",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '提现后剩余余额'")
+    private BigDecimal surplusBalance = new BigDecimal(0);
+
+    @Column(name = "order_id", columnDefinition = "bigint(20) default null COMMENT '相关第三方订单id'")
+    private Long orderId;
+
+    @Column(name = "order_no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '第三方相关订单编号'")
+    private String orderNo;
+
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '提现状态 ： 1充值中 2充值完成  3充值异常'")
+    private Integer status = 1;
+
+    @Column(name = "remarks", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '备注'")
+    private String remarks;
+
+    @Temporal(TIMESTAMP)
+    @Column(name = "finish_time", columnDefinition = "datetime COMMENT '转账成功时间'")
+    private Date finishTime;
 
     @Column(name = "longitude", columnDefinition = "double default null COMMENT ''")
     private double longitude;
@@ -61,13 +68,6 @@ public class RewardFlow extends BaseEntity {
     @Column(name = "ip", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'ip地址'")
     private String ip;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 未分配奖励 2已分配奖励 3完成'")
-    private Integer status = 1;
-
-    @Temporal(TIMESTAMP)
-    @Column(name = "finish_time", columnDefinition = "datetime COMMENT '结束时间'")
-    private Date finishTime;
-
     public Long getId() {
         return id;
     }
@@ -76,44 +76,60 @@ public class RewardFlow extends BaseEntity {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Reward getReward() {
-        return reward;
-    }
-
-    public void setReward(Reward reward) {
-        this.reward = reward;
-    }
-
-    public Integer getFirstUser() {
-        return firstUser;
-    }
-
-    public void setFirstUser(Integer firstUser) {
-        this.firstUser = firstUser;
-    }
-
     public BigDecimal getMoney() {
         return money;
     }
 
     public void setMoney(BigDecimal money) {
         this.money = money;
+    }
+
+    public BigDecimal getSurplusBalance() {
+        return surplusBalance;
+    }
+
+    public void setSurplusBalance(BigDecimal surplusBalance) {
+        this.surplusBalance = surplusBalance;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Date getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(Date finishTime) {
+        this.finishTime = finishTime;
     }
 
     public double getLongitude() {
@@ -162,21 +178,5 @@ public class RewardFlow extends BaseEntity {
 
     public void setIp(String ip) {
         this.ip = ip;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
     }
 }
