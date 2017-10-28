@@ -18,8 +18,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "batch")
-public class Batch extends BaseEntity {
+@Table(name = "reward_batch")
+public class RewardBatch extends BaseEntity {
 
 
     @Id
