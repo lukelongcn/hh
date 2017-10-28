@@ -33,18 +33,15 @@ public class User extends BaseEntity {
     @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
     private String phone;
 
+    @Column(name = "open_id",  columnDefinition = "varchar(64) default null COMMENT '微信openId'")
+    private String openId;
+
     @Column(name = "avatar", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户头像'")
     private String avatar;
 
     @Column(name = "nick_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '昵称'")
     private String nickName;
 
-    @Column(name = "open_id",  columnDefinition = "varchar(64) default null COMMENT '微信openId'")
-    private String openId;
-
-    @Temporal(TIMESTAMP)
-    @Column(name = "regist_time", columnDefinition = "datetime COMMENT '注册时间'")
-    private Date registTime;
 
     @Temporal(TIMESTAMP)
     @Column(name = "last_login_time", columnDefinition = "datetime COMMENT '最后登陆时间'")
@@ -53,6 +50,12 @@ public class User extends BaseEntity {
     @Column(name = "login_count",nullable = false,columnDefinition = "int default 0 COMMENT '登录次数'")
     private Integer loginCount;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 2禁用 3失效'")
+    private Integer status = 1;
+
+    //TODO 待定
+    @Column(name = "type",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常用户'")
+    private Integer type = 1;
 
 
     public Long getId() {
@@ -71,6 +74,15 @@ public class User extends BaseEntity {
         this.phone = phone;
     }
 
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
     public String getAvatar() {
         return avatar;
     }
@@ -85,22 +97,6 @@ public class User extends BaseEntity {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public String getOpenId() {
-        return openId;
-    }
-
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
-
-    public Date getRegistTime() {
-        return registTime;
-    }
-
-    public void setRegistTime(Date registTime) {
-        this.registTime = registTime;
     }
 
     public Date getLastLoginTime() {
@@ -119,4 +115,19 @@ public class User extends BaseEntity {
         this.loginCount = loginCount;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
 }

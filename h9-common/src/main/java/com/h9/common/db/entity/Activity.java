@@ -7,8 +7,10 @@ import org.hibernate.dialect.unique.DB2UniqueDelegate;
 import javax.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,8 +21,8 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "reward_type")
-public class RewardType extends BaseEntity {
+@Table(name = "activity")
+public class Activity extends BaseEntity {
 
 
     @Id
@@ -34,32 +36,43 @@ public class RewardType extends BaseEntity {
     /****
      * TODO 可能要考虑将时间做成多配置的
      */
-    @Column(name = "limit_date_type",nullable = false,columnDefinition = "tinyint default 1 COMMENT '奖励次数限制0 不限制 1 秒 2 分 3小时 4天 5周 6月 7 年'")
+    @Column(name = "limit_date_type",nullable = false,columnDefinition = "tinyint default 0 COMMENT '奖励次数限制0 不限制 1 秒 2 分 3小时 4天 5周 6月 7 年'")
     private Integer limitDateType = 0;
-
     @Column(name = "limit_date",nullable = false,columnDefinition = "int default 0 COMMENT '限制的时间天数'")
     private Integer limitDate = 0;
-
     @Column(name = "limit_count",nullable = false,columnDefinition = "int default 0 COMMENT '限制次数'")
     private Integer limitCount = 0 ;
-
-    @Column(name = "share_status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否可以被分享'")
-    private Integer shareStatus = 1;
 
     @Column(name = "share_count",nullable = false,columnDefinition = "int default 0 COMMENT '奖励可以分享使用次数'")
     private Integer shareCount = 0;
 
-    @Column(name = "user_count",nullable = false,columnDefinition = "int default 0 COMMENT '单个用户单个条码次数'")
-    private Integer userCount;
 
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '奖励代码'")
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '奖励口令'")
     private String code;
+//  //移到批次表
+//    @Column(name = "reward_count",nullable = false,columnDefinition = "int default 0 COMMENT '奖励总数量'")
+//    private Integer rewardCount;
 
-    @Column(name = "reward_count",nullable = false,columnDefinition = "int default 0 COMMENT '奖励总数量'")
-    private Integer rewardCount;
+    @Column(name = "activity_url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '活动路径'")
+    private String activityUrl;
 
-    @Column(name = "reward_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '单个奖励金额'")
-    private BigDecimal rewardMoney = new BigDecimal(0);
+    @Column(name = "activity_icon", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '图片路径'")
+    private String activityIcon;
+
+    @Column(name = "activity_desc", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '活动描述'")
+    private String activityDesc;
+
+    @Temporal(TIMESTAMP)
+    @Column(name = "start_time", columnDefinition = "datetime COMMENT '活动开始时间'")
+    private Date startTime;
+
+    @Temporal(TIMESTAMP)
+    @Column(name = "end_time", columnDefinition = "datetime COMMENT '活动结束时间'")
+    private Date endTime;
+
+    @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '0 禁用  1 启用'")
+    private Integer enable = 0;
+
 
 
     public Long getId() {
@@ -102,28 +115,12 @@ public class RewardType extends BaseEntity {
         this.limitCount = limitCount;
     }
 
-    public Integer getShareStatus() {
-        return shareStatus;
-    }
-
-    public void setShareStatus(Integer shareStatus) {
-        this.shareStatus = shareStatus;
-    }
-
     public Integer getShareCount() {
         return shareCount;
     }
 
     public void setShareCount(Integer shareCount) {
         this.shareCount = shareCount;
-    }
-
-    public Integer getUserCount() {
-        return userCount;
-    }
-
-    public void setUserCount(Integer userCount) {
-        this.userCount = userCount;
     }
 
     public String getCode() {
@@ -134,19 +131,51 @@ public class RewardType extends BaseEntity {
         this.code = code;
     }
 
-    public Integer getRewardCount() {
-        return rewardCount;
+    public String getActivityUrl() {
+        return activityUrl;
     }
 
-    public void setRewardCount(Integer rewardCount) {
-        this.rewardCount = rewardCount;
+    public void setActivityUrl(String activityUrl) {
+        this.activityUrl = activityUrl;
     }
 
-    public BigDecimal getRewardMoney() {
-        return rewardMoney;
+    public String getActivityIcon() {
+        return activityIcon;
     }
 
-    public void setRewardMoney(BigDecimal rewardMoney) {
-        this.rewardMoney = rewardMoney;
+    public void setActivityIcon(String activityIcon) {
+        this.activityIcon = activityIcon;
+    }
+
+    public String getActivityDesc() {
+        return activityDesc;
+    }
+
+    public void setActivityDesc(String activityDesc) {
+        this.activityDesc = activityDesc;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Integer getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Integer enable) {
+        this.enable = enable;
     }
 }

@@ -26,17 +26,9 @@ public class BannerType extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型名称'")
     private String name;
 
-    @Column(name = "title", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '界面显示标题'")
-    private String title;
-
-    @Column(name = "icon", columnDefinition = "varchar(128) default '' COMMENT '类型图标'")
-    private String icon;
-
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型标识'")
     private String code;
 
-    @Column(name = "url", columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
-    private String url;
 
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")
     private Integer enable;
@@ -56,30 +48,6 @@ public class BannerType extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getCode() {

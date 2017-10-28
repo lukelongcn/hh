@@ -91,27 +91,5 @@ public class SystemBlackList extends BaseEntity {
         this.status = status;
     }
 
-    public String getCause() {
-        return cause;
-    }
 
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
-
-    public Long getRewardId() {
-        return rewardId;
-    }
-
-    public void setRewardId(Long rewardId) {
-        this.rewardId = rewardId;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
 }

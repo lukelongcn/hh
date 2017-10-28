@@ -10,13 +10,13 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Created with IntelliJ IDEA.
  * Description:
  * User:刘敏华 shadow.liu@hey900.com
- * Date: 2017/10/27
- * Time: 17:37
+ * Date: 2017/10/28
+ * Time: 17:43
  */
 
 @Entity
-@Table(name = "balance_flow_type")
-public class BalanceFlowType extends BaseEntity {
+@Table(name = "product")
+public class Product extends BaseEntity {
 
 
     @Id
@@ -24,8 +24,13 @@ public class BalanceFlowType extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "flow_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '流水类型名称'")
-    private String flowName;
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '产品名'")
+    private String name;
+
+    @Column(name = "product_code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '关联商品条码'")
+    private String productCode;
+
+
 
     public Long getId() {
         return id;
@@ -35,12 +40,5 @@ public class BalanceFlowType extends BaseEntity {
         this.id = id;
     }
 
-    public String getFlowName() {
-        return flowName;
-    }
-
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
 
 }
