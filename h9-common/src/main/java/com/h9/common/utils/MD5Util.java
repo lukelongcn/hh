@@ -28,6 +28,8 @@ public class MD5Util {
     }
 
     public static void main(String[] args) {
-        System.out.println(getMD5("ldh").equals("3f5453e192e572cbc2bed32097c7aaaf"));
+        String s = getMD5("ldh");
+        System.out.println(s);
+        System.out.println(s.length());
     }
 }

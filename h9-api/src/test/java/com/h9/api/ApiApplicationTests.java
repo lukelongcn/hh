@@ -2,6 +2,7 @@ package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
@@ -64,5 +65,12 @@ public class ApiApplicationTests {
         redisBean.setStringValue(key,"");
 
         System.out.println(stringValue);
+    }
+
+    @Resource
+    private MobileRechargeService mobileRechargeService;
+    @Test
+    public void mobileRecharge(){
+       mobileRechargeService.recharge();
     }
 }
