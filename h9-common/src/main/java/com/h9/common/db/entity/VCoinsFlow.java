@@ -3,22 +3,21 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
-
 import java.math.BigDecimal;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:余额流水
+ * Description:V币流水
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/27
  * Time: 17:30
  */
 
 @Entity
-@Table(name = "balance_flow")
-public class BalanceFlow extends BaseEntity {
+@Table(name = "vcoins_flow")
+public class VCoinsFlow extends BaseEntity {
 
 
     @Id
@@ -33,8 +32,9 @@ public class BalanceFlow extends BaseEntity {
     private BigDecimal money = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
-    private BalanceFlowType balanceFlowType;
+    @JoinColumn(name = "v_coins_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    private VCoinsFlowType vCoinsFlowType;
+
 
     @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
     private String remarks;
@@ -73,14 +73,6 @@ public class BalanceFlow extends BaseEntity {
         this.money = money;
     }
 
-    public BalanceFlowType getBalanceFlowType() {
-        return balanceFlowType;
-    }
-
-    public void setBalanceFlowType(BalanceFlowType balanceFlowType) {
-        this.balanceFlowType = balanceFlowType;
-    }
-
     public String getRemarks() {
         return remarks;
     }
@@ -111,5 +103,13 @@ public class BalanceFlow extends BaseEntity {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public VCoinsFlowType getvCoinsFlowType() {
+        return vCoinsFlowType;
+    }
+
+    public void setvCoinsFlowType(VCoinsFlowType vCoinsFlowType) {
+        this.vCoinsFlowType = vCoinsFlowType;
     }
 }

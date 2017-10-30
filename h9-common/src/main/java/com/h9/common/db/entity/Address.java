@@ -8,7 +8,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description: 收货地址
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/28
  * Time: 15:04

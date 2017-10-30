@@ -14,7 +14,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description:抽奖活动配置
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/28
  * Time: 10:20
