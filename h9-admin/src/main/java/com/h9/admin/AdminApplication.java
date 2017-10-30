@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.h9.common", "com.h9.admin"})
-@EnableJpaRepositories(basePackages="com.h9.common.db.repo")
-@EntityScan(basePackages = "com.h9.common.db.entity")
+@EnableJpaRepositories(basePackages={"com.h9.common.db.repo","com.h9.admin.repository"})
+@EntityScan(basePackages = {"com.h9.common.db.entity","com.h9.admin.model.po"})
 @AutoConfigurationPackage
 public class AdminApplication {
 
