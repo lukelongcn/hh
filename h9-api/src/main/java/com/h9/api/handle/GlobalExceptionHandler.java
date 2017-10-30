@@ -3,6 +3,7 @@ package com.h9.api.handle;
 import com.h9.common.base.Result;
 import org.jboss.logging.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -36,6 +36,8 @@ public class GlobalExceptionHandler {
             return new Result(1, msg);
         }else if(e instanceof UnAuthException){
             return new Result(1, e.getMessage());
+        }else if(e instanceof HttpMessageNotReadableException){
+            return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
         } else {
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }

@@ -1,7 +1,11 @@
 package com.h9.api.model.dto;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -12,14 +16,13 @@ public class UserPersonInfoDTO {
     @Size(min = 1,message = "请填写nickName")
     @NotNull(message = "请填写nickName")
     private String nickName;
-    @Size(min = 1,message = "请填写phone")
-    @NotNull(message = "请填写phone")
-    private String phone;
-    private int sex;
+    private Integer sex;
     private Date birthday;
-    private int marriageStatus;
-    private int education;
+    private Integer marriageStatus;
+    private Integer education;
     private String job;
+
+
 
     public String getAvatar() {
         return avatar;
@@ -37,15 +40,9 @@ public class UserPersonInfoDTO {
         this.nickName = nickName;
     }
 
-    public String getPhone() {
-        return phone;
-    }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 
-    public int getSex() {
+    public Integer getSex() {
         return sex;
     }
 
@@ -57,23 +54,28 @@ public class UserPersonInfoDTO {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
+    public void setBirthday(String birthday) {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date bir = format.parse("1995-09-04");
+            this.birthday = bir;
+        } catch (ParseException e) {
+        }
     }
 
-    public int getMarriageStatus() {
+    public Integer getMarriageStatus() {
         return marriageStatus;
     }
 
-    public void setMarriageStatus(int marriageStatus) {
+    public void setMarriageStatus(Integer marriageStatus) {
         this.marriageStatus = marriageStatus;
     }
 
-    public int getEducation() {
+    public Integer getEducation() {
         return education;
     }
 
-    public void setEducation(int education) {
+    public void setEducation(Integer education) {
         this.education = education;
     }
 

@@ -6,6 +6,7 @@ import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.provider.SMService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
+import io.swagger.annotations.ApiParam;
 import org.hibernate.annotations.Source;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.*;
@@ -51,15 +52,5 @@ public class UserController {
     public Result updateInfo(@Valid@RequestBody UserPersonInfoDTO personInfoDTO){
         return userService.updatePersonInfo(personInfoDTO);
     }
-    @Secured
-    @GetMapping("/test")
-    public Result test(){
-        System.out.println(MDC.get("userId"));
-        return Result.success();
-    }
 
-    @GetMapping("/test2")
-    public Result test2(){
-        return Result.success();
-    }
 }
