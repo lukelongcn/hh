@@ -4,10 +4,9 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.provider.SMService;
+import com.h9.api.service.AccountService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
-import io.swagger.annotations.ApiParam;
-import org.hibernate.annotations.Source;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,13 +23,13 @@ public class UserController {
     @Resource
     private SMService smService;
 
+
     /**
      * description: 手机号登录
      */
     @Secured
     @PostMapping("/user/phone/login")
     public Result phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO){
-
         return userService.loginFromPhone(userLoginDTO);
     }
 
@@ -52,5 +51,7 @@ public class UserController {
     public Result updateInfo(@Valid@RequestBody UserPersonInfoDTO personInfoDTO){
         return userService.updatePersonInfo(personInfoDTO);
     }
+
+
 
 }
