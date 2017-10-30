@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Aspect
 @Component
-public class Aop {
+public class LogAop {
     private Logger logger = Logger.getLogger(this.getClass());
 
     @Around("execution(public * com.h9.admin.controller..*.*(..))")
