@@ -12,6 +12,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class LoginAuthInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
+    @Resource
+    private RedisBean redisBean;
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -33,7 +36,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
                 // token 失效检查
-                RedisBean redisBean = SpringUtil.getBean("redisBean", RedisBean.class);
+//                RedisBean redisBean = SpringUtil.getBean("redisBean", RedisBean.class);
                 String userId = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
                 if (StringUtils.isBlank(userId)) {
                     throw new UnAuthException("请重新登录");

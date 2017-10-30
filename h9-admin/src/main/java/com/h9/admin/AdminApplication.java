@@ -2,11 +2,17 @@ package com.h9.admin;
 
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.h9.common", "com.h9.admin"})
+@EnableJpaRepositories(basePackages="com.h9.common.db.repo")
+@EntityScan(basePackages = "com.h9.common.db.entity")
+@AutoConfigurationPackage
 public class AdminApplication {
 
     public static void main(String[] args) {
