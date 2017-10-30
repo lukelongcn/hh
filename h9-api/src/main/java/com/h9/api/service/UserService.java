@@ -5,6 +5,7 @@ import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.provider.SMService;
+import com.h9.api.util.UserUtil;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -63,7 +64,11 @@ public class UserService {
         String code = userLoginDTO.getCode();
 
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone), phone));
-        if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+        if ("dev".equals(currentEnvironment)) {
+
+        } else {
+            if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+        }
 
         List<User> userList = userRepository.findByPhone(phone);
         User user = null;
@@ -73,7 +78,7 @@ public class UserService {
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(user.getId());
             userAccountReposiroty.save(userAccount);
-        }else{
+        } else {
             user = userList.get(0);
         }
 
@@ -86,7 +91,7 @@ public class UserService {
         String tokenKey = RedisKey.getTokenKey(phone);
         redisBean.setStringValue(tokenKey, token, 7, TimeUnit.DAYS);
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey,user.getId()+"",7,TimeUnit.DAYS);
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 7, TimeUnit.DAYS);
 
         LoginResultVO vo = LoginResultVO.convert(user, token);
         return Result.success(vo);
@@ -96,14 +101,14 @@ public class UserService {
      * description: 初化一个用户，并返回这个用户对象
      */
     public User initUserInfo(String phone) {
-        if(phone == null) return null;
+        if (phone == null) return null;
         User user = new User();
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        user.setNickName("手机用户-"+phone);
+        user.setNickName("");
         user.setLastLoginTime(new Date());
-
+        user.setSex(1);
         return user;
     }
 
@@ -135,10 +140,10 @@ public class UserService {
         String code = RandomStringUtils.random(4, "0123456789");
         String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
         Result returnMsg = null;
-        if("dev".equals(currentEnvironment)){
+        if ("dev".equals(currentEnvironment)) {
             returnMsg = new Result(0, "");
             code = "0000";
-        }else{
+        } else {
             returnMsg = smService.sendSMS(phone, content);
         }
         //处理结果
@@ -163,7 +168,36 @@ public class UserService {
 
 
     public Result updatePersonInfo(UserPersonInfoDTO personInfoDTO) {
-//        BeanUtils.copyProperties(personInfoDTO,);
-        return null;
+        Long userId = UserUtil.getCurrentUserId();
+        User user = userRepository.findOne(userId);
+        if (user == null) return Result.fail("此用户不存在");
+
+        String avatar = personInfoDTO.getAvatar();
+        if (!StringUtils.isBlank(avatar))
+            user.setAvatar(avatar);
+
+        Integer sex = personInfoDTO.getSex();
+        if (sex != null)
+            user.setSex(sex);
+
+        Integer marriageStatus = personInfoDTO.getMarriageStatus();
+        if (marriageStatus != null)
+            user.setMarriageStatus(marriageStatus);
+
+        String job = personInfoDTO.getJob();
+        if (job != null)
+            user.setJob(job);
+
+        Date birthday = personInfoDTO.getBirthday();
+        if (birthday != null)
+            user.setBirthday(birthday);
+
+        Integer education = personInfoDTO.getEducation();
+        if (education != null)
+            user.setEducation(education);
+
+        userRepository.save(user);
+        return Result.success();
     }
+
 }

@@ -2,6 +2,7 @@ package com.h9.api.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
 import org.jboss.logging.Logger;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * description: 请求日志打印拦截器
  */
+@Component
 public class RequestLogInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
 

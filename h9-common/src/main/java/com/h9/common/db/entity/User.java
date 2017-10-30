@@ -36,8 +36,8 @@ public class User extends BaseEntity {
     @Column(name = "open_id",  columnDefinition = "varchar(64) default null COMMENT '微信openId'")
     private String openId;
 
-    @Column(name = "avatar", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户头像'")
-    private String avatar;
+    @Column(name = "avatar", columnDefinition = "varchar(128) default '' COMMENT '用户头像'")
+    private String avatar ;
 
     @Column(name = "nick_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '昵称'")
     private String nickName;
@@ -57,6 +57,61 @@ public class User extends BaseEntity {
     @Column(name = "type",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常用户'")
     private Integer type = 1;
 
+    @Column(name = "sex",nullable = false,columnDefinition = "int default 1 COMMENT ' 1 为男 0为女'")
+    private Integer sex = 1;
+    @Column(name = "birthday",columnDefinition = "datetime COMMENT '生日'")
+    private Date birthday;
+
+
+    @Column(name = "marriage_status",columnDefinition = "int default 1 COMMENT '1 单身，2恋受，3已婚，4其他'")
+    private Integer marriageStatus;
+
+    @Column(name = "education",columnDefinition = "int default 0 COMMENT '小学及以下 1，初中  2 ，高中    3，中专    4，本科    5" +
+            "，研究生   6，博士及以上 7'")
+    private Integer education;
+
+    @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
+    private String job;
+
+    public Integer getEducation() {
+        return education;
+    }
+
+    public void setEducation(Integer education) {
+        this.education = education;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Integer getMarriageStatus() {
+        return marriageStatus;
+    }
+
+    public void setMarriageStatus(Integer marriageStatus) {
+        this.marriageStatus = marriageStatus;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
 
     public Long getId() {
         return id;
