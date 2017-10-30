@@ -18,6 +18,36 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class ArticleType extends BaseEntity {
 
 
+    public enum ArticleTypeEnum{
+
+        NOTICE("公告",1),
+        RECOMMEND("推荐文章",2);
+
+        ArticleTypeEnum(String desc, int code) {
+            this.desc = desc;
+            this.code = code;
+        }
+
+        private String desc;
+        private int code;
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+    }
+
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")

@@ -18,6 +18,35 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class BannerType extends BaseEntity {
 
 
+    public enum BannerTypeEnum {
+
+        TOP_BANNER(1,"顶部banner"),
+        IDEAR_BANNER(3,"创意banner"),
+        NAVITION_BANNER(2,"功能导航banner");
+
+        BannerTypeEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+        private int code;
+        private String desc;
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public java.lang.String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(java.lang.String desc) {
+            this.desc = desc;
+        }
+    }
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
