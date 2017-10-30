@@ -39,9 +39,10 @@ public class Banner extends BaseEntity {
 
     @Column(name = "url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
     private String url;
+    
+    @Column(name = "icon", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '显示路径'")
+    private String icon;
 
-    @Column(name = "user_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户名'")
-    private String userName;
 
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 0禁用'")
     private Integer enable;
@@ -99,13 +100,6 @@ public class Banner extends BaseEntity {
         this.url = url;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public Integer getEnable() {
         return enable;
@@ -137,5 +131,13 @@ public class Banner extends BaseEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }
