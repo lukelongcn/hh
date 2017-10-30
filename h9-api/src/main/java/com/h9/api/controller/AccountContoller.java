@@ -1,7 +1,11 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.vo.BalanceFlowVO;
+import com.h9.api.service.AccountService;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.VCoinsFlow;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.MDC;
@@ -23,14 +27,12 @@ import javax.annotation.Resource;
 public class AccountContoller {
 
     @Resource
-    private com.h9.api.service.AccountService balanceService;
-
-
+    private AccountService balanceService;
 
     @Secured
     @ApiOperation(value = "账户余额流水")
     @GetMapping("/account/balance/detail")
-    public Result getUserBalance(@RequestParam("page") int page, @RequestParam("limit") int limit){
+    public Result<PageResult<BalanceFlowVO>> getUserBalance(@RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
         return balanceService.getBalanceFlow(userId,page,limit);
     }
@@ -39,7 +41,7 @@ public class AccountContoller {
     @Secured
     @ApiOperation(value = "账户V币流水")
     @GetMapping("/account/vCoins/detail")
-    public Result getVCoinsFlow(@RequestParam("page") int page,@RequestParam("limit") int limit){
+    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
         return balanceService.getVCoinsFlow(userId,page,limit);
     }
