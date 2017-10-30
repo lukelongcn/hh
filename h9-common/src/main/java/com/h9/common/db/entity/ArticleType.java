@@ -14,8 +14,8 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Time: 18:13
  */
 @Entity
-@Table(name = "banner_type")
-public class BannerType extends BaseEntity {
+@Table(name = "article_type")
+public class ArticleType extends BaseEntity {
 
 
     @Id

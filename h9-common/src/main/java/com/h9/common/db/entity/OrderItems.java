@@ -10,7 +10,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description:订单商品
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/28
  * Time: 15:57
@@ -83,5 +83,21 @@ public class OrderItems extends BaseEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
+    public Integer getPayMethond() {
+        return payMethond;
+    }
+
+    public void setPayMethond(Integer payMethond) {
+        this.payMethond = payMethond;
     }
 }

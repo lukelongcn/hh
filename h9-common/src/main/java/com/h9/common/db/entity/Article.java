@@ -3,7 +3,6 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
-
 import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -18,8 +17,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "banner")
-public class Banner extends BaseEntity {
+@Table(name = "article")
+public class Article extends BaseEntity {
 
 
     @Id
@@ -28,8 +27,8 @@ public class Banner extends BaseEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "banner_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT 'banner类型'")
-    private BannerType bannerType;
+    @JoinColumn(name = "article_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '标题类型'")
+    private ArticleType articleType;
 
     @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")
     private String title;
@@ -67,12 +66,12 @@ public class Banner extends BaseEntity {
         this.id = id;
     }
 
-    public BannerType getBannerType() {
-        return bannerType;
+    public ArticleType getArticleType() {
+        return articleType;
     }
 
-    public void setBannerType(BannerType bannerType) {
-        this.bannerType = bannerType;
+    public void setArticleType(ArticleType articleType) {
+        this.articleType = articleType;
     }
 
     public String getTitle() {

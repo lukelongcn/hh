@@ -59,23 +59,9 @@ public class WithdrawalsRecord extends BaseEntity {
     @Column(name = "finish_time", columnDefinition = "datetime COMMENT '转账成功时间'")
     private Date finishTime;
 
-    @Column(name = "longitude", columnDefinition = "double default null COMMENT ''")
-    private double longitude;
-
-    @Column(name = "latitude", columnDefinition = "double default null COMMENT ''")
-    private double latitude;
-
-    @Column(name = "address", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '地址'")
-    private String address;
-
-    @Column(name = "refer", nullable = false, columnDefinition = "varchar(500) default '' COMMENT '前置页面'")
-    private String refer;
-
-    @Column(name = "user_agent", nullable = false, columnDefinition = "varchar(500) default '' COMMENT '用户代理'")
-    private String userAgent;
-
-    @Column(name = "ip", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'ip地址'")
-    private String ip;
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_record_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    private UserRecord userRecord;
 
 
     public Long getId() {
@@ -141,55 +127,7 @@ public class WithdrawalsRecord extends BaseEntity {
     public void setFinishTime(Date finishTime) {
         this.finishTime = finishTime;
     }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getRefer() {
-        return refer;
-    }
-
-    public void setRefer(String refer) {
-        this.refer = refer;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
+    
     public Long getOrderId() {
         return orderId;
     }
@@ -204,5 +142,13 @@ public class WithdrawalsRecord extends BaseEntity {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public UserRecord getUserRecord() {
+        return userRecord;
+    }
+
+    public void setUserRecord(UserRecord userRecord) {
+        this.userRecord = userRecord;
     }
 }

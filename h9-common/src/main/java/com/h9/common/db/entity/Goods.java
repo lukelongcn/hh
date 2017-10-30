@@ -10,37 +10,39 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:充值规则
+ * Description:商品，包括虚拟商品
  * User:刘敏华 shadow.liu@hey900.com
- * Date: 2017/10/28
- * Time: 14:14
+ * Date: 2017/10/30
+ * Time: 11:33
  */
 
 @Entity
-@Table(name = "recharge_rule")
-public class RechargeRule extends BaseEntity {
+@Table(name = "goods")
+public class Goods extends BaseEntity {
 
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
-    
+
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '充值显示名称'")
     private String name;
-    
-    @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '充值金额'")
-    private BigDecimal money = new BigDecimal(0);
-    
-    @Column(name = "need_pay",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付金额'")
-    private BigDecimal needPay = new BigDecimal(0);
-    
+
+    @Column(name = "real_price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '虚拟商品价值'")
+    private BigDecimal realPrice = new BigDecimal(0);
+
+    @Column(name = "price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '商品价格'")
+    private BigDecimal price = new BigDecimal(0);
+
     @Column(name = "cash_back",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励金额'")
     private BigDecimal cashBack = new BigDecimal(0);
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用 2 禁用'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 上架 2 下架'")
     private Integer status = 1;
 
+    @Column(name = "description", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '描述'")
+    private String description;
 
     public Long getId() {
         return id;
@@ -50,7 +52,6 @@ public class RechargeRule extends BaseEntity {
         this.id = id;
     }
 
-
     public String getName() {
         return name;
     }
@@ -59,20 +60,28 @@ public class RechargeRule extends BaseEntity {
         this.name = name;
     }
 
-    public BigDecimal getMoney() {
-        return money;
+    public BigDecimal getRealPrice() {
+        return realPrice;
     }
 
-    public void setMoney(BigDecimal money) {
-        this.money = money;
+    public void setRealPrice(BigDecimal realPrice) {
+        this.realPrice = realPrice;
     }
 
-    public BigDecimal getNeedPay() {
-        return needPay;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNeedPay(BigDecimal needPay) {
-        this.needPay = needPay;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public BigDecimal getCashBack() {
@@ -90,6 +99,4 @@ public class RechargeRule extends BaseEntity {
     public void setStatus(Integer status) {
         this.status = status;
     }
-
-
 }

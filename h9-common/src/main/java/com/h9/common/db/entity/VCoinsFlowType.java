@@ -8,15 +8,15 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:余额流水类型
+ * Description:
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/27
  * Time: 17:37
  */
 
 @Entity
-@Table(name = "balance_flow_type")
-public class BalanceFlowType extends BaseEntity {
+@Table(name = "vcoins_flow_type")
+public class VCoinsFlowType extends BaseEntity {
 
 
     @Id
