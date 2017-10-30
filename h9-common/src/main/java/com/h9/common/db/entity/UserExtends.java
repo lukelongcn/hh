@@ -25,7 +25,7 @@ public class UserExtends extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
-    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户'")
+    @Column(name = "user_id", columnDefinition = "bigint(20)  COMMENT '用户'")
     private Long userId;
 
     @Column(name = "sex",nullable = false,columnDefinition = "tinyint default 0 COMMENT ' 1 男 2 女 0未知'")

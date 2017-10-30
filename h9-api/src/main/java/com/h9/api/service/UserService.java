@@ -101,8 +101,9 @@ public class UserService {
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        user.setRegistTime(new Date());
         user.setNickName("手机用户-"+phone);
+        user.setLastLoginTime(new Date());
+
         return user;
     }
 

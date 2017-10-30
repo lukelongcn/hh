@@ -31,7 +31,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             Secured secured = ((HandlerMethod) o).getMethodAnnotation(Secured.class);
 
             if (secured != null) {
-                if (StringUtils.isBlank(token)) throw new UnAuthException("请重新登录");
+                if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
                 // token 失效检查
                 RedisBean redisBean = SpringUtil.getBean("redisBean", RedisBean.class);
                 String userId = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));

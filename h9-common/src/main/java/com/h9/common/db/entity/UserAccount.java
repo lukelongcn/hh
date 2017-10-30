@@ -24,7 +24,7 @@ public class UserAccount extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
-    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT ''")
+    @Column(name = "user_id", columnDefinition = "bigint(20)  COMMENT ''")
     private Long userId;
 
     @Column(name = "balance",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '用户余额'")
@@ -32,7 +32,6 @@ public class UserAccount extends BaseEntity {
 
     @Column(name = "v_coins",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT 'v币个数'")
     private BigDecimal vCoins = new BigDecimal(0);
-
 
 
     public Long getUserId() {
