@@ -4,17 +4,12 @@ import com.h9.common.base.Result;
 import com.h9.common.utils.MD5Util;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import sun.plugin2.main.client.MozillaServiceDelegate;
 
-import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.SimpleFormatter;
 
 /**
  * description: 手机充值

@@ -406,7 +406,7 @@ public class DateUtil {
         }
     }
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //		String dateStr = "2015-1-1";
 //		String dateStr2 = "2015-1-2";
 //		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -436,10 +436,10 @@ public class DateUtil {
 //		System.out.println("上年开始点时间：" + getLastYearStartTime().toLocaleString());
 //		System.out.println("某月开始点时间：" + getTimesMonthmorning(parser("2016-02-05 15:00:45", "yyyy-MM-dd HH:mm:ss")).toLocaleString());
 //		System.out.println("某月未24点时间：" + getTimesMonthnight(parser("2016-02-05 15:00:45", "yyyy-MM-dd HH:mm:ss")).toLocaleString());
-
-        String endDate = getEndDate(new Date(), parser("2016-09-06 18:55:55", "yyyy-MM-dd HH:mm:ss"));
-        System.out.println("endDate = [" + endDate + "]");
-    }
+//
+//        String endDate = getEndDate(new Date(), parser("2016-09-06 18:55:55", "yyyy-MM-dd HH:mm:ss"));
+//        System.out.println("endDate = [" + endDate + "]");
+//    }
 
 
     public static String getEndDate(Date begin, Date end) {

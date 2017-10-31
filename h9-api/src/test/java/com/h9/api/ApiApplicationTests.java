@@ -50,7 +50,7 @@ public class ApiApplicationTests {
 
     @Resource
     private RedisBean redisBean;
-    @Test
+//    @Test
     public void redisTest(){
         String key = String.format("h9:sms:count:%s", "17673140753");
         redisBean.setStringValue(key,"0");
@@ -58,7 +58,7 @@ public class ApiApplicationTests {
 
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
-    @Test
+//    @Test
     public void test(){
         String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
         String stringValue = redisBean.getStringValue(key);
@@ -69,7 +69,7 @@ public class ApiApplicationTests {
 
     @Resource
     private MobileRechargeService mobileRechargeService;
-    @Test
+//    @Test
     public void mobileRecharge(){
        mobileRechargeService.recharge();
     }

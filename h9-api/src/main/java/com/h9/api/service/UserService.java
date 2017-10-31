@@ -279,12 +279,8 @@ public class UserService {
     private String jsAppId;
     @Value("${wechat.js.secret}")
     private String jsSecret;
-
     @Value("${common.code.url}")
     private String commonCodeUrl;
-
-    @Value("${wechat.code.callback}")
-    private String callback;
 
     public String getCode(String url){
         byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
