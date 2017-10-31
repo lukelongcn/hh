@@ -5,7 +5,6 @@ import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.service.AccountService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.VCoinsFlow;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.MDC;
@@ -27,14 +26,14 @@ import javax.annotation.Resource;
 public class AccountContoller {
 
     @Resource
-    private AccountService balanceService;
+    private AccountService accountService;
 
     @Secured
     @ApiOperation(value = "账户余额流水")
     @GetMapping("/account/balance/detail")
     public Result<PageResult<BalanceFlowVO>> getUserBalance(@RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
-        return balanceService.getBalanceFlow(userId,page,limit);
+        return accountService.getBalanceFlow(userId,page,limit);
     }
 
 
@@ -43,7 +42,7 @@ public class AccountContoller {
     @GetMapping("/account/vCoins/detail")
     public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
-        return balanceService.getVCoinsFlow(userId,page,limit);
+        return accountService.getVCoinsFlow(userId,page,limit);
     }
 
 
