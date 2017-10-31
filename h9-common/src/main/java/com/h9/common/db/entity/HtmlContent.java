@@ -30,10 +30,10 @@ public class HtmlContent extends BaseEntity {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '静态页面 标识 在路径最后面'")
     private String code;
 
-    @Column(name = "title", nullable = false, columnDefinition = "text default '' COMMENT '标题'")
+    @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")
     private String title;
     
-    @Column(name = "content", nullable = false, columnDefinition = "varchar() default '' COMMENT '静态页面内容'")
+    @Column(name = "content", nullable = false, columnDefinition = "text COMMENT '静态页面内容'")
     private String content;
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用 2 禁用 同一个code 只能有一个启用的'")

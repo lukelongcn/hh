@@ -7,7 +7,9 @@ import com.h9.api.provider.SMService;
 import com.h9.api.service.AccountService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.MDC;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,7 +31,7 @@ public class UserController {
      */
     @Secured
     @PostMapping("/user/phone/login")
-    public Result phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO){
+    public Result phoneLogin(@Valid  @RequestBody UserLoginDTO userLoginDTO){
         return userService.loginFromPhone(userLoginDTO);
     }
 
@@ -38,7 +40,7 @@ public class UserController {
      */
     @Secured
     @PostMapping("/user/sms/register/{phone}")
-    public Result sendRegistSMS(@PathVariable String phone){
+    public Result sendRegistSMS(@PathVariable @NotEmpty(message = "手机号不能为空") String phone){
 
         return userService.smsRegister(phone);
     }
