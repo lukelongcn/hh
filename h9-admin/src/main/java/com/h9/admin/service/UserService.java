@@ -5,7 +5,6 @@ import com.h9.admin.repository.UserRepository;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
