@@ -132,7 +132,6 @@ public class User extends BaseEntity {
         this.phone = phone;
     }
 
-
     public String getOpenId() {
         return openId;
     }
