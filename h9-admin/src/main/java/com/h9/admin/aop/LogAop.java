@@ -1,7 +1,7 @@
 package com.h9.admin.aop;
 
 import com.alibaba.fastjson.JSONObject;
-import com.h9.admin.interceptor.HttpModel;
+import com.h9.common.utils.HttpUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,7 +32,7 @@ public class LogAop {
     }
 
     private void printRequest(){
-        HttpServletRequest httpServletRequest = HttpModel.getRequest();
+        HttpServletRequest httpServletRequest = HttpUtil.getHttpServletRequest();
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
@@ -52,7 +52,7 @@ public class LogAop {
     }
 
     private void printResponse(Object result){
-        HttpServletResponse httpServletResponse = HttpModel.getResponse();
+        HttpServletResponse httpServletResponse = HttpUtil.getHttpServletResponse();
         logger.infov("-------------------响应信息-------------------");
         logger.info("http code : " + httpServletResponse.getStatus());
         logger.info("response content: "+ JSONObject.toJSONString(result));
