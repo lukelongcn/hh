@@ -54,6 +54,16 @@ public class UserController {
         return userService.updatePersonInfo(personInfoDTO);
     }
 
+    @GetMapping("/user/wechat/code")
+    public void getCode(String url){
+//        return userService.getCode();
+    }
+
+
+
+
+
+
 
 
 }

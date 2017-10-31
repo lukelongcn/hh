@@ -200,4 +200,16 @@ public class UserService {
         return Result.success();
     }
 
+//    @Value("${}")
+//    private String callbackUrl = "";
+
+//    public String getCode(String url){
+////        String url;
+//
+//
+//    }
+
+
+
+
 }
