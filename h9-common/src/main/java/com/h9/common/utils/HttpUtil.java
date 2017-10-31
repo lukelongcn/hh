@@ -25,6 +25,14 @@ public class HttpUtil {
         return getHttpServletRequest().getSession();
     }
 
+    public static void setHttpSessionAttr(String key,Object val){
+        getHttpSession().setAttribute(key,val);
+    }
+
+    public static Object setHttpSessionAttr(String key){
+        return getHttpSession().getAttribute(key);
+    }
+
     public static ServletRequestAttributes getServletRequestAttributes(){
         return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     }

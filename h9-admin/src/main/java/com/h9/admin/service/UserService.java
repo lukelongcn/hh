@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -47,15 +49,22 @@ public class UserService {
         }
         //生成token,并保存
         String token = UUID.randomUUID().toString();
-        String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 2,TimeUnit.HOURS);
-        HttpUtil.getHttpSession().setAttribute("user",this.userRepository.findByPhone(name));
+       /* String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 2,TimeUnit.HOURS);*/
+        HttpSession session = HttpUtil.getHttpSession();
+        session.setAttribute("user",this.userRepository.findByPhone(name));
+        session.setAttribute("token",token);
+        session.setMaxInactiveInterval(2*3600);
         return new Result(0, "登录成功",new LoginResultVO(token,name));
     }
 
-   /* public Result logout(){
-        String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 2,TimeUnit.HOURS);
-        return new Result(0, "登录成功",new LoginResultVO(token,name));
-    }*/
+    public Result logout(){
+        HttpSession session = HttpUtil.getHttpSession();
+        Enumeration<String> em = session.getAttributeNames();
+        while(em.hasMoreElements()){
+            session.removeAttribute(em.nextElement().toString());
+        }
+        session.invalidate();
+        return new Result(0, "成功退出登录");
+    }
 }

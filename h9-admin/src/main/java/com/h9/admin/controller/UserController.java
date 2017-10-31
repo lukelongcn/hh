@@ -1,5 +1,6 @@
 package com.h9.admin.controller;
 
+import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.SystemUserDTO;
 import com.h9.admin.model.vo.LoginResultVO;
 import com.h9.admin.service.UserService;
@@ -25,6 +26,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/hello")
+    @Secured
     public String hello(){
         return "hello";
     }
@@ -50,10 +52,10 @@ public class UserController {
         return  this.userService.login(systemUserDTO.getName(),systemUserDTO.getPassword());
     }
 
-   /* @GetMapping("/logout")
-    @ApiOperation(value = "退出登录") // hidden=true隐藏接口
-    public Result<LoginResultVO> logout() {
-        return  this.userService.login(systemUserDTO.getName(),systemUserDTO.getPassword());
-    }*/
+    @GetMapping("/logout")
+    @ApiOperation(value = "退出登录")
+    public Result logout() {
+        return  this.userService.logout();
+    }
 
 }

@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.jboss.logging.Logger;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 @Aspect
 @Component
+@Order(1)
 public class LogAop {
     private Logger logger = Logger.getLogger(this.getClass());
 
