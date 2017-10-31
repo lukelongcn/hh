@@ -13,5 +13,6 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(new HttpModelInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new LoginAuthInterceptor()).addPathPatterns("/**");
     }
 }

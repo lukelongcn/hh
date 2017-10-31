@@ -73,6 +73,9 @@ public class User extends BaseEntity {
     @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
     private String job;
 
+    @Column(name = "type",nullable = false,columnDefinition = "tinyint default 0 COMMENT '0:非后台用户 1：后台用户'")
+    private Integer isAdmin = 1;
+
     public Integer getEducation() {
         return education;
     }
@@ -184,5 +187,13 @@ public class User extends BaseEntity {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Integer isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }
