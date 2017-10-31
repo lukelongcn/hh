@@ -18,15 +18,13 @@ import java.util.Base64;
  * Time: 10:32
  */
 @Service
-public class WeChatService {
+public class WeChatProvider {
 
     @Value("${wechat.js.appid}")
     private String jsAppId;
     @Value("${wechat.js.secret}")
     private String jsSecret;
-
-
-    @Value("${common.wechat.redirect_url}")
+    @Value("${common.wechat.callback}")
     private String url;
     @Resource
     private RestTemplate restTemplate;
@@ -59,6 +57,18 @@ public class WeChatService {
         stringBuffer.append("code=");
         stringBuffer.append(code);
         return stringBuffer.toString();
+    }
+
+
+    public String getOpenIdUrl(String appId, String secret, String code){
+        String openId = "";
+        String url = MessageFormat.format("https://api.weixin.qq.com/" +
+                "sns/oauth2/access_token" +
+                "?appid={0}&secret={1}" +
+                "&code={2}&grant_type=authorization_code", appId, secret, code);
+        String getTokenResult = restTemplate.getForObject(url, String.class);
+        restTemplate.getForObject(url, String.class);
+        return openId;
     }
 
 

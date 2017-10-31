@@ -28,6 +28,8 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +55,7 @@ public class UserService {
     private UserAccountReposiroty userAccountReposiroty;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
+
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -243,6 +246,10 @@ public class UserService {
         return Result.success();
     }
 
+
+
+
+
     public Result getUserInfo() {
         User user = getCurrentUser();
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
@@ -265,14 +272,32 @@ public class UserService {
             throw new UnAuthException("用户不存在");
         }
     }
-//    @Value("${}")
-//    private String callbackUrl = "";
 
-//    public String getCode(String url){
-////        String url;
-//
-//
-//    }
+
+
+    @Value("${wechat.js.appid}")
+    private String jsAppId;
+    @Value("${wechat.js.secret}")
+    private String jsSecret;
+
+    @Value("${common.code.url}")
+    private String commonCodeUrl;
+
+    @Value("${wechat.code.callback}")
+    private String callback;
+
+    public String getCode(String url){
+        byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
+        return MessageFormat.format(commonCodeUrl, jsAppId, new String(urlByte));
+    }
+
+    public Result getOpenId(String code){
+
+
+
+        return Result.success();
+    }
+
 
 
 

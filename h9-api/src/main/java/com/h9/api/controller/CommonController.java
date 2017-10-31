@@ -1,13 +1,9 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
-import com.h9.api.model.vo.BalanceFlowVO;
-import com.h9.api.provider.WeChatService;
-import com.h9.common.base.PageResult;
-import com.h9.common.base.Result;
+import com.h9.api.provider.WeChatProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +27,7 @@ import java.io.IOException;
 public class CommonController {
 
     @Resource
-    private WeChatService weChatService;
+    private WeChatProvider weChatProvider;
 
     /*****
      * @param appId 需要获取授权的appId
@@ -43,7 +39,7 @@ public class CommonController {
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
     public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state,HttpServletResponse response) throws IOException {
-        response.sendRedirect(weChatService.getJSCode(appId,state));
+        response.sendRedirect(weChatProvider.getJSCode(appId,state));
     }
 
     /***
@@ -57,7 +53,7 @@ public class CommonController {
     @ApiOperation(value = "微信回调")
     @GetMapping("/wechat/callback")
     public void callback(@RequestParam("code") String code, @RequestParam("state") String state,HttpServletResponse response) throws IOException {
-        response.sendRedirect(weChatService.getCode(code,state));
+        response.sendRedirect(weChatProvider.getCode(code,state));
     }
 
 
