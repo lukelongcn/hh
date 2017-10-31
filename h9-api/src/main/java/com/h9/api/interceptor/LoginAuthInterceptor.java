@@ -1,7 +1,6 @@
 package com.h9.api.interceptor;
 
 import com.h9.api.handle.UnAuthException;
-import com.h9.api.util.SpringUtil;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +35,6 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
                 // token 失效检查
-//                RedisBean redisBean = SpringUtil.getBean("redisBean", RedisBean.class);
                 String userId = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
                 if (StringUtils.isBlank(userId)) {
                     throw new UnAuthException("请重新登录");
