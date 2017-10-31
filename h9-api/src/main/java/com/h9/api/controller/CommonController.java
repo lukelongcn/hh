@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Time: 11:22
  */
 @RestController
-@RequestMapping("common")
+@RequestMapping("/common")
 public class CommonController {
+
 }
