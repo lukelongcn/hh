@@ -25,6 +25,8 @@ public class GlobalExceptionHandler {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         }else if(e instanceof NoHandlerFoundException){
             return new Result(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase());
+        }else if(e instanceof UnAuthException){
+            return new Result(1, e.getMessage());
         } else {
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }

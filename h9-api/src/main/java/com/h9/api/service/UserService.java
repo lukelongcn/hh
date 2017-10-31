@@ -1,35 +1,33 @@
 package com.h9.api.service;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.h9.api.enums.SMSTypeEnum;
+import com.h9.api.handle.UnAuthException;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.SMService;
-import com.h9.api.util.UserUtil;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.SMSLog;
 import com.h9.common.db.entity.User;
 import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.UserExtends;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.db.repo.UserAccountReposiroty;
+import com.h9.common.db.repo.UserExtendsReposiroty;
 import com.h9.common.db.repo.UserRepository;
-import com.h9.common.utils.MD5Util;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.slf4j.MDC;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import java.net.URI;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +51,8 @@ public class UserService {
     private SMSLogReposiroty smsLogReposiroty;
     @Resource
     private UserAccountReposiroty userAccountReposiroty;
+    @Resource
+    private UserExtendsReposiroty userExtendsReposiroty;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -78,6 +78,9 @@ public class UserService {
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(user.getId());
             userAccountReposiroty.save(userAccount);
+            UserExtends userExtends = new UserExtends();
+            userExtends.setSex(1);
+            userExtendsReposiroty.save(userExtends);
         } else {
             user = userList.get(0);
         }
@@ -89,7 +92,7 @@ public class UserService {
         //生成token
         String token = UUID.randomUUID().toString();
         String tokenKey = RedisKey.getTokenKey(phone);
-        redisBean.setStringValue(tokenKey, token, 7, TimeUnit.DAYS);
+        redisBean.setStringValue(tokenKey, token, 30, TimeUnit.DAYS);
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 7, TimeUnit.DAYS);
 
@@ -108,12 +111,33 @@ public class UserService {
         user.setPhone(phone);
         user.setNickName("");
         user.setLastLoginTime(new Date());
-        user.setSex(1);
         return user;
     }
 
-    public Result smsRegister(String phone) {
+    /**
+     * description:
+     *
+     * @see com.h9.api.enums.SMSTypeEnum 短信类别
+     */
+    public Result sendSMS(String phone, int smsType) {
 
+        if (smsType == SMSTypeEnum.BIND_MOBILE.getCode()) {
+
+            String code = RandomStringUtils.random(4, "0123456789");
+            String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
+
+            smService.sendSMS(phone, content);
+            String key = String.format(RedisKey.getSmsCodeKey(phone));
+            redisBean.setStringValue(key, code);
+
+            return Result.success("发送成功");
+        } else {
+            return registerSMS(phone);
+        }
+
+    }
+
+    private Result registerSMS(String phone) {
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = String.format(RedisKey.getLastSendKey(phone), phone);
         String lastSendValue = redisBean.getStringValue(lastSendKey);
@@ -168,38 +192,79 @@ public class UserService {
 
 
     public Result updatePersonInfo(UserPersonInfoDTO personInfoDTO) {
-        Long userId = UserUtil.getCurrentUserId();
-        User user = userRepository.findOne(userId);
-        if (user == null) return Result.fail("此用户不存在");
 
+        User user = getCurrentUser();
+        if (user == null) return Result.fail("此用户不存在");
+        UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
         String avatar = personInfoDTO.getAvatar();
         if (!StringUtils.isBlank(avatar))
             user.setAvatar(avatar);
 
         Integer sex = personInfoDTO.getSex();
         if (sex != null)
-            user.setSex(sex);
+            userExtends.setSex(sex);
 
         Integer marriageStatus = personInfoDTO.getMarriageStatus();
         if (marriageStatus != null)
-            user.setMarriageStatus(marriageStatus);
+            userExtends.setMarriageStatus(marriageStatus);
 
         String job = personInfoDTO.getJob();
         if (job != null)
-            user.setJob(job);
+            userExtends.setJob(job);
 
         Date birthday = personInfoDTO.getBirthday();
         if (birthday != null)
-            user.setBirthday(birthday);
+            userExtends.setBirthday(birthday);
 
         Integer education = personInfoDTO.getEducation();
         if (education != null)
-            user.setEducation(education);
+            userExtends.setEducation(education);
 
+        userRepository.save(user);
+        userExtendsReposiroty.save(userExtends);
+        return Result.success();
+    }
+
+    public Result bindPhone(String code, String phone) {
+
+        User user = getCurrentUser();
+        if (user == null) return Result.fail("此用户不存在");
+
+        if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
+        String key = String.format(RedisKey.getSmsCodeKey(phone));
+
+        String redisCode = redisBean.getStringValue(key);
+        if (redisCode == null) return Result.fail("验证码错误");
+
+        if (!redisCode.equals(code)) return Result.fail("验证码错误");
+
+        user.setPhone(phone);
         userRepository.save(user);
         return Result.success();
     }
 
+    public Result getUserInfo() {
+        User user = getCurrentUser();
+        UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
+
+        UserInfoVO vo = UserInfoVO.convert(user, userExtends);
+
+        return Result.success(vo);
+    }
+
+
+    public User getCurrentUser() {
+        String userIdStr = MDC.get("userId");
+        try {
+            Long userId = Long.valueOf(userIdStr);
+            User user = userRepository.findOne(userId);
+            if (user == null) throw new UnAuthException("用户不存在");
+            return user;
+        } catch (NumberFormatException e) {
+            logger.info(e.getMessage(), e);
+            throw new UnAuthException("用户不存在");
+        }
+    }
 //    @Value("${}")
 //    private String callbackUrl = "";
 

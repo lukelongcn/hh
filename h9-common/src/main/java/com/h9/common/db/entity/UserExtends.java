@@ -28,21 +28,21 @@ public class UserExtends extends BaseEntity {
     @Column(name = "user_id", columnDefinition = "bigint(20)  COMMENT '用户'")
     private Long userId;
 
-    @Column(name = "sex",nullable = false,columnDefinition = "tinyint default 0 COMMENT ' 1 男 2 女 0未知'")
+    @Column(name = "sex",nullable = false,columnDefinition = "int default 1 COMMENT ' 1 为男 0为女'")
     private Integer sex = 1;
-
-    @Temporal(DATE)
-    @Column(name = "birthday", columnDefinition = "DATE COMMENT '生日'")
+    @Column(name = "birthday",columnDefinition = "datetime COMMENT '生日'")
     private Date birthday;
 
-    @Column(name = "emotion",nullable = false,columnDefinition = "int default 0 COMMENT '情感'")
-    private Integer emotion;
 
-    @Column(name = "education",nullable = false,columnDefinition = "int default 0 COMMENT '教育'")
-    private Integer education;
+    @Column(name = "marriage_status",columnDefinition = "int default 1 COMMENT '1 单身，2恋受，3已婚，4其他'")
+    private Integer marriageStatus;
 
-    @Column(name = "job", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '职业'")
-    private String job;
+    @Column(name = "education",columnDefinition = "int default 0 COMMENT '小学及以下 1，初中  2 ，高中    3，中专    4，本科    5" +
+            "，研究生   6，博士及以上 7'")
+    private Integer education = 0;
+
+    @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
+    private String job="";
 
     public Long getUserId() {
         return userId;
@@ -68,12 +68,12 @@ public class UserExtends extends BaseEntity {
         this.birthday = birthday;
     }
 
-    public Integer getEmotion() {
-        return emotion;
+    public Integer getMarriageStatus() {
+        return marriageStatus;
     }
 
-    public void setEmotion(Integer emotion) {
-        this.emotion = emotion;
+    public void setMarriageStatus(Integer marriageStatus) {
+        this.marriageStatus = marriageStatus;
     }
 
     public Integer getEducation() {

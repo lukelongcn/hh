@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
             String msg = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError().getDefaultMessage();
             return new Result(1, msg);
         }else if(e instanceof UnAuthException){
-            return new Result(1, e.getMessage());
+            return new Result(401, e.getMessage());
         }else if(e instanceof HttpMessageNotReadableException){
             return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
         } else {

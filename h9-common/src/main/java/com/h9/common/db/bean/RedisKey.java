@@ -30,6 +30,10 @@ public class RedisKey {
      * description: %s 占位符为token
      */
     private static String tokenUserIdKey = "h9:userId:%s";
+    /**
+     * description: %s 占位符为token
+     */
+    private static String adminTokenUserIdKey = "h9:admin:userId:%s";
 
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
@@ -48,5 +52,9 @@ public class RedisKey {
 
     public static String getTokenKey(String phone) {
         return String.format(tokenKey,phone);
+    }
+
+    public static String getAdminTokenUserIdKey(String token){
+        return String.format(adminTokenUserIdKey,token);
     }
 }
