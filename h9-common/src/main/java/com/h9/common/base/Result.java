@@ -10,7 +10,7 @@ package com.h9.common.base;
 public class Result<T> {
 
 
-    private int code;
+    private int code;  // 0 成功 1 失败
     private String msg;
     private T data;
 

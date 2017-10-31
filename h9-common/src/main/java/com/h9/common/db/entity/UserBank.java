@@ -89,4 +89,12 @@ public class UserBank extends BaseEntity {
     public void setCity(String city) {
         this.city = city;
     }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }
