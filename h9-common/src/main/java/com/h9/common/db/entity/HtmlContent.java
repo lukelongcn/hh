@@ -3,12 +3,13 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
+import javax.websocket.server.PathParam;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 静态页面
+ * Description: 静态页面配置
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/31
  * Time: 10:51
