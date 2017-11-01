@@ -6,7 +6,7 @@ import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
-import com.h9.api.provider.MobileRechargeService;
+
 import com.h9.api.provider.SMService;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
@@ -49,8 +49,6 @@ public class UserService {
     private UserAccountReposiroty userAccountReposiroty;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
-    @Resource
-    private MobileRechargeService mobileRechargeService;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -60,9 +58,7 @@ public class UserService {
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
         String code = userLoginDTO.getCode();
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone), phone));
-        if ("dev".equals(currentEnvironment)) {
-
-        } else {
+        if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
         }
         User user = userRepository.findByPhone(phone);
@@ -89,8 +85,7 @@ public class UserService {
             user = userRepository.saveAndFlush(user);
         }
 
-        //生成token
-        LoginResultVO vo = LoginResultVO.convert(user);
+        LoginResultVO vo = getLoginResult(user);
         return Result.success(vo);
     }
 
@@ -105,7 +100,7 @@ public class UserService {
     /**
      * description: 初化一个用户，并返回这个用户对象
      */
-    public User initUserInfo(String phone) {
+    private User initUserInfo(String phone) {
         if (phone == null) return null;
         User user = new User();
         user.setAvatar("");
@@ -130,7 +125,7 @@ public class UserService {
             String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
 
             smService.sendSMS(phone, content);
-            String key = String.format(RedisKey.getSmsCodeKey(phone));
+            String key = RedisKey.getSmsCodeKey(phone);
             redisBean.setStringValue(key, code);
 
             return Result.success("发送成功");
@@ -166,7 +161,7 @@ public class UserService {
         logger.info("今天已发送次: " + count);
         String code = RandomStringUtils.random(4, "0123456789");
         String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
-        Result returnMsg = null;
+        Result returnMsg;
         if ("dev".equals(currentEnvironment)) {
             returnMsg = new Result(0, "");
             code = "0000";
@@ -234,7 +229,7 @@ public class UserService {
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
-        String key = String.format(RedisKey.getSmsCodeKey(phone));
+        String key = RedisKey.getSmsCodeKey(phone);
 
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码错误");
@@ -258,7 +253,7 @@ public class UserService {
     }
 
 
-    public User getCurrentUser() {
+    private User getCurrentUser() {
         String userIdStr = MDC.get("userId");
         try {
             Long userId = Long.valueOf(userIdStr);
