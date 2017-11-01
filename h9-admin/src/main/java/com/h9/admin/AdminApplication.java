@@ -20,8 +20,8 @@ public class AdminApplication {
 
         Logger logger = Logger.getLogger(AdminApplication.class);
         logger.info("\n" +
-                "                                        _ooOoo_\n" +
-                "                                       o8888888o\n" +
+                "                                          _ooOoo_\n" +
+                "                                         o8888888o\n" +
                 "                                       88\\\" . \\\"88\n" +
                 "                                        (| -_- |)\n" +
                 "                                       O\\\\  =  /O\n" +
