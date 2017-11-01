@@ -51,8 +51,9 @@ public class ConsumeService {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser();
 
-        Orders order = orderService.initOrder(user.getNickName(),new BigDecimal(mobileRechargeDTO.getCardNum()),mobileRechargeDTO.getTel()+"");
+        Orders order = orderService.initOrder(user.getNickName(),new BigDecimal(mobileRechargeDTO.getCardNum()),mobileRechargeDTO.getTel()+"",Orders.orderTypeEnum.VIRTUAL_ORDER.getCode());
 
+        order.setUser(user);
         orderItems.setOrders(order);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
         orderItems.setMoney(new BigDecimal(mobileRechargeDTO.getCardNum()));
