@@ -2,7 +2,6 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.provider.WeChatProvider;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +21,9 @@ import java.io.IOException;
  * Time: 11:22
  */
 @RestController
-@Api("公共模块")
 @RequestMapping("/common")
 public class CommonController {
+
 
     @Resource
     private WeChatProvider weChatProvider;
@@ -38,7 +37,7 @@ public class CommonController {
     @Secured
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
-    public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state,HttpServletResponse response) throws IOException {
+    public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state, HttpServletResponse response) throws IOException {
         response.sendRedirect(weChatProvider.getJSCode(appId,state));
     }
 

@@ -18,7 +18,11 @@ import java.util.List;
 @Repository
 public interface UserRepository extends BaseRepository<User> {
 
-    List<User> findByPhone(String phone);
+    User findByPhone(String phone);
+
+    @Query("select u from User u where u.openId = ?1 and u.status<>2")
+    User findByOpenId(String openId);
+
 
     @Query(value = "select o from User o where o.phone=?1 and o.password=?2 and o.isAdmin=?3")
     User findByPhoneAndPasswordAndIsAdmin(String phone, String password, Integer isAdmin);

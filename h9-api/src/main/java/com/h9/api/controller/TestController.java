@@ -24,7 +24,7 @@ public class TestController {
      */
     @GetMapping("/hello")
     public Result phoneLogin(){
-        return Result.fail();
+        return Result.success();
     }
 
 
