@@ -253,7 +253,7 @@ public class UserService {
     }
 
 
-    private User getCurrentUser() {
+    public User getCurrentUser() {
         String userIdStr = MDC.get("userId");
         try {
             Long userId = Long.valueOf(userIdStr);
