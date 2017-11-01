@@ -48,7 +48,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录") // hidden=true隐藏接口
-    public Result<LoginResultVO> login(@Valid @ModelAttribute SystemUserDTO systemUserDTO) {
+    public Result<LoginResultVO> login( @Valid @RequestBody SystemUserDTO systemUserDTO) {
         return  this.userService.login(systemUserDTO.getName(),systemUserDTO.getPassword());
     }
 
