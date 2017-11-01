@@ -23,10 +23,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
-        String method = httpServletRequest.getMethod();
-        if(HttpMethod.OPTIONS.name().equals(method)){
-            return false;
-        }
+
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
@@ -47,6 +44,10 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         logger.info("");
         logger.infov("-------------------响应信息-------------------");
         logger.info("http code : " + httpServletResponse.getStatus());
+        String method = httpServletRequest.getMethod();
+        if(HttpMethod.OPTIONS.name().equals(method)){
+            return false;
+        }
         return true;
     }
 
