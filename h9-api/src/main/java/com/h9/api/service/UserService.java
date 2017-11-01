@@ -113,7 +113,8 @@ public class UserService {
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        user.setNickName("");
+        CharSequence charSequence = phone.subSequence(4, 8);
+        user.setNickName(phone.replace(charSequence,"****"));
         user.setLastLoginTime(new Date());
         return user;
     }
