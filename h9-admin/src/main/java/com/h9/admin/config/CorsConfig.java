@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by lmh on 2017/6/13.
  */
-//@Configuration
+@Configuration
 public class CorsConfig {
 
      Logger logger = Logger.getLogger(CorsConfig.class);
@@ -30,7 +30,7 @@ public class CorsConfig {
         return corsConfiguration;
     }
 
-//    @Bean
+    @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", buildConfig());
