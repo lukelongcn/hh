@@ -56,6 +56,8 @@ public class Article extends BaseEntity {
     @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
     private Integer sort = 1;
 
+    @Column(name = "recommend",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 推荐 2 不推荐'")
+    private Integer recommend = 1;
 
 
     public Long getId() {
@@ -136,5 +138,13 @@ public class Article extends BaseEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public Integer getRecommend() {
+        return recommend;
+    }
+
+    public void setRecommend(Integer recommend) {
+        this.recommend = recommend;
     }
 }

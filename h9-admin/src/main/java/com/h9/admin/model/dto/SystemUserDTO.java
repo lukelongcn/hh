@@ -3,6 +3,7 @@ package com.h9.admin.model.dto;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author: George
@@ -11,9 +12,11 @@ import javax.persistence.Column;
 public class SystemUserDTO {
 
     @NotEmpty(message = "用户名不能为空")
+    @NotNull(message = "用户名不能为空")
     private String name;
 
     @NotEmpty( message = "密码不能为空")
+     @NotNull(message = "密码不能为空")
     private String password;
 
     public String getName() {

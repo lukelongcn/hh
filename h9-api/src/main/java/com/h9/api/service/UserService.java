@@ -1,7 +1,6 @@
 package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
-import com.h9.api.handle.UnAuthException;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
@@ -19,7 +18,6 @@ import com.h9.common.db.repo.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -189,9 +187,8 @@ public class UserService {
     }
 
 
-    public Result updatePersonInfo(UserPersonInfoDTO personInfoDTO) {
-
-        User user = getCurrentUser();
+    public Result updatePersonInfo(Long userId,UserPersonInfoDTO personInfoDTO) {
+        User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("此用户不存在");
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
         String avatar = personInfoDTO.getAvatar();
@@ -223,9 +220,9 @@ public class UserService {
         return Result.success();
     }
 
-    public Result bindPhone(String code, String phone) {
+    public Result bindPhone(Long userId,String code, String phone) {
 
-        User user = getCurrentUser();
+        User user = getCurrentUser(userId);
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
@@ -242,28 +239,16 @@ public class UserService {
     }
 
 
-
-
-
-    public Result getUserInfo() {
-        User user = getCurrentUser();
+    public Result getUserInfo(Long userId) {
+        User user = userRepository.findOne(userId);
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
         UserInfoVO vo = UserInfoVO.convert(user, userExtends);
         return Result.success(vo);
     }
 
 
-    public User getCurrentUser() {
-        String userIdStr = MDC.get("userId");
-        try {
-            Long userId = Long.valueOf(userIdStr);
-            User user = userRepository.findOne(userId);
-            if (user == null) throw new UnAuthException("用户不存在");
-            return user;
-        } catch (NumberFormatException e) {
-            logger.info(e.getMessage(), e);
-            throw new UnAuthException("用户不存在");
-        }
+    public User getCurrentUser(Long userId) {
+        return userRepository.findOne(userId);
     }
 
     @Value("${wechat.js.appid}")

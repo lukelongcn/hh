@@ -113,12 +113,6 @@
             </dependency>
 
 
-            <!--<dependency>-->
-                <!--<groupId>com.wedo.server.common.sdk</groupId>-->
-                <!--<artifactId>common_api_sdk</artifactId>-->
-                <!--<version>1.0-SNAPSHOT</version>-->
-            <!--</dependency>-->
-
         </dependencies>
 
 

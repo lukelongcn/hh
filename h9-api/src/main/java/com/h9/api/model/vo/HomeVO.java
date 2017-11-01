@@ -1,8 +1,12 @@
 package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.Article;
+import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.Banner;
+import com.h9.common.db.entity.BannerType;
+import com.h9.common.utils.DateUtil;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,67 +17,98 @@ import java.util.Map;
  */
 public class HomeVO {
 
-    private List<Banner> topBannerList = new ArrayList<Banner>();
+    private String imgUrl;
+    private String link;
+    private String title;
+    private String content;
+    private String code;
+    private String createTime;
+    private String type;
 
-    private List<Article> notice = new ArrayList<Article>();
+    public static HomeVO convert(Class clazz, Object obj) {
 
-    private List<Banner> navigationList = new ArrayList<Banner>();
+        HomeVO vo = new HomeVO();
+        if (clazz.getSimpleName().equalsIgnoreCase("Article")) {
 
-    private List<Banner> ideaList = new ArrayList<Banner>();
+            Article article = (Article) obj;
+            ArticleType articleType = article.getArticleType();
+            vo.setImgUrl(article.getUrl());
+            vo.setContent(article.getUserName());
+            vo.setCode(articleType.getCode());
+            vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+            vo.setType("article");
+            return vo;
+        }
 
-    private List<Article> recommend = new ArrayList<Article>();
+        if (clazz.getSimpleName().equalsIgnoreCase("Banner")) {
 
-    private Map<String, String> popAd = new HashMap<>();
+            Banner banner = (Banner) obj;
+            vo.setImgUrl(banner.getUrl());
+            vo.setContent(banner.getContent());
+            vo.setTitle(banner.getTitle());
+            BannerType bannerType = banner.getBannerType();
+            vo.setCode(bannerType.getCode());
+            vo.setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+            vo.setType("banner");
+            return vo;
+        }
 
-    public HomeVO( ) {
+        return null;
     }
 
-
-    public List<Banner> getTopBannerList() {
-        return topBannerList;
+    public String getType() {
+        return type;
     }
 
-    public void setTopBannerList(List<Banner> topBannerList) {
-        this.topBannerList = topBannerList;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public List<Article> getNotice() {
-        return notice;
+    public String getTitle() {
+        return title;
     }
 
-    public void setNotice(List<Article> notice) {
-        this.notice = notice;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public List<Banner> getNavigationList() {
-        return navigationList;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
-    public void setNavigationList(List<Banner> navigationList) {
-        this.navigationList = navigationList;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
-    public List<Banner> getIdeaList() {
-        return ideaList;
+    public String getLink() {
+        return link;
     }
 
-    public void setIdeaList(List<Banner> ideaList) {
-        this.ideaList = ideaList;
+    public void setLink(String link) {
+        this.link = link;
     }
 
-    public List<Article> getRecommend() {
-        return recommend;
+    public String getContent() {
+        return content;
     }
 
-    public void setRecommend(List<Article> recommend) {
-        this.recommend = recommend;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public Map<String, String> getPopAd() {
-        return popAd;
+    public String getCode() {
+        return code;
     }
 
-    public void setPopAd(Map<String, String> popAd) {
-        this.popAd = popAd;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }
