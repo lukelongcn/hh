@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -27,43 +25,43 @@ public class HomeService {
     private BannerReposiroty bannerReposiroty;
     @Resource
     private ArticleReposiroty articleReposiroty;
+
+    @SuppressWarnings("Duplicates")
     public Result homeDate() {
-        HomeVO vo = new HomeVO();
-
-        List<Banner> bannerLsit = bannerReposiroty.findActiviBanner(new Date());
-
-        if (!CollectionUtils.isEmpty(bannerLsit)) {
-
-            Map<String, List<Banner>> groupBannerMap = bannerLsit.stream()
-                    .collect(Collectors.groupingBy(banner -> banner.getBannerType().getCode()));
-
-            if (!CollectionUtils.isEmpty(groupBannerMap)) {
-
-                List<Banner> navitionBannerList = groupBannerMap.get(BannerType.BannerTypeEnum.NAVITION_BANNER.getCode()+"");
-                List<Banner> topBannerList = groupBannerMap.get(BannerType.BannerTypeEnum.TOP_BANNER.getCode()+"");
-                List<Banner> ideaBannerList = groupBannerMap.get(BannerType.BannerTypeEnum.IDEAR_BANNER.getCode()+"");
-
-                vo.setTopBannerList(topBannerList);
-                vo.setNavigationList(navitionBannerList);
-                vo.setIdeaList(ideaBannerList);
-
-            }
+        Map<String, List<HomeVO>> voMap = new HashMap<>();
+        List<Banner> bannerList = bannerReposiroty.findActiviBanner(new Date());
+        if (!CollectionUtils.isEmpty(bannerList)) {
+            bannerList.forEach(banner -> {
+                BannerType bannerType = banner.getBannerType();
+                HomeVO convert = HomeVO.convert(Banner.class, banner);
+                List<HomeVO> list = voMap.get(bannerType.getCode());
+                if (list == null) {
+                    List<HomeVO> tempList = new ArrayList<>();
+                    tempList.add(convert);
+                    voMap.put(bannerType.getCode(), tempList);
+                } else {
+                    list.add(convert);
+                }
+            });
         }
 
         List<Article> articleList = articleReposiroty.findActiveAriticle(new Date());
-        if(!CollectionUtils.isEmpty(articleList)){
+        if (!CollectionUtils.isEmpty(articleList)) {
+            articleList.forEach(article -> {
+                ArticleType articleType = article.getArticleType();
+                HomeVO convert = HomeVO.convert(Article.class, article);
 
-            Map<String, List<Article>> groupArticleMap = articleList.stream().collect(Collectors.groupingBy(article -> article.getArticleType().getCode()));
-
-            if (!CollectionUtils.isEmpty(groupArticleMap)) {
-
-                List<Article> noticeArticleList = groupArticleMap.get(ArticleType.ArticleTypeEnum.NOTICE.getCode()+"");
-                List<Article> recommedList = groupArticleMap.get(ArticleType.ArticleTypeEnum.RECOMMEND.getCode()+"");
-                vo.setRecommend(recommedList);
-                vo.setNotice(noticeArticleList);
-
-            }
+                List<HomeVO> list = voMap.get(articleType.getCode());
+                if (list == null) {
+                    List<HomeVO> tempList = new ArrayList<>();
+                    tempList.add(convert);
+                    voMap.put(articleType.getCode(), tempList);
+                } else {
+                    list.add(convert);
+                }
+            });
         }
-        return Result.success(vo);
+
+        return Result.success(voMap);
     }
 }
