@@ -2,14 +2,15 @@ package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.handle.UnAuthException;
-import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
-import com.h9.api.provider.MobileRechargeService;
+
 import com.h9.api.provider.SMService;
 import com.h9.api.provider.WeChatProvider;
+import com.h9.api.provider.model.OpenIdCode;
+import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -21,19 +22,11 @@ import org.jboss.logging.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import javax.xml.ws.RequestWrapper;
-import java.math.BigDecimal;
-import java.util.Arrays;
 import java.text.MessageFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -56,57 +49,43 @@ public class UserService {
     private UserAccountReposiroty userAccountReposiroty;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
-    @Resource
-    private MobileRechargeService mobileRechargeService;
-    @Resource
-    private OrderItemReposiroty orderItemReposiroty;
-    @Resource
-    private OrderService orderService;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO) {
         String phone = userLoginDTO.getPhone();
-
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
-
         String code = userLoginDTO.getCode();
-
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone), phone));
-        if ("dev".equals(currentEnvironment)) {
-
-        } else {
+        if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
         }
-
-        List<User> userList = userRepository.findByPhone(phone);
-        User user = null;
-        if (CollectionUtils.isEmpty(userList)) {
+        User user = userRepository.findByPhone(phone);
+        if (user == null) {
             //第一登录 生成用户信息
             user = initUserInfo(phone);
+            int loginCount = user.getLoginCount();
+            user.setLoginCount(++loginCount);
+            user.setLastLoginTime(new Date());
+            User userFromDb = userRepository.saveAndFlush(user);
+
             UserAccount userAccount = new UserAccount();
-            userAccount.setUserId(user.getId());
+            userAccount.setUserId(userFromDb.getId());
             userAccountReposiroty.save(userAccount);
+
             UserExtends userExtends = new UserExtends();
+            userExtends.setUserId(userFromDb.getId());
             userExtends.setSex(1);
             userExtendsReposiroty.save(userExtends);
         } else {
-            user = userList.get(0);
+            int loginCount = user.getLoginCount();
+            user.setLoginCount(++loginCount);
+            user.setLastLoginTime(new Date());
+            user = userRepository.saveAndFlush(user);
         }
 
-        int loginCount = user.getLoginCount();
-        user.setLoginCount(++loginCount);
-        user = userRepository.saveAndFlush(user);
-
-        //生成token
-        String token = UUID.randomUUID().toString();
-        String tokenKey = RedisKey.getTokenKey(user.getId());
-        redisBean.setStringValue(tokenKey, token, 30, TimeUnit.DAYS);
-        String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 7, TimeUnit.DAYS);
-
-        LoginResultVO vo = LoginResultVO.convert(user, token);
+        LoginResultVO vo = getLoginResult(user);
         return Result.success(vo);
     }
 
@@ -121,13 +100,14 @@ public class UserService {
     /**
      * description: 初化一个用户，并返回这个用户对象
      */
-    public User initUserInfo(String phone) {
+    private User initUserInfo(String phone) {
         if (phone == null) return null;
         User user = new User();
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        user.setNickName("");
+        CharSequence charSequence = phone.subSequence(4, 8);
+        user.setNickName(phone.replace(charSequence,"****"));
         user.setLastLoginTime(new Date());
         return user;
     }
@@ -145,7 +125,7 @@ public class UserService {
             String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
 
             smService.sendSMS(phone, content);
-            String key = String.format(RedisKey.getSmsCodeKey(phone));
+            String key = RedisKey.getSmsCodeKey(phone);
             redisBean.setStringValue(key, code);
 
             return Result.success("发送成功");
@@ -181,7 +161,7 @@ public class UserService {
         logger.info("今天已发送次: " + count);
         String code = RandomStringUtils.random(4, "0123456789");
         String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
-        Result returnMsg = null;
+        Result returnMsg;
         if ("dev".equals(currentEnvironment)) {
             returnMsg = new Result(0, "");
             code = "0000";
@@ -249,7 +229,7 @@ public class UserService {
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
-        String key = String.format(RedisKey.getSmsCodeKey(phone));
+        String key = RedisKey.getSmsCodeKey(phone);
 
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码错误");
@@ -268,14 +248,12 @@ public class UserService {
     public Result getUserInfo() {
         User user = getCurrentUser();
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
-
         UserInfoVO vo = UserInfoVO.convert(user, userExtends);
-
         return Result.success(vo);
     }
 
 
-    public User getCurrentUser() {
+    private User getCurrentUser() {
         String userIdStr = MDC.get("userId");
         try {
             Long userId = Long.valueOf(userIdStr);
@@ -303,19 +281,39 @@ public class UserService {
     }
 
     public Result getOpenId(String code){
-        String openId = weChatProvider.getOpenId(jsAppId, jsSecret, code);
-        if(StringUtils.isEmpty(openId)){
+        OpenIdCode openIdCode = weChatProvider.getOpenId(jsAppId, jsSecret, code);
+        if(openIdCode == null&&StringUtils.isEmpty(openIdCode.getOpenid())){
             return Result.fail("微信登录失败");
         }
+        String openId = openIdCode.getOpenid();
         User user = userRepository.findByOpenId(openId);
+
         if (user != null) {
-            return Result.success(getLoginResult(user));
+            LoginResultVO loginResult = getLoginResult(user);
+            user.setLoginCount(user.getLoginCount()+1);
+            user.setLastLoginTime(user.getLastLoginTime());
+            userRepository.save(user);
+            return Result.success(loginResult);
+        }else{
+            WeChatUser userInfo = weChatProvider.getUserInfo(openIdCode);
+            user = userInfo.convert();
+            user.setLoginCount(1);
+            user.setLastLoginTime(new Date());
+            User userFromDb = userRepository.saveAndFlush(user);
+
+            UserExtends userExtends = new UserExtends();
+            userExtends.setUserId(userFromDb.getId());
+            userExtends.setSex(userInfo.getSex());
+            userExtendsReposiroty.save(userExtends);
+
+            UserAccount userAccount = new UserAccount();
+            userAccount.setUserId(user.getId());
+            userAccountReposiroty.save(userAccount);
+
+            LoginResultVO loginResult = getLoginResult(user);
+            return Result.success(loginResult);
         }
 
-
-
-
-        return Result.success();
     }
 
 

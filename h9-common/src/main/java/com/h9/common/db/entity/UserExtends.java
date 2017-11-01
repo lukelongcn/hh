@@ -23,8 +23,6 @@ public class UserExtends extends BaseEntity {
 
 
     @Id
-    @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     @Column(name = "user_id", columnDefinition = "bigint(20)  COMMENT '用户'")
     private Long userId;
 
@@ -43,6 +41,7 @@ public class UserExtends extends BaseEntity {
 
     @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
     private String job="";
+
 
     public Long getUserId() {
         return userId;
