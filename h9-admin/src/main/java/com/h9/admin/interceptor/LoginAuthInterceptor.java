@@ -3,6 +3,7 @@ package com.h9.admin.interceptor;
 import com.h9.admin.handler.UnAuthException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.utils.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.slf4j.MDC;
@@ -34,11 +35,10 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
 
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
-                String userId = redisBean.getStringValue(RedisKey.getAdminTokenUserIdKey(token));
-                if (StringUtils.isBlank(userId)) {
+                //String userId = redisBean.getStringValue(RedisKey.getAdminTokenUserIdKey(token));
+                if (!token.equals(HttpUtil.getHttpSession().getAttribute("token"))) {
                     throw new UnAuthException("请重新登录");
                 }
-                MDC.put("userId",userId);
             }
 
         }

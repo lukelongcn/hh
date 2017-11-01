@@ -36,9 +36,8 @@ public class Orders extends BaseEntity {
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '商家名称'")
     private String supplierName;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "address_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '地址'")
-    private Address address;
+    @Column(name = "addressId")
+    private Long addressId;
 
     @Column(name = "user_name", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
     private String userName;
@@ -46,7 +45,7 @@ public class Orders extends BaseEntity {
     @Column(name = "user_phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
     private String userPhone;
     
-    @Column(name = "user_addres", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")
+    @Column(name = "user_addres", columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")
     private String userAddres;
     
     @Column(name = "pay_methond",nullable = false,columnDefinition = "int default 0 COMMENT '支付方式'")
@@ -63,12 +62,12 @@ public class Orders extends BaseEntity {
     
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
     private Integer status = 1;
-    
+
+
     @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
     private List<OrderItems> orderItems = new ArrayList<>();
-
 
 
     public Long getId() {
@@ -95,12 +94,20 @@ public class Orders extends BaseEntity {
         this.supplierName = supplierName;
     }
 
-    public Address getAddress() {
-        return address;
+    public Long getAddressId() {
+        return addressId;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
+
+    public List<OrderItems> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItems> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public String getUserName() {

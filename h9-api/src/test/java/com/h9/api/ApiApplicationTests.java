@@ -7,6 +7,8 @@ import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.entity.Goods;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
 
@@ -20,9 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.net.URI;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
@@ -50,7 +50,7 @@ public class  ApiApplicationTests {
 
     @Resource
     private RedisBean redisBean;
-    @Test
+//    @Test
     public void redisTest(){
         String key = String.format("h9:sms:count:%s", "17673140753");
         redisBean.setStringValue(key,"0");
@@ -58,7 +58,7 @@ public class  ApiApplicationTests {
 
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
-    @Test
+//    @Test
     public void test(){
         String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
         String stringValue = redisBean.getStringValue(key);
@@ -69,8 +69,12 @@ public class  ApiApplicationTests {
 
     @Resource
     private MobileRechargeService mobileRechargeService;
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
     @Test
+//    @Test
     public void mobileRecharge(){
-       mobileRechargeService.recharge();
+
+
     }
 }

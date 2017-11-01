@@ -10,6 +10,7 @@ public class LoginResultVO {
     private String token;
     private String imgUrl;
     private String nickName;
+    private String openId;
 
     public static LoginResultVO convert(User user,String token){
         LoginResultVO vo = new LoginResultVO();
@@ -17,6 +18,7 @@ public class LoginResultVO {
         vo.setToken(token);
         vo.setImgUrl(user.getAvatar());
         vo.setNickName(user.getNickName());
+        vo.setOpenId(user.getOpenId());
         return vo;
     }
 
@@ -50,5 +52,13 @@ public class LoginResultVO {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

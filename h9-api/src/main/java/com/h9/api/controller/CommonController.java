@@ -1,14 +1,7 @@
 package com.h9.api.controller;
 
-
-import com.h9.common.db.repo.AgreementRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -21,12 +14,5 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/common")
 public class CommonController {
-    @Autowired
-    private AgreementRepository agreementRepository;
-
-    @GetMapping(value = "/{name}")
-    public String agreement(@RequestParam("name") String name){
-        return agreementRepository.agreement(name);
-    }
 
 }

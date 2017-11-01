@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "goodsType")
+@Table(name = "goods_type")
 public class GoodsType extends BaseEntity {
 
 
@@ -29,11 +29,53 @@ public class GoodsType extends BaseEntity {
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用  2 禁用'")
     private Integer status = 1;
-    
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
-    private GoodsType parent;
 
+    /**
+     * description:
+     * @see
+     */
+    @Column(name = "code",nullable = false,columnDefinition = "int default 1 COMMENT ''")
+    private Integer code;
+//    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    @JoinColumn(name = "parent_id",nullable = true,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    @Column(name = "parent_id")
+    private Long parent;
+
+    public enum GoodsTypeEnum{
+
+        MOBILE_RECHARGE(1,"手机卡充值"),
+        DIDI_CARD(2, "滴滴卡兑换");
+        private int code;
+        private String desc;
+        GoodsTypeEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
     public Long getId() {
         return id;
@@ -59,11 +101,12 @@ public class GoodsType extends BaseEntity {
         this.status = status;
     }
 
-    public GoodsType getParent() {
+
+    public Long getParent() {
         return parent;
     }
 
-    public void setParent(GoodsType parent) {
+    public void setParent(Long parent) {
         this.parent = parent;
     }
 }

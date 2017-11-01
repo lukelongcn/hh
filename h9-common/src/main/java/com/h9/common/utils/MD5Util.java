@@ -27,9 +27,9 @@ public class MD5Util {
         return builder.toString();
     }
 
-    public static void main(String[] args) {
-        String s = getMD5("ldh");
-        System.out.println(s);
-        System.out.println(s.length());
-    }
+//    public static void main(String[] args) {
+//        String s = getMD5("ldh");
+//        System.out.println(s);
+//        System.out.println(s.length());
+//    }
 }
