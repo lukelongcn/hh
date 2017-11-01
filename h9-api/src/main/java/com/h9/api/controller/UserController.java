@@ -61,6 +61,12 @@ public class UserController {
     }
 
 
+    @GetMapping("/user/wechat/code")
+    public void getCode(String url){
+//        return userService.getCode();
+    }
+
+
     /**
      * description: 绑定手机号码
      */

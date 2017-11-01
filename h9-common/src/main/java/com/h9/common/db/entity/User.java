@@ -57,6 +57,67 @@ public class User extends BaseEntity {
     @Column(name = "type",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常用户'")
     private Integer type = 1;
 
+    @Column(name = "sex",nullable = false,columnDefinition = "int default 1 COMMENT ' 1 为男 0为女'")
+    private Integer sex = 1;
+    @Column(name = "birthday",columnDefinition = "datetime COMMENT '生日'")
+    private Date birthday;
+
+
+    @Column(name = "marriage_status",columnDefinition = "int default 1 COMMENT '1 单身，2恋受，3已婚，4其他'")
+    private Integer marriageStatus;
+
+    @Column(name = "education",columnDefinition = "int default 0 COMMENT '小学及以下 1，初中  2 ，高中    3，中专    4，本科    5" +
+            "，研究生   6，博士及以上 7'")
+    private Integer education;
+
+    @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
+    private String job;
+
+    @Column(name = "is_admin",nullable = false,columnDefinition = "tinyint default 0 COMMENT '0:非后台用户 1：后台用户'")
+    private Integer isAdmin = 1;
+
+    @Column(name = "password", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '加密后密码'")
+    private String password;
+
+    public Integer getEducation() {
+        return education;
+    }
+
+    public void setEducation(Integer education) {
+        this.education = education;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Integer getMarriageStatus() {
+        return marriageStatus;
+    }
+
+    public void setMarriageStatus(Integer marriageStatus) {
+        this.marriageStatus = marriageStatus;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
 
     public Long getId() {
         return id;
@@ -128,5 +189,21 @@ public class User extends BaseEntity {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Integer isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

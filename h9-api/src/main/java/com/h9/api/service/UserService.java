@@ -9,6 +9,7 @@ import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -28,6 +29,8 @@ import javax.transaction.Transactional;
 import javax.xml.ws.RequestWrapper;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -59,6 +62,7 @@ public class UserService {
     private OrderItemReposiroty orderItemReposiroty;
     @Resource
     private OrderService orderService;
+
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -104,6 +108,14 @@ public class UserService {
 
         LoginResultVO vo = LoginResultVO.convert(user, token);
         return Result.success(vo);
+    }
+
+    private LoginResultVO getLoginResult( User user) {
+        //生成token
+        String token = UUID.randomUUID().toString();
+        String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
+        return LoginResultVO.convert(user, token);
     }
 
     /**
@@ -249,6 +261,10 @@ public class UserService {
         return Result.success();
     }
 
+
+
+
+
     public Result getUserInfo() {
         User user = getCurrentUser();
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
@@ -271,6 +287,39 @@ public class UserService {
             throw new UnAuthException("用户不存在");
         }
     }
+
+    @Value("${wechat.js.appid}")
+    private String jsAppId;
+    @Value("${wechat.js.secret}")
+    private String jsSecret;
+    @Value("${common.code.url}")
+    private String commonCodeUrl;
+    @Resource
+    private WeChatProvider weChatProvider;
+
+    public String getCode(String url){
+        byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
+        return MessageFormat.format(commonCodeUrl, jsAppId, new String(urlByte));
+    }
+
+    public Result getOpenId(String code){
+        String openId = weChatProvider.getOpenId(jsAppId, jsSecret, code);
+        if(StringUtils.isEmpty(openId)){
+            return Result.fail("微信登录失败");
+        }
+        User user = userRepository.findByOpenId(openId);
+        if (user != null) {
+            return Result.success(getLoginResult(user));
+        }
+
+
+
+
+        return Result.success();
+    }
+
+
+
 
 
 }

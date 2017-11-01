@@ -18,8 +18,8 @@
 
     <modules>
         <module>../h9-api</module>
-        <module>../h9-common</module>
         <module>../h9-admin</module>
+        <module>../h9-common</module>
     </modules>
 
     <properties>
@@ -121,13 +121,5 @@
 
         </dependencies>
 
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                </plugin>
-            </plugins>
-        </build>
 
 </project>

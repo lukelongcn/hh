@@ -30,28 +30,31 @@ public class RedisKey {
      * description: %s 占位符为token
      */
     private static String tokenUserIdKey = "h9:userId:%s";
+    /**
+     * description: %s 占位符为token
+     */
+    public static final String adminTokenUserIdKey = "h9:admin:userId:%s";
 
     public static String getTokenUserIdKey(String token){
-        if(StringUtils.isBlank(token)) return null;
         return String.format(tokenUserIdKey,token);
     }
     public static String getLastSendKey(String phone) {
-        if (StringUtils.isBlank(phone)) return null;
         return String.format(lastSendKey, phone);
     }
 
     public static String getSendCountKey(String phone) {
-        if (StringUtils.isBlank(phone)) return null;
         return String.format(sendCountKey, phone);
     }
 
     public static String getSmsCodeKey(String phone) {
-        if (StringUtils.isBlank(phone)) return null;
         return String.format(smsCodeKey, phone);
     }
 
     public static String getTokenKey(String phone) {
-        if (StringUtils.isBlank(phone)) return null;
         return String.format(tokenKey,phone);
+    }
+
+    public static String getAdminTokenUserIdKey(String token){
+        return String.format(adminTokenUserIdKey,token);
     }
 }
