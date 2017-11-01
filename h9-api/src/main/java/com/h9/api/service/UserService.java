@@ -2,22 +2,18 @@ package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.handle.UnAuthException;
+import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.SMSLog;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.UserExtends;
-import com.h9.common.db.repo.SMSLogReposiroty;
-import com.h9.common.db.repo.UserAccountReposiroty;
-import com.h9.common.db.repo.UserExtendsReposiroty;
-import com.h9.common.db.repo.UserRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -25,9 +21,13 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import javax.xml.ws.RequestWrapper;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +53,12 @@ public class UserService {
     private UserAccountReposiroty userAccountReposiroty;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
+    @Resource
+    private MobileRechargeService mobileRechargeService;
+    @Resource
+    private OrderItemReposiroty orderItemReposiroty;
+    @Resource
+    private OrderService orderService;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -91,7 +97,7 @@ public class UserService {
 
         //生成token
         String token = UUID.randomUUID().toString();
-        String tokenKey = RedisKey.getTokenKey(phone);
+        String tokenKey = RedisKey.getTokenKey(user.getId());
         redisBean.setStringValue(tokenKey, token, 30, TimeUnit.DAYS);
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 7, TimeUnit.DAYS);
@@ -265,4 +271,6 @@ public class UserService {
             throw new UnAuthException("用户不存在");
         }
     }
+
+
 }

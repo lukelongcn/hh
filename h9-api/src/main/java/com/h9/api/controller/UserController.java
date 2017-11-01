@@ -2,8 +2,10 @@ package com.h9.api.controller;
 
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
@@ -19,10 +21,9 @@ import javax.validation.Valid;
 public class UserController {
     @Resource
     private UserService userService;
+
     @Resource
-    private SMService smService;
-
-
+    private MobileRechargeService mobileRechargeService;
     /**
      * description: 手机号登录
      */
@@ -35,7 +36,7 @@ public class UserController {
      * description: 发送验证码
      */
     @Secured
-    @PostMapping("/user/sms/register/{phone}")
+    @GetMapping("/user/sms/register/{phone}")
     public Result sendRegistSMS(@PathVariable String phone){
 
         return userService.sendSMS(phone, SMSTypeEnum.REGISTER.getCode());
@@ -50,12 +51,14 @@ public class UserController {
         return userService.updatePersonInfo(personInfoDTO);
     }
 
+    /**
+     * description: 获取用户信息
+     */
     @Secured
     @GetMapping("/user/info")
     public Result getUserInfo(){
         return userService.getUserInfo();
     }
-
 
 
     /**
@@ -66,4 +69,6 @@ public class UserController {
     public Result bindPhone(@PathVariable String phone,@PathVariable String code){
         return userService.bindPhone(code,phone);
     }
+
+
 }
