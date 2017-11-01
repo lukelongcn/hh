@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends BaseRepository<User> {
 
-    List<User> findByPhone(String phone);
+    User findByPhone(String phone);
 
     @Query("select u from User u where u.openId = ?1 and u.status<>2")
     User findByOpenId(String openId);
