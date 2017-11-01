@@ -25,9 +25,10 @@ public class ConsumeController {
      */
     @Secured
     @PostMapping("/mobile/recharge")
-    public Result mobileRecharge(@RequestBody MobileRechargeDTO mobileRechargeDTO) {
-
-        return consumeService.recharge(mobileRechargeDTO);
+    public Result mobileRecharge(
+            @SessionAttribute("curUserId")Long userId,
+            @RequestBody MobileRechargeDTO mobileRechargeDTO) {
+        return consumeService.recharge(userId,mobileRechargeDTO);
     }
 
     /**

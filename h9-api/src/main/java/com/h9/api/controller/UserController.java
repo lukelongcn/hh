@@ -5,10 +5,13 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
+import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,6 +21,7 @@ import javax.validation.Valid;
  * Created by itservice on 2017/10/26.
  */
 @RestController
+@Api(value = "用户相关接口",description = "用户相关接口")
 public class UserController {
     @Resource
     private UserService userService;
@@ -28,16 +32,17 @@ public class UserController {
      * description: 手机号登录
      */
     @PostMapping("/user/phone/login")
-    public Result phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO){
+    @ApiOperation("手机号登录")
+    public Result<LoginResultVO> phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO){
         return userService.loginFromPhone(userLoginDTO);
     }
 
     /**
      * description: 发送验证码
      */
-    @Secured
     @GetMapping("/user/sms/register/{phone}")
-    public Result sendRegistSMS(@PathVariable String phone){
+    @ApiOperation("发送验证码")
+    public Result sendRegistSMS(@PathVariable("phone") String phone){
 
         return userService.sendSMS(phone, SMSTypeEnum.REGISTER.getCode());
     }
@@ -47,8 +52,10 @@ public class UserController {
      */
     @Secured
     @PutMapping("/user/info")
-    public Result updateInfo(@Valid@RequestBody UserPersonInfoDTO personInfoDTO){
-        return userService.updatePersonInfo(personInfoDTO);
+    @ApiOperation("修改个人信息")
+    public Result updateInfo(@SessionAttribute("curUserId")Long userId,
+                                 @Valid@RequestBody UserPersonInfoDTO personInfoDTO){
+        return userService.updatePersonInfo(userId,personInfoDTO);
     }
 
     /**
@@ -56,8 +63,9 @@ public class UserController {
      */
     @Secured
     @GetMapping("/user/info")
-    public Result getUserInfo(){
-        return userService.getUserInfo();
+    @ApiOperation("获取用户信息")
+    public Result getUserInfo(@SessionAttribute("curUserId")Long userId){
+        return userService.getUserInfo(userId);
     }
 
 
@@ -72,8 +80,10 @@ public class UserController {
      */
     @Secured
     @PutMapping("/user/phone/bind/{phone}/{code}")
-    public Result bindPhone(@PathVariable String phone,@PathVariable String code){
-        return userService.bindPhone(code,phone);
+    public Result bindPhone(@SessionAttribute("curUserId")Long userId,
+                            @PathVariable String phone,
+                            @PathVariable String code){
+        return userService.bindPhone(userId,code,phone);
     }
 
 

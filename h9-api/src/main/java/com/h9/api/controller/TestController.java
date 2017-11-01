@@ -1,12 +1,11 @@
 package com.h9.api.controller;
 
-import com.h9.api.interceptor.Secured;
-import com.h9.api.model.dto.UserLoginDTO;
+
 import com.h9.common.base.Result;
-import org.hibernate.annotations.GeneratorType;
+import io.swagger.annotations.Api;
+
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +16,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/test")
+@Api(value = "测试相关接口",description = "测试相关接口")
 public class TestController {
 
     /**
