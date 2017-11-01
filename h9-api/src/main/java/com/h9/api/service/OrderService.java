@@ -43,11 +43,8 @@ public class OrderService {
         return order;
     }
 
-    public Result orderList() {
-
-        User user = userService.getCurrentUser();
-
-        List<Orders> ordersList = ordersReposiroty.findByUser(user);
+    public Result orderList(Long userId) {
+        List<Orders> ordersList = ordersReposiroty.findByUser(userId);
         List<OrderListVO> vo = new ArrayList<>();
         if (CollectionUtils.isEmpty(ordersList)) return Result.success(vo);
 

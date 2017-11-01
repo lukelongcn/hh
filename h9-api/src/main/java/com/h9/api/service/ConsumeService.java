@@ -45,11 +45,11 @@ public class ConsumeService {
     @Resource
     private GoodsReposiroty goodsReposiroty;
 
-    public Result recharge(MobileRechargeDTO mobileRechargeDTO) {
+    public Result recharge(Long userId,MobileRechargeDTO mobileRechargeDTO) {
         //TODO 判断 余额 够不够
         //TODO 防止用户连续多次点击，多次充值的情况
         OrderItems orderItems = new OrderItems();
-        User user = userService.getCurrentUser();
+        User user = userService.getCurrentUser(userId);
 
         Orders order = orderService.initOrder(user.getNickName(),new BigDecimal(mobileRechargeDTO.getCardNum()),mobileRechargeDTO.getTel()+"",Orders.orderTypeEnum.VIRTUAL_ORDER.getCode());
 

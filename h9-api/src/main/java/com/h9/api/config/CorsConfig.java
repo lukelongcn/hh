@@ -9,8 +9,9 @@ import org.springframework.web.filter.CorsFilter;
 /**
  * Created by lmh on 2017/6/13.
  */
-@Configuration
+//@Configuration
 public class CorsConfig {
+
     private CorsConfiguration buildConfig() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin("*");
@@ -19,10 +20,11 @@ public class CorsConfig {
         return corsConfiguration;
     }
 
-    @Bean
+//    @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", buildConfig());
         return new CorsFilter(source);
     }
+
 }
