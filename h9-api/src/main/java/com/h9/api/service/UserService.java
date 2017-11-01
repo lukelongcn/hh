@@ -274,33 +274,28 @@ public class UserService {
         }
     }
 
-
-
     @Value("${wechat.js.appid}")
     private String jsAppId;
     @Value("${wechat.js.secret}")
     private String jsSecret;
     @Value("${common.code.url}")
     private String commonCodeUrl;
+    @Resource
+    private WeChatProvider weChatProvider;
 
     public String getCode(String url){
         byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
         return MessageFormat.format(commonCodeUrl, jsAppId, new String(urlByte));
     }
-    
-    @Resource
-    private WeChatProvider weChatProvider;
 
-    
     public Result getOpenId(String code){
         String openId = weChatProvider.getOpenId(jsAppId, jsSecret, code);
         if(StringUtils.isEmpty(openId)){
             return Result.fail("微信登录失败");
         }
-
         User user = userRepository.findByOpenId(openId);
         if (user != null) {
-            getLoginResult(user);
+            return Result.success(getLoginResult(user));
         }
 
 
