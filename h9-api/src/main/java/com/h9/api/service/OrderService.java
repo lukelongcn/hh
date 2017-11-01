@@ -57,7 +57,7 @@ public class OrderService {
 
     public Result orderDetail(Long orderId) {
         Orders orders = ordersReposiroty.findOne(orderId);
-//        OrderDetailVO.con
-        return null;
+        OrderDetailVO vo = OrderDetailVO.convert(orders);
+        return Result.success(vo);
     }
 }

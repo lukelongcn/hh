@@ -1,8 +1,11 @@
 package com.h9.api.model.vo;
 
+import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
+import com.h9.common.utils.DateUtil;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by itservice on 2017/11/1.
@@ -10,7 +13,6 @@ import java.util.List;
 public class OrderDetailVO {
     private String company;
     private String orderStatus;
-    private String goodsList;
     private Integer orderType;
     private String accepterName;
     private String tel;
@@ -24,8 +26,41 @@ public class OrderDetailVO {
 
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
+        vo.setCompany(order.getSupplierName());
+        vo.setOrderStatus("已完成");
+        vo.setOrderType(order.getOrderType());
+        if(order.getOrderType() == Orders.orderTypeEnum.OTHER.getCode()){
+            vo.setAccepterName("");
+            vo.setTel("");
+            vo.setAddress("");
+        }
+
+        vo.setOrderId(order.getId() + "");
+        vo.setPayMethod("余额支付");
+        vo.setPayMoney(order.getPayMoney() + "");
+        vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+
+        List<OrderItems> itemList = order.getOrderItems();
+        List<GoodsInfo> goodsInfos = itemList.stream().map(item -> {
+            GoodsInfo goodsInfo = new GoodsInfo();
+            goodsInfo.setGoodsName(item.getName());
+            goodsInfo.setImgUrl(item.getImage());
+            return goodsInfo;
+        }).collect(Collectors.toList());
+
+        vo.setGoodsInfoList(goodsInfos);
         return vo;
     }
+
+
+    public List<GoodsInfo> getGoodsInfoList() {
+        return goodsInfoList;
+    }
+
+    public void setGoodsInfoList(List<GoodsInfo> goodsInfoList) {
+        this.goodsInfoList = goodsInfoList;
+    }
+
     private static class GoodsInfo{
         private String imgUrl;
         private String GoodsName;
@@ -63,13 +98,7 @@ public class OrderDetailVO {
         this.orderStatus = orderStatus;
     }
 
-    public String getGoodsList() {
-        return goodsList;
-    }
 
-    public void setGoodsList(String goodsList) {
-        this.goodsList = goodsList;
-    }
 
     public Integer getOrderType() {
         return orderType;
