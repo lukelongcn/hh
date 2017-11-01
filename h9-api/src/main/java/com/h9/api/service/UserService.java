@@ -6,6 +6,7 @@ import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
@@ -13,21 +14,14 @@ import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.SMSLog;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.UserExtends;
-import com.h9.common.db.repo.SMSLogReposiroty;
-import com.h9.common.db.repo.UserAccountReposiroty;
-import com.h9.common.db.repo.UserExtendsReposiroty;
-import com.h9.common.db.repo.UserRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -55,6 +49,8 @@ public class UserService {
     private UserAccountReposiroty userAccountReposiroty;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
+    @Resource
+    private MobileRechargeService mobileRechargeService;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -92,7 +88,9 @@ public class UserService {
             user.setLastLoginTime(new Date());
             user = userRepository.saveAndFlush(user);
         }
-        LoginResultVO vo = getLoginResult( user);
+
+        //生成token
+        LoginResultVO vo = LoginResultVO.convert(user);
         return Result.success(vo);
     }
 
@@ -255,9 +253,7 @@ public class UserService {
     public Result getUserInfo() {
         User user = getCurrentUser();
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
-
         UserInfoVO vo = UserInfoVO.convert(user, userExtends);
-
         return Result.success(vo);
     }
 

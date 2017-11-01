@@ -7,6 +7,8 @@ import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.entity.Goods;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
 
@@ -20,9 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.net.URI;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
@@ -69,8 +69,12 @@ public class ApiApplicationTests {
 
     @Resource
     private MobileRechargeService mobileRechargeService;
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
+    @Test
 //    @Test
     public void mobileRecharge(){
-       mobileRechargeService.recharge();
+
+
     }
 }
