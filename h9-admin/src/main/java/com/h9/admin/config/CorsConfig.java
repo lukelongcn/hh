@@ -19,7 +19,7 @@ public class CorsConfig {
 
      Logger logger = Logger.getLogger(CorsConfig.class);
 
-    @SuppressWarnings("Duplicates")
+
     private CorsConfiguration buildConfig() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin("*");
