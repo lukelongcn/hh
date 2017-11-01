@@ -6,6 +6,7 @@ import com.h9.common.db.bean.RedisKey;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.slf4j.MDC;
+import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,6 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * description: 登录权限认证拦截器
@@ -30,8 +34,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
         if (o instanceof HandlerMethod) {
             //获限token
             String token = httpServletRequest.getHeader("token");
-            Secured secured = ((HandlerMethod) o).getMethodAnnotation(Secured.class);
-
+            HandlerMethod handlerMethod = (HandlerMethod) o;
+            Secured secured = handlerMethod.getMethodAnnotation(Secured.class);
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
                 // token 失效检查
@@ -40,8 +44,9 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                     throw new UnAuthException("请重新登录");
                 }
                 MDC.put("userId",userId);
+                httpServletRequest.getSession().removeAttribute("curUserId");
+                httpServletRequest.getSession().setAttribute("curUserId",userId);
             }
-
         }
         return true;
     }

@@ -41,7 +41,7 @@ public class AccountContoller {
     @Secured
     @ApiOperation(value = "账户V币流水")
     @GetMapping("/account/vCoins/detail")
-    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@RequestParam("page") int page, @RequestParam("limit") int limit){
+    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@ApiParam("token") @RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
         return accountService.getVCoinsFlow(userId,page,limit);
     }
