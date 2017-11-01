@@ -23,7 +23,7 @@ public class RedisKey {
      */
     private static String smsCodeKey = "h9:sms:code:%s";
     /**
-     * description: %s 占位符为手机号码
+     * description: %s 占位符为UserId
      */
     private static String tokenKey ="h9:token:%s";
     /**
@@ -50,8 +50,9 @@ public class RedisKey {
         return String.format(smsCodeKey, phone);
     }
 
-    public static String getTokenKey(String phone) {
-        return String.format(tokenKey,phone);
+    public static String getTokenKey(Long userId) {
+        return String.format(tokenKey,userId);
+
     }
 
     public static String getAdminTokenUserIdKey(String token){

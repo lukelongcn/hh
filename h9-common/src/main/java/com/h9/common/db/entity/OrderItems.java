@@ -17,7 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "orderItems")
+@Table(name = "order_items")
 public class OrderItems extends BaseEntity {
 
 
@@ -29,7 +29,7 @@ public class OrderItems extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(16) default '' COMMENT '商品名称'")
     private String name;
 
-    @Column(name = "image", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '商品图片'")
+    @Column(name = "image", columnDefinition = "varchar(256) default '' COMMENT '商品图片'")
     private String image;
 
     @Column(name = "price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '价格'")
@@ -38,12 +38,21 @@ public class OrderItems extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "pay_methond",nullable = false,columnDefinition = "int default 0 COMMENT '支付类型'")
-    private Integer payMethond;
+    @Column(name = "count",columnDefinition = "int default 1 COMMENT '数量' ")
+    private Integer count = 1;
+
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单商品id'")
     private Orders orders;
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 
     public Long getId() {
         return id;
@@ -93,11 +102,6 @@ public class OrderItems extends BaseEntity {
         this.money = money;
     }
 
-    public Integer getPayMethond() {
-        return payMethond;
-    }
 
-    public void setPayMethond(Integer payMethond) {
-        this.payMethond = payMethond;
-    }
+
 }
