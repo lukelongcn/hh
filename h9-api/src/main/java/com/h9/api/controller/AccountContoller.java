@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
- * AccountContoller:刘敏华 shadow.liu@hey900.com
+ * AccountContoller:刘敏华 shadow.l-iu@hey900.com
  * Date: 2017/10/30
  * Time: 18:00
  */

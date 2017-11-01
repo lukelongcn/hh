@@ -8,6 +8,8 @@ import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.SMService;
 import com.h9.api.provider.WeChatProvider;
+import com.h9.api.provider.model.OpenIdCode;
+import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -30,10 +32,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.text.MessageFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,36 +61,37 @@ public class UserService {
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO) {
         String phone = userLoginDTO.getPhone();
-
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
-
         String code = userLoginDTO.getCode();
-
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone), phone));
         if ("dev".equals(currentEnvironment)) {
 
         } else {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
         }
-
-        List<User> userList = userRepository.findByPhone(phone);
-        User user = null;
-        if (CollectionUtils.isEmpty(userList)) {
+        User user = userRepository.findByPhone(phone);
+        if (user == null) {
             //第一登录 生成用户信息
             user = initUserInfo(phone);
+            int loginCount = user.getLoginCount();
+            user.setLoginCount(++loginCount);
+            user.setLastLoginTime(new Date());
+            User userFromDb = userRepository.saveAndFlush(user);
+
             UserAccount userAccount = new UserAccount();
-            userAccount.setUserId(user.getId());
+            userAccount.setUserId(userFromDb.getId());
             userAccountReposiroty.save(userAccount);
+
             UserExtends userExtends = new UserExtends();
+            userExtends.setUserId(userFromDb.getId());
             userExtends.setSex(1);
             userExtendsReposiroty.save(userExtends);
         } else {
-            user = userList.get(0);
+            int loginCount = user.getLoginCount();
+            user.setLoginCount(++loginCount);
+            user.setLastLoginTime(new Date());
+            user = userRepository.saveAndFlush(user);
         }
-
-        int loginCount = user.getLoginCount();
-        user.setLoginCount(++loginCount);
-        user = userRepository.saveAndFlush(user);
         LoginResultVO vo = getLoginResult( user);
         return Result.success(vo);
     }
@@ -289,19 +289,39 @@ public class UserService {
     }
 
     public Result getOpenId(String code){
-        String openId = weChatProvider.getOpenId(jsAppId, jsSecret, code);
-        if(StringUtils.isEmpty(openId)){
+        OpenIdCode openIdCode = weChatProvider.getOpenId(jsAppId, jsSecret, code);
+        if(openIdCode == null&&StringUtils.isEmpty(openIdCode.getOpenid())){
             return Result.fail("微信登录失败");
         }
+        String openId = openIdCode.getOpenid();
         User user = userRepository.findByOpenId(openId);
+
         if (user != null) {
-            return Result.success(getLoginResult(user));
+            LoginResultVO loginResult = getLoginResult(user);
+            user.setLoginCount(user.getLoginCount()+1);
+            user.setLastLoginTime(user.getLastLoginTime());
+            userRepository.save(user);
+            return Result.success(loginResult);
+        }else{
+            WeChatUser userInfo = weChatProvider.getUserInfo(openIdCode);
+            user = userInfo.convert();
+            user.setLoginCount(1);
+            user.setLastLoginTime(new Date());
+            User userFromDb = userRepository.saveAndFlush(user);
+
+            UserExtends userExtends = new UserExtends();
+            userExtends.setUserId(userFromDb.getId());
+            userExtends.setSex(userInfo.getSex());
+            userExtendsReposiroty.save(userExtends);
+
+            UserAccount userAccount = new UserAccount();
+            userAccount.setUserId(user.getId());
+            userAccountReposiroty.save(userAccount);
+
+            LoginResultVO loginResult = getLoginResult(user);
+            return Result.success(loginResult);
         }
 
-
-
-
-        return Result.success();
     }
 
 
