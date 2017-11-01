@@ -4,15 +4,11 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.common.db.repo.AgreementRepository;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,7 +24,7 @@ public class CommonController {
     private AgreementRepository agreementRepository;
 
     @GetMapping(value = "/{code}")
-    public String agreement(@RequestParam("code") String code){
+    public String agreement(@PathVariable("code") String code){
         return agreementRepository.agreement(code);
     }
 
