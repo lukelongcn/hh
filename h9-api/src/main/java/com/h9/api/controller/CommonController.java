@@ -2,6 +2,7 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.provider.WeChatProvider;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("/common")
+@Api(value = "公共模块相关信息",description = "公共模块相关信息")
 public class CommonController {
 
 

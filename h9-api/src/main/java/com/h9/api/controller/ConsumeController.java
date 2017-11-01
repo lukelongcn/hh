@@ -4,6 +4,7 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.service.ConsumeService;
 import com.h9.common.base.Result;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/consume")
+@Api(value = "充值接口",description = "充值接口")
 public class ConsumeController {
 
     @Resource
