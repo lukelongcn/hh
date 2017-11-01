@@ -7,6 +7,7 @@ import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.SMService;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -91,16 +92,16 @@ public class UserService {
         int loginCount = user.getLoginCount();
         user.setLoginCount(++loginCount);
         user = userRepository.saveAndFlush(user);
+        LoginResultVO vo = getLoginResult( user);
+        return Result.success(vo);
+    }
 
+    private LoginResultVO getLoginResult( User user) {
         //生成token
         String token = UUID.randomUUID().toString();
-        String tokenKey = RedisKey.getTokenKey(phone);
-        redisBean.setStringValue(tokenKey, token, 30, TimeUnit.DAYS);
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 7, TimeUnit.DAYS);
-
-        LoginResultVO vo = LoginResultVO.convert(user, token);
-        return Result.success(vo);
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
+        return LoginResultVO.convert(user, token);
     }
 
     /**
@@ -286,8 +287,22 @@ public class UserService {
         byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
         return MessageFormat.format(commonCodeUrl, jsAppId, new String(urlByte));
     }
+    
+    @Resource
+    private WeChatProvider weChatProvider;
 
+    
     public Result getOpenId(String code){
+        String openId = weChatProvider.getOpenId(jsAppId, jsSecret, code);
+        if(StringUtils.isEmpty(openId)){
+            return Result.fail("微信登录失败");
+        }
+
+        User user = userRepository.findByOpenId(openId);
+        if (user != null) {
+            getLoginResult(user);
+        }
+
 
 
 
