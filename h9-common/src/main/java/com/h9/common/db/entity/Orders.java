@@ -53,7 +53,7 @@ public class Orders extends BaseEntity {
     
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '订单金额'")
     private BigDecimal money = new BigDecimal(0);
-    
+
     @Column(name = "pay_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付的金额'")
     private BigDecimal payMoney = new BigDecimal(0);
     
@@ -63,15 +63,69 @@ public class Orders extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
     private Integer status = 1;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) COMMENT ''")
+    private User user;
 
     @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
     private List<OrderItems> orderItems = new ArrayList<>();
 
+    /**
+     * description: 标识订单类别
+     * @see
+     */
+    @Column(name="order_type",columnDefinition = "int default 1 COMMENT'订单类别'")
+    private Integer orderType ;
+    public enum orderTypeEnum{
+
+        VIRTUAL_ORDER(1, "虚拟订单（话费，滴滴兑换）"),
+        OTHER(2, "其他");
+
+        private int code;
+        private String desc;
+
+        orderTypeEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public Integer getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setId(Long id) {
