@@ -7,6 +7,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +22,7 @@ import javax.annotation.Resource;
  * Date: 2017/10/30
  * Time: 18:00
  */
-@Api(value = "账户相关信息")
+@Api(value = "账户相关信息",description = "账户相关信息")
 @RestController
 public class AccountContoller {
 
@@ -31,7 +32,7 @@ public class AccountContoller {
     @Secured
     @ApiOperation(value = "账户余额流水")
     @GetMapping("/account/balance/detail")
-    public Result<PageResult<BalanceFlowVO>> getUserBalance(@RequestParam("page") int page, @RequestParam("limit") int limit){
+    public Result<PageResult<BalanceFlowVO>> getUserBalance(@ApiParam("token") @RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
         return accountService.getBalanceFlow(userId,page,limit);
     }
@@ -40,7 +41,7 @@ public class AccountContoller {
     @Secured
     @ApiOperation(value = "账户V币流水")
     @GetMapping("/account/vCoins/detail")
-    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@RequestParam("page") int page, @RequestParam("limit") int limit){
+    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@ApiParam("token") @RequestParam("page") int page, @RequestParam("limit") int limit){
         long userId = Long.parseLong(MDC.get("userId"));
         return accountService.getVCoinsFlow(userId,page,limit);
     }

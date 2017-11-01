@@ -15,6 +15,7 @@ public class HomeController {
 
     @Resource
     private HomeService homeService;
+
     @GetMapping("/home")
     public Result homeData(){
 
