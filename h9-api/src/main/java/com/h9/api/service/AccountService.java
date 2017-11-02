@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.h9.api.model.vo.BalanceFlowVO;
+import com.h9.api.model.vo.UserAccountInfoVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BalanceFlow;
@@ -56,5 +57,14 @@ public class AccountService {
         if(userAccount == null) return new BigDecimal(0);
 
         return userAccount.getBalance();
+    }
+
+    public Result accountInfo(Long userId) {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        User user = userRepository.findOne(userId);
+
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount);
+
+        return Result.success(userAccountInfoVO);
     }
 }

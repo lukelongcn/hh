@@ -92,6 +92,7 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
+        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 
