@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
+import com.h9.common.modle.DiDiCardInfo;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class ConsumeService {
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
     @Resource
-    private UserAccountReposiroty userAccountReposiroty;
+    private UserAccountRepository userAccountRepository;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
     @Resource
@@ -55,17 +55,20 @@ public class ConsumeService {
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
 
+    @Resource
+    private AccountService accountService;
+
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
         //TODO 判断 余额 够不够
+        BigDecimal accountBalance = accountService.getAccountBalance(userId);
         //TODO 防止用户连续多次点击，多次充值的情况
         //TODO 记录充值日志
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
 
         Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(), "滴滴");
-
 
         order.setUser(user);
         orderItems.setOrders(order);
@@ -106,11 +109,17 @@ public class ConsumeService {
 
         if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
 
-        //TODO 余额判断
+        BigDecimal accountBalance = accountService.getAccountBalance(userId);
+        BigDecimal price = didiCardDTO.getPrice();
+
+        if(accountBalance.compareTo(price) < 0){
+            return Result.fail("余额不足");
+        }
+
         Goods goods = goodsReposiroty.findByTop1();
         goods.setStatus(0);
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(), "欧飞");
+        Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(), "滴滴");
         orders.setUser(user);
 
         ordersReposiroty.saveAndFlush(orders);

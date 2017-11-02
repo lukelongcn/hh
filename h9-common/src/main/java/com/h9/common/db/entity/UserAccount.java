@@ -33,7 +33,6 @@ public class UserAccount extends BaseEntity {
     @Column(name = "v_coins",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT 'v币个数'")
     private BigDecimal vCoins = new BigDecimal(0);
 
-
     public Long getUserId() {
         return userId;
     }

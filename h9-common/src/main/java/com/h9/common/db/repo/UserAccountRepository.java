@@ -6,5 +6,7 @@ import com.h9.common.db.entity.UserAccount;
 /**
  * Created by itservice on 2017/10/28.
  */
-public interface UserAccountReposiroty extends BaseRepository<UserAccount> {
+public interface UserAccountRepository extends BaseRepository<UserAccount> {
+
+    UserAccount findByUserId(Long userId);
 }
