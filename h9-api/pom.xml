@@ -81,5 +81,12 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
+
+		<profile>
+			<id>product</id>
+			<properties>
+				<package.environment>product</package.environment>
+			</properties>
+		</profile>
 	</profiles>
 </project>

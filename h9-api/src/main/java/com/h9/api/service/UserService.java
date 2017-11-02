@@ -55,7 +55,7 @@ public class UserService {
         String phone = userLoginDTO.getPhone();
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
         String code = userLoginDTO.getCode();
-        String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone), phone));
+        String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone,SMSTypeEnum.REGISTER.getCode()), phone));
         if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
         }
@@ -117,18 +117,27 @@ public class UserService {
      */
     public Result sendSMS(String phone, int smsType) {
 
-        if (smsType == SMSTypeEnum.BIND_MOBILE.getCode()) {
+        SMSTypeEnum smstypeEnum = SMSTypeEnum.findByCode(smsType);
+        if(smstypeEnum == null) return Result.fail("请传入正确的短信类别");
 
+        if (smsType == SMSTypeEnum.REGISTER.getCode()) {
+
+            return registerSMS(phone);
+
+        } else {
             String code = RandomStringUtils.random(4, "0123456789");
             String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
 
-            smService.sendSMS(phone, content);
-            String key = RedisKey.getSmsCodeKey(phone);
+            if ("dev".equals(currentEnvironment)) {
+                code = "0000";
+            } else {
+                smService.sendSMS(phone, content);
+            }
+
+            String key = RedisKey.getSmsCodeKey(phone,smsType);
             redisBean.setStringValue(key, code);
 
             return Result.success("发送成功");
-        } else {
-            return registerSMS(phone);
         }
 
     }
@@ -179,7 +188,7 @@ public class UserService {
             redisBean.setStringValue(lastSendKey, System.currentTimeMillis() + "", 60, TimeUnit.SECONDS);
             //发送次数加1,1天超时
             redisBean.setStringValue(countKey, ((++count)) + "", 1, TimeUnit.DAYS);
-            String codeKey = String.format(RedisKey.getSmsCodeKey(phone), phone);
+            String codeKey =RedisKey.getSmsCodeKey(phone,SMSTypeEnum.REGISTER.getCode()) ;
             logger.info("用户:" + phone + " code:" + code);
             redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
             return new Result(0, "短信发送成功");
@@ -226,7 +235,7 @@ public class UserService {
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
-        String key = RedisKey.getSmsCodeKey(phone);
+        String key = RedisKey.getSmsCodeKey(phone,SMSTypeEnum.BIND_MOBILE.getCode());
 
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码错误");
@@ -234,6 +243,7 @@ public class UserService {
         if (!redisCode.equals(code)) return Result.fail("验证码错误");
 
         user.setPhone(phone);
+        redisBean.setStringValue(key,"",1,TimeUnit.SECONDS);
         userRepository.save(user);
         return Result.success();
     }

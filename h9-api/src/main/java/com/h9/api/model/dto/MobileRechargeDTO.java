@@ -8,17 +8,17 @@ import javax.validation.constraints.Size;
  * Created by itservice on 2017/10/31.
  */
 public class MobileRechargeDTO {
-    @Min(value = 20,message = "请传入合法充值金额")
-    private Integer cardNum;
+    @Min(value = 0,message = "请填写Id")
+    private Long id;
     @Size(min = 11,max = 11,message = "请输入合法的手机号码")
     private Long tel;
 
-    public Integer getCardNum() {
-        return cardNum;
+    public Long getId() {
+        return id;
     }
 
-    public void setCardNum(Integer cardNum) {
-        this.cardNum = cardNum;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getTel() {

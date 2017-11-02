@@ -1,20 +1,21 @@
 package com.h9.api.service;
 
+import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -44,19 +45,26 @@ public class ConsumeService {
     private OrderService orderService;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private OrdersReposiroty ordersReposiroty;
+
+    @Resource
+    private GoodsTypeReposiroty goodsTypeReposiroty;
 
     public Result recharge(Long userId,MobileRechargeDTO mobileRechargeDTO) {
         //TODO 判断 余额 够不够
         //TODO 防止用户连续多次点击，多次充值的情况
+        //TODO 记录充值日志
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
 
-        Orders order = orderService.initOrder(user.getNickName(),new BigDecimal(mobileRechargeDTO.getCardNum()),mobileRechargeDTO.getTel()+"",Orders.orderTypeEnum.VIRTUAL_ORDER.getCode());
+        Orders order = orderService.initOrder(user.getNickName(),new BigDecimal(50),mobileRechargeDTO.getTel()+"",Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(),"滴滴");
+
 
         order.setUser(user);
         orderItems.setOrders(order);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
-        orderItems.setMoney(new BigDecimal(mobileRechargeDTO.getCardNum()));
+        orderItems.setMoney(new BigDecimal(50));
         orderItems.setName("手机话费充值");
 
         orderItemReposiroty.saveAndFlush(orderItems);
@@ -72,7 +80,33 @@ public class ConsumeService {
 
         List<Goods> all = goodsReposiroty.findAll();
 
-
         return Result.success(all);
+    }
+
+    public Result didiCardList() {
+        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
+        Map<String, Object> map = new HashMap<>();
+        map.put("didiCardList", realPriceAndStock);
+        map.put("balance", "10");
+        return Result.success(map);
+    }
+
+    public Result didiCardConvert(DidiCardDTO didiCardDTO, Long userId) {
+        User user = userRepository.findOne(userId);
+        Goods goods = goodsReposiroty.findByTop1();
+        goods.setStatus(0);
+        //生成订单
+        Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(),"欧飞");
+        orders.setUser(user);
+
+        ordersReposiroty.saveAndFlush(orders);
+        OrderItems items = new OrderItems("滴滴卡兑换","",didiCardDTO.getPrice(),didiCardDTO.getPrice(),1,orders);
+        orderItemReposiroty.save(items);
+        goodsReposiroty.save(goods);
+        //返回数据
+        Map<String, String> voMap = new HashMap<>();
+        voMap.put("didiCardNumber",goods.getDiDiCardNumber());
+        voMap.put("money",goods.getRealPrice().toString());
+        return Result.success(voMap);
     }
 }
