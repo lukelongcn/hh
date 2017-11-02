@@ -1,14 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
-import com.h9.common.validation.Add;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -33,7 +26,6 @@ public class BannerType extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @NotEmpty(message = "名称不能为空")
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型名称'")
     private String name;
 
@@ -43,12 +35,10 @@ public class BannerType extends BaseEntity {
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")
     private Integer enable;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "start_time",columnDefinition = "datetime COMMENT '开始时间'")
     @Temporal(TIMESTAMP)
     private Date startTime;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "end_time",columnDefinition = "datetime COMMENT '结束时间'")
     @Temporal(TIMESTAMP)
     private Date endTime;
