@@ -46,6 +46,17 @@ public class OrderItems extends BaseEntity {
     @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单商品id'")
     private Orders orders;
 
+    public OrderItems(String name, String image, BigDecimal price, BigDecimal money, Integer count, Orders orders) {
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.money = money;
+        this.count = count;
+        this.orders = orders;
+    }
+
+    public OrderItems(){}
+
     public Integer getCount() {
         return count;
     }

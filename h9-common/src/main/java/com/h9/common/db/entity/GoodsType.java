@@ -32,7 +32,7 @@ public class GoodsType extends BaseEntity {
 
     /**
      * description:
-     * @see
+     * @see GoodsTypeEnum
      */
     @Column(name = "code",nullable = false,columnDefinition = "int default 1 COMMENT ''")
     private Integer code;
