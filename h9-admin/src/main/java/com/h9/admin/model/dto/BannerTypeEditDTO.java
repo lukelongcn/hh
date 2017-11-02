@@ -1,7 +1,9 @@
 package com.h9.admin.model.dto;
 
+import com.h9.common.db.entity.BannerType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -23,5 +25,10 @@ public class BannerTypeEditDTO extends BannerTypeAddDTO {
         this.id = id;
     }
 
+    public BannerType toBannerType(){
+        BannerType bannerType = super.toBannerType();
+        bannerType.setId(this.id);
+        return  bannerType;
+    }
 
 }

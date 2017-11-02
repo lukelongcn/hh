@@ -83,4 +83,9 @@ public class BannerTypeAddDTO {
         BeanUtils.copyProperties(this,bannerType);
         return  bannerType;
     }
+
+    public BannerType toBannerType(BannerType bannerType){
+        BeanUtils.copyProperties(this,bannerType);
+        return  bannerType;
+    }
 }
