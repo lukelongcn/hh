@@ -1,4 +1,4 @@
-package com.h9.common.validation;
+package com.h9.admin.validation;
 
 /**
  * @author: George

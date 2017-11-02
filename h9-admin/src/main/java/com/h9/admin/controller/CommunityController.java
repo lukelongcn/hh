@@ -1,6 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.BannerTypeDTO;
 import com.h9.admin.service.CommunityService;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BannerType;
@@ -30,12 +31,7 @@ public class CommunityController {
     @Secured
     @PostMapping(value="/banner_type")
     @ApiOperation("增加功能类型")
-    public Result<BannerType> add(@Validated @ModelAttribute BannerType bannerType){
-        return this.communityService.addBannerType(bannerType);
+    public Result<BannerType> add(@Validated @RequestBody BannerTypeDTO bannerTypeDTO){
+        return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
     }
-
-    /*@InitBinder
-    public void initBinder(WebDataBinder binder){
-        binder.registerCustomEditor(Date.class,new CustomDateEditor(new Si));
-    }*/
 }
