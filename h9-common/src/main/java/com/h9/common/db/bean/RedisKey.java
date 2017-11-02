@@ -21,7 +21,7 @@ public class RedisKey {
     /**
      * description: %s 占位符为手机号码
      */
-    private static String smsCodeKey = "h9:sms:code:%s";
+    private static String smsCodeKey = "h9:sms:code:%s:type:%s";
     /**
      * description: %s 占位符为UserId
      */
@@ -46,8 +46,13 @@ public class RedisKey {
         return String.format(sendCountKey, phone);
     }
 
-    public static String getSmsCodeKey(String phone) {
-        return String.format(smsCodeKey, phone);
+    public static String getSmsCodeKey(String phone,int type) {
+        return String.format(smsCodeKey, phone,type);
+    }
+
+    public static void main(String[] args) {
+        String smsCodeKey = getSmsCodeKey("17673140753", 1);
+        System.out.println(smsCodeKey);
     }
 
     public static String getTokenKey(Long userId) {

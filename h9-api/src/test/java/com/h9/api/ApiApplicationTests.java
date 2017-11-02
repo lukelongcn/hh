@@ -7,8 +7,11 @@ import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.entity.DiDiCardInfo;
 import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.repo.GoodsReposiroty;
+import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
 
@@ -17,10 +20,12 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -71,10 +76,36 @@ public class  ApiApplicationTests {
     private MobileRechargeService mobileRechargeService;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private GoodsTypeReposiroty goodsTypeReposiroty;
     @Test
 //    @Test
     public void mobileRecharge(){
 
 
     }
+
+    @Test
+    public void didiCardInit(){
+
+        GoodsType goodsType = goodsTypeReposiroty.findOne(2L);
+        for (int i = 0; i < 200; i++) {
+            Goods goods = new Goods();
+            goods.setDescription("滴滴卡兑换");
+            goods.setName("滴滴卡兑换");
+            goods.setPrice(new BigDecimal(30));
+            goods.setRealPrice(new BigDecimal(30));
+            goods.setDiDiCardNumber(UUID.randomUUID().toString());
+            goods.setStatus(1);
+            goods.setGoodsType(goodsType);
+            goodsReposiroty.save(goods);
+        }
+    }
+
+    @Test
+    public void test2(){
+        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
+        System.out.println(realPriceAndStock);
+    }
+
 }

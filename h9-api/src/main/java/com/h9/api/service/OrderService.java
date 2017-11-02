@@ -29,14 +29,14 @@ public class OrderService {
     @Resource
     private UserService userService;
 
-    public Orders initOrder(String nickName, BigDecimal money, String tel,int type) {
+    public Orders initOrder(String nickName, BigDecimal money, String tel,int type,String supplierName) {
         Orders order = new Orders();
         order.setUserName(nickName);
         order.setPayMoney(money);
         order.setNo("");
         order.setPayMethond(1);
         order.setUserPhone(tel);
-        order.setSupplierName("欧飞");
+        order.setSupplierName(supplierName);
         order.setPayStatus(1);
         order.setStatus(1);
         order.setOrderType(type);

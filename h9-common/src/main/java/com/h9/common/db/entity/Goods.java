@@ -52,6 +52,17 @@ public class Goods extends BaseEntity {
     @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id")
     private GoodsType goodsType;
 
+    @Column(name = "didi_card_number",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '滴滴卡兑换码' ")
+    private String DiDiCardNumber;
+
+    public String getDiDiCardNumber() {
+        return DiDiCardNumber;
+    }
+
+    public void setDiDiCardNumber(String diDiCardNumber) {
+        DiDiCardNumber = diDiCardNumber;
+    }
+
     public Integer getStock() {
         return stock;
     }
