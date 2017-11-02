@@ -1,34 +1,26 @@
 package com.h9.api;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
-import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.DiDiCardInfo;
+import com.h9.common.modle.DiDiCardInfo;
 import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.SMSLogReposiroty;
-import com.h9.common.utils.MD5Util;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

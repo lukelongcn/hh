@@ -59,6 +59,7 @@ public class UserController {
 
     /**
      * description: 获取用户信息
+     *
      */
     @Secured
     @GetMapping("/user/info")

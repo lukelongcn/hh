@@ -44,7 +44,7 @@ public class UserService {
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
     @Resource
-    private UserAccountReposiroty userAccountReposiroty;
+    private UserAccountRepository userAccountRepository;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
 
@@ -70,7 +70,7 @@ public class UserService {
 
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(userFromDb.getId());
-            userAccountReposiroty.save(userAccount);
+            userAccountRepository.save(userAccount);
 
             UserExtends userExtends = new UserExtends();
             userExtends.setUserId(userFromDb.getId());
@@ -92,6 +92,7 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
+        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 
@@ -303,7 +304,7 @@ public class UserService {
 
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(user.getId());
-            userAccountReposiroty.save(userAccount);
+            userAccountRepository.save(userAccount);
 
             LoginResultVO loginResult = getLoginResult(user);
             return Result.success(loginResult);

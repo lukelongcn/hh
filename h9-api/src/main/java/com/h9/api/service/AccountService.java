@@ -1,17 +1,23 @@
 package com.h9.api.service;
 
 import com.h9.api.model.vo.BalanceFlowVO;
+import com.h9.api.model.vo.UserAccountInfoVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.UserAccount;
 import com.h9.common.db.entity.VCoinsFlow;
 import com.h9.common.db.repo.BalanceFlowRepository;
+import com.h9.common.db.repo.UserAccountRepository;
+import com.h9.common.db.repo.UserRepository;
 import com.h9.common.db.repo.VCoinsFlowRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,7 +32,11 @@ public class AccountService {
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private VCoinsFlowRepository vCoinsFlowRepository;
+    @Resource
+    private UserAccountRepository userAccountRepository;
 
+    @Resource
+    private UserRepository userRepository;
     
     public Result getBalanceFlow(Long userId,int page,int limit){
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
@@ -42,4 +52,19 @@ public class AccountService {
         return Result.success(flowPageResult.result2Result(BalanceFlowVO::new));
     }
 
+    public BigDecimal getAccountBalance(Long userId){
+        UserAccount userAccount = userAccountRepository.findOne(userId);
+        if(userAccount == null) return new BigDecimal(0);
+
+        return userAccount.getBalance();
+    }
+
+    public Result accountInfo(Long userId) {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        User user = userRepository.findOne(userId);
+
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount);
+
+        return Result.success(userAccountInfoVO);
+    }
 }

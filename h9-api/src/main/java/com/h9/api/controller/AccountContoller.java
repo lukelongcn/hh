@@ -53,5 +53,10 @@ public class AccountContoller {
     }
 
 
+    @Secured
+    @GetMapping("/account/info")
+    public Result accountInfo(@SessionAttribute("curUserId") Long userId){
+        return accountService.accountInfo(userId);
+    }
 
 }

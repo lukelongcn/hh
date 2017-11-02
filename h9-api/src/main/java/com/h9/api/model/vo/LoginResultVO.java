@@ -1,6 +1,9 @@
 package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.UserAccount;
+
+import java.math.RoundingMode;
 
 /**
  * Created by itservice on 2017/10/28.
@@ -12,7 +15,7 @@ public class LoginResultVO {
     private String nickName;
     private String openId;
 
-    public static LoginResultVO convert(User user,String token){
+    public static LoginResultVO convert(User user, String token){
         LoginResultVO vo = new LoginResultVO();
         vo.setId(user.getId());
         vo.setToken(token);
