@@ -25,7 +25,7 @@ import java.util.Map;
 public class LogAop {
     private Logger logger = Logger.getLogger(this.getClass());
 
-    @Around("execution(public * com.h9.admin.controller..*.*(..))")
+    @Around("execution(public * com.h9.admin.controller..*.*(..))&&!execution(public * com.h9.admin.controller.UserController.login(..))")
     public Object httpLog(ProceedingJoinPoint pjp) throws Throwable{
         printRequest();
         Object result = pjp.proceed();// result的值就是被拦截方法的返回值
