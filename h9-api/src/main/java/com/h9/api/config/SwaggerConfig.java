@@ -1,4 +1,4 @@
-package com.h9.api;
+package com.h9.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
