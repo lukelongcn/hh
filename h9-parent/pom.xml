@@ -20,6 +20,7 @@
         <module>../h9-api</module>
         <module>../h9-admin</module>
         <module>../h9-common</module>
+        <module>../h9-lottery</module>
     </modules>
 
     <properties>
