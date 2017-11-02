@@ -53,9 +53,8 @@ public class GlobalExceptionHandler {
         if (e instanceof HttpMessageNotReadableException) {
             return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
         }
-        {
-            return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-        }
+        return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }
+
 
 }
