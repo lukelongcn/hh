@@ -25,15 +25,15 @@ import java.util.Map;
 public class LogAop {
     private Logger logger = Logger.getLogger(this.getClass());
 
-    @Around("execution(public * com.h9.admin.controller..*.*(..))&&!execution(public * com.h9.admin.controller.UserController.login(..))")
+    @Around("execution(public * com.h9.admin.controller..*.*(..))")
     public Object httpLog(ProceedingJoinPoint pjp) throws Throwable{
-        printRequest();
+        printRequest(pjp);
         Object result = pjp.proceed();// result的值就是被拦截方法的返回值
         printResponse(result);
         return result;
     }
 
-    private void printRequest(){
+    private void printRequest(ProceedingJoinPoint pjp){
         HttpServletRequest httpServletRequest = HttpUtil.getHttpServletRequest();
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
@@ -41,7 +41,9 @@ public class LogAop {
         logger.info("content-type: " + httpServletRequest.getHeader("Content-Type"));
         Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
         String paramStr = JSONObject.toJSONString(parameterMap);
-        logger.info("request param: " + paramStr);
+        if(!"login".equals(pjp.getSignature().getName())){
+            logger.info("request param: " + paramStr);
+        }
         Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
         Map<String, String> headers = new HashMap<>();
         while (headerNames.hasMoreElements()) {
