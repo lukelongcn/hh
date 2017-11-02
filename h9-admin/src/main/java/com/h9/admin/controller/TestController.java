@@ -1,5 +1,6 @@
 package com.h9.admin.controller;
 
+import com.h9.admin.interceptor.Secured;
 import com.h9.common.base.Result;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class TestController {
      * description: 手机号登录
      */
     @GetMapping("/hello")
+    @Secured
     public Result hello(){
         return Result.success();
     }
