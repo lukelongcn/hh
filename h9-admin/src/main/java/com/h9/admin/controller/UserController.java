@@ -52,10 +52,11 @@ public class UserController {
         return  this.userService.login(systemUserDTO.getName(),systemUserDTO.getPassword());
     }
 
+    @Secured
     @GetMapping("/logout")
     @ApiOperation(value = "退出登录")
-    public Result logout() {
-        return  this.userService.logout();
+    public Result logout(@RequestHeader("token")String token) {
+        return  this.userService.logout(token);
     }
 
 }

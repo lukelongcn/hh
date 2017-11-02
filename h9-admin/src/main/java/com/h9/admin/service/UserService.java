@@ -49,22 +49,13 @@ public class UserService {
         }
         //生成token,并保存
         String token = UUID.randomUUID().toString();
-       /* String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 2,TimeUnit.HOURS);*/
-        HttpSession session = HttpUtil.getHttpSession();
-        session.setAttribute("user",this.userRepository.findByPhone(name));
-        session.setAttribute("token",token);
-        session.setMaxInactiveInterval(2*3600);
+        String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 10,TimeUnit.MINUTES);
         return new Result(0, "登录成功",new LoginResultVO(token,name));
     }
 
-    public Result logout(){
-        HttpSession session = HttpUtil.getHttpSession();
-        Enumeration<String> em = session.getAttributeNames();
-        while(em.hasMoreElements()){
-            session.removeAttribute(em.nextElement().toString());
-        }
-        session.invalidate();
+    public Result logout(String token){
+        redisBean.expire(RedisKey.getAdminTokenUserIdKey(token),100,TimeUnit.MICROSECONDS);
         return new Result(0, "成功退出登录");
     }
 }

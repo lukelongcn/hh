@@ -15,13 +15,13 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * description: 登录权限认证拦截器
  */
 @Component
 public class LoginAuthInterceptor implements HandlerInterceptor {
-    private Logger logger = Logger.getLogger(this.getClass());
     @Resource
     private RedisBean redisBean;
 
@@ -32,13 +32,15 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             //获限token
             String token = httpServletRequest.getHeader("token");
             Secured secured = ((HandlerMethod) o).getMethodAnnotation(Secured.class);
-
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
-                //String userId = redisBean.getStringValue(RedisKey.getAdminTokenUserIdKey(token));
-                if (!token.equals(HttpUtil.getHttpSession().getAttribute("token"))) {
-                    throw new UnAuthException("请重新登录");
+                String userId = redisBean.getStringValue(RedisKey.getAdminTokenUserIdKey(token));
+                if(StringUtils.isEmpty(userId)){
+                    throw new UnAuthException("请登录");
                 }
+                redisBean.expire(RedisKey.getAdminTokenUserIdKey(token), 10, TimeUnit.MINUTES);
+                httpServletRequest.getSession().removeAttribute("curUserId");
+                httpServletRequest.getSession().setAttribute("curUserId",userId);
             }
 
         }
