@@ -53,6 +53,9 @@ public class ConsumeController {
         return consumeService.didiCardList();
     }
 
+    /**
+     * description: 兑换滴滴卡
+     */
     @Secured
     @PutMapping("/didiCard/convert")
     public Result didiCardConvert(@RequestBody@Valid DidiCardDTO didiCardDTO, @SessionAttribute("curUserId")Long userId){

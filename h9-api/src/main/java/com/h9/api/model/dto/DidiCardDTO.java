@@ -11,22 +11,23 @@ import java.math.BigDecimal;
 public class DidiCardDTO {
     @NotNull(message = "请填写价格参数")
     private BigDecimal price;
-    @NotEmpty(message = "请填写手机号码")
-    private String tel;
 
+    @NotEmpty(message = "请填写验证码")
+    private String code;
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
 }
