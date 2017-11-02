@@ -1,5 +1,8 @@
 package com.h9.common.base;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -7,11 +10,15 @@ package com.h9.common.base;
  * DateDeserializer: 2017-08-07
  * Time: 16:28
  */
+
+@ApiModel("结果")
 public class Result<T> {
 
-
+    @ApiModelProperty(value = "状态码")
     private int code;  // 0 成功 1 失败
+    @ApiModelProperty(value = "提示信息")
     private String msg;
+    @ApiModelProperty(value = "数据")
     private T data;
 
     public Result(int code, String msg, T t) {
