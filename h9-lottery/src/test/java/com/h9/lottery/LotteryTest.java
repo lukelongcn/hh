@@ -1,9 +1,12 @@
 package com.h9.lottery;
 
+import com.h9.lottery.service.CodeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,8 +19,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class LotteryTest {
 
+    @Resource
+    private CodeService codeService;
+
+
     @Test
     public void contextLoads() {
-
+        codeService.productCode();
     }
 }
