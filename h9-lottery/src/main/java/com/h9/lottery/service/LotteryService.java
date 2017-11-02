@@ -1,5 +1,7 @@
 package com.h9.lottery.service;
 
+import org.springframework.stereotype.Service;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
@@ -7,5 +9,8 @@ package com.h9.lottery.service;
  * Date: 2017/11/2
  * Time: 14:50
  */
+@Service
 public class LotteryService {
+
+
 }
