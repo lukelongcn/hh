@@ -61,6 +61,8 @@ public class RedisKey {
     }
 
     public static String getAdminTokenUserIdKey(String token){
-        return String.format(adminTokenUserIdKey,token);
+        return String.format("h9:admin:userId:%s",token);
     }
+
+
 }

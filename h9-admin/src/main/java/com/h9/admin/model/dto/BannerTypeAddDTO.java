@@ -2,44 +2,41 @@ package com.h9.admin.model.dto;
 
 import com.h9.common.db.entity.BannerType;
 import com.h9.common.utils.DateUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George
  * @date: 2017/11/2 10:42
  */
-public class BannerTypeDTO {
+@ApiModel("功能分类-增加-参数")
+public class BannerTypeAddDTO {
 
-    private Long id;
-
+    @ApiModelProperty(value = "名称")
     @NotEmpty(message = "名称不能为空")
     private String name;
 
+    @ApiModelProperty(value = "标识")
+    @NotEmpty(message = "标识不能为空")
     private String code;
 
+    @ApiModelProperty(value = "状态")
+    @NotNull(message = "状态不能为空")
     private Integer enable;
 
    // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+   @ApiModelProperty(value = "开始时间")
     private Date startTime;
 
    // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+   @ApiModelProperty(value = "结束时间")
     private Date endTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
