@@ -32,7 +32,7 @@ public class CommunityService {
         return Result.success(this.bannerTypeReposiroty.save(bannerType));
     }
 
-    public Result<BannerType> editBannerType(BannerTypeEditDTO bannerType){
+    public Result<BannerType> updateBannerType(BannerTypeEditDTO bannerType){
         if(this.bannerTypeReposiroty.findByIdNotAndCode(bannerType.getId(),bannerType.getCode())!=null){
             return Result.fail("标识已存在");
         }
@@ -51,5 +51,15 @@ public class CommunityService {
         Page<BannerType> bannerTypes = this.bannerTypeReposiroty.findAllByPage(pageRequest);
         PageResult<BannerType> pageResult = new PageResult<>(bannerTypes);
         return Result.success(pageResult);
+    }
+
+    public Result<BannerType> updateBannerTypeStatus(long id){
+        BannerType bannerType = this.bannerTypeReposiroty.findOne(id);
+        if(bannerType.getEnable()==1){
+            bannerType.setEnable(0);
+        }else{
+            bannerType.setEnable(1);
+        }
+        return Result.success(this.bannerTypeReposiroty.save(bannerType));
     }
 }
