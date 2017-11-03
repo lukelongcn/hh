@@ -1,5 +1,9 @@
 package com.h9.api;
 
+import chinapay.Base64;
+import chinapay.PrivateKey;
+import chinapay.SecureLink;
+import chinapay.util.SecureUtil;
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
@@ -10,9 +14,15 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by itservice on 2017/11/2.
@@ -24,14 +34,13 @@ public class Test {
     String bucket = "h9-joyful-img";
 
 
-
     public static void main(String[] args) throws UnsupportedEncodingException {
 
 //        upload(); // FoHkjc0XuS0niM_RKKJkWiGZLC5q
     }
 
     @org.junit.Test
-    public  void downLoad() throws UnsupportedEncodingException {
+    public void downLoad() throws UnsupportedEncodingException {
         String fileName = "FoHkjc0XuS0niM_RKKJkWiGZLC5q";
         String domainOfBucket = "http://devtools.qiniu.com";
         String encodedFileName = URLEncoder.encode(fileName, "utf-8");
@@ -53,7 +62,7 @@ public class Test {
     }
 
     @org.junit.Test
-    public    void upload(){
+    public void upload() {
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Zone.zone2());
 //...其他参数参考类注释
@@ -86,7 +95,7 @@ public class Test {
     }
 
     @org.junit.Test
-    public void  getInfo(){
+    public void getInfo() {
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Zone.zone0());
 //...其他参数参考类注释
@@ -103,5 +112,175 @@ public class Test {
         } catch (QiniuException ex) {
             System.err.println(ex.response.toString());
         }
+    }
+
+    @org.junit.Test
+    public void chinaPayTest2() throws IOException {
+        String version = "20090501";
+        String signFlag = "1";
+        String chkValue = "";
+        String merId = "808080211881410";
+
+        String money = "101";
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMDD");
+        String date = format.format(new Date());
+        String bachNumber = "000001";
+        StringBuilder fileName = new StringBuilder();
+        fileName.append(merId);
+        fileName.append("_");
+        fileName.append(date);
+        fileName.append("_");
+        fileName.append(bachNumber);
+        fileName.append(".txt");
+        System.out.println("filename: " + fileName);
+
+        StringBuilder fileHead = new StringBuilder();
+        fileHead.append(merId);
+        fileHead.append("|");
+        fileHead.append(bachNumber);
+        fileHead.append("|");
+        fileHead.append("1");
+        fileHead.append("|");
+        fileHead.append(money);
+
+        StringBuilder fileBody = new StringBuilder();
+        fileBody.append(merId);
+        fileBody.append("|");
+        String flowNumber = "0000000000000001";
+        fileBody.append(flowNumber);
+        fileBody.append("|");
+        fileBody.append("李圆");
+        fileBody.append("|");
+        fileBody.append("6210984280001561104");
+        fileBody.append("|");
+        fileBody.append("中国邮政储蓄银行");
+        fileBody.append("|");
+        fileBody.append("江西省");
+        fileBody.append("|");
+        fileBody.append("赣州");
+        fileBody.append("|");
+        fileBody.append("中国邮政储蓄银行");
+        fileBody.append("|");
+        fileBody.append(money);
+        fileBody.append("|");
+        fileBody.append("提现");
+
+        String fileContent = fileHead + "\n" + fileBody;
+
+        File file = new File("/" + fileName);
+        System.out.println(file.getAbsolutePath());
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(fileContent.toString().getBytes());
+        System.out.println(fileContent);
+        System.out.println("----------");
+
+    }
+
+    @org.junit.Test
+    public void chinapayTest2() {
+        String url = "http://sfj-test.chinapay.com/dac/SinPayServletGBK";
+        String merId = "808080211881410";
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+        String merDate = format.format(new Date());
+        String merSeqId = "4";
+        String cardNo = "6210984280001561104";
+        String usrName = "李圆";
+        String openBank = "中国邮政储蓄银行";
+        String prov = "江西";
+        String city = "赣州";
+        String transAmt = "101";
+        String purpose = "提现";
+        String version = "20151207";
+        String signFlag = "1";
+        String termType = "7";
+        String s = merId + merDate + merSeqId + cardNo + usrName + openBank + prov + city + transAmt + purpose + version;
+
+        PrivateKey key = new PrivateKey();
+        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        boolean buildOK = key.buildKey(merId, 0, path);
+        if(!buildOK){
+            System.out.println("没有找到私钥文件");
+        }
+        System.out.println(buildOK);
+        SecureLink secureLink = new SecureLink(key);
+        char[] encode = Base64.encode(s.getBytes());
+        String sign = secureLink.Sign(new String(encode));
+
+        System.out.println("------");
+        System.out.println(sign);
+        System.out.println("------");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("merId",merId);
+        params.add("merDate",merDate);
+        System.out.println(merDate);
+        params.add("merSeqId",merSeqId);
+        params.add("cardNo",cardNo);
+        params.add("usrName",usrName);
+        params.add("openBank",openBank);
+        params.add("prov",prov);
+        params.add("city",city);
+        params.add("transAmt",transAmt);
+        params.add("purpose",purpose);
+//        params.add("subBank",);
+//        params.add("flag",);
+        params.add("version",version);
+        params.add("signFlag",signFlag);
+        params.add("chkValue",sign);
+        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
+        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        System.out.println(res);
+    }
+
+
+    @org.junit.Test
+    public void cpTest3() throws UnsupportedEncodingException {
+        String merId = "808080211881410";
+        String merDate = "20171103";
+        String merSeqId = "4";
+
+        String version = "20090501";
+        String signFlag = "1";
+        String chkValue = merId+merDate+merSeqId+version;
+
+
+        PrivateKey key = new PrivateKey();
+        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        boolean buildOK = key.buildKey(merId, 0, path);
+        if(!buildOK){
+            System.out.println("没有找到私钥文件");
+        }
+        System.out.println(buildOK);
+        SecureLink secureLink = new SecureLink(key);
+
+        chkValue = new String(Base64.encode(chkValue.getBytes()));
+        chkValue = secureLink.Sign(new String(chkValue));
+
+
+        String url = "http://sfj-test.chinapay.com/dac/SinPayQueryServletGBK";
+
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("merId",merId);
+        params.add("merDate",merDate);
+        params.add("merSeqId",merSeqId);
+        params.add("version",version);
+        params.add("signFlag",signFlag);
+        params.add("chkValue",chkValue);
+        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
+        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+
+        String gbk = new String(res.toString().getBytes("GBK"), "utf-8");
+        System.out.println(gbk);
+
+//        System.out.println(res);
     }
 }
