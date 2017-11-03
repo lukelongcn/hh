@@ -39,7 +39,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                     throw new UnAuthException("请登录");
                 }
                 redisBean.expire(RedisKey.getAdminTokenUserIdKey(token), 10, TimeUnit.MINUTES);
-                httpServletRequest.getSession().removeAttribute("curUserId");
+               // httpServletRequest.getSession().removeAttribute("curUserId");
                 httpServletRequest.getSession().setAttribute("curUserId",userId);
             }
 

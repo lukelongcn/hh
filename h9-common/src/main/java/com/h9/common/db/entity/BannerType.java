@@ -1,6 +1,9 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 
 import java.util.Date;
@@ -42,6 +45,9 @@ public class BannerType extends BaseEntity {
     @Column(name = "end_time",columnDefinition = "datetime COMMENT '结束时间'")
     @Temporal(TIMESTAMP)
     private Date endTime;
+
+    @Transient
+    private Integer bannerCount;
 
 
     public Long getId() {
@@ -90,5 +96,21 @@ public class BannerType extends BaseEntity {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Integer getBannerCount() {
+        return bannerCount;
+    }
+
+    public void setBannerCount(Integer bannerCount) {
+        this.bannerCount = bannerCount;
+    }
+
+    public BannerType() {
+    }
+
+    public BannerType(BannerType bannerType,int bannerCount) {
+        BeanUtils.copyProperties(bannerType,this);
+        this.bannerCount = bannerCount;
     }
 }

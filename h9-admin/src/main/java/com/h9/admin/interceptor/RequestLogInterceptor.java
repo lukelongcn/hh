@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.jboss.logging.Logger;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,8 +31,15 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         logger.info("content-type: " + httpServletRequest.getHeader("Content-Type"));
         Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
         String paramStr = JSONObject.toJSONString(parameterMap);
-        logger.info("request param: " + paramStr);
-
+        //if("login".equals(httpServletRequest.getMethod().))
+        if (o instanceof HandlerMethod){
+            NotPrintParam notPrintParam = ((HandlerMethod) o).getMethodAnnotation(NotPrintParam.class);
+            if(notPrintParam==null){
+                logger.info("request param: " + paramStr);
+            }
+        }else{
+            logger.info("request param: " + paramStr);
+        }
         Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
         Map<String, String> headers = new HashMap<>();
         while (headerNames.hasMoreElements()) {
