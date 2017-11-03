@@ -54,4 +54,6 @@ public class CommunityController {
     public Result<BannerType> updateBannerTypeStatus(@ApiParam(value = "功能分类id")@PathVariable long id){
         return this.communityService.updateBannerTypeStatus(id);
     }
+
+
 }

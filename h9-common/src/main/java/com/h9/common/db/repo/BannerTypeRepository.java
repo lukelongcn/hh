@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
  * @author: George
  * @date: 2017/11/1 16:57
  */
-public interface BannerTypeReposiroty extends BaseRepository<BannerType> {
+public interface BannerTypeRepository extends BaseRepository<BannerType> {
 
     BannerType findByCode(String code);
 
