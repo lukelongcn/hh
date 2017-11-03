@@ -68,5 +68,12 @@ public class ArticleType extends BaseEntity {
         this.enable = enable;
     }
 
+    public ArticleType() {
+    }
 
+    public ArticleType(String name, String code, Integer enable) {
+        this.name = name;
+        this.code = code;
+        this.enable = enable;
+    }
 }

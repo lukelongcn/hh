@@ -113,4 +113,10 @@ public class BannerType extends BaseEntity {
         BeanUtils.copyProperties(bannerType,this);
         this.bannerCount = bannerCount;
     }
+
+    public BannerType(String name, String code, Integer enable) {
+        this.name = name;
+        this.code = code;
+        this.enable = enable;
+    }
 }
