@@ -1,5 +1,7 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.BannerAddDTO;
+import com.h9.admin.model.dto.BannerEditDTO;
 import com.h9.admin.model.dto.BannerTypeEditDTO;
 import com.h9.admin.model.dto.PageDTO;
 import com.h9.common.base.PageResult;
@@ -70,12 +72,35 @@ public class CommunityService {
         return Result.success(this.bannerTypeRepository.save(bannerType));
     }
 
-    public Result<Banner> addBanner(Banner banner){
-        if(this.bannerRepository.findByTitle(banner.getTitle())!=null){
+    public Result<Banner> addBanner(BannerAddDTO bannerAddDTO){
+        BannerType bannerType = this.bannerTypeRepository.findOne(bannerAddDTO.getBannerTypeId());
+        if(bannerType==null){
+            return Result.fail("功能类别不存在");
+        }
+        if(this.bannerRepository.findByTitle(bannerAddDTO.getTitle())!=null){
             return Result.fail("名称已存在");
         }
+        Banner banner = bannerAddDTO.toBanner();
+        banner.setBannerType(bannerType);
         return Result.success(this.bannerRepository.save(banner));
     }
+
+    public Result<Banner> updateBanner(BannerEditDTO bannerEditDTO){
+        if(this.bannerRepository.findByIdNotAndTitle(bannerEditDTO.getId(),bannerEditDTO.getTitle())!=null){
+            return Result.fail("名称已存在");
+        }
+        Banner b = this.bannerRepository.findOne(bannerEditDTO.getId());
+        BeanUtils.copyProperties(bannerEditDTO,b);
+        return Result.success(this.bannerRepository.save(b));
+    }
+
+    public Result<PageResult<Banner>> getBanners(PageDTO pageDTO){
+        PageRequest pageRequest = this.bannerRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<Banner> banners = this.bannerRepository.findAllByPage(pageRequest);
+        PageResult<Banner> pageResult = new PageResult<>(banners);
+        return Result.success(pageResult);
+    }
+
 
     public Result<ArticleType> addArticleType(ArticleType articleType){
         return Result.success(this.articleTypeRepository.save(articleType));

@@ -1,6 +1,7 @@
 package com.h9.admin.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -19,13 +20,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
+@ComponentScan(basePackages ={"com.h9.admin","com.h9.common"})
 public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.h9.admin.controller"))
+                //.apis(RequestHandlerSelectors.basePackage("com.h9.*n"))
                 .paths(PathSelectors.any())
                 .build();
     }

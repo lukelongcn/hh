@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -16,17 +17,13 @@ import java.util.Date;
 @ApiModel("功能-增加-参数")
 public class BannerAddDTO {
 
-    @ApiModelProperty(value = "功能类型，只需传id",required = true)
-    @NotEmpty(message = "功能类型不能为空")
-    private BannerType bannerType;
+    @ApiModelProperty(value = "功能类型id",required = true)
+    @NotNull(message = "功能类型不能为空")
+    private Long bannerTypeId;
 
     @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
     private String title;
-
-   /* @ApiModelProperty(value = "名称",required = true)
-    @NotEmpty(message = "名称不能为空")
-    private String content;*/
 
     @ApiModelProperty(value = "动作",required = true)
     @NotEmpty(message = "动作")
@@ -37,7 +34,7 @@ public class BannerAddDTO {
     private String icon;
 
     @ApiModelProperty(value = "状态，1：启用 0：禁用",required = true)
-    @NotEmpty(message = "状态不能为空")
+    @NotNull(message = "状态不能为空")
     private Integer enable;
 
     @ApiModelProperty(value = "开始时间")
@@ -47,19 +44,18 @@ public class BannerAddDTO {
     private Date endTime;
 
     @ApiModelProperty(value = "排序",required = true)
-    @NotEmpty(message = "排序不能为空")
+    @NotNull(message = "排序不能为空")
     private Integer sort = 1;
 
     @ApiModelProperty(value = "字体颜色")
     private String fontColor;
 
-
-    public BannerType getBannerType() {
-        return bannerType;
+    public Long getBannerTypeId() {
+        return bannerTypeId;
     }
 
-    public void setBannerType(BannerType bannerType) {
-        this.bannerType = bannerType;
+    public void setBannerTypeId(Long bannerTypeId) {
+        this.bannerTypeId = bannerTypeId;
     }
 
     public String getTitle() {
@@ -69,14 +65,6 @@ public class BannerAddDTO {
     public void setTitle(String title) {
         this.title = title;
     }
-
-   /* public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }*/
 
     public String getUrl() {
         return url;

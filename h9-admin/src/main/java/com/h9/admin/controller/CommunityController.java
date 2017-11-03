@@ -1,10 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.dto.BannerAddDTO;
-import com.h9.admin.model.dto.BannerTypeAddDTO;
-import com.h9.admin.model.dto.BannerTypeEditDTO;
-import com.h9.admin.model.dto.PageDTO;
+import com.h9.admin.model.dto.*;
 import com.h9.admin.service.CommunityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -61,7 +58,21 @@ public class CommunityController {
     @PostMapping(value="/banner")
     @ApiOperation("增加功能")
     public Result<Banner> addBanner(@Validated @RequestBody BannerAddDTO bannerAddDTO){
-        return this.communityService.addBanner(bannerAddDTO.toBanner());
+        return this.communityService.addBanner(bannerAddDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/banner")
+    @ApiOperation("编辑功能")
+    public Result<Banner> updateBanner(@Validated @RequestBody BannerEditDTO bannerEditDTO){
+        return this.communityService.updateBanner(bannerEditDTO);
+    }
+
+    @Secured
+    @GetMapping(value="/banner/page")
+    @ApiOperation("分页获取功能")
+    public Result<PageResult<Banner>> getBanners(PageDTO pageDTO){
+        return this.communityService.getBanners(pageDTO);
     }
 
 }

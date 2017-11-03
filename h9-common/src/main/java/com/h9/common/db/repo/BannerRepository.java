@@ -2,6 +2,8 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.Banner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
@@ -19,4 +21,9 @@ public interface BannerRepository extends BaseRepository<Banner> {
     List<Banner> findActiviBanner( Date date);
 
     Banner findByTitle(String title);
+
+    Banner findByIdNotAndTitle(long id,String title);
+
+    @Query("select o from Banner o")
+    Page<Banner> findAllByPage(Pageable page);
 }
