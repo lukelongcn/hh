@@ -61,6 +61,9 @@ public class Reward extends BaseEntity {
     @Temporal(TIMESTAMP)
     @Column(name = "finish_time", columnDefinition = "datetime COMMENT '结束时间'")
     private Date finishTime;
+    
+    @Column(name = "partake_count",nullable = false,columnDefinition = "int default 0 COMMENT '参加数量'")
+    private Integer partakeCount;
 
     public Long getId() {
         return id;
@@ -156,5 +159,13 @@ public class Reward extends BaseEntity {
 
     public void setMd5Code(String md5Code) {
         this.md5Code = md5Code;
+    }
+
+    public Integer getPartakeCount() {
+        return partakeCount;
+    }
+
+    public void setPartakeCount(Integer partakeCount) {
+        this.partakeCount = partakeCount;
     }
 }

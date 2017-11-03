@@ -5,6 +5,7 @@ import com.h9.lottery.interceptor.Secured;
 import com.h9.lottery.model.dto.LotteryFlow;
 import com.h9.lottery.model.dto.LotteryResult;
 
+import com.h9.lottery.model.vo.LotteryVo;
 import com.h9.lottery.service.LotteryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,10 +13,12 @@ import io.swagger.annotations.ApiParam;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 /**
@@ -39,10 +42,8 @@ public class LotteryContorller {
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
-                              @PathParam("code") @NotEmpty(message = "条码不存在") String code){
-        logger.debugv("userId {0} code {1}" ,userId, code);
-        //        TODO
-        return  Result.success();
+                          @RequestBody LotteryVo lotteryVo,HttpServletRequest request){
+        return lotteryService.appCode(userId,lotteryVo,request);
     }
 
     @Secured
@@ -63,6 +64,7 @@ public class LotteryContorller {
         logger.debugv("userId {0}" ,userId);
         return Result.success();
     }
+
 
 
 
