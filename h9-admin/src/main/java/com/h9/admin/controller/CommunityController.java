@@ -10,6 +10,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.entity.BannerType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class CommunityController {
     @PutMapping(value="/banner_type")
     @ApiOperation("编辑功能类别")
     public Result<BannerType> updateBannerType(@Validated @RequestBody BannerTypeEditDTO bannerTypeDTO){
-        return this.communityService.editBannerType(bannerTypeDTO);
+        return this.communityService.updateBannerType(bannerTypeDTO);
     }
 
     @Secured
@@ -46,4 +47,13 @@ public class CommunityController {
     public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO){
         return this.communityService.getBannerTypes(pageDTO);
     }
+
+    @Secured
+    @PutMapping(value="/banner_type/status/{id}")
+    @ApiOperation("禁用/开启功能类别")
+    public Result<BannerType> updateBannerTypeStatus(@ApiParam(value = "功能分类id")@PathVariable long id){
+        return this.communityService.updateBannerTypeStatus(id);
+    }
+
+
 }

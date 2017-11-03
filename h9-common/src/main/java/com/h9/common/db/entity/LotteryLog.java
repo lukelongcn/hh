@@ -10,13 +10,13 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Created with IntelliJ IDEA.
  * Description:
  * User:刘敏华 shadow.liu@hey900.com
- * Date: 2017/11/2
- * Time: 16:59
+ * Date: 2017/11/3
+ * Time: 15:53
  */
 
 @Entity
-@Table(name = "codeRepo",uniqueConstraints = @UniqueConstraint(columnNames = "code"))
-public class CodeRepo extends BaseEntity {
+@Table(name = "lotteryLog")
+public class LotteryLog extends BaseEntity {
 
 
     @Id
@@ -24,8 +24,15 @@ public class CodeRepo extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'code'")
+    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
+    private Long userId;
+
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '奖励条码'")
     private String code;
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    private UserRecord userRecord;
 
 
     public Long getId() {
@@ -36,11 +43,5 @@ public class CodeRepo extends BaseEntity {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
-    }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
 }

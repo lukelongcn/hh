@@ -1,6 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 
@@ -37,28 +38,28 @@ public class UserRecord extends BaseEntity {
     @Column(name = "latitude", columnDefinition = "double default null COMMENT ''")
     private double latitude;
 
-    @Column(name = "address", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '地址'")
+    @Column(name = "address", columnDefinition = "varchar(64) default '' COMMENT '地址'")
     private String address;
 
-    @Column(name = "refer", nullable = false, columnDefinition = "varchar(500) default '' COMMENT '前置页面'")
+    @Column(name = "refer", columnDefinition = "varchar(500) default '' COMMENT '前置页面'")
     private String refer;
 
-    @Column(name = "user_agent", nullable = false, columnDefinition = "varchar(500) default '' COMMENT '用户代理'")
+    @Column(name = "user_agent",  columnDefinition = "varchar(500) default '' COMMENT '用户代理'")
     private String userAgent;
 
-    @Column(name = "ip", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'ip地址'")
+    @Column(name = "ip", columnDefinition = "varchar(64) default '' COMMENT 'ip地址'")
     private String ip;
     
-    @Column(name = "os", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '系统'")
+    @Column(name = "os",columnDefinition = "varchar(32) default '' COMMENT '系统'")
     private String os;
     
-    @Column(name = "version", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '客户端版本'")
+    @Column(name = "version",  columnDefinition = "varchar(32) default '' COMMENT '客户端版本'")
     private String version;
     
-    @Column(name = "client",nullable = false,columnDefinition = "int default 0 COMMENT '客户端'")
+    @Column(name = "client",columnDefinition = "int default 0 COMMENT '客户端'")
     private Integer client;
 
-    @Column(name = "imei", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '机器唯一码'")
+    @Column(name = "imei",  columnDefinition = "varchar(64) default '' COMMENT '机器唯一码'")
     private String imei;
 
     
@@ -115,7 +116,13 @@ public class UserRecord extends BaseEntity {
     }
 
     public void setRefer(String refer) {
-        this.refer = refer;
+        if(StringUtils.isNotEmpty(refer)){
+            if(refer.length()>499){
+                refer = refer.substring(0, 499);
+            }
+            this.refer = refer;
+        }
+
     }
 
     public String getUserAgent() {
@@ -123,7 +130,12 @@ public class UserRecord extends BaseEntity {
     }
 
     public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+        if(StringUtils.isNotEmpty(userAgent)){
+            if(userAgent.length()>499){
+                userAgent = userAgent.substring(0, 499);
+            }
+            this.userAgent = userAgent;
+        }
     }
 
     public String getIp() {
@@ -132,5 +144,37 @@ public class UserRecord extends BaseEntity {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Integer getClient() {
+        return client;
+    }
+
+    public void setClient(Integer client) {
+        this.client = client;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 }

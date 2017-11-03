@@ -1,7 +1,6 @@
 package com.h9.admin.model.dto;
 
 import com.h9.common.db.entity.BannerType;
-import com.h9.common.utils.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -66,16 +65,16 @@ public class BannerTypeAddDTO {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = DateUtil.formatDate(startTime,DateUtil.FormatType.SECOND);
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
     public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = DateUtil.formatDate(endTime,DateUtil.FormatType.SECOND);
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public BannerType toBannerType(){
