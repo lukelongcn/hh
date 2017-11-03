@@ -1,12 +1,14 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.BannerAddDTO;
 import com.h9.admin.model.dto.BannerTypeAddDTO;
 import com.h9.admin.model.dto.BannerTypeEditDTO;
 import com.h9.admin.model.dto.PageDTO;
 import com.h9.admin.service.CommunityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,5 +57,11 @@ public class CommunityController {
         return this.communityService.updateBannerTypeStatus(id);
     }
 
+    @Secured
+    @PostMapping(value="/banner")
+    @ApiOperation("增加功能")
+    public Result<Banner> addBanner(@Validated @RequestBody BannerAddDTO bannerAddDTO){
+        return this.communityService.addBanner(bannerAddDTO.toBanner());
+    }
 
 }

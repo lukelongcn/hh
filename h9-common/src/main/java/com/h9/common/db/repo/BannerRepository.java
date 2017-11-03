@@ -17,4 +17,6 @@ public interface BannerRepository extends BaseRepository<Banner> {
      */
     @Query(value = "select o from Banner o where o.startTime < ?1 and o.endTime> ?1 and o.enable =1  order by o.sort")
     List<Banner> findActiviBanner( Date date);
+
+    Banner findByTitle(String title);
 }

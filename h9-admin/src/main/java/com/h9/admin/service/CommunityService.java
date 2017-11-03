@@ -4,7 +4,11 @@ import com.h9.admin.model.dto.BannerTypeEditDTO;
 import com.h9.admin.model.dto.PageDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.ArticleType;
+import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.repo.ArticleTypeRepository;
+import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.BannerTypeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,10 @@ public class CommunityService {
 
     @Autowired
     private BannerTypeRepository bannerTypeRepository;
+    @Autowired
+    private BannerRepository bannerRepository;
+    @Autowired
+    private ArticleTypeRepository articleTypeRepository;
 
     public Result<BannerType> addBannerType(BannerType bannerType){
         if(this.bannerTypeRepository.findByCode(bannerType.getCode())!=null){
@@ -60,5 +68,16 @@ public class CommunityService {
             bannerType.setEnable(1);
         }
         return Result.success(this.bannerTypeRepository.save(bannerType));
+    }
+
+    public Result<Banner> addBanner(Banner banner){
+        if(this.bannerRepository.findByTitle(banner.getTitle())!=null){
+            return Result.fail("名称已存在");
+        }
+        return Result.success(this.bannerRepository.save(banner));
+    }
+
+    public Result<ArticleType> addArticleType(ArticleType articleType){
+        return Result.success(this.articleTypeRepository.save(articleType));
     }
 }

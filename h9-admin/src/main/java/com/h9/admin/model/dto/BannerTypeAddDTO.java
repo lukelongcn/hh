@@ -17,15 +17,15 @@ import java.util.Date;
 @ApiModel("功能分类-增加-参数")
 public class BannerTypeAddDTO {
 
-    @ApiModelProperty(value = "名称")
+    @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "标识")
+    @ApiModelProperty(value = "标识",required = true)
     @NotEmpty(message = "标识不能为空")
     private String code;
 
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态",required = true)
     @NotNull(message = "状态不能为空")
     private Integer enable;
 
