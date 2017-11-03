@@ -41,10 +41,13 @@ public class OrderItems extends BaseEntity {
     @Column(name = "count",columnDefinition = "int default 1 COMMENT '数量' ")
     private Integer count = 1;
 
-
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单商品id'")
+    @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单id'")
     private Orders orders;
+
+    @ManyToOne
+    @JoinColumn(name = "goods_id",referencedColumnName = "id")
+    private Goods goods;
 
     public OrderItems(String name, String image, BigDecimal price, BigDecimal money, Integer count, Orders orders) {
         this.name = name;
@@ -53,6 +56,14 @@ public class OrderItems extends BaseEntity {
         this.money = money;
         this.count = count;
         this.orders = orders;
+    }
+
+    public Goods getGoods() {
+        return goods;
+    }
+
+    public void setGoods(Goods goods) {
+        this.goods = goods;
     }
 
     public OrderItems(){}

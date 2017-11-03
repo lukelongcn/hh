@@ -1,23 +1,20 @@
 package com.h9.api.service;
 
 import com.h9.api.model.vo.BalanceFlowVO;
+import com.h9.api.model.vo.MyCouponsVO;
 import com.h9.api.model.vo.UserAccountInfoVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.VCoinsFlow;
-import com.h9.common.db.repo.BalanceFlowRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.db.repo.UserRepository;
-import com.h9.common.db.repo.VCoinsFlowRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +31,8 @@ public class AccountService {
     private VCoinsFlowRepository vCoinsFlowRepository;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private OrderItemReposiroty orderItemReposiroty;
 
     @Resource
     private UserRepository userRepository;
@@ -62,9 +61,21 @@ public class AccountService {
     public Result accountInfo(Long userId) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
+        Object cardCount = orderItemReposiroty.findCardCount(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
 
-        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount);
-
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount,cardCount+"");
         return Result.success(userAccountInfoVO);
+    }
+
+    public Result couponeList(Long userId) {
+//        User user = userRepository.findOne(userId);
+        List<OrderItems> itemsList = orderItemReposiroty.findByUser(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
+
+        List<MyCouponsVO> voList = new ArrayList<>();
+        for(OrderItems item : itemsList){
+            MyCouponsVO vo = new MyCouponsVO(item,item.getGoods());
+            voList.add(vo);
+        }
+        return Result.success(voList);
     }
 }

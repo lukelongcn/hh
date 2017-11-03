@@ -13,10 +13,10 @@ public class UserAccountInfoVO {
     private String imgUrl;
     private String nickName;
 
-    public UserAccountInfoVO (User user, UserAccount userAccount){
+    public UserAccountInfoVO (User user, UserAccount userAccount,String cardNum){
         this.balance = userAccount.getBalance().toString();
         this.vb = userAccount.getvCoins().toString();
-        this.cardNum = "2";
+        this.cardNum = cardNum;
         this.imgUrl = user.getAvatar();
         this.nickName = user.getNickName();
     }
