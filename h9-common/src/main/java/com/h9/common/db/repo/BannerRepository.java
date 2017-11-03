@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by itservice on 2017/10/30.
  */
-public interface BannerReposiroty extends BaseRepository<Banner> {
+public interface BannerRepository extends BaseRepository<Banner> {
 
     /**
      * description: 查询当前生效的banner

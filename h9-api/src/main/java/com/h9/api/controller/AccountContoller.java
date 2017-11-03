@@ -53,10 +53,19 @@ public class AccountContoller {
     }
 
 
+    /**
+     * description: 账户资金信息
+     */
     @Secured
     @GetMapping("/account/info")
     public Result accountInfo(@SessionAttribute("curUserId") Long userId){
         return accountService.accountInfo(userId);
     }
 
+    @Secured
+    @GetMapping("/account/didicoupons")
+    public Result didiCoupones(@SessionAttribute("curUserId") Long userId){
+
+        return accountService.couponeList(userId);
+    }
 }

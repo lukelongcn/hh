@@ -58,6 +58,11 @@ public class Banner extends BaseEntity {
     @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
     private Integer sort = 1;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 0 COMMENT '状态 1启用 0 禁用'")
+    private Integer status;
+
+    @Column(name = "font_color", columnDefinition = "varchar(10) default '' COMMENT '字体颜色'")
+    private String fontColor;
 
 
     public Long getId() {
@@ -139,5 +144,21 @@ public class Banner extends BaseEntity {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
     }
 }

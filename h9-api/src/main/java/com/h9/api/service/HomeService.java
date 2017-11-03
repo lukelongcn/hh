@@ -7,13 +7,12 @@ import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.repo.ArticleReposiroty;
-import com.h9.common.db.repo.BannerReposiroty;
+import com.h9.common.db.repo.BannerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by itservice on 2017/10/30.
@@ -22,14 +21,14 @@ import java.util.stream.Collectors;
 public class HomeService {
 
     @Resource
-    private BannerReposiroty bannerReposiroty;
+    private BannerRepository bannerRepository;
     @Resource
     private ArticleReposiroty articleReposiroty;
 
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
         Map<String, List<HomeVO>> voMap = new HashMap<>();
-        List<Banner> bannerList = bannerReposiroty.findActiviBanner(new Date());
+        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date());
         if (!CollectionUtils.isEmpty(bannerList)) {
             bannerList.forEach(banner -> {
                 BannerType bannerType = banner.getBannerType();

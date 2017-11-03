@@ -1,5 +1,6 @@
 package com.h9.admin.controller;
 
+import com.h9.admin.interceptor.NotPrintParam;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.SystemUserDTO;
 import com.h9.admin.model.vo.LoginResultVO;
@@ -46,6 +47,7 @@ public class UserController {
         int i = 1/0;
     }
 
+    @NotPrintParam
     @PostMapping("/login")
     @ApiOperation(value = "登录") // hidden=true隐藏接口
     public Result<LoginResultVO> login( @Valid @RequestBody SystemUserDTO systemUserDTO) {
