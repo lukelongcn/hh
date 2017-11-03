@@ -80,8 +80,9 @@ public class Orders extends BaseEntity {
     private Integer orderType ;
     public enum orderTypeEnum{
 
-        VIRTUAL_ORDER(1, "虚拟订单（话费，滴滴兑换）"),
-        OTHER(2, "其他");
+        MOBILE_RECHARGE(1, "话费充值"),
+        DIDI_COUPON(2,"滴滴兑换"),
+        OTHER(3, "其他");
 
         private int code;
         private String desc;

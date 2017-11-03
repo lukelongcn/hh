@@ -68,7 +68,7 @@ public class ConsumeService {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
 
-        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(), "滴滴");
+        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", Orders.orderTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
 
         order.setUser(user);
         orderItems.setOrders(order);
@@ -119,7 +119,7 @@ public class ConsumeService {
         Goods goods = goodsReposiroty.findByTop1();
         goods.setStatus(0);
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_ORDER.getCode(), "滴滴");
+        Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
         orders.setUser(user);
 
         ordersReposiroty.saveAndFlush(orders);

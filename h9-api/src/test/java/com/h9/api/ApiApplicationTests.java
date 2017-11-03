@@ -5,6 +5,7 @@ import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.repo.OrderItemReposiroty;
 import com.h9.common.modle.DiDiCardInfo;
 import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.GoodsType;
@@ -44,6 +45,8 @@ public class  ApiApplicationTests {
 //        System.out.println(result);
 //    }
 
+    @Resource
+    private OrderItemReposiroty orderItemReposiroty;
 
     @Resource
     private RedisBean redisBean;
@@ -96,8 +99,8 @@ public class  ApiApplicationTests {
 
     @Test
     public void test2(){
-        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
-        System.out.println(realPriceAndStock);
+//        Object byTest = orderItemReposiroty.findCardCount();
+//        System.out.println(byTest);
     }
 
 }
