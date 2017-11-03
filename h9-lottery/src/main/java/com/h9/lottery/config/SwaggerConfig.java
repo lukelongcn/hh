@@ -25,7 +25,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.h9.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.h9.lottery.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -34,7 +34,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("徽酒api文档")
                 .description("版权所有翻版必究")
-                .termsOfServiceUrl("https://weixin-dev-h9.thy360.com/h9/api/swagger-ui.html")
+                .termsOfServiceUrl("https://weixin-dev-h9.thy360.com/")
                 .version("1.0")
                 .build();
     }

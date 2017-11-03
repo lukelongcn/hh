@@ -24,7 +24,7 @@ public class TestController {
      * description: 手机号登录
      */
     @GetMapping("/hello")
-    public Result phoneLogin(){
+    public Result test(){
         return Result.success();
     }
 

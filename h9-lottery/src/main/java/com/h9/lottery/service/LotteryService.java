@@ -1,5 +1,6 @@
 package com.h9.lottery.service;
 
+import com.h9.common.base.Result;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,6 +12,17 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LotteryService {
+
+
+    public Result appCode(Long userId,String code){
+
+
+        return Result.success();
+    }
+
+
+
+
 
 
 }
