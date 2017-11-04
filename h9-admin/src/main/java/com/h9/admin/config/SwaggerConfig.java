@@ -20,14 +20,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
-@ComponentScan(basePackages ={"com.h9.admin","com.h9.common"})
+//@ComponentScan(basePackages ={"com.h9.admin","com.h9.common"})
 public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                //.apis(RequestHandlerSelectors.basePackage("com.h9.*n"))
+                .apis(RequestHandlerSelectors.basePackage("com.h9.admin.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
