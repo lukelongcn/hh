@@ -2,9 +2,16 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.*;
+import com.h9.admin.model.dto.activity.ActivityAddDTO;
+import com.h9.admin.model.dto.activity.ActivityEditDTO;
+import com.h9.admin.model.dto.community.BannerAddDTO;
+import com.h9.admin.model.dto.community.BannerEditDTO;
+import com.h9.admin.model.dto.community.BannerTypeAddDTO;
+import com.h9.admin.model.dto.community.BannerTypeEditDTO;
 import com.h9.admin.service.CommunityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
 import io.swagger.annotations.Api;
@@ -69,10 +76,40 @@ public class CommunityController {
     }
 
     @Secured
-    @GetMapping(value="/banner/page")
+    @GetMapping(value="/banner/page/{banner_type_id}")
     @ApiOperation("分页获取功能")
-    public Result<PageResult<Banner>> getBanners(PageDTO pageDTO){
-        return this.communityService.getBanners(pageDTO);
+    public Result<PageResult<Banner>> getBanners(@PathVariable long banner_type_id, PageDTO pageDTO){
+        return this.communityService.getBanners(banner_type_id,pageDTO);
+    }
+
+    @Secured
+    @DeleteMapping(value="/banner/{id}")
+    @ApiOperation("删除功能")
+    public Result deleteBanner(@PathVariable long id){
+        return this.communityService.deleteBanner(id);
+    }
+
+    @Secured
+    @PostMapping(value="/activity")
+    @ApiOperation("增加活动")
+    public Result<Activity> addActivity(@Validated @RequestBody ActivityAddDTO activityAddDTO){
+        return Result.success(activityAddDTO.toActivity());
+        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
+    }
+
+    @Secured
+    @PutMapping(value="/activity")
+    @ApiOperation("编辑活动")
+    public Result<Activity> editActivity(@Validated @RequestBody ActivityEditDTO activityEditDTO){
+        return Result.success(activityEditDTO.toActivity());
+        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
+    }
+
+    @Secured
+    @GetMapping(value="/activity/page")
+    @ApiOperation("分页获取活动")
+    public Result<PageResult<Activity>> getBanners(PageDTO pageDTO){
+        return Result.success(new PageResult<Activity>());
     }
 
 }

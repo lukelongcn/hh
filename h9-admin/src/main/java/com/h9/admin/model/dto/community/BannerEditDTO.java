@@ -1,4 +1,4 @@
-package com.h9.admin.model.dto;
+package com.h9.admin.model.dto.community;
 
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
@@ -7,19 +7,22 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
  * @author: George
- * @date: 2017/11/3 14:46
+ * @date: 2017/11/3 14:39
  */
-@ApiModel("功能-增加-参数")
-public class BannerAddDTO {
+@ApiModel("功能-编辑-参数")
+public class BannerEditDTO{
 
-    @ApiModelProperty(value = "功能类型id",required = true)
-    @NotNull(message = "功能类型不能为空")
-    private Long bannerTypeId;
+    @ApiModelProperty(value = "id",required = true)
+    @NotNull(message = "id不能为空")
+    private Long id;
 
     @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
@@ -45,17 +48,19 @@ public class BannerAddDTO {
 
     @ApiModelProperty(value = "排序",required = true)
     @NotNull(message = "排序不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer sort = 1;
 
     @ApiModelProperty(value = "字体颜色")
     private String fontColor;
 
-    public Long getBannerTypeId() {
-        return bannerTypeId;
+    public Long getId() {
+        return id;
     }
 
-    public void setBannerTypeId(Long bannerTypeId) {
-        this.bannerTypeId = bannerTypeId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -127,4 +132,5 @@ public class BannerAddDTO {
         BeanUtils.copyProperties(this,banner);
         return  banner;
     }
+
 }
