@@ -1,4 +1,4 @@
-package com.h9.admin.model.dto;
+package com.h9.admin.model.dto.community;
 
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
@@ -12,14 +12,14 @@ import java.util.Date;
 
 /**
  * @author: George
- * @date: 2017/11/3 14:39
+ * @date: 2017/11/3 14:46
  */
-@ApiModel("功能-编辑-参数")
-public class BannerEditDTO{
+@ApiModel("功能-增加-参数")
+public class BannerAddDTO {
 
-    @ApiModelProperty(value = "id",required = true)
-    @NotNull(message = "id不能为空")
-    private Long id;
+    @ApiModelProperty(value = "功能类型id",required = true)
+    @NotNull(message = "功能类型不能为空")
+    private Long bannerTypeId;
 
     @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
@@ -50,12 +50,12 @@ public class BannerEditDTO{
     @ApiModelProperty(value = "字体颜色")
     private String fontColor;
 
-    public Long getId() {
-        return id;
+    public Long getBannerTypeId() {
+        return bannerTypeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBannerTypeId(Long bannerTypeId) {
+        this.bannerTypeId = bannerTypeId;
     }
 
     public String getTitle() {
@@ -127,5 +127,4 @@ public class BannerEditDTO{
         BeanUtils.copyProperties(this,banner);
         return  banner;
     }
-
 }

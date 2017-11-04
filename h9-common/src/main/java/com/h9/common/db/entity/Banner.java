@@ -27,7 +27,7 @@ public class Banner extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "banner_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT 'banner类型'")
     private BannerType bannerType;
 
