@@ -93,23 +93,23 @@ public class CommunityController {
     @PostMapping(value="/activity")
     @ApiOperation("增加活动")
     public Result<Activity> addActivity(@Validated @RequestBody ActivityAddDTO activityAddDTO){
-        return Result.success(activityAddDTO.toActivity());
-        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
+        return this.communityService.addActivity(activityAddDTO.toActivity());
     }
 
     @Secured
     @PutMapping(value="/activity")
     @ApiOperation("编辑活动")
     public Result<Activity> editActivity(@Validated @RequestBody ActivityEditDTO activityEditDTO){
-        return Result.success(activityEditDTO.toActivity());
-        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
+        return this.communityService.updateActivity(activityEditDTO);
     }
 
     @Secured
     @GetMapping(value="/activity/page")
     @ApiOperation("分页获取活动")
-    public Result<PageResult<Activity>> getBanners(PageDTO pageDTO){
-        return Result.success(new PageResult<Activity>());
+    public Result<PageResult<Activity>> getActivities(PageDTO pageDTO){
+        return this.communityService.getActivities(pageDTO);
     }
+
+
 
 }

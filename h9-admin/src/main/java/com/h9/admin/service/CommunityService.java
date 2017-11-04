@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.activity.ActivityEditDTO;
 import com.h9.admin.model.dto.community.BannerAddDTO;
 import com.h9.admin.model.dto.community.BannerEditDTO;
 import com.h9.admin.model.dto.community.BannerTypeEditDTO;
@@ -10,6 +11,7 @@ import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.repo.ActivityRepository;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.BannerTypeRepository;
@@ -32,6 +34,8 @@ public class CommunityService {
     private BannerTypeRepository bannerTypeRepository;
     @Autowired
     private BannerRepository bannerRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
     @Autowired
     private ArticleTypeRepository articleTypeRepository;
 
@@ -115,10 +119,26 @@ public class CommunityService {
         return Result.success(this.articleTypeRepository.save(articleType));
     }
 
-   /* public Result<Activity> addActivity(Activity activity){
-        if(this.bannerTypeRepository.findByCode(bannerType.getCode())!=null){
-            return Result.fail("标识已存在");
+    public Result<Activity> addActivity(Activity activity){
+        if(this.activityRepository.findByCode(activity.getCode())!=null){
+            return Result.fail("关键字已存在");
         }
-        return Result.success(this.bannerTypeRepository.save(bannerType));
-    }*/
+        return Result.success(this.activityRepository.save(activity));
+    }
+
+    public Result<Activity> updateActivity(ActivityEditDTO activityEditDTO){
+        if(this.activityRepository.findByIdNotAndCode(activityEditDTO.getId(),activityEditDTO.getCode())!=null){
+            return Result.fail("关键字已存在");
+        }
+        Activity a = this.activityRepository.findOne(activityEditDTO.getId());
+        BeanUtils.copyProperties(activityEditDTO,a);
+        return Result.success(this.activityRepository.save(a));
+    }
+
+    public Result<PageResult<Activity>> getActivities(PageDTO pageDTO){
+        PageRequest pageRequest = this.activityRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<Activity> activitys = this.activityRepository.findAllByPage(pageRequest);
+        PageResult<Activity> pageResult = new PageResult<>(activitys);
+        return Result.success(pageResult);
+    }
 }

@@ -56,10 +56,10 @@ public class Activity extends BaseEntity {
 //    @Column(name = "reward_count",nullable = false,columnDefinition = "int default 0 COMMENT '奖励总数量'")
 //    private Integer rewardCount;
 
-    @Column(name = "activity_url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '活动路径'")
+    @Column(name = "activity_url",  columnDefinition = "varchar(256) default '' COMMENT '活动路径'")
     private String activityUrl;
 
-    @Column(name = "activity_icon", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '图片路径'")
+    @Column(name = "activity_icon",  columnDefinition = "varchar(256) default '' COMMENT '图片路径'")
     private String activityIcon;
 
     @Column(name = "activity_desc", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '活动描述'")

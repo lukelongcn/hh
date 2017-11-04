@@ -16,9 +16,6 @@ import java.util.Date;
 @ApiModel("活动-编辑-参数")
 public class ActivityAddDTO {
 
-    @ApiModelProperty(value = "id",required = true)
-    @NotNull(message = "id不能为空")
-    private Long id;
 
     @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
@@ -98,20 +95,12 @@ public class ActivityAddDTO {
     private String imgTextDesc;
 
     @ApiModelProperty(value = "中奖人数",required = true)
-    @NotEmpty(message = "中奖人数不能为空")
+    @NotNull(message = "中奖人数不能为空")
     private Integer targetCount = 0;
 
     @ApiModelProperty(value = "中奖比例",required = true)
     @NotEmpty(message = "中奖比例不能为空")
     private String targetRate;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getActivityName() {
         return activityName;

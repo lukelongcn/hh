@@ -3,15 +3,9 @@ package com.h9.admin.model.dto.activity;
 import com.h9.common.db.entity.Activity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George
