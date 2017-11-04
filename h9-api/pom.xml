@@ -72,8 +72,12 @@
 			<resource>
 				<directory>src/main/resources/MerPrK_808080211881410_20171102154758.key</directory>
 			</resource>
+
 			<resource>
-				<directory>lib/netpayclient.jar</directory>
+				<directory>src/main/resources/</directory>
+				<includes>
+					<include>netpayclient.jar</include>
+				</includes>
 			</resource>
 		</resources>
 	</build>
