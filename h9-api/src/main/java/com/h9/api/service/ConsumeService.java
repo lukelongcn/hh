@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
+//import com.h9.api.provider.ChinaPayService;
 import com.h9.common.modle.DiDiCardInfo;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
@@ -15,6 +16,7 @@ import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  * Created by itservice on 2017/10/31.
  */
 @Service
+@Transactional
 public class ConsumeService {
 
     @Resource
@@ -51,9 +54,10 @@ public class ConsumeService {
     private GoodsReposiroty goodsReposiroty;
     @Resource
     private OrdersReposiroty ordersReposiroty;
-
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
+//    @Resource
+//    private ChinaPayService chinaPayService;
 
     @Resource
     private AccountService accountService;
@@ -61,15 +65,27 @@ public class ConsumeService {
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
-        //TODO 判断 余额 够不够
         BigDecimal accountBalance = accountService.getAccountBalance(userId);
         //TODO 防止用户连续多次点击，多次充值的情况
         //TODO 记录充值日志
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+
+        if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
+
+        Goods goods = goodsReposiroty.findOne(mobileRechargeDTO.getId());
+        BigDecimal realPrice = goods.getRealPrice();
+        if(balance.compareTo(realPrice) < 0){
+            return Result.fail("余额不足");
+        }
+
+        BigDecimal subtract = balance.subtract(realPrice);
+
+        userAccountRepository.changeBalance(subtract,userId);
 
         Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", Orders.orderTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
-
         order.setUser(user);
         orderItems.setOrders(order);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
@@ -77,11 +93,11 @@ public class ConsumeService {
         orderItems.setName("手机话费充值");
 
         orderItemReposiroty.saveAndFlush(orderItems);
-
+        userAccountRepository.save(userAccount);
         if (result.getCode() == 0) {
             return Result.success("充值成功");
         } else {
-            return Result.fail("充值失败");
+            throw new RuntimeException("充值失败");
         }
     }
 
@@ -112,7 +128,7 @@ public class ConsumeService {
         BigDecimal accountBalance = accountService.getAccountBalance(userId);
         BigDecimal price = didiCardDTO.getPrice();
 
-        if(accountBalance.compareTo(price) < 0){
+        if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
         }
 
@@ -130,8 +146,14 @@ public class ConsumeService {
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", goods.getDiDiCardNumber());
         voMap.put("money", goods.getRealPrice().toString());
-        logger.info("key : "+smsCodeKey);
-        redisBean.setStringValue(smsCodeKey,"",1, TimeUnit.SECONDS);
+        logger.info("key : " + smsCodeKey);
+        redisBean.setStringValue(smsCodeKey, "", 1, TimeUnit.SECONDS);
         return Result.success(voMap);
+    }
+
+    public Result bankWithDraw(Long userId) {
+//        User user = userRepository.findOne(userId);
+//        Result result = chinaPayService.signPay();
+        return null;
     }
 }

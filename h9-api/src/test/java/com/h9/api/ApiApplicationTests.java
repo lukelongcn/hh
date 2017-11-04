@@ -1,8 +1,10 @@
 package com.h9.api;
 
 import com.h9.api.interceptor.LoginAuthInterceptor;
-import com.h9.api.provider.MobileRechargeService;
+//import com.h9.api.provider.ChinaPayService;
+//import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
+import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.repo.OrderItemReposiroty;
@@ -71,8 +73,8 @@ public class ApiApplicationTests {
         System.out.println(stringValue);
     }
 
-    @Resource
-    private MobileRechargeService mobileRechargeService;
+//    @Resource
+//    private MobileRechargeService mobileRechargeService;
     @Resource
     private GoodsReposiroty goodsReposiroty;
     @Resource
@@ -104,6 +106,31 @@ public class ApiApplicationTests {
 
     @Value("${chinaPay.merId}")
     private String merId;
+
+//    @Resource
+//    private ChinaPayService chinaPayService;
+    @Test
+    public void testcp(){
+
+        String merId = "808080211881410";
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+        String merDate = format.format(new Date());
+        String merSeqId = "8";
+        String cardNo = "6210984280001561104";
+        String usrName = "李圆";
+        String openBank = "中国邮政储蓄银行";
+        String prov = "江西";
+        String city = "赣州";
+        String transAmt = "101";
+        String purpose = "提现";
+        String version = "20151207";
+        String signFlag = "1";
+        String termType = "7";
+
+//        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
+//        Result result = chinaPayService.signPay(payParam);
+//        System.out.println(result);
+    }
 
 
 
