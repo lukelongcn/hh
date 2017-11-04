@@ -15,17 +15,19 @@ import com.h9.common.db.repo.SMSLogReposiroty;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class  ApiApplicationTests {
+public class ApiApplicationTests {
 
     @Test
     public void contextLoads() {
@@ -50,19 +52,21 @@ public class  ApiApplicationTests {
 
     @Resource
     private RedisBean redisBean;
-//    @Test
-    public void redisTest(){
+
+    //    @Test
+    public void redisTest() {
         String key = String.format("h9:sms:count:%s", "17673140753");
-        redisBean.setStringValue(key,"0");
+        redisBean.setStringValue(key, "0");
     }
 
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
-//    @Test
-    public void test(){
+
+    //    @Test
+    public void test() {
         String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
         String stringValue = redisBean.getStringValue(key);
-        redisBean.setStringValue(key,"");
+        redisBean.setStringValue(key, "");
 
         System.out.println(stringValue);
     }
@@ -73,15 +77,16 @@ public class  ApiApplicationTests {
     private GoodsReposiroty goodsReposiroty;
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
+
     @Test
 //    @Test
-    public void mobileRecharge(){
+    public void mobileRecharge() {
 
 
     }
 
     @Test
-    public void didiCardInit(){
+    public void didiCardInit() {
 
         GoodsType goodsType = goodsTypeReposiroty.findOne(2L);
         for (int i = 0; i < 200; i++) {
@@ -97,10 +102,9 @@ public class  ApiApplicationTests {
         }
     }
 
-    @Test
-    public void test2(){
-//        Object byTest = orderItemReposiroty.findCardCount();
-//        System.out.println(byTest);
-    }
+    @Value("${chinaPay.merId}")
+    private String merId;
+
+
 
 }
