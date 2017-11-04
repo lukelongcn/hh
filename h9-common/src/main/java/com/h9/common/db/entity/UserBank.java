@@ -3,6 +3,7 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -31,6 +32,9 @@ public class UserBank extends BaseEntity {
 
     @Column(name = "no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '银行卡号'")
     private String no;
+
+    @Column(name = "bank_type", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '银行类别'")
+    private String bankType;
 
     @Column(name = "provice", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户省'")
     private String provice;
