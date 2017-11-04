@@ -21,6 +21,9 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Table(name = "reward")
 public class Reward extends BaseEntity {
 
+
+
+
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -52,6 +55,9 @@ public class Reward extends BaseEntity {
     @JoinColumn(name = "product_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '管连商品信息'")
     private Product product;
 
+    /***
+     * @see StatusEnum
+     */
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 未领取 2 部分领取 3 已领取完毕 4 已失效'")
     private Integer status = 1;
 
@@ -63,7 +69,7 @@ public class Reward extends BaseEntity {
     private Date finishTime;
     
     @Column(name = "partake_count",nullable = false,columnDefinition = "int default 0 COMMENT '参加数量'")
-    private Integer partakeCount;
+    private int partakeCount;
 
     public Long getId() {
         return id;
@@ -128,11 +134,18 @@ public class Reward extends BaseEntity {
     public void setProduct(Product product) {
         this.product = product;
     }
-
+    /***
+     * @see StatusEnum
+     * @param status
+     */
     public Integer getStatus() {
         return status;
     }
 
+    /***
+     * @see StatusEnum
+     * @param status
+     */
     public void setStatus(Integer status) {
         this.status = status;
     }
@@ -161,11 +174,47 @@ public class Reward extends BaseEntity {
         this.md5Code = md5Code;
     }
 
-    public Integer getPartakeCount() {
+    public  int getPartakeCount() {
         return partakeCount;
     }
 
-    public void setPartakeCount(Integer partakeCount) {
+    public void setPartakeCount(int partakeCount) {
         this.partakeCount = partakeCount;
+    }
+
+
+    public static enum StatusEnum{
+
+        TO_BEGIN(1,"待领取"),
+        PART_START(2,"抢红包中"),
+        END(3,"抢红包结束"),
+        FAILD(4,"红包已失效");
+
+        private int code;
+        private String desc;
+
+        StatusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+
+
     }
 }

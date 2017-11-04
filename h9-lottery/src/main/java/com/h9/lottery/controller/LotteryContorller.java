@@ -4,13 +4,11 @@ import com.h9.common.base.Result;
 import com.h9.lottery.interceptor.Secured;
 import com.h9.lottery.model.dto.LotteryFlow;
 import com.h9.lottery.model.dto.LotteryResult;
-
-import com.h9.lottery.model.vo.LotteryVo;
+import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.service.LotteryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +37,7 @@ public class LotteryContorller {
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
-                          @RequestBody LotteryVo lotteryVo,HttpServletRequest request){
+                          @RequestBody LotteryDto lotteryVo, HttpServletRequest request){
         return lotteryService.appCode(userId,lotteryVo,request);
     }
 
@@ -57,7 +55,7 @@ public class LotteryContorller {
     @Secured
     @GetMapping("/history")
     @ApiOperation(value = "奖励结果页面")
-    public Result<LotteryFlow> getLotteryH(@SessionAttribute("curUserId") long userId){
+    public Result<LotteryFlow> getLotteryHistory(@SessionAttribute("curUserId") long userId){
         logger.debugv("userId {0}" ,userId);
         return Result.success();
     }
