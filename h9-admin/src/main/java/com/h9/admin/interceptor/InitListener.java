@@ -22,8 +22,6 @@ import javax.annotation.Resource;
 @Component
 public class InitListener implements ApplicationListener<ApplicationReadyEvent> {
     private Logger logger = Logger.getLogger(InitListener.class);
-    public static final String[] BANNER_TYPE = {"topBanner","navigationBanner","ideaBanner"};
-    public static final String[] ARTICLE_TYPE = {"noticeArticle","recommendArticle"};
     @Resource
     private BannerTypeRepository bannerTypeRepository;
     @Resource

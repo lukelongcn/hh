@@ -33,10 +33,13 @@ public class HomeVO {
             Article article = (Article) obj;
             ArticleType articleType = article.getArticleType();
             vo.setImgUrl(article.getUrl());
-            vo.setContent(article.getUserName());
+            vo.setContent("");
+            vo.setTitle(article.getTitle());
             vo.setCode(articleType.getCode());
+            vo.setLink(article.getUrl());
             vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
             vo.setType("article");
+            vo.setContent(article.getTitle());
             return vo;
         }
 

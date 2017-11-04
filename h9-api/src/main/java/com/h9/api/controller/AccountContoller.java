@@ -62,6 +62,9 @@ public class AccountContoller {
         return accountService.accountInfo(userId);
     }
 
+    /**
+     * description: 我的滴滴卡劵列表
+     */
     @Secured
     @GetMapping("/account/didicoupons")
     public Result didiCoupones(@SessionAttribute("curUserId") Long userId){

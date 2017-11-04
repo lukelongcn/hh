@@ -18,8 +18,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class ArticleType extends BaseEntity {
 
 
-
-
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")

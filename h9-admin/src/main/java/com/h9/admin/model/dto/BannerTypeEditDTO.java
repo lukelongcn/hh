@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @ApiModel("功能分类-编辑-参数")
 public class BannerTypeEditDTO extends BannerTypeAddDTO {
 
+    @ApiModelProperty(value = "id",required = true)
     @NotNull(message = "id不能为空")
     private Long id;
 
