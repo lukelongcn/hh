@@ -4,6 +4,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.entity.UserRecord;
 import com.h9.common.db.repo.RewardRepository;
+import com.h9.common.db.repo.UserRecordRepository;
 import com.h9.common.utils.NetworkUtil;
 import com.h9.lottery.model.vo.LotteryVo;
 import org.springframework.stereotype.Service;
@@ -25,20 +26,22 @@ public class LotteryService {
     private RewardRepository rewardRepository;
 
 
+    @Resource
+    UserRecordRepository userRecordRepository;
+
+
     public Result appCode(Long userId, LotteryVo lotteryVo,HttpServletRequest request){
-
 //        记录用户信息
-
+        UserRecord userRecord = newUserRecord(userId, lotteryVo, request);
         //检查用户是否在黑名单里面
+        //检查用户参与活动次数
         Reward reward = rewardRepository.findByCode(lotteryVo.getCode());
         if (reward == null) {
-           Long count = record(userId, lotteryVo);
             //次数到达多少次 加如黑名单
-
-
-
             return Result.fail("奖励条码不存在");
         }
+
+
 
 
 
@@ -72,9 +75,7 @@ public class LotteryService {
         userRecord.setLatitude(lotteryVo.getLatitude());
         userRecord.setLongitude(lotteryVo.getLongitude());
         userRecord.setImei(lotteryVo.getImei());
-
-
-        return userRecord;
+        return userRecordRepository.saveAndFlush(userRecord);
 
     }
 
