@@ -47,7 +47,7 @@
 			<artifactId>chinapay</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/netpayclient.jar</systemPath>
+			<systemPath>${project.basedir}/lib/netpayclient.jar</systemPath>
 		</dependency>
 
 	</dependencies>
