@@ -47,7 +47,7 @@
 			<artifactId>postgresql</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/netpayclient.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/resources/netpayclient.jar</systemPath>
 		</dependency>
 
 	</dependencies>
@@ -73,11 +73,7 @@
 				<directory>src/main/resources/MerPrK_808080211881410_20171102154758.key</directory>
 			</resource>
 			<resource>
-				<targetPath>lib</targetPath>
-				<directory>lib</directory>
-				<includes>
-					<include>*.jar</include>
-				</includes>
+				<directory>lib/netpayclient.jar</directory>
 			</resource>
 		</resources>
 	</build>
