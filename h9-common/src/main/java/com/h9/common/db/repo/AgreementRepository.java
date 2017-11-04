@@ -5,13 +5,16 @@ import com.h9.common.db.entity.HtmlContent;
 import org.springframework.data.jpa.repository.Query;
 
 /**
- * Created by 李圆
- * on 2017/11/1
+ * Created by liyuan on 2017/11/1.
  */
 public interface AgreementRepository extends BaseRepository<HtmlContent> {
     /**
-     * 返回用户协议内容
+     * 返回页面内容
+     * @param code
+     * @return
      */
-    @Query("select code from HtmlContent where name=?1 ")
-    String agreement(String name);
+    @Query("select content from HtmlContent where code=?1 ")
+    String agreement(String code);
+
+
 }
