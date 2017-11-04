@@ -3,6 +3,7 @@ package com.h9.api.service;
 import com.h9.api.enums.SMSTypeEnum;
 //import com.h9.api.provider.ChinaPayService;
 //import com.h9.api.provider.ChinaPayService;
+import com.h9.api.provider.ChinaPayService;
 import com.h9.common.modle.DiDiCardInfo;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +60,8 @@ public class ConsumeService {
     private OrdersReposiroty ordersReposiroty;
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
-//    @Resource
-//    private ChinaPayService chinaPayService;
+    @Resource
+    private ChinaPayService chinaPayService;
 
     @Resource
     private AccountService accountService;
@@ -154,7 +157,23 @@ public class ConsumeService {
 
     public Result bankWithDraw(Long userId) {
 //        User user = userRepository.findOne(userId);
+
+        String merId = "808080211881410";
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+        String merDate = format.format(new Date());
+        String merSeqId = "8";
+        String cardNo = "6210984280001561104";
+        String usrName = "李圆";
+        String openBank = "中国邮政储蓄银行";
+        String prov = "江西";
+        String city = "赣州";
+        String transAmt = "101";
+        String purpose = "提现";
+        String version = "20151207";
+        String signFlag = "1";
+        String termType = "7";
+        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam();
 //        Result result = chinaPayService.signPay();
-        return null;
+        return Result.fail();
     }
 }
