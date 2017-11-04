@@ -16,6 +16,7 @@ public class LotteryResult {
     private String code;
     private BigDecimal money = new BigDecimal(0);
     private List<LotteryUser> users;
+    private List<LotteryUser> lotteryUsers;
     private String startTime;
     private String endTime;
     private int status;
@@ -50,5 +51,37 @@ public class LotteryResult {
 
     public void setMoney(BigDecimal money) {
         this.money = money;
+    }
+
+    public List<LotteryUser> getLotteryUsers() {
+        return lotteryUsers;
+    }
+
+    public void setLotteryUsers(List<LotteryUser> lotteryUsers) {
+        this.lotteryUsers = lotteryUsers;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

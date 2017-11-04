@@ -1,11 +1,8 @@
 package com.h9.api.model.dto;
 
-import com.h9.common.db.entity.BankType;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 /**
  * Created by 李圆
