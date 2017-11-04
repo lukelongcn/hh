@@ -18,7 +18,7 @@ public class BankCardDTO {
     @NotEmpty(message = "请填写真实姓名")
     private String name;
 
-    private String bankTypes;//银行类别
+    private String bankName;//银行类别
 
     private String provice;
 
@@ -39,7 +39,6 @@ public class BankCardDTO {
     }
 
     public void setNo(String no) {
-
         this.no = no;
     }
 
@@ -51,12 +50,12 @@ public class BankCardDTO {
         this.name = name;
     }
 
-    public String getBankTypes() {
-        return bankTypes;
+    public String getBankName() {
+        return bankName;
     }
 
-    public void setBankTypes(String bankTypes) {
-        this.bankTypes = bankTypes;
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 
     public String getProvice() {

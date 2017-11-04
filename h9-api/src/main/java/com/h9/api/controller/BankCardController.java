@@ -21,7 +21,6 @@ import javax.validation.Valid;
 @Api(value = "银行卡编辑信息",description = "银行卡编辑信息")
 public class BankCardController {
 
-
     @Resource
     private BankCardService bankCardService;
 
@@ -32,8 +31,8 @@ public class BankCardController {
      */
     @ApiOperation(value = "添加银行卡")
     @PostMapping("/bankCard/add")
-    public  Result addBankCard(@Valid@RequestBody BankCardDTO bankCardDTO,@RequestParam("name") String name){
-        return  bankCardService.addBankCard(bankCardDTO,name);
+    public  Result addBankCard(@SessionAttribute("curUserId")long userId,@Valid@RequestBody BankCardDTO bankCardDTO){
+        return  bankCardService.addBankCard(userId,bankCardDTO);
     }
 
     /**
