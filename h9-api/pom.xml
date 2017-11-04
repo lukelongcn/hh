@@ -69,9 +69,6 @@
 			<resource>
 				<directory>src/main/resources/profiles/${package.environment}</directory>
 			</resource>
-			<resource>
-				<directory>src/main/resources/MerPrK_808080211881410_20171102154758.key</directory>
-			</resource>
 
 			<resource>
 				<directory>src/main/resources/</directory>

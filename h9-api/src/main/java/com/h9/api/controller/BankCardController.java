@@ -5,8 +5,6 @@ import com.h9.api.model.dto.BankCardDTO;
 import com.h9.api.service.BankCardService;
 import com.h9.common.base.Result;
 
-import com.h9.common.db.entity.UserBank;
-import com.h9.common.db.repo.BankCardRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
