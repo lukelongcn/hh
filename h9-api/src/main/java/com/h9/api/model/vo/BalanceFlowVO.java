@@ -1,8 +1,10 @@
 package com.h9.api.model.vo;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
+import org.springframework.beans.BeanUtils;
 
 
 import java.math.BigDecimal;
@@ -24,16 +26,14 @@ public class BalanceFlowVO {
     private String remarks;
 
     public BalanceFlowVO(BalanceFlow balanceFlow) {
-        money = balanceFlow.getMoney();
-        remarks = balanceFlow.getRemarks();
+        BeanUtils.copyProperties(balanceFlow,this);
         Date createTime = balanceFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
     }
 
     public BalanceFlowVO(VCoinsFlow vCoinsFlow) {
-        money = vCoinsFlow.getMoney();
-        remarks = vCoinsFlow.getRemarks();
+        BeanUtils.copyProperties(vCoinsFlow,this);
         Date createTime = vCoinsFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
