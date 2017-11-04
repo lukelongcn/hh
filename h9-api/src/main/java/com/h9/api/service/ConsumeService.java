@@ -2,7 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
 //import com.h9.api.provider.ChinaPayService;
-import com.h9.api.provider.ChinaPayService;
+//import com.h9.api.provider.ChinaPayService;
 import com.h9.common.modle.DiDiCardInfo;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
@@ -57,8 +57,8 @@ public class ConsumeService {
     private OrdersReposiroty ordersReposiroty;
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
-    @Resource
-    private ChinaPayService chinaPayService;
+//    @Resource
+//    private ChinaPayService chinaPayService;
 
     @Resource
     private AccountService accountService;
