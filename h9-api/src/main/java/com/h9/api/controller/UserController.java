@@ -40,7 +40,7 @@ public class UserController {
     /**
      * description: 发送验证码
      */
-    @GetMapping("/user/sms/register/{phone}/{type}")
+    @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送验证码")
     public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type){
         return userService.sendSMS(phone, type);
