@@ -25,11 +25,15 @@ public class CommonController {
     @Resource
     private AgreementRepository agreementRepository;
 
-    @GetMapping(value = "/{code}")
-    public String agreement(@PathVariable("code") String code){
+    /**
+     * @param code  页面标识
+     * @return  页面内容
+     */
+    @ApiOperation(value = "获取content")
+    @GetMapping(value = "/code")
+    public String agreement(@RequestParam("code") String code){
         return agreementRepository.agreement(code);
     }
-
 
     @Resource
     private WeChatProvider weChatProvider;
@@ -60,6 +64,4 @@ public class CommonController {
     public void callback(@RequestParam("code") String code, @RequestParam("state") String state,HttpServletResponse response) throws IOException {
         response.sendRedirect(weChatProvider.getCode(code,state));
     }
-
-
 }
