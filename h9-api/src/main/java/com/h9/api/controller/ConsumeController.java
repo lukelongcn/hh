@@ -6,6 +6,7 @@ import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.service.ConsumeService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
+import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ public class ConsumeController {
     @Resource
     private ConsumeService consumeService;
 
+    private Logger logger = Logger.getLogger(this.getClass());
     /**
      * description: 手机充值
      */
@@ -30,7 +32,12 @@ public class ConsumeController {
     public Result mobileRecharge(
             @SessionAttribute("curUserId")Long userId,
             @RequestBody MobileRechargeDTO mobileRechargeDTO) {
-        return consumeService.recharge(userId,mobileRechargeDTO);
+        try {
+            return consumeService.recharge(userId,mobileRechargeDTO);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail("充值失败");
+        }
     }
 
     /**
@@ -60,5 +67,12 @@ public class ConsumeController {
     @PutMapping("/didiCard/convert")
     public Result didiCardConvert(@RequestBody@Valid DidiCardDTO didiCardDTO, @SessionAttribute("curUserId")Long userId){
         return consumeService.didiCardConvert(didiCardDTO,userId);
+    }
+
+    @Secured
+    @PostMapping("/withdraw")
+    public Result bankWithdraw(@SessionAttribute("curUserId")Long userId){
+
+        return consumeService.bankWithDraw(userId);
     }
 }

@@ -31,6 +31,9 @@ public class OrderController {
         return orderService.orderList(userId);
     }
 
+    /**
+     * description: 订单详情
+     */
     @Secured
     @GetMapping("/orders/{orderId}")
     public Result orderDetail(@PathVariable Long orderId){

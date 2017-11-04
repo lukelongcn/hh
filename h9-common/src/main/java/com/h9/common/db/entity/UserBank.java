@@ -41,6 +41,17 @@ public class UserBank extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1:正常 2禁用 3已删除'")
     private Integer status = 1;
 
+    @Column(name = "back_img",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '银行图标'")
+    private String bankImg;
+
+
+    public String getBankImg() {
+        return bankImg;
+    }
+
+    public void setBankImg(String bankImg) {
+        this.bankImg = bankImg;
+    }
 
     public Long getId() {
         return id;
