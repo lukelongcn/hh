@@ -43,8 +43,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.djdj</groupId>
-			<artifactId>cp</artifactId>
+			<groupId>com.djdg.cp</groupId>
+			<artifactId>chinapay</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/resources/netpayclient.jar</systemPath>
@@ -70,12 +70,12 @@
 				<directory>src/main/resources/profiles/${package.environment}</directory>
 			</resource>
 
-			<resource>
-				<directory>src/main/resources/</directory>
-				<includes>
-					<include>netpayclient.jar</include>
-				</includes>
-			</resource>
+			<!--<resource>-->
+				<!--<directory>src/main/resources/lib</directory>-->
+				<!--<includes>-->
+					<!--<include>**/.jar</include>-->
+				<!--</includes>-->
+			<!--</resource>-->
 		</resources>
 	</build>
 
