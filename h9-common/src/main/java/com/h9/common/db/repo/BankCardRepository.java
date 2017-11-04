@@ -13,4 +13,7 @@ public interface BankCardRepository extends BaseRepository<UserBank> {
 
     //通过id找到对应的银行卡
     UserBank findById(Long id);
+
+    //判断有无对应银行卡存在
+    UserBank findByNo(String no);
 }
