@@ -37,14 +37,15 @@ public class BankCardController {
 
     /**
      * 解绑银行卡
-     * @param status 银行卡状态
-     * @return 结果信息
+     * @param id
+     * @param userId
+     * @return  提示信息
      */
     @ApiOperation(value = "解绑银行卡")
     @PutMapping("/bankCard/update/{id}")
     public Result updateBankCard(@PathVariable("id")Long id,
-                                 @RequestParam("status")Integer status){
-        return bankCardService.updateStatus(id,status);
+                                 @SessionAttribute("curUserId")long userId){
+        return bankCardService.updateStatus(id,userId);
      }
 
 }
