@@ -43,8 +43,8 @@ public class BankCardController {
     @ApiOperation(value = "解绑银行卡")
     @PutMapping("/bankCard/update/{id}")
     public Result updateBankCard(@PathVariable("id")Long id,
-                                 @RequestParam("status")Integer status){
-        return bankCardService.updateStatus(id,status);
+                                 @SessionAttribute("curUserId")long userId){
+        return bankCardService.updateStatus(id,userId);
      }
 
 }
