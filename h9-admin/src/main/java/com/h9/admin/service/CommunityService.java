@@ -1,14 +1,17 @@
 package com.h9.admin.service;
 
-import com.h9.admin.model.dto.BannerAddDTO;
-import com.h9.admin.model.dto.BannerEditDTO;
-import com.h9.admin.model.dto.BannerTypeEditDTO;
+import com.h9.admin.model.dto.activity.ActivityEditDTO;
+import com.h9.admin.model.dto.community.BannerAddDTO;
+import com.h9.admin.model.dto.community.BannerEditDTO;
+import com.h9.admin.model.dto.community.BannerTypeEditDTO;
 import com.h9.admin.model.dto.PageDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.repo.ActivityRepository;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.BannerTypeRepository;
@@ -31,6 +34,8 @@ public class CommunityService {
     private BannerTypeRepository bannerTypeRepository;
     @Autowired
     private BannerRepository bannerRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
     @Autowired
     private ArticleTypeRepository articleTypeRepository;
 
@@ -65,6 +70,10 @@ public class CommunityService {
     public Result<BannerType> updateBannerTypeStatus(long id){
         BannerType bannerType = this.bannerTypeRepository.findOne(id);
         if(bannerType.getEnable()==1){
+            /*List<Banner> bannerList = (this.bannerRepository.findAllByBannerTypeId(bannerType.getId());
+            if(!CollectionUtils.isEmpty(bannerList)){
+                return Result.fail("")
+            }*/
             bannerType.setEnable(0);
         }else{
             bannerType.setEnable(1);
@@ -94,15 +103,42 @@ public class CommunityService {
         return Result.success(this.bannerRepository.save(b));
     }
 
-    public Result<PageResult<Banner>> getBanners(PageDTO pageDTO){
+    public Result<PageResult<Banner>> getBanners(long banner_type_id,PageDTO pageDTO){
         PageRequest pageRequest = this.bannerRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
-        Page<Banner> banners = this.bannerRepository.findAllByPage(pageRequest);
+        Page<Banner> banners = this.bannerRepository.findAllByBannerType_Id(banner_type_id,pageRequest);
         PageResult<Banner> pageResult = new PageResult<>(banners);
         return Result.success(pageResult);
     }
 
+    public Result deleteBanner(long id){
+       this.bannerRepository.delete(id);
+        return Result.success("删除成功");
+    }
 
     public Result<ArticleType> addArticleType(ArticleType articleType){
         return Result.success(this.articleTypeRepository.save(articleType));
+    }
+
+    public Result<Activity> addActivity(Activity activity){
+        if(this.activityRepository.findByCode(activity.getCode())!=null){
+            return Result.fail("关键字已存在");
+        }
+        return Result.success(this.activityRepository.save(activity));
+    }
+
+    public Result<Activity> updateActivity(ActivityEditDTO activityEditDTO){
+        if(this.activityRepository.findByIdNotAndCode(activityEditDTO.getId(),activityEditDTO.getCode())!=null){
+            return Result.fail("关键字已存在");
+        }
+        Activity a = this.activityRepository.findOne(activityEditDTO.getId());
+        BeanUtils.copyProperties(activityEditDTO,a);
+        return Result.success(this.activityRepository.save(a));
+    }
+
+    public Result<PageResult<Activity>> getActivities(PageDTO pageDTO){
+        PageRequest pageRequest = this.activityRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<Activity> activitys = this.activityRepository.findAllByPage(pageRequest);
+        PageResult<Activity> pageResult = new PageResult<>(activitys);
+        return Result.success(pageResult);
     }
 }
