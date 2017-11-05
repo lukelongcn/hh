@@ -16,6 +16,8 @@ public interface BannerTypeRepository extends BaseRepository<BannerType> {
 
     BannerType findByIdNotAndCode(long id,String code);
 
+    //BannerType findBy
+
     @Query("select o from BannerType o")
     Page<BannerType> findAllByPage(Pageable page);
 }

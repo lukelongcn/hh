@@ -7,11 +7,11 @@ import javax.persistence.Column;
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
- * LotteryVo:刘敏华 shadow.liu@hey900.com
+ * LotteryDto:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/3
  * Time: 15:26
  */
-public class LotteryVo {
+public class LotteryDto {
     @NotEmpty(message = "条码不存在")
     private String code;
     private double longitude;

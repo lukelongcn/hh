@@ -25,6 +25,7 @@ import java.util.UUID;
 /**
  * Created by itservice on 2017/10/30.
  */
+@SuppressWarnings("Duplicates")
 @Service
 public class FileService {
     @Value("${qiniu.AccessKey}")

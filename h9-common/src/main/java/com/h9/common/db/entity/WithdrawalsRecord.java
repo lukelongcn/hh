@@ -13,7 +13,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description: 提现订单表
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/28
  * Time: 14:32
@@ -22,7 +22,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Entity
 @Table(name = "withdrawals_record")
 public class WithdrawalsRecord extends BaseEntity {
-
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
@@ -35,8 +34,8 @@ public class WithdrawalsRecord extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '提现金额'")
     private BigDecimal money = new BigDecimal(0);
     
-    @Column(name = "surplus_balance",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '提现后剩余余额'")
-    private BigDecimal surplusBalance = new BigDecimal(0);
+//    @Column(name = "surplus_balance",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '提现后剩余余额'")
+//    private BigDecimal surplusBalance = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'")
@@ -51,7 +50,7 @@ public class WithdrawalsRecord extends BaseEntity {
     @Column(name = "order_id", columnDefinition = "bigint(20) default null COMMENT '相关第三方订单id'")
     private Long orderId;
 
-    @Column(name = "order_no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '第三方相关订单编号'")
+    @Column(name = "order_no",  columnDefinition = "varchar(64) default '' COMMENT '第三方相关订单编号'")
     private String orderNo;
 
 
@@ -64,6 +63,14 @@ public class WithdrawalsRecord extends BaseEntity {
     private UserRecord userRecord;
 
 
+    public WithdrawalsRecord(Long userId, BigDecimal money , UserBank userBank ,String remarks) {
+        this.userId = userId;
+        this.money = money;
+        this.userBank = userBank;
+        this.remarks = remarks;
+    }
+
+    public WithdrawalsRecord(){}
     public Long getId() {
         return id;
     }
@@ -88,13 +95,13 @@ public class WithdrawalsRecord extends BaseEntity {
         this.money = money;
     }
 
-    public BigDecimal getSurplusBalance() {
-        return surplusBalance;
-    }
+//    public BigDecimal getSurplusBalance() {
+//        return surplusBalance;
+//    }
 
-    public void setSurplusBalance(BigDecimal surplusBalance) {
-        this.surplusBalance = surplusBalance;
-    }
+//    public void setSurplusBalance(BigDecimal surplusBalance) {
+//        this.surplusBalance = surplusBalance;
+//    }
 
     public UserBank getUserBank() {
         return userBank;
