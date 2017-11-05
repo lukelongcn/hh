@@ -119,4 +119,33 @@ public class BannerType extends BaseEntity {
         this.code = code;
         this.enable = enable;
     }
+
+    public enum EnableEnum {
+        DISABLED(0,"禁用"),
+        ENABLED(1,"启用");
+
+        EnableEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

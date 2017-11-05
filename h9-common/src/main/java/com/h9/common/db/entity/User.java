@@ -156,4 +156,64 @@ public class User extends BaseEntity {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
+    public enum IsAdminEnum{
+        NOTADMIN(0,"非后台用户"),
+        ADMIN(1,"后台用户");
+
+        IsAdminEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public enum StatusEnum {
+        ENABLED(1,"启用"),
+        DISABLED(2,"禁用"),
+        INVALID(3,"失效");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

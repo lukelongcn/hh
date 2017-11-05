@@ -19,11 +19,17 @@ public class GlobalProperty extends BaseEntity  {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '键'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '名称'")
     private String name;
+
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '键'")
+    private String code;
 
     @Column(name = "val", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '值'")
     private String val;
+
+    @Column(name = "description", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '说明'")
+    private String description;
 
     public Long getId() {
         return id;
@@ -41,11 +47,27 @@ public class GlobalProperty extends BaseEntity  {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getVal() {
         return val;
     }
 
     public void setVal(String val) {
         this.val = val;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

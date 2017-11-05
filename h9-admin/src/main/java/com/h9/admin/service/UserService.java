@@ -6,19 +6,11 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.UserRepository;
-import com.h9.common.utils.HttpUtil;
 import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpSession;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -40,17 +32,17 @@ public class UserService {
     public Result<LoginResultVO> login(String name, String password){
         String actualPassword = MD5Util.getMD5(password);
         this.logger.infov("name:{0},password:{1}",name,actualPassword);
-        User user  = this.userRepository.findByPhoneAndPasswordAndIsAdmin(name,actualPassword,1);
+        User user  = this.userRepository.findByPhoneAndPasswordAndIsAdmin(name,actualPassword,User.IsAdminEnum.ADMIN.getId());
         if(user == null){
             return Result.fail("用户不存在");
         }
-        if(user.getStatus()!=1){
+        if(user.getStatus()!= User.StatusEnum.ENABLED.getId()){
             return Result.fail("该用户已被禁用");
         }
         //生成token,并保存
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
-        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 10,TimeUnit.MINUTES);
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30,TimeUnit.MINUTES);
         return new Result(0, "登录成功",new LoginResultVO(token,name));
     }
 
