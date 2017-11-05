@@ -35,7 +35,7 @@ public class UserBank extends BaseEntity {
 
 //    @Column(name = "bank_type", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '银行类别'")
     @ManyToOne
-    @JoinColumn(name = "bank_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) COMMENT '银行卡类型'")
+    @JoinColumn(name = "bank_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '银行卡类型'")
     private BankType bankType;
 
 

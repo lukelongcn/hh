@@ -1,5 +1,6 @@
 package com.h9.api.controller;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.BankCardDTO;
 
 import com.h9.api.service.BankCardService;
@@ -18,7 +19,7 @@ import javax.validation.Valid;
  * on 2017/11/2
  */
 @RestController
-@Api(value = "银行卡编辑信息",description = "银行卡编辑信息")
+@Api(value = "银行卡编辑信息", description = "银行卡编辑信息")
 public class BankCardController {
 
     @Resource
@@ -26,25 +27,38 @@ public class BankCardController {
 
     /**
      * 新增银行卡
+     *
      * @param bankCardDTO
      * @return
      */
+    @Secured
     @ApiOperation(value = "添加银行卡")
     @PostMapping("/bankCard/add")
-    public  Result addBankCard(@SessionAttribute("curUserId")long userId,@Valid@RequestBody BankCardDTO bankCardDTO){
-        return  bankCardService.addBankCard(userId,bankCardDTO);
+    public Result addBankCard(@SessionAttribute("curUserId") long userId, @Valid @RequestBody BankCardDTO bankCardDTO) {
+        return bankCardService.addBankCard(userId, bankCardDTO);
     }
 
     /**
      * 解绑银行卡
+     *
      * @param status 银行卡状态
      * @return 结果信息
      */
+
+    @Secured
     @ApiOperation(value = "解绑银行卡")
     @PutMapping("/bankCard/update/{id}")
-    public Result updateBankCard(@PathVariable("id")Long id,
-                                 @RequestParam("status")Integer status){
-        return bankCardService.updateStatus(id,status);
-     }
+    public Result updateBankCard(@PathVariable("id") Long id,
+                                 @RequestParam("status") Integer status) {
+        return bankCardService.updateStatus(id, status);
+    }
 
+    /**
+     * description: 银行类型
+     */
+    @Secured
+    @GetMapping("/bankTypes")
+    public Result allBankType(){
+        return bankCardService.allBank();
+    }
 }

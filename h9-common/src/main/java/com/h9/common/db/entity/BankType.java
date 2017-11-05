@@ -30,6 +30,17 @@ public class BankType extends BaseEntity {
     private String color;
 
 
+    @Column(name = "back_img",columnDefinition = "varchar(200) default '' COMMENT '银行图标'")
+    private String bankImg;
+
+    public String getBankImg() {
+        return bankImg;
+    }
+
+    public void setBankImg(String bankImg) {
+        this.bankImg = bankImg;
+    }
+
     public Long getId() {
         return id;
     }
