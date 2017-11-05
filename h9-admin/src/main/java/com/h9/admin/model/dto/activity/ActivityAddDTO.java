@@ -6,8 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: George
@@ -52,14 +56,20 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "每人总次数",required = true)
     @NotNull(message = "每人总次数不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer personTotalNumber = 0;
 
     @ApiModelProperty(value = "每人每天次数",required = true)
     @NotNull(message = "每人每天次数不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer personDailyNumber = 0;
 
     @ApiModelProperty(value = "每人每天中奖次数",required = true)
     @NotNull(message = "每人每天中奖次数不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer personDailyTargetNumber = 0;
 
     @ApiModelProperty(value = "时间间隔",required = true)
@@ -274,8 +284,8 @@ public class ActivityAddDTO {
         return targetRate;
     }
 
-    public void setTargetRate(String targetRate) {
-        this.targetRate = targetRate;
+    public void setTargetRate(List<Map> targetRate) {
+        this.targetRate = targetRate.toString();
     }
 
     public Activity toActivity(){
