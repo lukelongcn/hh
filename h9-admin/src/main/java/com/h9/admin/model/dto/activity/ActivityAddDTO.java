@@ -70,7 +70,7 @@ public class ActivityAddDTO {
     @NotNull(message = "参与频率不能为空")
     private Integer participationFrequency = 0;
 
-    @ApiModelProperty(value = "分享标题",required = true)
+   /* @ApiModelProperty(value = "分享标题",required = true)
     @NotEmpty(message = "分享标题不能为空")
     private String shareTitle;
 
@@ -92,7 +92,7 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "图文描述",required = true)
     @NotEmpty(message = "图文描述不能为空")
-    private String imgTextDesc;
+    private String imgTextDesc;*/
 
     @ApiModelProperty(value = "中奖人数",required = true)
     @NotNull(message = "中奖人数不能为空")
@@ -214,7 +214,7 @@ public class ActivityAddDTO {
         this.participationFrequency = participationFrequency;
     }
 
-    public String getShareTitle() {
+    /*public String getShareTitle() {
         return shareTitle;
     }
 
@@ -260,7 +260,7 @@ public class ActivityAddDTO {
 
     public void setImgTextDesc(String imgTextDesc) {
         this.imgTextDesc = imgTextDesc;
-    }
+    }*/
 
     public Integer getTargetCount() {
         return targetCount;

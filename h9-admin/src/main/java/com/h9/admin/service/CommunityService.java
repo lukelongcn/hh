@@ -69,14 +69,14 @@ public class CommunityService {
 
     public Result<BannerType> updateBannerTypeStatus(long id){
         BannerType bannerType = this.bannerTypeRepository.findOne(id);
-        if(bannerType.getEnable()==1){
+        if(bannerType.getEnable()==BannerType.EnableEnum.ENABLED.getId()){
             /*List<Banner> bannerList = (this.bannerRepository.findAllByBannerTypeId(bannerType.getId());
             if(!CollectionUtils.isEmpty(bannerList)){
                 return Result.fail("")
             }*/
-            bannerType.setEnable(0);
+            bannerType.setEnable(BannerType.EnableEnum.DISABLED.getId());
         }else{
-            bannerType.setEnable(1);
+            bannerType.setEnable(BannerType.EnableEnum.ENABLED.getId());
         }
         return Result.success(this.bannerTypeRepository.save(bannerType));
     }
@@ -133,6 +133,19 @@ public class CommunityService {
         Activity a = this.activityRepository.findOne(activityEditDTO.getId());
         BeanUtils.copyProperties(activityEditDTO,a);
         return Result.success(this.activityRepository.save(a));
+    }
+
+    public Result<Activity> updateActivityStatus(long id){
+        Activity activity = this.activityRepository.findOne(id);
+        if(activity==null){
+            return Result.fail("活动不存在");
+        }
+        if(activity.getEnable()==Activity.EnableEnum.DISABLED.getId()){
+            activity.setEnable(Activity.EnableEnum.ENABLED.getId());
+        }else{
+            activity.setEnable(Activity.EnableEnum.DISABLED.getId());
+        }
+        return Result.success(this.activityRepository.save(activity));
     }
 
     public Result<PageResult<Activity>> getActivities(PageDTO pageDTO){

@@ -2,15 +2,21 @@ package com.h9.api.service;
 
 import com.h9.api.model.dto.BankCardDTO;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 李圆
@@ -23,9 +29,8 @@ public class BankCardService {
     @Autowired
     private BankCardRepository bankCardRepository;
 
-    @Autowired
+    @Resource
     private BankTypeRepository bankTypeRepository;
-
     /**
      * 添加银行卡
      * @param bankCardDTO
@@ -41,10 +46,14 @@ public class BankCardService {
         userBank.setUserId(userId);
         userBank.setName(bankCardDTO.getName());
         userBank.setNo(bankCardDTO.getNo());
-        userBank.setBankType(bankTypeRepository.findByBankName(bankCardDTO.getName()));
+        Long typeId = bankCardDTO.getBankTypeId();
+        BankType bankType = bankTypeRepository.findOne(typeId);
+        if(bankType == null) return Result.fail("此银行类型不存在");
+        userBank.setBankType(bankType);
         userBank.setProvice(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
-        userBank.setStatus(bankCardDTO.getStatus());
+        userBank.setStatus(1);
+        userBank.setBankImg(bankType.getBankImg());
 
         bankCardRepository.save(userBank);
         return Result.success();
@@ -67,5 +76,18 @@ public class BankCardService {
         userBank.setStatus(3);
         bankCardRepository.save(userBank);
         return Result.success();
+    }
+
+    public Result allBank() {
+        List<BankType> all = bankTypeRepository.findAll();
+        List<Map<String, String>> bankVoList = new ArrayList<>();
+        if(CollectionUtils.isEmpty(all)) return Result.success();
+        all.forEach(bank -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("name", bank.getBankName());
+            map.put("id", bank.getId() + "");
+            bankVoList.add(map);
+        });
+        return Result.success(bankVoList);
     }
 }

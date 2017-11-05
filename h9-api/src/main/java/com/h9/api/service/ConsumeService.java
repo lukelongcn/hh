@@ -15,6 +15,7 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -63,16 +64,16 @@ public class ConsumeService {
     private GoodsTypeReposiroty goodsTypeReposiroty;
     @Resource
     private ChinaPayService chinaPayService;
-
     @Resource
     private WithdrawalsRecordReposiroty withdrawalsRecordReposiroty;
-
     @Resource
     private AccountService accountService;
     @Resource
     private UserBankRepository userBankRepository;
+    @Resource
+    private WithdrawalsFailsReposiroty withdrawalsFailsReposiroty;
     @Value("${chinaPay.merId}")
-    private String merId ;
+    private String merId;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -83,20 +84,23 @@ public class ConsumeService {
         //TODO 记录充值日志
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
-        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+//        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+
         BigDecimal balance = userAccount.getBalance();
 
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 
         Goods goods = goodsReposiroty.findOne(mobileRechargeDTO.getId());
         BigDecimal realPrice = goods.getRealPrice();
-        if(balance.compareTo(realPrice) < 0){
+        if (balance.compareTo(realPrice) < 0) {
             return Result.fail("余额不足");
         }
 
         BigDecimal subtract = balance.subtract(realPrice);
 
-        userAccountRepository.changeBalance(subtract,userId);
+//        userAccountRepository.changeBalance(subtract, userId);
+        userAccount.setBalance(subtract);
 
         Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", Orders.orderTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
         order.setUser(user);
@@ -164,15 +168,21 @@ public class ConsumeService {
         return Result.success(voMap);
     }
 
-    public Result bankWithDraw(Long userId) {
+    public Result bankWithDraw(Long userId, Long bankId) {
         User user = userRepository.findOne(userId);
-
-        UserBank userBank = userBankRepository.findByUserId(userId);
+//        UserBank userBank = userBankRepository.findByUserId(userId);
+        UserBank userBank = userBankRepository.findOne(bankId);
+//        UserBank
         BankType bankType = userBank.getBankType();
+//        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+
+        BigDecimal balance = userAccount.getBalance();
+        if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 
         String cardNo = userBank.getNo();
         String usrName = userBank.getName();
-        String openBank =bankType.getBankName();
+        String openBank = bankType.getBankName();
         String prov = userBank.getProvice();
         String city = userBank.getCity();
         String transAmt = "101";
@@ -181,21 +191,39 @@ public class ConsumeService {
         String signFlag = "1";
 //        String termType = "7";
 
-        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId,new BigDecimal(transAmt),userBank,purpose);
+        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, new BigDecimal(transAmt), userBank, purpose);
+        withdrawalsRecord.setBankReturnData("");
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
         ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
         Result result = chinaPayService.signPay(payParam);
-
+        withdrawalsRecord.setBankReturnData(result.getData().toString());
         if (result.getData().toString().startsWith("responseCode=0000")) {
             //转账成功
             withdrawalsRecord.setStatus(3);
+            userAccount.setBalance(new BigDecimal(0));
+            userAccountRepository.save(userAccount);
+            BeanUtils.copyProperties( payParam,withdrawalsRecord);
             withdrawalsRecordReposiroty.save(withdrawalsRecord);
             return Result.success();
         } else {
+            //提现失败
+            withdrawalsRecord.setStatus(4);
+            BeanUtils.copyProperties( payParam,withdrawalsRecord);
+            withdrawalsRecordReposiroty.save(withdrawalsRecord);
+            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+            BeanUtils.copyProperties( payParam,withdrawalsFails);
+            withdrawalsFails.setBankReturnData(result.getData().toString());
+            withdrawalsFailsReposiroty.save(withdrawalsFails);
             return Result.fail();
         }
+    }
 
+    public Result cz(Long userId) {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        userAccount.setBalance(new BigDecimal(200));
+        userAccountRepository.save(userAccount);
+        return Result.success();
     }
 }

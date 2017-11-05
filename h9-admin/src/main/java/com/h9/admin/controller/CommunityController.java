@@ -110,6 +110,11 @@ public class CommunityController {
         return this.communityService.getActivities(pageDTO);
     }
 
-
+    @Secured
+    @PutMapping(value="/activity/{id}/status")
+    @ApiOperation("开启/关闭活动")
+    public Result<Activity> editActivityStatus(@PathVariable long id){
+        return this.communityService.updateActivityStatus(id);
+    }
 
 }

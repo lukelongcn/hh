@@ -98,7 +98,7 @@ public class Activity extends BaseEntity {
     @Column(name = "participation_frequency",nullable = false,columnDefinition = "int default 0 COMMENT '参与频率'")
     private Integer participationFrequency = 0;
 
-    @Column(name = "share_title", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '分享标题'")
+   /* @Column(name = "share_title", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '分享标题'")
     private String shareTitle;
 
     @Column(name = "share_img", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '分享图片'")
@@ -114,7 +114,7 @@ public class Activity extends BaseEntity {
     private String imgTextUrl;
 
     @Column(name = "img_text_desc", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '图文描述'")
-    private String imgTextDesc;
+    private String imgTextDesc;*/
 
     @Column(name = "target_count",columnDefinition = "int default 0 COMMENT '中奖人数'")
     private Integer targetCount = 0;
@@ -290,7 +290,7 @@ public class Activity extends BaseEntity {
         this.participationFrequency = participationFrequency;
     }
 
-    public String getShareTitle() {
+   /* public String getShareTitle() {
         return shareTitle;
     }
 
@@ -336,7 +336,7 @@ public class Activity extends BaseEntity {
 
     public void setImgTextDesc(String imgTextDesc) {
         this.imgTextDesc = imgTextDesc;
-    }
+    }*/
 
     public Integer getTargetCount() {
         return targetCount;
@@ -352,5 +352,34 @@ public class Activity extends BaseEntity {
 
     public void setTargetRate(String targetRate) {
         this.targetRate = targetRate;
+    }
+
+    public enum EnableEnum {
+        DISABLED(0,"禁用"),
+        ENABLED(1,"启用");
+
+        EnableEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

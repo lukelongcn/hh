@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,9 +35,10 @@ public class AccountService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private OrderItemReposiroty orderItemReposiroty;
-
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private UserBankRepository userBankRepository;
     
     public Result getBalanceFlow(Long userId,int page,int limit){
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
@@ -62,8 +65,19 @@ public class AccountService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
         Object cardCount = orderItemReposiroty.findCardCount(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
+        List<Map<String, String>> bankList = new ArrayList<>();
+        List<UserBank> userBankList = userBankRepository.findByUserId(userId);
 
-        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount,cardCount+"");
+        userBankList.forEach(bank -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("bankImg", bank.getBankImg());
+            map.put("name", bank.getName());
+            String no = bank.getNo();
+            int length = no.length();
+            no = no.substring(length-4,length);
+            map.put("no",no);
+        });
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount,cardCount+"",bankList);
         return Result.success(userAccountInfoVO);
     }
 

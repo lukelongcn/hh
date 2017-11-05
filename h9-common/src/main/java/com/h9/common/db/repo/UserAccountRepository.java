@@ -15,7 +15,11 @@ public interface UserAccountRepository extends BaseRepository<UserAccount> {
 
     UserAccount findByUserId(Long userId);
 
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//    @Query("update UserAccount u set u.balance = ?1 where u.userId = ?2")
+//    void changeBalance(BigDecimal money,Long userId);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("update UserAccount u set u.balance = ?1 where u.userId = ?2")
-    void changeBalance(BigDecimal money,Long userId);
+    @Query("select o from UserAccount  o where o.userId = ?1")
+    UserAccount findByUserIdLock(Long userId);
 }
