@@ -11,7 +11,7 @@ public class BankCardDTO {
 
     private Long user_id;
 
-    @Size(min = 19,max = 19,message = "请填写正确的银行卡号")
+    @Size(min = 10,message = "请填写正确的银行卡号")
     @NotEmpty(message = "请填写银行卡号")
     private String no;
 
