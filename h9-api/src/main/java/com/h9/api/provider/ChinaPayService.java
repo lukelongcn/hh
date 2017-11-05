@@ -17,6 +17,7 @@ import java.util.Date;
 /**
  * Created by itservice on 2017/11/3.
  */
+
 @Service
 public class ChinaPayService {
     @Value("${chinaPay.testUrl}")
@@ -67,7 +68,7 @@ public class ChinaPayService {
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
         ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
         String body = res.getBody();
-        return Result.success(body);
+        return Result.success("success",body);
     }
 
     public static class PayParam {

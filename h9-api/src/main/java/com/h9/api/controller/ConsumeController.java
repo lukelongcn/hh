@@ -17,25 +17,26 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/consume")
-@Api(value = "充值接口",description = "充值接口")
+@Api(value = "充值接口", description = "充值接口")
 public class ConsumeController {
 
     @Resource
     private ConsumeService consumeService;
 
     private Logger logger = Logger.getLogger(this.getClass());
+
     /**
      * description: 手机充值
      */
     @Secured
     @PostMapping("/mobile/recharge")
     public Result mobileRecharge(
-            @SessionAttribute("curUserId")Long userId,
+            @SessionAttribute("curUserId") Long userId,
             @RequestBody MobileRechargeDTO mobileRechargeDTO) {
         try {
-            return consumeService.recharge(userId,mobileRechargeDTO);
+            return consumeService.recharge(userId, mobileRechargeDTO);
         } catch (Exception e) {
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
             return Result.fail("充值失败");
         }
     }
@@ -45,7 +46,7 @@ public class ConsumeController {
      */
     @Secured
     @GetMapping("/mobile/denomination")
-    public Result rechargeDenomination(){
+    public Result rechargeDenomination() {
 
         return consumeService.rechargeDenomination();
     }
@@ -55,7 +56,7 @@ public class ConsumeController {
      */
     @Secured
     @GetMapping("/didiCards")
-    public Result didiCardList(){
+    public Result didiCardList() {
 
         return consumeService.didiCardList();
     }
@@ -65,14 +66,26 @@ public class ConsumeController {
      */
     @Secured
     @PutMapping("/didiCard/convert")
-    public Result didiCardConvert(@RequestBody@Valid DidiCardDTO didiCardDTO, @SessionAttribute("curUserId")Long userId){
-        return consumeService.didiCardConvert(didiCardDTO,userId);
+    public Result didiCardConvert(@RequestBody @Valid DidiCardDTO didiCardDTO, @SessionAttribute("curUserId") Long userId) {
+        return consumeService.didiCardConvert(didiCardDTO, userId);
     }
 
+    /**
+     * description: 提现
+     */
     @Secured
-    @PostMapping("/withdraw")
-    public Result bankWithdraw(@SessionAttribute("curUserId")Long userId){
+    @PostMapping("/withdraw/{bankId}")
+    public Result bankWithdraw(@SessionAttribute("curUserId") Long userId,@PathVariable Long bankId) {
 
-        return consumeService.bankWithDraw(userId);
+        return consumeService.bankWithDraw(userId,bankId);
+    }
+
+    /**
+     * description: 余额充值
+     */
+    @Secured
+    @GetMapping("/cz/{userId}")
+    public Result cz(@PathVariable Long userId) {
+        return consumeService.cz(userId);
     }
 }

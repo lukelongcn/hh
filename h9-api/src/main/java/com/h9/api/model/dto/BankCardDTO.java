@@ -2,6 +2,7 @@ package com.h9.api.model.dto;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -10,30 +11,18 @@ import javax.validation.constraints.Size;
  */
 public class BankCardDTO {
 
-    private Long user_id;
 
-    @Size(min = 19,max = 19,message = "请填写正确的银行卡号")
+    @Size(min = 10,message = "请填写正确的银行卡号")
     @NotEmpty(message = "请填写银行卡号")
     private String no;
-
     @NotEmpty(message = "请填写真实姓名")
     private String name;
-
-    private String bankTypes;//银行类别
-
+    @NotNull(message = "请填写银行类型 id")
+    private Long bankTypeId;//银行类别
+    @NotNull(message = "请填写provice")
     private String provice;
-
+    @NotNull(message = "请填写city")
     private String city;
-
-    private Integer status = 1;
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
 
     public String getNo() {
         return no;
@@ -51,12 +40,20 @@ public class BankCardDTO {
         this.name = name;
     }
 
-    public String getBankTypes() {
-        return bankTypes;
+    public Long getBankName() {
+        return bankTypeId;
     }
 
-    public void setBankTypes(String bankTypes) {
-        this.bankTypes = bankTypes;
+    public Long getBankTypeId() {
+        return bankTypeId;
+    }
+
+    public void setBankTypeId(Long bankTypeId) {
+        this.bankTypeId = bankTypeId;
+    }
+
+    public void setBankName(Long bankName) {
+        this.bankTypeId = bankName;
     }
 
     public String getProvice() {
@@ -73,14 +70,6 @@ public class BankCardDTO {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
 

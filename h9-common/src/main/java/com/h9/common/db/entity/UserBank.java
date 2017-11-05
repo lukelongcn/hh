@@ -33,8 +33,11 @@ public class UserBank extends BaseEntity {
     @Column(name = "no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '银行卡号'")
     private String no;
 
-    @Column(name = "bank_type", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '银行类别'")
-    private String bankType;
+//    @Column(name = "bank_type", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '银行类别'")
+    @ManyToOne
+    @JoinColumn(name = "bank_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '银行卡类型'")
+    private BankType bankType;
+
 
     @Column(name = "provice", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户省'")
     private String provice;
@@ -48,6 +51,13 @@ public class UserBank extends BaseEntity {
     @Column(name = "back_img",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '银行图标'")
     private String bankImg;
 
+    public BankType getBankType() {
+        return bankType;
+    }
+
+    public void setBankType(BankType bankType) {
+        this.bankType = bankType;
+    }
 
     public String getBankImg() {
         return bankImg;
