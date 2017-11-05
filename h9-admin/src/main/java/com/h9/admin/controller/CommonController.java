@@ -22,6 +22,7 @@ import java.io.IOException;
  * @author: George
  * @date: 2017/11/3 20:30
  */
+@SuppressWarnings("Duplicates")
 @RestController
 @Api
 @RequestMapping(value = "/common")

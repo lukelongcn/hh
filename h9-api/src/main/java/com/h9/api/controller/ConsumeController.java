@@ -69,6 +69,9 @@ public class ConsumeController {
         return consumeService.didiCardConvert(didiCardDTO,userId);
     }
 
+    /**
+     * description: 提现
+     */
     @Secured
     @PostMapping("/withdraw")
     public Result bankWithdraw(@SessionAttribute("curUserId")Long userId){

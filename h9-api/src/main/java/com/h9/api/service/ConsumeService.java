@@ -15,6 +15,7 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -64,7 +65,15 @@ public class ConsumeService {
     private ChinaPayService chinaPayService;
 
     @Resource
+    private WithdrawalsRecordReposiroty withdrawalsRecordReposiroty;
+
+    @Resource
     private AccountService accountService;
+    @Resource
+    private UserBankRepository userBankRepository;
+    @Value("${chinaPay.merId}")
+    private String merId ;
+
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -156,24 +165,37 @@ public class ConsumeService {
     }
 
     public Result bankWithDraw(Long userId) {
-//        User user = userRepository.findOne(userId);
+        User user = userRepository.findOne(userId);
 
-        String merId = "808080211881410";
-        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
-        String merDate = format.format(new Date());
-        String merSeqId = "8";
-        String cardNo = "6210984280001561104";
-        String usrName = "李圆";
-        String openBank = "中国邮政储蓄银行";
-        String prov = "江西";
-        String city = "赣州";
+        UserBank userBank = userBankRepository.findByUserId(userId);
+        BankType bankType = userBank.getBankType();
+
+        String cardNo = userBank.getNo();
+        String usrName = userBank.getName();
+        String openBank =bankType.getBankName();
+        String prov = userBank.getProvice();
+        String city = userBank.getCity();
         String transAmt = "101";
         String purpose = "提现";
-        String version = "20151207";
+//        String version = "20151207";
         String signFlag = "1";
-        String termType = "7";
-        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam();
-//        Result result = chinaPayService.signPay();
-        return Result.fail();
+//        String termType = "7";
+
+        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId,new BigDecimal(transAmt),userBank,purpose);
+        withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+        String merSeqId = String.valueOf(withdrawalsRecord.getId());
+
+        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
+        Result result = chinaPayService.signPay(payParam);
+
+        if (result.getData().toString().startsWith("responseCode=0000")) {
+            //转账成功
+            withdrawalsRecord.setStatus(3);
+            withdrawalsRecordReposiroty.save(withdrawalsRecord);
+            return Result.success();
+        } else {
+            return Result.fail();
+        }
+
     }
 }
