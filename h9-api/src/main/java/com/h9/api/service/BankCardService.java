@@ -4,6 +4,7 @@ import com.h9.api.model.dto.BankCardDTO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankCardRepository;
+import com.h9.common.db.repo.BankTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class BankCardService {
     @Autowired
     private BankCardRepository bankCardRepository;
 
+    @Autowired
+    private BankTypeRepository bankTypeRepository;
+
     /**
      * 添加银行卡
      * @param bankCardDTO
@@ -37,6 +41,7 @@ public class BankCardService {
         userBank.setUserId(userId);
         userBank.setName(bankCardDTO.getName());
         userBank.setNo(bankCardDTO.getNo());
+        userBank.setBankType(bankTypeRepository.findByBankName(bankCardDTO.getName()));
         userBank.setProvice(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
         userBank.setStatus(bankCardDTO.getStatus());

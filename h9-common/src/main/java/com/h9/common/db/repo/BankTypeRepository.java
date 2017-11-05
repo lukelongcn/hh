@@ -13,6 +13,9 @@ import java.util.List;
  */
 @Repository
 public interface BankTypeRepository  extends BaseRepository<BankType> {
+
+   BankType findByBankName(String name);
+
     @Query("select bankName from BankType")
     List<String> findBankName();
 }
