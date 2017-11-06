@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface GoodsDIDINumberRepository extends BaseRepository<GoodsDIDINumber>{
 
-    @Query(value = "select count(o.id) from GoodsDIDINumber o where o.status = 1")
-    Object getCount();
+    @Query(value = "select count(o.id) from GoodsDIDINumber o where o.status = 1 and o.goodsId = ?1 ")
+    Object getCount(Long goodId);
+
+    GoodsDIDINumber findByGoodsId(Long goodsId);
 }

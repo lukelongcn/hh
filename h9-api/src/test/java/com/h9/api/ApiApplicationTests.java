@@ -95,7 +95,7 @@ public class ApiApplicationTests {
 
             GoodsDIDINumber goodsDIDINumber = new GoodsDIDINumber();
             goodsDIDINumber.setDidiNumber(UUID.randomUUID().toString());
-            goodsDIDINumber.setGoodsId(1309L);
+            goodsDIDINumber.setGoodsId(1310L);
             goodsDIDINumber.setStatus(1);
             goodsDIDINumberRepository.save(goodsDIDINumber);
         }

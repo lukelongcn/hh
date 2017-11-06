@@ -152,10 +152,10 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
-            Object count = goodsDIDINumberRepository.getCount();
+            Object count = goodsDIDINumberRepository.getCount(goods.getId());
             map.put("stock", count);
             map.put("name", goods.getName());
-            map.put("banner", "");
+            map.put("goodId", goods.getId());
             list.add(map);
         });
         return Result.success(list);
