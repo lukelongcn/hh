@@ -19,7 +19,7 @@ public class GlobalPropertyAddDTO {
     @NotEmpty(message = "名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "参数标识， 0：文本 1：对象 ",required = true)
+    @ApiModelProperty(value = "参数类型， 0：文本 1：对象 ",required = true)
     @NotNull(message = "参数类型不能为空")
     private Integer type;
 

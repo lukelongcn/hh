@@ -5,8 +5,10 @@ import com.h9.common.base.BaseEntity;
 import javax.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,11 +57,19 @@ public class Goods extends BaseEntity {
     @Column(name = "didi_card_number",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '滴滴卡兑换码' ")
     private String DiDiCardNumber;
 
-   /* @Column(name = "img",nullable = false,columnDefinition = "varchar(256) default '' COMMENT '图片url' ")
+    @Column(name = "img",nullable = false,columnDefinition = "varchar(256) default '' COMMENT '图片url' ")
     private String img;
 
-    @Column(name = "didi_card_number",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '滴滴卡兑换码' ")
-    private String DiDiCardNumber;*/
+    @Column(name = "v_coins_rate",columnDefinition = "DECIMAL(10,2) default 0 COMMENT 'V币兑换比例值'")
+    private BigDecimal vCoinsRate = new BigDecimal(0);
+
+    @Temporal(TIMESTAMP)
+    @Column(name = "start_time", columnDefinition = "datetime COMMENT '上架开始时间'")
+    private Date startTime;
+
+    @Temporal(TIMESTAMP)
+    @Column(name = "end_time", columnDefinition = "datetime COMMENT '上架结束时间'")
+    private Date endTime;
 
     public String getDiDiCardNumber() {
         return DiDiCardNumber;
@@ -139,5 +149,37 @@ public class Goods extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public BigDecimal getvCoinsRate() {
+        return vCoinsRate;
+    }
+
+    public void setvCoinsRate(BigDecimal vCoinsRate) {
+        this.vCoinsRate = vCoinsRate;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }
