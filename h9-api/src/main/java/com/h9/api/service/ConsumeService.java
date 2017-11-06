@@ -155,7 +155,7 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
 
-        Goods goods = goodsReposiroty.findByTop1();
+        Goods goods = goodsReposiroty.findByTop1(price);
         goods.setStatus(0);
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
