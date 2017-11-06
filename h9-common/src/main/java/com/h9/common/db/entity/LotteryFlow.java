@@ -12,15 +12,16 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 具体用户的抽奖信息
+ * Description: 获奖用户记录
  * User:刘敏华 shadow.liu@hey900.com
- * Date: 2017/10/28
- * Time: 10:21
+ * Date: 2017/11/5
+ * Time: 14:52
  */
 
 @Entity
-@Table(name = "lottery")
-public class Lottery extends BaseEntity {
+@Table(name = "lottery_flow")
+public class LotteryFlow extends BaseEntity {
+
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
@@ -43,10 +44,6 @@ public class Lottery extends BaseEntity {
 
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '1 未分配奖励 2已分配奖励 3完成'")
     private Integer status = 1;
-
-    @Temporal(TIMESTAMP)
-    @Column(name = "finish_time", columnDefinition = "datetime COMMENT '获奖时间'")
-    private Date finishTime;
 
     @Column(name = "room_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 房间主人 2 普通用户'")
     private Integer roomUser = 1;
@@ -99,13 +96,6 @@ public class Lottery extends BaseEntity {
         this.status = status;
     }
 
-    public Date getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
-    }
 
     public Integer getRoomUser() {
         return roomUser;

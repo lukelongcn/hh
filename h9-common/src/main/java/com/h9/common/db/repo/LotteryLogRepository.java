@@ -19,6 +19,6 @@ import java.util.Date;
 public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
 
     @Query("select ll from LotteryLog  ll  where ll.userId = ?1 and ll.createTime between ?2 and ?3 group by ll.code")
-    int getLotteryCount(Long userId,Date startDate,Date endDate);
+    BigDecimal getLotteryCount(Long userId,Date startDate,Date endDate);
 
 }
