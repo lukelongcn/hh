@@ -8,6 +8,9 @@ import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: George
@@ -19,7 +22,7 @@ public class GlobalPropertyAddDTO {
     @NotEmpty(message = "名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "参数类型， 0：文本 1：对象 ",required = true)
+    @ApiModelProperty(value = "参数类型， 0：文本 1：对象 2:数组",required = true)
     @NotNull(message = "参数类型不能为空")
     private Integer type;
 
@@ -28,8 +31,8 @@ public class GlobalPropertyAddDTO {
     private String code;
 
     @ApiModelProperty(value = "参数值",required = true)
-    @NotEmpty(message = "参数值不能为空")
-    private String val;
+    @NotNull(message = "参数值不能为空")
+    private List<Map<String,String>> val;
 
     @ApiModelProperty(value = "说明",required = true)
     private String description;
@@ -51,10 +54,6 @@ public class GlobalPropertyAddDTO {
         this.type = type;
     }
 
-    public void setVal(String val) {
-        this.val = val;
-    }
-
     public String getCode() {
         return code;
     }
@@ -64,7 +63,23 @@ public class GlobalPropertyAddDTO {
     }
 
     public String getVal() {
-        return val;
+        String v="";
+        if(type==0){
+            v = val.get(0).get("val");
+        }else if(type==1){
+            v = JSON.toJSONString(val);
+        }else{
+            List<String> stringList = new ArrayList<>();
+            for(Map m:val){
+                stringList.add(m.get("val").toString());
+            }
+            v = JSON.toJSONString(stringList);
+        }
+        return v;
+    }
+
+    public void setVal(List val) {
+        this.val = val;
     }
 
     public String getDescription() {
@@ -76,6 +91,7 @@ public class GlobalPropertyAddDTO {
     }
 
     public GlobalProperty toGlobalProperty(){
+
         GlobalProperty globalProperty = new GlobalProperty();
         BeanUtils.copyProperties(this,globalProperty);
         return globalProperty;

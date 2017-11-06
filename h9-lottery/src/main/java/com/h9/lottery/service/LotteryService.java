@@ -66,7 +66,6 @@ public class LotteryService {
         Date startDate = new Date();
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
         Date timesMonthnight = DateUtil.getTimesMonthnight(startDate);
-
         BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
         if (lotteryCount == null) {
             lotteryCount = new BigDecimal(0);
@@ -96,6 +95,7 @@ public class LotteryService {
                 return Result.fail("红包活动已经结束");
             }
             //是第一个用户
+            lottery = new Lottery();
             int partakeCount = reward.getPartakeCount();
             if (partakeCount == 0) {
                 reward.setUserId(userId);
@@ -103,7 +103,6 @@ public class LotteryService {
             }
             reward.setPartakeCount(partakeCount + 1);
             rewardRepository.save(reward);
-            lottery = new Lottery();
             lottery.setReward(reward);
             lottery.setUserId(userId);
 
@@ -164,30 +163,48 @@ public class LotteryService {
 
         LotteryResult lotteryResult = new LotteryResult();
         lotteryResult.setCode(code);
+        Integer status = reward.getStatus();
+        lotteryResult.setLottery(status == StatusEnum.END.getCode());
         lotteryResult.setMoney(reward.getMoney());
 
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
-        //中奖状态
-        Integer status = reward.getStatus();
-        lotteryResult.setLottery(status == StatusEnum.END.getCode());
+        //TODO 可能要调整
+        String endTime = DateUtil.formatDate( reward.getUpdateTime(), DateUtil.FormatType.SECOND);
+        lotteryResult.setEndTime(endTime);
+        //TODO 路径
+        lotteryResult.setQrCode(""+code);
 
-        List<Lottery> lotteryList = lotteryRepository.findByReward(reward);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
-        for (int i = 0; i < lotteryList.size(); i++) {
-            Lottery lotteryFromDb = lotteryList.get(i);
-            LotteryUser lotteryUser = new LotteryUser();
-            lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
-            lotteryUser.setUserId(lotteryFromDb.getUserId());
-            User user = userRepository.findOne(userId);
-            lotteryUser.setName(user.getNickName());
-            lotteryUser.setAvatar(user.getAvatar());
-            lotteryUser.setMe(userId == lotteryUser.getUserId());
-            lotteryUsers.add(lotteryUser);
+        if(status == StatusEnum.END.getCode()){
+            List<LotteryFlow> flows = lotteryFlowRepository.findByReward(reward);
+            for (int i = 0; i < flows.size(); i++) {
+                LotteryFlow lotteryFromDb = flows.get(i);
+                LotteryUser lotteryUser = new LotteryUser();
+                lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
+                lotteryUser.setUserId(lotteryFromDb.getUserId());
+                User user = userRepository.findOne(lotteryFromDb.getUserId());
+                lotteryUser.setName(user.getNickName());
+                lotteryUser.setAvatar(user.getAvatar());
+                lotteryUser.setMe(userId == lotteryUser.getUserId());
+                lotteryUsers.add(lotteryUser);
+            }
+        }else{
+            List<Lottery> lotteryList = lotteryRepository.findByReward(reward);
+            for (int i = 0; i < lotteryList.size(); i++) {
+                Lottery lotteryFromDb = lotteryList.get(i);
+                LotteryUser lotteryUser = new LotteryUser();
+                lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
+                lotteryUser.setUserId(lotteryFromDb.getUserId());
+                User user = userRepository.findOne(lotteryFromDb.getUserId());
+                lotteryUser.setName(user.getNickName());
+                lotteryUser.setAvatar(user.getAvatar());
+                lotteryUser.setMe(userId == lotteryUser.getUserId());
+                lotteryUsers.add(lotteryUser);
+            }
         }
         lotteryResult.setLotteryUsers(lotteryUsers);
-
         return Result.success(lotteryResult);
     }
 
@@ -243,6 +260,7 @@ public class LotteryService {
      * @param lotteries
      * @return
      */
+    @Transactional
     public List<LotteryFlow> getReward(Reward reward, List<Lottery> lotteryList,List<Lottery> lotteries) {
         BigDecimal money = reward.getMoney();
         int size = lotteryList.size();

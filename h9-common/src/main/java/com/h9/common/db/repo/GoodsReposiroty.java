@@ -4,6 +4,8 @@ import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.modle.DiDiCardInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
@@ -23,5 +25,7 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query(value = "select * from goods  where status = 1 and real_price = ?1 and goods_type_id = 2 limit 0,1",nativeQuery = true)
     Goods findByTop1(BigDecimal realPrice);
 
+    @Query("select o from Goods o")
+    Page<Goods> findAllByPage(Pageable page);
 
 }

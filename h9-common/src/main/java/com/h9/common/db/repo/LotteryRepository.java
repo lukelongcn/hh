@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,9 +22,11 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
 
     Lottery findByUserIdAndReward(Long userId, Reward reward);
 
+    @Query("select l.createTime from Lottery l where l.reward = ?1 order by l.createTime desc ")
     List<Lottery> findByReward(Reward reward);
 
     @Query("select count(l) from Lottery l where l.reward = ?1")
     BigDecimal findByRewardCount(Reward reward);
+
 
 }

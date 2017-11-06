@@ -4,16 +4,14 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.*;
 import com.h9.admin.model.dto.activity.ActivityAddDTO;
 import com.h9.admin.model.dto.activity.ActivityEditDTO;
-import com.h9.admin.model.dto.community.BannerAddDTO;
-import com.h9.admin.model.dto.community.BannerEditDTO;
-import com.h9.admin.model.dto.community.BannerTypeAddDTO;
-import com.h9.admin.model.dto.community.BannerTypeEditDTO;
+import com.h9.admin.model.dto.community.*;
 import com.h9.admin.service.CommunityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.entity.Goods;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -117,4 +115,24 @@ public class CommunityController {
         return this.communityService.updateActivityStatus(id);
     }
 
+    @Secured
+    @PostMapping(value="/goods")
+    @ApiOperation("增加商品")
+    public Result<Goods> addGoods(@Validated @RequestBody GoodsAddDTO goodsAddDTO){
+        return this.communityService.addGoods(goodsAddDTO.toGoods());
+    }
+
+    @Secured
+    @PutMapping(value="/goods")
+    @ApiOperation("编辑商品")
+    public Result<Goods> addGoods(@Validated @RequestBody GoodsEditDTO goodsEditDTO){
+        return this.communityService.updateGoods(goodsEditDTO);
+    }
+
+    @Secured
+    @GetMapping(value="/goods/page")
+    @ApiOperation("分页获取商品")
+    public Result<PageResult<Goods>> getGoods(PageDTO pageDTO){
+        return this.communityService.getGoods(pageDTO);
+    }
 }

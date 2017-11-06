@@ -18,7 +18,7 @@ import java.util.Date;
 @Repository
 public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
 
-    @Query("select ll from LotteryLog  ll  where ll.userId = ?1 and ll.createTime between ?2 and ?3 group by ll.code")
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime between ?2 and ?3 ")
     BigDecimal getLotteryCount(Long userId,Date startDate,Date endDate);
 
 }
