@@ -164,9 +164,14 @@ public class LotteryService {
 
         LotteryResult lotteryResult = new LotteryResult();
         lotteryResult.setCode(code);
+        lotteryResult.setMoney(reward.getMoney());
+
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
+        //中奖状态
+        Integer status = reward.getStatus();
+        lotteryResult.setLottery(status == StatusEnum.END.getCode());
 
         List<Lottery> lotteryList = lotteryRepository.findByReward(reward);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
@@ -266,7 +271,7 @@ public class LotteryService {
         return lotteryFlows;
     }
 
-    
+
 
 
 

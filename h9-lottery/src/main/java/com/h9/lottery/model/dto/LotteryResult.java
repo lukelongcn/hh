@@ -14,6 +14,7 @@ public class LotteryResult {
 
     private String qrCode;
     private String code;
+    private boolean lottery;
     private BigDecimal money = new BigDecimal(0);
     private List<LotteryUser> users;
     private List<LotteryUser> lotteryUsers;
@@ -83,5 +84,13 @@ public class LotteryResult {
 
     public void setNowTime(String nowTime) {
         this.nowTime = nowTime;
+    }
+
+    public boolean isLottery() {
+        return lottery;
+    }
+
+    public void setLottery(boolean lottery) {
+        this.lottery = lottery;
     }
 }
