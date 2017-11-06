@@ -2,6 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.model.vo.OrderDetailVO;
 import com.h9.api.model.vo.OrderListVO;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.User;
@@ -49,8 +50,7 @@ public class OrderService {
     public Result orderList(Long userId,Integer page,Integer size) {
         PageRequest pageRequest = new PageRequest(page,size);
         Page<Orders> pageOrders = ordersReposiroty.findByUser(userId, pageRequest);
-        Page<OrderListVO> orderListVo = pageOrders.map(order -> OrderListVO.convert(order));
-        return Result.success(orderListVo);
+        return Result.success(new PageResult<>(pageOrders).result2Result(order -> OrderListVO.convert(order)));
     }
 
     public Result orderDetail(Long orderId) {
