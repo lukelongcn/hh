@@ -1,13 +1,17 @@
 package com.h9.lottery.service;
 
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.NetworkUtil;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
 import com.h9.lottery.model.vo.LotteryDto;
+import com.h9.lottery.utils.RandomDataUtil;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.h9.common.db.entity.Reward.StatusEnum.END;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
@@ -29,6 +35,7 @@ import java.util.*;
 @Service
 public class LotteryService {
 
+    private static int dayMaxotteryCount = 6;
     @Resource
     UserRecordRepository userRecordRepository;
     @Resource
@@ -39,10 +46,14 @@ public class LotteryService {
     private LotteryLogRepository lotteryLogRepository;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private RandomDataUtil randomDataUtil;
+    @Resource
+    private LotteryFlowRepository lotteryFlowRepository;
+    @Resource
+    private CommonService commonService;
     
-
-
-    private static int dayMaxotteryCount = 6;
+    
 
 
     @Transactional
@@ -55,23 +66,23 @@ public class LotteryService {
         Date startDate = new Date();
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
         Date timesMonthnight = DateUtil.getTimesMonthnight(startDate);
-        
+
         BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
         if (lotteryCount == null) {
             lotteryCount = new BigDecimal(0);
         }
         //TODO 写成配置的
-        if(lotteryCount.compareTo(new BigDecimal(dayMaxotteryCount))>0){
+        if (lotteryCount.compareTo(new BigDecimal(dayMaxotteryCount)) > 0) {
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
         //记录扫码记录
         record(userId, reward, lotteryVo, userRecord);
-        if(reward == null){
+        if (reward == null) {
             return Result.fail("奖励条码不存在");
         }
         Integer status = reward.getStatus();
-        if (status == Reward.StatusEnum.FAILD.getCode()) {
+        if (status == StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
@@ -80,7 +91,7 @@ public class LotteryService {
             return Result.success();
         } else {
 //        如果没有参加，参加活动
-            if (status == Reward.StatusEnum.END.getCode()) {
+            if (status == END.getCode()) {
 //                如果已经结束
                 return Result.fail("红包活动已经结束");
             }
@@ -102,21 +113,21 @@ public class LotteryService {
         return Result.success();
     }
 
-    public void record(Long userId,Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
+    public void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
         lotteryLog.setUserRecord(userRecord);
         lotteryLog.setCode(lotteryVo.getCode());
         if (reward == null) {
             lotteryLog.setStatus(2);
-        }else{
+        } else {
             lotteryLog.setReward(reward);
         }
         lotteryLogRepository.save(lotteryLog);
     }
 
 
-    public UserRecord newUserRecord(Long userId, LotteryDto lotteryVo, HttpServletRequest request){
+    public UserRecord newUserRecord(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
         UserRecord userRecord = new UserRecord();
 
         String refer = request.getHeader("Referer");
@@ -127,7 +138,7 @@ public class LotteryService {
         String ip = NetworkUtil.getIpAddress(request);
         userRecord.setIp(ip);
         String client = request.getHeader("client");
-        if(StringUtils.isNotEmpty(client)){
+        if (StringUtils.isNotEmpty(client)) {
             userRecord.setClient(Integer.parseInt(client));
         }
         String version = request.getHeader("version");
@@ -141,13 +152,13 @@ public class LotteryService {
 
 
     public Result<LotteryResult> getLotteryRoom(
-             long userId, String code) {
+            long userId, String code) {
         Reward reward = rewardRepository.findByCode(code);
-        if(reward == null||reward.getPartakeCount()==0){
+        if (reward == null || reward.getPartakeCount() == 0) {
             return Result.fail("红包不存在");
         }
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
-        if(lottery == null){
+        if (lottery == null) {
             return Result.fail("您没有参与该活动");
         }
 
@@ -163,13 +174,11 @@ public class LotteryService {
             Lottery lotteryFromDb = lotteryList.get(i);
             LotteryUser lotteryUser = new LotteryUser();
             lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
-
             lotteryUser.setUserId(lotteryFromDb.getUserId());
             User user = userRepository.findOne(userId);
             lotteryUser.setName(user.getNickName());
             lotteryUser.setAvatar(user.getAvatar());
             lotteryUser.setMe(userId == lotteryUser.getUserId());
-
             lotteryUsers.add(lotteryUser);
         }
         lotteryResult.setLotteryUsers(lotteryUsers);
@@ -178,79 +187,86 @@ public class LotteryService {
     }
 
     @Transactional
-    public Result lottery(String code){
+    public Result lottery(Long curUserId,String code) {
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
         }
-        if(reward.getStatus()==3) {
+        if(curUserId!=null){
+            if(!curUserId.equals(reward.getUserId())){
+                return Result.fail("你无权操作");
+            }
+        }
+        if (reward.getStatus() == END.getCode()) {
             return Result.success("红包已经抽取");
         }
-        if(reward.getStatus()==4) {
+        if (reward.getStatus() == StatusEnum.FAILD.getCode()) {
             return Result.success("红包已失效");
         }
         List<Lottery> lotteryList = lotteryRepository.findByReward(reward);
-        if(CollectionUtils.isEmpty(lotteryList)){
+        if (CollectionUtils.isEmpty(lotteryList)) {
             return Result.fail("没有抽奖记录");
         }
-        int size = lotteryList.size();
-        BigDecimal money = reward.getMoney();
-        List<LotteryFlow> lotteryFlows = new ArrayList<>();
-
+        List<Lottery> lotteries = new ArrayList<>();
+        List<LotteryFlow> lotteryFlows = getReward(reward, lotteryList, lotteries);
+        lotteryRepository.save(lotteries);
+        lotteryFlowRepository.save(lotteryFlows);
+        //变更奖励状态
+        reward.setStatus(END.getCode());
+        //变更中奖用户余额
+        reward.setHaveMoney(new BigDecimal(0));
+        reward.setSurplusMoeny(reward.getMoney());
+        rewardRepository.save(reward);
+        //变更用余额
+        for (int i = 0; i < lotteryFlows.size(); i++) {
+            LotteryFlow lotteryFlow = lotteryFlows.get(i);
+            Long lotteryUserId = lotteryFlow.getUserId();
+            BigDecimal money = lotteryFlow.getMoney();
+            commonService.getBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "");
+        }
         return Result.success();
     }
 
 
-    public LotteryFlow newLotteryFlow(Lottery lottery, BigDecimal money)
-    {
-        LotteryFlow lotteryFlow = new LotteryFlow();
-        BeanUtils.copyProperties(lottery,lotteryFlow,"id");
-        return lotteryFlow;
-    }
 
 
 
-    public  List<LotteryFlow> getReward(Reward reward,List<Lottery> lotteryList){
-        List<LotteryFlow> lotteryFlows = new ArrayList<>();
+    /****
+     * 生成奖励人员
+     * @param reward
+     * @param lotteryList
+     * @param lotteries
+     * @return
+     */
+    public List<LotteryFlow> getReward(Reward reward, List<Lottery> lotteryList,List<Lottery> lotteries) {
         BigDecimal money = reward.getMoney();
-        int size = lotteryFlows.size();
-        Map<Integer, BigDecimal> map = new HashMap<>();
+        int size = lotteryList.size();
+        Map<Integer, BigDecimal> moneyMap = new HashMap<>();
 
-
-        if(size == 1){
-            map.put(1,money );
-//            Lottery lottery = lotteryList.get(0);
-//            lottery.setMoney(money);
-//            LotteryFlow lotteryFlow = newLotteryFlow(lottery, money);
-//            lotteryFlows.add(lotteryFlow);
-        }else if(size == 2){
-            map.put(1,money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)) );
-            map.put(2,money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)) );
-            int index = new Random().nextInt(1);
-
-            Lottery lottery = lotteryList.get(0);
-            lottery.setMoney(money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)));
-            LotteryFlow lotteryFlow = newLotteryFlow(lottery, money);
-            lotteryFlows.add(lotteryFlow);
-
-        }else if(size == 3){
-            map.put(1,money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)) );
-            map.put(2,money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)) );
-            map.put(3,money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)) );
-        }else{
-
-
+        if (size == 1) {
+            moneyMap.put(1, money);
+        } else if (size == 2) {
+            moneyMap.put(1, money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)));
+            moneyMap.put(2, money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)));
+        } else {
+            moneyMap.put(1, money.multiply(new BigDecimal(40)).divide(new BigDecimal(100)));
+            moneyMap.put(2, money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)));
+            moneyMap.put(3, money.multiply(new BigDecimal(10)).divide(new BigDecimal(100)));
         }
-
-
-
-
-
+        //获取随机中奖人数
+        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomDataNoRepeat(lotteryList, size <= 3 ? size : 3);
+        lotteries.addAll(lotteriesRandom);
+        List<LotteryFlow> lotteryFlows = new ArrayList<>();
+        for (int i = 0; i < lotteries.size(); i++) {
+            BigDecimal rewardMoney = moneyMap.get(i + 1);
+            Lottery lottery = lotteries.get(i);
+            lottery.setMoney(rewardMoney);
+            lotteryFlows.add(new LotteryFlow(lottery));
+        }
         return lotteryFlows;
     }
 
-
-
+    
 
 
 
