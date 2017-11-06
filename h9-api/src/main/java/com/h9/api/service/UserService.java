@@ -55,7 +55,7 @@ public class UserService {
         String phone = userLoginDTO.getPhone();
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
         String code = userLoginDTO.getCode();
-        String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone,SMSTypeEnum.REGISTER.getCode()), phone));
+        String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode()), phone));
         if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
         }
@@ -87,7 +87,7 @@ public class UserService {
         return Result.success(vo);
     }
 
-    private LoginResultVO getLoginResult( User user) {
+    private LoginResultVO getLoginResult(User user) {
         //生成token
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
@@ -106,7 +106,7 @@ public class UserService {
         user.setLoginCount(0);
         user.setPhone(phone);
         CharSequence charSequence = phone.subSequence(4, 8);
-        user.setNickName(phone.replace(charSequence,"****"));
+        user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
         return user;
     }
@@ -119,7 +119,7 @@ public class UserService {
     public Result sendSMS(String phone, int smsType) {
 
         SMSTypeEnum smstypeEnum = SMSTypeEnum.findByCode(smsType);
-        if(smstypeEnum == null) return Result.fail("请传入正确的短信类别");
+        if (smstypeEnum == null) return Result.fail("请传入正确的短信类别");
 
         if (smsType == SMSTypeEnum.REGISTER.getCode()) {
 
@@ -135,7 +135,7 @@ public class UserService {
                 smService.sendSMS(phone, content);
             }
 
-            String key = RedisKey.getSmsCodeKey(phone,smsType);
+            String key = RedisKey.getSmsCodeKey(phone, smsType);
             redisBean.setStringValue(key, code);
 
             return Result.success("发送成功");
@@ -189,7 +189,7 @@ public class UserService {
             redisBean.setStringValue(lastSendKey, System.currentTimeMillis() + "", 60, TimeUnit.SECONDS);
             //发送次数加1,1天超时
             redisBean.setStringValue(countKey, ((++count)) + "", 1, TimeUnit.DAYS);
-            String codeKey =RedisKey.getSmsCodeKey(phone,SMSTypeEnum.REGISTER.getCode()) ;
+            String codeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode());
             logger.info("用户:" + phone + " code:" + code);
             redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
             return new Result(0, "短信发送成功");
@@ -197,46 +197,62 @@ public class UserService {
     }
 
 
-    public Result updatePersonInfo(Long userId,UserPersonInfoDTO personInfoDTO) {
+    public Result updatePersonInfo(Long userId, UserPersonInfoDTO personInfoDTO) {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("此用户不存在");
         UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
         String avatar = personInfoDTO.getAvatar();
-        if (!StringUtils.isBlank(avatar))
+        if (StringUtils.isNotBlank(avatar))
             user.setAvatar(avatar);
 
-        Integer sex = personInfoDTO.getSex();
-        if (sex != null)
-            userExtends.setSex(sex);
+        String sex = personInfoDTO.getSex();
 
-        Integer marriageStatus = personInfoDTO.getMarriageStatus();
-        if (marriageStatus != null)
+        if (StringUtils.isNotBlank(sex)) {
+
+            if (sex.equals("1") || sex.equals("0")) {
+                userExtends.setSex(Integer.valueOf(sex));
+            }
+
+            if (sex.equals("男")) {
+                userExtends.setSex(1);
+            }
+            if (sex.equals("女")) {
+                userExtends.setSex(0);
+            }
+        }
+
+        String marriageStatus = personInfoDTO.getMarriageStatus();
+        if (StringUtils.isNotBlank(marriageStatus))
             userExtends.setMarriageStatus(marriageStatus);
 
         String job = personInfoDTO.getJob();
-        if (job != null)
+        if (StringUtils.isNotBlank(job))
             userExtends.setJob(job);
 
         Date birthday = personInfoDTO.getBirthday();
         if (birthday != null)
             userExtends.setBirthday(birthday);
 
-        Integer education = personInfoDTO.getEducation();
-        if (education != null)
+        String education = personInfoDTO.getEducation();
+        if (StringUtils.isNotBlank(education))
             userExtends.setEducation(education);
 
+        String nickName = personInfoDTO.getNickName();
+
+        if (StringUtils.isNotBlank(nickName))
+            user.setNickName(nickName);
         userRepository.save(user);
         userExtendsReposiroty.save(userExtends);
         return Result.success();
     }
 
-    public Result bindPhone(Long userId,String code, String phone) {
+    public Result bindPhone(Long userId, String code, String phone) {
 
         User user = getCurrentUser(userId);
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
-        String key = RedisKey.getSmsCodeKey(phone,SMSTypeEnum.BIND_MOBILE.getCode());
+        String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
 
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码错误");
@@ -244,7 +260,7 @@ public class UserService {
         if (!redisCode.equals(code)) return Result.fail("验证码错误");
 
         user.setPhone(phone);
-        redisBean.setStringValue(key,"",1,TimeUnit.SECONDS);
+        redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
         userRepository.save(user);
         return Result.success();
     }
@@ -271,14 +287,14 @@ public class UserService {
     @Resource
     private WeChatProvider weChatProvider;
 
-    public String getCode(String url){
+    public String getCode(String url) {
         byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
         return MessageFormat.format(commonCodeUrl, jsAppId, new String(urlByte));
     }
 
-    public Result getOpenId(String code){
+    public Result getOpenId(String code) {
         OpenIdCode openIdCode = weChatProvider.getOpenId(jsAppId, jsSecret, code);
-        if(openIdCode == null&&StringUtils.isEmpty(openIdCode.getOpenid())){
+        if (openIdCode == null && StringUtils.isEmpty(openIdCode.getOpenid())) {
             return Result.fail("微信登录失败");
         }
         String openId = openIdCode.getOpenid();
@@ -286,11 +302,11 @@ public class UserService {
 
         if (user != null) {
             LoginResultVO loginResult = getLoginResult(user);
-            user.setLoginCount(user.getLoginCount()+1);
+            user.setLoginCount(user.getLoginCount() + 1);
             user.setLastLoginTime(user.getLastLoginTime());
             userRepository.save(user);
             return Result.success(loginResult);
-        }else{
+        } else {
             WeChatUser userInfo = weChatProvider.getUserInfo(openIdCode);
             user = userInfo.convert();
             user.setLoginCount(1);
@@ -311,9 +327,6 @@ public class UserService {
         }
 
     }
-
-
-
 
 
 }

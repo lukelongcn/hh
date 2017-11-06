@@ -49,4 +49,11 @@ public class BasisController {
     public Result<PageResult<GlobalProperty>> getActivities(PageDTO pageDTO){
         return this.basisService.getGlobalProperties(pageDTO);
     }
+
+    @Secured
+    @DeleteMapping(value="/param/{id}")
+    @ApiOperation("删除参数")
+    public Result<GlobalProperty> deleteGlobalProperty(@PathVariable long id){
+        return this.basisService.deleteGlobalProperty(id);
+    }
 }

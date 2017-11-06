@@ -51,4 +51,9 @@ public class BasisService {
         return Result.success(pageResult);
     }
 
+    public Result deleteGlobalProperty(long globalPropertyId){
+        this.globalPropertyRepository.delete(globalPropertyId);
+        return Result.success();
+    }
+
 }

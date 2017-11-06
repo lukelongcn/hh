@@ -11,20 +11,29 @@ public class UserInfoVO {
     private String avatar;
     private String nickName;
     private String tel;
-    private Integer sex;
+    private String sex;
     private String birthday;
-    private Integer marriageStatus;
-    private Integer education;
+    private String marriageStatus;
+    private String education;
     private String job;
 
 
-    public UserInfoVO(){}
-    public static UserInfoVO convert(User user, UserExtends userExtends){
+    public UserInfoVO() {
+    }
+
+    public static UserInfoVO convert(User user, UserExtends userExtends) {
         UserInfoVO vo = new UserInfoVO();
         vo.setAvatar(user.getAvatar());
         vo.setNickName(user.getNickName());
         vo.setTel(user.getPhone());
-        vo.setSex(userExtends.getSex());
+        Integer sex = userExtends.getSex();
+        if (sex == 1) {
+            vo.setSex("男");
+
+        } else {
+            vo.setSex("女");
+        }
+
         vo.setBirthday(DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.GBK_DAY));
         vo.setMarriageStatus(userExtends.getMarriageStatus());
         vo.setEducation(userExtends.getEducation());
@@ -56,11 +65,12 @@ public class UserInfoVO {
         this.tel = tel;
     }
 
-    public Integer getSex() {
+
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(Integer sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -72,19 +82,19 @@ public class UserInfoVO {
         this.birthday = birthday;
     }
 
-    public Integer getMarriageStatus() {
+    public String getMarriageStatus() {
         return marriageStatus;
     }
 
-    public void setMarriageStatus(Integer marriageStatus) {
+    public void setMarriageStatus(String marriageStatus) {
         this.marriageStatus = marriageStatus;
     }
 
-    public Integer getEducation() {
+    public String getEducation() {
         return education;
     }
 
-    public void setEducation(Integer education) {
+    public void setEducation(String education) {
         this.education = education;
     }
 
