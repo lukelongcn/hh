@@ -1,5 +1,6 @@
 package com.h9.common.db.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.h9.common.base.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -56,11 +57,17 @@ public class GlobalProperty extends BaseEntity  {
     }
 
     public String getVal() {
+
         return val;
     }
 
-    public void setVal(String val) {
-        this.val = val;
+    public void setVal(Object val) {
+        if(val instanceof String){
+            this.val = val.toString();
+        }else{
+            this.val = JSON.toJSONString(val);
+        }
+
     }
 
     public String getDescription() {

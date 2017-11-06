@@ -21,7 +21,7 @@ public class GlobalPropertyAddDTO {
 
     @ApiModelProperty(value = "参数值",required = true)
     @NotEmpty(message = "参数值不能为空")
-    private String val;
+    private Object val;
 
     @ApiModelProperty(value = "说明",required = true)
     private String description;
@@ -43,11 +43,11 @@ public class GlobalPropertyAddDTO {
         this.code = code;
     }
 
-    public String getVal() {
+    public Object getVal() {
         return val;
     }
 
-    public void setVal(String val) {
+    public void setVal(Object val) {
         this.val = val;
     }
 
