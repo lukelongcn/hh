@@ -20,7 +20,6 @@ public class LotteryResult {
     private List<LotteryUser> lotteryUsers;
     private String endTime;
     private String nowTime;
-    private int status;
 
     public String getQrCode() {
         return qrCode;
@@ -68,14 +67,6 @@ public class LotteryResult {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public String getNowTime() {
