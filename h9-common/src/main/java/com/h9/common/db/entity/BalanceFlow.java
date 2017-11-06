@@ -37,7 +37,7 @@ public class BalanceFlow extends BaseEntity {
 //    private BalanceFlowType balanceFlowType;
 
     @Column(name = "flow_type",columnDefinition = "varchar(200) default '' COMMENT '流水类型'")
-    private Integer flowType;
+    private Long flowType;
 
     @Column(name = "remarks", columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
     private String remarks;
@@ -63,11 +63,11 @@ public class BalanceFlow extends BaseEntity {
         this.withdrawals_id = withdrawals_id;
     }
 
-    public Integer getFlowType() {
+    public Long getFlowType() {
         return flowType;
     }
 
-    public void setFlowType(Integer flowType) {
+    public void setFlowType(Long flowType) {
         this.flowType = flowType;
     }
 

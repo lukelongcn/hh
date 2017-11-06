@@ -229,7 +229,7 @@ public class ConsumeService {
             BalanceFlow balanceFlow = new BalanceFlow();
             balanceFlow.setMoney(new BigDecimal(transAmt));
             balanceFlow.setBalance(new BigDecimal(0));
-            balanceFlow.setFlowType(1);
+            balanceFlow.setFlowType(1l);
             balanceFlow.setRemarks("提现");
             balanceFlow.setWithdrawals_id(withdrawalsRecord.getId());
             balanceFlowRepository.save(balanceFlow);

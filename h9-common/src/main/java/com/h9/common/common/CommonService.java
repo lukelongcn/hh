@@ -50,11 +50,11 @@ public class CommonService {
         BalanceFlow balanceFlow = new BalanceFlow();
         balanceFlow.setBalance(newbalance);
         balanceFlow.setMoney(money);
-        BalanceFlowType balanceFlowType = balanceFlowTypeRepository.findOne(typeId);
-        balanceFlow.setBalanceFlowType(balanceFlowType);
+//        BalanceFlowType balanceFlowType = balanceFlowTypeRepository.findOne(typeId);
+        balanceFlow.setFlowType(typeId);
         balanceFlow.setOrderId(orderId);
         balanceFlow.setOrderNo(orderNo);
-        balanceFlow.setRemarks(balanceFlowType.getFlowName());
+//        balanceFlow.setRemarks();
         return Result.success();
     }
 
