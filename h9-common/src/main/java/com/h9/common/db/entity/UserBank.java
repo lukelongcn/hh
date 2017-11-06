@@ -45,7 +45,7 @@ public class UserBank extends BaseEntity {
     @Column(name = "city", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
     private String city;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1:正常 2禁用 3已删除'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1:正常 2禁用 3解绑'")
     private Integer status = 1;
 
     @Column(name = "back_img",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '银行图标'")

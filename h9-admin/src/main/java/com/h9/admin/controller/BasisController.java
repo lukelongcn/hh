@@ -1,10 +1,12 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.PageDTO;
 import com.h9.admin.model.dto.activity.ActivityAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
 import com.h9.admin.service.BasisService;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.GlobalProperty;
@@ -39,5 +41,12 @@ public class BasisController {
     @ApiOperation("编辑参数")
     public Result<GlobalProperty> editGlobalProperty(@Validated @RequestBody GlobalPropertyEditDTO globalPropertyEditDTO){
         return this.basisService.updateGlobalProperty(globalPropertyEditDTO);
+    }
+
+    @Secured
+    @GetMapping(value="/param/page")
+    @ApiOperation("分页获取参数")
+    public Result<PageResult<GlobalProperty>> getActivities(PageDTO pageDTO){
+        return this.basisService.getGlobalProperties(pageDTO);
     }
 }

@@ -61,18 +61,21 @@ public class BankCardService {
 
     /**
      * 解绑银行卡
-     * @param status 银行状态
+     * @param id
+     * @param userId
      * @return
      */
-    public Result updateStatus(Long id,Integer status){
+    public Result updateStatus(Long id,Long userId){
         UserBank userBank = bankCardRepository.findById(id);
-        if(userBank!=null){
-            userBank.setStatus(status);
-            bankCardRepository.save(userBank);
-            return Result.success();
-        }else{
-            return Result.fail();
+        if(userBank == null) {
+            return Result.fail("银行卡不存在");
         }
+        if (userId.equals(userBank.getUserId())) {
+            return Result.fail("用户名不一致");
+        }
+        userBank.setStatus(3);
+        bankCardRepository.save(userBank);
+        return Result.success();
     }
 
     public Result allBank() {

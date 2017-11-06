@@ -1,13 +1,17 @@
 package com.h9.admin.model.dto.activity;
 
+import com.h9.common.db.dto.TargetRateDTO;
 import com.h9.common.db.entity.Activity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: George
@@ -52,14 +56,20 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "每人总次数",required = true)
     @NotNull(message = "每人总次数不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer personTotalNumber = 0;
 
     @ApiModelProperty(value = "每人每天次数",required = true)
     @NotNull(message = "每人每天次数不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer personDailyNumber = 0;
 
     @ApiModelProperty(value = "每人每天中奖次数",required = true)
     @NotNull(message = "每人每天中奖次数不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer personDailyTargetNumber = 0;
 
     @ApiModelProperty(value = "时间间隔",required = true)
@@ -100,7 +110,7 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "中奖比例",required = true)
     @NotEmpty(message = "中奖比例不能为空")
-    private String targetRate;
+    private List<TargetRateDTO> targetRate;
 
     public String getActivityName() {
         return activityName;
@@ -270,11 +280,11 @@ public class ActivityAddDTO {
         this.targetCount = targetCount;
     }
 
-    public String getTargetRate() {
+    public List<TargetRateDTO> getTargetRate() {
         return targetRate;
     }
 
-    public void setTargetRate(String targetRate) {
+    public void setTargetRate(List<TargetRateDTO> targetRate) {
         this.targetRate = targetRate;
     }
 
