@@ -148,7 +148,9 @@ public class ConsumeService {
 
         if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
 
-        BigDecimal accountBalance = accountService.getAccountBalance(userId);
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+        BigDecimal accountBalance = userAccount.getBalance();
+//        BigDecimal accountBalance = accountService.getAccountBalance(userId);
         BigDecimal price = didiCardDTO.getPrice();
 
         if (accountBalance.compareTo(price) < 0) {
@@ -156,6 +158,8 @@ public class ConsumeService {
         }
 
         Goods goods = goodsReposiroty.findByTop1(price);
+        if(goods == null) return Result.fail("商品不存在");
+        userAccount.setBalance(accountBalance.subtract(price));
         goods.setStatus(0);
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
@@ -165,6 +169,7 @@ public class ConsumeService {
         OrderItems items = new OrderItems("滴滴卡兑换", "", didiCardDTO.getPrice(), didiCardDTO.getPrice(), 1, orders);
         orderItemReposiroty.save(items);
         goodsReposiroty.save(goods);
+        userAccountRepository.save(userAccount);
         //返回数据
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", goods.getDiDiCardNumber());

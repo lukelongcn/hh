@@ -1,5 +1,7 @@
 package com.h9.api.model.dto;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,13 +18,12 @@ public class UserPersonInfoDTO {
     @Size(min = 1,message = "请填写nickName")
     @NotNull(message = "请填写nickName")
     private String nickName;
-    private Integer sex;
+    @NotEmpty(message = "请填写sex")
+    private String sex;
     private Date birthday;
-    private Integer marriageStatus;
-    private Integer education;
+    private String marriageStatus;
+    private String education;
     private String job;
-
-
 
     public String getAvatar() {
         return avatar;
@@ -41,12 +42,11 @@ public class UserPersonInfoDTO {
     }
 
 
-
-    public Integer getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -63,19 +63,25 @@ public class UserPersonInfoDTO {
         }
     }
 
-    public Integer getMarriageStatus() {
+
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getMarriageStatus() {
         return marriageStatus;
     }
 
-    public void setMarriageStatus(Integer marriageStatus) {
+    public void setMarriageStatus(String marriageStatus) {
         this.marriageStatus = marriageStatus;
     }
 
-    public Integer getEducation() {
+    public String getEducation() {
         return education;
     }
 
-    public void setEducation(Integer education) {
+    public void setEducation(String education) {
         this.education = education;
     }
 
