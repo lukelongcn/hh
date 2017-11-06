@@ -32,12 +32,12 @@ public class UserExtends extends BaseEntity {
     private Date birthday;
 
 
-    @Column(name = "marriage_status",columnDefinition = "int default 1 COMMENT '1 单身，2恋受，3已婚，4其他'")
-    private Integer marriageStatus;
+    @Column(name = "marriage_status",columnDefinition = "varchar(200) default 1 COMMENT '单身，恋受，已婚，其他(前端提供)'")
+    private String marriageStatus;
 
-    @Column(name = "education",columnDefinition = "int default 0 COMMENT '小学及以下 1，初中  2 ，高中    3，中专    4，本科    5" +
+    @Column(name = "education",columnDefinition = "varchar(200) default 0 COMMENT '小学及以下 1，初中  2 ，高中    3，中专    4，本科 (前端提供)" +
             "，研究生   6，博士及以上 7'")
-    private Integer education = 0;
+    private String education = "本科";
 
     @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
     private String job="";
@@ -67,19 +67,17 @@ public class UserExtends extends BaseEntity {
         this.birthday = birthday;
     }
 
-    public Integer getMarriageStatus() {
-        return marriageStatus;
-    }
 
-    public void setMarriageStatus(Integer marriageStatus) {
+
+    public void setMarriageStatus(String marriageStatus) {
         this.marriageStatus = marriageStatus;
     }
 
-    public Integer getEducation() {
+    public String getEducation() {
         return education;
     }
 
-    public void setEducation(Integer education) {
+    public void setEducation(String education) {
         this.education = education;
     }
 
@@ -87,7 +85,13 @@ public class UserExtends extends BaseEntity {
         return job;
     }
 
-    public void setJob(String job) {
+    public String getMarriageStatus() {
+        return marriageStatus;
+    }
+
+    public void setJob(String job)
+
+    {
         this.job = job;
     }
 }
