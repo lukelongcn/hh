@@ -17,14 +17,13 @@ public class MyCouponsVO {
     private String cardNumber;
 
 
-    public MyCouponsVO(OrderItems items, Goods goods, String cardNumber) {
+    public MyCouponsVO(OrderItems items) {
         this.price = items.getPrice().toString();
         this.name = items.getName();
         this.status = "已发放";
         this.createTime = DateUtil.formatDate(items.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.from = "大转盘奖励";
-        if (goods != null)
-            this.cardNumber = cardNumber;
+        this.cardNumber = items.getDidiCardNumber();
     }
 
     public String getPrice() {

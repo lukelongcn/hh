@@ -1,15 +1,8 @@
 package com.h9.api.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.h9.api.enums.SMSTypeEnum;
-//import com.h9.api.provider.ChinaPayService;
-//import com.h9.api.provider.ChinaPayService;
 import com.h9.api.provider.ChinaPayService;
 import com.h9.common.common.CommonService;
-import com.h9.common.modle.DiDiCardInfo;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
@@ -22,10 +15,12 @@ import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -172,35 +167,41 @@ public class ConsumeService {
 
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
         BigDecimal accountBalance = userAccount.getBalance();
-//        BigDecimal accountBalance = accountService.getAccountBalance(userId);
-        BigDecimal price = didiCardDTO.getPrice();
+        Long id = didiCardDTO.getId();
 
+        Goods goods = goodsReposiroty.findOne(id);
+        BigDecimal price = goods.getPrice();
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
         }
 
-        Goods goods = goodsReposiroty.findByTop1(price);
         if (goods == null) return Result.fail("商品不存在");
-//        userAccount.setBalance(accountBalance.subtract(price));
         goods.setStatus(0);
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
         orders.setUser(user);
 
         ordersReposiroty.saveAndFlush(orders);
-        OrderItems items = new OrderItems("滴滴卡兑换", "", didiCardDTO.getPrice(), didiCardDTO.getPrice(), 1, orders);
-        orderItemReposiroty.save(items);
+        OrderItems items = new OrderItems("滴滴卡兑换", "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
         //
         //余额操作
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         //返回数据
+        PageRequest pageRequest = new PageRequest(0,1);
+        GoodsDIDINumber goodsDIDINumber = goodsDIDINumberRepository.findByGoodsId(goods.getId());
+        goodsDIDINumber.setStatus(2);
+
+        items.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        items.setGoods(goods);
         Map<String, String> voMap = new HashMap<>();
-        voMap.put("didiCardNumber", "");
+        voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber() );
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
         redisBean.setStringValue(smsCodeKey, "", 1, TimeUnit.SECONDS);
+        orderItemReposiroty.save(items);
+        goodsDIDINumberRepository.save(goodsDIDINumber);
         return Result.success(voMap);
     }
 

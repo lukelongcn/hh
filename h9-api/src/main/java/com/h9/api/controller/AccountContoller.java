@@ -52,7 +52,6 @@ public class AccountContoller {
         return accountService.getVCoinsFlow(userId,page,limit);
     }
 
-
     /**
      * description: 账户资金信息
      */
@@ -69,6 +68,6 @@ public class AccountContoller {
     @GetMapping("/account/didicoupons")
     public Result didiCoupones(@SessionAttribute("curUserId") Long userId
             ,@RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit){
-        return accountService.couponeList(userId);
+        return accountService.couponeList(userId,page,limit);
     }
 }

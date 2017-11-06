@@ -2,6 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.MyCouponsVO;
+import com.h9.api.model.vo.OrderListVO;
 import com.h9.api.model.vo.UserAccountInfoVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -10,6 +11,7 @@ import com.h9.common.db.repo.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -40,7 +42,8 @@ public class AccountService {
     @Resource
     private UserBankRepository userBankRepository;
     @Resource
-    private GoodsDIDINumberRepository goodsDIDINumberRepository;
+    private OrdersReposiroty ordersReposiroty;
+
 
     public Result getBalanceFlow(Long userId, int page, int limit) {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
@@ -89,18 +92,21 @@ public class AccountService {
         return Result.success(userAccountInfoVO);
     }
 
-    public Result couponeList(Long userId) {
-        List<OrderItems> itemsList = orderItemReposiroty.findByUser(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
+    public Result couponeList(Long userId,int page,int limit) {
 
-        List<MyCouponsVO> voList = new ArrayList<>();
-        for (OrderItems item : itemsList) {
+        PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
+        Page<Orders> orders = ordersReposiroty.findByUser(userId, pageRequest);
 
-            GoodsDIDINumber goodsDIDINumber = goodsDIDINumberRepository.findByGoodsId(item.getGoods().getId());
-            MyCouponsVO vo = new MyCouponsVO(item, item.getGoods(), goodsDIDINumber.getDidiNumber());
-            voList.add(vo);
+        return Result.success(new PageResult<>(orders).result2Result(ord -> {
 
-        }
+            List<OrderItems> list = ord.getOrderItems();
+            if (!CollectionUtils.isEmpty(list)) {
+                OrderItems orderItems = list.get(0);
+                MyCouponsVO myCouponsVO = new MyCouponsVO(orderItems);
+                return myCouponsVO;
+            }
+            return null;
+        }));
 
-        return Result.success(voList);
     }
 }
