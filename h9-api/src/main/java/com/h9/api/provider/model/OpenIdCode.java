@@ -2,7 +2,7 @@ package com.h9.api.provider.model;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * OpenIdCode:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/1
  * Time: 14:31

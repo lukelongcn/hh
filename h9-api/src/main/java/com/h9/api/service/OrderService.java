@@ -7,6 +7,9 @@ import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.OrdersReposiroty;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -43,16 +46,11 @@ public class OrderService {
         return order;
     }
 
-    public Result orderList(Long userId) {
-        List<Orders> ordersList = ordersReposiroty.findByUser(userId);
-        List<OrderListVO> vo = new ArrayList<>();
-        if (CollectionUtils.isEmpty(ordersList)) return Result.success(vo);
-
-        vo = ordersList.stream()
-                .map(order -> OrderListVO.convert(order))
-                .collect(Collectors.toList());
-
-        return Result.success(vo);
+    public Result orderList(Long userId,Integer page,Integer size) {
+        PageRequest pageRequest = new PageRequest(page,size);
+        Page<Orders> pageOrders = ordersReposiroty.findByUser(userId, pageRequest);
+        Page<OrderListVO> orderListVo = pageOrders.map(order -> OrderListVO.convert(order));
+        return Result.success(orderListVo);
     }
 
     public Result orderDetail(Long orderId) {
