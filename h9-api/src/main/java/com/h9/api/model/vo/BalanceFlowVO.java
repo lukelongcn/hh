@@ -24,12 +24,15 @@ public class BalanceFlowVO {
     private String month;
     private String createTime;
     private String remarks;
+    private String imgUrl;
 
     public BalanceFlowVO(BalanceFlow balanceFlow) {
         BeanUtils.copyProperties(balanceFlow,this);
         Date createTime = balanceFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
-        remarks = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
+        remarks = balanceFlow.getRemarks();
+        money = balanceFlow.getMoney();
+        imgUrl="";
     }
 
     public BalanceFlowVO(VCoinsFlow vCoinsFlow) {
@@ -39,10 +42,18 @@ public class BalanceFlowVO {
         remarks = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
     }
 
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public BigDecimal getMoney() {
         return money;
     }
+
 
     public void setMoney(BigDecimal money) {
         this.money = money;

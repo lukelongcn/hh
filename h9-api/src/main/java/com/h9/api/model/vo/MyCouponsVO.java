@@ -23,8 +23,10 @@ public class MyCouponsVO {
         this.status = "已发放";
         this.createTime = DateUtil.formatDate(items.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.from = "大转盘奖励";
-        if(goods != null)
-        this.cardNumber = goods.getDiDiCardNumber() == null ? "":goods.getDiDiCardNumber();
+        //TODO 重构完放开
+//        if(goods != null)
+//        this.cardNumber = goods.getDiDiCardNumber() == null ? "":goods.getDiDiCardNumber();
+        //TODO 重构完放开
     }
 
     public String getPrice() {

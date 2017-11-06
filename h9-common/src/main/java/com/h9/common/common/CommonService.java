@@ -29,16 +29,11 @@ public class CommonService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private BalanceFlowTypeRepository balanceFlowTypeRepository;
-
-
-    @Transactional
-    public Result getBalance(Long userId, BigDecimal money, Long typeId){
-        return getBalance(userId, money, typeId);
-    }
-
+    @Resource
+    private BalanceFlowRepository balanceFlowRepository;
 
     @Transactional
-    public Result getBalance(Long userId, BigDecimal money, Long typeId,Long orderId,String orderNo){
+    public Result setBalance(Long userId, BigDecimal money, Long typeId,Long orderId,String orderNo,String remarks){
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
@@ -49,11 +44,14 @@ public class CommonService {
         BalanceFlow balanceFlow = new BalanceFlow();
         balanceFlow.setBalance(newbalance);
         balanceFlow.setMoney(money);
-//        BalanceFlowType balanceFlowType = balanceFlowTypeRepository.findOne(typeId);
         balanceFlow.setFlowType(typeId);
         balanceFlow.setOrderId(orderId);
         balanceFlow.setOrderNo(orderNo);
-//        balanceFlow.setRemarks();
+        balanceFlow.setRemarks(remarks);
+        balanceFlow.setUserId(userId);
+
+        userAccountRepository.save(userAccount);
+        balanceFlowRepository.save(balanceFlow);
         return Result.success();
     }
 
