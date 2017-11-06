@@ -17,9 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -57,9 +55,13 @@ public class LotteryService {
         Date startDate = new Date();
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
         Date timesMonthnight = DateUtil.getTimesMonthnight(startDate);
-        int lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
+        
+        BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
+        if (lotteryCount == null) {
+            lotteryCount = new BigDecimal(0);
+        }
         //TODO 写成配置的
-        if(lotteryCount>=dayMaxotteryCount){
+        if(lotteryCount.compareTo(new BigDecimal(dayMaxotteryCount))>0){
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
@@ -194,23 +196,6 @@ public class LotteryService {
         int size = lotteryList.size();
         BigDecimal money = reward.getMoney();
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
-        if(size == 1){
-            Lottery lottery = lotteryList.get(0);
-            lottery.setMoney(money);
-            LotteryFlow lotteryFlow = newLotteryFlow(lottery, money);
-            lotteryFlows.add(lotteryFlow);
-        }else if(size == 2){
-            Lottery lottery = lotteryList.get(0);
-            lottery.setMoney(money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)));
-            LotteryFlow lotteryFlow = newLotteryFlow(lottery, money);
-            lotteryFlows.add(lotteryFlow);
-
-        }else if(size == 3){
-
-        }else{
-
-        }
-
 
         return Result.success();
     }
@@ -222,6 +207,49 @@ public class LotteryService {
         BeanUtils.copyProperties(lottery,lotteryFlow,"id");
         return lotteryFlow;
     }
+
+
+
+    public  List<LotteryFlow> getReward(Reward reward,List<Lottery> lotteryList){
+        List<LotteryFlow> lotteryFlows = new ArrayList<>();
+        BigDecimal money = reward.getMoney();
+        int size = lotteryFlows.size();
+        Map<Integer, BigDecimal> map = new HashMap<>();
+
+
+        if(size == 1){
+            map.put(1,money );
+//            Lottery lottery = lotteryList.get(0);
+//            lottery.setMoney(money);
+//            LotteryFlow lotteryFlow = newLotteryFlow(lottery, money);
+//            lotteryFlows.add(lotteryFlow);
+        }else if(size == 2){
+            map.put(1,money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)) );
+            map.put(2,money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)) );
+            int index = new Random().nextInt(1);
+
+            Lottery lottery = lotteryList.get(0);
+            lottery.setMoney(money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)));
+            LotteryFlow lotteryFlow = newLotteryFlow(lottery, money);
+            lotteryFlows.add(lotteryFlow);
+
+        }else if(size == 3){
+            map.put(1,money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)) );
+            map.put(2,money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)) );
+            map.put(3,money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)) );
+        }else{
+
+
+        }
+
+
+
+
+
+        return lotteryFlows;
+    }
+
+
 
 
 
