@@ -1,6 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 
@@ -50,6 +51,13 @@ public class LotteryFlow extends BaseEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public LotteryFlow() {
+    }
+
+    public LotteryFlow(Lottery lottery) {
+        BeanUtils.copyProperties(lottery,this);
     }
 
     public void setId(Long id) {
