@@ -2,15 +2,13 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.PageDTO;
-import com.h9.admin.model.dto.activity.ActivityAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
+import com.h9.common.modle.vo.GlobalPropertyVO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.db.repo.GlobalPropertyRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +30,21 @@ public class BasisController {
     @Secured
     @PostMapping(value="/param")
     @ApiOperation("增加参数")
-    public Result<GlobalProperty> addGlobalProperty(@Validated @RequestBody GlobalPropertyAddDTO globalPropertyAddDTO){
+    public Result<GlobalPropertyVO> addGlobalProperty(@Validated @RequestBody GlobalPropertyAddDTO globalPropertyAddDTO){
         return this.basisService.addGlobalProperty(globalPropertyAddDTO.toGlobalProperty());
     }
 
     @Secured
     @PutMapping(value="/param")
     @ApiOperation("编辑参数")
-    public Result<GlobalProperty> editGlobalProperty(@Validated @RequestBody GlobalPropertyEditDTO globalPropertyEditDTO){
+    public Result<GlobalPropertyVO> editGlobalProperty(@Validated @RequestBody GlobalPropertyEditDTO globalPropertyEditDTO){
         return this.basisService.updateGlobalProperty(globalPropertyEditDTO);
     }
 
     @Secured
     @GetMapping(value="/param/page")
     @ApiOperation("分页获取参数")
-    public Result<PageResult<GlobalProperty>> getActivities(PageDTO pageDTO){
+    public Result<PageResult<GlobalPropertyVO>> getActivities(PageDTO pageDTO){
         return this.basisService.getGlobalProperties(pageDTO);
     }
 

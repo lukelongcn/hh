@@ -2,6 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.modle.vo.GlobalPropertyVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,7 @@ public interface GlobalPropertyRepository extends BaseRepository<GlobalProperty>
 
     GlobalProperty findByIdNotAndCode(long id,String code);
 
-    @Query("select o from GlobalProperty o")
-    Page<GlobalProperty> findAllByPage(Pageable page);
+    @Query("select new com.h9.common.modle.vo.GlobalPropertyVO(o) from GlobalProperty o")
+    Page<GlobalPropertyVO> findAllByPage(Pageable page);
 
 }

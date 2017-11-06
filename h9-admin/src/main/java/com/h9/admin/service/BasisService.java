@@ -2,9 +2,9 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.PageDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
+import com.h9.common.modle.vo.GlobalPropertyVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.GlobalProperty;
 import com.h9.common.db.repo.GlobalPropertyRepository;
 import org.springframework.beans.BeanUtils;
@@ -25,14 +25,14 @@ public class BasisService {
     @Autowired
     private GlobalPropertyRepository globalPropertyRepository;
 
-    public Result<GlobalProperty> addGlobalProperty(GlobalProperty globalProperty){
+    public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
             return Result.fail("标识已存在");
         }
-        return Result.success(this.globalPropertyRepository.save(globalProperty));
+        return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
     }
 
-    public Result<GlobalProperty> updateGlobalProperty(GlobalPropertyEditDTO globalPropertyEditDTO){
+    public Result<GlobalPropertyVO> updateGlobalProperty(GlobalPropertyEditDTO globalPropertyEditDTO){
         GlobalProperty globalProperty = this.globalPropertyRepository.findOne(globalPropertyEditDTO.getId());
         if(globalProperty==null){
             return Result.fail("参数不存在");
@@ -41,13 +41,13 @@ public class BasisService {
             return Result.fail("标识已存在");
         }
         BeanUtils.copyProperties(globalPropertyEditDTO,globalProperty);
-        return Result.success(this.globalPropertyRepository.save(globalProperty));
+        return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
     }
 
-    public Result<PageResult<GlobalProperty>> getGlobalProperties(PageDTO pageDTO){
+    public Result<PageResult<GlobalPropertyVO>> getGlobalProperties(PageDTO pageDTO){
         PageRequest pageRequest = this.globalPropertyRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
-        Page<GlobalProperty> globalPropertys = this.globalPropertyRepository.findAllByPage(pageRequest);
-        PageResult<GlobalProperty> pageResult = new PageResult<>(globalPropertys);
+        Page<GlobalPropertyVO> globalPropertys = this.globalPropertyRepository.findAllByPage(pageRequest);
+        PageResult<GlobalPropertyVO> pageResult = new PageResult<>(globalPropertys);
         return Result.success(pageResult);
     }
 
