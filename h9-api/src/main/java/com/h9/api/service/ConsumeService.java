@@ -23,10 +23,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -120,9 +117,18 @@ public class ConsumeService {
 
     public Result rechargeDenomination() {
 
-        List<Goods> all = goodsReposiroty.findAll();
-
-        return Result.success(all);
+        GoodsType goodsType = goodsTypeReposiroty.findOne(1L);
+        List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
+        if(goodsList == null) return Result.fail();
+        List<Map<String, String>> list = new ArrayList<>();
+        goodsList.forEach(goods -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", goods.getId() + "");
+            map.put("price", goods.getPrice().toString());
+            map.put("realPrice", goods.getRealPrice().toString());
+            list.add(map);
+        });
+        return Result.success(list);
     }
 
     public Result didiCardList() {
@@ -168,13 +174,17 @@ public class ConsumeService {
         return Result.success(voMap);
     }
 
-    public Result bankWithDraw(Long userId, Long bankId) {
+    public Result bankWithDraw(Long userId, Long bankId, String code) {
+
+        //TODO 额度校验
         User user = userRepository.findOne(userId);
-//        UserBank userBank = userBankRepository.findByUserId(userId);
+        //验证短信
+        String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
+        String redisCode = redisBean.getStringValue(smsCodeKey);
+        if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+
         UserBank userBank = userBankRepository.findOne(bankId);
-//        UserBank
         BankType bankType = userBank.getBankType();
-//        UserAccount userAccount = userAccountRepository.findByUserId(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
 
         BigDecimal balance = userAccount.getBalance();
@@ -204,16 +214,16 @@ public class ConsumeService {
             withdrawalsRecord.setStatus(3);
             userAccount.setBalance(new BigDecimal(0));
             userAccountRepository.save(userAccount);
-            BeanUtils.copyProperties( payParam,withdrawalsRecord);
+            BeanUtils.copyProperties(payParam, withdrawalsRecord);
             withdrawalsRecordReposiroty.save(withdrawalsRecord);
             return Result.success();
         } else {
             //提现失败
             withdrawalsRecord.setStatus(4);
-            BeanUtils.copyProperties( payParam,withdrawalsRecord);
+            BeanUtils.copyProperties(payParam, withdrawalsRecord);
             withdrawalsRecordReposiroty.save(withdrawalsRecord);
             WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
-            BeanUtils.copyProperties( payParam,withdrawalsFails);
+            BeanUtils.copyProperties(payParam, withdrawalsFails);
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             return Result.fail();

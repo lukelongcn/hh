@@ -3,6 +3,7 @@ package com.h9.api.model.dto;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -11,8 +12,7 @@ import javax.validation.constraints.Size;
  */
 public class BankCardDTO {
 
-
-    @Size(min = 10,message = "请填写正确的银行卡号")
+    @Size(min = 10, message = "请填写正确的银行卡号")
     @NotEmpty(message = "请填写银行卡号")
     private String no;
     @NotEmpty(message = "请填写真实姓名")

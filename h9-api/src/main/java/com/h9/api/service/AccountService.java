@@ -39,24 +39,24 @@ public class AccountService {
     private UserRepository userRepository;
     @Resource
     private UserBankRepository userBankRepository;
-    
-    public Result getBalanceFlow(Long userId,int page,int limit){
+
+    public Result getBalanceFlow(Long userId, int page, int limit) {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
-        Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(userId,pageRequest);
+        Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(userId, pageRequest);
         PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
         return Result.success(flowPageResult.result2Result(BalanceFlowVO::new));
     }
 
-    public Result getVCoinsFlow(Long userId,int page,int limit){
+    public Result getVCoinsFlow(Long userId, int page, int limit) {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
-        Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId,pageRequest);
+        Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
         return Result.success(flowPageResult.result2Result(BalanceFlowVO::new));
     }
 
-    public BigDecimal getAccountBalance(Long userId){
+    public BigDecimal getAccountBalance(Long userId) {
         UserAccount userAccount = userAccountRepository.findOne(userId);
-        if(userAccount == null) return new BigDecimal(0);
+        if (userAccount == null) return new BigDecimal(0);
 
         return userAccount.getBalance();
     }
@@ -69,15 +69,21 @@ public class AccountService {
         List<UserBank> userBankList = userBankRepository.findByUserId(userId);
 
         userBankList.forEach(bank -> {
-            Map<String, String> map = new HashMap<>();
-            map.put("bankImg", bank.getBankImg());
-            map.put("name", bank.getName());
-            String no = bank.getNo();
-            int length = no.length();
-            no = no.substring(length-4,length);
-            map.put("no",no);
+
+            if (bank.getStatus() == 1) {
+                Map<String, String> map = new HashMap<>();
+                map.put("bankImg", bank.getBankImg());
+                map.put("name", bank.getName());
+                String no = bank.getNo();
+                int length = no.length();
+                no = no.substring(length - 4, length);
+                map.put("no", no);
+                map.put("id", bank.getId()+"");
+                bankList.add(map);
+            }
+
         });
-        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount,cardCount+"",bankList);
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "", bankList);
         return Result.success(userAccountInfoVO);
     }
 
@@ -86,8 +92,8 @@ public class AccountService {
         List<OrderItems> itemsList = orderItemReposiroty.findByUser(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
 
         List<MyCouponsVO> voList = new ArrayList<>();
-        for(OrderItems item : itemsList){
-            MyCouponsVO vo = new MyCouponsVO(item,item.getGoods());
+        for (OrderItems item : itemsList) {
+            MyCouponsVO vo = new MyCouponsVO(item, item.getGoods());
             voList.add(vo);
         }
         return Result.success(voList);
