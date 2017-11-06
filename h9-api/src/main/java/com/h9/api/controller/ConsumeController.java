@@ -74,14 +74,15 @@ public class ConsumeController {
      * description: 提现
      */
     @Secured
-    @PostMapping("/withdraw/{bankId}")
-    public Result bankWithdraw(@SessionAttribute("curUserId") Long userId,@PathVariable Long bankId) {
+    @PostMapping("/withdraw/{bankId}/{code}")
+    public Result bankWithdraw(@SessionAttribute("curUserId") Long userId
+            ,@PathVariable Long bankId,@PathVariable String code) {
 
-        return consumeService.bankWithDraw(userId,bankId);
+        return consumeService.bankWithDraw(userId,bankId,code);
     }
 
     /**
-     * description: 余额充值
+     * description: 余额充值/test 使用
      */
     @Secured
     @GetMapping("/cz/{userId}")

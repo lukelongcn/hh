@@ -44,8 +44,8 @@ public class BasisController {
     }
 
     @Secured
-    @GetMapping(value="/activity/page")
-    @ApiOperation("分页获取活动")
+    @GetMapping(value="/param/page")
+    @ApiOperation("分页获取参数")
     public Result<PageResult<GlobalProperty>> getActivities(PageDTO pageDTO){
         return this.basisService.getGlobalProperties(pageDTO);
     }
