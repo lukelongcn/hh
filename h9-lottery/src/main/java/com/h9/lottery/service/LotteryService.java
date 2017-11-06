@@ -244,7 +244,7 @@ public class LotteryService {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);
             Long lotteryUserId = lotteryFlow.getUserId();
             BigDecimal money = lotteryFlow.getMoney();
-            commonService.getBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "");
+            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "","");
         }
         return Result.success();
     }
