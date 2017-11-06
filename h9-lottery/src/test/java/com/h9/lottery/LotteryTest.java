@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * LotteryTest:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/2
  * Time: 14:53

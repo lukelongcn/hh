@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * BalanceFlowVO:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/30
  * Time: 16:58

@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * AccountContoller:刘敏华 shadow.l-iu@hey900.com
  * Date: 2017/10/30
  * Time: 18:00
@@ -36,8 +36,8 @@ public class AccountContoller {
     @GetMapping("/account/balance/detail")
     public Result<PageResult<BalanceFlowVO>> getUserBalance(@ApiParam(name = "用户token",value="token",type="head")
                                                                 @SessionAttribute("curUserId") Long userId,
-                                                            @RequestParam("page") int page,
-                                                            @RequestParam("limit") int limit){
+                                                            @RequestParam(value = "page",defaultValue ="1" ) int page,
+                                                            @RequestParam(value = "limit",defaultValue = "20") int limit){
         return accountService.getBalanceFlow(userId,page,limit);
     }
 

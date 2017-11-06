@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * LotteryApplication:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/2
  * Time: 14:26

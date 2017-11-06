@@ -4,10 +4,7 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.service.OrderService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -27,8 +24,9 @@ public class OrderController {
      */
     @Secured
     @GetMapping("/orders")
-    public Result orderList(@SessionAttribute("curUserId")long userId) {
-        return orderService.orderList(userId);
+    public Result orderList(@SessionAttribute("curUserId")long userId,
+                            @RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer size) {
+        return orderService.orderList(userId,page,size);
     }
 
     /**

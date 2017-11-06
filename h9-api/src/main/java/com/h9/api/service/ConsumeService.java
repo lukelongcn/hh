@@ -1,5 +1,9 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.h9.api.enums.SMSTypeEnum;
 //import com.h9.api.provider.ChinaPayService;
 //import com.h9.api.provider.ChinaPayService;
@@ -69,6 +73,10 @@ public class ConsumeService {
     private UserBankRepository userBankRepository;
     @Resource
     private WithdrawalsFailsReposiroty withdrawalsFailsReposiroty;
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private BalanceFlowRepository balanceFlowRepository;
     @Value("${chinaPay.merId}")
     private String merId;
 
@@ -202,9 +210,7 @@ public class ConsumeService {
         String city = userBank.getCity();
         String transAmt = "101";
         String purpose = "提现";
-//        String version = "20151207";
         String signFlag = "1";
-//        String termType = "7";
 
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, new BigDecimal(transAmt), userBank, purpose);
         withdrawalsRecord.setBankReturnData("");
@@ -215,14 +221,26 @@ public class ConsumeService {
         Result result = chinaPayService.signPay(payParam);
         withdrawalsRecord.setBankReturnData(result.getData().toString());
         if (result.getData().toString().startsWith("responseCode=0000")) {
+
             //转账成功
             withdrawalsRecord.setStatus(3);
             userAccount.setBalance(new BigDecimal(0));
+            //记录到 balanceFlow 表中
+            BalanceFlow balanceFlow = new BalanceFlow();
+            balanceFlow.setMoney(new BigDecimal(transAmt));
+            balanceFlow.setBalance(new BigDecimal(0));
+            balanceFlow.setFlowType(1);
+            balanceFlow.setRemarks("提现");
+            balanceFlow.setWithdrawals_id(withdrawalsRecord.getId());
+            balanceFlowRepository.save(balanceFlow);
+
             userAccountRepository.save(userAccount);
             BeanUtils.copyProperties(payParam, withdrawalsRecord);
             withdrawalsRecordReposiroty.save(withdrawalsRecord);
             return Result.success();
+
         } else {
+
             //提现失败
             withdrawalsRecord.setStatus(4);
             BeanUtils.copyProperties(payParam, withdrawalsRecord);
@@ -232,6 +250,7 @@ public class ConsumeService {
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             return Result.fail();
+
         }
     }
 

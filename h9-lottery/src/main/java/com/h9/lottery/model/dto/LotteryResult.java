@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * LotteryResult:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/3
  * Time: 10:26

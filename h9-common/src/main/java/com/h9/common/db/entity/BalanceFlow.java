@@ -32,11 +32,14 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '变更金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
-    private BalanceFlowType balanceFlowType;
+//    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
+//    private BalanceFlowType balanceFlowType;
 
-    @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
+    @Column(name = "flow_type",columnDefinition = "varchar(200) default '' COMMENT '流水类型'")
+    private Integer flowType;
+
+    @Column(name = "remarks", columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
     private String remarks;
 
     @JoinColumn(name = "user_id",columnDefinition = "bigint(20) default 0 COMMENT '资金变更用户'")
@@ -45,9 +48,28 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "order_id", columnDefinition = "bigint(20) default null COMMENT '订单id'")
     private Long orderId;
 
+
     @Column(name = "order_no", columnDefinition = "varchar(32) default '' COMMENT '订单号'")
     private String orderNo;
 
+    @Column(name ="withdrawals_id",columnDefinition = "varchar(200) default '' COMMENT '提现id' ")
+    private Long withdrawals_id;
+
+    public Long getWithdrawals_id() {
+        return withdrawals_id;
+    }
+
+    public void setWithdrawals_id(Long withdrawals_id) {
+        this.withdrawals_id = withdrawals_id;
+    }
+
+    public Integer getFlowType() {
+        return flowType;
+    }
+
+    public void setFlowType(Integer flowType) {
+        this.flowType = flowType;
+    }
 
     public Long getId() {
         return id;
@@ -73,13 +95,6 @@ public class BalanceFlow extends BaseEntity {
         this.money = money;
     }
 
-    public BalanceFlowType getBalanceFlowType() {
-        return balanceFlowType;
-    }
-
-    public void setBalanceFlowType(BalanceFlowType balanceFlowType) {
-        this.balanceFlowType = balanceFlowType;
-    }
 
     public String getRemarks() {
         return remarks;
