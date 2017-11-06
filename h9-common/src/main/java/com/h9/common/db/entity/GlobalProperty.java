@@ -23,6 +23,9 @@ public class GlobalProperty extends BaseEntity  {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '名称'")
     private String name;
 
+    @Column(name = "type",nullable = false,columnDefinition = "tinyint default 0 COMMENT '参数类型 0：文本 1：对象 '")
+    private Integer type;
+
     @Column(name = "code", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '键'")
     private String code;
 
@@ -56,18 +59,20 @@ public class GlobalProperty extends BaseEntity  {
         this.code = code;
     }
 
-    public String getVal() {
+    public Integer getType() {
+        return type;
+    }
 
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getVal() {
         return val;
     }
 
-    public void setVal(Object val) {
-        if(val instanceof String){
-            this.val = val.toString();
-        }else{
-            this.val = JSON.toJSONString(val);
-        }
-
+    public void setVal(String val) {
+       this.val = val;
     }
 
     public String getDescription() {
