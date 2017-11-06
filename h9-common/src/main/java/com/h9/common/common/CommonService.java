@@ -46,7 +46,6 @@ public class CommonService {
             return Result.fail("余额不足");
         }
         userAccount.setBalance(newbalance);
-
         BalanceFlow balanceFlow = new BalanceFlow();
         balanceFlow.setBalance(newbalance);
         balanceFlow.setMoney(money);

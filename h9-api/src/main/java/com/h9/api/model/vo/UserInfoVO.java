@@ -34,7 +34,7 @@ public class UserInfoVO {
             vo.setSex("女");
         }
 
-        vo.setBirthday(DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.GBK_DAY));
+        vo.setBirthday(DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.DAY));
         vo.setMarriageStatus(userExtends.getMarriageStatus());
         vo.setEducation(userExtends.getEducation());
         vo.setJob(userExtends.getJob());
