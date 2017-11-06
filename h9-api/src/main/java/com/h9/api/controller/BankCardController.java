@@ -1,5 +1,6 @@
 package com.h9.api.controller;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.BankCardDTO;
 
 import com.h9.api.service.BankCardService;
@@ -47,5 +48,15 @@ public class BankCardController {
                                  @SessionAttribute("curUserId")long userId){
         return bankCardService.updateStatus(id,userId);
      }
+
+
+    /**
+     * description: 银行类型
+     */
+    @Secured
+    @GetMapping("/bankTypes")
+    public Result allBankType(){
+        return bankCardService.allBank();
+    }
 
 }
