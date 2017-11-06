@@ -5,16 +5,11 @@ import com.h9.admin.model.dto.community.BannerAddDTO;
 import com.h9.admin.model.dto.community.BannerEditDTO;
 import com.h9.admin.model.dto.community.BannerTypeEditDTO;
 import com.h9.admin.model.dto.PageDTO;
+import com.h9.admin.model.dto.community.GoodsEditDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Activity;
-import com.h9.common.db.entity.ArticleType;
-import com.h9.common.db.entity.Banner;
-import com.h9.common.db.entity.BannerType;
-import com.h9.common.db.repo.ActivityRepository;
-import com.h9.common.db.repo.ArticleTypeRepository;
-import com.h9.common.db.repo.BannerRepository;
-import com.h9.common.db.repo.BannerTypeRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +33,8 @@ public class CommunityService {
     private ActivityRepository activityRepository;
     @Autowired
     private ArticleTypeRepository articleTypeRepository;
+    @Autowired
+    private GoodsReposiroty goodsReposiroty;
 
     public Result<BannerType> addBannerType(BannerType bannerType){
         if(this.bannerTypeRepository.findByCode(bannerType.getCode())!=null){
@@ -154,4 +151,25 @@ public class CommunityService {
         PageResult<Activity> pageResult = new PageResult<>(activitys);
         return Result.success(pageResult);
     }
+
+    public Result<Goods> addGoods(Goods goods){
+        return Result.success(this.goodsReposiroty.save(goods));
+    }
+
+    public Result<Goods> updateGoods(GoodsEditDTO goodsEditDTO){
+        return Result.success(this.goodsReposiroty.save(goodsEditDTO.toGoods()));
+    }
+
+    public Result<PageResult<Goods>> getGoods(PageDTO pageDTO){
+        PageRequest pageRequest = this.goodsReposiroty.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<Goods> goodss = this.goodsReposiroty.findAllByPage(pageRequest);
+        PageResult<Goods> pageResult = new PageResult<>(goodss);
+        return Result.success(pageResult);
+    }
+
+   /* public Result<Goods> updateGoodsStatus(long goodsId){
+        Goods goods = this.goodsReposiroty.findOne(goodsId);
+        if
+        return Result.success(this.goodsReposiroty.save(goodsEditDTO.toGoods()));
+    }*/
 }
