@@ -53,7 +53,6 @@ public class BankCardService {
         userBank.setProvice(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
         userBank.setStatus(1);
-        userBank.setBankImg(bankType.getBankImg());
 
         bankCardRepository.save(userBank);
         return Result.success();

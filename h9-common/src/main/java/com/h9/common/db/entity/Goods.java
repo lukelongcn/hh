@@ -54,9 +54,6 @@ public class Goods extends BaseEntity {
     @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '商品类型'")
     private GoodsType goodsType;
 
-    @Column(name = "didi_card_number",nullable = false,columnDefinition = "varchar(200) default '' COMMENT '滴滴卡兑换码' ")
-    private String DiDiCardNumber;
-
     @Column(name = "img",nullable = false,columnDefinition = "varchar(256) default '' COMMENT '图片url' ")
     private String img;
 
@@ -71,13 +68,6 @@ public class Goods extends BaseEntity {
     @Column(name = "end_time", columnDefinition = "datetime COMMENT '上架结束时间'")
     private Date endTime;
 
-    public String getDiDiCardNumber() {
-        return DiDiCardNumber;
-    }
-
-    public void setDiDiCardNumber(String diDiCardNumber) {
-        DiDiCardNumber = diDiCardNumber;
-    }
 
     public Integer getStock() {
         return stock;

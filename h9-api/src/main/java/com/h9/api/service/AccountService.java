@@ -39,6 +39,8 @@ public class AccountService {
     private UserRepository userRepository;
     @Resource
     private UserBankRepository userBankRepository;
+    @Resource
+    private GoodsDIDINumberRepository goodsDIDINumberRepository;
 
     public Result getBalanceFlow(Long userId, int page, int limit) {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
@@ -72,13 +74,13 @@ public class AccountService {
 
             if (bank.getStatus() == 1) {
                 Map<String, String> map = new HashMap<>();
-                map.put("bankImg", bank.getBankImg());
+                map.put("bankImg", bank.getBankType().getBankImg());
                 map.put("name", bank.getName());
                 String no = bank.getNo();
                 int length = no.length();
                 no = no.substring(length - 4, length);
                 map.put("no", no);
-                map.put("id", bank.getId()+"");
+                map.put("id", bank.getId() + "");
                 bankList.add(map);
             }
 
@@ -88,14 +90,17 @@ public class AccountService {
     }
 
     public Result couponeList(Long userId) {
-//        User user = userRepository.findOne(userId);
         List<OrderItems> itemsList = orderItemReposiroty.findByUser(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
 
         List<MyCouponsVO> voList = new ArrayList<>();
         for (OrderItems item : itemsList) {
-            MyCouponsVO vo = new MyCouponsVO(item, item.getGoods());
+
+            GoodsDIDINumber goodsDIDINumber = goodsDIDINumberRepository.findByGoodsId(item.getGoods().getId());
+            MyCouponsVO vo = new MyCouponsVO(item, item.getGoods(), goodsDIDINumber.getDidiNumber());
             voList.add(vo);
+
         }
+
         return Result.success(voList);
     }
 }

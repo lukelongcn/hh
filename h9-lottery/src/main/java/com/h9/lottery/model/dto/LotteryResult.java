@@ -16,11 +16,9 @@ public class LotteryResult {
     private String code;
     private boolean lottery;
     private BigDecimal money = new BigDecimal(0);
-    private List<LotteryUser> users;
     private List<LotteryUser> lotteryUsers;
     private String endTime;
     private String nowTime;
-    private int status;
 
     public String getQrCode() {
         return qrCode;
@@ -28,14 +26,6 @@ public class LotteryResult {
 
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
-    }
-
-    public List<LotteryUser> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<LotteryUser> users) {
-        this.users = users;
     }
 
     public String getCode() {
@@ -68,14 +58,6 @@ public class LotteryResult {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public String getNowTime() {

@@ -47,7 +47,7 @@ public class LotteryContorller {
     @ApiOperation(value = "开始抽奖")
     public Result startCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @SessionAttribute("curUserId") long userId
-                            ,@PathParam("code") String code){
+                            ,@PathVariable("code") String code){
         return lotteryService.lottery(userId,code);
     }
 
@@ -58,7 +58,7 @@ public class LotteryContorller {
     @ApiOperation(value = "奖励房间")
     public Result<LotteryResult> getLotteryRoom(
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
-            @SessionAttribute("curUserId") long userId,@PathParam("code") String code){
+            @SessionAttribute("curUserId") long userId,@PathVariable("code") String code){
         logger.debugv("userId {0} code {1}" ,userId, code);
         return lotteryService.getLotteryRoom(userId,code);
     }

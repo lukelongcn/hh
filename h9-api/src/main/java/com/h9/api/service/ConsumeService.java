@@ -8,6 +8,7 @@ import com.h9.api.enums.SMSTypeEnum;
 //import com.h9.api.provider.ChinaPayService;
 //import com.h9.api.provider.ChinaPayService;
 import com.h9.api.provider.ChinaPayService;
+import com.h9.common.common.CommonService;
 import com.h9.common.modle.DiDiCardInfo;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
@@ -76,6 +77,10 @@ public class ConsumeService {
     private GlobalPropertyRepository globalPropertyRepository;
     @Resource
     private BalanceFlowRepository balanceFlowRepository;
+    @Resource
+    private CommonService commonService;
+    @Resource
+    private GoodsDIDINumberRepository goodsDIDINumberRepository;
     @Value("${chinaPay.merId}")
     private String merId;
 
@@ -83,9 +88,6 @@ public class ConsumeService {
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
-        BigDecimal accountBalance = accountService.getAccountBalance(userId);
-        //TODO 防止用户连续多次点击，多次充值的情况
-        //TODO 记录充值日志
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
 //        UserAccount userAccount = userAccountRepository.findByUserId(userId);
@@ -114,6 +116,7 @@ public class ConsumeService {
         orderItems.setName("手机话费充值");
 
         orderItemReposiroty.saveAndFlush(orderItems);
+        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         userAccountRepository.save(userAccount);
         if (result.getCode() == 0) {
             return Result.success("充值成功");
@@ -126,7 +129,7 @@ public class ConsumeService {
 
         GoodsType goodsType = goodsTypeReposiroty.findOne(1L);
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
-        if(goodsList == null) return Result.fail();
+        if (goodsList == null) return Result.fail();
         List<Map<String, String>> list = new ArrayList<>();
         goodsList.forEach(goods -> {
             Map<String, String> map = new HashMap<>();
@@ -139,11 +142,23 @@ public class ConsumeService {
     }
 
     public Result didiCardList() {
-        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
-        Map<String, Object> map = new HashMap<>();
-        map.put("didiCardList", realPriceAndStock);
-        map.put("balance", "10");
-        return Result.success(map);
+//        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
+        List<Map<String, Object>> list = new ArrayList<>();
+        GoodsType goodsType = goodsTypeReposiroty.findOne(new Long(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode()));
+        if (goodsType == null) return Result.fail();
+
+        List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
+
+        goodsList.forEach(goods -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("imgUrl", goods.getImg());
+            Object count = goodsDIDINumberRepository.getCount(goods.getId());
+            map.put("stock", count);
+            map.put("name", goods.getName());
+            map.put("goodId", goods.getId());
+            list.add(map);
+        });
+        return Result.success(list);
     }
 
     public Result didiCardConvert(DidiCardDTO didiCardDTO, Long userId) {
@@ -165,8 +180,8 @@ public class ConsumeService {
         }
 
         Goods goods = goodsReposiroty.findByTop1(price);
-        if(goods == null) return Result.fail("商品不存在");
-        userAccount.setBalance(accountBalance.subtract(price));
+        if (goods == null) return Result.fail("商品不存在");
+//        userAccount.setBalance(accountBalance.subtract(price));
         goods.setStatus(0);
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), didiCardDTO.getPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
@@ -177,9 +192,12 @@ public class ConsumeService {
         orderItemReposiroty.save(items);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
+        //
+        //余额操作
+        commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         //返回数据
         Map<String, String> voMap = new HashMap<>();
-        voMap.put("didiCardNumber", goods.getDiDiCardNumber());
+        voMap.put("didiCardNumber", "");
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
         redisBean.setStringValue(smsCodeKey, "", 1, TimeUnit.SECONDS);
@@ -188,7 +206,6 @@ public class ConsumeService {
 
     public Result bankWithDraw(Long userId, Long bankId, String code) {
 
-        //TODO 额度校验
         User user = userRepository.findOne(userId);
         //验证短信
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
@@ -222,21 +239,7 @@ public class ConsumeService {
         if (result.getData().toString().startsWith("responseCode=0000")) {
 
             //转账成功
-            withdrawalsRecord.setStatus(3);
-            userAccount.setBalance(new BigDecimal(0));
-            //记录到 balanceFlow 表中
-            BalanceFlow balanceFlow = new BalanceFlow();
-            balanceFlow.setMoney(new BigDecimal(transAmt));
-            balanceFlow.setBalance(new BigDecimal(0));
-            balanceFlow.setFlowType(1l);
-            balanceFlow.setRemarks("提现");
-            balanceFlow.setWithdrawals_id(withdrawalsRecord.getId());
-            balanceFlow.setUserId(userId);
-            balanceFlowRepository.save(balanceFlow);
-
-            userAccountRepository.save(userAccount);
-            BeanUtils.copyProperties(payParam, withdrawalsRecord);
-            withdrawalsRecordReposiroty.save(withdrawalsRecord);
+            commonService.setBalance(userId, balance.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
             return Result.success();
 
         } else {

@@ -67,8 +67,8 @@ public class AccountContoller {
      */
     @Secured
     @GetMapping("/account/didicoupons")
-    public Result didiCoupones(@SessionAttribute("curUserId") Long userId){
-
+    public Result didiCoupones(@SessionAttribute("curUserId") Long userId
+            ,@RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit){
         return accountService.couponeList(userId);
     }
 }

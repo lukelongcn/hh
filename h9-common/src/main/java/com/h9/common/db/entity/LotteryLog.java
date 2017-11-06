@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "lotteryLog")
+@Table(name = "lottery_Log")
 public class LotteryLog extends BaseEntity {
 
 
