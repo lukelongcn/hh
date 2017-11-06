@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
- * LotteryUser:刘敏华 shadow.liu@hey900.com
+ * LotteryFlowDTO:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/3
  * Time: 10:27
  */
@@ -14,6 +14,7 @@ public class LotteryUser {
     private String name;
     private String avatar;
     private boolean me;
+    private boolean roomUser;
     private BigDecimal money = new BigDecimal(0);
     private String desc;
 
@@ -65,5 +66,14 @@ public class LotteryUser {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+    public boolean isRoomUser() {
+        return roomUser;
+    }
+
+    public void setRoomUser(boolean roomUser) {
+        this.roomUser = roomUser;
+    }
+
 }
 

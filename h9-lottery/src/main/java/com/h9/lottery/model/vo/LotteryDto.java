@@ -16,9 +16,6 @@ public class LotteryDto {
     private String code;
     private double longitude;
     private double latitude;
-    private String version;
-    private Integer client;
-    private String imei;
 
     public String getCode() {
         return code;
@@ -44,27 +41,4 @@ public class LotteryDto {
         this.latitude = latitude;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Integer getClient() {
-        return client;
-    }
-
-    public void setClient(Integer client) {
-        this.client = client;
-    }
-
-    public String getImei() {
-        return imei;
-    }
-
-    public void setImei(String imei) {
-        this.imei = imei;
-    }
 }

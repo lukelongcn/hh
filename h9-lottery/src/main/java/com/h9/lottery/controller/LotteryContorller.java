@@ -2,7 +2,7 @@ package com.h9.lottery.controller;
 
 import com.h9.common.base.Result;
 import com.h9.lottery.interceptor.Secured;
-import com.h9.lottery.model.dto.LotteryFlow;
+import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.service.LotteryService;
@@ -48,14 +48,14 @@ public class LotteryContorller {
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
             @SessionAttribute("curUserId") long userId,@PathParam("code") String code){
         logger.debugv("userId {0} code {1}" ,userId, code);
-        return Result.success();
+        return lotteryService.getLotteryRoom(userId,code);
     }
 
 
     @Secured
     @GetMapping("/history")
     @ApiOperation(value = "奖励结果页面")
-    public Result<LotteryFlow> getLotteryHistory(@SessionAttribute("curUserId") long userId){
+    public Result<LotteryFlowDTO> getLotteryHistory(@SessionAttribute("curUserId") long userId){
         logger.debugv("userId {0}" ,userId);
         return Result.success();
     }

@@ -12,9 +12,9 @@ import java.util.Date;
  * Description:TODO
  * BalanceFlowVO:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/30
- * Time: 16:58
+ * Time: 16:58徽
  */
-public class LotteryFlow {
+public class LotteryFlowDTO {
 
     private BigDecimal money = new BigDecimal(0);
     private String month;
