@@ -104,13 +104,13 @@ public class ActivityAddDTO {
     @NotEmpty(message = "图文描述不能为空")
     private String imgTextDesc;*/
 
-    @ApiModelProperty(value = "中奖人数",required = true)
+    /*@ApiModelProperty(value = "中奖人数",required = true)
     @NotNull(message = "中奖人数不能为空")
     private Integer targetCount = 0;
 
     @ApiModelProperty(value = "中奖比例",required = true)
     @NotEmpty(message = "中奖比例不能为空")
-    private List<TargetRateDTO> targetRate;
+    private List<TargetRateDTO> targetRate;*/
 
     public String getActivityName() {
         return activityName;
@@ -272,7 +272,7 @@ public class ActivityAddDTO {
         this.imgTextDesc = imgTextDesc;
     }*/
 
-    public Integer getTargetCount() {
+   /* public Integer getTargetCount() {
         return targetCount;
     }
 
@@ -286,7 +286,7 @@ public class ActivityAddDTO {
 
     public void setTargetRate(List<TargetRateDTO> targetRate) {
         this.targetRate = targetRate;
-    }
+    }*/
 
     public Activity toActivity(){
         Activity activity = new Activity();

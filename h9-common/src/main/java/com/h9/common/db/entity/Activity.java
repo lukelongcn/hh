@@ -120,11 +120,11 @@ public class Activity extends BaseEntity {
     @Column(name = "img_text_desc", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '图文描述'")
     private String imgTextDesc;*/
 
-    @Column(name = "target_count",columnDefinition = "int default 0 COMMENT '中奖人数'")
+    /*@Column(name = "target_count",columnDefinition = "int default 0 COMMENT '中奖人数'")
     private Integer targetCount = 0;
 
     @Column(name = "target_rate",  columnDefinition = "varchar(256) default '' COMMENT '中奖比例'")
-    private String targetRate;
+    private String targetRate;*/
 
     public Long getId() {
         return id;
@@ -342,7 +342,7 @@ public class Activity extends BaseEntity {
         this.imgTextDesc = imgTextDesc;
     }*/
 
-    public Integer getTargetCount() {
+    /*public Integer getTargetCount() {
         return targetCount;
     }
 
@@ -359,7 +359,7 @@ public class Activity extends BaseEntity {
 
     public void setTargetRate(List<TargetRateDTO> targetRate) {
         this.targetRate = JSON.toJSONString(targetRate);
-    }
+    }*/
 
     public enum EnableEnum {
         DISABLED(0,"禁用"),
