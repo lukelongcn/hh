@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -232,6 +231,7 @@ public class ConsumeService {
             balanceFlow.setFlowType(1l);
             balanceFlow.setRemarks("提现");
             balanceFlow.setWithdrawals_id(withdrawalsRecord.getId());
+            balanceFlow.setUserId(userId);
             balanceFlowRepository.save(balanceFlow);
 
             userAccountRepository.save(userAccount);
