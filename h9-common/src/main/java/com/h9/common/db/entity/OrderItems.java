@@ -49,6 +49,17 @@ public class OrderItems extends BaseEntity {
     @JoinColumn(name = "goods_id",referencedColumnName = "id")
     private Goods goods;
 
+    @Column(name="didi_card_number")
+    private String didiCardNumber;
+
+    public String getDidiCardNumber() {
+        return didiCardNumber;
+    }
+
+    public void setDidiCardNumber(String didiCardNumber) {
+        this.didiCardNumber = didiCardNumber;
+    }
+
     public OrderItems(String name, String image, BigDecimal price, BigDecimal money, Integer count, Orders orders) {
         this.name = name;
         this.image = image;

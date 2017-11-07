@@ -12,6 +12,7 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,8 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.awt.print.Pageable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -114,6 +117,7 @@ public class ConsumeService {
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         userAccountRepository.save(userAccount);
         if (result.getCode() == 0) {
+
             return Result.success("充值成功");
         } else {
             throw new RuntimeException("充值失败");
@@ -241,7 +245,12 @@ public class ConsumeService {
 
             //转账成功
             commonService.setBalance(userId, balance.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
-            return Result.success();
+
+            Map<String, String> map = new HashMap<>();
+            map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
+            map.put("money", "￥" +balance.setScale(2, RoundingMode.DOWN));
+
+            return Result.success(map);
 
         } else {
 
