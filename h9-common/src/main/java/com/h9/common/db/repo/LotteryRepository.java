@@ -29,4 +29,8 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
     BigDecimal findByRewardCount(Reward reward);
 
 
+
+    @Query("select l.createTime from Lottery l where l.reward = ?1 order by l.createTime desc")
+    Date findByRewardLastTime(Reward reward);
+
 }

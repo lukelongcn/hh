@@ -80,7 +80,7 @@ public class GlobalPropertyAddDTO {
                 Object o = m.get("val");
                 stringList.add(o.toString());
             }
-            v = StringUtils.join(stringList.toArray(), ",");  ;
+            v = StringUtils.join(stringList.toArray(), ",");
         }
         return v;
     }

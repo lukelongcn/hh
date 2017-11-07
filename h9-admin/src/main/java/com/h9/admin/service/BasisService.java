@@ -1,7 +1,11 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.PageDTO;
+import com.h9.admin.model.dto.basis.BankTypeAddDTO;
+import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
+import com.h9.common.db.entity.BankType;
+import com.h9.common.db.repo.BankTypeRepository;
 import com.h9.common.modle.vo.GlobalPropertyVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -24,6 +28,8 @@ public class BasisService {
 
     @Autowired
     private GlobalPropertyRepository globalPropertyRepository;
+    @Autowired
+    private BankTypeRepository bankTypeRepository;
 
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
@@ -54,6 +60,45 @@ public class BasisService {
     public Result deleteGlobalProperty(long globalPropertyId){
         this.globalPropertyRepository.delete(globalPropertyId);
         return Result.success();
+    }
+
+    public Result<BankType> addBankType(BankTypeAddDTO bankTypeAddDTO){
+        if(this.bankTypeRepository.findByBankName(bankTypeAddDTO.getBankName())!=null){
+            return Result.fail("银行已存在");
+        }
+        return Result.success(this.bankTypeRepository.save(bankTypeAddDTO.toBankType()));
+    }
+
+    public Result<BankType> updateBankType(BankTypeEditDTO bankTypeEditDTO){
+        if(this.bankTypeRepository.findByIdNotAndBankName(bankTypeEditDTO.getId(),bankTypeEditDTO.getBankName())!=null){
+            return Result.fail("银行已存在");
+        }
+        BankType bankType = this.bankTypeRepository.findOne(bankTypeEditDTO.getId());
+        if(bankType==null){
+            return Result.fail("银行不存在");
+        }
+        BeanUtils.copyProperties(bankTypeEditDTO,bankType);
+        return Result.success(this.bankTypeRepository.save(bankType));
+    }
+
+    public Result<BankType> updateBankTypeStatus(long id){
+        BankType bankType = this.bankTypeRepository.findOne(id);
+        if(bankType==null){
+            return Result.fail("银行不存在");
+        }
+        if(bankType.getStatus()==BankType.StatusEnum.DISABLED.getId()){
+            bankType.setStatus(BankType.StatusEnum.ENABLED.getId());
+        }else{
+            bankType.setStatus(BankType.StatusEnum.DISABLED.getId());
+        }
+        return Result.success(this.bankTypeRepository.save(bankType));
+    }
+
+    public Result<PageResult<BankType>> getBankTypes(PageDTO pageDTO){
+        PageRequest pageRequest = this.bankTypeRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<BankType> bankTypes = this.bankTypeRepository.findAllByPage(pageRequest);
+        PageResult<BankType> pageResult = new PageResult<>(bankTypes);
+        return Result.success(pageResult);
     }
 
 }

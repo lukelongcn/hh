@@ -17,7 +17,7 @@ public interface GlobalPropertyRepository extends BaseRepository<GlobalProperty>
 
     GlobalProperty findByIdNotAndCode(long id,String code);
 
-    @Query("select new com.h9.common.modle.vo.GlobalPropertyVO(o) from GlobalProperty o")
+    @Query("select new com.h9.common.modle.vo.GlobalPropertyVO(o) from GlobalProperty o  order by o.id desc ")
     Page<GlobalPropertyVO> findAllByPage(Pageable page);
 
 }

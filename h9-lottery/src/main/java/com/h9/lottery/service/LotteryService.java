@@ -7,13 +7,14 @@ import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.NetworkUtil;
+import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
 import com.h9.lottery.model.vo.LotteryDto;
+import com.h9.lottery.model.vo.LotteryResultDto;
 import com.h9.lottery.utils.RandomDataUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -58,7 +60,6 @@ public class LotteryService {
 //        记录用户信息
         UserRecord userRecord = newUserRecord(userId, lotteryVo, request);
         //TODO 检查用户是否在黑名单里面
-
         //检查用户参与活动次数,是否超标
         Date startDate = new Date();
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
@@ -75,6 +76,8 @@ public class LotteryService {
 //            这个码没有被扫过，是新码,并且当天数量超标了
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
+
+        //TODO 检查第三方库有没有数据
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
         //记录扫码记录
         record(userId, reward, lotteryVo, userRecord);
@@ -87,30 +90,38 @@ public class LotteryService {
         }
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
         if (lottery != null) {
-//         如果已经参加，放回房间号
-            return Result.success();
+//          放回是否开奖
+            LotteryResultDto lotteryResultDto = new LotteryResultDto();
+            lotteryResultDto.setRoomUser(lottery.getRoomUser() == 1);
+            lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
+            return Result.success(lotteryResultDto);
         } else {
 //        如果没有参加，参加活动
             if (status == END.getCode()) {
 //                如果已经结束
                 return Result.fail("红包活动已经结束");
             }
+            LotteryResultDto lotteryResultDto = new LotteryResultDto();
+            lotteryResultDto.setLottery(false);
+            lotteryResultDto.setRoomUser(false);
+            lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             //是第一个用户
             lottery = new Lottery();
             int partakeCount = reward.getPartakeCount();
             if (partakeCount == 0) {
                 reward.setUserId(userId);
                 lottery.setRoomUser(2);
+                lotteryResultDto.setRoomUser(true);
             }
             reward.setPartakeCount(partakeCount + 1);
             rewardRepository.save(reward);
             lottery.setReward(reward);
             lottery.setUserId(userId);
-
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
+            return Result.success(lotteryResultDto);
         }
-        return Result.success();
+
     }
 
     public void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
@@ -152,7 +163,7 @@ public class LotteryService {
 
 
     public Result<LotteryResult> getLotteryRoom(
-            long userId, String code) {
+            Long userId, String code) {
         Reward reward = rewardRepository.findByCode(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -164,22 +175,33 @@ public class LotteryService {
 
         LotteryResult lotteryResult = new LotteryResult();
         lotteryResult.setCode(code);
-        Integer status = reward.getStatus();
-        boolean islottery = status == StatusEnum.END.getCode();
-        lotteryResult.setLottery(islottery);
-        lotteryResult.setMoney(reward.getMoney());
 
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
-        //TODO 可能要调整
-        Date updateTime = reward.getUpdateTime();
-        Date lastDate = DateUtil.getDate(updateTime, 1, Calendar.MINUTE);
-        String endTime = DateUtil.formatDate(lastDate , DateUtil.FormatType.SECOND);
-        lotteryResult.setEndTime(endTime);
-        //TODO 路径
-        lotteryResult.setQrCode(""+code);
 
+        Date updateTime = lotteryRepository.findByRewardLastTime(reward);
+        //TODO 暂时设置为 5 分钟
+        Date lastDate = DateUtil.getDate(updateTime, 5, Calendar.MINUTE);
+        String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
+        lotteryResult.setEndTime(endTime);
+
+        if(lastDate.before(nowDate)){
+            lottery(null, code);
+        }
+
+        Integer status = reward.getStatus();
+        boolean islottery = status == StatusEnum.END.getCode();
+        lotteryResult.setLottery(islottery);
+        lotteryResult.setRoomUser(userId.equals(reward.getUserId()));
+
+        //TODO
+        LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
+        if(lotteryFlow!=null){
+            lotteryResult.setMoney(lotteryFlow.getMoney());
+        }
+
+        lotteryResult.setQrCode(""+code);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
         if(islottery){
             List<LotteryFlow> flows = lotteryFlowRepository.findByReward(reward);
@@ -211,6 +233,7 @@ public class LotteryService {
             }
         }
         lotteryResult.setLotteryUsers(lotteryUsers);
+
         return Result.success(lotteryResult);
     }
 
@@ -257,8 +280,6 @@ public class LotteryService {
 
 
 
-
-
     /****
      * 生成奖励人员
      * @param reward
@@ -286,18 +307,38 @@ public class LotteryService {
         List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
+        Random random = new Random();
+        int count = list.size();
         for (int i = 0; i < lotteries.size(); i++) {
             BigDecimal rewardMoney = moneyMap.get(i + 1);
             Lottery lottery = lotteries.get(i);
             lottery.setMoney(rewardMoney);
-            lotteryFlows.add(new LotteryFlow(lottery));
+            LotteryFlow lotteryFlow = new LotteryFlow(lottery);
+            lotteryFlow.setRemarks(list.get(i % count));
+            lotteryFlows.add(lotteryFlow);
         }
         return lotteryFlows;
+    }
+
+    static List<String> list = new ArrayList<>();
+
+    static{
+        list.add("一杯高炉酒，红包啥都有");
+        list.add("换个姿势抢，红包会更多");
+        list.add("与君共饮一杯酒！");
     }
 
 
 
 
+    public Result<List<LotteryFlowDTO>> history(Long userId){
+        List<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId);
+        List<LotteryFlowDTO> lotteryFlowDTOS = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(lotteryFlows)){
+            lotteryFlowDTOS = lotteryFlows.stream().map(LotteryFlowDTO::new).collect(Collectors.toList());
+        }
+        return Result.success(lotteryFlowDTOS);
+    }
 
 
 

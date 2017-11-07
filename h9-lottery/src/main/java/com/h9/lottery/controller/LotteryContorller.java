@@ -1,6 +1,7 @@
 package com.h9.lottery.controller;
 
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.lottery.interceptor.Secured;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -64,6 +66,16 @@ public class LotteryContorller {
 
 
 
+
+    @Secured
+    @GetMapping("/history")
+    @ApiOperation(value = "奖励房间")
+    public Result<List<LotteryFlowDTO>> getLotteryRoom(
+            @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
+            @SessionAttribute("curUserId") long userId){
+
+        return lotteryService.history(userId);
+    }
 
 
 

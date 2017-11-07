@@ -77,6 +77,8 @@ public class ConsumeService {
     private CommonService commonService;
     @Resource
     private GoodsDIDINumberRepository goodsDIDINumberRepository;
+    @Resource
+    private WithdrawalsRequestReposiroty withdrawalsRequestReposiroty;
     @Value("${chinaPay.merId}")
     private String merId;
 
@@ -234,33 +236,44 @@ public class ConsumeService {
         String signFlag = "1";
 
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, new BigDecimal(transAmt), userBank, purpose);
-        withdrawalsRecord.setBankReturnData("");
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
         ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
         Result result = chinaPayService.signPay(payParam);
-        withdrawalsRecord.setBankReturnData(result.getData().toString());
-        if (result.getData().toString().startsWith("responseCode=0000")) {
 
-            //转账成功
-            commonService.setBalance(userId, balance.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
+        //保存这个提现请求
+        WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
+        withdrawalsRequest.setWithdrawCashId(withdrawalsRecord.getId());
+        BeanUtils.copyProperties(payParam, withdrawalsRequest);
+        withdrawalsRequest.setBankReturnData(result.getData().toString());
+        if (result.getData().toString().startsWith("responseCode=0000")) {
+            if (result.getData().toString().contains("stat=s")) {
+                //转账成功
+                commonService.setBalance(userId, balance.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
+                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+            } else {
+                //转账尚未到用户卡上
+                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
+            }
+
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "￥" + balance.setScale(2, RoundingMode.DOWN));
-
+            withdrawalsRequestReposiroty.save(withdrawalsRequest);
+            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             return Result.success(map);
 
         } else {
-
             //提现失败
-            withdrawalsRecord.setStatus(4);
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
             BeanUtils.copyProperties(payParam, withdrawalsRecord);
             withdrawalsRecordReposiroty.save(withdrawalsRecord);
             WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
             BeanUtils.copyProperties(payParam, withdrawalsFails);
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
+            withdrawalsRequestReposiroty.save(withdrawalsRequest);
             return Result.fail();
         }
     }
@@ -274,5 +287,18 @@ public class ConsumeService {
         userAccount.setBalance(new BigDecimal(200));
         userAccountRepository.save(userAccount);
         return Result.success();
+    }
+
+    public Result scan() {
+        List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+
+        String reduce = withdrawCashRecord.stream()
+                .map(record -> record.getId() + "")
+                .reduce("", (x, y) -> x + " ," + y);
+
+        logger.info("没有到账的订单"+reduce);
+        //查询状态
+
+        return null;
     }
 }
