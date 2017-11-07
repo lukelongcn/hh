@@ -57,4 +57,6 @@ public class BankCardController {
     public Result allBankType(){
         return bankCardService.allBank();
     }
+
+
 }
