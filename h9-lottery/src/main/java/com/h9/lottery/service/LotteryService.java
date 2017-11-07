@@ -11,9 +11,8 @@ import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
 import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.utils.RandomDataUtil;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -52,9 +51,6 @@ public class LotteryService {
     private LotteryFlowRepository lotteryFlowRepository;
     @Resource
     private CommonService commonService;
-    
-    
-
 
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -164,7 +160,8 @@ public class LotteryService {
         LotteryResult lotteryResult = new LotteryResult();
         lotteryResult.setCode(code);
         Integer status = reward.getStatus();
-        lotteryResult.setLottery(status == StatusEnum.END.getCode());
+        boolean islottery = status == StatusEnum.END.getCode();
+        lotteryResult.setLottery(islottery);
         lotteryResult.setMoney(reward.getMoney());
 
         Date nowDate = new Date();
@@ -177,7 +174,7 @@ public class LotteryService {
         lotteryResult.setQrCode(""+code);
 
         List<LotteryUser> lotteryUsers = new ArrayList<>();
-        if(status == StatusEnum.END.getCode()){
+        if(islottery){
             List<LotteryFlow> flows = lotteryFlowRepository.findByReward(reward);
             for (int i = 0; i < flows.size(); i++) {
                 LotteryFlow lotteryFromDb = flows.get(i);
@@ -277,7 +274,7 @@ public class LotteryService {
             moneyMap.put(3, money.multiply(new BigDecimal(10)).divide(new BigDecimal(100)));
         }
         //获取随机中奖人数
-        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomDataNoRepeat(lotteryList, size <= 3 ? size : 3);
+        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
         for (int i = 0; i < lotteries.size(); i++) {
