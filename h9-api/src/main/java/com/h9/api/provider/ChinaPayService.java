@@ -25,6 +25,9 @@ public class ChinaPayService {
     @Value("${chinaPay.merId}")
     private String merId;
 
+    /**
+     * description: 银行代付
+     */
     public Result signPay(PayParam payParam) {
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
@@ -69,6 +72,53 @@ public class ChinaPayService {
         ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
         String body = res.getBody();
         return Result.success("success",body);
+    }
+
+
+    public Result query(PayParam payParam){
+//        String merId = "808080211881410";
+//        String merDate = "20171103";
+//        String merSeqId = "4";
+//
+//        String version = "20090501";
+//        String signFlag = "1";
+//        String chkValue = merId+merDate+merSeqId+version;
+//
+//        PrivateKey key = new PrivateKey();
+//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        boolean buildOK = key.buildKey(merId, 0, path);
+//        if(!buildOK){
+//            System.out.println("没有找到私钥文件");
+//        }
+//        System.out.println(buildOK);
+//        SecureLink secureLink = new SecureLink(key);
+//
+//        chkValue = new String(Base64.encode(chkValue.getBytes()));
+//        chkValue = secureLink.Sign(new String(chkValue));
+//
+//
+//        String url = "http://sfj-test.chinapay.com/dac/SinPayQueryServletGBK";
+//
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+//        params.add("merId",merId);
+//        params.add("merDate",merDate);
+//        params.add("merSeqId",merSeqId);
+//        params.add("version",version);
+//        params.add("signFlag",signFlag);
+//        params.add("chkValue",chkValue);
+//        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
+//        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+//
+//        String gbk = new String(res.toString().getBytes("GBK"), "utf-8");
+//        System.out.println(gbk);
+
+//        System.out.println(res);
+        return null;
     }
 
     public static class PayParam {
