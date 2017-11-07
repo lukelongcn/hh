@@ -91,7 +91,8 @@ public class GlobalPropertyVO {
             JSONObject map = JSON.parseObject(val);
             for(Map.Entry entry: map.entrySet()){
                 Map m = new HashMap();
-                m.put(entry.getKey(),entry.getValue());
+                m.put("key",entry.getKey());
+                m.put("code",entry.getValue());
                 list.add(m);
             }
         }else{

@@ -71,7 +71,7 @@ public class GlobalPropertyAddDTO {
         }else if(type==1){
             Map map = new HashMap();
             for(int i=0;i<val.size();i++){
-                map.putAll(val.get(i));
+                map.put(val.get(i).get("key"),val.get(i).get("code"));
             }
             v = JSON.toJSONString(map);
         }else{
