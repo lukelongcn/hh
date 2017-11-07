@@ -24,7 +24,7 @@ public class RandomDataUtil {
 
     public final static int TWO=2;
     /**
-     * 生成随机集合（不重复）
+     * 生成随机集合（不重复）  有可能会出现死循环
      * <p>
      *     使用Set的值唯一的特性。
      *     最佳适用场合：集合中数目多，取相对较少对象时。在取对象相对较多时（超过集合的一半时）采用逆向方法，
@@ -186,21 +186,24 @@ public class RandomDataUtil {
         return set;
     }
 
-    public static void main(String[] args) {
-        Logger logger = getLogger(RandomDataUtil.class);
-        RandomDataUtil randomDataUtil = new RandomDataUtil();
-        List<String> list = new ArrayList<>();
-        list.add("a");
+//    public static void main(String[] args) {
+//        Logger logger = getLogger(RandomDataUtil.class);
+//        RandomDataUtil randomDataUtil = new RandomDataUtil();
+//        List<String> list = new ArrayList<>();
+//        list.add("a");
 //        list.add("b");
 //        list.add("c");
 //        list.add("d");
 //        list.add("e");
 //        list.add("f");
 //        list.add("g");
-        logger.debugv(JSONObject.toJSONString(list));
-        List<String> strings = randomDataUtil.generateRandomPermutation(list, 1);
-        logger.debugv("---");
-        logger.debugv(JSONObject.toJSONString(strings) + " " + strings.size());
-    }
+//        for(int i=0;i<10000;i++){
+//            logger.debugv(JSONObject.toJSONString(list));
+//            List<String> strings = randomDataUtil.generateRandomPermutation(list, 3);
+//            logger.debugv("---  i="+i);
+//            logger.debugv(JSONObject.toJSONString(strings) + " " + strings.size());
+//        }
+//
+//    }
 
 }
