@@ -89,4 +89,13 @@ public class ConsumeController {
     public Result cz(@PathVariable Long userId) {
         return consumeService.cz(userId);
     }
+
+
+    /**
+     * description: 扫述充值不没有到账的情况
+     */
+    @PutMapping("/withdraw/scan")
+    public Result orderScan(){
+        return consumeService.scan();
+    }
 }
