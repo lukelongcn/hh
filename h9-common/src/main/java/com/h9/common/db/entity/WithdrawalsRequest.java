@@ -60,6 +60,16 @@ public class WithdrawalsRequest {
     @Column(name = "withdraw_id")
     private Long withdrawCashId;
 
+    @Column(name="mer_date")
+    private String merDate;
+
+    public String getMerDate() {
+        return merDate;
+    }
+
+    public void setMerDate(String merDate) {
+        this.merDate = merDate;
+    }
 
     public Long getWithdrawCashId() {
         return withdrawCashId;

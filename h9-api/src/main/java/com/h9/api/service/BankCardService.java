@@ -101,7 +101,7 @@ public class BankCardService {
             if (bank.getStatus() == 1) {
                 Map<String, String> map = new HashMap<>();
                 map.put("bankImg", bank.getBankType().getBankImg());
-                map.put("name", bank.getName());
+                map.put("name", bank.getBankType().getBankName());
                 String no = bank.getNo();
                 int length = no.length();
                 map.put("no", no);

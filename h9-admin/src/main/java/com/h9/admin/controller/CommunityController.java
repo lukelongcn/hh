@@ -10,6 +10,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.Banner;
+//import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.Goods;
 import io.swagger.annotations.Api;
