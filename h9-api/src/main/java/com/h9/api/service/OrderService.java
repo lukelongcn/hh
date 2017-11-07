@@ -48,14 +48,20 @@ public class OrderService {
     }
 
     public Result orderList(Long userId,Integer page,Integer size) {
-        PageRequest pageRequest = new PageRequest(page,size);
-        Page<Orders> pageOrders = ordersReposiroty.findByUser(userId, pageRequest);
-        return Result.success(new PageResult<>(pageOrders).result2Result(order -> OrderListVO.convert(order)));
+        PageResult<Orders> pageResult = ordersReposiroty.findByUser(userId, page, size);
+        return Result.success(pageResult.result2Result(OrderListVO::convert));
     }
 
     public Result orderDetail(Long orderId) {
         Orders orders = ordersReposiroty.findOne(orderId);
         OrderDetailVO vo = OrderDetailVO.convert(orders);
         return Result.success(vo);
+    }
+
+    /**
+     * description:
+     */
+    public Result scan() {
+        return null;
     }
 }

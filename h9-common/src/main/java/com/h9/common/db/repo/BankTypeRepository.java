@@ -23,6 +23,6 @@ public interface BankTypeRepository  extends BaseRepository<BankType> {
 
     BankType findByIdNotAndBankName(long id,String name);
 
-    @Query("select o from BankType o")
+    @Query("select o from BankType o  order by o.id desc ")
     Page<BankType> findAllByPage(Pageable page);
 }
