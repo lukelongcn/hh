@@ -7,6 +7,7 @@ import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.NetworkUtil;
+import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
 import com.h9.lottery.model.vo.LotteryDto;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -278,8 +280,6 @@ public class LotteryService {
 
 
 
-
-
     /****
      * 生成奖励人员
      * @param reward
@@ -307,18 +307,38 @@ public class LotteryService {
         List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
+        Random random = new Random();
+        int count = list.size();
         for (int i = 0; i < lotteries.size(); i++) {
             BigDecimal rewardMoney = moneyMap.get(i + 1);
             Lottery lottery = lotteries.get(i);
             lottery.setMoney(rewardMoney);
-            lotteryFlows.add(new LotteryFlow(lottery));
+            LotteryFlow lotteryFlow = new LotteryFlow(lottery);
+            lotteryFlow.setRemarks(list.get(i % count));
+            lotteryFlows.add(lotteryFlow);
         }
         return lotteryFlows;
+    }
+
+    static List<String> list = new ArrayList<>();
+
+    static{
+        list.add("一杯高炉酒，红包啥都有");
+        list.add("换个姿势抢，红包会更多");
+        list.add("与君共饮一杯酒！");
     }
 
 
 
 
+    public Result<List<LotteryFlowDTO>> history(Long userId){
+        List<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId);
+        List<LotteryFlowDTO> lotteryFlowDTOS = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(lotteryFlows)){
+            lotteryFlowDTOS = lotteryFlows.stream().map(LotteryFlowDTO::new).collect(Collectors.toList());
+        }
+        return Result.success(lotteryFlowDTOS);
+    }
 
 
 
