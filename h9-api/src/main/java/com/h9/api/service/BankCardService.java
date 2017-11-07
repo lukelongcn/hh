@@ -31,15 +31,17 @@ public class BankCardService {
 
     @Resource
     private BankTypeRepository bankTypeRepository;
+
     /**
      * 添加银行卡
+     *
      * @param bankCardDTO
      * @return
      */
-    public Result addBankCard(Long userId,BankCardDTO bankCardDTO){
+    public Result addBankCard(Long userId, BankCardDTO bankCardDTO) {
 
         //判断银行卡号是否已被绑定
-        if(bankCardRepository.findByNo(bankCardDTO.getNo())!=null){
+        if (bankCardRepository.findByNo(bankCardDTO.getNo()) != null) {
             return Result.fail();
         }
         UserBank userBank = new UserBank();
@@ -48,7 +50,7 @@ public class BankCardService {
         userBank.setNo(bankCardDTO.getNo());
         Long typeId = bankCardDTO.getBankTypeId();
         BankType bankType = bankTypeRepository.findOne(typeId);
-        if(bankType == null) return Result.fail("此银行类型不存在");
+        if (bankType == null) return Result.fail("此银行类型不存在");
         userBank.setBankType(bankType);
         userBank.setProvice(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
@@ -60,13 +62,14 @@ public class BankCardService {
 
     /**
      * 解绑银行卡
+     *
      * @param id
      * @param userId
      * @return
      */
-    public Result updateStatus(Long id,Long userId){
+    public Result updateStatus(Long id, Long userId) {
         UserBank userBank = bankCardRepository.findById(id);
-        if(userBank == null) {
+        if (userBank == null) {
             return Result.fail("银行卡不存在");
         }
         if (userId.equals(userBank.getUserId())) {
@@ -80,7 +83,7 @@ public class BankCardService {
     public Result allBank() {
         List<BankType> all = bankTypeRepository.findAll();
         List<Map<String, String>> bankVoList = new ArrayList<>();
-        if(CollectionUtils.isEmpty(all)) return Result.success();
+        if (CollectionUtils.isEmpty(all)) return Result.success();
         all.forEach(bank -> {
             Map<String, String> map = new HashMap<>();
             map.put("name", bank.getBankName());
@@ -88,5 +91,25 @@ public class BankCardService {
             bankVoList.add(map);
         });
         return Result.success(bankVoList);
+    }
+
+    public Result getMyBankList(long userId) {
+        List<UserBank> userBankList = bankCardRepository.findByUserId(userId);
+        List<Map<String, String>> bankList = new ArrayList<>();
+        userBankList.forEach(bank -> {
+
+            if (bank.getStatus() == 1) {
+                Map<String, String> map = new HashMap<>();
+                map.put("bankImg", bank.getBankType().getBankImg());
+                map.put("name", bank.getName());
+                String no = bank.getNo();
+                int length = no.length();
+                map.put("no", no);
+                map.put("id", bank.getId() + "");
+                bankList.add(map);
+            }
+
+        });
+        return Result.success(bankList);
     }
 }

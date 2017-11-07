@@ -72,8 +72,6 @@ public class ConsumeService {
     @Resource
     private WithdrawalsFailsReposiroty withdrawalsFailsReposiroty;
     @Resource
-    private GlobalPropertyRepository globalPropertyRepository;
-    @Resource
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private CommonService commonService;
@@ -117,8 +115,10 @@ public class ConsumeService {
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         userAccountRepository.save(userAccount);
         if (result.getCode() == 0) {
-
-            return Result.success("充值成功");
+            Map<String, String> map = new HashMap<>();
+            map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
+            map.put("money", "￥" +realPrice.setScale(2, RoundingMode.DOWN));
+            return Result.success("充值成功",map);
         } else {
             throw new RuntimeException("充值失败");
         }
