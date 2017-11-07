@@ -12,8 +12,8 @@ import javax.validation.constraints.Size;
 public class MobileRechargeDTO {
     @Min(value = 0,message = "请填写Id")
     private Long id;
-    @Size(min = 11,max = 11,message = "请输入合法的手机号码")
-    private Long tel;
+    @NotEmpty(message = "请输入合法的手机号码")
+    private String tel;
     @NotEmpty(message = "请传code")
     private String code;
 
@@ -33,11 +33,11 @@ public class MobileRechargeDTO {
         this.id = id;
     }
 
-    public Long getTel() {
+    public String getTel() {
         return tel;
     }
 
-    public void setTel(Long tel) {
+    public void setTel(String tel) {
         this.tel = tel;
     }
 }

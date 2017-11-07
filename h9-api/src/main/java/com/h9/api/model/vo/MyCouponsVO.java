@@ -17,16 +17,13 @@ public class MyCouponsVO {
     private String cardNumber;
 
 
-    public MyCouponsVO(OrderItems items, Goods goods) {
+    public MyCouponsVO(OrderItems items) {
         this.price = items.getPrice().toString();
         this.name = items.getName();
         this.status = "已发放";
         this.createTime = DateUtil.formatDate(items.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.from = "大转盘奖励";
-        //TODO 重构完放开
-//        if(goods != null)
-//        this.cardNumber = goods.getDiDiCardNumber() == null ? "":goods.getDiDiCardNumber();
-        //TODO 重构完放开
+        this.cardNumber = items.getDidiCardNumber();
     }
 
     public String getPrice() {

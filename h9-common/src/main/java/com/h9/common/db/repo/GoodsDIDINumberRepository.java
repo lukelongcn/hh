@@ -2,6 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.GoodsDIDINumber;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 /**
@@ -9,6 +10,9 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface GoodsDIDINumberRepository extends BaseRepository<GoodsDIDINumber>{
 
-    @Query(value = "select count(o.id) from GoodsDIDINumber o where o.status = 1")
-    Object getCount();
+    @Query(value = "select count(o.id) from GoodsDIDINumber o where o.status = 1 and o.goodsId = ?1 ")
+    Object getCount(Long goodId);
+
+    @Query(value = "select * from goods_didi_number where goods_id = ?1 and status = 1 limit 0,1",nativeQuery = true)
+    GoodsDIDINumber findByGoodsId(Long goodsId);
 }

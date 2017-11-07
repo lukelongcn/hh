@@ -32,7 +32,7 @@ public class ConsumeController {
     @PostMapping("/mobile/recharge")
     public Result mobileRecharge(
             @SessionAttribute("curUserId") Long userId,
-            @RequestBody MobileRechargeDTO mobileRechargeDTO) {
+            @Valid@RequestBody MobileRechargeDTO mobileRechargeDTO) {
         try {
             return consumeService.recharge(userId, mobileRechargeDTO);
         } catch (Exception e) {
