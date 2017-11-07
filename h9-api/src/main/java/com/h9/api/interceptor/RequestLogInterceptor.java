@@ -21,6 +21,7 @@ import java.util.Map;
 public class RequestLogInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
 
+    @SuppressWarnings("Duplicates")
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 

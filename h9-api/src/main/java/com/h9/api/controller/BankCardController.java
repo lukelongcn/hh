@@ -59,4 +59,9 @@ public class BankCardController {
     }
 
 
+    @Secured
+    @GetMapping("/my/bankcards")
+    public Result myBankCards(@SessionAttribute("curUserId")long userId){
+        return bankCardService.getMyBankList(userId);
+    }
 }

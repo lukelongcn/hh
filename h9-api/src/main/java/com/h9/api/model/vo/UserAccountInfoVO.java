@@ -18,7 +18,6 @@ public class UserAccountInfoVO {
     private String imgUrl;
     private String nickName;
     private Integer withdrawalCount;
-    private List<Map<String, String>> bankList = new ArrayList<>();
 
     public UserAccountInfoVO (User user, UserAccount userAccount,String cardNum,List<Map<String,String>> bankList){
         this.balance = userAccount.getBalance().toString();
@@ -27,16 +26,10 @@ public class UserAccountInfoVO {
         this.imgUrl = user.getAvatar();
         this.nickName = user.getNickName();
         this.withdrawalCount = 10000;
-        this.bankList = bankList;
     }
 
-    public List<Map<String, String>> getBankList() {
-        return bankList;
-    }
 
-    public void setBankList(List<Map<String, String>> bankList) {
-        this.bankList = bankList;
-    }
+
 
     public Integer getWithdrawalCount() {
         return withdrawalCount;

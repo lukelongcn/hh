@@ -5,6 +5,8 @@ import com.h9.common.db.entity.UserBank;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by 李圆
  * on 2017/11/2
@@ -17,4 +19,6 @@ public interface BankCardRepository extends BaseRepository<UserBank> {
 
     //判断有无对应银行卡存在
     UserBank findByNo(String no);
+
+    List<UserBank> findByUserId(Long userId);
 }
