@@ -58,10 +58,5 @@ public class OrderService {
         return Result.success(vo);
     }
 
-    /**
-     * description:
-     */
-    public Result scan() {
-        return null;
-    }
+
 }

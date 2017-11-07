@@ -25,6 +25,7 @@ import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -240,13 +241,17 @@ public class ConsumeService {
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
         ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
-        Result result = chinaPayService.signPay(payParam);
+
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+        String merDate = format.format(new Date());
+        Result result = chinaPayService.signPay(payParam,merDate);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
         withdrawalsRequest.setWithdrawCashId(withdrawalsRecord.getId());
         BeanUtils.copyProperties(payParam, withdrawalsRequest);
         withdrawalsRequest.setBankReturnData(result.getData().toString());
+        withdrawalsRequest.setMerDate(merDate);
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
@@ -298,7 +303,14 @@ public class ConsumeService {
 
         logger.info("没有到账的订单"+reduce);
         //查询状态
-
+        withdrawCashRecord.forEach(wr -> {
+            WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());
+            if(withdrawRequest!=null){
+                Result result = chinaPayService.query(withdrawRequest);
+                if(result.getData().toString().contains(""))
+                logger.info("scan result : "+result);
+            }
+        });
         return null;
     }
 }
