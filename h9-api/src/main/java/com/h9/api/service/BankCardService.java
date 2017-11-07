@@ -39,8 +39,13 @@ public class BankCardService {
     public Result addBankCard(Long userId,BankCardDTO bankCardDTO){
 
         //判断银行卡号是否已被绑定
-        if(bankCardRepository.findByNo(bankCardDTO.getNo())!=null){
-            return Result.fail();
+        UserBank user=bankCardRepository.findByNo(bankCardDTO.getNo());
+        if(user!=null){
+            if(user.getUserId().equals(userId)){
+                user.setStatus(1);
+                return Result.fail("该卡已被本人绑定");
+            }
+            return Result.fail("该卡已被他人绑定");
         }
         UserBank userBank = new UserBank();
         userBank.setUserId(userId);
@@ -55,7 +60,7 @@ public class BankCardService {
         userBank.setStatus(1);
 
         bankCardRepository.save(userBank);
-        return Result.success();
+        return Result.success("绑定成功");
     }
 
     /**
@@ -74,9 +79,13 @@ public class BankCardService {
         }
         userBank.setStatus(3);
         bankCardRepository.save(userBank);
-        return Result.success();
+        return Result.success("绑定成功");
     }
 
+    /**
+     * 银行卡类型列表
+     * @return
+     */
     public Result allBank() {
         List<BankType> all = bankTypeRepository.findAll();
         List<Map<String, String>> bankVoList = new ArrayList<>();

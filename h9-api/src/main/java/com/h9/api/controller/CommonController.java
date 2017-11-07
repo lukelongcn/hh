@@ -30,8 +30,8 @@ public class CommonController {
      * @return  页面内容
      */
     @ApiOperation(value = "获取content")
-    @GetMapping(value = "/code")
-    public String agreement(@RequestParam("code") String code){
+    @GetMapping(value = "/{code}")
+    public String agreement(@PathVariable("code") String code){
         return agreementRepository.agreement(code);
     }
 

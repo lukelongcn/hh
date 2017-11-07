@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.common.base.Result;
 import com.h9.common.db.entity.Article;
 import com.h9.common.db.repo.ArticleReposiroty;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +19,7 @@ public class ArticleService {
     ArticleReposiroty articleReposiroty;
 
     @ApiOperation(value = "获取文章内容")
-    public Article findOne(Long id){
-        return articleReposiroty.findOne(id);
+    public Result findOne(Long id){
+        return Result.success(articleReposiroty.findOne(id));
     }
 }
