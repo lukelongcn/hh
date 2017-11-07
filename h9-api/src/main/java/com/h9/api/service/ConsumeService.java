@@ -117,8 +117,8 @@ public class ConsumeService {
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "￥" +realPrice.setScale(2, RoundingMode.DOWN));
-            return Result.success("充值成功",map);
+            map.put("money", "￥" + realPrice.setScale(2, RoundingMode.DOWN));
+            return Result.success("充值成功", map);
         } else {
             throw new RuntimeException("充值失败");
         }
@@ -193,14 +193,14 @@ public class ConsumeService {
         //余额操作
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         //返回数据
-        PageRequest pageRequest = new PageRequest(0,1);
+        PageRequest pageRequest = new PageRequest(0, 1);
         GoodsDIDINumber goodsDIDINumber = goodsDIDINumberRepository.findByGoodsId(goods.getId());
         goodsDIDINumber.setStatus(2);
 
         items.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
         items.setGoods(goods);
         Map<String, String> voMap = new HashMap<>();
-        voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber() );
+        voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
         redisBean.setStringValue(smsCodeKey, "", 1, TimeUnit.SECONDS);
@@ -245,10 +245,9 @@ public class ConsumeService {
 
             //转账成功
             commonService.setBalance(userId, balance.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
-
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "￥" +balance.setScale(2, RoundingMode.DOWN));
+            map.put("money", "￥" + balance.setScale(2, RoundingMode.DOWN));
 
             return Result.success(map);
 
@@ -263,11 +262,14 @@ public class ConsumeService {
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             return Result.fail();
-
         }
     }
 
+    @Value("${h9.current.envir}")
+    private String currentEnvironment;
+
     public Result cz(Long userId) {
+        if (!"dev".equals(currentEnvironment)) return Result.fail("此环境不支持");
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         userAccount.setBalance(new BigDecimal(200));
         userAccountRepository.save(userAccount);

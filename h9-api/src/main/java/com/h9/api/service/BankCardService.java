@@ -106,6 +106,7 @@ public class BankCardService {
                 int length = no.length();
                 map.put("no", no);
                 map.put("id", bank.getId() + "");
+                map.put("color", bank.getBankType().getColor());
                 bankList.add(map);
             }
 
