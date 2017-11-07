@@ -1,7 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
-import com.sun.org.apache.regexp.internal.RE;
+
 
 import javax.persistence.*;
 

@@ -30,7 +30,7 @@ public class Reward extends BaseEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "activity_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '活动id'")
+    @JoinColumn(name = "activity_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '活动id'")
     private Activity activity;
 
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '奖励条码'")
@@ -48,7 +48,7 @@ public class Reward extends BaseEntity {
     @Column(name = "surplus_moeny",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '剩余金额'")
     private BigDecimal surplusMoeny = new BigDecimal(0);
 
-    @Column(name = "reward_url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '奖励路径'")
+    @Column(name = "reward_url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '红包路径'")
     private String rewardUrl;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -61,7 +61,7 @@ public class Reward extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 未领取 2 部分领取 3 已领取完毕 4 已失效'")
     private Integer status = 1;
 
-    @Column(name = "user_id",nullable = false, columnDefinition = "bigint(20) default 0 COMMENT '奖励所属人'")
+    @Column(name = "user_id",columnDefinition = "bigint(20) default 0 COMMENT '奖励所属人'")
     private Long userId;
 
     @Temporal(TIMESTAMP)
@@ -69,7 +69,7 @@ public class Reward extends BaseEntity {
     private Date finishTime;
     
     @Column(name = "partake_count",nullable = false,columnDefinition = "int default 0 COMMENT '参加数量'")
-    private int partakeCount;
+    private int partakeCount = 0;
 
     public Long getId() {
         return id;
