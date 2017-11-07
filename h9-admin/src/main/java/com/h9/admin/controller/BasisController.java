@@ -3,6 +3,7 @@ package com.h9.admin.controller;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.PageDTO;
 import com.h9.admin.model.dto.basis.BankTypeAddDTO;
+import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
 import com.h9.common.db.entity.BankType;
@@ -60,7 +61,28 @@ public class BasisController {
     @Secured
     @PostMapping(value="/bank")
     @ApiOperation("增加银行")
-    public Result<BankType> addGlobalProperty(@Validated @RequestBody BankTypeAddDTO bankTypeAddDTO){
+    public Result<BankType> addBankType(@Validated @RequestBody BankTypeAddDTO bankTypeAddDTO){
         return this.basisService.addBankType(bankTypeAddDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/bank")
+    @ApiOperation("编辑银行")
+    public Result<BankType> editBankType(@Validated @RequestBody BankTypeEditDTO bankTypeEditDTO){
+        return this.basisService.updateBankType(bankTypeEditDTO);
+    }
+
+    @Secured
+    @GetMapping(value="/bank/page")
+    @ApiOperation("分页获取银行")
+    public Result<PageResult<BankType>> getBankTypes(PageDTO pageDTO){
+        return this.basisService.getBankTypes(pageDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/bank/{id}/status")
+    @ApiOperation("启用/禁用银行")
+    public Result<BankType> editBankTypeStatus(@PathVariable long id){
+        return this.basisService.updateBankTypeStatus(id);
     }
 }

@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -27,7 +28,7 @@ public class BankTypeAddDTO {
     private String color;
 
     @ApiModelProperty(value = "状态， 1：启用，0：禁用",required = true)
-    @NotEmpty(message = "状态不能为空")
+    @NotNull(message = "状态不能为空")
     private Integer status;
 
     public String getBankName() {
