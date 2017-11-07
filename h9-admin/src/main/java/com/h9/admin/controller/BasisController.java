@@ -2,8 +2,10 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.PageDTO;
+import com.h9.admin.model.dto.basis.BankTypeAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
+import com.h9.common.db.entity.BankType;
 import com.h9.common.modle.vo.GlobalPropertyVO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;
@@ -53,5 +55,12 @@ public class BasisController {
     @ApiOperation("删除参数")
     public Result<GlobalProperty> deleteGlobalProperty(@PathVariable long id){
         return this.basisService.deleteGlobalProperty(id);
+    }
+
+    @Secured
+    @PostMapping(value="/bank")
+    @ApiOperation("增加银行")
+    public Result<BankType> addGlobalProperty(@Validated @RequestBody BankTypeAddDTO bankTypeAddDTO){
+        return this.basisService.addBankType(bankTypeAddDTO);
     }
 }

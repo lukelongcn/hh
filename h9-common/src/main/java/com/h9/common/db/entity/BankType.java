@@ -29,9 +29,11 @@ public class BankType extends BaseEntity {
     @Column(name = "color",nullable = false,columnDefinition = "varchar(32) default '' COMMENT '颜色'")
     private String color;
 
-
     @Column(name = "back_img",columnDefinition = "varchar(200) default '' COMMENT '银行图标'")
     private String bankImg;
+
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
+    private Integer status;
 
     public String getBankImg() {
         return bankImg;
@@ -63,5 +65,42 @@ public class BankType extends BaseEntity {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public enum StatusEnum {
+        DISABLED(0,"禁用"),
+        ENABLED(1,"启用");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }
