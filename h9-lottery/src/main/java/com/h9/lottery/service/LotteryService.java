@@ -188,6 +188,8 @@ public class LotteryService {
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
                 lotteryUser.setUserId(lotteryFromDb.getUserId());
+                lotteryUser.setMoney(lotteryFromDb.getMoney());
+
                 User user = userRepository.findOne(lotteryFromDb.getUserId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
