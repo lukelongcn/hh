@@ -20,6 +20,10 @@ public class GoodsAddDTO {
     @NotEmpty(message = "名称不能为空")
     private String name;
 
+    @ApiModelProperty(value = "编码",required = true)
+    @NotEmpty(message = "编码不能为空")
+    private String code;
+
     @ApiModelProperty(value = "商品类型id",required = true)
     @NotNull(message = "商品类型不能为空")
     private Long goodsTypeId;
@@ -66,6 +70,22 @@ public class GoodsAddDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public BigDecimal getRealPrice() {
+        return realPrice;
+    }
+
+    public void setRealPrice(BigDecimal realPrice) {
+        this.realPrice = realPrice;
     }
 
     public BigDecimal getPrice() {
