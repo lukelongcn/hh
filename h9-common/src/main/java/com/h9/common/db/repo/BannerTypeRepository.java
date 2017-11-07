@@ -18,6 +18,6 @@ public interface BannerTypeRepository extends BaseRepository<BannerType> {
 
     //BannerType findBy
 
-    @Query("select o from BannerType o")
+    @Query("select o from BannerType o order by o.id desc ")
     Page<BannerType> findAllByPage(Pageable page);
 }
