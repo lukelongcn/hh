@@ -24,7 +24,7 @@ import javax.annotation.Resource;
  * Date: 2017/10/30
  * Time: 18:00
  */
-@Api(value = "账户相关信息",description = "账户相关信息")
+@Api(value = "账户相关信息", description = "账户相关信息")
 @RestController
 public class AccountContoller {
 
@@ -34,22 +34,22 @@ public class AccountContoller {
     @Secured
     @ApiOperation(value = "账户余额流水")
     @GetMapping("/account/balance/detail")
-    public Result<PageResult<BalanceFlowVO>> getUserBalance(@ApiParam(name = "用户token",value="token",type="head")
-                                                                @SessionAttribute("curUserId") Long userId,
-                                                            @RequestParam(value = "page",defaultValue ="1" ) int page,
-                                                            @RequestParam(value = "limit",defaultValue = "20") int limit){
-        return accountService.getBalanceFlow(userId,page,limit);
+    public Result<PageResult<BalanceFlowVO>> getUserBalance(@ApiParam(name = "用户token", value = "token", type = "head")
+                                                            @SessionAttribute("curUserId") Long userId,
+                                                            @RequestParam(value = "page", defaultValue = "1") int page,
+                                                            @RequestParam(value = "limit", defaultValue = "20") int limit) {
+        return accountService.getBalanceFlow(userId, page, limit);
     }
 
 
     @Secured
     @ApiOperation(value = "账户V币流水")
     @GetMapping("/account/vCoins/detail")
-    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@ApiParam(name = "用户token",value="token",type="head")
-                                                               @SessionAttribute("curUserId") Long userId,
-                                                               @RequestParam("page") int page,
-                                                           @RequestParam("limit") int limit){
-        return accountService.getVCoinsFlow(userId,page,limit);
+    public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@ApiParam(name = "用户token", value = "token", type = "head")
+                                                           @SessionAttribute("curUserId") Long userId,
+                                                           @RequestParam("page") int page,
+                                                           @RequestParam("limit") int limit) {
+        return accountService.getVCoinsFlow(userId, page, limit);
     }
 
     /**
@@ -57,7 +57,7 @@ public class AccountContoller {
      */
     @Secured
     @GetMapping("/account/info")
-    public Result accountInfo(@SessionAttribute("curUserId") Long userId){
+    public Result accountInfo(@SessionAttribute("curUserId") Long userId) {
         return accountService.accountInfo(userId);
     }
 
@@ -67,7 +67,7 @@ public class AccountContoller {
     @Secured
     @GetMapping("/account/didicoupons")
     public Result didiCoupones(@SessionAttribute("curUserId") Long userId
-            ,@RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit){
-        return accountService.couponeList(userId,page,limit);
+            , @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit) {
+        return accountService.couponeList(userId, page, limit);
     }
 }

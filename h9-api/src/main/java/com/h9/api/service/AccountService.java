@@ -71,23 +71,23 @@ public class AccountService {
         User user = userRepository.findOne(userId);
         Object cardCount = orderItemReposiroty.findCardCount(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
         List<Map<String, String>> bankList = new ArrayList<>();
-        List<UserBank> userBankList = userBankRepository.findByUserId(userId);
+//        List<UserBank> userBankList = userBankRepository.findByUserId(userId);
 
-        userBankList.forEach(bank -> {
-
-            if (bank.getStatus() == 1) {
-                Map<String, String> map = new HashMap<>();
-                map.put("bankImg", bank.getBankType().getBankImg());
-                map.put("name", bank.getName());
-                String no = bank.getNo();
-                int length = no.length();
-                no = no.substring(length - 4, length);
-                map.put("no", no);
-                map.put("id", bank.getId() + "");
-                bankList.add(map);
-            }
-
-        });
+//        userBankList.forEach(bank -> {
+//
+//            if (bank.getStatus() == 1) {
+//                Map<String, String> map = new HashMap<>();
+//                map.put("bankImg", bank.getBankType().getBankImg());
+//                map.put("name", bank.getName());
+//                String no = bank.getNo();
+//                int length = no.length();
+//                no = no.substring(length - 4, length);
+//                map.put("no", no);
+//                map.put("id", bank.getId() + "");
+//                bankList.add(map);
+//            }
+//
+//        });
         UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "", bankList);
         return Result.success(userAccountInfoVO);
     }
