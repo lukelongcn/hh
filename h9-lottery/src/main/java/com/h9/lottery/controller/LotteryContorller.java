@@ -33,11 +33,11 @@ public class LotteryContorller {
     private LotteryService lotteryService;
 
     @Secured
-    @PostMapping("/qr")
+    @GetMapping("/qr")
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
-                          @RequestBody LotteryDto lotteryVo, HttpServletRequest request){
+                            LotteryDto lotteryVo, HttpServletRequest request){
         return lotteryService.appCode(userId,lotteryVo,request);
     }
 
@@ -52,7 +52,6 @@ public class LotteryContorller {
     }
 
 
-
     @Secured
     @GetMapping("/room/{code}")
     @ApiOperation(value = "奖励房间")
@@ -63,14 +62,6 @@ public class LotteryContorller {
         return lotteryService.getLotteryRoom(userId,code);
     }
 
-
-    @Secured
-    @GetMapping("/history")
-    @ApiOperation(value = "奖励结果页面")
-    public Result<LotteryFlowDTO> getLotteryHistory(@SessionAttribute("curUserId") long userId){
-        logger.debugv("userId {0}" ,userId);
-        return Result.success();
-    }
 
 
 

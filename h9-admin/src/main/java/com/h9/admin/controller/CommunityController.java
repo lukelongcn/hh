@@ -119,7 +119,7 @@ public class CommunityController {
     @PostMapping(value="/goods")
     @ApiOperation("增加商品")
     public Result<Goods> addGoods(@Validated @RequestBody GoodsAddDTO goodsAddDTO){
-        return this.communityService.addGoods(goodsAddDTO.toGoods());
+        return this.communityService.addGoods(goodsAddDTO);
     }
 
     @Secured
@@ -134,5 +134,12 @@ public class CommunityController {
     @ApiOperation("分页获取商品")
     public Result<PageResult<Goods>> getGoods(PageDTO pageDTO){
         return this.communityService.getGoods(pageDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/goods/{id}/status")
+    @ApiOperation("上架/下架商品")
+    public Result<Goods> addGoods(@PathVariable long id){
+        return this.communityService.updateGoodsStatus(id);
     }
 }

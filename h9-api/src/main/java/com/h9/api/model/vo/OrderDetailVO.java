@@ -3,6 +3,7 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,18 +12,18 @@ import java.util.stream.Collectors;
  * Created by itservice on 2017/11/1.
  */
 public class OrderDetailVO {
-    private String company;
-    private String orderStatus;
+    private String company = "";
+    private String orderStatus = "";
     private Integer orderType;
-    private String accepterName;
-    private String tel;
-    private String address;
-    private String orderId;
-    private String payMethod;
-    private String payMoney;
-    private String createOrderDate;
+    private String accepterName = "";
+    private String tel= "";
+    private String address= "";
+    private String orderId= "";
+    private String payMethod= "";
+    private String payMoney= "";
+    private String createOrderDate= "";
     private List<GoodsInfo> goodsInfoList;
-
+    private String couponsNumber = "";
 
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
@@ -34,7 +35,10 @@ public class OrderDetailVO {
             vo.setTel("");
             vo.setAddress("");
         }
-
+        List<OrderItems> orderItems = order.getOrderItems();
+        if (!CollectionUtils.isEmpty(orderItems)) {
+            vo.setCouponsNumber(orderItems.get(0).getDidiCardNumber());
+        }
         vo.setOrderId(order.getId() + "");
         vo.setPayMethod("余额支付");
         vo.setPayMoney(order.getPayMoney() + "");
@@ -52,6 +56,14 @@ public class OrderDetailVO {
         return vo;
     }
 
+
+    public String getCouponsNumber() {
+        return couponsNumber;
+    }
+
+    public void setCouponsNumber(String couponsNumber) {
+        this.couponsNumber = couponsNumber;
+    }
 
     public List<GoodsInfo> getGoodsInfoList() {
         return goodsInfoList;

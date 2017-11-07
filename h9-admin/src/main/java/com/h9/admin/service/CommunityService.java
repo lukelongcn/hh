@@ -1,11 +1,8 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.activity.ActivityEditDTO;
-import com.h9.admin.model.dto.community.BannerAddDTO;
-import com.h9.admin.model.dto.community.BannerEditDTO;
-import com.h9.admin.model.dto.community.BannerTypeEditDTO;
+import com.h9.admin.model.dto.community.*;
 import com.h9.admin.model.dto.PageDTO;
-import com.h9.admin.model.dto.community.GoodsEditDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
@@ -35,6 +32,8 @@ public class CommunityService {
     private ArticleTypeRepository articleTypeRepository;
     @Autowired
     private GoodsReposiroty goodsReposiroty;
+    @Autowired
+    private GoodsTypeReposiroty goodsTypeReposiroty;
 
     public Result<BannerType> addBannerType(BannerType bannerType){
         if(this.bannerTypeRepository.findByCode(bannerType.getCode())!=null){
@@ -152,12 +151,29 @@ public class CommunityService {
         return Result.success(pageResult);
     }
 
-    public Result<Goods> addGoods(Goods goods){
+    public Result<Goods> addGoods(GoodsAddDTO goodsAddDTO){
+        Goods goods = goodsAddDTO.toGoods();
+        goods.setGoodsType(this.goodsTypeReposiroty.findOne(goodsAddDTO.getGoodsTypeId()));
         return Result.success(this.goodsReposiroty.save(goods));
     }
 
-    public Result<Goods> updateGoods(GoodsEditDTO goodsEditDTO){
-        return Result.success(this.goodsReposiroty.save(goodsEditDTO.toGoods()));
+    public Result<Goods> updateGoods(GoodsEditDTO GoodsEditDTO){
+        Goods goods = GoodsEditDTO.toGoods();
+        goods.setGoodsType(this.goodsTypeReposiroty.findOne(GoodsEditDTO.getGoodsTypeId()));
+        return Result.success(this.goodsReposiroty.save(goods));
+    }
+
+    public Result<Goods> updateGoodsStatus(long id){
+        Goods goods = this.goodsReposiroty.findOne(id);
+        if(goods == null){
+            return Result.fail("商品不存在");
+        }
+        if(Goods.StatusEnum.ONSHELF.getId()==goods.getStatus()){
+            goods.setStatus(Goods.StatusEnum.OFFSHELF.getId());
+        }else{
+            goods.setStatus(Goods.StatusEnum.ONSHELF.getId());
+        }
+        return Result.success(this.goodsReposiroty.save(goods));
     }
 
     public Result<PageResult<Goods>> getGoods(PageDTO pageDTO){

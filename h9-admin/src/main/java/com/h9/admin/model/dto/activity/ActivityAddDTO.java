@@ -1,6 +1,5 @@
 package com.h9.admin.model.dto.activity;
 
-import com.h9.common.db.dto.TargetRateDTO;
 import com.h9.common.db.entity.Activity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +10,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author: George

@@ -2,6 +2,8 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.OrderItems;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -17,10 +19,9 @@ public interface OrderItemReposiroty extends BaseRepository<OrderItems> {
             , nativeQuery = true)
     Object findCardCount(Long userId,int orderType);
 
-    /**
-     * description: 查询指定用户，订单类别
-     */
-    @Query(value = "select order_items.* from orders,order_items where orders.user_id = ?1 and order_items.orders_id = orders.id and orders.order_type = ?2",
-            nativeQuery = true)
-    List<OrderItems> findByUser(Long userId,int orderType);
+//    /**
+//     * description: 查询指定用户，订单类别
+//     */
+//    @Query(value = "select order_items.* from orders,order_items where orders.user_id = ?1 and order_items.orders_id = orders.id and orders.order_type = ?2",nativeQuery = true)
+//    Page<OrderItems> findByUser(Long userId, int orderType, Pageable pageable);
 }

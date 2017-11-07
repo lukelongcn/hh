@@ -57,7 +57,7 @@ public class LotteryFlow extends BaseEntity {
     }
 
     public LotteryFlow(Lottery lottery) {
-        BeanUtils.copyProperties(lottery,this);
+        BeanUtils.copyProperties(lottery,this,"id");
     }
 
     public void setId(Long id) {

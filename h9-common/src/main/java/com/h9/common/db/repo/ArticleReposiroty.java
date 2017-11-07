@@ -18,4 +18,6 @@ public interface ArticleReposiroty extends BaseRepository<Article>{
      */
     @Query(value = "select o from Article o where o.startTime < ?1 and o.endTime > ?1 and o.enable = 1 order by o.sort")
     List<Article> findActiveAriticle(Date date);
+
+    Article findOne(Long id);
 }

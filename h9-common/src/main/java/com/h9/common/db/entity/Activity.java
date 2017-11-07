@@ -1,17 +1,10 @@
 package com.h9.common.db.entity;
 
-import com.alibaba.fastjson.JSON;
 import com.h9.common.base.BaseEntity;
-import com.h9.common.db.dto.TargetRateDTO;
-import io.swagger.models.auth.In;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.dialect.unique.DB2UniqueDelegate;
 
 import javax.persistence.*;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;

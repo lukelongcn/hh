@@ -83,3 +83,6 @@ hs_err_pid*
 *.iml
 */target
 .idea/
+h9-api/log/
+h9-lottery/log/
+log/

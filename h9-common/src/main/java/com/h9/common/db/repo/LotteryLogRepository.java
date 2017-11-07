@@ -21,4 +21,7 @@ public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
     @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime between ?2 and ?3 ")
     BigDecimal getLotteryCount(Long userId,Date startDate,Date endDate);
 
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.code = ?2")
+    BigDecimal getLotteryCount(Long userId,String code);
+
 }

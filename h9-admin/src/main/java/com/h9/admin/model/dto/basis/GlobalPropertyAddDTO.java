@@ -3,12 +3,14 @@ package com.h9.admin.model.dto.basis;
 import com.alibaba.fastjson.JSON;
 import com.h9.common.db.entity.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +34,7 @@ public class GlobalPropertyAddDTO {
 
     @ApiModelProperty(value = "参数值",required = true)
     @NotNull(message = "参数值不能为空")
-    private List<Map<String,String>> val;
+    private List<Map<String,Object>> val;
 
     @ApiModelProperty(value = "说明",required = true)
     private String description;
@@ -65,15 +67,20 @@ public class GlobalPropertyAddDTO {
     public String getVal() {
         String v="";
         if(type==0){
-            v = val.get(0).get("val");
+            v = val.get(0).get("val").toString();
         }else if(type==1){
-            v = JSON.toJSONString(val);
-        }else{
-            List<String> stringList = new ArrayList<>();
-            for(Map m:val){
-                stringList.add(m.get("val").toString());
+            Map map = new HashMap();
+            for(int i=0;i<val.size();i++){
+                map.put(val.get(i).get("key"),val.get(i).get("code"));
             }
-            v = JSON.toJSONString(stringList);
+            v = JSON.toJSONString(map);
+        }else{
+            List stringList = new ArrayList<>();
+            for(Map m:val){
+                Object o = m.get("val");
+                stringList.add(o.toString());
+            }
+            v = StringUtils.join(stringList.toArray(), ",");  ;
         }
         return v;
     }
@@ -95,5 +102,11 @@ public class GlobalPropertyAddDTO {
         GlobalProperty globalProperty = new GlobalProperty();
         BeanUtils.copyProperties(this,globalProperty);
         return globalProperty;
+    }
+
+    public static void main(String[] args){
+    Map map = new HashMap();
+    map.put("1","2");
+    System.out.println(map);
     }
 }

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -19,33 +20,29 @@ public class GoodsAddDTO {
     @NotEmpty(message = "名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "价格",required = true)
-    @NotNull(message = "价格不能为空")
-    private BigDecimal price = new BigDecimal(0);
-
-    @ApiModelProperty(value = "状态，1：上架，2：下架",required = true)
-    @NotNull(message = "状态不能为空")
-    private Integer status = 1;
-
-    @ApiModelProperty(value = "描述",required = true)
-    @NotEmpty(message = "描述不能为空")
-    private String description;
-
-    @ApiModelProperty(value = "库存",required = true)
-    @NotNull(message = "库存不能为空")
-    private Integer stock = 0;
-
     @ApiModelProperty(value = "商品类型id",required = true)
     @NotNull(message = "商品类型不能为空")
     private Long goodsTypeId;
 
-    @ApiModelProperty(value = "图片url",required = true)
-    @NotEmpty(message = "图片url不能为空")
+    @ApiModelProperty(value = "图片",required = true)
+    @NotEmpty(message = "图片不能为空")
     private String img;
+
+    @ApiModelProperty(value = "原价",required = true)
+    @NotNull(message = "原价不能为空")
+    private BigDecimal realPrice = new BigDecimal(0);
+
+    @ApiModelProperty(value = "价格",required = true)
+    @NotNull(message = "价格不能为空")
+    private BigDecimal price = new BigDecimal(0);
 
     @ApiModelProperty(value = "V币兑换比例值",required = true)
     @NotNull(message = "V币兑换比例值不能为空")
     private BigDecimal vCoinsRate = new BigDecimal(0);
+
+    @ApiModelProperty(value = "描述",required = true)
+    @NotEmpty(message = "描述不能为空")
+    private String description;
 
     @ApiModelProperty(value = "上架开始时间",required = true)
     @NotNull(message = "上架开始时间不能为空")
@@ -54,6 +51,14 @@ public class GoodsAddDTO {
     @ApiModelProperty(value = "上架结束时间",required = true)
     @NotNull(message = "上架结束时间不能为空")
     private Date endTime;
+
+    @ApiModelProperty(value = "库存",required = true)
+    @NotNull(message = "库存不能为空")
+    private Integer stock = 0;
+
+    @ApiModelProperty(value = "状态，1：上架，2：下架",required = true)
+    @NotNull(message = "状态不能为空")
+    private Integer status = 1;
 
     public String getName() {
         return name;
