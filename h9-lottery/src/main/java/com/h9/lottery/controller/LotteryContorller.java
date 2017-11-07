@@ -52,7 +52,6 @@ public class LotteryContorller {
     }
 
 
-
     @Secured
     @GetMapping("/room/{code}")
     @ApiOperation(value = "奖励房间")

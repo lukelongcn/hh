@@ -32,6 +32,12 @@ public class Orders extends BaseEntity {
 
     @Column(name = "no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '订单编号'")
     private String no;
+    
+    @Column(name = "supplier_id", columnDefinition = "bigint(20) default null COMMENT '供应商id'")
+    private Long supplierId;
+    
+    @Column(name = "delivery_id", columnDefinition = "bigint(20) default null COMMENT '配送'")
+    private Long deliveryId;
 
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '商家名称'")
     private String supplierName;
@@ -62,7 +68,7 @@ public class Orders extends BaseEntity {
     
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
     private Integer status = 1;
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) COMMENT ''")
     private User user;
@@ -227,5 +233,21 @@ public class Orders extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Long getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
+    }
+
+    public Long getDeliveryId() {
+        return deliveryId;
+    }
+
+    public void setDeliveryId(Long deliveryId) {
+        this.deliveryId = deliveryId;
     }
 }

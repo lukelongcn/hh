@@ -25,7 +25,6 @@ public class OrderDetailVO {
     private List<GoodsInfo> goodsInfoList;
     private String couponsNumber = "";
 
-
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
