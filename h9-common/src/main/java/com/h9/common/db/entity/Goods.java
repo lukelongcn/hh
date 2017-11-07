@@ -31,6 +31,9 @@ public class Goods extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '充值显示名称'")
     private String name;
 
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(30) default '' COMMENT '商品编码'")
+    private String code;
+
     @Column(name = "real_price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '虚拟商品价值'")
     private BigDecimal realPrice = new BigDecimal(0);
 
@@ -99,6 +102,14 @@ public class Goods extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public BigDecimal getRealPrice() {
