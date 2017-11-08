@@ -182,10 +182,10 @@ public class LotteryService {
                 LotteryFlow lotteryFromDb = flows.get(i);
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
-                lotteryUser.setUserId(lotteryFromDb.getUserId());
+                lotteryUser.setUserId(lotteryFromDb.getUser().getId());
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
-                User user = userRepository.findOne(lotteryFromDb.getUserId());
+                User user = userRepository.findOne(lotteryFromDb.getUser().getId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
                 lotteryUser.setMe(userId == lotteryUser.getUserId());
@@ -241,7 +241,7 @@ public class LotteryService {
         //变更用余额
         for (int i = 0; i < lotteryFlows.size(); i++) {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);
-            Long lotteryUserId = lotteryFlow.getUserId();
+            Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
             commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "","抢红包获取余额");
         }

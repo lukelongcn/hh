@@ -1,7 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.dto.PageDTO;
+import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.model.dto.basis.BankTypeAddDTO;
 import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;

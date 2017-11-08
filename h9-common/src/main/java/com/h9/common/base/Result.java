@@ -33,38 +33,38 @@ public class Result<T> {
     }
 
     public static Result success() {
-        return new Result(SUCCESS, "成功");
+        return new Result(SUCCESS_CODE, "成功");
     }
 
-    public static <T> Result success(T t) {
-        return new Result(SUCCESS, "成功", t);
+    public static <T>Result success(T t) {
+        return new Result<>(SUCCESS_CODE, "成功", t);
     }
 
     public static <T> Result success(String msg, T t) {
-        return new Result(0, msg, t);
+        return new Result<>(0, msg, t);
     }
 
-    public static  Result success(String msg) {
-        return new Result(SUCCESS, msg, null);
+    public static Result success(String msg) {
+        return new Result<>(SUCCESS_CODE, msg, null);
     }
 
-    public static <T> Result fail() {
-        return new Result(FAILD, "失败");
+    public static Result fail() {
+        return new Result(FAILED_CODE, "失败");
     }
 
     public static <T> Result fail(String msg,T t) {
-        return new Result(FAILD, msg,t);
+        return new Result<>(FAILED_CODE, msg,t);
     }
 
 
 
 
-    public static <T> Result fail(String msg) {
-        return new Result(FAILD, msg);
+    public static Result fail(String msg) {
+        return new Result(FAILED_CODE, msg);
     }
 
-    public static final int SUCCESS = 0;
-    public static final int FAILD = 1;
+    public static final int SUCCESS_CODE = 0;
+    public static final int FAILED_CODE = 1;
 
     public int getCode() {
         return code;

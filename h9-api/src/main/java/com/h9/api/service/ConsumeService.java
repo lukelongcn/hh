@@ -130,8 +130,8 @@ public class ConsumeService {
         }
     }
 
-    public Result rechargeDenomination() {
-
+    public Result rechargeDenomination(Long userId) {
+        User user = userRepository.findOne(userId);
         GoodsType goodsType = goodsTypeReposiroty.findOne(1L);
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
         if (goodsList == null) return Result.fail();
@@ -143,7 +143,14 @@ public class ConsumeService {
             map.put("realPrice", goods.getRealPrice().toString());
             list.add(map);
         });
-        return Result.success(list);
+//        Map<String, String> telMap = new HashMap<>();
+
+//        telMap.put("tel", user.getPhone());
+//        list.add(telMap);
+        Map<String, Object> mapVo = new HashMap<>();
+        mapVo.put("priceList", list);
+        mapVo.put("tel", user.getPhone());
+        return Result.success(mapVo);
     }
 
     public Result didiCardList() {
@@ -334,7 +341,7 @@ public class ConsumeService {
 
     @SuppressWarnings("Duplicates")
     public Result withdraInfo(Long userId) {
-        List<UserBank> userBankList = bankCardRepository.findByUserId(userId);
+        List<UserBank> userBankList = bankCardRepository.findByUserIdAndStatus(userId,1);
         List<Map<String, String>> bankList = new ArrayList<>();
         userBankList.forEach(bank -> {
 
