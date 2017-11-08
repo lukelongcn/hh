@@ -4,6 +4,8 @@ import chinapay.Base64;
 import chinapay.PrivateKey;
 import chinapay.SecureLink;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.WithdrawalsRequest;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,13 +27,14 @@ public class ChinaPayService {
     private String url;
     @Value("${chinaPay.merId}")
     private String merId;
-
+    @Value("${chinaPay.queryUrl}")
+    private String queryUrl;
+    private Logger logger = Logger.getLogger(this.getClass());
     /**
      * description: 银行代付
      */
-    public Result signPay(PayParam payParam) {
-        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
-        String merDate = format.format(new Date());
+    public Result signPay(PayParam payParam,String merDate) {
+
         String s = merId + merDate + payParam.getMerSeqId() + payParam.getCardNo() + payParam.getUsrName() + payParam.getOpenBank()
                 + payParam.getProv() + payParam.getCity() + payParam.getTransAmt() + payParam.getPurpose() + payParam.getVersion();
 
@@ -75,51 +79,89 @@ public class ChinaPayService {
     }
 
 
-    public Result query(PayParam payParam){
-//        String merId = "808080211881410";
-//        String merDate = "20171103";
-//        String merSeqId = "4";
-//
-//        String version = "20090501";
-//        String signFlag = "1";
-//        String chkValue = merId+merDate+merSeqId+version;
-//
-//        PrivateKey key = new PrivateKey();
-//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
-//        boolean buildOK = key.buildKey(merId, 0, path);
-//        if(!buildOK){
-//            System.out.println("没有找到私钥文件");
-//        }
-//        System.out.println(buildOK);
-//        SecureLink secureLink = new SecureLink(key);
-//
-//        chkValue = new String(Base64.encode(chkValue.getBytes()));
-//        chkValue = secureLink.Sign(new String(chkValue));
-//
-//
-//        String url = "http://sfj-test.chinapay.com/dac/SinPayQueryServletGBK";
-//
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        params.add("merId",merId);
-//        params.add("merDate",merDate);
-//        params.add("merSeqId",merSeqId);
-//        params.add("version",version);
-//        params.add("signFlag",signFlag);
-//        params.add("chkValue",chkValue);
-//        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
-//        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-//
-//        String gbk = new String(res.toString().getBytes("GBK"), "utf-8");
-//        System.out.println(gbk);
+    public Result query(WithdrawalsRequest withdrawalsRequest)  {
+        String merDate = withdrawalsRequest.getMerDate();
+        String merSeqId = withdrawalsRequest.getMerSeqId();
 
-//        System.out.println(res);
-        return null;
+        String version = withdrawalsRequest.getVersion();
+        String signFlag = withdrawalsRequest.getSignFlag();
+        String chkValue = merId+merDate+merSeqId+version;
+
+        PrivateKey key = new PrivateKey();
+        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        boolean buildOK = key.buildKey(merId, 0, path);
+        if(!buildOK){
+            System.out.println("没有找到私钥文件");
+        }
+        System.out.println(buildOK);
+        SecureLink secureLink = new SecureLink(key);
+
+        chkValue = new String(Base64.encode(chkValue.getBytes()));
+        chkValue = secureLink.Sign(new String(chkValue));
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("merId",merId);
+        params.add("merDate",merDate);
+        params.add("merSeqId",merSeqId);
+        params.add("version",version);
+        params.add("signFlag",signFlag);
+        params.add("chkValue",chkValue);
+        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
+        ResponseEntity<String> res = restTemplate.exchange(queryUrl, HttpMethod.POST, httpEntity, String.class);
+
+        String gbk = null;
+        try {
+            gbk = new String(res.getBody().toString().getBytes("GBK"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.info(e.getMessage(),e);
+        }
+
+        return Result.success("",gbk);
     }
+
+    public enum CPstatEnum{
+
+        SUCESS("s","交易成功"),
+        FAIL("6","失败");
+
+        private String code;
+        private String desc;
+        CPstatEnum(String code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public static String calcExpectReturn(WithdrawalsRequest withdrawalsRequest,String type,String merId){
+        StringBuilder calcResult = new StringBuilder();
+        calcResult.append("0000");
+        calcResult.append("|");
+        calcResult.append(merId);
+        calcResult.append("|");
+        calcResult.append(withdrawalsRequest.getMerDate());
+        calcResult.append(withdrawalsRequest.getMerSeqId());
+//        calcResult.append(withdrawalsRequest.getc)
+        return calcResult.toString();
+    }
+
 
     public static class PayParam {
         private String merSeqId;

@@ -1,6 +1,8 @@
 package com.h9.api.controller;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.service.ArticleService;
+import com.h9.common.base.Result;
 import com.h9.common.db.entity.Article;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +22,7 @@ public class ArticleController {
 
     @ApiOperation(value = "获取文章内容")
     @GetMapping(value = "/article/{id}")
-    public Article finOne(@PathVariable("id")Long id){
+    public Result<Article> finOne(@PathVariable("id")Long id){
         return articleService.findOne(id);
     }
 }

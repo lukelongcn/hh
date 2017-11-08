@@ -24,9 +24,14 @@ public class TestController {
      */
     @GetMapping("/hello")
     public Result phoneLogin(){
+        System.out.println("hello 11111111111");
+        show();
         return Result.success();
     }
 
 
+    public static  void show(){
+        System.out.println("im show");
+    }
 
 }

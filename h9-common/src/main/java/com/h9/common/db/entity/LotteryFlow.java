@@ -7,6 +7,8 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -22,6 +24,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Entity
 @Table(name = "lottery_flow")
 public class LotteryFlow extends BaseEntity {
+
+
 
 
     @Id
@@ -48,6 +52,12 @@ public class LotteryFlow extends BaseEntity {
 
     @Column(name = "room_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 房间主人 2 普通用户'")
     private Integer roomUser = 1;
+    
+    @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '备注'")
+    private String remarks;
+
+    @Column(name = "description",columnDefinition = "varchar(64) default '' COMMENT '描述'")
+    private String desc;
 
     public Long getId() {
         return id;
@@ -111,5 +121,21 @@ public class LotteryFlow extends BaseEntity {
 
     public void setRoomUser(Integer roomUser) {
         this.roomUser = roomUser;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

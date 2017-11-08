@@ -1,6 +1,7 @@
 package com.h9.lottery.model.dto;
 
 import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
 
@@ -20,6 +21,19 @@ public class LotteryFlowDTO {
     private String month;
     private String createTime;
     private String remarks;
+
+    public LotteryFlowDTO() {
+
+    }
+
+
+    public LotteryFlowDTO(LotteryFlow lotteryFlow) {
+        Date createDate = lotteryFlow.getCreateTime();
+        createTime = DateUtil.formatDate(createDate, DateUtil.FormatType.SECOND);
+        month = DateUtil.formatDate(createDate, DateUtil.FormatType.GBK_MONTH);
+        money = lotteryFlow.getMoney();
+        remarks = lotteryFlow.getRemarks();
+    }
 
 
     public BigDecimal getMoney() {

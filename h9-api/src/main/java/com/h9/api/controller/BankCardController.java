@@ -32,7 +32,7 @@ public class BankCardController {
      */
     @ApiOperation(value = "添加银行卡")
     @PostMapping("/bankCard/add")
-    public  Result addBankCard(@SessionAttribute("curUserId")long userId,@Valid@RequestBody BankCardDTO bankCardDTO){
+    public  Result addBankCard(@SessionAttribute("curUserId")Long userId,@Valid@RequestBody BankCardDTO bankCardDTO){
         return  bankCardService.addBankCard(userId,bankCardDTO);
     }
 
