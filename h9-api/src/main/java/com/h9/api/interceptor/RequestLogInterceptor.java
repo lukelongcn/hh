@@ -25,7 +25,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
         String method = httpServletRequest.getMethod();
-        if(HttpMethod.OPTIONS.name().equals(method)){
+        if (HttpMethod.OPTIONS.name().equals(method)) {
             return false;
         }
         logger.infov("-------------------请求信息-------------------");
@@ -44,21 +44,24 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         }
 
 
-
         int contentLength = httpServletRequest.getContentLength();
+        if (contentLength != -1) {
 
-        byte buffer[] = new byte[contentLength];
-        for (int i = 0; i < contentLength;) {
+            byte buffer[] = new byte[contentLength];
+            for (int i = 0; i < contentLength; ) {
 
-            int readlen = httpServletRequest.getInputStream().read(buffer, i,
-                    contentLength - i);
-            if (readlen == -1) {
-                break;
+                int readlen = httpServletRequest.getInputStream().read(buffer, i,
+                        contentLength - i);
+                if (readlen == -1) {
+                    break;
+                }
+                i += readlen;
             }
-            i += readlen;
+            logger.info("request param: " + new java.lang.String(buffer));
+        }else{
+            logger.info("request param: " + new java.lang.String(paramStr));
         }
 
-        logger.info("request param: " + new java.lang.String(buffer));
         logger.info("request headers : " + JSONObject.toJSONString(headers));
 //        logger.infov("---------------------------------------------");
         logger.info("");
