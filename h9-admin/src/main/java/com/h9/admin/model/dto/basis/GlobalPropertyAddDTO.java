@@ -41,7 +41,7 @@ public class GlobalPropertyAddDTO {
     private List<Map<String,Object>> val;
 
     @ApiModelProperty(value = "说明",required = true)
-    @Max(value = 512,message = "参数值不能大于512")
+    @Max(value = 512,message = "说明过长")
     private String description;
 
 
