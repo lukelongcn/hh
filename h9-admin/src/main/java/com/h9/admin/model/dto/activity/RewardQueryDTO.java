@@ -2,7 +2,6 @@ package com.h9.admin.model.dto.activity;
 
 import com.h9.admin.model.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Date;
 

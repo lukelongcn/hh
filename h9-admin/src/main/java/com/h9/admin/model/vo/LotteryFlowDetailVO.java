@@ -1,25 +1,19 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.Reward;
-import com.h9.common.db.entity.UserRecord;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author: George
- * @date: 2017/11/8 13:52
+ * @date: 2017/11/8 16:04
  */
-public class LotteryFlowVO {
-    @ApiModelProperty(value = "id" )
-    private Long id;
+public class LotteryFlowDetailVO {
 
     @ApiModelProperty(value = "用户id" )
     private Long userId;
-
-    @ApiModelProperty(value = "兑奖码" )
-    private String code;
 
     @ApiModelProperty(value = "手机号码")
     private String phone;
@@ -33,16 +27,14 @@ public class LotteryFlowVO {
     @ApiModelProperty(value = "纬度" )
     private double latitude;
 
-    @ApiModelProperty(value = "ip地址" )
-    private String ip;
+    @ApiModelProperty(value = "手机号码" )
+    private String phoneType;
 
-    public Long getId() {
-        return id;
-    }
+    @ApiModelProperty(value = "版本" )
+    private String version;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ApiModelProperty(value = "时间" )
+    protected Date createTime;
 
     public Long getUserId() {
         return userId;
@@ -50,14 +42,6 @@ public class LotteryFlowVO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getPhone() {
@@ -92,11 +76,27 @@ public class LotteryFlowVO {
         this.latitude = latitude;
     }
 
-    public String getIp() {
-        return ip;
+    public String getPhoneType() {
+        return phoneType;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setPhoneType(String phoneType) {
+        this.phoneType = phoneType;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }
