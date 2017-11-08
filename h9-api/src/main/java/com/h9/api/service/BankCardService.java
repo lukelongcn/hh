@@ -41,9 +41,9 @@ public class BankCardService {
     public Result addBankCard(Long userId, BankCardDTO bankCardDTO) {
 
         //判断银行卡号是否已被绑定
-        UserBank user=bankCardRepository.findByNo(bankCardDTO.getNo());
-        if(user!=null){
-            if(user.getUserId().equals(userId)){
+        UserBank user = bankCardRepository.findByNo(bankCardDTO.getNo());
+        if (user != null) {
+            if (user.getUserId().equals(userId)) {
                 user.setStatus(1);
                 return Result.fail("该卡已被本人绑定");
             }
@@ -60,20 +60,30 @@ public class BankCardService {
         userBank.setProvice(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
         userBank.setStatus(1);
+        userBank.setDefaultSelect(1);
 
+        //设置 为默认银行卡
+        UserBank defaultBank = bankCardRepository.getDefaultBank(userId);
+        if (defaultBank != null) {
+            defaultBank.setDefaultSelect(0);
+        }
+        userBank.setDefaultSelect(1);
+
+        bankCardRepository.save(defaultBank);
         bankCardRepository.save(userBank);
         return Result.success("绑定成功");
     }
 
     /**
      * 解绑银行卡
+     *
      * @param id
      * @param userId
      * @return
      */
-    public Result updateStatus(Long id,Long userId){
+    public Result updateStatus(Long id, Long userId) {
         UserBank userBank = bankCardRepository.findById(id);
-        if(userBank == null) {
+        if (userBank == null) {
             return Result.fail("银行卡不存在");
         }
         if (userId.equals(userBank.getUserId())) {
@@ -86,12 +96,13 @@ public class BankCardService {
 
     /**
      * 银行卡类型列表
+     *
      * @return
      */
     public Result allBank() {
         List<BankType> all = bankTypeRepository.findTypeList();
         List<Map<String, String>> bankVoList = new ArrayList<>();
-        if(CollectionUtils.isEmpty(all)) return Result.success();
+        if (CollectionUtils.isEmpty(all)) return Result.success();
         all.forEach(bank -> {
             Map<String, String> map = new HashMap<>();
             map.put("name", bank.getBankName());
@@ -101,24 +112,33 @@ public class BankCardService {
         return Result.success(bankVoList);
     }
 
+    @SuppressWarnings("Duplicates")
     public Result getMyBankList(long userId) {
-        List<UserBank> userBankList = bankCardRepository.findByUserId(userId);
+        List<UserBank> userBankList = bankCardRepository.findByUserIdAndStatus(userId, 1);
         List<Map<String, String>> bankList = new ArrayList<>();
-        userBankList.forEach(bank -> {
+        userBankList.stream()
+                .sorted((x, y) -> {
+                    int defaultSelect = x.getDefaultSelect();
+                    if (defaultSelect == 1) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                })
+                .forEach(bank -> {
+                    if (bank.getStatus() == 1) {
+                        Map<String, String> map = new HashMap<>();
+                        map.put("bankImg", bank.getBankType().getBankImg());
+                        map.put("name", bank.getBankType().getBankName());
+                        String no = bank.getNo();
+                        int length = no.length();
+                        map.put("no", no);
+                        map.put("id", bank.getId() + "");
+                        map.put("color", bank.getBankType().getColor());
+                        bankList.add(map);
+                    }
 
-            if (bank.getStatus() == 1) {
-                Map<String, String> map = new HashMap<>();
-                map.put("bankImg", bank.getBankType().getBankImg());
-                map.put("name", bank.getBankType().getBankName());
-                String no = bank.getNo();
-                int length = no.length();
-                map.put("no", no);
-                map.put("id", bank.getId() + "");
-                map.put("color", bank.getBankType().getColor());
-                bankList.add(map);
-            }
-
-        });
+                });
         return Result.success(bankList);
     }
 }

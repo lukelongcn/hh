@@ -95,13 +95,12 @@ public class RewardVO {
 
     public RewardVO(Reward reward){
         BeanUtils.copyProperties(reward,this);
-        this.productName = reward.getProduct().getName();
+
     }
 
     public static RewardVO toRewardVO(Reward reward){
         RewardVO rewardVO = new RewardVO();
         BeanUtils.copyProperties(reward,rewardVO);
-        rewardVO.productName = reward.getProduct().getName();
         return  rewardVO;
     }
 }

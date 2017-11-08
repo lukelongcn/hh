@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class ResponseLogAspectShow {
     private Logger logger = Logger.getLogger(this.getClass());
 
-    @Pointcut("execution(public * com.h9.api.controller..*.*(..))")
+    @Pointcut("execution(public * com.h9.lottery.controller..*.*(..))")
     public void pointCut() {}
 
 

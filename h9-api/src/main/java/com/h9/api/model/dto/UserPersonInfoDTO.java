@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public class UserPersonInfoDTO {
     private String avatar;
-    @Size(min = 1,message = "请填写nickName")
+    @Size(min = 1,max=64,message = "请填写nickName")
     @NotNull(message = "请填写nickName")
     private String nickName;
     @NotEmpty(message = "请填写sex")

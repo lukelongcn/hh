@@ -2,12 +2,11 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Lottery;
+import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.entity.User;
 import com.h9.common.modle.dto.LotteryFlowDTO;
-import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
+import org.springframework.data.domain.PageRequest;
 import java.util.List;
 
 /**
@@ -34,12 +33,12 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
     List<LotteryFlow> findByReward(Reward reward);
 
 
-    @Query("select l from LotteryFlow l where l.reward = ?1 and l.userId = ?2 order by l.createTime desc ")
+    @Query("select l from LotteryFlow l where l.reward = ?1 and l.user.id = ?2 order by l.createTime desc ")
     LotteryFlow findByReward(Reward reward,Long userId);
 
 
-    @Query("select l from LotteryFlow l where l.userId = ?2 order by l.createTime desc ")
-    List<LotteryFlow> findByReward(Long userId);
+    @Query("select l from LotteryFlow l where l.user.id = ?1 order by l.createTime desc ")
+    Page<LotteryFlow> findByReward(Long userId, Pageable pageable);
 
     default Specification<LotteryFlow> buildSpecification(LotteryFlowDTO lotteryFlowDTO){
         return  new Specification<LotteryFlow>() {
@@ -66,5 +65,11 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
         };
 
     }
+
+   default PageResult<LotteryFlow> findByReward(Long userId, int page , int limit){
+       PageRequest pageRequest = pageRequest(page, limit);
+       Page<LotteryFlow> lotteryFlows = findByReward(userId, pageRequest);
+       return new PageResult(lotteryFlows);
+   }
 
 }
