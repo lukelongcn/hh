@@ -18,6 +18,7 @@ public class BankCardDTO {
     @Size(max = 32, message = "请填写正确姓名")
     @NotEmpty(message = "请填写真实姓名")
     private String name;
+    @Size(max = 20)
     @NotNull(message = "请填写银行类型 id")
     private Long bankTypeId;//银行类别
     @NotNull(message = "请填写provice")
