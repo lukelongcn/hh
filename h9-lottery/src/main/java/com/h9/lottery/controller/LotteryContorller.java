@@ -69,7 +69,7 @@ public class LotteryContorller {
 
     @Secured
     @GetMapping("/history")
-    @ApiOperation(value = "奖励房间")
+    @ApiOperation(value = "抽奖记录")
     public Result<List<LotteryFlowDTO>> getLotteryRoom(
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
             @SessionAttribute("curUserId") long userId){
