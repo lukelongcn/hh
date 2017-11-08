@@ -62,6 +62,9 @@ public class UserRecord extends BaseEntity {
     @Column(name = "imei",  columnDefinition = "varchar(64) default '' COMMENT '机器唯一码'")
     private String imei;
 
+    @Column(name = "phone_type",  columnDefinition = "varchar(32) default '' COMMENT '手机品牌'")
+    private String phoneType;
+
     
     public Long getId() {
         return id;
@@ -176,5 +179,13 @@ public class UserRecord extends BaseEntity {
 
     public void setImei(String imei) {
         this.imei = imei;
+    }
+
+    public String getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(String phoneType) {
+        this.phoneType = phoneType;
     }
 }
