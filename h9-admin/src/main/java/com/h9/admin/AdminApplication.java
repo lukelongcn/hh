@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableJpaRepositories(basePackages={"com.h9.common.db.repo"})
 @EntityScan(basePackages = {"com.h9.common.db.entity","com.h9.admin.model.po"})
 @AutoConfigurationPackage
+@EnableScheduling
 public class AdminApplication {
 
 

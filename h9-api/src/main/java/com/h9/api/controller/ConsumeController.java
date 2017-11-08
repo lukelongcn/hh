@@ -91,11 +91,11 @@ public class ConsumeController {
     }
 
 
-    /**
-     * description: 扫述充值不没有到账的情况
-     */
-    @PutMapping("/withdraw/scan")
-    public Result orderScan(){
-        return consumeService.scan();
-    }
+//    /**
+//     * description: 扫述充值不没有到账的情况
+//     */
+//    @PostMapping("/withdraw/scan")
+//    public Result orderScan(){
+//        return consumeService.scan();
+//    }
 }

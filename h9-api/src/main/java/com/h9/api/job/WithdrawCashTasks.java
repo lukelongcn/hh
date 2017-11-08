@@ -1,5 +1,6 @@
-package com.h9.admin.job;
+package com.h9.api.job;
 
+import com.h9.api.service.ConsumeService;
 import org.jboss.logging.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,13 @@ public class WithdrawCashTasks {
 
     @Resource
     private RestTemplate restTemplate;
+    @Resource
+    private ConsumeService consumeService;
 
-    @Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void run(){
 
         logger.info("withdrawCashTasks run ........");
-
-
+        consumeService.scan();
     }
 }

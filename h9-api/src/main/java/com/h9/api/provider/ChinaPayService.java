@@ -122,6 +122,47 @@ public class ChinaPayService {
         return Result.success("",gbk);
     }
 
+    public enum CPstatEnum{
+
+        SUCESS("s","交易成功"),
+        FAIL("6","失败");
+
+        private String code;
+        private String desc;
+        CPstatEnum(String code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public static String calcExpectReturn(WithdrawalsRequest withdrawalsRequest,String type,String merId){
+        StringBuilder calcResult = new StringBuilder();
+        calcResult.append("0000");
+        calcResult.append("|");
+        calcResult.append(merId);
+        calcResult.append("|");
+        calcResult.append(withdrawalsRequest.getMerDate());
+        calcResult.append(withdrawalsRequest.getMerSeqId());
+//        calcResult.append(withdrawalsRequest.getc)
+        return calcResult.toString();
+    }
+
+
     public static class PayParam {
         private String merSeqId;
         private String cardNo;

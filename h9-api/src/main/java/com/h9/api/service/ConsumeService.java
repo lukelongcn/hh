@@ -244,7 +244,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam,merDate);
+        Result result = chinaPayService.signPay(payParam, merDate);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
@@ -295,21 +295,35 @@ public class ConsumeService {
     }
 
     public Result scan() {
-        List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+        List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
 
         String reduce = withdrawCashRecord.stream()
                 .map(record -> record.getId() + "")
                 .reduce("", (x, y) -> x + " ," + y);
 
-        logger.info("没有到账的订单"+reduce);
+        logger.info("没有到账的订单" + reduce);
         //查询状态
         withdrawCashRecord.forEach(wr -> {
             WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());
-            if(withdrawRequest!=null){
+            if (withdrawRequest != null) {
                 Result result = chinaPayService.query(withdrawRequest);
-                if(result.getData().toString().contains(""))
-                logger.info("scan result : "+result);
+                String cpReturnData = result.getData().toString();
+                logger.info("scan result : " + cpReturnData + " " + wr);
+
+                if (cpReturnData.contains("|s|")) {
+                    //此笔交易银行显示已完成了，把订单状态改变
+                    wr.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+                }
+
+
+                if (cpReturnData.contains("|9|")) {
+                    //此笔交易银联打款失败
+                    wr.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+                }
+
+                withdrawalsRecordReposiroty.save(wr);
             }
+
         });
         return null;
     }
