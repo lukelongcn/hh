@@ -1,4 +1,4 @@
-package com.h9.admin.model.dto;
+package com.h9.common.modle.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

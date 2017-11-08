@@ -42,18 +42,9 @@ public class Reward extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励总金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "have_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '已领取奖励总金额'")
-    private BigDecimal haveMoney = new BigDecimal(0);
-
-    @Column(name = "surplus_moeny",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '剩余金额'")
-    private BigDecimal surplusMoeny = new BigDecimal(0);
 
     @Column(name = "reward_url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '红包路径'")
     private String rewardUrl;
-
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '管连商品信息'")
-    private Product product;
 
     /***
      * @see StatusEnum
@@ -103,21 +94,6 @@ public class Reward extends BaseEntity {
         this.money = money;
     }
 
-    public BigDecimal getHaveMoney() {
-        return haveMoney;
-    }
-
-    public void setHaveMoney(BigDecimal haveMoney) {
-        this.haveMoney = haveMoney;
-    }
-
-    public BigDecimal getSurplusMoeny() {
-        return surplusMoeny;
-    }
-
-    public void setSurplusMoeny(BigDecimal surplusMoeny) {
-        this.surplusMoeny = surplusMoeny;
-    }
 
     public String getRewardUrl() {
         return rewardUrl;
@@ -127,13 +103,6 @@ public class Reward extends BaseEntity {
         this.rewardUrl = rewardUrl;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
     /***
      * @see StatusEnum
      * @param status

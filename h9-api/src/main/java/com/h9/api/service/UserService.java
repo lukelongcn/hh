@@ -48,6 +48,8 @@ public class UserService {
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
 
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -108,6 +110,8 @@ public class UserService {
         CharSequence charSequence = phone.subSequence(4, 8);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
+        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
+        user.setAvatar(defaultHead.getVal());
         return user;
     }
 

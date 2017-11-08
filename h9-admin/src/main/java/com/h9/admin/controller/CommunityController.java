@@ -1,7 +1,6 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.dto.*;
 import com.h9.admin.model.dto.activity.ActivityAddDTO;
 import com.h9.admin.model.dto.activity.ActivityEditDTO;
 import com.h9.admin.model.dto.community.*;
@@ -13,6 +12,7 @@ import com.h9.common.db.entity.Banner;
 //import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.Goods;
+import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
