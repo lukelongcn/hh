@@ -63,6 +63,13 @@ public class BankCardService {
         userBank.setDefaultSelect(1);
 
         //设置 为默认银行卡
+        UserBank defaultBank = bankCardRepository.getDefaultBank(userId);
+        if (defaultBank != null) {
+            defaultBank.setDefaultSelect(0);
+        }
+        userBank.setDefaultSelect(1);
+
+        bankCardRepository.save(defaultBank);
         bankCardRepository.save(userBank);
         return Result.success("绑定成功");
     }
