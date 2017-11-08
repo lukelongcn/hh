@@ -33,10 +33,10 @@ public class Product extends BaseEntity {
 
     @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '商品名称'")
     private String name;
-    
+
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '供应商名称（喷码）'")
     private String supplierName;
-    
+
     @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar() default '' COMMENT ''")
     private String supplierDistrict;
 
@@ -46,7 +46,7 @@ public class Product extends BaseEntity {
     @Temporal(TIMESTAMP)
     @Column(name = "fisrt_time", columnDefinition = "datetime COMMENT '首次扫描时间'")
     private Date fisrtTime;
-    
+
 
     public Long getId() {
         return id;

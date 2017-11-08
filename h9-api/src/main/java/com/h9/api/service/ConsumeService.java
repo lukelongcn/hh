@@ -80,9 +80,12 @@ public class ConsumeService {
     private GoodsDIDINumberRepository goodsDIDINumberRepository;
     @Resource
     private WithdrawalsRequestReposiroty withdrawalsRequestReposiroty;
+    @Resource
+    private BankCardRepository bankCardRepository;
     @Value("${chinaPay.merId}")
     private String merId;
-
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -244,7 +247,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam,merDate);
+        Result result = chinaPayService.signPay(payParam, merDate);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
@@ -295,22 +298,69 @@ public class ConsumeService {
     }
 
     public Result scan() {
-        List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+        List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
 
         String reduce = withdrawCashRecord.stream()
                 .map(record -> record.getId() + "")
                 .reduce("", (x, y) -> x + " ," + y);
 
-        logger.info("没有到账的订单"+reduce);
+        logger.info("没有到账的订单" + reduce);
         //查询状态
         withdrawCashRecord.forEach(wr -> {
             WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());
-            if(withdrawRequest!=null){
+            if (withdrawRequest != null) {
                 Result result = chinaPayService.query(withdrawRequest);
-                if(result.getData().toString().contains(""))
-                logger.info("scan result : "+result);
+                String cpReturnData = result.getData().toString();
+                logger.info("scan result : " + cpReturnData + " " + wr);
+
+                if (cpReturnData.contains("|s|")) {
+                    //此笔交易银行显示已完成了，把订单状态改变
+                    wr.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+                }
+
+
+                if (cpReturnData.contains("|9|")) {
+                    //此笔交易银联打款失败
+                    wr.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+                }
+
+                withdrawalsRecordReposiroty.save(wr);
             }
+
         });
         return null;
+    }
+
+
+    @SuppressWarnings("Duplicates")
+    public Result withdraInfo(Long userId) {
+        List<UserBank> userBankList = bankCardRepository.findByUserId(userId);
+        List<Map<String, String>> bankList = new ArrayList<>();
+        userBankList.forEach(bank -> {
+
+            if (bank.getStatus() == 1) {
+                Map<String, String> map = new HashMap<>();
+                map.put("bankImg", bank.getBankType().getBankImg());
+                map.put("name", bank.getBankType().getBankName());
+                String no = bank.getNo();
+                int length = no.length();
+                map.put("no", no);
+                map.put("id", bank.getId() + "");
+                map.put("color", bank.getBankType().getColor());
+                bankList.add(map);
+
+            }
+
+        });
+
+        Map<String, Object> infoVO = new HashMap<>();
+        infoVO.put("bankList", bankList);
+        //TODO 提现额度查询
+        GlobalProperty globalProperty = globalPropertyRepository.findByCode("withdrawMax");
+        String max = globalProperty.getVal();
+        infoVO.put("withdrawalCount", max);
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        infoVO.put("balance",userAccount.getBalance());
+        return Result.success(infoVO);
     }
 }

@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.MyCouponsVO;
 import com.h9.api.model.vo.OrderListVO;
@@ -43,13 +44,19 @@ public class AccountService {
     private UserBankRepository userBankRepository;
     @Resource
     private OrdersReposiroty ordersReposiroty;
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
 
 
     public Result getBalanceFlow(Long userId, int page, int limit) {
+
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(userId, pageRequest);
         PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
-        return Result.success(flowPageResult.result2Result(BalanceFlowVO::new));
+        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
+        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+        return Result.success(flowPageResult.result2Result(bf -> new BalanceFlowVO(bf, iconMap)));
+
     }
 
     public Result getVCoinsFlow(Long userId, int page, int limit) {
@@ -92,7 +99,7 @@ public class AccountService {
         return Result.success(userAccountInfoVO);
     }
 
-    public Result couponeList(Long userId,int page,int limit) {
+    public Result couponeList(Long userId, int page, int limit) {
 
         PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
         Page<Orders> orders = ordersReposiroty.findByUser(userId, pageRequest);
