@@ -1,7 +1,7 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.vo.LotteryFlowVO;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.repo.LotteryFlowRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.dto.LotteryFlowDTO;
@@ -12,7 +12,6 @@ import com.h9.common.base.Result;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.repo.ActivityRepository;
 import com.h9.common.db.repo.RewardRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,20 +57,21 @@ public class ActivityService {
         return rewards;
     }
 
-   /* public Result<PageResult<LotteryFlowVO>> getRewards(LotteryFlowDTO lotteryFlowDTO){
-        User user = null;
-        if(!StringUtils.isEmpty(lotteryFlowDTO.getPhone())){
-            user = this.userRepository.findByPhone(lotteryFlowDTO.getPhone());
-            if(user==null){
-                return Result.success(new PageResult<LotteryFlowVO>());
-            }
-        }
+    public Result<PageResult<LotteryFlowVO>> getRewards(LotteryFlowDTO lotteryFlowDTO){
         Sort sort = new Sort(Sort.Direction.DESC,"id");
-        PageRequest pageRequest = this.rewardRepository.pageRequest(lotteryFlowDTO.getPageNumber(),lotteryFlowDTO.getPageSize(),sort);
-        Page<Reward> rewards = this.rewardRepository.findAll(this.buildSpecification(rewardQueryDTO),pageRequest);
-        PageResult<Reward> pageResult = new PageResult<>(rewards);
-        return Result.success(this.toRewardVO(pageResult));
-    }*/
+        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowDTO.getPageNumber(),lotteryFlowDTO.getPageSize(),sort);
+        Page<LotteryFlow> lotteryFlows = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository.buildSpecification(lotteryFlowDTO),pageRequest);
+        PageResult<LotteryFlow> pageResult = new PageResult<>(lotteryFlows);
+        return Result.success(this.toLotteryFlowVO(pageResult));
+    }
 
+    private PageResult<LotteryFlowVO> toLotteryFlowVO(PageResult lotteryFlows){
+        List<LotteryFlowVO> rewardVOList = new ArrayList<>();
+        for(LotteryFlow lotteryFlow:(List<LotteryFlow>)lotteryFlows.getData()){
+            rewardVOList.add(LotteryFlowVO.toLotteryFlowVO(lotteryFlow));
+        }
+        lotteryFlows.setData(rewardVOList);
+        return lotteryFlows;
+    }
 
 }
