@@ -1,8 +1,8 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.dto.activity.LotteryFlowDTO;
-import com.h9.admin.model.dto.activity.RewardQueryDTO;
+import com.h9.common.modle.dto.LotteryFlowDTO;
+import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowDetailVO;
 import com.h9.admin.model.vo.LotteryFlowVO;
 import com.h9.admin.model.vo.RewardVO;

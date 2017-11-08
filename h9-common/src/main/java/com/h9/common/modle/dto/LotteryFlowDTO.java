@@ -1,6 +1,5 @@
-package com.h9.admin.model.dto.activity;
+package com.h9.common.modle.dto;
 
-import com.h9.admin.model.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
