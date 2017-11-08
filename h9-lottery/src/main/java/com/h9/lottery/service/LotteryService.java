@@ -1,5 +1,6 @@
 package com.h9.lottery.service;
 
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.*;
@@ -167,7 +168,6 @@ public class LotteryService {
         boolean islottery = status == StatusEnum.END.getCode();
         lotteryResult.setLottery(islottery);
         lotteryResult.setRoomUser(userId.equals(reward.getUserId()));
-
         //TODO
         LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
         if(lotteryFlow!=null){
@@ -301,13 +301,9 @@ public class LotteryService {
 
 
 
-    public Result<List<LotteryFlowDTO>> history(Long userId){
-        List<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId);
-        List<LotteryFlowDTO> lotteryFlowDTOS = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(lotteryFlows)){
-            lotteryFlowDTOS = lotteryFlows.stream().map(LotteryFlowDTO::new).collect(Collectors.toList());
-        }
-        return Result.success(lotteryFlowDTOS);
+    public Result<PageResult<LotteryFlowDTO>>  history(Long userId,int  page,int limit){
+        PageResult<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId, page, limit);
+        return Result.success(lotteryFlows.result2Result(LotteryFlowDTO::new));
     }
 
 
