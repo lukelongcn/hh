@@ -46,9 +46,9 @@ public class ConsumeController {
      */
     @Secured
     @GetMapping("/mobile/denomination")
-    public Result rechargeDenomination() {
+    public Result rechargeDenomination(@SessionAttribute("curUserId") Long userId) {
 
-        return consumeService.rechargeDenomination();
+        return consumeService.rechargeDenomination(userId);
     }
 
     /**

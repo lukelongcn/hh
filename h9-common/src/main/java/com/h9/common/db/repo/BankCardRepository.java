@@ -2,6 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.UserBank;
+import com.h9.common.db.entity.WithdrawalsRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +21,11 @@ public interface BankCardRepository extends BaseRepository<UserBank> {
     //判断有无对应银行卡存在
     UserBank findByNo(String no);
 
-    List<UserBank> findByUserId(Long userId);
+    List<UserBank> findByUserIdAndStatus(Long userId,Integer status);
+
+    @Query(value = "select * from user_bank where status = 1 and default_select = 1 and user_id = ?1",nativeQuery = true)
+    UserBank getDefaultBank(Long userId);
+
+
+
 }
