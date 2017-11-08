@@ -86,9 +86,6 @@ public class BankCardService {
             return Result.fail("银行卡不存在");
         }
         if (!userId.equals(userBank.getUserId())) {
-            return Result.fail("用户名不一致");
-        }
-        if (!userId.equals(userBank.getUserId())) {
             return Result.fail("无权操作");
         }
         userBank.setStatus(3);
