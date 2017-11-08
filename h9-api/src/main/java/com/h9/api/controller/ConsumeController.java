@@ -84,7 +84,6 @@ public class ConsumeController {
     /**
      * description: 余额充值/test 使用
      */
-    @Secured
     @GetMapping("/cz/{userId}")
     public Result cz(@PathVariable Long userId) {
         return consumeService.cz(userId);
