@@ -56,6 +56,9 @@ public class LotteryFlow extends BaseEntity {
     @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '备注'")
     private String remarks;
 
+    @Column(name = "description",columnDefinition = "varchar(64) default '' COMMENT '描述'")
+    private String desc;
+
     public Long getId() {
         return id;
     }
@@ -126,5 +129,13 @@ public class LotteryFlow extends BaseEntity {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

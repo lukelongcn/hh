@@ -211,7 +211,7 @@ public class LotteryService {
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
                 lotteryUser.setUserId(lotteryFromDb.getUserId());
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
-
+                lotteryUser.setDesc(lotteryFromDb.getDesc());
                 User user = userRepository.findOne(lotteryFromDb.getUserId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
@@ -307,14 +307,14 @@ public class LotteryService {
         List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
-        Random random = new Random();
         int count = list.size();
         for (int i = 0; i < lotteries.size(); i++) {
             BigDecimal rewardMoney = moneyMap.get(i + 1);
             Lottery lottery = lotteries.get(i);
             lottery.setMoney(rewardMoney);
             LotteryFlow lotteryFlow = new LotteryFlow(lottery);
-            lotteryFlow.setRemarks(list.get(i % count));
+            lotteryFlow.setDesc(list.get(i % count));
+            lotteryFlow.setRemarks("抢红包");
             lotteryFlows.add(lotteryFlow);
         }
         return lotteryFlows;
