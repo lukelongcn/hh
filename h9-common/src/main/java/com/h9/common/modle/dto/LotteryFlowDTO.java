@@ -17,7 +17,7 @@ public class LotteryFlowDTO extends PageDTO{
     private String phone;
 
     @ApiModelProperty(value = "中奖状态")
-    private String status;
+    private Integer status;
 
     public String getCode() {
         return code;
@@ -35,11 +35,11 @@ public class LotteryFlowDTO extends PageDTO{
         this.phone = phone;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 }
