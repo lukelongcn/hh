@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
 public class BankTypeAddDTO {
 
     @ApiModelProperty(value = "名称",required = true)
+    @Size(max = 32, message = "名称过长")
     @NotEmpty(message = "名称不能为空")
     private String bankName;
 
