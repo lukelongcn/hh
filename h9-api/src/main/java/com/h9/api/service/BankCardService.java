@@ -66,9 +66,10 @@ public class BankCardService {
         UserBank defaultBank = bankCardRepository.getDefaultBank(userId);
         if (defaultBank != null) {
             defaultBank.setDefaultSelect(0);
-            bankCardRepository.save(defaultBank);
         }
         userBank.setDefaultSelect(1);
+
+        bankCardRepository.save(defaultBank);
         bankCardRepository.save(userBank);
         return Result.success("绑定成功");
     }
@@ -85,8 +86,8 @@ public class BankCardService {
         if (userBank == null) {
             return Result.fail("银行卡不存在");
         }
-        if (userId.equals(userBank.getUserId())) {
-            return Result.fail("用户名不一致");
+        if (!userId.equals(userBank.getUserId())) {
+            return Result.fail("无权操作");
         }
         userBank.setStatus(3);
         bankCardRepository.save(userBank);
