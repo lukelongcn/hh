@@ -10,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Created by itservice on 2017/11/1.
@@ -24,4 +26,8 @@ public interface OrdersReposiroty extends BaseRepository<Orders> {
         Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));
         return new PageResult(byUser);
     }
+
+    @Async
+    @Query("select o from Orders o")
+    Future<List<Orders>> findAllAsy();
 }

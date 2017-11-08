@@ -1,5 +1,6 @@
 package com.h9.lottery.controller;
 
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.LotteryFlow;
 import com.h9.lottery.interceptor.Secured;
@@ -70,11 +71,14 @@ public class LotteryContorller {
     @Secured
     @GetMapping("/history")
     @ApiOperation(value = "抽奖记录")
-    public Result<List<LotteryFlowDTO>> getLotteryRoom(
+    public Result<PageResult<LotteryFlowDTO>>  getLotteryRoom(
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
-            @SessionAttribute("curUserId") long userId){
+            @SessionAttribute("curUserId") long userId,
+            @RequestParam(value = "page",required = false) int page,
+            @RequestParam(value = "limit",required = false) int limit
+    ){
 
-        return lotteryService.history(userId);
+        return lotteryService.history(userId,page,limit);
     }
 
 

@@ -8,6 +8,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.GoodsDIDINumber;
+import com.h9.common.db.entity.Orders;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.DiDiCardInfo;
 import com.h9.common.db.entity.Goods;
@@ -24,6 +25,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -129,6 +132,22 @@ public class ApiApplicationTests {
 //        System.out.println(result);
     }
 
+
+    @Resource
+    private OrdersReposiroty ordersReposiroty;
+    @Test
+    public void asys(){
+        Future<List<Orders>> allAsy = ordersReposiroty.findAllAsy();
+        try {
+            List<Orders> orders = allAsy.get();
+            System.out.println(orders.size());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 }
