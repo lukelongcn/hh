@@ -99,7 +99,7 @@ public class ConsumeController {
 //        return consumeService.scan();
 //    }
     @Secured
-    @GetMapping("/withraw/info")
+    @GetMapping("/withdraw/info")
     public Result withdraInfo(@SessionAttribute("curUserId") Long userId) {
         return consumeService.withdraInfo(userId);
     }
