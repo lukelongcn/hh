@@ -12,6 +12,7 @@ public class LoginResultVO {
     private String imgUrl;
     private String nickName;
     private String openId;
+    private String tel = "";
 
     public LoginResultVO() {
     }
@@ -29,7 +30,16 @@ public class LoginResultVO {
         vo.setImgUrl(user.getAvatar());
         vo.setNickName(user.getNickName());
         vo.setOpenId(user.getOpenId());
+        vo.setTel(user.getPhone());
         return vo;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     public String getNickName() {

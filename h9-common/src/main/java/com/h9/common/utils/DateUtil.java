@@ -523,6 +523,19 @@ public class DateUtil {
         calendar.setTime(date);
         return calendar.get(type);
     }
-
+    /**
+    *   @Author:George
+    *   @Description:
+    *   @Date:2017/11/7 20:45
+    *	@param date
+    *	@param days 天数，正为加，负为减
+    *   @return java.util.Date
+    */
+    public static Date addDays(Date date, Integer days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, days);
+        return calendar.getTime();
+    }
 
 }

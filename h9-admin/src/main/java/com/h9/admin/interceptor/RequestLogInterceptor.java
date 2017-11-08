@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * description: 请求日志打印拦截器
  */
+@SuppressWarnings("Duplicates")
 @Component
 public class RequestLogInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
@@ -25,21 +26,17 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
 
+        String method = httpServletRequest.getMethod();
+        if (HttpMethod.OPTIONS.name().equals(method)) {
+            return false;
+        }
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
         logger.info("content-type: " + httpServletRequest.getHeader("Content-Type"));
         Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
         String paramStr = JSONObject.toJSONString(parameterMap);
-        //if("login".equals(httpServletRequest.getMethod().))
-        if (o instanceof HandlerMethod){
-            NotPrintParam notPrintParam = ((HandlerMethod) o).getMethodAnnotation(NotPrintParam.class);
-            if(notPrintParam==null){
-                logger.info("request param: " + paramStr);
-            }
-        }else{
-            logger.info("request param: " + paramStr);
-        }
+
         Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
         Map<String, String> headers = new HashMap<>();
         while (headerNames.hasMoreElements()) {
@@ -47,15 +44,31 @@ public class RequestLogInterceptor implements HandlerInterceptor {
             String value = httpServletRequest.getHeader(key);
             headers.put(key, value);
         }
+
+
+        int contentLength = httpServletRequest.getContentLength();
+        if (contentLength != -1) {
+
+            byte buffer[] = new byte[contentLength];
+            for (int i = 0; i < contentLength; ) {
+
+                int readlen = httpServletRequest.getInputStream().read(buffer, i,
+                        contentLength - i);
+                if (readlen == -1) {
+                    break;
+                }
+                i += readlen;
+            }
+            logger.info("request param: " + new java.lang.String(buffer));
+        }else{
+            logger.info("request param: " + new java.lang.String(paramStr));
+        }
+
         logger.info("request headers : " + JSONObject.toJSONString(headers));
 //        logger.infov("---------------------------------------------");
         logger.info("");
         logger.infov("-------------------响应信息-------------------");
         logger.info("http code : " + httpServletResponse.getStatus());
-        String method = httpServletRequest.getMethod();
-        if(HttpMethod.OPTIONS.name().equals(method)){
-            return false;
-        }
         return true;
     }
 

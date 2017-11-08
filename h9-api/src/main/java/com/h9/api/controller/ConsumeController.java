@@ -32,7 +32,7 @@ public class ConsumeController {
     @PostMapping("/mobile/recharge")
     public Result mobileRecharge(
             @SessionAttribute("curUserId") Long userId,
-            @Valid@RequestBody MobileRechargeDTO mobileRechargeDTO) {
+            @Valid @RequestBody MobileRechargeDTO mobileRechargeDTO) {
         try {
             return consumeService.recharge(userId, mobileRechargeDTO);
         } catch (Exception e) {
@@ -76,9 +76,9 @@ public class ConsumeController {
     @Secured
     @PostMapping("/withdraw/{bankId}/{code}")
     public Result bankWithdraw(@SessionAttribute("curUserId") Long userId
-            ,@PathVariable Long bankId,@PathVariable String code) {
+            , @PathVariable Long bankId, @PathVariable String code) {
 
-        return consumeService.bankWithDraw(userId,bankId,code);
+        return consumeService.bankWithDraw(userId, bankId, code);
     }
 
     /**
@@ -91,11 +91,17 @@ public class ConsumeController {
     }
 
 
-    /**
-     * description: 扫述充值不没有到账的情况
-     */
-    @PutMapping("/withdraw/scan")
-    public Result orderScan(){
-        return consumeService.scan();
+    //    /**
+//     * description: 扫述充值不没有到账的情况
+//     */
+//    @PostMapping("/withdraw/scan")
+//    public Result orderScan(){
+//        return consumeService.scan();
+//    }
+    @Secured
+    @GetMapping("/withdraw/info")
+    public Result withdraInfo(@SessionAttribute("curUserId") Long userId) {
+        return consumeService.withdraInfo(userId);
     }
+
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,14 +29,21 @@ public class BalanceFlowVO {
     private String imgUrl;
     private String createTime;
 
-    public BalanceFlowVO(BalanceFlow balanceFlow) {
+    public BalanceFlowVO(BalanceFlow balanceFlow,Map<String, String> iconMap) {
         BeanUtils.copyProperties(balanceFlow,this);
         Date createTime = balanceFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = balanceFlow.getRemarks();
         money = balanceFlow.getMoney();
         this.createTime = DateUtil.formatDate(balanceFlow.getCreateTime(), DateUtil.FormatType.SECOND);
-        imgUrl="";
+        Set<String> keySet = iconMap.keySet();
+
+        for(String key : keySet){
+            if(key.equals(balanceFlow.getFlowType())){
+                imgUrl=iconMap.get(key);
+                break;
+            }
+        }
     }
 
     public BalanceFlowVO(VCoinsFlow vCoinsFlow) {
