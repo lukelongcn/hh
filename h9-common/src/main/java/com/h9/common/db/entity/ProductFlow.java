@@ -31,7 +31,7 @@ public class ProductFlow extends BaseEntity {
     @JoinColumn(name = "product_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
     private Product product;
     
-    @Column(name = "code", nullable = false, columnDefinition = "varchar() default '' COMMENT ''")
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT ''")
     private String code;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
