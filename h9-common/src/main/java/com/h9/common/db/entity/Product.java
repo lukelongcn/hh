@@ -37,7 +37,7 @@ public class Product extends BaseEntity {
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '供应商名称（喷码）'")
     private String supplierName;
 
-    @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar() default '' COMMENT ''")
+    @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar(128) default '' COMMENT ''")
     private String supplierDistrict;
 
     @Column(name = "count",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '查询次数'")
