@@ -1,6 +1,7 @@
 package com.h9.lottery.service;
 
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.UserRecord;
 import com.h9.common.db.repo.UserRecordRepository;
 import com.h9.common.utils.NetworkUtil;
@@ -24,36 +25,15 @@ public class ProductService {
 
     @Resource
     private UserRecordRepository userRecordRepository;
+    @Resource
+    private CommonService commonService;
 
 
     public Result<AuthenticityVO> getAuthenticity(Long userId, LotteryDto lotteryVo, HttpServletRequest request){
-        UserRecord userRecord = newUserRecord(userId, lotteryVo, request);
-
-        return Result.success();
+        UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
+        AuthenticityVO authenticityVO = new AuthenticityVO();
+        return Result.success(authenticityVO);
     }
 
-
-    @SuppressWarnings("Duplicates")
-    public UserRecord newUserRecord(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
-        UserRecord userRecord = new UserRecord();
-        String refer = request.getHeader("Referer");
-        String userAgent = request.getHeader("User-Agent");
-        userRecord.setUserId(userId);
-        userRecord.setUserAgent(userAgent);
-        userRecord.setRefer(refer);
-        String ip = NetworkUtil.getIpAddress(request);
-        userRecord.setIp(ip);
-        String client = request.getHeader("client");
-        if (StringUtils.isNotEmpty(client)) {
-            userRecord.setClient(Integer.parseInt(client));
-        }
-        String version = request.getHeader("version");
-        userRecord.setVersion(version);
-        userRecord.setLatitude(lotteryVo.getLatitude());
-        userRecord.setLongitude(lotteryVo.getLongitude());
-        String imei = request.getHeader("imei");
-        userRecord.setImei(imei);
-        return userRecordRepository.saveAndFlush(userRecord);
-    }
 
 }
