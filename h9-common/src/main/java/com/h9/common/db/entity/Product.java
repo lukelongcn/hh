@@ -37,15 +37,18 @@ public class Product extends BaseEntity {
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '供应商名称（喷码）'")
     private String supplierName;
 
-    @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar() default '' COMMENT ''")
+    @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar(128) default '' COMMENT ''")
     private String supplierDistrict;
 
-    @Column(name = "count",columnDefinition = "DECIMAL(10,2) default 0.00 COMMEN'查询次数'")
+    @Column(name = "count",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '查询次数'")
     private BigDecimal count = new BigDecimal(0);
 
     @Temporal(TIMESTAMP)
     @Column(name = "fisrt_time", columnDefinition = "datetime COMMENT '首次扫描时间'")
     private Date fisrtTime;
+
+    @Column(name = "address", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '上次查询位置'")
+    private String address;
 
 
     public Long getId() {
@@ -102,5 +105,13 @@ public class Product extends BaseEntity {
 
     public void setFisrtTime(Date fisrtTime) {
         this.fisrtTime = fisrtTime;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
