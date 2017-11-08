@@ -37,7 +37,7 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
     LotteryFlow findByReward(Reward reward,Long userId);
 
 
-    @Query("select l from LotteryFlow l where l.userId = ?1 order by l.createTime desc ")
+    @Query("select l from LotteryFlow l where l.user.id = ?1 order by l.createTime desc ")
     List<LotteryFlow> findByReward(Long userId);
 
    /* default Specification<LotteryFlow> buildSpecification(LotteryFlowDTO lotteryFlowDTO){
