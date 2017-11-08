@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class GlobalPropertyAddDTO {
 
     @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
+    @Max(value = 512,message = "名称不能大于512")
     private String name;
 
     @ApiModelProperty(value = "参数类型， 0：文本 1：对象 2:数组",required = true)
@@ -30,13 +32,16 @@ public class GlobalPropertyAddDTO {
 
     @ApiModelProperty(value = "参数标识",required = true)
     @NotEmpty(message = "参数标识不能为空")
+    @Max(value = 50,message = "参数标识不能大于50")
     private String code;
 
     @ApiModelProperty(value = "参数值",required = true)
     @NotNull(message = "参数值不能为空")
+    @Max(value = 512,message = "参数值不能大于512")
     private List<Map<String,Object>> val;
 
     @ApiModelProperty(value = "说明",required = true)
+    @Max(value = 512,message = "参数值不能大于512")
     private String description;
 
 
