@@ -54,7 +54,7 @@ public class AccountService {
         Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(userId, pageRequest);
         PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
         GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
-        Map<String, String> iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
         return Result.success(flowPageResult.result2Result(bf -> new BalanceFlowVO(bf, iconMap)));
 
     }

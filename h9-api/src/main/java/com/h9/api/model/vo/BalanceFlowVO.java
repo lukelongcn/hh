@@ -39,7 +39,7 @@ public class BalanceFlowVO {
         Set<String> keySet = iconMap.keySet();
 
         for(String key : keySet){
-            if(key.equals(balanceFlow.getFlowType())){
+            if(key.equals(balanceFlow.getFlowType()+"")){
                 imgUrl=iconMap.get(key);
                 break;
             }
