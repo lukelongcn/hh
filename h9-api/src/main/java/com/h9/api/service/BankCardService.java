@@ -89,7 +89,7 @@ public class BankCardService {
      * @return
      */
     public Result allBank() {
-        List<BankType> all = bankTypeRepository.findAll();
+        List<BankType> all = bankTypeRepository.findTypeList();
         List<Map<String, String>> bankVoList = new ArrayList<>();
         if(CollectionUtils.isEmpty(all)) return Result.success();
         all.forEach(bank -> {
