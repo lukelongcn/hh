@@ -12,9 +12,10 @@ import javax.validation.constraints.Size;
  */
 public class BankCardDTO {
 
-    @Size(min = 10, message = "请填写正确的银行卡号")
+    @Size(min = 10,max = 64, message = "请填写正确的银行卡号")
     @NotEmpty(message = "请填写银行卡号")
     private String no;
+    @Size(max = 32, message = "请填写正确姓名")
     @NotEmpty(message = "请填写真实姓名")
     private String name;
     @NotNull(message = "请填写银行类型 id")

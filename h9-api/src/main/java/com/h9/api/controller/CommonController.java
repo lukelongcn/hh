@@ -5,9 +5,11 @@ import com.h9.api.provider.WeChatProvider;
 import com.h9.common.db.repo.AgreementRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -30,7 +32,7 @@ public class CommonController {
      * @return  页面内容
      */
     @ApiOperation(value = "获取content")
-    @GetMapping(value = "/{code}")
+    @GetMapping(value = "/{code}",produces = MediaType.TEXT_HTML_VALUE)
     public String agreement(@PathVariable("code") String code){
         return agreementRepository.agreement(code);
     }
