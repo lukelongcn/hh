@@ -80,6 +80,8 @@ public class ConsumeService {
     private GoodsDIDINumberRepository goodsDIDINumberRepository;
     @Resource
     private WithdrawalsRequestReposiroty withdrawalsRequestReposiroty;
+    @Resource
+    private BankCardRepository bankCardRepository;
     @Value("${chinaPay.merId}")
     private String merId;
 
@@ -326,5 +328,36 @@ public class ConsumeService {
 
         });
         return null;
+    }
+
+
+    @SuppressWarnings("Duplicates")
+    public Result withdraInfo(Long userId) {
+        List<UserBank> userBankList = bankCardRepository.findByUserId(userId);
+        List<Map<String, String>> bankList = new ArrayList<>();
+        userBankList.forEach(bank -> {
+
+            if (bank.getStatus() == 1) {
+                Map<String, String> map = new HashMap<>();
+                map.put("bankImg", bank.getBankType().getBankImg());
+                map.put("name", bank.getBankType().getBankName());
+                String no = bank.getNo();
+                int length = no.length();
+                map.put("no", no);
+                map.put("id", bank.getId() + "");
+                map.put("color", bank.getBankType().getColor());
+                bankList.add(map);
+
+            }
+
+        });
+
+        Map<String, Object> infoVO = new HashMap<>();
+        infoVO.put("bankList", bankList);
+        //TODO 提现额度查询
+        infoVO.put("withdrawalCount", "10000");
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        infoVO.put("balance",userAccount.getBalance());
+        return Result.success(infoVO);
     }
 }
