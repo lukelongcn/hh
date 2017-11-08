@@ -32,7 +32,7 @@ public class CommonController {
      * @return  页面内容
      */
     @ApiOperation(value = "获取content")
-    @GetMapping(value = "/{code}",produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/page/{code}",produces = MediaType.TEXT_HTML_VALUE)
     public String agreement(@PathVariable("code") String code){
         return agreementRepository.agreement(code);
     }
