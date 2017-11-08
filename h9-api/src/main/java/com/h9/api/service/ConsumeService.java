@@ -262,6 +262,16 @@ public class ConsumeService {
         BeanUtils.copyProperties(payParam, withdrawalsRequest);
         withdrawalsRequest.setBankReturnData(result.getData().toString());
         withdrawalsRequest.setMerDate(merDate);
+
+        //设置默认银行卡
+        UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
+        if(defaulBank != null){
+            defaulBank.setDefaultSelect(0);
+            bankCardRepository.save(defaulBank);
+        }
+        userBank.setDefaultSelect(1);
+        bankCardRepository.save(userBank);
+
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
