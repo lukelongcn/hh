@@ -84,7 +84,8 @@ public class ConsumeService {
     private BankCardRepository bankCardRepository;
     @Value("${chinaPay.merId}")
     private String merId;
-
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -355,7 +356,9 @@ public class ConsumeService {
         Map<String, Object> infoVO = new HashMap<>();
         infoVO.put("bankList", bankList);
         //TODO 提现额度查询
-        infoVO.put("withdrawalCount", "10000");
+        GlobalProperty globalProperty = globalPropertyRepository.findByCode("withdrawMax");
+        String max = globalProperty.getVal();
+        infoVO.put("withdrawalCount", max);
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         infoVO.put("balance",userAccount.getBalance());
         return Result.success(infoVO);
