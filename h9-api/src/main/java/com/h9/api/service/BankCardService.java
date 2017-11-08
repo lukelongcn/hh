@@ -66,10 +66,9 @@ public class BankCardService {
         UserBank defaultBank = bankCardRepository.getDefaultBank(userId);
         if (defaultBank != null) {
             defaultBank.setDefaultSelect(0);
+            bankCardRepository.save(defaultBank);
         }
         userBank.setDefaultSelect(1);
-
-        bankCardRepository.save(defaultBank);
         bankCardRepository.save(userBank);
         return Result.success("绑定成功");
     }
