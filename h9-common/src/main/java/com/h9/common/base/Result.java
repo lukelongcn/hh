@@ -32,8 +32,8 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public static Result success() {
-        return new Result(SUCCESS_CODE, "成功");
+    public static <T>Result<T> success() {
+        return success(null);
     }
 
     public static <T>Result<T> success(T t) {

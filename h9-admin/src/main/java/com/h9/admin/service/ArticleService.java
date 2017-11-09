@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.article.ArticleDTO;
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -70,5 +71,52 @@ public class ArticleService {
     public Result<PageResult<Article>> articleList(PageDTO pageDTO) {
         Page<Article> all = articleRepository.findAll(pageDTO.toPageRequest());
         return Result.success(new PageResult<>(all));
+    }
+
+    public Result<Article> getArticle(Long id) {
+        Article one = articleRepository.findOne(id);
+        if(one==null){
+            return Result.fail("您访问的文章不存在");
+        }
+        return Result.success(one);
+    }
+
+    public Result deleteArticle(Long id) {
+        Article one = articleRepository.findOne(id);
+        if(one==null){
+            return Result.fail("您要删除的文章不存在");
+        }
+        one.setEnable(2);
+        articleRepository.save(one);
+        return Result.success();
+    }
+
+    public Result<Article> addArticle(ArticleDTO articleDTO) {
+        //检查分类是否存在
+        ArticleType one = articleTypeRepository.findOne(articleDTO.getArticleTypeId());
+        if(one==null){
+            return Result.fail("文章分类不存在,请选择其他的分类");
+        }
+
+        Article article = new Article();
+        BeanUtils.copyProperties(articleDTO,article);
+        article.setId(null);
+        article.setArticleType(one);
+        articleRepository.save(article);
+        return Result.success(article);
+    }
+
+    public Result<Article> editArticle(ArticleDTO articleDTO) {
+        //检查分类是否存在
+        ArticleType one = articleTypeRepository.findOne(articleDTO.getArticleTypeId());
+        if(one==null){
+            return Result.fail("文章分类不存在,请选择其他的分类");
+        }
+        //检查是否有这个文章
+        Article article = articleRepository.findOne(articleDTO.getId());
+        BeanUtils.copyProperties(articleDTO,article);
+        article.setArticleType(one);
+        articleRepository.save(article);
+        return Result.success(article);
     }
 }
