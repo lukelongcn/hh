@@ -1,6 +1,7 @@
 package com.h9.api;
 
 import com.h9.common.StartBanner;
+import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,11 +10,15 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import static org.jboss.logging.Logger.getLogger;
 
@@ -44,8 +49,11 @@ public class ApiApplication {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        return restTemplate;
     }
+
 
 
 }

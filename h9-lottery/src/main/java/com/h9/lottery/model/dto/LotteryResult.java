@@ -19,6 +19,7 @@ public class LotteryResult {
     private BigDecimal money = new BigDecimal(0);
     private List<LotteryUser> lotteryUsers;
     private String endTime;
+    private long differentDate;
     private String nowTime;
 
     public String getQrCode() {
@@ -83,6 +84,14 @@ public class LotteryResult {
 
     public void setRoomUser(boolean roomUser) {
         this.roomUser = roomUser;
+    }
+
+    public long getDifferentDate() {
+        return differentDate;
+    }
+
+    public void setDifferentDate(long differentDate) {
+        this.differentDate = differentDate;
     }
 }
 

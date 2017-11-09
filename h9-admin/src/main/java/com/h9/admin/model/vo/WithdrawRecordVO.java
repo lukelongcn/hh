@@ -1,10 +1,17 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.utils.DateUtil;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -21,8 +28,8 @@ public class WithdrawRecordVO {
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    @ApiModelProperty(value = "昵称")
-    private String nickName;
+    @ApiModelProperty(value = "姓名")
+    private String name;
 
     @ApiModelProperty(value = "手机号")
     private String phone;
@@ -38,6 +45,10 @@ public class WithdrawRecordVO {
 
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
+
+
+    @ApiModelProperty(value = "转账成功时间")
+    private Date finishTime;
 
     @ApiModelProperty(value = "提现状态 ： 1提现中  2银行转账中 3银行转账完成 ，4 提现异常,5退回")
     private Integer status = 1;
@@ -64,12 +75,12 @@ public class WithdrawRecordVO {
         this.userId = userId;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getName() {
+        return name;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhone() {
@@ -134,5 +145,40 @@ public class WithdrawRecordVO {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Date getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(Date finishTime) {
+        this.finishTime = finishTime;
+    }
+
+   /* public static WithdrawRecordVO toWithdrawRecordVO(Map map){
+     *//*   WithdrawRecordVO withdrawRecordVO = new WithdrawRecordVO();
+        withdrawRecordVO.setBankCardNo(MapUtils.getString(map,"no"));
+        withdrawRecordVO.setBankName(MapUtils.getString(map,"bank_name"));
+        BeanUtils.
+        withdrawRecordVO.setCity(MapUtils.getString(map,"city"));
+        withdrawRecordVO.setProvice(MapUtils.getString(map,"provice"));
+        withdrawRecordVO.setCreateTime(DateUtil.formatDate(MapUtils.getString(map,"create_time"),DateUtil.FormatType.SECOND));
+        withdrawRecordVO.setFinishTime(DateUtil.formatDate(MapUtils.getString(map,"finish_time"),DateUtil.FormatType.SECOND));
+        withdrawRecordVO.setId(MapUtils.getLong(map,"id"));
+        withdrawRecordVO.setMoney(new BigDecimal(MapUtils.getString(map,"money")));*//*
+    }*/
+
+    public static List<WithdrawRecordVO> toWithdrawRecordVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
+        if(maps==null){
+            return null;
+        }else{
+            List<WithdrawRecordVO> withdrawRecordVOS = new ArrayList<>();
+            for(Map map:maps){
+                WithdrawRecordVO withdrawRecordVO = new WithdrawRecordVO();
+                org.apache.commons.beanutils.BeanUtils.populate(withdrawRecordVO,map);
+                withdrawRecordVOS.add(withdrawRecordVO);
+            }
+            return withdrawRecordVOS;
+        }
     }
 }

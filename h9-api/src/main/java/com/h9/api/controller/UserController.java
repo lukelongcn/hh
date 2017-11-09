@@ -8,10 +8,13 @@ import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -65,7 +68,8 @@ public class UserController {
 
 
     @GetMapping("/wechat/login")
-    public Result getCode(String code){
+    public Result getCode(@RequestParam(value = "code",required = false)
+                                    @NotNull(message = "微信登录失败") String code){
         return userService.loginByWechat(code);
     }
 

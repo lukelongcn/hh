@@ -44,19 +44,23 @@ public class WeChatProvider {
             e.printStackTrace();
         }
         return MessageFormat.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=" +
-                "code&scope={2}&state={3}#wechat_redirect", appId , "snsapi_userinfo", state);  //snsapi_base
+                "code&scope={2}&state={3}#wechat_redirect", appId ,realUrl, "snsapi_userinfo", state);  //snsapi_base
     }
 
     public String getJSCode(String appId, String state) {
         if (appId == null) {
             appId = jsAppId;
         }
-        return getJSCode(appId, url, state);
+        String jsCode = getJSCode(appId, url, state);
+        logger.debugv(jsCode);
+        return jsCode;
     }
 
     public String getCode(String code, String state) {
         byte[] decode = Base64.getDecoder().decode(state);
-        return concatUrl(new String(decode), code);
+        String url = concatUrl(new String(decode), code);
+        logger.debugv(url);
+        return url;
     }
 
     public String concatUrl(String url, String code) {
