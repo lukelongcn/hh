@@ -4,6 +4,7 @@ import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
@@ -25,15 +26,15 @@ public class BannerEditDTO{
     private Long id;
 
     @ApiModelProperty(value = "名称",required = true)
-    @NotEmpty(message = "名称不能为空")
+    @NotBlank(message = "名称不能为空")
     private String title;
 
     @ApiModelProperty(value = "动作",required = true)
-    @NotEmpty(message = "动作")
+    @NotBlank(message = "动作")
     private String url;
 
     @ApiModelProperty(value = "图标url",required = true)
-    @NotEmpty(message = "图标url名称不能为空")
+    @NotBlank(message = "图标url名称不能为空")
     private String icon;
 
     @ApiModelProperty(value = "状态，1：启用 0：禁用",required = true)
