@@ -26,7 +26,7 @@ public class OrderDetailVO {
     private List<GoodsInfo> goodsInfoList;
     private String couponsNumber = "";
     private String companyIcon = "";
-
+    private String logisticsNumber="";
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
@@ -35,8 +35,9 @@ public class OrderDetailVO {
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         if(order.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()){
             vo.setAccepterName("");
-            vo.setTel("");
-            vo.setAddress("");
+            vo.setTel(order.getUserPhone());
+            vo.setAddress(order.getUserAddres());
+            vo.setLogisticsNumber(order.getLogisticsNumber());
         }
         List<OrderItems> orderItems = order.getOrderItems();
         if (!CollectionUtils.isEmpty(orderItems)) {
@@ -46,7 +47,6 @@ public class OrderDetailVO {
         vo.setPayMethod("余额支付");
         vo.setPayMoney(order.getPayMoney() + "");
         vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
-
         List<OrderItems> itemList = order.getOrderItems();
         List<GoodsInfo> goodsInfos = itemList.stream().map(item -> {
             GoodsInfo goodsInfo = new GoodsInfo();
@@ -59,6 +59,13 @@ public class OrderDetailVO {
         return vo;
     }
 
+    public String getLogisticsNumber() {
+        return logisticsNumber;
+    }
+
+    public void setLogisticsNumber(String logisticsNumber) {
+        this.logisticsNumber = logisticsNumber;
+    }
 
     public String getCompanyIcon() {
         return companyIcon;

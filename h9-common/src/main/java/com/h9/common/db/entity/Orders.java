@@ -84,7 +84,19 @@ public class Orders extends BaseEntity {
      */
     @Column(name="order_type",columnDefinition = "int default 1 COMMENT'订单类别'")
     private Integer orderType ;
-//    public enum orderTypeEnum{
+
+    @Column(name = "loginstics_number")
+    private String logisticsNumber;
+
+    public String getLogisticsNumber() {
+        return logisticsNumber;
+    }
+
+    public void setLogisticsNumber(String logisticsNumber) {
+        this.logisticsNumber = logisticsNumber;
+    }
+
+    //    public enum orderTypeEnum{
 //
 //        MOBILE_RECHARGE(1, "话费充值"),
 //        DIDI_COUPON(2,"滴滴兑换"),
