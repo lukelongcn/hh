@@ -42,7 +42,7 @@ public class CommonController {
 
     /*****
      * @param appId 需要获取授权的appId
-     * @param  回调路径 需要base64编码
+     * @param  url回调路径 需要base64编码
      * @param response
      * @throws IOException
      */
