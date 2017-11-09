@@ -6,17 +6,18 @@ import com.h9.admin.model.dto.basis.BankTypeAddDTO;
 import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
-import com.h9.common.db.entity.BankType;
-import com.h9.common.modle.vo.GlobalPropertyVO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.modle.vo.GlobalPropertyVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author: George
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/basis")
 public class BasisController {
 
-    @Autowired
+    @Resource
     private BasisService basisService;
 
     @Secured
@@ -84,5 +85,12 @@ public class BasisController {
     @ApiOperation("启用/禁用银行")
     public Result<BankType> editBankTypeStatus(@PathVariable long id){
         return this.basisService.updateBankTypeStatus(id);
+    }
+
+    @Secured
+    @GetMapping(value="/statistics/lottery")
+    @ApiOperation("获取统计的积分和奖励数据")
+    public Result statisticsLottery(){
+        return basisService.statisticsLottery();
     }
 }

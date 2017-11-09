@@ -4,19 +4,21 @@ import com.h9.admin.model.dto.PageDTO;
 import com.h9.admin.model.dto.basis.BankTypeAddDTO;
 import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
-import com.h9.common.db.entity.BankType;
-import com.h9.common.db.repo.BankTypeRepository;
-import com.h9.common.modle.vo.GlobalPropertyVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.repo.BankTypeRepository;
 import com.h9.common.db.repo.GlobalPropertyRepository;
+import com.h9.common.db.repo.LotteryFlowRepository;
+import com.h9.common.modle.vo.GlobalPropertyVO;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * @author: George
@@ -26,10 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BasisService {
 
-    @Autowired
+    @Resource
     private GlobalPropertyRepository globalPropertyRepository;
-    @Autowired
+    @Resource
     private BankTypeRepository bankTypeRepository;
+    @Resource
+    private LotteryFlowRepository lotteryFlowRepository;
 
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
@@ -101,4 +105,8 @@ public class BasisService {
         return Result.success(pageResult);
     }
 
+    public Result statisticsLottery() {
+        
+        return null;
+    }
 }
