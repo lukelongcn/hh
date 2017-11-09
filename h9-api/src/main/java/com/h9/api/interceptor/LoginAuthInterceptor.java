@@ -28,6 +28,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     @Resource
     private RedisBean redisBean;
 
+    @SuppressWarnings("Duplicates")
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
@@ -39,13 +40,17 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
                 // token 失效检查
-                String userId = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
-                if (StringUtils.isBlank(userId)) {
+                String userId4phone = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
+                String userId4WeChat = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
+                if(StringUtils.isEmpty(userId4WeChat)&&StringUtils.isEmpty(userId4phone)){
                     throw new UnAuthException("请重新登录");
                 }
-                MDC.put("userId",userId);
+                if (StringUtils.isBlank(userId4phone)) {
+                    throw new UnAuthException("请重新登录");
+                }
+                MDC.put("userId4phone",userId4phone);
                 httpServletRequest.getSession().removeAttribute("curUserId");
-                httpServletRequest.getSession().setAttribute("curUserId",userId);
+                httpServletRequest.getSession().setAttribute("curUserId",userId4phone);
             }
         }
         return true;

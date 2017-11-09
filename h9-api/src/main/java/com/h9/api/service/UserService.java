@@ -91,12 +91,17 @@ public class UserService {
         return Result.success(vo);
     }
 
+    /***
+     * 处理登录token
+     * @param user
+     * @return
+     */
     private LoginResultVO getLoginResult(User user) {
         //生成token
         String token = UUID.randomUUID().toString();
-        String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
+        String tokenUserIdKey = StringUtils.isNotEmpty(user.getPhone())?RedisKey.getTokenUserIdKey(token):RedisKey.getWeChatUserId(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
-        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+//        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 

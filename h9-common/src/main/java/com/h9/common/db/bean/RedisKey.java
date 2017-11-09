@@ -40,6 +40,11 @@ public class RedisKey {
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
     }
+
+    public static String getWeChatUserId(String token){
+        return String.format("h9:wechat:userId:%s",token);
+    }
+
     public static String getLastSendKey(String phone) {
         return String.format(lastSendKey, phone);
     }
