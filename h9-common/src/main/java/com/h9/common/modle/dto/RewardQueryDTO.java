@@ -3,6 +3,7 @@ package com.h9.common.modle.dto;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Date;
  */
 public class RewardQueryDTO extends PageDTO{
 
+    @Size(max = 64,message = "兑奖码过长")
     @ApiModelProperty(value = "兑奖码")
     private String code;
 
@@ -32,15 +34,15 @@ public class RewardQueryDTO extends PageDTO{
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartTime(long startTime) {
+        this.startTime = new Date(startTime);
     }
 
     public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndTime(long endTime) {
+        this.endTime = new Date(endTime);
     }
 }

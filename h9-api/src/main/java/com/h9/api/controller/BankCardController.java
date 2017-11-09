@@ -32,6 +32,7 @@ public class BankCardController {
      */
     @ApiOperation(value = "添加银行卡")
     @PostMapping("/bankCard/add")
+    @Secured
     public  Result addBankCard(@SessionAttribute("curUserId")Long userId,@Valid@RequestBody BankCardDTO bankCardDTO){
         return  bankCardService.addBankCard(userId,bankCardDTO);
     }
@@ -44,6 +45,7 @@ public class BankCardController {
      */
     @ApiOperation(value = "解绑银行卡")
     @PutMapping("/bankCard/update/{id}")
+    @Secured
     public Result updateBankCard(@PathVariable("id")Long id,
                                  @SessionAttribute("curUserId")long userId){
         return bankCardService.updateStatus(id,userId);

@@ -339,6 +339,10 @@ public class ConsumeService {
                 if (cpReturnData.contains("|9|")) {
                     //此笔交易银联打款失败
                     wr.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+                    //TODO 退款到用户账号
+                    Long userId = wr.getUserId();
+                    UserAccount userAccount = userAccountRepository.findByUserId(userId);
+                    userAccount.setBalance(userAccount.getBalance().add(wr.getMoney()));
                 }
 
                 withdrawalsRecordReposiroty.save(wr);
