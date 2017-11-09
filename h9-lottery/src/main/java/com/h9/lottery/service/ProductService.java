@@ -69,7 +69,9 @@ public class ProductService {
         Date lastTime = product4Update.getLastTime();
         product4Update.setLastTime(new Date());
         productLog.setProduct(product4Update);
+        String address = product4Update.getAddress();
         product4Update.setAddress(userRecord.getAddress());
+
 
         productLogRepository.save(productLog);
         ProductFlow productFlow = new ProductFlow();
@@ -82,6 +84,7 @@ public class ProductService {
         authenticityVO.setSupplierName(product4Update.getSupplierName());
         authenticityVO.setSupplierDistrict(product4Update.getSupplierDistrict());
         authenticityVO.setLastQueryTime(DateUtil.formatDate(lastTime, DateUtil.FormatType.GBK_SECOND));
+        authenticityVO.setLastQueryAddress(address);
         authenticityVO.setQueryCount(count);
         return Result.success(authenticityVO);
     }
