@@ -19,7 +19,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class GlobalPropertyEditDTO extends GlobalPropertyAddDTO{
 
     @ApiModelProperty(value = "id",required = true)
-    @Size(max = 20, message = "id过长")
     @NotNull(message = "id不能为空")
     private Long id;
 

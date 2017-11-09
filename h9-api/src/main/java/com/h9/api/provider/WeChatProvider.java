@@ -34,28 +34,28 @@ public class WeChatProvider {
     private RestTemplate restTemplate;
 
 
-    public String getJSCode(String appId,String redirectUrl, String state) {
+    public String getJSCode(String appId, String redirectUrl, String state) {
         return MessageFormat.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=" +
                 "code&scope={2}&state={3}#wechat_redirect", appId, url, "snsapi_userinfo", state);  //snsapi_base
     }
 
-    public String getJSCode(String appId,String state){
-        if(appId == null){
-        appId = jsAppId;
+    public String getJSCode(String appId, String state) {
+        if (appId == null) {
+            appId = jsAppId;
+        }
+        return getJSCode(appId, url, state);
     }
-        return getJSCode(appId,url,state);
-}
 
-    public String getCode(String code,String state){
+    public String getCode(String code, String state) {
         byte[] decode = Base64.getDecoder().decode(state);
-        return concatUrl(new String(decode),code);
+        return concatUrl(new String(decode), code);
     }
 
-    public String concatUrl(String url,String code){
+    public String concatUrl(String url, String code) {
         StringBuffer stringBuffer = new StringBuffer(url);
-        if(url.contains("?")){
+        if (url.contains("?")) {
             stringBuffer.append("&");
-        }else{
+        } else {
             stringBuffer.append("?");
         }
         stringBuffer.append("code=");
@@ -64,7 +64,7 @@ public class WeChatProvider {
     }
 
 
-    public OpenIdCode getOpenId(String appId, String secret, String code){
+    public OpenIdCode getOpenId(String appId, String secret, String code) {
         String url = MessageFormat.format("https://api.weixin.qq.com/" +
                 "sns/oauth2/access_token" +
                 "?appid={0}&secret={1}" +
@@ -75,17 +75,14 @@ public class WeChatProvider {
     }
 
 
-    public WeChatUser getUserInfo(OpenIdCode openIdCode){
+    public WeChatUser getUserInfo(OpenIdCode openIdCode) {
         String url = MessageFormat.format("https://api.weixin.qq.com/sns/userinfo" +
-                "?access_token={0}&openid={1}&lang=zh_CN",
+                        "?access_token={0}&openid={1}&lang=zh_CN",
                 openIdCode.getAccess_token(), openIdCode.getOpenid());
         WeChatUser weChatUser = restTemplate.getForObject(url, WeChatUser.class);
         logger.debug(JSONObject.toJSONString(weChatUser));
         return weChatUser;
     }
-
-
-
 
 
 }

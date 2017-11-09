@@ -1,6 +1,7 @@
 package com.h9.admin.model.dto.community;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
@@ -14,12 +15,12 @@ public class ArticleTypeAddDTO {
 
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型名称'")
     @ApiModelProperty(value = "动作",required = true)
-    @NotEmpty(message = "动作")
+    @NotBlank(message = "动作")
     private String name;
 
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型标识'")
     @ApiModelProperty(value = "动作",required = true)
-    @NotEmpty(message = "动作")
+    @NotBlank(message = "动作")
     private String code;
 
 

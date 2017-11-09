@@ -2,6 +2,7 @@ package com.h9.admin.model.dto.basis;
 
 import com.h9.common.db.entity.BankType;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
@@ -18,15 +19,15 @@ public class BankTypeAddDTO {
 
     @ApiModelProperty(value = "名称",required = true)
     @Size(max = 32, message = "名称过长")
-    @NotEmpty(message = "名称不能为空")
+    @NotBlank(message = "名称不能为空")
     private String bankName;
 
     @ApiModelProperty(value = "图标",required = true)
-    @NotEmpty(message = "图标不能为空")
+    @NotBlank(message = "图标不能为空")
     private String bankImg;
 
     @ApiModelProperty(value = "背景色",required = true)
-    @NotEmpty(message = "背景色不能为空")
+    @NotBlank(message = "背景色不能为空")
     private String color;
 
     @ApiModelProperty(value = "状态， 1：启用，0：禁用",required = true)
