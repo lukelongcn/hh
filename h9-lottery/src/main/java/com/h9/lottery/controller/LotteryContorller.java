@@ -35,7 +35,7 @@ public class LotteryContorller {
     @Resource
     private LotteryService lotteryService;
 
-    @Secured
+    @Secured(bindPhone = false)
     @GetMapping("/qr")
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
@@ -45,7 +45,7 @@ public class LotteryContorller {
     }
 
 
-    @Secured
+    @Secured(bindPhone = false)
     @PostMapping("/{code}/start")
     @ApiOperation(value = "开始抽奖")
     public Result startCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
@@ -55,7 +55,7 @@ public class LotteryContorller {
     }
 
 
-    @Secured
+    @Secured(bindPhone = false)
     @GetMapping("/room/{code}")
     @ApiOperation(value = "奖励房间")
     public Result<LotteryResult> getLotteryRoom(
@@ -68,7 +68,7 @@ public class LotteryContorller {
 
 
 
-    @Secured
+    @Secured(bindPhone = false)
     @GetMapping("/history")
     @ApiOperation(value = "抽奖记录")
     public Result<PageResult<LotteryFlowDTO>>  getLotteryRoom(
