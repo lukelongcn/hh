@@ -42,8 +42,13 @@ public class ApiApplication {
         chinaPayKeyPath = System.getProperty("user.dir");
 
         chinaPayKeyPath += "/certs/china-unionpay/MerPrK_808080211881410_20171102154758.key";
-        logger.info("证书位置: "+chinaPayKeyPath);
-        logger.info("存在: "+new File(chinaPayKeyPath).exists());
+        logger.info("私钥位置: "+chinaPayKeyPath);
+        boolean exists = new File(chinaPayKeyPath).exists();
+        logger.info("存在: "+exists);
+        if (!exists) {
+            logger.info("银联私钥不存在,启动终止!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+        }
+
     }
 
 
@@ -53,7 +58,6 @@ public class ApiApplication {
         restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         return restTemplate;
     }
-
 
 
 }
