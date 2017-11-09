@@ -3,7 +3,6 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
-import javax.websocket.server.PathParam;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -36,7 +35,7 @@ public class HtmlContent extends BaseEntity {
     @Column(name = "content", nullable = false, columnDefinition = "text COMMENT '静态页面内容'")
     private String content;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用 2 禁用 同一个code 只能有一个启用的'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用 2 禁用 3删除 同一个code 只能有一个启用的'")
     private Integer status = 1;
     
 
