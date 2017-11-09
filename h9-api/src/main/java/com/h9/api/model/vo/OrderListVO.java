@@ -32,6 +32,7 @@ public class OrderListVO {
         vo.setStatus("已完成");
         vo.setGoodsInfoList(goodsInfoList);
         vo.setOrderId(orders.getId());
+        vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         return vo;
     }
 
