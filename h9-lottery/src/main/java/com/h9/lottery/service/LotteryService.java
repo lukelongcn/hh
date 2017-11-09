@@ -38,7 +38,7 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
 @Service
 public class LotteryService {
 
-    private static int dayMaxotteryCount = 6;
+    private static int dayMaxotteryCount = 100;
     @Resource
     UserRecordRepository userRecordRepository;
     @Resource
