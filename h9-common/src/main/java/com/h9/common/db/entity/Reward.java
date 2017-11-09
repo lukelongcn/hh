@@ -23,8 +23,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public class Reward extends BaseEntity {
 
 
-
-
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -65,6 +63,10 @@ public class Reward extends BaseEntity {
     
     @Column(name = "factory_status",nullable = false,columnDefinition = "tinyint default -1 COMMENT ' 工厂放回状态'")
     private Integer factoryStatus = -1;
+
+    @Column(name = "start_type",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 手动开启  2  自动开启'")
+    private Integer startType = 1;
+
 
     public Long getId() {
         return id;
@@ -162,6 +164,14 @@ public class Reward extends BaseEntity {
 
     public void setFactoryStatus(Integer factoryStatus) {
         this.factoryStatus = factoryStatus;
+    }
+
+    public Integer getStartType() {
+        return startType;
+    }
+
+    public void setStartType(Integer startType) {
+        this.startType = startType;
     }
 
     public static enum StatusEnum{

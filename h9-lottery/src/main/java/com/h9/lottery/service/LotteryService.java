@@ -15,9 +15,7 @@ import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.model.vo.LotteryResultDto;
 import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
-import com.h9.lottery.utils.CodeUtil;
 import com.h9.lottery.utils.RandomDataUtil;
-import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,9 +36,7 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
 @Service
 public class LotteryService {
 
-    private static int dayMaxotteryCount = 100;
-    @Resource
-    UserRecordRepository userRecordRepository;
+    public static int dayMaxotteryCount = 100;
     @Resource
     private RewardRepository rewardRepository;
     @Resource
@@ -128,7 +124,7 @@ public class LotteryService {
     }
 
 
-    public void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
+    private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
         lotteryLog.setUserRecord(userRecord);
@@ -195,7 +191,7 @@ public class LotteryService {
                 User user = userRepository.findOne(lotteryFromDb.getUser().getId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
-                lotteryUser.setMe(userId == lotteryUser.getUserId());
+                lotteryUser.setMe(userId.equals(lotteryUser.getUserId()));
                 lotteryUsers.add(lotteryUser);
             }
         }else{
@@ -208,7 +204,7 @@ public class LotteryService {
                 User user = userRepository.findOne(lotteryFromDb.getUserId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
-                lotteryUser.setMe(userId == lotteryUser.getUserId());
+                lotteryUser.setMe(userId.equals(lotteryUser.getUserId()));
                 lotteryUsers.add(lotteryUser);
             }
         }
@@ -248,6 +244,13 @@ public class LotteryService {
         }
         //变更奖励状态
         reward.setStatus(END.getCode());
+        if(curUserId!=null){
+            //手动开启奖励的
+            reward.setStartType(1);
+        }else{
+            //自动开启奖励的
+            reward.setStartType(2);
+        }
         rewardRepository.save(reward);
         //变更用余额
         for (int i = 0; i < lotteryFlows.size(); i++) {
@@ -263,7 +266,7 @@ public class LotteryService {
 
     /****
      * 生成奖励人员
-     * @param reward
+     * @param reward 奖励
      * @param lotteryList
      * @param lotteries
      * @return
