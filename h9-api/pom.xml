@@ -66,20 +66,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-
-            <!--<plugin>-->
-                <!--<groupId>org.springframework.boot</groupId>-->
-                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.springframework</groupId>-->
-                        <!--<artifactId>springloaded</artifactId>-->
-                        <!--<version>1.2.5.RELEASE</version>-->
-                    <!--</dependency>-->
-
-
-                <!--</dependencies>-->
-            <!--</plugin>-->
         </plugins>
 
 
@@ -93,6 +79,23 @@
                 <directory>src/main/resources/profiles/${package.environment}</directory>
             </resource>
 
+            <resource>
+
+                <directory>lib</directory>
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+
+            </resource>
+
+            <resource>
+
+                <directory>src/main/resources</directory>
+
+                <targetPath>BOOT-INF/classes/</targetPath>
+
+            </resource>
         </resources>
     </build>
 

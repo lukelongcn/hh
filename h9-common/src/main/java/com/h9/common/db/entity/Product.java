@@ -47,7 +47,7 @@ public class Product extends BaseEntity {
     @Column(name = "fisrt_time", columnDefinition = "datetime COMMENT '首次扫描时间'")
     private Date fisrtTime;
 
-    @Column(name = "address", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '上次查询位置'")
+    @Column(name = "address",  columnDefinition = "varchar(256) default '' COMMENT '上次查询位置'")
     private String address;
 
     @Temporal(TIMESTAMP)

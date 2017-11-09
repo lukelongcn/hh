@@ -30,9 +30,19 @@ public class ArticleType extends BaseEntity {
     private String code;
 
 
-    @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")
+    @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用 2删除'")
     private Integer enable;
+    
+    @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
+    private Integer sort = 1;
 
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
 
     public Long getId() {
         return id;

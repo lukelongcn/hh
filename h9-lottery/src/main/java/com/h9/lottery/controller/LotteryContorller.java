@@ -40,7 +40,7 @@ public class LotteryContorller {
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
-                            LotteryDto lotteryVo, HttpServletRequest request){
+                          @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request){
         return lotteryService.appCode(userId,lotteryVo,request);
     }
 

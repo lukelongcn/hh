@@ -38,7 +38,7 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
 @Service
 public class LotteryService {
 
-    private static int dayMaxotteryCount = 6;
+    private static int dayMaxotteryCount = 100;
     @Resource
     UserRecordRepository userRecordRepository;
     @Resource
@@ -78,10 +78,10 @@ public class LotteryService {
         }
 
         // TODO 检查第三方库有没有数据
-//        Result result = exitsReward(lotteryVo.getCode());
-//        if(result!=null){
-//            return result;
-//        }
+        Result result = exitsReward(lotteryVo.getCode());
+        if(result!=null){
+            return result;
+        }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
         //记录扫码记录
         record(userId, reward, lotteryVo, userRecord);
@@ -128,9 +128,6 @@ public class LotteryService {
     }
 
 
-
-
-
     public void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
@@ -143,9 +140,6 @@ public class LotteryService {
         }
         lotteryLogRepository.save(lotteryLog);
     }
-
-
-
 
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
@@ -298,6 +292,9 @@ public class LotteryService {
             Lottery lottery = lotteries.get(i);
             lottery.setMoney(rewardMoney);
             LotteryFlow lotteryFlow = new LotteryFlow(lottery);
+            Long userId = lottery.getUserId();
+            User user = userRepository.findOne(userId);
+            lotteryFlow.setUser(user);
             lotteryFlow.setDesc(list.get(i % count));
             lotteryFlow.setRemarks("抢红包");
             lotteryFlows.add(lotteryFlow);

@@ -4,6 +4,8 @@ package com.h9.common.db.repo;
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.Lottery;
 import com.h9.common.db.entity.Reward;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +32,14 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
 
 
 
-    @Query("select l.createTime from Lottery l where l.reward = ?1 order by l.createTime desc")
-    Date findByRewardLastTime(Reward reward);
+    @Query("select l.createTime from Lottery as l where l.reward = ?1 order by l.createTime desc")
+    List<Date> findByRewardLastTime(Reward reward, Pageable pageable);
+
+
+
+   default Date findByRewardLastTime(Reward reward){
+       return findByRewardLastTime(reward, pageRequest(1, 1)).get(0);
+   }
+
 
 }
