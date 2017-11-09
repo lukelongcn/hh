@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.groups.Default;
 
 /**
  * 文章
@@ -56,7 +57,7 @@ public class ArticleController {
     @Secured
     @PutMapping(value = "/category")
     @ApiOperation("编辑文章类别")
-    public Result editCategory(@Validated(Edit.class) @RequestBody ArticleTypeDTO articleTypeDTO){
+    public Result editCategory(@Validated({Edit.class, Default.class}) @RequestBody ArticleTypeDTO articleTypeDTO){
         return articleService.editCategory(articleTypeDTO);
     }
 }
