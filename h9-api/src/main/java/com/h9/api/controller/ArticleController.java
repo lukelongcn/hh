@@ -6,6 +6,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.entity.Article;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
@@ -21,7 +22,7 @@ public class ArticleController {
     ArticleService articleService;
 
     @ApiOperation(value = "获取文章内容")
-    @GetMapping(value = "/article/{id}")
+    @GetMapping(value = "/article/{id}",produces = MediaType.TEXT_HTML_VALUE)
     public Result<Article> finOne(@PathVariable("id")Long id){
         return articleService.findOne(id);
     }

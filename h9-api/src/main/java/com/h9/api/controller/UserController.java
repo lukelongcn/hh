@@ -87,4 +87,10 @@ public class UserController {
     }
 
 
+    @GetMapping("/user/info/options")
+    public Result options(){
+
+        return userService.findAllOptions();
+    }
+
 }
