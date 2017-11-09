@@ -19,4 +19,7 @@ public interface ArticleRepository extends BaseRepository<Article>{
     List<Article> findActiveArticle(Date date);
 
     Article findOne(Long id);
+    
+    @Query("select count(a) from Article a where a.articleType.id=?1 and a.enable<>2")
+    Long findCountByArticleType(Long articleType);
 }
