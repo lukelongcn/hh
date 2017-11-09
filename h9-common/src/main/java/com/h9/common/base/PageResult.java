@@ -23,6 +23,23 @@ public class PageResult<T> extends BasePageResult<List<T>> {
         }
     }
 
+    public PageResult(long currPage,long count,long total,List<T> data) {
+        this.setCurrPage(currPage);
+        this.setCount(count);
+        this.setTotal(total);
+        if(total%count!=0){
+            this.setTotalPage(total/count+1);
+        }else{
+            this.setTotalPage(total/count);
+        }
+        if(currPage*count<total){
+            this.setHasNext(true);
+        }else{
+            this.setHasNext(false);
+        }
+        setData(data);
+    }
+
 
 
     /****
