@@ -1,7 +1,9 @@
 package com.h9.lottery.provider;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,17 +22,29 @@ public class FactoryProvider {
     private RestTemplate restTemplate;
 
     public LotteryModel findByLotteryModel(String code) {
-        return restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, LotteryModel.class);
+        String result = restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, String.class);
+        if(StringUtils.isEmpty(result)){
+            return null;
+        }
+        return JSONObject.parseObject(result, LotteryModel.class);
     }
 
 
     public LotteryModel updateLotteryStatus(String code) {
-        return restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
+        String result =  restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, String.class);
+        if(StringUtils.isEmpty(result)){
+            return null;
+        }
+        return JSONObject.parseObject(result, LotteryModel.class);
     }
 
 
     public ProductModel getProductInfo(String code) {
-        return restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, ProductModel.class);
+        String result =  restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, String.class);
+        if(StringUtils.isEmpty(result)){
+            return null;
+        }
+        return JSONObject.parseObject(result, ProductModel.class);
     }
 
 
