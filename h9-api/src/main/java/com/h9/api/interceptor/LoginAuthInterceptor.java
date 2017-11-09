@@ -38,19 +38,27 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             HandlerMethod handlerMethod = (HandlerMethod) o;
             Secured secured = handlerMethod.getMethodAnnotation(Secured.class);
             if (secured != null) {
-                if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
+                if (StringUtils.isBlank(token)) throw new UnAuthException(401,"未知用户");
                 // token 失效检查
                 String userId4phone = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
                 String userId4WeChat = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
                 if(StringUtils.isEmpty(userId4WeChat)&&StringUtils.isEmpty(userId4phone)){
-                    throw new UnAuthException("请重新登录");
+                    throw new UnAuthException(401,"请重新登录");
                 }
-                if (StringUtils.isBlank(userId4phone)) {
-                    throw new UnAuthException("请重新登录");
+                String userId = "";
+                if(!StringUtils.isEmpty(userId4WeChat)){
+                    userId = userId4WeChat;
                 }
-                MDC.put("userId4phone",userId4phone);
+                if(!StringUtils.isEmpty(userId4phone)){
+                    userId = userId4phone;
+                }else{
+                    if(secured.bindPhone()){
+                        throw new UnAuthException(402,"绑定手机号");
+                    }
+                }
+                MDC.put("userId",userId);
                 httpServletRequest.getSession().removeAttribute("curUserId");
-                httpServletRequest.getSession().setAttribute("curUserId",userId4phone);
+                httpServletRequest.getSession().setAttribute("curUserId",userId);
             }
         }
         return true;
