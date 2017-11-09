@@ -37,15 +37,15 @@ public class ActivityController {
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
     public Result<PageResult<LotteryFlowVO>> getLotteryFlows(LotteryFlowDTO lotteryFlowDTO){
-        return Result.success(new PageResult<LotteryFlowVO>());
-        //return this.activityService.getRewards(rewardQueryDTO);
+       // return Result.success(new PageResult<LotteryFlowVO>());
+        return this.activityService.getLotteryFlows(lotteryFlowDTO);
     }
 
-    @Secured
+    /*@Secured
     @GetMapping(value = "/lottery/flow/{id}")
     @ApiOperation("分页获取抢红包参与详情")
     public Result<LotteryFlowDetailVO> getLotteryFlow(){
         return Result.success(new LotteryFlowDetailVO());
         //return this.activityService.getRewards(rewardQueryDTO);
-    }
+    }*/
 }

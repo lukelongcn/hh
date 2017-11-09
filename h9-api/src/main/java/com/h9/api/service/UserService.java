@@ -363,7 +363,9 @@ public class UserService {
 
         for (String key : ketSet) {
             Map<String, String> temp = new HashMap<>();
-            temp.put(key, map.get(key));
+//            temp.put(key, map.get(key));
+            temp.put("key", key);
+            temp.put("value", map.get(key));
             list.add(temp);
         }
 

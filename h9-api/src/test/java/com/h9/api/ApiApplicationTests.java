@@ -2,6 +2,8 @@ package com.h9.api;
 
 //import com.h9.api.provider.ChinaPayService;
 //import com.h9.api.provider.MobileRechargeService;
+
+import chinapay.PrivateKey;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
@@ -22,6 +24,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -74,7 +78,7 @@ public class ApiApplicationTests {
         System.out.println(stringValue);
     }
 
-//    @Resource
+    //    @Resource
 //    private MobileRechargeService mobileRechargeService;
     @Resource
     private GoodsReposiroty goodsReposiroty;
@@ -90,6 +94,7 @@ public class ApiApplicationTests {
 
     @Resource
     GoodsDIDINumberRepository goodsDIDINumberRepository;
+
     @Test
     public void didiCardInit() {
 
@@ -107,10 +112,10 @@ public class ApiApplicationTests {
     @Value("${chinaPay.merId}")
     private String merId;
 
-//    @Resource
+    //    @Resource
 //    private ChinaPayService chinaPayService;
     @Test
-    public void testcp(){
+    public void testcp() {
 
         String merId = "808080211881410";
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
@@ -135,8 +140,9 @@ public class ApiApplicationTests {
 
     @Resource
     private OrdersReposiroty ordersReposiroty;
+
     @Test
-    public void asys(){
+    public void asys() {
         Future<List<Orders>> allAsy = ordersReposiroty.findAllAsy();
         try {
             List<Orders> orders = allAsy.get();
@@ -150,4 +156,12 @@ public class ApiApplicationTests {
     }
 
 
+    @Test
+    public void testKey() {
+//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("MerPrK_808080211881410_20171102154758.key");
+//        PrivateKey key = new PrivateKey();
+//        System.out.println(new File("/").getAbsolutePath());
+//        boolean buildOK = key.buildKey(merId, 0, path);
+//        System.out.println(is == null);
+    }
 }

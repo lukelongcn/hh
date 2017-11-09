@@ -2,6 +2,8 @@ package com.h9.common.db.bean;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.MessageFormat;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:redis的键值
@@ -64,5 +66,17 @@ public class RedisKey {
         return String.format("h9:admin:userId:%s",token);
     }
 
+    /***
+     * 获取通用全局配置
+     * @see com.h9.common.db.entity.GlobalProperty
+     * @param code
+     * @return
+     */
+    public static String getConfigValue(String code){
+        return MessageFormat.format("config:{0}",code);
+    }
+    public static String getConfigType(String code){
+        return MessageFormat.format("config:{0}:type",code);
+    }
 
 }
