@@ -1,6 +1,7 @@
 package com.h9.admin;
 
 import com.h9.common.StartBanner;
+import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
@@ -30,7 +31,11 @@ public class AdminApplication {
 
     @Bean
     public RestTemplate restTemplate(){
-        return new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
+        return restTemplate;
+
+
     }
 
 }

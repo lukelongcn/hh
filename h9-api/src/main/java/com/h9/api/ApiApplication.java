@@ -1,6 +1,7 @@
 package com.h9.api;
 
 import com.h9.common.StartBanner;
+import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
@@ -42,18 +43,22 @@ public class ApiApplication {
         chinaPayKeyPath = System.getProperty("user.dir");
 
         chinaPayKeyPath += "/certs/china-unionpay/MerPrK_808080211881410_20171102154758.key";
-        logger.info("证书位置: "+chinaPayKeyPath);
-        logger.info("存在: "+new File(chinaPayKeyPath).exists());
+        logger.info("私钥位置: "+chinaPayKeyPath);
+        boolean exists = new File(chinaPayKeyPath).exists();
+        logger.info("存在: "+exists);
+        if (!exists) {
+            logger.info("银联私钥不存在,启动终止!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+        }
+
     }
 
 
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
         return restTemplate;
     }
-
 
 
 }

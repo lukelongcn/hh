@@ -1,6 +1,7 @@
 package com.h9.lottery;
 
 import com.h9.common.StartBanner;
+import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,7 +37,9 @@ public class LotteryApplication  {
 
     @Bean
     public RestTemplate getRestTemplate(){
-        return new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
+        return restTemplate;
     }
 
 }

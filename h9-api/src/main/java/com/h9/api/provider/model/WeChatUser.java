@@ -26,6 +26,7 @@ public class WeChatUser {
         user.setOpenId(getOpenid());
         user.setAvatar(getHeadimgurl());
         user.setNickName(getNickname());
+        user.setUnionId(getUnionid());
         return user;
     }
 
