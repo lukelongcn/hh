@@ -23,7 +23,7 @@ import javax.validation.groups.Default;
  * Created by Gonyb on 2017/11/9.
  */
 @RestController
-@Api("文章")
+@Api()
 @RequestMapping(value = "/article")
 public class ArticleController {
 
