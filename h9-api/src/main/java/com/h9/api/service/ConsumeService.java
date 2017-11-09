@@ -21,10 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +63,7 @@ public class ConsumeService {
     @Resource
     private ChinaPayService chinaPayService;
     @Resource
-    private WithdrawalsRecordReposiroty withdrawalsRecordReposiroty;
+    private WithdrawalsRecordRepository withdrawalsRecordReposiroty;
     @Resource
     private AccountService accountService;
     @Resource

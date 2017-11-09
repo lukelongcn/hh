@@ -9,6 +9,7 @@ import com.h9.common.db.entity.User;
 import com.h9.common.modle.dto.LotteryFlowDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import org.springframework.data.domain.PageRequest;
 import java.util.List;
 
 /**
@@ -72,4 +72,6 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
        return new PageResult(lotteryFlows);
    }
 
+   @Query("select sum(l.money) from LotteryFlow l")
+   BigDecimal getLotteryCount();
 }
