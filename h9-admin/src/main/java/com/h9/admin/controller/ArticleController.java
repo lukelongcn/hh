@@ -4,7 +4,10 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.admin.service.ArticleService;
 import com.h9.admin.validation.Edit;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Article;
+import com.h9.common.db.entity.ArticleType;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,16 +30,16 @@ public class ArticleController {
     private ArticleService articleService;
     
     @Secured
-    @GetMapping(value = "/category")
-    @ApiOperation("获取文章类别")
-    public Result categoryList(PageDTO pageDTO){
+    @GetMapping(value = "/category/list")
+    @ApiOperation("获取文章类别list")
+    public Result<PageResult<ArticleType>> categoryList(PageDTO pageDTO){
         return articleService.categoryList(pageDTO);
     }
 
     @Secured
     @GetMapping(value = "/category/{id}")
     @ApiOperation("获取文章类别")
-    public Result getCategory(@PathVariable("id") Long id){
+    public Result<ArticleType> getCategory(@PathVariable("id") Long id){
         return articleService.getCategory(id);
     }
 
@@ -57,7 +60,14 @@ public class ArticleController {
     @Secured
     @PutMapping(value = "/category")
     @ApiOperation("编辑文章类别")
-    public Result editCategory(@Validated({Edit.class, Default.class}) @RequestBody ArticleTypeDTO articleTypeDTO){
+    public Result<ArticleType> editCategory(@Validated({Edit.class, Default.class}) @RequestBody ArticleTypeDTO articleTypeDTO){
         return articleService.editCategory(articleTypeDTO);
+    }
+
+    @Secured
+    @GetMapping(value = "/")
+    @ApiOperation("获取文章类别")
+    public Result<PageResult<Article>> articleList(PageDTO pageDTO){
+        return articleService.articleList(pageDTO);
     }
 }
