@@ -49,13 +49,13 @@ public interface RewardRepository extends BaseRepository<Reward> {
             public Predicate toPredicate(Root<Reward> root, CriteriaQuery<?> query, CriteriaBuilder cb){
                 List<Predicate> predicates = new ArrayList<>();
                 if(!StringUtils.isEmpty(rewardQueryDTO.getCode())){
-                    predicates.add(cb.like(root.get("code").as(String.class),"%"+rewardQueryDTO.getCode()+"%"));
+                    predicates.add(cb.equal(root.get("code").as(String.class),rewardQueryDTO.getCode()));
                 }
                 if(rewardQueryDTO.getStartTime()!=null){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("startTime").as(Date.class),rewardQueryDTO.getStartTime()));
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("createTime").as(Date.class),rewardQueryDTO.getStartTime()));
                 }
                 if(rewardQueryDTO.getEndTime()!=null){
-                    predicates.add(cb.lessThan(root.get("endTime").as(Date.class), DateUtil.addDays(rewardQueryDTO.getEndTime(),1)));
+                    predicates.add(cb.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(rewardQueryDTO.getEndTime(),1)));
                 }
                 Predicate[] pre = new Predicate[predicates.size()];
                 return query.where(predicates.toArray(pre)).getRestriction();

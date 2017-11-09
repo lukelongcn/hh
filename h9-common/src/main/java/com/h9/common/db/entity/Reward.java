@@ -4,6 +4,7 @@ import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
 
+import java.awt.image.DataBuffer;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -61,6 +62,9 @@ public class Reward extends BaseEntity {
     
     @Column(name = "partake_count",nullable = false,columnDefinition = "int default 0 COMMENT '参加数量'")
     private int partakeCount = 0;
+    
+    @Column(name = "factory_status",nullable = false,columnDefinition = "tinyint default -1 COMMENT ' 工厂放回状态'")
+    private Integer factoryStatus = -1;
 
     public Long getId() {
         return id;
@@ -152,6 +156,14 @@ public class Reward extends BaseEntity {
     }
 
 
+    public Integer getFactoryStatus() {
+        return factoryStatus;
+    }
+
+    public void setFactoryStatus(Integer factoryStatus) {
+        this.factoryStatus = factoryStatus;
+    }
+
     public static enum StatusEnum{
 
         TO_BEGIN(1,"待领取"),
@@ -182,6 +194,7 @@ public class Reward extends BaseEntity {
         public void setDesc(String desc) {
             this.desc = desc;
         }
+
 
 
 
