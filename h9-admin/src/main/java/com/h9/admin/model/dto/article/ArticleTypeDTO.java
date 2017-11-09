@@ -29,7 +29,8 @@ public class ArticleTypeDTO {
     
     @Min(value = 0,message = "请传入正确的enable")
     @Max(value = 1,message = "请传入正确的enable")
-    private int enable;
+    @NotNull(message = "enable不能为空")
+    private Integer enable;
 
 
     public String getName() {
@@ -48,11 +49,11 @@ public class ArticleTypeDTO {
         this.sort = sort;
     }
 
-    public int getEnable() {
+    public Integer getEnable() {
         return enable;
     }
 
-    public void setEnable(int enable) {
+    public void setEnable(Integer enable) {
         this.enable = enable;
     }
 

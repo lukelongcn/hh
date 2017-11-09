@@ -31,7 +31,9 @@ public class ArticleService {
 
 
     public Result getCategory(Long id) {
-        return Result.success(articleTypeRepository.findOne(id));
+        ArticleType one = articleTypeRepository.findOne(id);
+        one.setArticleCount(articleRepository.findCountByArticleType(one.getId()));
+        return Result.success(one);
     }
 
     public Result addCategory(ArticleTypeDTO articleTypeDTO) {
@@ -60,6 +62,6 @@ public class ArticleService {
         }
         one.setEnable(2);
         articleTypeRepository.save(one);
-        return Result.success(one);
+        return Result.success();
     }
 }
