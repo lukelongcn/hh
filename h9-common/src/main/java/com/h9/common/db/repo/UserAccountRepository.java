@@ -22,4 +22,6 @@ public interface UserAccountRepository extends BaseRepository<UserAccount> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select o from UserAccount  o where o.userId = ?1")
     UserAccount findByUserIdLock(Long userId);
+    @Query("select sum(u.vCoins) from UserAccount u")
+    BigDecimal getUserVCoins();
 }

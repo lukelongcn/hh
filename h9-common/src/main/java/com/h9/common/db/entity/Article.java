@@ -42,7 +42,7 @@ public class Article extends BaseEntity {
     @Column(name = "user_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户名'")
     private String userName;
 
-    @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 0禁用'")
+    @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 0禁用 2删除'")
     private Integer enable;
 
     @Temporal(TIMESTAMP)

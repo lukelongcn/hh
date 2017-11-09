@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.bytebuddy.asm.Advice;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -32,7 +33,7 @@ public class ProductController {
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @SessionAttribute("curUserId") long userId,
-                          LotteryDto lotteryVo, HttpServletRequest request){
+                          @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request){
         return productService.getAuthenticity(userId,lotteryVo,request);
     }
 }
