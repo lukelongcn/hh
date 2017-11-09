@@ -1,6 +1,7 @@
 package com.h9.lottery.model.vo;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.Column;
 
