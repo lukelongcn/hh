@@ -3,6 +3,7 @@ package com.h9.admin.model.dto.community;
 import com.h9.common.db.entity.BannerType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
@@ -18,11 +19,11 @@ import java.util.Date;
 public class BannerTypeAddDTO {
 
     @ApiModelProperty(value = "名称",required = true)
-    @NotEmpty(message = "名称不能为空")
+    @NotBlank(message = "名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "标识",required = true)
-    @NotEmpty(message = "标识不能为空")
+    @NotBlank(message = "标识不能为空")
     private String code;
 
     @ApiModelProperty(value = "状态",required = true)

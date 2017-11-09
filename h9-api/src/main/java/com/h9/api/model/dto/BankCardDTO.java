@@ -1,5 +1,6 @@
 package com.h9.api.model.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
@@ -13,15 +14,16 @@ import javax.validation.constraints.Size;
 public class BankCardDTO {
 
     @Size(min = 10, message = "请填写正确的银行卡号")
-    @NotEmpty(message = "请填写银行卡号")
+    @NotBlank(message = "请填写银行卡号")
     private String no;
-    @NotEmpty(message = "请填写真实姓名")
+    @NotBlank(message = "请填写真实姓名")
+    @Size(max = 32,message = "姓名过长")
     private String name;
     @NotNull(message = "请填写银行类型 id")
     private Long bankTypeId;//银行类别
-    @NotNull(message = "请填写provice")
+    @NotBlank(message = "请填写provice")
     private String provice;
-    @NotNull(message = "请填写city")
+    @NotBlank(message = "请填写city")
     private String city;
 
     public String getNo() {
