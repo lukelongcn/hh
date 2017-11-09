@@ -58,7 +58,9 @@ public class WeChatProvider {
 
     public String getCode(String code, String state) {
         byte[] decode = Base64.getDecoder().decode(state);
-        return concatUrl(new String(decode), code);
+        String url = concatUrl(new String(decode), code);
+        logger.debugv(url);
+        return url;
     }
 
     public String concatUrl(String url, String code) {
