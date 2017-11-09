@@ -2,6 +2,8 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
@@ -18,8 +20,12 @@ public interface ArticleRepository extends BaseRepository<Article>{
     @Query(value = "select o from Article o where o.startTime < ?1 and o.endTime > ?1 and o.enable = 1 order by o.sort")
     List<Article> findActiveArticle(Date date);
 
-    Article findOne(Long id);
-    
     @Query("select count(a) from Article a where a.articleType.id=?1 and a.enable<>2")
     Long findCountByArticleType(Long articleType);
+    
+    @Query("select a from Article a where a.enable<>2")
+    Page<Article> findAll(PageRequest pageRequest);
+    
+    @Query("select a from Article a where a.enable<>2 and a.id=?1")
+    Article findOne(Long id);
 }
