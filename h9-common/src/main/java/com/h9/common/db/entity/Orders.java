@@ -84,36 +84,36 @@ public class Orders extends BaseEntity {
      */
     @Column(name="order_type",columnDefinition = "int default 1 COMMENT'订单类别'")
     private Integer orderType ;
-    public enum orderTypeEnum{
-
-        MOBILE_RECHARGE(1, "话费充值"),
-        DIDI_COUPON(2,"滴滴兑换"),
-        OTHER(3, "其他");
-
-        private int code;
-        private String desc;
-
-        orderTypeEnum(int code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public void setCode(int code) {
-            this.code = code;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public void setDesc(String desc) {
-            this.desc = desc;
-        }
-    }
+//    public enum orderTypeEnum{
+//
+//        MOBILE_RECHARGE(1, "话费充值"),
+//        DIDI_COUPON(2,"滴滴兑换"),
+//        OTHER(3, "其他");
+//
+//        private int code;
+//        private String desc;
+//
+//        orderTypeEnum(int code, String desc) {
+//            this.code = code;
+//            this.desc = desc;
+//        }
+//
+//        public int getCode() {
+//            return code;
+//        }
+//
+//        public void setCode(int code) {
+//            this.code = code;
+//        }
+//
+//        public String getDesc() {
+//            return desc;
+//        }
+//
+//        public void setDesc(String desc) {
+//            this.desc = desc;
+//        }
+//    }
 
     public Integer getOrderType() {
         return orderType;

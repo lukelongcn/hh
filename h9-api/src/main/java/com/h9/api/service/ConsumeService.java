@@ -108,7 +108,7 @@ public class ConsumeService {
 //        userAccountRepository.changeBalance(subtract, userId);
         userAccount.setBalance(subtract);
 
-        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", Orders.orderTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
+        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
         order.setUser(user);
         orderItems.setOrders(order);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
@@ -195,7 +195,7 @@ public class ConsumeService {
         if (goods == null) return Result.fail("商品不存在");
         goods.setStatus(0);
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.DIDI_COUPON.getCode(), "滴滴");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode() , "滴滴");
         orders.setUser(user);
 
         ordersReposiroty.saveAndFlush(orders);
