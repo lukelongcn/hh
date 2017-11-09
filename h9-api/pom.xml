@@ -7,10 +7,9 @@
     <artifactId>h9-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <val>h9-api</val>
     <description>Demo project for Spring Boot</description>
 
+    <name>h9-api</name>
     <parent>
         <groupId>com.h9.parent</groupId>
         <artifactId>h9-parent</artifactId>
