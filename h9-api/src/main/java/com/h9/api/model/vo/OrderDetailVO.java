@@ -1,5 +1,6 @@
 package com.h9.api.model.vo;
 
+import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
@@ -24,13 +25,15 @@ public class OrderDetailVO {
     private String createOrderDate= "";
     private List<GoodsInfo> goodsInfoList;
     private String couponsNumber = "";
+    private String companyIcon = "";
 
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
         vo.setOrderStatus("已完成");
         vo.setOrderType(order.getOrderType());
-        if(order.getOrderType() == Orders.orderTypeEnum.OTHER.getCode()){
+        vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
+        if(order.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()){
             vo.setAccepterName("");
             vo.setTel("");
             vo.setAddress("");
@@ -56,6 +59,14 @@ public class OrderDetailVO {
         return vo;
     }
 
+
+    public String getCompanyIcon() {
+        return companyIcon;
+    }
+
+    public void setCompanyIcon(String companyIcon) {
+        this.companyIcon = companyIcon;
+    }
 
     public String getCouponsNumber() {
         return couponsNumber;

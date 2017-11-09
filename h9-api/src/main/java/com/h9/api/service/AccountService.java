@@ -78,7 +78,7 @@ public class AccountService {
     public Result accountInfo(Long userId) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
-        Object cardCount = orderItemReposiroty.findCardCount(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
+        Object cardCount = orderItemReposiroty.findCardCount(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         List<Map<String, String>> bankList = new ArrayList<>();
 //        List<UserBank> userBankList = userBankRepository.findByUserId(userId);
 
