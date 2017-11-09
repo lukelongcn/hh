@@ -6,7 +6,7 @@ import com.h9.common.db.entity.Article;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.BannerType;
-import com.h9.common.db.repo.ArticleReposiroty;
+import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.db.repo.BannerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -23,7 +23,7 @@ public class HomeService {
     @Resource
     private BannerRepository bannerRepository;
     @Resource
-    private ArticleReposiroty articleReposiroty;
+    private ArticleRepository articleRepository;
 
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
@@ -44,7 +44,7 @@ public class HomeService {
             });
         }
 
-        List<Article> articleList = articleReposiroty.findActiveAriticle(new Date());
+        List<Article> articleList = articleRepository.findActiveArticle(new Date());
         if (!CollectionUtils.isEmpty(articleList)) {
             articleList.forEach(article -> {
                 ArticleType articleType = article.getArticleType();
