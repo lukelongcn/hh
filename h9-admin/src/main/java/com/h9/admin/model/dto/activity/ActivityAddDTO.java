@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
@@ -21,14 +22,17 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "名称",required = true)
     @NotEmpty(message = "名称不能为空")
+    @Size(max = 128, message = "名称过长")
     private String activityName;
 
     @ApiModelProperty(value = "关键字",required = true)
     @NotEmpty(message = "关键字不能为空")
+    @Size(max = 32, message = "关键字过长")
     private String code;
 
     @ApiModelProperty(value = "是否回复关键字推送活动 0：不推送  1：推送",required = true)
     @NotNull(message = "是否回复关键字推送活动不能为空")
+    @Size(max = 4)
     private Integer isPush = 0;
 
     @ApiModelProperty(value = "活动规则",required = true)
@@ -42,6 +46,7 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "是否需要手机号 0：需要  1：不需要",required = true)
     @NotNull(message = "是否需要手机号不能为空")
+    @Size(max = 4)
     private Integer needPhone = 0;
 
     @ApiModelProperty(value = "是否需要短信验证 0：需要  1：不需要",required = true)

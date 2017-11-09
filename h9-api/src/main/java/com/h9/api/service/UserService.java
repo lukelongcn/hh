@@ -1,5 +1,7 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
@@ -48,6 +50,8 @@ public class UserService {
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
 
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -108,6 +112,8 @@ public class UserService {
         CharSequence charSequence = phone.subSequence(4, 8);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
+        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
+        user.setAvatar(defaultHead.getVal());
         return user;
     }
 
@@ -329,4 +335,40 @@ public class UserService {
     }
 
 
+    public Result findAllOptions() {
+
+        GlobalProperty profileEmotion = globalPropertyRepository.findByCode("profileEmotion");
+        GlobalProperty profileEducation = globalPropertyRepository.findByCode("profileEducation");
+        GlobalProperty profileJob = globalPropertyRepository.findByCode("profileJob");
+        GlobalProperty profileSex = globalPropertyRepository.findByCode("profileSex");
+
+
+        List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class));
+        List<String> emotionList = map2list(JSONObject.parseObject(profileEmotion.getVal(), Map.class));
+        List<String> jobList = map2list(JSONObject.parseObject(profileJob.getVal(), Map.class));
+        List<String> sexList = map2list(JSONObject.parseObject(profileSex.getVal(), Map.class));
+        Map<String, Object> mapVo = new HashMap<>();
+        mapVo.put("educationList", educationList);
+        mapVo.put("emotionList", emotionList);
+        mapVo.put("jobList", jobList);
+        mapVo.put("sexList", sexList);
+
+        return Result.success(mapVo);
+    }
+
+    private  List<Map<String,String>> map2list(Map<String, String> map) {
+
+        List<Map<String,String>> list = new ArrayList<>();
+        Set<String> ketSet = map.keySet();
+
+        for (String key : ketSet) {
+            Map<String, String> temp = new HashMap<>();
+//            temp.put(key, map.get(key));
+            temp.put("key", key);
+            temp.put("value", map.get(key));
+            list.add(temp);
+        }
+
+        return list;
+    }
 }

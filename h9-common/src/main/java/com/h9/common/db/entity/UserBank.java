@@ -24,7 +24,7 @@ public class UserBank extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "user_id",nullable = false,columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
+    @Column(name = "user_id", nullable = false, columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
     private Long userId;
 
     @Column(name = "name", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '持卡人名'")
@@ -33,9 +33,9 @@ public class UserBank extends BaseEntity {
     @Column(name = "no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '银行卡号'")
     private String no;
 
-//    @Column(name = "bank_type", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '银行类别'")
+    //    @Column(name = "bank_type", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '银行类别'")
     @ManyToOne
-    @JoinColumn(name = "bank_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '银行卡类型'")
+    @JoinColumn(name = "bank_type_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20)  COMMENT '银行卡类型'")
     private BankType bankType;
 
 
@@ -45,8 +45,20 @@ public class UserBank extends BaseEntity {
     @Column(name = "city", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
     private String city;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1:正常 2禁用 3解绑'")
+    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '1:正常 2禁用 3解绑'")
     private Integer status = 1;
+
+    @Column(name = "default_select", nullable = false, columnDefinition = "int default 0 COMMENT '默认选择的银行卡 1 默认 0 为不是默认'")
+    private Integer defaultSelect;
+    
+
+    public Integer getDefaultSelect() {
+        return defaultSelect;
+    }
+
+    public void setDefaultSelect(Integer defaultSelect) {
+        this.defaultSelect = defaultSelect;
+    }
 
     public BankType getBankType() {
         return bankType;

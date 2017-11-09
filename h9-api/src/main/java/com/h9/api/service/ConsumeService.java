@@ -130,8 +130,8 @@ public class ConsumeService {
         }
     }
 
-    public Result rechargeDenomination() {
-
+    public Result rechargeDenomination(Long userId) {
+        User user = userRepository.findOne(userId);
         GoodsType goodsType = goodsTypeReposiroty.findOne(1L);
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
         if (goodsList == null) return Result.fail();
@@ -143,7 +143,14 @@ public class ConsumeService {
             map.put("realPrice", goods.getRealPrice().toString());
             list.add(map);
         });
-        return Result.success(list);
+//        Map<String, String> telMap = new HashMap<>();
+
+//        telMap.put("tel", user.getPhone());
+//        list.add(telMap);
+        Map<String, Object> mapVo = new HashMap<>();
+        mapVo.put("priceList", list);
+        mapVo.put("tel", user.getPhone());
+        return Result.success(mapVo);
     }
 
     public Result didiCardList() {
@@ -255,6 +262,16 @@ public class ConsumeService {
         BeanUtils.copyProperties(payParam, withdrawalsRequest);
         withdrawalsRequest.setBankReturnData(result.getData().toString());
         withdrawalsRequest.setMerDate(merDate);
+
+        //设置默认银行卡
+        UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
+        if(defaulBank != null){
+            defaulBank.setDefaultSelect(0);
+            bankCardRepository.save(defaulBank);
+        }
+        userBank.setDefaultSelect(1);
+        bankCardRepository.save(userBank);
+
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
@@ -322,6 +339,10 @@ public class ConsumeService {
                 if (cpReturnData.contains("|9|")) {
                     //此笔交易银联打款失败
                     wr.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+                    //TODO 退款到用户账号
+                    Long userId = wr.getUserId();
+                    UserAccount userAccount = userAccountRepository.findByUserId(userId);
+                    userAccount.setBalance(userAccount.getBalance().add(wr.getMoney()));
                 }
 
                 withdrawalsRecordReposiroty.save(wr);
@@ -334,7 +355,7 @@ public class ConsumeService {
 
     @SuppressWarnings("Duplicates")
     public Result withdraInfo(Long userId) {
-        List<UserBank> userBankList = bankCardRepository.findByUserId(userId);
+        List<UserBank> userBankList = bankCardRepository.findByUserIdAndStatus(userId,1);
         List<Map<String, String>> bankList = new ArrayList<>();
         userBankList.forEach(bank -> {
 

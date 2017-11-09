@@ -62,7 +62,6 @@ public class LotteryTest {
                 logger.debugv(shortUrl);
                 reward.setActivity(one);
                 reward.setMd5Code(MD5Util.getMD5(shortUrl));
-                reward.setProduct(product);
                 Reward reward1 = rewardRepository.saveAndFlush(reward);
                 logger.debugv(shortUrl+ " " +JSONObject.toJSONString(reward1));
             } catch (Exception e) {

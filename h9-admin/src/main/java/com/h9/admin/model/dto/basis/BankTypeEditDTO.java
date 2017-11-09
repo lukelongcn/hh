@@ -3,6 +3,7 @@ package com.h9.admin.model.dto.basis;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author: George
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
  */
 public class BankTypeEditDTO extends BankTypeAddDTO{
     @ApiModelProperty(value = "id",required = true)
+    @Size(max = 20, message = "id过长")
     @NotNull(message = "id不能为空")
     private Long id;
 

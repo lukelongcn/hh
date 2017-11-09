@@ -1,8 +1,10 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.entity.UserRecord;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -98,5 +100,15 @@ public class LotteryFlowVO {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public static LotteryFlowVO toLotteryFlowVO(LotteryFlow lotteryFlow){
+        LotteryFlowVO lotteryFlowVO = new LotteryFlowVO();
+        BeanUtils.copyProperties(lotteryFlow,lotteryFlow);
+        lotteryFlowVO.setIp(lotteryFlow.getUserRecord().getIp());
+        lotteryFlowVO.setLatitude(lotteryFlow.getUserRecord().getLatitude());
+        lotteryFlowVO.setLongitude(lotteryFlow.getUserRecord().getLongitude());
+        lotteryFlowVO.setUserId(lotteryFlow.getUser().getId());
+        return  lotteryFlowVO;
     }
 }

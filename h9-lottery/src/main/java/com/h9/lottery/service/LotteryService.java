@@ -1,24 +1,21 @@
 package com.h9.lottery.service;
 
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
-import com.h9.common.utils.NetworkUtil;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
 import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.model.vo.LotteryResultDto;
 import com.h9.lottery.utils.RandomDataUtil;
-import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -58,8 +55,7 @@ public class LotteryService {
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
 //        记录用户信息
-        UserRecord userRecord = newUserRecord(userId, lotteryVo, request);
-        //TODO 检查用户是否在黑名单里面
+        UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
         //检查用户参与活动次数,是否超标
         Date startDate = new Date();
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
@@ -138,28 +134,6 @@ public class LotteryService {
     }
 
 
-    public UserRecord newUserRecord(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
-        UserRecord userRecord = new UserRecord();
-
-        String refer = request.getHeader("Referer");
-        String userAgent = request.getHeader("User-Agent");
-        userRecord.setUserId(userId);
-        userRecord.setUserAgent(userAgent);
-        userRecord.setRefer(refer);
-        String ip = NetworkUtil.getIpAddress(request);
-        userRecord.setIp(ip);
-        String client = request.getHeader("client");
-        if (StringUtils.isNotEmpty(client)) {
-            userRecord.setClient(Integer.parseInt(client));
-        }
-        String version = request.getHeader("version");
-        userRecord.setVersion(version);
-        userRecord.setLatitude(lotteryVo.getLatitude());
-        userRecord.setLongitude(lotteryVo.getLongitude());
-        String imei = request.getHeader("imei");
-        userRecord.setImei(imei);
-        return userRecordRepository.saveAndFlush(userRecord);
-    }
 
 
     public Result<LotteryResult> getLotteryRoom(
@@ -194,7 +168,6 @@ public class LotteryService {
         boolean islottery = status == StatusEnum.END.getCode();
         lotteryResult.setLottery(islottery);
         lotteryResult.setRoomUser(userId.equals(reward.getUserId()));
-
         //TODO
         LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
         if(lotteryFlow!=null){
@@ -209,10 +182,10 @@ public class LotteryService {
                 LotteryFlow lotteryFromDb = flows.get(i);
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
-                lotteryUser.setUserId(lotteryFromDb.getUserId());
+                lotteryUser.setUserId(lotteryFromDb.getUser().getId());
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
-                User user = userRepository.findOne(lotteryFromDb.getUserId());
+                User user = userRepository.findOne(lotteryFromDb.getUser().getId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
                 lotteryUser.setMe(userId == lotteryUser.getUserId());
@@ -264,14 +237,11 @@ public class LotteryService {
         lotteryFlowRepository.save(lotteryFlows);
         //变更奖励状态
         reward.setStatus(END.getCode());
-        //变更中奖用户余额
-        reward.setHaveMoney(new BigDecimal(0));
-        reward.setSurplusMoeny(reward.getMoney());
         rewardRepository.save(reward);
         //变更用余额
         for (int i = 0; i < lotteryFlows.size(); i++) {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);
-            Long lotteryUserId = lotteryFlow.getUserId();
+            Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
             commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "","抢红包获取余额");
         }
@@ -331,13 +301,9 @@ public class LotteryService {
 
 
 
-    public Result<List<LotteryFlowDTO>> history(Long userId){
-        List<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId);
-        List<LotteryFlowDTO> lotteryFlowDTOS = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(lotteryFlows)){
-            lotteryFlowDTOS = lotteryFlows.stream().map(LotteryFlowDTO::new).collect(Collectors.toList());
-        }
-        return Result.success(lotteryFlowDTOS);
+    public Result<PageResult<LotteryFlowDTO>>  history(Long userId,int  page,int limit){
+        PageResult<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId, page, limit);
+        return Result.success(lotteryFlows.result2Result(LotteryFlowDTO::new));
     }
 
 

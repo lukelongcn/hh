@@ -4,13 +4,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Created by itservice on 2017/10/31.
  */
 public class MobileRechargeDTO {
-    @Min(value = 0,message = "请填写Id")
+//    @Size(max = 20,message = "请填写Id")
+//    @NotEmpty(message = "请填写id")
     private Long id;
     @NotEmpty(message = "请输入合法的手机号码")
     private String tel;

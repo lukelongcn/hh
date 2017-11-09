@@ -1,13 +1,15 @@
-package com.h9.admin.model.dto.activity;
+package com.h9.common.modle.dto;
 
-import com.h9.admin.model.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
+
+import javax.validation.constraints.Size;
 
 /**
  * @author: George
  * @date: 2017/11/8 11:26
  */
 public class LotteryFlowDTO extends PageDTO{
+    @Size(max = 64,message = "兑奖码过长")
     @ApiModelProperty(value = "兑奖码")
     private String code;
 
@@ -15,7 +17,7 @@ public class LotteryFlowDTO extends PageDTO{
     private String phone;
 
     @ApiModelProperty(value = "中奖状态")
-    private String status;
+    private Integer status;
 
     public String getCode() {
         return code;
@@ -33,11 +35,11 @@ public class LotteryFlowDTO extends PageDTO{
         this.phone = phone;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 }

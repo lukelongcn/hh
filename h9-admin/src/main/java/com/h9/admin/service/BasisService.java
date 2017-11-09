@@ -1,6 +1,6 @@
 package com.h9.admin.service;
 
-import com.h9.admin.model.dto.PageDTO;
+import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.model.dto.basis.BankTypeAddDTO;
 import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;

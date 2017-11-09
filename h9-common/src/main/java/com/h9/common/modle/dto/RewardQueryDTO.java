@@ -1,8 +1,9 @@
-package com.h9.admin.model.dto.activity;
+package com.h9.common.modle.dto;
 
-import com.h9.admin.model.dto.PageDTO;
+import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Date;
  */
 public class RewardQueryDTO extends PageDTO{
 
+    @Size(max = 64,message = "兑奖码过长")
     @ApiModelProperty(value = "兑奖码")
     private String code;
 
