@@ -15,6 +15,7 @@ public class MyCouponsVO {
     private String createTime;
     private String from;
     private String cardNumber;
+    private String imgUrl;
 
 
     public MyCouponsVO(OrderItems items) {
@@ -24,6 +25,15 @@ public class MyCouponsVO {
         this.createTime = DateUtil.formatDate(items.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.from = "大转盘奖励";
         this.cardNumber = items.getDidiCardNumber();
+        this.imgUrl = "https://cdn-h9-img.thy360.com/FuQuxK79VYsa9cut_Uy6mxIXkE9e";
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getPrice() {

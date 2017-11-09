@@ -47,8 +47,8 @@ public class AccountContoller {
     @GetMapping("/account/vCoins/detail")
     public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@ApiParam(name = "用户token", value = "token", type = "head")
                                                            @SessionAttribute("curUserId") Long userId,
-                                                           @RequestParam("page") int page,
-                                                           @RequestParam("limit") int limit) {
+                                                           @RequestParam(value = "page",defaultValue = "1") int page,
+                                                           @RequestParam(value = "limit",defaultValue = "10") int limit) {
         return accountService.getVCoinsFlow(userId, page, limit);
     }
 

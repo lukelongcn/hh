@@ -41,7 +41,7 @@ public class WithdrawalsRecord extends BaseEntity {
     @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'")
     private UserBank userBank;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '提现状态 ： 1提现中  2银行转账中 3银行转账完成 ，4 提现异常'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '提现状态 ： 1提现中  2银行转账中 3银行转账完成 ，4 提现异常,5退回'")
     private Integer status = 1;
 
     @Column(name = "remarks", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '备注'")
