@@ -24,7 +24,6 @@ public class BalanceFlowVO {
 
     private BigDecimal money = new BigDecimal(0);
     private String month;
-
     private String remarks;
     private String imgUrl;
     private String createTime;

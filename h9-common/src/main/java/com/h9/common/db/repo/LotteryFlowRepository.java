@@ -37,6 +37,9 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
     LotteryFlow findByReward(Reward reward,Long userId);
 
 
+    LotteryFlow findTop1ByRewardOrderByMoneyDesc(Reward reward);
+
+
     @Query("select l from LotteryFlow l where l.user.id = ?1 order by l.createTime desc ")
     Page<LotteryFlow> findByReward(Long userId, Pageable pageable);
 
