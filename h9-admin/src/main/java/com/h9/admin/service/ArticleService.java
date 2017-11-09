@@ -107,6 +107,7 @@ public class ArticleService {
         BeanUtils.copyProperties(articleDTO,article);
         article.setId(null);
         article.setArticleType(one);
+        article.setUserName("au");
         article.setCreateTime(new Date());
         articleRepository.save(article);
         return Result.success(article);
