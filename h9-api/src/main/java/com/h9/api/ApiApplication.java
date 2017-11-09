@@ -30,37 +30,17 @@ import static org.jboss.logging.Logger.getLogger;
 public class ApiApplication {
 
     static Logger logger = getLogger(ApiApplication.class);
-    public static String chinaPayKey = null;
+    public static String chinaPayKeyPath = null;
+
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
         logger.debugv(StartBanner.BANNER);
 
-        File keyPath = new File("/", "MerPrK_808080211881410_20171102154758.key");
-        keyPath.setWritable(true, false);
-        logger.info("证书位置:"+keyPath.getAbsolutePath());
-        chinaPayKey = keyPath.getAbsolutePath();
-        if (!keyPath.exists()) {
-            try {
+        chinaPayKeyPath = System.getProperty("user.dir");
 
-                InputStream is = ApiApplication.class.getClassLoader().getResourceAsStream("MerPrK_808080211881410_20171102154758.key");
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(keyPath));
-                int len = 0;
-                byte[] bytes = new byte[1024];
-
-                while ((len = is.read(bytes)) != -1) {
-
-                    bos.write(bytes);
-                    bos.flush();
-
-                }
-                IOUtils.closeQuietly(bos);
-
-            } catch (IOException e) {
-                logger.info("存放证书出错", e);
-            }
-        }
-
-
+        chinaPayKeyPath += "/certs/china-unionpay/MerPrK_808080211881410_20171102154758.key";
+        logger.info("证书位置: "+chinaPayKeyPath);
+        logger.info("存在: "+new File(chinaPayKeyPath).exists());
     }
 
 
