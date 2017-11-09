@@ -148,6 +148,8 @@ public class ConsumeService {
         Map<String, Object> mapVo = new HashMap<>();
         mapVo.put("priceList", list);
         mapVo.put("tel", user.getPhone());
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        mapVo.put("balance", userAccount.getBalance());
         return Result.success(mapVo);
     }
 

@@ -42,7 +42,7 @@ public class CommonController {
 
     /*****
      * @param appId 需要获取授权的appId
-     * @param url 回调路径 需要base64编码
+     * @param  回调路径 需要base64编码
      * @param response
      * @throws IOException
      */
@@ -51,6 +51,13 @@ public class CommonController {
     @GetMapping("/wechat/code")
     public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state, HttpServletResponse response) throws IOException {
         response.sendRedirect(weChatProvider.getJSCode(appId,state));
+    }
+
+    @GetMapping("/test/wx")
+    public void testwx(HttpServletResponse response) throws IOException {
+        //http://localhost:6305/h9/api/common/test/wx
+        //https://weixin-dev-h9.thy360.com/h9/api/account/didicoupons?page=1&limit=5
+        response.sendRedirect("http://www.baidu.com");
     }
 
     /***
