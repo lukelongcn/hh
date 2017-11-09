@@ -1,7 +1,9 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Article;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.db.repo.ArticleTypeRepository;
@@ -23,20 +25,20 @@ public class ArticleService {
     @Resource
     private ArticleRepository articleRepository;
 
-    public Result categoryList(PageDTO pageDTO) {
+    public Result<PageResult<ArticleType>> categoryList(PageDTO pageDTO) {
         Page<ArticleType> all = articleTypeRepository.findAll(pageDTO.toPageRequest());
         all.forEach(articleType -> articleType.setArticleCount(articleRepository.findCountByArticleType(articleType.getId())));
-        return Result.success(all);
+        return Result.success(new PageResult<>(all));
     }
 
 
-    public Result getCategory(Long id) {
+    public Result<ArticleType> getCategory(Long id) {
         ArticleType one = articleTypeRepository.findOne(id);
         one.setArticleCount(articleRepository.findCountByArticleType(one.getId()));
         return Result.success(one);
     }
 
-    public Result addCategory(ArticleTypeDTO articleTypeDTO) {
+    public Result<ArticleType> addCategory(ArticleTypeDTO articleTypeDTO) {
         ArticleType articleType = new ArticleType();
         BeanUtils.copyProperties(articleTypeDTO,articleType);
         articleType.setId(null);
@@ -44,7 +46,7 @@ public class ArticleService {
         return Result.success(articleType);
     }
 
-    public Result editCategory(ArticleTypeDTO articleTypeDTO) {
+    public Result<ArticleType> editCategory(ArticleTypeDTO articleTypeDTO) {
         Long id = articleTypeDTO.getId();
         ArticleType one = articleTypeRepository.findOne(id);
         if(one==null){
@@ -63,5 +65,10 @@ public class ArticleService {
         one.setEnable(2);
         articleTypeRepository.save(one);
         return Result.success();
+    }
+
+    public Result<PageResult<Article>> articleList(PageDTO pageDTO) {
+        Page<Article> all = articleRepository.findAll(pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(all));
     }
 }
