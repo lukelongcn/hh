@@ -1,7 +1,6 @@
 package com.h9.api;
 
 import com.h9.common.StartBanner;
-import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.io.*;
-import java.util.Date;
 
 import static org.jboss.logging.Logger.getLogger;
 
