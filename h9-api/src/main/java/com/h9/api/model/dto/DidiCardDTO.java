@@ -10,7 +10,6 @@ import java.math.BigDecimal;
  * Created by itservice on 2017/11/2.
  */
 public class DidiCardDTO {
-    @Size(max = 20)
     @NotNull(message = "id为空")
     private Long id;
 

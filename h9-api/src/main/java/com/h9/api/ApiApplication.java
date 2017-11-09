@@ -36,6 +36,7 @@ public class ApiApplication {
         logger.debugv(StartBanner.BANNER);
 
         File keyPath = new File("/", "MerPrK_808080211881410_20171102154758.key");
+        keyPath.setWritable(true, false);
         logger.info("证书位置:"+keyPath.getAbsolutePath());
         chinaPayKey = keyPath.getAbsolutePath();
         if (!keyPath.exists()) {
