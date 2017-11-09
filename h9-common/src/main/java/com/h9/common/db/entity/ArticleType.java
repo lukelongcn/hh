@@ -35,6 +35,16 @@ public class ArticleType extends BaseEntity {
     
     @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
     private Integer sort = 1;
+    @Transient
+    private Long articleCount;
+
+    public Long getArticleCount() {
+        return articleCount;
+    }
+
+    public void setArticleCount(Long articleCount) {
+        this.articleCount = articleCount;
+    }
 
     public Integer getSort() {
         return sort;
