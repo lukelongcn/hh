@@ -164,7 +164,7 @@ public class LotteryService {
         Date lastDate = DateUtil.getDate(updateTime, 12*60, Calendar.MINUTE);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
-
+        lotteryResult.setDifferentDate(lastDate.getTime()-nowDate.getTime());
         if(lastDate.before(nowDate)){
             lottery(null, code);
         }
