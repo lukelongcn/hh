@@ -85,7 +85,7 @@ public class AccountService {
 //            if (bank.getStatus() == 1) {
 //                Map<String, String> map = new HashMap<>();
 //                map.put("bankImg", bank.getBankType().getBankImg());
-//                map.put("name", bank.getName());
+//                map.put("name", bank.getVal());
 //                String no = bank.getNo();
 //                int length = no.length();
 //                no = no.substring(length - 4, length);

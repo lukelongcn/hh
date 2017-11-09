@@ -5,31 +5,36 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.GlobalProperty;
 import com.h9.common.db.repo.GlobalPropertyRepository;
+import com.h9.common.modle.vo.Config;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description:获取全局通用配置项
  * ConfigService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/9
  * Time: 11:00
  */
+@Component
 public class ConfigService {
 
     @Resource
     private RedisBean redisBean;
 
+
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
 
 
-
-    public Object getConfig(String code){
-        if(code==null) {
+    public Object getConfig(String code) {
+        if (code == null) {
             return null;
         }
         Object valueRedis1 = getConfigFromCache(code);
@@ -37,42 +42,46 @@ public class ConfigService {
         return getConfigFromDb(code);
     }
 
-    public String getStringConfig(String code){
+    public String getStringConfig(String code) {
         Object config = getConfig(code);
-        if(config instanceof String){
+        if (config instanceof String) {
             return (String) config;
-        }else{
+        } else {
             return null;
         }
     }
 
-    public List<String> getStringListConfig(String code){
+    public List<String> getStringListConfig(String code) {
         Object config = getConfig(code);
-        if(config instanceof List){
+        if (config instanceof List) {
             return (List<String>) config;
-        }else{
+        } else {
             return null;
         }
     }
 
 
-    public Map getMapConfig(String code){
+    public Map getMapConfig(String code) {
         Object config = getConfig(code);
-        if(config instanceof Map){
+        if (config instanceof Map) {
             return (Map) config;
-        }else{
+        } else {
             return null;
         }
     }
 
-    public List<Map<String,String>> getMapListConfig(String code){
+    public List<Config> getMapListConfig(String code) {
         Map mapConfig = getMapConfig(code);
-        if(mapConfig == null){
+        if (mapConfig == null) {
             return null;
         }
-        return null;
+        List<Config> configs = new ArrayList<>();
+        Set<String> set = mapConfig.keySet();
+        for(String key:set){
+            configs.add(new Config(key, (String)mapConfig.get(key)));
+        }
+        return configs;
     }
-
 
 
     private Object getConfigFromDb(String code) {
@@ -80,10 +89,10 @@ public class ConfigService {
         if (globalProperty != null) {
             String val = globalProperty.getVal();
             String type = globalProperty.getType() + "";
-            redisBean.setStringValue(RedisKey.getConfigValue(code),val);
-            redisBean.setStringValue(RedisKey.getConfigType(code),type);
+            redisBean.setStringValue(RedisKey.getConfigValue(code), val);
+            redisBean.setStringValue(RedisKey.getConfigType(code), type);
             return getValue(type, val);
-        }else{
+        } else {
             return null;
         }
     }
@@ -91,7 +100,7 @@ public class ConfigService {
     private Object getConfigFromCache(String code) {
         String typeRedis = redisBean.getStringValue(RedisKey.getConfigType(code));
         String valueRedis = redisBean.getStringValue(RedisKey.getConfigValue(code));
-        if(StringUtils.isNotEmpty(valueRedis)&&StringUtils.isNotEmpty(typeRedis)){
+        if (StringUtils.isNotEmpty(valueRedis) && StringUtils.isNotEmpty(typeRedis)) {
             Object map = getValue(typeRedis, valueRedis);
             if (map != null) return map;
         }
@@ -99,18 +108,18 @@ public class ConfigService {
     }
 
     private Object getValue(String typeRedis, String valueRedis) {
-        if(typeRedis.equals("0")){
+        if (typeRedis.equals("0")) {
             return valueRedis;
         }
-        if(typeRedis.equals("1")){
+        if (typeRedis.equals("1")) {
             Map map = JSONObject.parseObject(valueRedis, Map.class);
             return map;
         }
-        if(typeRedis.equals("2")){
+        if (typeRedis.equals("2")) {
             List<String> strings = JSONObject.parseArray(valueRedis, String.class);
             return strings;
         }
         return null;
     }
-
 }
+

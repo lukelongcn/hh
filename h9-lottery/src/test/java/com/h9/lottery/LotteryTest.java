@@ -1,12 +1,14 @@
 package com.h9.lottery;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.Product;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.repo.ActivityRepository;
 import com.h9.common.db.repo.ProductRepository;
 import com.h9.common.db.repo.RewardRepository;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.MD5Util;
 import com.h9.lottery.utils.CodeUtil;
 import org.jboss.logging.Logger;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -43,13 +47,28 @@ public class LotteryTest {
     @Resource
     private ProductRepository productRepository;
 
-
+    @Resource
+    private ConfigService configService;
 
 
     @Test
     @Transactional
     public void contextLoads() {
 
+//        generateCode();
+
+        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
+        logger.debugv(JSONObject.toJSONString(lotteryRemark));
+        Map profileJob = configService.getMapConfig("profileJob");
+        logger.debugv(JSONObject.toJSONString(profileJob));
+        List<Config> profileJob1 = configService.getMapListConfig("profileJob");
+        logger.debugv(JSONObject.toJSONString(profileJob1));
+
+        String withdrawMax = configService.getStringConfig("withdrawMax");
+        logger.debugv(JSONObject.toJSONString(withdrawMax));
+    }
+
+    private void generateCode() {
         Activity one = activityRepository.findOne(8L);
         Product product = productRepository.findOne(1L);
         for(int i=0;i<=1000;i++) {
@@ -63,7 +82,7 @@ public class LotteryTest {
                 reward.setActivity(one);
                 reward.setMd5Code(MD5Util.getMD5(shortUrl));
                 Reward reward1 = rewardRepository.saveAndFlush(reward);
-                logger.debugv(shortUrl+ " " +JSONObject.toJSONString(reward1));
+                logger.debugv(shortUrl+ " " + JSONObject.toJSONString(reward1));
             } catch (Exception e) {
                 logger.debug(e.getMessage(),e);;
             } finally {
@@ -71,9 +90,6 @@ public class LotteryTest {
         }
         logger.debugv("完成");
     }
-
-
-
 
 
 }
