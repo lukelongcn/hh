@@ -67,6 +67,14 @@ public class ConfigService {
         }
     }
 
+    public List<Map<String,String>> getMapListConfig(String code){
+        Map mapConfig = getMapConfig(code);
+        if(mapConfig == null){
+            return null;
+        }
+        return null;
+    }
+
 
 
     private Object getConfigFromDb(String code) {

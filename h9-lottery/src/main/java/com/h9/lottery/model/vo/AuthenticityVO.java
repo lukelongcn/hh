@@ -15,6 +15,7 @@ public class AuthenticityVO {
     private String supplierName;
     private String supplierDistrict;
     private String lastQueryTime;
+    private String lastQueryAddress;
     private BigDecimal queryCount = new BigDecimal(0);
 
     public String getProductName() {
@@ -56,4 +57,13 @@ public class AuthenticityVO {
     public void setQueryCount(BigDecimal queryCount) {
         this.queryCount = queryCount;
     }
+
+    public String getLastQueryAddress() {
+        return lastQueryAddress;
+    }
+
+    public void setLastQueryAddress(String lastQueryAddress) {
+        this.lastQueryAddress = lastQueryAddress;
+    }
 }
+

@@ -78,10 +78,10 @@ public class LotteryService {
         }
 
         // TODO 检查第三方库有没有数据
-//        Result result = exitsReward(lotteryVo.getCode());
-//        if(result!=null){
-//            return result;
-//        }
+        Result result = exitsReward(lotteryVo.getCode());
+        if(result!=null){
+            return result;
+        }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
         //记录扫码记录
         record(userId, reward, lotteryVo, userRecord);
