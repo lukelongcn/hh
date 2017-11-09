@@ -91,12 +91,17 @@ public class UserService {
         return Result.success(vo);
     }
 
+    /***
+     * 处理登录token
+     * @param user
+     * @return
+     */
     private LoginResultVO getLoginResult(User user) {
         //生成token
         String token = UUID.randomUUID().toString();
-        String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
+        String tokenUserIdKey = StringUtils.isNotEmpty(user.getPhone())?RedisKey.getTokenUserIdKey(token):RedisKey.getWeChatUserId(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
-        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+//        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 
@@ -260,6 +265,9 @@ public class UserService {
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
         String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
 
+        User phoneUser = userRepository.findByPhone(phone);
+        if(phoneUser != null) return Result.fail("此手机已被绑定了");
+
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码错误");
 
@@ -329,18 +337,26 @@ public class UserService {
     }
 
 
-    public Result findAllOptions() {
+    public Result findAllOptions(Long userId) {
 
+        UserExtends userExtends = userExtendsReposiroty.findByUserId(userId);
         GlobalProperty profileEmotion = globalPropertyRepository.findByCode("profileEmotion");
         GlobalProperty profileEducation = globalPropertyRepository.findByCode("profileEducation");
         GlobalProperty profileJob = globalPropertyRepository.findByCode("profileJob");
         GlobalProperty profileSex = globalPropertyRepository.findByCode("profileSex");
 
 
-        List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class));
-        List<String> emotionList = map2list(JSONObject.parseObject(profileEmotion.getVal(), Map.class));
-        List<String> jobList = map2list(JSONObject.parseObject(profileJob.getVal(), Map.class));
-        List<String> sexList = map2list(JSONObject.parseObject(profileSex.getVal(), Map.class));
+        String educationCode = userExtends.getEducation();
+        List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class),educationCode);
+
+        String marriageStatus = userExtends.getMarriageStatus();
+        List<String> emotionList = map2list(JSONObject.parseObject(profileEmotion.getVal(), Map.class),marriageStatus);
+
+        String jobCode = userExtends.getJob();
+        List<String> jobList = map2list(JSONObject.parseObject(profileJob.getVal(), Map.class),jobCode);
+
+        Integer sex = userExtends.getSex();
+        List<String> sexList = map2list(JSONObject.parseObject(profileSex.getVal(), Map.class),sex+"");
         Map<String, Object> mapVo = new HashMap<>();
         mapVo.put("educationList", educationList);
         mapVo.put("emotionList", emotionList);
@@ -350,7 +366,7 @@ public class UserService {
         return Result.success(mapVo);
     }
 
-    private  List<Map<String,String>> map2list(Map<String, String> map) {
+    private  List<Map<String,String>> map2list(Map<String, String> map,String code) {
 
         List<Map<String,String>> list = new ArrayList<>();
         Set<String> ketSet = map.keySet();
@@ -360,6 +376,11 @@ public class UserService {
 //            temp.put(key, map.get(key));
             temp.put("key", key);
             temp.put("value", map.get(key));
+            if (key.equals(code)) {
+                temp.put("select", "1");
+            }else{
+                temp.put("select", "0");
+            }
             list.add(temp);
         }
 

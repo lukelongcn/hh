@@ -1,4 +1,4 @@
-package com.h9.common.db.repo;
+package com.h9.common.db.basis;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -200,11 +200,11 @@ public class JpaRepository {
 		return (long)q.getSingleResult();
 	}
 	
-	public BigInteger nativeCount(String sql) {
+	public Long nativeCount(String sql) {
 		EntityManager em = getEntityManager();
 		sql="select count(*) "+sql.substring(sql.indexOf("from"));
 		Query q = em.createNativeQuery(sql);
-		return (BigInteger)q.getSingleResult();
+		return ((BigInteger)q.getSingleResult()).longValue();
 	}
 	
 	public BigInteger nativeCount(String countKey,String sql) {

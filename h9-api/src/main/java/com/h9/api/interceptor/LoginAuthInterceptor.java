@@ -28,6 +28,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     @Resource
     private RedisBean redisBean;
 
+    @SuppressWarnings("Duplicates")
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
@@ -37,11 +38,23 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             HandlerMethod handlerMethod = (HandlerMethod) o;
             Secured secured = handlerMethod.getMethodAnnotation(Secured.class);
             if (secured != null) {
-                if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
+                if (StringUtils.isBlank(token)) throw new UnAuthException(401,"未知用户");
                 // token 失效检查
-                String userId = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
-                if (StringUtils.isBlank(userId)) {
-                    throw new UnAuthException("请重新登录");
+                String userId4phone = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
+                String userId4WeChat = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
+                if(StringUtils.isEmpty(userId4WeChat)&&StringUtils.isEmpty(userId4phone)){
+                    throw new UnAuthException(401,"请重新登录");
+                }
+                String userId = "";
+                if(!StringUtils.isEmpty(userId4WeChat)){
+                    userId = userId4WeChat;
+                }
+                if(!StringUtils.isEmpty(userId4phone)){
+                    userId = userId4phone;
+                }else{
+                    if(secured.bindPhone()){
+                        throw new UnAuthException(402,"绑定手机号");
+                    }
                 }
                 MDC.put("userId",userId);
                 httpServletRequest.getSession().removeAttribute("curUserId");
