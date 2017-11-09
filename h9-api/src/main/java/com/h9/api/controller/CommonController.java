@@ -48,7 +48,7 @@ public class CommonController {
      */
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
-    public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state, HttpServletResponse response) throws IOException {
+    public void getCode(@RequestParam(value = "appId",required = false) String appId, @RequestParam(value = "url") String state, HttpServletResponse response) throws IOException {
         response.sendRedirect(weChatProvider.getJSCode(appId,state));
     }
 

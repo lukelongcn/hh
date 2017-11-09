@@ -1,13 +1,9 @@
 package com.h9.api.controller;
 
-import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.Secured;
-import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
-import com.h9.api.provider.MobileRechargeService;
-import com.h9.api.provider.SMService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
@@ -26,8 +22,6 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private MobileRechargeService mobileRechargeService;
     /**
      * description: 手机号登录
      */
