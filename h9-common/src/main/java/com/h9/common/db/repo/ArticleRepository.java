@@ -3,7 +3,7 @@ package com.h9.common.db.repo;
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.Article;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
@@ -24,7 +24,7 @@ public interface ArticleRepository extends BaseRepository<Article>{
     Long findCountByArticleType(Long articleType);
     
     @Query("select a from Article a where a.enable<>2")
-    Page<Article> findAll(PageRequest pageRequest);
+    Page<Article> findAll(Pageable pageable);
     
     @Query("select a from Article a where a.enable<>2 and a.id=?1")
     Article findOne(Long id);
