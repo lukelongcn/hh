@@ -38,12 +38,12 @@ public class FinanceController {
         return this.financeService.getWithdrawRecords(withdrawRecordQueryDTO);
     }
 
-    @Secured
+    /*@Secured
     @PostMapping(value="/withdraw_record/{id}/status")
     @ApiOperation("提现退回")
     public Result<PageResult<WithdrawRecordVO>> cancelWithdrawRecord()  {
         //return this.communityService.getBannerTypes(pageDTO);
         //return  Result.success(new PageResult<WithdrawRecordVO>());
         return this.financeService.getWithdrawRecords(withdrawRecordQueryDTO);
-    }
+    }*/
 }
