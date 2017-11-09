@@ -2,13 +2,13 @@ package com.h9.common.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.GlobalProperty;
 import com.h9.common.db.entity.UserAccount;
 import com.h9.common.db.entity.UserRecord;
-import com.h9.common.db.repo.BalanceFlowRepository;
-import com.h9.common.db.repo.BalanceFlowTypeRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.db.repo.UserRecordRepository;
+import com.h9.common.db.repo.*;
 import com.h9.common.utils.NetworkUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -20,6 +20,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -124,6 +126,7 @@ public class CommonService {
 
         return userRecordRepository.saveAndFlush(userRecord);
     }
+
 
 
 }

@@ -7,12 +7,17 @@ import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MD5Util;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
 import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.model.vo.LotteryResultDto;
+import com.h9.lottery.provider.FactoryProvider;
+import com.h9.lottery.provider.model.LotteryModel;
+import com.h9.lottery.utils.CodeUtil;
 import com.h9.lottery.utils.RandomDataUtil;
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -20,7 +25,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -73,7 +77,11 @@ public class LotteryService {
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
 
-        //TODO 检查第三方库有没有数据
+        // TODO 检查第三方库有没有数据
+//        Result result = exitsReward(lotteryVo.getCode());
+//        if(result!=null){
+//            return result;
+//        }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
         //记录扫码记录
         record(userId, reward, lotteryVo, userRecord);
@@ -117,8 +125,11 @@ public class LotteryService {
             lotteryRepository.save(lottery);
             return Result.success(lotteryResultDto);
         }
-
     }
+
+
+
+
 
     public void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
@@ -235,6 +246,10 @@ public class LotteryService {
         List<LotteryFlow> lotteryFlows = getReward(reward, lotteryList, lotteries);
         lotteryRepository.save(lotteries);
         lotteryFlowRepository.save(lotteryFlows);
+        LotteryModel lotteryModel = factoryProvider.updateLotteryStatus(code);
+        if(lotteryModel!=null){
+            reward.setFactoryStatus(lotteryModel.getState());
+        }
         //变更奖励状态
         reward.setStatus(END.getCode());
         rewardRepository.save(reward);
@@ -306,6 +321,35 @@ public class LotteryService {
         return Result.success(lotteryFlows.result2Result(LotteryFlowDTO::new));
     }
 
+
+    @Resource
+    private FactoryProvider factoryProvider;
+
+    public Result exitsReward(String code){
+        Reward reward = rewardRepository.findByCode(code);
+        if(reward!=null){
+            return null;
+        }
+        LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
+        if(lotteryModel == null){
+            return Result.fail("服务繁忙，请稍后再试");
+        }
+        int state = lotteryModel.getState();
+        if(state == 2) {
+            return Result.fail("兑奖码已兑奖完毕");
+        }
+        else if(state == 3) {
+            return Result.fail("兑奖码已兑奖完毕");
+        }else if(state == 4) {
+            return Result.fail("服务繁忙，请稍后再试");
+        }
+        reward = new Reward();
+        reward.setMoney( lotteryModel.getBouns());
+        reward.setCode(code);
+        reward.setMd5Code(MD5Util.getMD5(code));
+        rewardRepository.saveAndFlush(reward);
+        return null;
+    }
 
 
 

@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 public class AuthenticityVO {
 
     private String productName;
-    private String type;
-    private String degrees;
-    private String unit;
+    private String supplierName;
+    private String supplierDistrict;
+    private String lastQueryTime;
     private BigDecimal queryCount = new BigDecimal(0);
 
     public String getProductName() {
@@ -25,28 +25,28 @@ public class AuthenticityVO {
         this.productName = productName;
     }
 
-    public String getType() {
-        return type;
+    public String getSupplierName() {
+        return supplierName;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
-    public String getDegrees() {
-        return degrees;
+    public String getSupplierDistrict() {
+        return supplierDistrict;
     }
 
-    public void setDegrees(String degrees) {
-        this.degrees = degrees;
+    public void setSupplierDistrict(String supplierDistrict) {
+        this.supplierDistrict = supplierDistrict;
     }
 
-    public String getUnit() {
-        return unit;
+    public String getLastQueryTime() {
+        return lastQueryTime;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setLastQueryTime(String lastQueryTime) {
+        this.lastQueryTime = lastQueryTime;
     }
 
     public BigDecimal getQueryCount() {

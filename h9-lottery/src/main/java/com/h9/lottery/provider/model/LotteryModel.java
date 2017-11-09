@@ -11,10 +11,11 @@ import java.math.BigDecimal;
  */
 public class LotteryModel {
     private int State;
+    private String Msg;
     private BigDecimal Bouns = new BigDecimal(0);
     private BigDecimal SeedAmount = new BigDecimal(0);
     private BigDecimal Intergal = new BigDecimal(0);
-    private String msg;
+
 
     public int getState() {
         return State;
@@ -49,10 +50,10 @@ public class LotteryModel {
     }
 
     public String getMsg() {
-        return msg;
+        return Msg;
     }
 
     public void setMsg(String msg) {
-        this.msg = msg;
+        Msg = msg;
     }
 }

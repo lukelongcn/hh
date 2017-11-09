@@ -307,7 +307,7 @@ public class ConsumeService {
     public Result cz(Long userId) {
         if (!"dev".equals(currentEnvironment)) return Result.fail("此环境不支持");
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        userAccount.setBalance(new BigDecimal(200));
+        userAccount.setBalance(new BigDecimal(201));
         userAccountRepository.save(userAccount);
         return Result.success();
     }
@@ -330,17 +330,15 @@ public class ConsumeService {
 
                 if (cpReturnData.contains("|s|")) {
                     //此笔交易银行显示已完成了，把订单状态改变
+                    logger.info("提现记录Id:"+wr.getId());
                     wr.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
                 }
-
 
                 if (cpReturnData.contains("|9|")) {
                     //此笔交易银联打款失败
                     wr.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
-                    //TODO 退款到用户账号
                     Long userId = wr.getUserId();
-                    UserAccount userAccount = userAccountRepository.findByUserId(userId);
-                    userAccount.setBalance(userAccount.getBalance().add(wr.getMoney()));
+                    commonService.setBalance(userId, wr.getMoney(), 2L, wr.getId(), "", "银联退回");
                 }
 
                 withdrawalsRecordReposiroty.save(wr);
@@ -374,7 +372,6 @@ public class ConsumeService {
 
         Map<String, Object> infoVO = new HashMap<>();
         infoVO.put("bankList", bankList);
-        //TODO 提现额度查询
         GlobalProperty globalProperty = globalPropertyRepository.findByCode("withdrawMax");
         String max = globalProperty.getVal();
         infoVO.put("withdrawalCount", max);

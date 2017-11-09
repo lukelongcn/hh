@@ -50,6 +50,10 @@ public class Product extends BaseEntity {
     @Column(name = "address", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '上次查询位置'")
     private String address;
 
+    @Temporal(TIMESTAMP)
+    @Column(name = "last_time", columnDefinition = "datetime COMMENT '上次扫描时间'")
+    private Date lastTime;
+
 
     public Long getId() {
         return id;
@@ -113,5 +117,13 @@ public class Product extends BaseEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Date getLastTime() {
+        return lastTime;
+    }
+
+    public void setLastTime(Date lastTime) {
+        this.lastTime = lastTime;
     }
 }
