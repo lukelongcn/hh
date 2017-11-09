@@ -36,7 +36,7 @@ public class WeChatProvider {
 
     public String getJSCode(String appId, String redirectUrl, String state) {
         return MessageFormat.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=" +
-                "code&scope={2}&state={3}#wechat_redirect", appId, url, "snsapi_userinfo", state);  //snsapi_base
+                "code&scope={2}&state={3}#wechat_redirect", appId, redirectUrl, "snsapi_userinfo", state);  //snsapi_base
     }
 
     public String getJSCode(String appId, String state) {
