@@ -3,6 +3,7 @@ package com.h9.api.provider;
 import chinapay.Base64;
 import chinapay.PrivateKey;
 import chinapay.SecureLink;
+import com.h9.api.ApiApplication;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.WithdrawalsRequest;
 import org.jboss.logging.Logger;
@@ -39,7 +40,8 @@ public class ChinaPayService {
                 + payParam.getProv() + payParam.getCity() + payParam.getTransAmt() + payParam.getPurpose() + payParam.getVersion();
 
         PrivateKey key = new PrivateKey();
-        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        String path = ApiApplication.chinaPayKey;
         boolean buildOK = key.buildKey(merId, 0, path);
         if (!buildOK) {
             System.out.println("没有找到私钥文件");
@@ -88,12 +90,12 @@ public class ChinaPayService {
         String chkValue = merId+merDate+merSeqId+version;
 
         PrivateKey key = new PrivateKey();
-        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        String path = ApiApplication.chinaPayKey;
         boolean buildOK = key.buildKey(merId, 0, path);
         if(!buildOK){
             System.out.println("没有找到私钥文件");
         }
-        System.out.println(buildOK);
         SecureLink secureLink = new SecureLink(key);
 
         chkValue = new String(Base64.encode(chkValue.getBytes()));

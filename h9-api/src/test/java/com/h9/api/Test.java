@@ -37,8 +37,8 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-
-//        upload(); // FoHkjc0XuS0niM_RKKJkWiGZLC5q
+        String parentPath = Test.class.getClassLoader().getResource("").getPath();
+        System.out.println(parentPath);
     }
 
     @org.junit.Test
@@ -198,7 +198,8 @@ public class Test {
         String s = merId + merDate + merSeqId + cardNo + usrName + openBank + prov + city + transAmt + purpose + version;
 
         PrivateKey key = new PrivateKey();
-        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        String path = ApiApplication.chinaPayKey;
         boolean buildOK = key.buildKey(merId, 0, path);
         if(!buildOK){
             System.out.println("没有找到私钥文件");
@@ -251,7 +252,8 @@ public class Test {
 
 
         PrivateKey key = new PrivateKey();
-        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+        String path = ApiApplication.chinaPayKey;
         boolean buildOK = key.buildKey(merId, 0, path);
         if(!buildOK){
             System.out.println("没有找到私钥文件");
@@ -330,6 +332,7 @@ public class Test {
 
         }
     }
+
 
 
 }
