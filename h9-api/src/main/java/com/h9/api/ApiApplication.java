@@ -1,6 +1,7 @@
 package com.h9.api;
 
 import com.h9.common.StartBanner;
+import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
@@ -55,7 +56,7 @@ public class ApiApplication {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
         return restTemplate;
     }
 
