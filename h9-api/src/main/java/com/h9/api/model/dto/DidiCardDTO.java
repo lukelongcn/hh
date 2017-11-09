@@ -1,5 +1,6 @@
 package com.h9.api.model.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ public class DidiCardDTO {
     @NotNull(message = "id为空")
     private Long id;
 
-    @NotEmpty(message = "请填写验证码")
+    @NotBlank(message = "请填写验证码")
     private String code;
 
 
