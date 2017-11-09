@@ -41,7 +41,7 @@ public class ChinaPayService {
 
         PrivateKey key = new PrivateKey();
 //        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
-        String path = ApiApplication.chinaPayKey;
+        String path = ApiApplication.chinaPayKeyPath;
         boolean buildOK = key.buildKey(merId, 0, path);
         if (!buildOK) {
             System.out.println("没有找到私钥文件");
@@ -91,7 +91,7 @@ public class ChinaPayService {
 
         PrivateKey key = new PrivateKey();
 //        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
-        String path = ApiApplication.chinaPayKey;
+        String path = ApiApplication.chinaPayKeyPath;
         boolean buildOK = key.buildKey(merId, 0, path);
         if(!buildOK){
             System.out.println("没有找到私钥文件");

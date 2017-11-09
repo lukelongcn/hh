@@ -31,9 +31,8 @@ public class VCoinsFlow extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '变更金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "v_coins_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
-    private VCoinsFlowType vCoinsFlowType;
+    @Column(name = "v_coins_flow_type_id",nullable = false,columnDefinition = "bigint(20) default 0 COMMENT '类型(与流水类型一致)'")
+    private Long vCoinsflowType;
 
 
     @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
@@ -47,6 +46,7 @@ public class VCoinsFlow extends BaseEntity {
 
     @Column(name = "order_no", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '订单号'")
     private String orderNo;
+
 
 
     public Long getId() {
@@ -105,11 +105,11 @@ public class VCoinsFlow extends BaseEntity {
         this.orderNo = orderNo;
     }
 
-    public VCoinsFlowType getvCoinsFlowType() {
-        return vCoinsFlowType;
+    public Long getvCoinsflowType() {
+        return vCoinsflowType;
     }
 
-    public void setvCoinsFlowType(VCoinsFlowType vCoinsFlowType) {
-        this.vCoinsFlowType = vCoinsFlowType;
+    public void setvCoinsflowType(Long vCoinsflowType) {
+        this.vCoinsflowType = vCoinsflowType;
     }
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:获取全局通用配置项
  * ConfigService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/9
  * Time: 11:00
@@ -27,6 +27,8 @@ public class ConfigService {
 
     @Resource
     private RedisBean redisBean;
+
+
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
 
