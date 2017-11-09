@@ -157,6 +157,13 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    public String getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
+    }
 
     public enum IsAdminEnum{
         NOTADMIN(0,"非后台用户"),
