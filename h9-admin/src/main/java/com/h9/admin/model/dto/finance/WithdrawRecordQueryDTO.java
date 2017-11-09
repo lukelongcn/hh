@@ -1,6 +1,7 @@
 package com.h9.admin.model.dto.finance;
 
 
+import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 
@@ -8,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author: George
  * @date: 2017/11/9 14:06
  */
-public class WithdrawRecordQueryDTO {
+public class WithdrawRecordQueryDTO extends PageDTO{
     @ApiModelProperty(value = "手机号码")
     private String phone;
 

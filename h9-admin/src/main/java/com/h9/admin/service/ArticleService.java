@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 文章服务
@@ -43,6 +44,7 @@ public class ArticleService {
         ArticleType articleType = new ArticleType();
         BeanUtils.copyProperties(articleTypeDTO,articleType);
         articleType.setId(null);
+        articleType.setCreateTime(new Date());
         articleTypeRepository.save(articleType);
         return Result.success(articleType);
     }
@@ -54,6 +56,7 @@ public class ArticleService {
             return Result.fail("分类不存在");
         }
         BeanUtils.copyProperties(articleTypeDTO,one);
+        one.setUpdateTime(new Date());
         articleTypeRepository.save(one);
         return Result.success(one);
     }
@@ -64,6 +67,7 @@ public class ArticleService {
             return Result.fail("分类不存在");
         }
         one.setEnable(2);
+        one.setUpdateTime(new Date());
         articleTypeRepository.save(one);
         return Result.success();
     }
@@ -87,6 +91,7 @@ public class ArticleService {
             return Result.fail("您要删除的文章不存在");
         }
         one.setEnable(2);
+        one.setUpdateTime(new Date());
         articleRepository.save(one);
         return Result.success();
     }
@@ -102,6 +107,7 @@ public class ArticleService {
         BeanUtils.copyProperties(articleDTO,article);
         article.setId(null);
         article.setArticleType(one);
+        article.setCreateTime(new Date());
         articleRepository.save(article);
         return Result.success(article);
     }
@@ -114,8 +120,12 @@ public class ArticleService {
         }
         //检查是否有这个文章
         Article article = articleRepository.findOne(articleDTO.getId());
+        if(article==null){
+            return Result.fail("要修改的文章不存在");
+        }
         BeanUtils.copyProperties(articleDTO,article);
         article.setArticleType(one);
+        article.setUpdateTime(new Date());
         articleRepository.save(article);
         return Result.success(article);
     }
