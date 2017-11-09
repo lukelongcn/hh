@@ -46,19 +46,12 @@ public class CommonController {
      * @param response
      * @throws IOException
      */
-    @Secured
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
-    public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state, HttpServletResponse response) throws IOException {
+    public void getCode(@RequestParam(value = "appId",required = false) String appId, @RequestParam(value = "url") String state, HttpServletResponse response) throws IOException {
         response.sendRedirect(weChatProvider.getJSCode(appId,state));
     }
 
-    @GetMapping("/test/wx")
-    public void testwx(HttpServletResponse response) throws IOException {
-        //http://localhost:6305/h9/api/common/test/wx
-        //https://weixin-dev-h9.thy360.com/h9/api/account/didicoupons?page=1&limit=5
-        response.sendRedirect("http://www.baidu.com");
-    }
 
     /***
      *
