@@ -17,6 +17,7 @@ public class LotteryUser {
     private boolean roomUser;
     private BigDecimal money = new BigDecimal(0);
     private String desc;
+    private boolean maxMoney;
 
 
     public Long getUserId() {
@@ -75,5 +76,12 @@ public class LotteryUser {
         this.roomUser = roomUser;
     }
 
+    public boolean isMaxMoney() {
+        return maxMoney;
+    }
+
+    public void setMaxMoney(boolean maxMoney) {
+        this.maxMoney = maxMoney;
+    }
 }
 

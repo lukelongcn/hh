@@ -161,7 +161,7 @@ public class LotteryService {
 
         Date updateTime = lotteryRepository.findByRewardLastTime(reward);
         //TODO 暂时设置为 5 分钟
-        Date lastDate = DateUtil.getDate(updateTime, 5, Calendar.MINUTE);
+        Date lastDate = DateUtil.getDate(updateTime, 12*60, Calendar.MINUTE);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
 
@@ -182,6 +182,7 @@ public class LotteryService {
         lotteryResult.setQrCode(""+code);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
         if(islottery){
+            LotteryFlow top1LotteryFlow = lotteryFlowRepository.findTop1ByRewardOrderByMoneyDesc(reward);
             List<LotteryFlow> flows = lotteryFlowRepository.findByReward(reward);
             for (int i = 0; i < flows.size(); i++) {
                 LotteryFlow lotteryFromDb = flows.get(i);
@@ -190,6 +191,7 @@ public class LotteryService {
                 lotteryUser.setUserId(lotteryFromDb.getUser().getId());
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
+                lotteryUser.setMaxMoney(top1LotteryFlow.getId().equals(lotteryFromDb.getId()));
                 User user = userRepository.findOne(lotteryFromDb.getUser().getId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
