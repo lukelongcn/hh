@@ -1,10 +1,12 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.modle.dto.PageDTO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +27,39 @@ public class ArticleService {
         Page<ArticleType> all = articleTypeRepository.findAll(pageDTO.toPageRequest());
         all.forEach(articleType -> articleType.setArticleCount(articleRepository.findCountByArticleType(articleType.getId())));
         return Result.success(all);
+    }
+
+
+    public Result getCategory(Long id) {
+        return Result.success(articleTypeRepository.findOne(id));
+    }
+
+    public Result addCategory(ArticleTypeDTO articleTypeDTO) {
+        ArticleType articleType = new ArticleType();
+        BeanUtils.copyProperties(articleTypeDTO,articleType);
+        articleType.setId(null);
+        articleTypeRepository.save(articleType);
+        return Result.success(articleType);
+    }
+
+    public Result editCategory(ArticleTypeDTO articleTypeDTO) {
+        Long id = articleTypeDTO.getId();
+        ArticleType one = articleTypeRepository.findOne(id);
+        if(one==null){
+            return Result.fail("分类不存在");
+        }
+        BeanUtils.copyProperties(articleTypeDTO,one);
+        articleTypeRepository.save(one);
+        return Result.success(one);
+    }
+
+    public Result deleteCategory(Long id) {
+        ArticleType one = articleTypeRepository.findOne(id);
+        if(one==null){
+            return Result.fail("分类不存在");
+        }
+        one.setEnable(2);
+        articleTypeRepository.save(one);
+        return Result.success(one);
     }
 }
