@@ -63,7 +63,9 @@ public class AccountService {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
-        return Result.success(flowPageResult.result2Result(BalanceFlowVO::new));
+        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
+        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+        return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc,iconMap)));
     }
 
     public BigDecimal getAccountBalance(Long userId) {
@@ -76,7 +78,7 @@ public class AccountService {
     public Result accountInfo(Long userId) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
-        Object cardCount = orderItemReposiroty.findCardCount(userId, Orders.orderTypeEnum.DIDI_COUPON.getCode());
+        Object cardCount = orderItemReposiroty.findCardCount(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         List<Map<String, String>> bankList = new ArrayList<>();
 //        List<UserBank> userBankList = userBankRepository.findByUserId(userId);
 

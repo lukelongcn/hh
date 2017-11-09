@@ -1,5 +1,6 @@
 package com.h9.api.model.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
@@ -15,10 +16,9 @@ import java.util.Date;
  */
 public class UserPersonInfoDTO {
     private String avatar;
-    @Size(min = 1,max=64,message = "请填写nickName")
-    @NotNull(message = "请填写nickName")
+    @NotBlank(message = "请填写nickName")
     private String nickName;
-    @NotEmpty(message = "请填写sex")
+    @NotBlank(message = "请填写sex")
     private String sex;
     private Date birthday;
     private String marriageStatus;

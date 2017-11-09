@@ -2,6 +2,9 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.ArticleType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * @author: George
@@ -9,4 +12,9 @@ import com.h9.common.db.entity.ArticleType;
  */
 public interface ArticleTypeRepository extends BaseRepository<ArticleType> {
     ArticleType findByCode(String code);
+    @Query("select a from ArticleType a where a.enable<>2 order by a.sort desc,a.id desc ")
+    Page<ArticleType> findAll(Pageable pageable);
+    
+    @Query("select a from ArticleType a where a.enable<>2 and a.id=?1")
+    ArticleType findOne(Long id);
 }

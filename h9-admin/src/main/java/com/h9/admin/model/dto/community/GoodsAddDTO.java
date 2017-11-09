@@ -2,11 +2,15 @@ package com.h9.admin.model.dto.community;
 
 import com.h9.common.db.entity.Goods;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.jpa.criteria.expression.function.AggregationFunction;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
+import sun.nio.cs.ext.MacArabic;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -17,11 +21,13 @@ import java.util.Date;
  */
 public class GoodsAddDTO {
     @ApiModelProperty(value = "名称",required = true)
-    @NotEmpty(message = "名称不能为空")
+    @NotBlank(message = "名称不能为空")
+    @Size(max = 64,message = "名称过长")
     private String name;
 
     @ApiModelProperty(value = "编码",required = true)
-    @NotEmpty(message = "编码不能为空")
+    @NotBlank(message = "编码不能为空")
+    @Size(max = 30,message = "编码长度不能超过30位")
     private String code;
 
     @ApiModelProperty(value = "商品类型id",required = true)
@@ -29,7 +35,7 @@ public class GoodsAddDTO {
     private Long goodsTypeId;
 
     @ApiModelProperty(value = "图片",required = true)
-    @NotEmpty(message = "图片不能为空")
+    @NotBlank(message = "图片不能为空")
     private String img;
 
     @ApiModelProperty(value = "原价",required = true)
@@ -45,7 +51,8 @@ public class GoodsAddDTO {
     private BigDecimal vCoinsRate = new BigDecimal(0);
 
     @ApiModelProperty(value = "描述",required = true)
-    @NotEmpty(message = "描述不能为空")
+    @NotBlank(message = "描述不能为空")
+    @Size(max = 256,message = "描述过长")
     private String description;
 
     @ApiModelProperty(value = "上架开始时间",required = true)

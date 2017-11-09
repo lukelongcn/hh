@@ -32,35 +32,35 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public static Result success() {
-        return new Result(SUCCESS_CODE, "成功");
+    public static <T>Result<T> success() {
+        return success(null);
     }
 
-    public static <T>Result success(T t) {
+    public static <T>Result<T> success(T t) {
         return new Result<>(SUCCESS_CODE, "成功", t);
     }
 
-    public static <T> Result success(String msg, T t) {
+    public static <T> Result<T> success(String msg, T t) {
         return new Result<>(0, msg, t);
     }
 
-    public static Result success(String msg) {
+    public static <T>Result<T> success(String msg) {
         return new Result<>(SUCCESS_CODE, msg, null);
     }
 
-    public static Result fail() {
-        return new Result(FAILED_CODE, "失败");
+    public static <T>Result<T> fail() {
+        return new Result<>(FAILED_CODE, "失败");
     }
 
-    public static <T> Result fail(String msg,T t) {
+    public static <T> Result<T> fail(String msg,T t) {
         return new Result<>(FAILED_CODE, msg,t);
     }
 
 
 
 
-    public static Result fail(String msg) {
-        return new Result(FAILED_CODE, msg);
+    public static <T>Result<T> fail(String msg) {
+        return new Result<>(FAILED_CODE, msg);
     }
 
     public static final int SUCCESS_CODE = 0;

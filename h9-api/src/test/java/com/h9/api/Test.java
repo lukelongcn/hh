@@ -74,7 +74,7 @@ public class Test {
         String secretKey = "3wKtwQGZfA7xFIsAt3I1LDaOR_kF6UVvRojLdi9k";
         String bucket = "h9-joyful-img";
 //如果是Windows情况下，格式是 D:\\qiniu\\test.png
-        String localFilePath = "C:\\Users\\itservice\\Pictures\\235113-1403260U22059.jpg";
+        String localFilePath = "Config:\\Users\\itservice\\Pictures\\235113-1403260U22059.jpg";
 //默认不指定key的情况下，以文件内容的hash值作为文件名
         String key = null;
         Auth auth = Auth.create(accessKey, secretKey);

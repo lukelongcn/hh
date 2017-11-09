@@ -10,7 +10,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:banner地址
+ * Description:文章类型
  * User:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/27
  * Time: 18:14

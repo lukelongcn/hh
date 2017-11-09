@@ -1,21 +1,20 @@
 package com.h9.api.controller;
 
-import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.Secured;
-import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
-import com.h9.api.provider.MobileRechargeService;
-import com.h9.api.provider.SMService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -26,8 +25,6 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private MobileRechargeService mobileRechargeService;
     /**
      * description: 手机号登录
      */
@@ -69,9 +66,11 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/wechat/code")
-    public void getCode(String url){
-//        return userService.getCode();
+
+    @GetMapping("/wechat/login")
+    public Result getCode(@RequestParam(value = "code",required = false)
+                                    @NotNull(message = "微信登录失败") String code){
+        return userService.loginByWechat(code);
     }
 
 

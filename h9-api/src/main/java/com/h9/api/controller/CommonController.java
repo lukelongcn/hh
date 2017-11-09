@@ -42,16 +42,16 @@ public class CommonController {
 
     /*****
      * @param appId 需要获取授权的appId
-     * @param url 回调路径 需要base64编码
+     * @param  url回调路径 需要base64编码
      * @param response
      * @throws IOException
      */
-    @Secured
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
-    public void getCode(@RequestParam("appId") String appId, @RequestParam("url") String state, HttpServletResponse response) throws IOException {
+    public void getCode(@RequestParam(value = "appId",required = false) String appId, @RequestParam(value = "url") String state, HttpServletResponse response) throws IOException {
         response.sendRedirect(weChatProvider.getJSCode(appId,state));
     }
+
 
     /***
      *
@@ -60,7 +60,6 @@ public class CommonController {
      * @param response
      * @throws IOException
      */
-    @Secured
     @ApiOperation(value = "微信回调")
     @GetMapping("/wechat/callback")
     public void callback(@RequestParam("code") String code, @RequestParam("state") String state,HttpServletResponse response) throws IOException {

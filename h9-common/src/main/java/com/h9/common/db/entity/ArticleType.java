@@ -23,11 +23,11 @@ public class ArticleType extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '文章类型名称'")
     private String name;
 
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型标识'")
-    private String code;
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '文章类型标识'")
+    private String code = "";
 
 
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用 2删除'")
@@ -35,6 +35,16 @@ public class ArticleType extends BaseEntity {
     
     @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
     private Integer sort = 1;
+    @Transient
+    private Long articleCount;
+
+    public Long getArticleCount() {
+        return articleCount;
+    }
+
+    public void setArticleCount(Long articleCount) {
+        this.articleCount = articleCount;
+    }
 
     public Integer getSort() {
         return sort;

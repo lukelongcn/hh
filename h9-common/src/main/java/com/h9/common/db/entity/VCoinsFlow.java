@@ -31,7 +31,7 @@ public class VCoinsFlow extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '变更金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "v_coins_flow_type_id",nullable = false,columnDefinition = "bigint(20) default 0 COMMENT '类型(与流水类型一致)'")
+    @Column(name = "v_coins_type_id",nullable = false,columnDefinition = "bigint(20) default 0 COMMENT '类型(与流水类型一致)'")
     private Long vCoinsflowType;
 
 
