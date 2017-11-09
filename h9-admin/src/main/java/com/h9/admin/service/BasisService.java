@@ -1,15 +1,16 @@
 package com.h9.admin.service;
 
-import com.h9.common.db.entity.WithdrawalsRecord;
-import com.h9.common.db.repo.*;
-import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.model.dto.basis.BankTypeAddDTO;
 import com.h9.admin.model.dto.basis.BankTypeEditDTO;
 import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
+import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.WithdrawalsRecord;
+import com.h9.common.db.repo.*;
+import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.GlobalPropertyVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -19,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author: George
@@ -115,11 +116,11 @@ public class BasisService {
         BigDecimal withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode());
         BigDecimal userVCoins = userAccountRepository.getUserVCoins();
         BigDecimal totalVCoins = BigDecimal.valueOf(66666);
-        Map<String,String> map = new HashMap<>();
-        map.put("lotteryCount",lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
-        map.put("withdrawalsCount",withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
-        map.put("surplus",userVCoins.toString());
-        map.put("totalVCoins",totalVCoins.toString());
-        return Result.success(map);
+        List<StatisticsItemVO> list = new ArrayList<>();
+        list.add(new StatisticsItemVO("奖金",lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总奖金（元）"));
+        list.add(new StatisticsItemVO("提现金额",withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总提现奖金（元）"));
+        list.add(new StatisticsItemVO("V币",userVCoins.toString(),"总V币"));
+        list.add(new StatisticsItemVO("剩余V币",totalVCoins.toString(),"剩余V币总量"));
+        return Result.success(list);
     }
 }
