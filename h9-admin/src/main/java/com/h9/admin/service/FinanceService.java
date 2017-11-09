@@ -4,11 +4,16 @@ import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.basis.JpaRepository;
+import com.h9.common.db.entity.BalanceFlowType;
+import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.entity.WithdrawalsRecord;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +29,14 @@ import java.util.Map;
 @Service
 @Transactional
 public class FinanceService {
+    private Logger logger = Logger.getLogger(this.getClass());
+
     @Autowired
     private JpaRepository jpaRepository;
     @Autowired
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
+    @Autowired
+    private CommonService commonService;
 
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
         /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
@@ -62,5 +71,21 @@ public class FinanceService {
         return sql.toString();
     }
 
+    public Result<WithdrawalsRecord> updateWithdrawRecordStatus(long id){
+        this.logger.infov("提现退回，订单id:{0}",id);
+        WithdrawalsRecord withdrawalsRecord = this.withdrawalsRecordRepository.findByLockId(id);
+        if(withdrawalsRecord.getStatus()==WithdrawalsRecord.statusEnum.FAIL.getCode()){
+            return Result.fail("该订单不是失败订单");
+        }
+        Result result = this.commonService.setBalance(withdrawalsRecord.getUserId(),withdrawalsRecord.getMoney(), BalanceFlowType.BalanceFlowTypeEnum.RETURN.getId(),
+                withdrawalsRecord.getId(),withdrawalsRecord.getOrderNo(),"银联退回");
+        if(result.getCode()==Result.FAILED_CODE){
+            this.logger.errorf("改变用户余额失败,msg:{0}",result.getMsg());
+            return Result.fail("改变用户余额失败");
+        }
+        withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.CANCEL.getCode());
+        this.withdrawalsRecordRepository.save(withdrawalsRecord);
+        return Result.success(this.withdrawalsRecordRepository.save(withdrawalsRecord));
+    }
 
 }
