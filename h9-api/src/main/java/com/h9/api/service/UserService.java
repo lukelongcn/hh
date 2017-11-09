@@ -288,17 +288,11 @@ public class UserService {
     private String jsAppId;
     @Value("${wechat.js.secret}")
     private String jsSecret;
-    @Value("${common.code.url}")
-    private String commonCodeUrl;
     @Resource
     private WeChatProvider weChatProvider;
 
-    public String getCode(String url) {
-        byte[] urlByte = Base64.getEncoder().encode(url.getBytes());
-        return MessageFormat.format(commonCodeUrl, jsAppId, new String(urlByte));
-    }
 
-    public Result getOpenId(String code) {
+    public Result loginByWechat(String code) {
         OpenIdCode openIdCode = weChatProvider.getOpenId(jsAppId, jsSecret, code);
         if (openIdCode == null && StringUtils.isEmpty(openIdCode.getOpenid())) {
             return Result.fail("微信登录失败");

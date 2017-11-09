@@ -69,9 +69,10 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/wechat/code")
-    public void getCode(String url){
-//        return userService.getCode();
+
+    @GetMapping("/wechat/login")
+    public Result getCode(String code){
+        return userService.loginByWechat(code);
     }
 
 
