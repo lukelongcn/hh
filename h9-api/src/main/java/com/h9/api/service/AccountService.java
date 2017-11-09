@@ -63,7 +63,9 @@ public class AccountService {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
-        return Result.success(flowPageResult.result2Result(BalanceFlowVO::new));
+        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
+        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+        return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc,iconMap)));
     }
 
     public BigDecimal getAccountBalance(Long userId) {
