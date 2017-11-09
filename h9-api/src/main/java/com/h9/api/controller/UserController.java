@@ -86,10 +86,11 @@ public class UserController {
     }
 
 
+    @Secured
     @GetMapping("/user/info/options")
-    public Result options(){
+    public Result options(@SessionAttribute("curUserId")Long userId){
 
-        return userService.findAllOptions();
+        return userService.findAllOptions(userId);
     }
 
 }
