@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
  */
 public class BankTypeEditDTO extends BankTypeAddDTO{
     @ApiModelProperty(value = "id",required = true)
-    @Size(max = 20, message = "id过长")
     @NotNull(message = "id不能为空")
     private Long id;
 
