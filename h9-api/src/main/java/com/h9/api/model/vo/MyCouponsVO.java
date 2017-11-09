@@ -21,6 +21,7 @@ public class MyCouponsVO {
     public MyCouponsVO(OrderItems items) {
         this.price = items.getPrice().toString();
         this.name = items.getName();
+        //TODO 做成动态的.
         this.status = "已发放";
         this.createTime = DateUtil.formatDate(items.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.from = "大转盘奖励";

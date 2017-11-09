@@ -2,6 +2,7 @@ package com.h9.common.modle.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.data.domain.PageRequest;
 
 /**
  * @author: George
@@ -29,5 +30,15 @@ public class PageDTO {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+    
+    
+    public PageRequest toPageRequest(){
+        //从第一页开始
+        if(pageNumber<1) pageNumber = 1;
+        if(pageSize < 1) pageSize = 20;
+//       防止请求页数过大，整垮服务器
+        if(pageSize>100) pageSize = 100;
+        return new PageRequest(pageNumber-1, pageSize);
     }
 }

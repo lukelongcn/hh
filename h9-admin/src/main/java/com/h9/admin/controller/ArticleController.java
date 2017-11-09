@@ -1,8 +1,16 @@
 package com.h9.admin.controller;
 
+import com.h9.admin.interceptor.Secured;
+import com.h9.admin.service.ArticleService;
+import com.h9.common.base.Result;
+import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * 文章
@@ -12,5 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("文章")
 @RequestMapping(value = "/article")
 public class ArticleController {
+
+    @Resource
+    private ArticleService articleService;
     
+    @Secured
+    @GetMapping(value = "/categoryList")
+    @ApiOperation("获取文章类别")
+    public Result categoryList(PageDTO pageDTO){
+        return articleService.categoryList(pageDTO);
+    }
 }

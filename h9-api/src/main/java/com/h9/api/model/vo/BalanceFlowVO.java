@@ -45,11 +45,21 @@ public class BalanceFlowVO {
         }
     }
 
-    public BalanceFlowVO(VCoinsFlow vCoinsFlow) {
+    public BalanceFlowVO(VCoinsFlow vCoinsFlow,Map<String, String> iconMap) {
         BeanUtils.copyProperties(vCoinsFlow,this);
         Date createTime = vCoinsFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
+
+        Set<String> keySet = iconMap.keySet();
+
+        for(String key : keySet){
+            if(key.equals(vCoinsFlow.getvCoinsflowType()+"")){
+                imgUrl=iconMap.get(key);
+                break;
+            }
+        }
+        this.createTime = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
     }
 
     public String getCreateTime() {

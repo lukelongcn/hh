@@ -14,6 +14,7 @@ public class OrderListVO {
     private Long orderId;
     private String company;
     private String status;
+    private String companyIcon;
 
     private List<GoodsInfo> goodsInfoList;
 
@@ -31,7 +32,16 @@ public class OrderListVO {
         vo.setStatus("已完成");
         vo.setGoodsInfoList(goodsInfoList);
         vo.setOrderId(orders.getId());
+        vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         return vo;
+    }
+
+    public String getCompanyIcon() {
+        return companyIcon;
+    }
+
+    public void setCompanyIcon(String companyIcon) {
+        this.companyIcon = companyIcon;
     }
 
     private static class GoodsInfo{
