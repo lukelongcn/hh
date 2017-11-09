@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author: George
@@ -37,6 +38,15 @@ public class LotteryFlowVO {
 
     @ApiModelProperty(value = "ip地址" )
     private String ip;
+
+    @ApiModelProperty(value = "手机品牌" )
+    private String phoneType;
+
+    @ApiModelProperty(value = "版本" )
+    private String version;
+
+    @ApiModelProperty(value = "创建时间" )
+    private Date createTime;
 
     public Long getId() {
         return id;
@@ -102,13 +112,41 @@ public class LotteryFlowVO {
         this.ip = ip;
     }
 
+    public String getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(String phoneType) {
+        this.phoneType = phoneType;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     public static LotteryFlowVO toLotteryFlowVO(LotteryFlow lotteryFlow){
         LotteryFlowVO lotteryFlowVO = new LotteryFlowVO();
-        BeanUtils.copyProperties(lotteryFlow,lotteryFlow);
+        BeanUtils.copyProperties(lotteryFlow,lotteryFlowVO);
+        lotteryFlowVO.setCode(lotteryFlow.getReward().getCode());
+        lotteryFlowVO.setPhone(lotteryFlow.getUser().getPhone());
         lotteryFlowVO.setIp(lotteryFlow.getUserRecord().getIp());
         lotteryFlowVO.setLatitude(lotteryFlow.getUserRecord().getLatitude());
         lotteryFlowVO.setLongitude(lotteryFlow.getUserRecord().getLongitude());
         lotteryFlowVO.setUserId(lotteryFlow.getUser().getId());
+        lotteryFlowVO.setPhoneType(lotteryFlow.getUserRecord().getPhoneType());
+        lotteryFlowVO.setVersion(lotteryFlow.getUserRecord().getVersion());
         return  lotteryFlowVO;
     }
 }

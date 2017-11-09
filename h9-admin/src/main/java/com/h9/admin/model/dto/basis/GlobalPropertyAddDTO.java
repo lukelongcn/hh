@@ -1,9 +1,11 @@
 package com.h9.admin.model.dto.basis;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.entity.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
@@ -22,8 +24,8 @@ import java.util.Map;
 public class GlobalPropertyAddDTO {
 
     @ApiModelProperty(value = "名称",required = true)
-    @NotEmpty(message = "名称不能为空")
-    @Max(value = 512,message = "名称不能大于512")
+    @NotBlank(message = "名称不能为空")
+    //@Max(value = 512,message = "名称不能大于512")
     private String name;
 
     @ApiModelProperty(value = "参数类型， 0：文本 1：对象 2:数组",required = true)
@@ -31,17 +33,17 @@ public class GlobalPropertyAddDTO {
     private Integer type;
 
     @ApiModelProperty(value = "参数标识",required = true)
-    @NotEmpty(message = "参数标识不能为空")
-    @Max(value = 50,message = "参数标识不能大于50")
+    @NotBlank(message = "参数标识不能为空")
+    //@Max(value = 50,message = "参数标识不能大于50")
     private String code;
 
     @ApiModelProperty(value = "参数值",required = true)
-    @NotNull(message = "参数值不能为空")
-    @Max(value = 512,message = "参数值不能大于512")
+    @NotEmpty(message = "参数值不能为空")
+    //@Max(value = 512,message = "参数值不能大于512")
     private List<Map<String,Object>> val;
 
     @ApiModelProperty(value = "说明",required = true)
-    @Max(value = 512,message = "说明过长")
+    //@Max(value = 512,message = "说明过长")
     private String description;
 
 
@@ -85,7 +87,7 @@ public class GlobalPropertyAddDTO {
                 Object o = m.get("val");
                 stringList.add(o.toString());
             }
-            v = StringUtils.join(stringList.toArray(), ",");
+            v = JSONObject.toJSONString(stringList);
         }
         return v;
     }

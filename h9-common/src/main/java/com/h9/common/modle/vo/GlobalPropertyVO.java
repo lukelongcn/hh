@@ -1,6 +1,7 @@
 package com.h9.common.modle.vo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.entity.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
@@ -97,7 +98,8 @@ public class GlobalPropertyVO {
             }
         }else{
             //val = val.substring(1,val.length()-1);
-            List l = Arrays.asList(val.split(","));
+            //List l = Arrays.asList(val.split(","));
+            List l = JSONArray.parseArray(val);
             for(int i=0;i<l.size();i++){
                 Map map = new HashMap();
                 map.put("val",l.get(i));

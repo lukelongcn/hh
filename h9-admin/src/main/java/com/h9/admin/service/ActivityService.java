@@ -57,7 +57,7 @@ public class ActivityService {
         return rewards;
     }
 
-    public Result<PageResult<LotteryFlowVO>> getRewards(LotteryFlowDTO lotteryFlowDTO){
+    public Result<PageResult<LotteryFlowVO>> getLotteryFlows(LotteryFlowDTO lotteryFlowDTO){
         Sort sort = new Sort(Sort.Direction.DESC,"id");
         PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowDTO.getPageNumber(),lotteryFlowDTO.getPageSize(),sort);
         Page<LotteryFlow> lotteryFlows = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository.buildSpecification(lotteryFlowDTO),pageRequest);

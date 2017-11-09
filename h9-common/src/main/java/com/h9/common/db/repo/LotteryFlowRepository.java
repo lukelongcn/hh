@@ -50,7 +50,7 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
                    predicates.add(cb.equal(join.get("phone").as(String.class),lotteryFlowDTO.getPhone()));
                 }
                 if(lotteryFlowDTO.getCode()!=null){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("code").as(String.class),lotteryFlowDTO.getCode()));
+                    predicates.add(cb.equal(root.get("reward").get("code").as(String.class),lotteryFlowDTO.getCode()));
                 }
                 if(lotteryFlowDTO.getStatus()!=null&&lotteryFlowDTO.getStatus()!=0){
                     if(lotteryFlowDTO.getStatus()==1){
