@@ -112,11 +112,7 @@ public class ProductService {
         }else if(state == 4){
             return Result.fail("服务器繁忙，请稍后再试");
         }else{
-            product = new Product();
-            product.setCode(code);
-            product.setName(productInfo.getName());
-            product.setSupplierName(productInfo.getZGLB());
-            product.setSupplierDistrict(productInfo.getGHQY());
+            product = productInfo.covert();
             productRepository.saveAndFlush(product);
             return null;
         }
