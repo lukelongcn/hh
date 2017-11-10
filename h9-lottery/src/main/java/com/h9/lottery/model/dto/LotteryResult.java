@@ -21,6 +21,7 @@ public class LotteryResult {
     private String endTime;
     private long differentDate;
     private String nowTime;
+    private BigDecimal refreshTime = new BigDecimal(10.0);
 
     public String getQrCode() {
         return qrCode;
@@ -92,6 +93,14 @@ public class LotteryResult {
 
     public void setDifferentDate(long differentDate) {
         this.differentDate = differentDate;
+    }
+
+    public BigDecimal getRefreshTime() {
+        return refreshTime;
+    }
+
+    public void setRefreshTime(BigDecimal refreshTime) {
+        this.refreshTime = refreshTime;
     }
 }
 
