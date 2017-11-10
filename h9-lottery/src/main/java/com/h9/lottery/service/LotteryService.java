@@ -62,12 +62,13 @@ public class LotteryService {
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
         Date timesMonthnight = DateUtil.getTimesMonthnight(startDate);
         BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
-
         if (lotteryCount == null) {
             lotteryCount = new BigDecimal(0);
         }
-        //TODO 写成配置的
+
+//        当前的条码是否是新码
         BigDecimal userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode());
+        //TODO 写成配置的
         if (lotteryCount.compareTo(new BigDecimal(dayMaxotteryCount)) > 0
                 && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
 //            这个码没有被扫过，是新码,并且当天数量超标了
@@ -153,6 +154,7 @@ public class LotteryService {
         lotteryResult.setCode(code);
         //TODO 设置成通用配置
         lotteryResult.setRefreshTime(new BigDecimal(10));
+
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
@@ -163,6 +165,7 @@ public class LotteryService {
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
         lotteryResult.setDifferentDate(lastDate.getTime()-nowDate.getTime());
+
         if(lastDate.before(nowDate)){
             lottery(null, code);
         }
