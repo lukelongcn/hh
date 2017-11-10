@@ -81,8 +81,9 @@ public class UserController {
     @PutMapping("/user/phone/bind/{phone}/{code}")
     public Result bindPhone(@SessionAttribute("curUserId")Long userId,
                             @PathVariable String phone,
+                            @RequestHeader("token") String token,
                             @PathVariable String code){
-        return userService.bindPhone(userId,code,phone);
+        return userService.bindPhone(userId,token,code,phone);
     }
 
 

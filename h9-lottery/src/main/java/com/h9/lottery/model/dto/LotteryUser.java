@@ -18,6 +18,7 @@ public class LotteryUser {
     private BigDecimal money = new BigDecimal(0);
     private String desc;
     private boolean maxMoney;
+    private String createDate;
 
 
     public Long getUserId() {
@@ -82,6 +83,14 @@ public class LotteryUser {
 
     public void setMaxMoney(boolean maxMoney) {
         this.maxMoney = maxMoney;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }
 
