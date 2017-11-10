@@ -31,6 +31,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.sun.javafx.text.ScriptMapper.INVALID;
+
 /**
  * Created by itservice on 2017/10/26.
  */
@@ -292,7 +294,7 @@ public class UserService {
                    phoneUser.setOpenId(user.getOpenId());
                    phoneUser.setUnionId(user.getUnionId());
                 }
-                user.setStatus(3);
+                user.setStatus(User.StatusEnum.INVALID.getId());
                 userRepository.save(user);
             }
         }else{

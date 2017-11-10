@@ -15,6 +15,7 @@ import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.model.vo.LotteryResultDto;
 import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
+import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +74,7 @@ public class LotteryService {
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
 
-        // TODO 检查第三方库有没有数据
+        //  检查第三方库有没有数据
         Result result = exitsReward(lotteryVo.getCode());
         if(result!=null){
             return result;
@@ -325,10 +326,13 @@ public class LotteryService {
         return Result.success(lotteryFlows.result2Result(LotteryFlowDTO::new));
     }
 
+    @Resource
+    private ProductRepository productRepository;
 
     @Resource
     private FactoryProvider factoryProvider;
 
+    @Transactional
     public Result exitsReward(String code){
         Reward reward = rewardRepository.findByCode(code);
         if(reward!=null){
@@ -347,11 +351,20 @@ public class LotteryService {
         }else if(state == 4) {
             return Result.fail("服务繁忙，请稍后再试");
         }
+        ProductModel productInfo = factoryProvider.getProductInfo(code);
+        Product product = null;
+        if(productInfo!=null){
+            product = productInfo.covert();
+            product = productRepository.saveAndFlush(product);
+        }
         reward = new Reward();
+        // 关联上商品信息
+        reward.setProduct(product);
         reward.setMoney( lotteryModel.getBouns());
         reward.setCode(code);
         reward.setMd5Code(MD5Util.getMD5(code));
         rewardRepository.saveAndFlush(reward);
+
         return null;
     }
 

@@ -1,5 +1,7 @@
 package com.h9.lottery.provider.model;
 
+import com.h9.common.db.entity.Product;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
@@ -14,6 +16,16 @@ public class ProductModel {
     private String Name;
     private String ZGLB;
     private String GHQY;
+
+    public Product covert(){
+        Product product = new Product();
+        product.setCode(QueryCode);
+        product.setName(Name);
+        product.setSupplierName(ZGLB);
+        product.setSupplierDistrict(GHQY);
+        return product;
+    }
+
 
     public int getState() {
         return State;
