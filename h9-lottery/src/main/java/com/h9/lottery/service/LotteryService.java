@@ -155,8 +155,15 @@ public class LotteryService {
         if (lottery == null || reward.getPartakeCount() == 0) {
             return Result.fail("您没有参与该活动");
         }
-
         LotteryResult lotteryResult = new LotteryResult();
+
+        User findUser = userRepository.findOne(userId);
+        String tel = "";
+        if (findUser != null){
+            tel = findUser.getPhone() == null ? "" : findUser.getPhone();
+        }
+        lotteryResult.setTel(tel);
+
         lotteryResult.setCode(code);
         lotteryResult.setRefreshTime(new BigDecimal(lotteryConfig.getLotteryRefresh()));
 
