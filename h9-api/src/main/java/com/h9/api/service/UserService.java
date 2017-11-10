@@ -1,7 +1,6 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
@@ -18,8 +17,10 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -392,7 +393,11 @@ public class UserService {
         mapVo.put("emotionList", emotionList);
         mapVo.put("jobList", jobList);
         mapVo.put("sexList", sexList);
-
+        User user = userRepository.findOne(userId);
+        mapVo.put("avatar",user.getAvatar());
+        mapVo.put("nickName", user.getNickName());
+        mapVo.put("tel", user.getPhone());
+        mapVo.put("birthday", DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.DAY));
         return Result.success(mapVo);
     }
 
