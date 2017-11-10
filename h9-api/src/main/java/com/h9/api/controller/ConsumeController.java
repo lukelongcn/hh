@@ -10,6 +10,7 @@ import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -76,9 +77,12 @@ public class ConsumeController {
     @Secured(bindPhone = true)
     @PostMapping("/withdraw/{bankId}/{code}")
     public Result bankWithdraw(@SessionAttribute("curUserId") Long userId
-            , @PathVariable Long bankId, @PathVariable String code) {
+            , @PathVariable Long bankId
+            , @PathVariable String code
+            , @RequestParam(required = false) Long longitude
+            , @RequestParam(required = false) Long latitude, HttpServletRequest request) {
 
-        return consumeService.bankWithDraw(userId, bankId, code);
+        return consumeService.bankWithDraw(userId, bankId, code,longitude,latitude,request);
     }
 
     /**

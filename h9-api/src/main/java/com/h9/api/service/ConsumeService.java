@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -104,19 +105,18 @@ public class ConsumeService {
         }
 
         BigDecimal subtract = balance.subtract(realPrice);
-
 //        userAccountRepository.changeBalance(subtract, userId);
         userAccount.setBalance(subtract);
 
         Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
         order.setUser(user);
         orderItems.setOrders(order);
+        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
         orderItems.setMoney(new BigDecimal(50));
         orderItems.setName("手机话费充值");
 
         orderItemReposiroty.saveAndFlush(orderItems);
-        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         userAccountRepository.save(userAccount);
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
@@ -222,7 +222,7 @@ public class ConsumeService {
         return Result.success(voMap);
     }
 
-    public Result bankWithDraw(Long userId, Long bankId, String code) {
+    public Result bankWithDraw(Long userId, Long bankId, String code, Long longitude, Long latitude, HttpServletRequest request) {
 
         User user = userRepository.findOne(userId);
         //验证短信
@@ -271,7 +271,7 @@ public class ConsumeService {
         }
         userBank.setDefaultSelect(1);
         bankCardRepository.save(userBank);
-
+        commonService.newUserRecord(userId, latitude, longitude, request);
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
