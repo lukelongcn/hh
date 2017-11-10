@@ -16,10 +16,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -156,5 +161,24 @@ public class ApiApplicationTests {
 //        System.out.println(new File("/").getAbsolutePath());
 //        boolean buildOK = key.buildKey(merId, 0, path);
 //        System.out.println(is == null);
+    }
+
+    @Resource
+    OrdersRepository ordersRepository;
+
+    @Test
+    public void testSpecification() {
+
+        Specification<Orders> specification = new Specification<Orders>() {
+            @Override
+            public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+
+//                criteriaBuilder.equal()
+                return criteriaBuilder.equal(root.get("id").as(Long.class), 28L);
+            }
+        };
+        Orders order = ordersReposiroty.findOne(specification);
+        System.out.println(order);
+
     }
 }

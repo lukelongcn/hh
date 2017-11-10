@@ -2,7 +2,7 @@ package com.h9.lottery.model.vo;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * LotteryResultDto:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/7
  * Time: 16:01

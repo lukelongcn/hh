@@ -1,14 +1,13 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.OrderItems;
+import com.h9.common.db.entity.Orders;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Gonyb on 2017/11/10.
@@ -18,42 +17,126 @@ public class OrderItemVO {
     private Long id;
 
     @ApiModelProperty(value = "订单编号")
-    private Long orderId;
+    private String no;
 
-    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
-    @ApiModelProperty(value = "用户id")
-    private Long userId;
+    @ApiModelProperty(value ="收货人姓名")
+    private String userName;
 
-    @ApiModelProperty(value = "姓名")
-    private String name;
+    @ApiModelProperty(value ="收货人号码")
+    private String userPhone;
 
-    @ApiModelProperty(value = "手机号")
-    private String phone;
+    @ApiModelProperty(value ="用户收货地址")
+    private String userAddres;
 
-    @ApiModelProperty(value = "银行名称")
-    private String bankName;
+    @ApiModelProperty(value ="支付方式")
+    private Integer payMethond;
 
-    @ApiModelProperty(value = "银行卡号")
-    private String bankCardNo;
+    @ApiModelProperty(value ="支付方式描述")
+    private String payMethodDesc;
 
-    @ApiModelProperty(value = "提现金额")
+    @ApiModelProperty(value ="订单金额")
     private BigDecimal money = new BigDecimal(0);
 
-    @ApiModelProperty(value = "创建时间")
-    private Date createTime;
+    @ApiModelProperty(value ="需要支付的金额")
+    private BigDecimal payMoney = new BigDecimal(0);
 
+    @ApiModelProperty(value ="支付状态 1待支付 2 已支付")
+    private Integer payStatus = 1;
 
-    @ApiModelProperty(value = "转账成功时间")
-    private Date finishTime;
-
-    @ApiModelProperty(value = "提现状态 ： 1提现中  2银行转账中 3银行转账完成 ，4 提现异常,5退回")
+    @ApiModelProperty(value ="订单状态")
     private Integer status = 1;
 
-    @ApiModelProperty(value = "开户省")
-    private String provice;
+    @ApiModelProperty(value ="用户id")
+    private Long userId;
+    
+    @ApiModelProperty(value ="商品")
+    private String goods;
+    
+    @ApiModelProperty(value ="订单类别 1手机卡 2滴滴卡 3实物")
+    private Integer orderType ;
+    
+    @ApiModelProperty(value ="物流单号")
+    private String logisticsNumber;
 
-    @ApiModelProperty(value = "开户城市")
-    private String city;
+    @ApiModelProperty(value ="滴滴券号")
+    private String didiCardNumber;
+
+    @ApiModelProperty(value ="快递公司名")
+    private String expressName;
+    @ApiModelProperty(value = "商品数量")
+    private long count;
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime ;//创建时间
+    @ApiModelProperty(value = "更新时间")
+    private Date updateTime;//更新时间
+
+    public static OrderItemVO toOrderItemVO(Orders orders){
+        OrderItemVO orderItemVO = new OrderItemVO();
+        BeanUtils.copyProperties(orders,orderItemVO);
+        String collect = orders.getOrderItems().stream()
+                .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
+                .collect(Collectors.joining(","));
+        orderItemVO.setGoods(collect);
+        String didi = orders.getOrderItems().stream()
+                .map(OrderItems::getDidiCardNumber)
+                .collect(Collectors.joining(","));
+        orderItemVO.setDidiCardNumber(didi);
+        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());
+        orderItemVO.setPayMethodDesc(byCode==null?"未知的支付方式":byCode.getDesc());
+        //统计订单商品数量
+        long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
+        orderItemVO.setCount(sum);
+        return orderItemVO;
+    }
+
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
+    }
+
+    public String getExpressName() {
+        return expressName;
+    }
+
+    public void setExpressName(String expressName) {
+        this.expressName = expressName;
+    }
+
+    public String getPayMethodDesc() {
+        return payMethodDesc;
+    }
+
+    public void setPayMethodDesc(String payMethodDesc) {
+        this.payMethodDesc = payMethodDesc;
+    }
+
+    public String getDidiCardNumber() {
+        return didiCardNumber;
+    }
+
+    public void setDidiCardNumber(String didiCardNumber) {
+        this.didiCardNumber = didiCardNumber;
+    }
 
     public Long getId() {
         return id;
@@ -63,44 +146,44 @@ public class OrderItemVO {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getNo() {
+        return no;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setNo(String no) {
+        this.no = no;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getUserPhone() {
+        return userPhone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
-    public String getBankName() {
-        return bankName;
+    public String getUserAddres() {
+        return userAddres;
     }
 
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
+    public void setUserAddres(String userAddres) {
+        this.userAddres = userAddres;
     }
 
-    public String getBankCardNo() {
-        return bankCardNo;
+    public Integer getPayMethond() {
+        return payMethond;
     }
 
-    public void setBankCardNo(String bankCardNo) {
-        this.bankCardNo = bankCardNo;
+    public void setPayMethond(Integer payMethond) {
+        this.payMethond = payMethond;
     }
 
     public BigDecimal getMoney() {
@@ -111,12 +194,20 @@ public class OrderItemVO {
         this.money = money;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public BigDecimal getPayMoney() {
+        return payMoney;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setPayMoney(BigDecimal payMoney) {
+        this.payMoney = payMoney;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
     }
 
     public Integer getStatus() {
@@ -127,62 +218,37 @@ public class OrderItemVO {
         this.status = status;
     }
 
-    public String getProvice() {
-        return provice;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setProvice(String provice) {
-        this.provice = provice;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public String getCity() {
-        return city;
+    public String getGoods() {
+        return goods;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setGoods(String goods) {
+        this.goods = goods;
     }
 
-    public Date getFinishTime() {
-        return finishTime;
+    public Integer getOrderType() {
+        return orderType;
     }
 
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public String getLogisticsNumber() {
+        return logisticsNumber;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setLogisticsNumber(String logisticsNumber) {
+        this.logisticsNumber = logisticsNumber;
     }
-
-/* public static WithdrawRecordVO toWithdrawRecordVO(Map map){
-     *//*   WithdrawRecordVO withdrawRecordVO = new WithdrawRecordVO();
-        withdrawRecordVO.setBankCardNo(MapUtils.getString(map,"no"));
-        withdrawRecordVO.setBankName(MapUtils.getString(map,"bank_name"));
-        BeanUtils.
-        withdrawRecordVO.setCity(MapUtils.getString(map,"city"));
-        withdrawRecordVO.setProvice(MapUtils.getString(map,"provice"));
-        withdrawRecordVO.setCreateTime(DateUtil.formatDate(MapUtils.getString(map,"create_time"),DateUtil.FormatType.SECOND));
-        withdrawRecordVO.setFinishTime(DateUtil.formatDate(MapUtils.getString(map,"finish_time"),DateUtil.FormatType.SECOND));
-        withdrawRecordVO.setId(MapUtils.getLong(map,"id"));
-        withdrawRecordVO.setMoney(new BigDecimal(MapUtils.getString(map,"money")));*//*
-    }*/
-
-    public static List<OrderItemVO> toWithdrawRecordVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
-        if(maps==null){
-            return null;
-        }else{
-            List<OrderItemVO> withdrawRecordVOS = new ArrayList<>();
-            for(Map map:maps){
-                OrderItemVO withdrawRecordVO = new OrderItemVO();
-                org.apache.commons.beanutils.BeanUtils.populate(withdrawRecordVO,map);
-                withdrawRecordVOS.add(withdrawRecordVO);
-            }
-            return withdrawRecordVOS;
-        }
-    }
+    
+    
 }

@@ -25,11 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * ProductService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/7
  * Time: 19:21
@@ -58,6 +59,14 @@ public class ProductService {
         Result result = findByCode(code);
         if(result!=null) return result;
 
+//      TODO  黑名单 改成配置的
+        int date = -60 * 1;
+        Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
+        long errCount = productLogRepository.findByUserId(userId, startDate);
+        long userCode = productLogRepository.findByUserId(userId, code);
+        if(errCount>3&&userCode<=0){
+            return Result.fail("您的错误次数已经到达上限，请稍后再试");
+        }
         Product product4Update = productRepository.findByCode4Update(code);
         BigDecimal count = product4Update.getCount();
 

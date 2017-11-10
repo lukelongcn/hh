@@ -13,7 +13,7 @@ import static org.jboss.logging.Logger.getLogger;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * RandomDataUtil:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/6
  * Time: 11:07

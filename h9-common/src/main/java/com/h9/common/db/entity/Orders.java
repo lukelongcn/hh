@@ -32,10 +32,10 @@ public class Orders extends BaseEntity {
 
     @Column(name = "no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '订单编号'")
     private String no;
-    
+
     @Column(name = "supplier_id", columnDefinition = "bigint(20) default null COMMENT '供应商id'")
     private Long supplierId;
-    
+
     @Column(name = "delivery_id", columnDefinition = "bigint(20) default null COMMENT '配送'")
     private Long deliveryId;
 
@@ -47,46 +47,95 @@ public class Orders extends BaseEntity {
 
     @Column(name = "user_name", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
     private String userName;
-    
+
     @Column(name = "user_phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
     private String userPhone;
-    
+
     @Column(name = "user_addres", columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")
     private String userAddres;
-    
-    @Column(name = "pay_methond",nullable = false,columnDefinition = "int default 0 COMMENT '支付方式'")
+
+    /**
+     * description: 支付方式
+     * @see PayMethodEnum
+     */
+    @Column(name = "pay_methond", nullable = false, columnDefinition = "int default 0 COMMENT '支付方式'")
     private Integer payMethond;
-    
-    @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '订单金额'")
+
+    @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '订单金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "pay_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付的金额'")
+
+    @Column(name = "pay_money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付的金额'")
     private BigDecimal payMoney = new BigDecimal(0);
-    
-    @Column(name = "pay_status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '支付状态 1待支付 2 已支付'")
+
+    @Column(name = "pay_status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '支付状态 1待支付 2 已支付'")
     private Integer payStatus = 1;
-    
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
+
+    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
     private Integer status = 1;
-    
+
     @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) COMMENT ''")
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) COMMENT ''")
     private User user;
 
-    @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
     private List<OrderItems> orderItems = new ArrayList<>();
 
+    public enum PayMethodEnum {
+
+        BALANCE_PAY(1, "余额支付"),
+        VBPAY(2, "vb支付");
+
+        private int code;
+        private String desc;
+
+        PayMethodEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static PayMethodEnum findByCode(int code){
+            PayMethodEnum[] values = values();
+            for(PayMethodEnum smsTypeEnum: values){
+                if(code == smsTypeEnum.getCode()){
+                    return smsTypeEnum;
+                }
+            }
+            return null;
+        }
+    }
+
     /**
      * description: 标识订单类别
+     *
      * @see
      */
-    @Column(name="order_type",columnDefinition = "int default 1 COMMENT'订单类别'")
-    private Integer orderType ;
+    @Column(name = "order_type", columnDefinition = "int default 1 COMMENT'订单类别'")
+    private Integer orderType;
 
     @Column(name = "loginstics_number")
     private String logisticsNumber;
+    @Column(name = "express_name",nullable = false, columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
+    private String expressName;
+
+    public String getExpressName() {
+        return expressName;
+    }
+
+    public void setExpressName(String expressName) {
+        this.expressName = expressName;
+    }
 
     public String getLogisticsNumber() {
         return logisticsNumber;

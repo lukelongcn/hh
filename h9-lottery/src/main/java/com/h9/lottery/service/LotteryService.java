@@ -8,6 +8,7 @@ import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
+import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
@@ -17,9 +18,11 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -37,9 +40,12 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
 @Service
 public class LotteryService {
 
-    public static int dayMaxotteryCount = 100;
+
+    @Resource
+    private LotteryConfig lotteryConfig;
     @Resource
     private RewardRepository rewardRepository;
+
     @Resource
     private LotteryRepository lotteryRepository;
     @Resource
@@ -62,13 +68,14 @@ public class LotteryService {
         Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
         Date timesMonthnight = DateUtil.getTimesMonthnight(startDate);
         BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
-
         if (lotteryCount == null) {
             lotteryCount = new BigDecimal(0);
         }
-        //TODO 写成配置的
+
+//        当前的条码是否是新码
         BigDecimal userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode());
-        if (lotteryCount.compareTo(new BigDecimal(dayMaxotteryCount)) > 0
+
+        if (lotteryCount.compareTo(new BigDecimal(lotteryConfig.getDayMaxotteryCount())) > 0
                 && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
 //            这个码没有被扫过，是新码,并且当天数量超标了
             return Result.fail("您的扫码数量已经超过当天限制了");
@@ -76,7 +83,7 @@ public class LotteryService {
 
         //  检查第三方库有没有数据
         Result result = exitsReward(lotteryVo.getCode());
-        if(result!=null){
+        if (result != null) {
             return result;
         }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
@@ -148,21 +155,29 @@ public class LotteryService {
         if (lottery == null || reward.getPartakeCount() == 0) {
             return Result.fail("您没有参与该活动");
         }
-
         LotteryResult lotteryResult = new LotteryResult();
+
+        User findUser = userRepository.findOne(userId);
+        String tel = "";
+        if (findUser != null){
+            tel = findUser.getPhone() == null ? "" : findUser.getPhone();
+        }
+        lotteryResult.setTel(tel);
+
         lotteryResult.setCode(code);
+        lotteryResult.setRefreshTime(new BigDecimal(lotteryConfig.getLotteryRefresh()));
 
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
 
         Date updateTime = lotteryRepository.findByRewardLastTime(reward);
-        //TODO 暂时设置为 5 分钟
-        Date lastDate = DateUtil.getDate(updateTime, 12*60, Calendar.MINUTE);
+        Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.MINUTE);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
-        lotteryResult.setDifferentDate(lastDate.getTime()-nowDate.getTime());
-        if(lastDate.before(nowDate)){
+        lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
+
+        if (lastDate.before(nowDate)) {
             lottery(null, code);
         }
 
@@ -172,13 +187,13 @@ public class LotteryService {
         lotteryResult.setRoomUser(userId.equals(reward.getUserId()));
         //TODO
         LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
-        if(lotteryFlow!=null){
+        if (lotteryFlow != null) {
             lotteryResult.setMoney(lotteryFlow.getMoney());
         }
 
-        lotteryResult.setQrCode(""+code);
+        lotteryResult.setQrCode("" + code);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
-        if(islottery){
+        if (islottery) {
             LotteryFlow top1LotteryFlow = lotteryFlowRepository.findTop1ByRewardOrderByMoneyDesc(reward);
             List<LotteryFlow> flows = lotteryFlowRepository.findByReward(reward);
             for (int i = 0; i < flows.size(); i++) {
@@ -189,21 +204,21 @@ public class LotteryService {
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
                 lotteryUser.setMaxMoney(top1LotteryFlow.getId().equals(lotteryFromDb.getId()));
-                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(),"MM-dd HH:mm"));
+                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
                 User user = userRepository.findOne(lotteryFromDb.getUser().getId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
                 lotteryUser.setMe(userId.equals(lotteryUser.getUserId()));
                 lotteryUsers.add(lotteryUser);
             }
-        }else{
+        } else {
             List<Lottery> lotteryList = lotteryRepository.findByReward(reward);
             for (int i = 0; i < lotteryList.size(); i++) {
                 Lottery lotteryFromDb = lotteryList.get(i);
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
                 lotteryUser.setUserId(lotteryFromDb.getUserId());
-                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(),"MM-dd HH:mm"));
+                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
                 User user = userRepository.findOne(lotteryFromDb.getUserId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
@@ -217,13 +232,13 @@ public class LotteryService {
     }
 
     @Transactional
-    public Result lottery(Long curUserId,String code) {
+    public Result lottery(Long curUserId, String code) {
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
         }
-        if(curUserId!=null){
-            if(!curUserId.equals(reward.getUserId())){
+        if (curUserId != null) {
+            if (!curUserId.equals(reward.getUserId())) {
                 return Result.fail("你无权操作");
             }
         }
@@ -242,15 +257,15 @@ public class LotteryService {
         lotteryRepository.save(lotteries);
         lotteryFlowRepository.save(lotteryFlows);
         LotteryModel lotteryModel = factoryProvider.updateLotteryStatus(code);
-        if(lotteryModel!=null){
+        if (lotteryModel != null) {
             reward.setFactoryStatus(lotteryModel.getState());
         }
         //变更奖励状态
         reward.setStatus(END.getCode());
-        if(curUserId!=null){
+        if (curUserId != null) {
             //手动开启奖励的
             reward.setStartType(1);
-        }else{
+        } else {
             //自动开启奖励的
             reward.setStartType(2);
         }
@@ -260,11 +275,10 @@ public class LotteryService {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);
             Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
-            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "","抢红包获取余额");
+            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "", "抢红包获取余额");
         }
         return Result.success();
     }
-
 
 
     /****
@@ -275,7 +289,7 @@ public class LotteryService {
      * @return
      */
     @Transactional
-    public List<LotteryFlow> getReward(Reward reward, List<Lottery> lotteryList,List<Lottery> lotteries) {
+    public List<LotteryFlow> getReward(Reward reward, List<Lottery> lotteryList, List<Lottery> lotteries) {
         BigDecimal money = reward.getMoney();
         int size = lotteryList.size();
         Map<Integer, BigDecimal> moneyMap = new HashMap<>();
@@ -312,16 +326,14 @@ public class LotteryService {
 
     static List<String> list = new ArrayList<>();
 
-    static{
+    static {
         list.add("一杯高炉酒，红包啥都有");
         list.add("换个姿势抢，红包会更多");
         list.add("与君共饮一杯酒！");
     }
 
 
-
-
-    public Result<PageResult<LotteryFlowDTO>>  history(Long userId,int  page,int limit){
+    public Result<PageResult<LotteryFlowDTO>> history(Long userId, int page, int limit) {
         PageResult<LotteryFlow> lotteryFlows = lotteryFlowRepository.findByReward(userId, page, limit);
         return Result.success(lotteryFlows.result2Result(LotteryFlowDTO::new));
     }
@@ -333,40 +345,38 @@ public class LotteryService {
     private FactoryProvider factoryProvider;
 
     @Transactional
-    public Result exitsReward(String code){
+    public Result exitsReward(String code) {
         Reward reward = rewardRepository.findByCode(code);
-        if(reward!=null){
+        if (reward != null) {
             return null;
         }
         LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
-        if(lotteryModel == null){
+        if (lotteryModel == null) {
             return Result.fail("服务繁忙，请稍后再试");
         }
         int state = lotteryModel.getState();
-        if(state == 2) {
+        if (state == 2) {
             return Result.fail("兑奖码已兑奖完毕");
-        }
-        else if(state == 3) {
+        } else if (state == 3) {
             return Result.fail("兑奖码已兑奖完毕");
-        }else if(state == 4) {
+        } else if (state == 4) {
             return Result.fail("服务繁忙，请稍后再试");
         }
         ProductModel productInfo = factoryProvider.getProductInfo(code);
         Product product = null;
-        if(productInfo!=null){
+        if (productInfo != null) {
             product = productInfo.covert();
             product = productRepository.saveAndFlush(product);
         }
         reward = new Reward();
         // 关联上商品信息
         reward.setProduct(product);
-        reward.setMoney( lotteryModel.getBouns());
+        reward.setMoney(lotteryModel.getBouns());
         reward.setCode(code);
         reward.setMd5Code(MD5Util.getMD5(code));
         rewardRepository.saveAndFlush(reward);
         return null;
     }
-
 
 
 }
