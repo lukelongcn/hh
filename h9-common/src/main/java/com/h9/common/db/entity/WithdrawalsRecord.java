@@ -63,9 +63,6 @@ public class WithdrawalsRecord extends BaseEntity {
     private UserRecord userRecord;
 
 
-    @Column(name = "user_record_id")
-    private Long userRecordId;
-
     public enum statusEnum{
         BANK_HANDLER(2,"银行转账中"),
 //        BANK_TANSLATE(2,"银行转账完成"),
@@ -98,13 +95,7 @@ public class WithdrawalsRecord extends BaseEntity {
         }
     }
 
-    public Long getUserRecordId() {
-        return userRecordId;
-    }
 
-    public void setUserRecordId(Long userRecordId) {
-        this.userRecordId = userRecordId;
-    }
 
     public WithdrawalsRecord(Long userId, BigDecimal money , UserBank userBank , String remarks) {
         this.userId = userId;
