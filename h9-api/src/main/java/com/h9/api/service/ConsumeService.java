@@ -57,7 +57,7 @@ public class ConsumeService {
     @Resource
     private GoodsReposiroty goodsReposiroty;
     @Resource
-    private OrdersReposiroty ordersReposiroty;
+    private OrdersRepository ordersReposiroty;
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
     @Resource
