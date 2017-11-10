@@ -32,8 +32,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.sun.javafx.text.ScriptMapper.INVALID;
-
 /**
  * Created by itservice on 2017/10/26.
  */
