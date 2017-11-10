@@ -21,7 +21,6 @@ public class TestController {
      * description: 手机号登录
      */
     @GetMapping("/hello")
-    @Secured
     public Result hello(){
         return Result.success();
     }
