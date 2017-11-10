@@ -1,6 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.finance.TransferLotterryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 
 /**
  * @author: George
@@ -32,8 +34,6 @@ public class FinanceController {
     @GetMapping(value="/withdraw_record/page")
     @ApiOperation("分页获取提现记录")
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
-        //return this.communityService.getBannerTypes(pageDTO);
-        //return  Result.success(new PageResult<WithdrawRecordVO>());
         return this.financeService.getWithdrawRecords(withdrawRecordQueryDTO);
     }
 
@@ -41,8 +41,6 @@ public class FinanceController {
     @PostMapping(value="/withdraw_record/{id}/status")
     @ApiOperation("提现退回")
     public Result<WithdrawalsRecord> cancelWithdrawRecord(@PathVariable long id)  {
-        //return this.communityService.getBannerTypes(pageDTO);
-        //return  Result.success(new PageResult<WithdrawRecordVO>());
         return this.financeService.updateWithdrawRecordStatus(id);
     }
 
@@ -50,7 +48,13 @@ public class FinanceController {
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
     public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
-        // return Result.success(new PageResult<LotteryFlowActivityVO>());
         return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
+    }
+
+    @Secured
+    @PostMapping(value="/lottery/flow/record")
+    @ApiOperation("转账")
+    public Result transferFromLotteryFlows( @RequestBody TransferLotterryFLowDTO transferLotterryFLowDTO)  {
+        return this.financeService.transferFromLotteryFlows(transferLotterryFLowDTO.getIds());
     }
 }
