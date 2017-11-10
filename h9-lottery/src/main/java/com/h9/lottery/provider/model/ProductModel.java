@@ -4,7 +4,7 @@ import com.h9.common.db.entity.Product;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * ProductModel:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/8
  * Time: 20:04

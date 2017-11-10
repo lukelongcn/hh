@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * LotteryModel:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/8
  * Time: 18:15
