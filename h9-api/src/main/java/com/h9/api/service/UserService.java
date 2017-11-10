@@ -49,9 +49,12 @@ public class UserService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
-
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private ArticleRepository articleRepository;
+    @Resource
+    private ArticleTypeRepository articleTypeRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -385,5 +388,21 @@ public class UserService {
         }
 
         return list;
+    }
+
+    public Result questionHelp() {
+
+        ArticleType articleType = articleTypeRepository.findByCode("questionHelp");
+        List<Article> questHelp = articleRepository.findByType(articleType);
+
+        if(questHelp == null) return Result.success();
+        List<Map<String, String>> ListvO = new ArrayList<>();
+        questHelp.forEach(article -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("title", article.getTitle());
+            map.put("articleId",article.getId()+"");
+            ListvO.add(map);
+        });
+        return Result.success(ListvO);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -46,12 +47,11 @@ public class ApiApplication {
         logger.info("私钥位置: "+chinaPayKeyPath);
         boolean exists = new File(chinaPayKeyPath).exists();
         logger.info("存在: "+exists);
-        if (!exists) {
-            logger.info("银联私钥不存在,启动终止!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
-        }
+//        if (!exists) {
+//            logger.info("银联私钥不存在,启动终止!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        }
 
     }
-
 
     @Bean
     public RestTemplate restTemplate() {
@@ -59,6 +59,5 @@ public class ApiApplication {
         restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
         return restTemplate;
     }
-
 
 }
