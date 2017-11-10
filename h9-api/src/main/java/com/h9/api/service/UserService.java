@@ -6,7 +6,6 @@ import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
-
 import com.h9.api.provider.SMService;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
@@ -20,7 +19,6 @@ import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,11 +26,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.sun.javafx.text.ScriptMapper.INVALID;
 
 /**
  * Created by itservice on 2017/10/26.

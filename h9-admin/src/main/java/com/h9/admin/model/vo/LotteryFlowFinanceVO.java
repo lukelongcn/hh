@@ -27,8 +27,14 @@ public class LotteryFlowFinanceVO {
     @ApiModelProperty(value = "金额" )
     private BigDecimal money = new BigDecimal(0);
 
-    @ApiModelProperty(value = "创建时间" )
+    @ApiModelProperty(value = "发奖时间" )
     private Date createTime;
+
+    @ApiModelProperty(value = "转账状态" )
+    private Integer transferStatus;
+
+    @ApiModelProperty(value = "转账时间" )
+    private Date transferTime;
 
     public Long getId() {
         return id;
@@ -77,6 +83,22 @@ public class LotteryFlowFinanceVO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getTransferStatus() {
+        return transferStatus;
+    }
+
+    public void setTransferStatus(Integer transferStatus) {
+        this.transferStatus = transferStatus;
+    }
+
+    public Date getTransferTime() {
+        return transferTime;
+    }
+
+    public void setTransferTime(Date transferTime) {
+        this.transferTime = transferTime;
     }
 
     public static LotteryFlowFinanceVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
