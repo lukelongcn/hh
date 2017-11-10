@@ -4,8 +4,12 @@ import com.h9.common.db.entity.LotteryFlow;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: George
@@ -30,12 +34,12 @@ public class LotteryFlowFinanceVO {
     @ApiModelProperty(value = "发奖时间" )
     private Date createTime;
 
-    @ApiModelProperty(value = "转账状态" )
+   /* @ApiModelProperty(value = "转账状态" )
     private Integer transferStatus;
 
     @ApiModelProperty(value = "转账时间" )
     private Date transferTime;
-
+*/
     public Long getId() {
         return id;
     }
@@ -85,7 +89,7 @@ public class LotteryFlowFinanceVO {
         this.createTime = createTime;
     }
 
-    public Integer getTransferStatus() {
+  /*  public Integer getTransferStatus() {
         return transferStatus;
     }
 
@@ -99,7 +103,7 @@ public class LotteryFlowFinanceVO {
 
     public void setTransferTime(Date transferTime) {
         this.transferTime = transferTime;
-    }
+    }*/
 
     public static LotteryFlowFinanceVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
         LotteryFlowFinanceVO lotteryFlowFinanceVO = new LotteryFlowFinanceVO();
@@ -108,5 +112,19 @@ public class LotteryFlowFinanceVO {
         lotteryFlowFinanceVO.setPhone(lotteryFlow.getUser().getPhone());
         lotteryFlowFinanceVO.setNickName(lotteryFlow.getUser().getNickName());
         return lotteryFlowFinanceVO;
+    }
+
+    public static List<LotteryFlowFinanceVO> toLotteryFlowFinanceVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
+        if(maps==null){
+            return null;
+        }else{
+            List<LotteryFlowFinanceVO> lotteryFlowFinanceVOS = new ArrayList<>();
+            for(Map map:maps){
+                LotteryFlowFinanceVO lotteryFlowFinanceVO = new LotteryFlowFinanceVO();
+                org.apache.commons.beanutils.BeanUtils.populate(lotteryFlowFinanceVO,map);
+                lotteryFlowFinanceVOS.add(lotteryFlowFinanceVO);
+            }
+            return lotteryFlowFinanceVOS;
+        }
     }
 }

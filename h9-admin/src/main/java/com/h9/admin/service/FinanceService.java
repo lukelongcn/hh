@@ -14,6 +14,7 @@ import com.h9.common.db.entity.WithdrawalsRecord;
 import com.h9.common.db.repo.LotteryFlowRepository;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -98,21 +100,43 @@ public class FinanceService {
         return Result.success(this.withdrawalsRecordRepository.save(withdrawalsRecord));
     }
 
-    public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
+    public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
         PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowFinanceDTO.getPageNumber(), lotteryFlowFinanceDTO.getPageSize(),sort);
-        Page<LotteryFlow> lotteryFlows = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository.buildFinanceSpecification(lotteryFlowFinanceDTO),pageRequest);
-        PageResult<LotteryFlow> pageResult = new PageResult<>(lotteryFlows);
-        return Result.success(this.toLotteryFlowFinanceVO(pageResult));
+        String sql = this.buildLotteryFlowQueryString(lotteryFlowFinanceDTO);
+        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFlowFinanceDTO.getPageNumber()-1,lotteryFlowFinanceDTO.getPageSize());
+        long total = this.jpaRepository.nativeCount(sql);
+        //解决Apache的BeanUtils对日期的支持不是很好的问题
+        ConvertUtils.register(new DateConverter(null),java.util.Date.class);
+        List<LotteryFlowFinanceVO> lotteryFlowFinanceVOS = LotteryFlowFinanceVO.toLotteryFlowFinanceVOs(maps);
+        PageResult<LotteryFlowFinanceVO> pageResult = new PageResult<>(lotteryFlowFinanceDTO.getPageNumber(),lotteryFlowFinanceDTO.getPageSize(),total,lotteryFlowFinanceVOS);
+        return Result.success(pageResult);
     }
 
-    private PageResult<LotteryFlowFinanceVO> toLotteryFlowFinanceVO(PageResult lotteryFlows){
-        List<LotteryFlowFinanceVO> flowFinanceVOList = new ArrayList<>();
-        for(LotteryFlow lotteryFlow:(List<LotteryFlow>)lotteryFlows.getData()){
-            flowFinanceVOList.add(LotteryFlowFinanceVO.toLotteryFlowFinanceVO(lotteryFlow));
+
+
+    private String buildLotteryFlowQueryString(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
+        StringBuilder sql = new StringBuilder(
+                "select o.* from(select lf.id,lf.money,lf.create_time as createTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow lf ,user u,user_account ua,reward r" +
+                        " where lf.user_id=u.id and lf.reward_id=r.id and lf.user_id=ua.user_id {0}) as o " +
+                        "left join lottery_flow_record lfr on o.id = lfr.lottery_flow_id where lfr.id is null");
+        StringBuilder condition  = new StringBuilder("");
+        if(!StringUtils.isEmpty(lotteryFlowFinanceDTO.getCode())){
+            condition.append(" and r.code='").append(lotteryFlowFinanceDTO.getCode()).append("'");
         }
-        lotteryFlows.setData(flowFinanceVOList);
-        return lotteryFlows;
+        if(!StringUtils.isEmpty(lotteryFlowFinanceDTO.getPhone())){
+            condition.append(" and u.phone='").append(lotteryFlowFinanceDTO.getPhone()).append("'");
+        }
+        if(lotteryFlowFinanceDTO.getStartTime()!=null){
+            condition.append(" and lf.create_time>='").append(DateUtil.formatDate(lotteryFlowFinanceDTO.getStartTime(),DateUtil.FormatType.SECOND)).append("'");
+        }
+        if(lotteryFlowFinanceDTO.getEndTime()!=null){
+            condition.append(" and lf.create_time<'")
+                    .append(DateUtil.formatDate(DateUtil.addDays(lotteryFlowFinanceDTO.getEndTime(),1),DateUtil.FormatType.SECOND))
+                    .append("'");
+        }
+        sql.append(" order by o.id desc");
+        return MessageFormat.format(sql.toString(),condition);
     }
 
 }

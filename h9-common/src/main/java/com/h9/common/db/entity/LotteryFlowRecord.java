@@ -11,7 +11,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  * @author: George
  * @date: 2017/11/10 14:41
  */
-@Entity
+@Entity(name="活动参与记录的转账记录")
 @Table(name = "lottery_flow_record")
 public class LotteryFlowRecord  extends BaseEntity {
     @Id
