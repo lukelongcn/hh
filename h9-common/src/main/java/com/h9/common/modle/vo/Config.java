@@ -2,7 +2,7 @@ package com.h9.common.modle.vo;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * Config:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/9
  * Time: 14:25

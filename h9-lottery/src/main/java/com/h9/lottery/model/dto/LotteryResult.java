@@ -22,6 +22,15 @@ public class LotteryResult {
     private long differentDate;
     private String nowTime;
     private BigDecimal refreshTime = new BigDecimal(10.0);
+    private String tel = "";
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
 
     public String getQrCode() {
         return qrCode;

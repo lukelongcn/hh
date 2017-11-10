@@ -29,7 +29,7 @@ public class OrderService {
         order.setUserName(nickName);
         order.setPayMoney(money);
         order.setNo("");
-        order.setPayMethond(1);
+        order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
         order.setUserPhone(tel);
         order.setSupplierName(supplierName);
         order.setPayStatus(1);

@@ -54,11 +54,16 @@ public class Orders extends BaseEntity {
     @Column(name = "user_addres", columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")
     private String userAddres;
 
+    /**
+     * description: 支付方式
+     * @see PayMethodEnum
+     */
     @Column(name = "pay_methond", nullable = false, columnDefinition = "int default 0 COMMENT '支付方式'")
     private Integer payMethond;
 
     @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '订单金额'")
     private BigDecimal money = new BigDecimal(0);
+
 
     @Column(name = "pay_money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付的金额'")
     private BigDecimal payMoney = new BigDecimal(0);
