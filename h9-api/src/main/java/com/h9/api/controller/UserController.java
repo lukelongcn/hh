@@ -78,12 +78,12 @@ public class UserController {
      * description: 绑定手机号码
      */
     @Secured
-    @PutMapping("/user/phone/bind/{phone}/{code}")
+    @PostMapping("/user/phone/bind")
     public Result bindPhone(@SessionAttribute("curUserId")Long userId,
-                            @PathVariable String phone,
                             @RequestHeader("token") String token,
-                            @PathVariable String code){
-        return userService.bindPhone(userId,token,code,phone);
+                            @Valid@RequestBody UserLoginDTO personInfoDTO
+    ){
+        return userService.bindPhone(userId,token,personInfoDTO.getCode(),personInfoDTO.getPhone());
     }
 
 
