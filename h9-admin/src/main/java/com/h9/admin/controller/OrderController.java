@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 订单
@@ -37,9 +38,15 @@ public class OrderController {
 
     @Secured
     @PostMapping(value = "/express")
-    @ApiOperation("修改物流信息")
+    @ApiOperation("填写/修改订单物流信息")
     public Result<OrderItemVO> editExpress(ExpressDTO expressDTO){
         return orderService.editExpress(expressDTO);
     }
-    
+
+    @Secured
+    @GetMapping(value = "/supportExpress")
+    @ApiOperation("获取支持配送的物流公司")
+    public Result<List<String>> getSupportExpress(){
+        return orderService.getSupportExpress();
+    }
 }
