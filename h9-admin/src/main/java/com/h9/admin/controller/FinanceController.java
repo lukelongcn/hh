@@ -7,14 +7,12 @@ import com.h9.admin.service.FinanceService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.entity.WithdrawalsRecord;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -38,12 +36,12 @@ public class FinanceController {
         return this.financeService.getWithdrawRecords(withdrawRecordQueryDTO);
     }
 
-    /*@Secured
+    @Secured
     @PostMapping(value="/withdraw_record/{id}/status")
     @ApiOperation("提现退回")
-    public Result<PageResult<WithdrawRecordVO>> cancelWithdrawRecord()  {
+    public Result<WithdrawalsRecord> cancelWithdrawRecord(@PathVariable long id)  {
         //return this.communityService.getBannerTypes(pageDTO);
         //return  Result.success(new PageResult<WithdrawRecordVO>());
-        return this.financeService.getWithdrawRecords(withdrawRecordQueryDTO);
-    }*/
+        return this.financeService.updateWithdrawRecordStatus(id);
+    }
 }
