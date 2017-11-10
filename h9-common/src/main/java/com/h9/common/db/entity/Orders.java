@@ -100,16 +100,19 @@ public class Orders extends BaseEntity {
             return code;
         }
 
-        public void setCode(int code) {
-            this.code = code;
-        }
 
         public String getDesc() {
             return desc;
         }
 
-        public void setDesc(String desc) {
-            this.desc = desc;
+        public static PayMethodEnum findByCode(int code){
+            PayMethodEnum[] values = values();
+            for(PayMethodEnum smsTypeEnum: values){
+                if(code == smsTypeEnum.getCode()){
+                    return smsTypeEnum;
+                }
+            }
+            return null;
         }
     }
 
@@ -123,6 +126,16 @@ public class Orders extends BaseEntity {
 
     @Column(name = "loginstics_number")
     private String logisticsNumber;
+    @Column(name = "express_name",nullable = false, columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
+    private String expressName;
+
+    public String getExpressName() {
+        return expressName;
+    }
+
+    public void setExpressName(String expressName) {
+        this.expressName = expressName;
+    }
 
     public String getLogisticsNumber() {
         return logisticsNumber;
