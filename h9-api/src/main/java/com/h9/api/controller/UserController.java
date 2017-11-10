@@ -77,7 +77,7 @@ public class UserController {
     /**
      * description: 绑定手机号码
      */
-    @Secured
+    @Secured(bindPhone = false)
     @PostMapping("/user/phone/bind")
     public Result bindPhone(@SessionAttribute("curUserId")Long userId,
                             @RequestHeader("token") String token,
