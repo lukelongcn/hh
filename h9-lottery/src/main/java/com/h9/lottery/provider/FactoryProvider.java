@@ -5,6 +5,7 @@ import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -22,17 +23,35 @@ public class FactoryProvider {
     private RestTemplate restTemplate;
 
     public LotteryModel findByLotteryModel(String code) {
-        return restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, LotteryModel.class);
+        try {
+            LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, LotteryModel.class);
+            return lotteryModel;
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
     public LotteryModel updateLotteryStatus(String code) {
-        return  restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
+        try {
+            LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
+            return lotteryModel;
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
     public ProductModel getProductInfo(String code) {
-        return restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, ProductModel.class);
+        try {
+            ProductModel productModel = restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, ProductModel.class);
+            return productModel;
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
+        return null;
 
     }
 
