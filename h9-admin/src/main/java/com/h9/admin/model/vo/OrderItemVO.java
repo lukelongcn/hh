@@ -62,6 +62,8 @@ public class OrderItemVO {
 
     @ApiModelProperty(value ="快递公司名")
     private String expressName;
+    @ApiModelProperty(value = "商品数量")
+    private long count;
 
 
     public static OrderItemVO toOrderItemVO(Orders orders){
@@ -77,7 +79,18 @@ public class OrderItemVO {
         orderItemVO.setDidiCardNumber(didi);
         Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());
         orderItemVO.setPayMethodDesc(byCode==null?"未知的支付方式":byCode.getDesc());
+        //统计订单商品数量
+        long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
+        orderItemVO.setCount(sum);
         return orderItemVO;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
     public String getExpressName() {
