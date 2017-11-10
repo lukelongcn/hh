@@ -17,11 +17,10 @@ import javax.annotation.Resource;
 @Service
 public class OrderService {
     @Resource
-    private OrdersRepository ordersReposiroty;
+    private OrdersRepository ordersRepository;
     
     public Result<PageResult<Orders>> orderList(PageDTO pageDTO) {
-        Page<Orders> all = ordersReposiroty.findAll(pageDTO.toPageRequest());
-
-        return null;
+        Page<Orders> all = ordersRepository.findAll(pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(all));
     }
 }
