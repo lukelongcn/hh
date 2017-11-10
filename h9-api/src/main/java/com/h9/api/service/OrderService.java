@@ -5,21 +5,12 @@ import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Orders;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.repo.OrdersReposiroty;
-import org.springframework.core.annotation.Order;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import com.h9.common.db.repo.OrdersRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -29,7 +20,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     @Resource
-    private OrdersReposiroty ordersReposiroty;
+    private OrdersRepository ordersReposiroty;
     @Resource
     private UserService userService;
 

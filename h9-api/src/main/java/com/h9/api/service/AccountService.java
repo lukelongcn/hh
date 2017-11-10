@@ -3,7 +3,6 @@ package com.h9.api.service;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.MyCouponsVO;
-import com.h9.api.model.vo.OrderListVO;
 import com.h9.api.model.vo.UserAccountInfoVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -17,7 +16,6 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class AccountService {
     @Resource
     private UserBankRepository userBankRepository;
     @Resource
-    private OrdersReposiroty ordersReposiroty;
+    private OrdersRepository ordersReposiroty;
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
 
