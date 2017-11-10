@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 /**
@@ -64,7 +65,10 @@ public class OrderItemVO {
     private String expressName;
     @ApiModelProperty(value = "商品数量")
     private long count;
-
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime ;//创建时间
+    @ApiModelProperty(value = "更新时间")
+    private Date updateTime;//更新时间
 
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
@@ -83,6 +87,23 @@ public class OrderItemVO {
         long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderItemVO.setCount(sum);
         return orderItemVO;
+    }
+
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public long getCount() {
