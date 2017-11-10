@@ -93,7 +93,6 @@ public class UserController {
     @Secured(bindPhone = true)
     @GetMapping("/user/info/options")
     public Result options(@SessionAttribute("curUserId")Long userId){
-
         return userService.findAllOptions(userId);
     }
 
