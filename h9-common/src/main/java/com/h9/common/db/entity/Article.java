@@ -8,13 +8,6 @@ import java.util.Date;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
-/**
- * Created with IntelliJ IDEA.
- * Description:文章类型
- * User:刘敏华 shadow.liu@hey900.com
- * Date: 2017/10/27
- * Time: 18:14
- */
 
 @Entity
 @Table(name = "article")

@@ -42,7 +42,7 @@ public class AccountContoller {
     }
 
 
-    @Secured
+    @Secured(bindPhone = true)
     @ApiOperation(value = "账户V币流水")
     @GetMapping("/account/vCoins/detail")
     public Result<PageResult<BalanceFlowVO>> getVCoinsFlow(@ApiParam(name = "用户token", value = "token", type = "head")
@@ -55,7 +55,7 @@ public class AccountContoller {
     /**
      * description: 账户资金信息
      */
-    @Secured
+    @Secured(bindPhone = true)
     @GetMapping("/account/info")
     public Result accountInfo(@SessionAttribute("curUserId") Long userId) {
         return accountService.accountInfo(userId);
@@ -64,7 +64,7 @@ public class AccountContoller {
     /**
      * description: 我的滴滴卡劵列表
      */
-    @Secured
+    @Secured(bindPhone = true)
     @GetMapping("/account/didicoupons")
     public Result didiCoupones(@SessionAttribute("curUserId") Long userId
             , @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit) {

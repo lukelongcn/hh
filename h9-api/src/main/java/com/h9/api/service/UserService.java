@@ -13,6 +13,7 @@ import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -49,9 +51,16 @@ public class UserService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private UserExtendsReposiroty userExtendsReposiroty;
+    @Resource
+    private CommonService commonService;
+
 
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private ArticleRepository articleRepository;
+    @Resource
+    private ArticleTypeRepository articleTypeRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -257,7 +266,8 @@ public class UserService {
         return Result.success();
     }
 
-    public Result bindPhone(Long userId, String code, String phone) {
+    @Transactional
+    public Result bindPhone(Long userId,String token, String code, String phone) {
 
         User user = getCurrentUser(userId);
         if (user == null) return Result.fail("此用户不存在");
@@ -265,17 +275,37 @@ public class UserService {
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
         String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
 
-        User phoneUser = userRepository.findByPhone(phone);
-        if(phoneUser != null) return Result.fail("此手机已被绑定了");
-
         String redisCode = redisBean.getStringValue(key);
-        if (redisCode == null) return Result.fail("验证码错误");
-
+        if (redisCode == null) return Result.fail("验证码已失效");
         if (!redisCode.equals(code)) return Result.fail("验证码错误");
-
-        user.setPhone(phone);
         redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
-        userRepository.save(user);
+
+        User phoneUser = userRepository.findByPhone(phone);
+        if(phoneUser != null){
+            if(StringUtils.isNotEmpty(phoneUser.getOpenId())){
+                return Result.fail("此手机已被其他用户绑定了");
+            }else{
+                //迁移资金积累
+                UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+                BigDecimal balance = userAccount.getBalance();
+                //增加双方流水
+                if(balance.compareTo(new BigDecimal(0))>0){
+                    //变更微信account
+                   commonService.setBalance(user.getId(), balance.abs().negate(), 1l, phoneUser.getId(), "", "");
+                   commonService.setBalance(phoneUser.getId(),balance.abs(),1l,phoneUser.getId(),"","");
+                   phoneUser.setOpenId(user.getOpenId());
+                   phoneUser.setUnionId(user.getUnionId());
+                }
+                user.setStatus(3);
+                userRepository.save(user);
+            }
+        }else{
+            user.setPhone(phone);
+            userRepository.save(user);
+            String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
+            redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
+            redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
+        }
         return Result.success();
     }
 
@@ -385,5 +415,21 @@ public class UserService {
         }
 
         return list;
+    }
+
+    public Result questionHelp() {
+
+        ArticleType articleType = articleTypeRepository.findByCode("questionHelp");
+        List<Article> questHelp = articleRepository.findByType(articleType);
+
+        if(questHelp == null) return Result.success();
+        List<Map<String, String>> ListvO = new ArrayList<>();
+        questHelp.forEach(article -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("title", article.getTitle());
+            map.put("articleId",article.getId()+"");
+            ListvO.add(map);
+        });
+        return Result.success(ListvO);
     }
 }

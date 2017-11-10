@@ -32,6 +32,9 @@ public class ArticleDTO {
     @ApiModelProperty(value = "内容",required = true)
     @NotBlank(message = "content不能为null")
     private String content;
+
+    @ApiModelProperty(value = "作者名字",required = true)
+    private String userName = "";
     
     @ApiModelProperty(value = "是否推荐到首页 1推荐 2不推荐",required = true)
     @NotNull(message = "recommend不能为null")
@@ -54,6 +57,15 @@ public class ArticleDTO {
     @ApiModelProperty(value = "发布时间",required = true)
     @NotNull(message = "startTime不能为null")
     private Date startTime;
+
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public Long getId() {
         return id;

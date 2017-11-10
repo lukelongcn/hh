@@ -41,6 +41,8 @@ public class BasisService {
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private VCoinsFlowRepository vCoinsFlowRepository;
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
             return Result.fail("标识已存在");
@@ -115,12 +117,14 @@ public class BasisService {
         BigDecimal lotteryCount = lotteryFlowRepository.getLotteryCount();
         BigDecimal withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode());
         BigDecimal userVCoins = userAccountRepository.getUserVCoins();
-        BigDecimal totalVCoins = BigDecimal.valueOf(66666);
+        BigDecimal totalVCoins = vCoinsFlowRepository.getGrantVCoins();
+        userVCoins = userVCoins == null ? BigDecimal.valueOf(0):userVCoins;
+        totalVCoins = totalVCoins == null ? BigDecimal.valueOf(0):totalVCoins;
         List<StatisticsItemVO> list = new ArrayList<>();
-        list.add(new StatisticsItemVO("奖金",lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总奖金（元）"));
-        list.add(new StatisticsItemVO("提现金额",withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总提现奖金（元）"));
-        list.add(new StatisticsItemVO("V币",userVCoins.toString(),"总V币"));
-        list.add(new StatisticsItemVO("剩余V币",totalVCoins.toString(),"剩余V币总量"));
+        list.add(new StatisticsItemVO("奖金",lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP).toPlainString(),"总奖金（元）"));
+        list.add(new StatisticsItemVO("提现金额",withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP).toPlainString(),"总提现奖金（元）"));
+        list.add(new StatisticsItemVO("V币",totalVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总V币"));
+        list.add(new StatisticsItemVO("剩余V币",userVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"剩余V币总量"));
         return Result.success(list);
     }
 }
