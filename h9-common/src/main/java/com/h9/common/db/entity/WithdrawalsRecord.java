@@ -67,7 +67,8 @@ public class WithdrawalsRecord extends BaseEntity {
         BANK_HANDLER(2,"银行转账中"),
 //        BANK_TANSLATE(2,"银行转账完成"),
         FINISH(3, "银行转账完成"),
-        FAIL(4, "银行转账失败");
+        FAIL(4, "银行转账失败"),
+        CANCEL(5,"退回");
 
         private int code;
         private String desc;
