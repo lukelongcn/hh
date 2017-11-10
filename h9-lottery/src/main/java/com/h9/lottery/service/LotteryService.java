@@ -151,7 +151,8 @@ public class LotteryService {
 
         LotteryResult lotteryResult = new LotteryResult();
         lotteryResult.setCode(code);
-
+        //TODO 设置成通用配置
+        lotteryResult.setRefreshTime(new BigDecimal(10));
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
