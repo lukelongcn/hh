@@ -49,7 +49,7 @@ public class FinanceController {
     @Secured
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
-    public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
+    public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
         // return Result.success(new PageResult<LotteryFlowActivityVO>());
         return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
     }
