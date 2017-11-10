@@ -1,10 +1,9 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.common.modle.dto.LotteryFlowDTO;
+import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
-import com.h9.admin.model.vo.LotteryFlowDetailVO;
-import com.h9.admin.model.vo.LotteryFlowVO;
+import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.admin.model.vo.RewardVO;
 import com.h9.admin.service.ActivityService;
 import com.h9.common.base.PageResult;
@@ -36,9 +35,9 @@ public class ActivityController {
     @Secured
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
-    public Result<PageResult<LotteryFlowVO>> getLotteryFlows(LotteryFlowDTO lotteryFlowDTO){
-       // return Result.success(new PageResult<LotteryFlowVO>());
-        return this.activityService.getLotteryFlows(lotteryFlowDTO);
+    public Result<PageResult<LotteryFlowActivityVO>> getLotteryFlows(LotteryFlowActivityDTO lotteryFlowActivityDTO){
+       // return Result.success(new PageResult<LotteryFlowActivityVO>());
+        return this.activityService.getLotteryFlows(lotteryFlowActivityDTO);
     }
 
     /*@Secured

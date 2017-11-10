@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
  * @author: George
  * @date: 2017/11/8 11:26
  */
-public class LotteryFlowDTO extends PageDTO{
+public class LotteryFlowActivityDTO extends PageDTO{
     @Size(max = 64,message = "兑奖码过长")
     @ApiModelProperty(value = "兑奖码")
     private String code;

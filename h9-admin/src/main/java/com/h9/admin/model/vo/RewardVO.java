@@ -101,6 +101,9 @@ public class RewardVO {
     public static RewardVO toRewardVO(Reward reward){
         RewardVO rewardVO = new RewardVO();
         BeanUtils.copyProperties(reward,rewardVO);
+        if(reward.getProduct()!=null){
+            rewardVO.setProductName(reward.getProduct().getName());
+        }
         return  rewardVO;
     }
 }

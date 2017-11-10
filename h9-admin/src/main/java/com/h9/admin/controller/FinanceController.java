@@ -2,13 +2,14 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
+import com.h9.admin.model.vo.LotteryFlowActivityVO;
+import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.WithdrawRecordVO;
 import com.h9.admin.service.FinanceService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.WithdrawalsRecord;
-import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,13 @@ public class FinanceController {
         //return this.communityService.getBannerTypes(pageDTO);
         //return  Result.success(new PageResult<WithdrawRecordVO>());
         return this.financeService.updateWithdrawRecordStatus(id);
+    }
+
+    @Secured
+    @GetMapping(value = "/lottery/flow/page")
+    @ApiOperation("分页获取抢红包参与列表")
+    public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
+        // return Result.success(new PageResult<LotteryFlowActivityVO>());
+        return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
     }
 }

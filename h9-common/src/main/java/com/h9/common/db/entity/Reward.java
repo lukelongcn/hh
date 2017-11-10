@@ -67,6 +67,10 @@ public class Reward extends BaseEntity {
     @Column(name = "start_type",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 手动开启  2  自动开启'")
     private Integer startType = 1;
 
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    private Product product;
+
 
     public Long getId() {
         return id;
@@ -172,6 +176,15 @@ public class Reward extends BaseEntity {
 
     public void setStartType(Integer startType) {
         this.startType = startType;
+    }
+
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public static enum StatusEnum{
