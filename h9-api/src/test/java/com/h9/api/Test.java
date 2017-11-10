@@ -24,7 +24,11 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by itservice on 2017/11/2.
@@ -334,5 +338,27 @@ public class Test {
     }
 
 
+    @org.junit.Test
+    public void testStream() {
+        List<String[]> collect = Arrays.asList("hello", "world").stream()
+                .map(word -> word.split(""))
+                .collect(Collectors.toList());
+
+        List<String> list = Arrays.asList("hello", "world").stream()
+                .map(word -> word.split(""))
+                .flatMap(Arrays::stream)
+                .collect(Collectors.toList());
+
+        Stream<String> stream = Arrays.stream(new String[]{"hello", "world"});
+
+        boolean h = stream.anyMatch(el -> el.contains("h"));
+        System.out.println(h);
+
+        Stream<String> stream2 = Arrays.stream(new String[]{"hello", "world","ja"});
+        boolean allMatch = stream2.allMatch(el -> el.length() > 2);
+        System.out.println("allMatch : "+allMatch);
+
+
+    }
 
 }
