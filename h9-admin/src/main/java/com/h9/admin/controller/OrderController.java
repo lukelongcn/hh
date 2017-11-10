@@ -29,8 +29,8 @@ public class OrderController {
     @Secured
     @GetMapping(value = "/list")
     @ApiOperation("获取订单列表")
-    public Result<PageResult<Orders>> articleList(PageDTO pageDTO){
-        return null;
+    public Result<PageResult<Orders>> orderList(PageDTO pageDTO){
+        return orderService.orderList(pageDTO);
     }
     
     

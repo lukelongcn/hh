@@ -95,7 +95,9 @@ public class WithdrawalsRecord extends BaseEntity {
         }
     }
 
-    public WithdrawalsRecord(Long userId, BigDecimal money , UserBank userBank ,String remarks) {
+
+
+    public WithdrawalsRecord(Long userId, BigDecimal money , UserBank userBank , String remarks) {
         this.userId = userId;
         this.money = money;
         this.userBank = userBank;
