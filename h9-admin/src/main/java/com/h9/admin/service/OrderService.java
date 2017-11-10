@@ -4,6 +4,7 @@ import com.h9.admin.model.dto.order.ExpressDTO;
 import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.modle.dto.PageDTO;
@@ -33,8 +34,13 @@ public class OrderService {
             return Result.fail("订单号不存在");
         }
         //只有实物订单才能修改
-        BeanUtils.copyProperties(expressDTO,one);
-        ordersRepository.save(one);
-        return Result.success(OrderItemVO.toOrderItemVO(one));
+        if (one.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()) {
+            BeanUtils.copyProperties(expressDTO, one);
+            ordersRepository.save(one);
+            return Result.success(OrderItemVO.toOrderItemVO(one));
+        } else {
+            GoodsType.GoodsTypeEnum byCode = GoodsType.GoodsTypeEnum.findByCode(one.getOrderType());
+            return Result.fail("此订单为"+(byCode==null?"未知":byCode.getDesc())+",无法添加物流信息");
+        } 
     }
 }

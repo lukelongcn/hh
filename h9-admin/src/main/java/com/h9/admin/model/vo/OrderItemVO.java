@@ -31,7 +31,7 @@ public class OrderItemVO {
     private Integer payMethond;
 
     @ApiModelProperty(value ="支付方式描述")
-    private Integer payMethondDesc;
+    private String payMethodDesc;
 
     @ApiModelProperty(value ="订单金额")
     private BigDecimal money = new BigDecimal(0);
@@ -75,6 +75,8 @@ public class OrderItemVO {
                 .map(OrderItems::getDidiCardNumber)
                 .collect(Collectors.joining(","));
         orderItemVO.setDidiCardNumber(didi);
+        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());
+        orderItemVO.setPayMethodDesc(byCode==null?"未知的支付方式":byCode.getDesc());
         return orderItemVO;
     }
 
@@ -86,12 +88,12 @@ public class OrderItemVO {
         this.expressName = expressName;
     }
 
-    public Integer getPayMethondDesc() {
-        return payMethondDesc;
+    public String getPayMethodDesc() {
+        return payMethodDesc;
     }
 
-    public void setPayMethondDesc(Integer payMethondDesc) {
-        this.payMethondDesc = payMethondDesc;
+    public void setPayMethodDesc(String payMethodDesc) {
+        this.payMethodDesc = payMethodDesc;
     }
 
     public String getDidiCardNumber() {

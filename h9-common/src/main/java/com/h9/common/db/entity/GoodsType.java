@@ -69,6 +69,16 @@ public class GoodsType extends BaseEntity {
         public void setDesc(String desc) {
             this.desc = desc;
         }
+
+        public static GoodsTypeEnum findByCode(int code){
+            GoodsTypeEnum[] values = values();
+            for(GoodsTypeEnum smsTypeEnum: values){
+                if(code == smsTypeEnum.getCode()){
+                    return smsTypeEnum;
+                }
+            }
+            return null;
+        }
     }
 
     public Integer getCode() {
