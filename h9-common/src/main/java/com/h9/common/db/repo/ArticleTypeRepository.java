@@ -17,4 +17,7 @@ public interface ArticleTypeRepository extends BaseRepository<ArticleType> {
     
     @Query("select a from ArticleType a where a.enable<>2 and a.id=?1")
     ArticleType findOne(Long id);
+
+    @Query("select o from ArticleType o where o.enable<>2 and o.code = ?1")
+    ArticleType findOnByCode(String code);
 }

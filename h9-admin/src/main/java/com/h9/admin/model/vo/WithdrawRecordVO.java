@@ -24,6 +24,9 @@ public class WithdrawRecordVO {
     @ApiModelProperty(value = "id")
     private Long id;
 
+    @ApiModelProperty(value = "订单编号")
+    private Long orderId;
+
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
     @ApiModelProperty(value = "用户id")
     private Long userId;
@@ -155,7 +158,15 @@ public class WithdrawRecordVO {
         this.finishTime = finishTime;
     }
 
-   /* public static WithdrawRecordVO toWithdrawRecordVO(Map map){
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+/* public static WithdrawRecordVO toWithdrawRecordVO(Map map){
      *//*   WithdrawRecordVO withdrawRecordVO = new WithdrawRecordVO();
         withdrawRecordVO.setBankCardNo(MapUtils.getString(map,"no"));
         withdrawRecordVO.setBankName(MapUtils.getString(map,"bank_name"));

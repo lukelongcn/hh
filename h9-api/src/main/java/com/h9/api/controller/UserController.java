@@ -54,16 +54,16 @@ public class UserController {
         return userService.updatePersonInfo(userId,personInfoDTO);
     }
 
-    /**
-     * description: 获取用户信息
-     *
-     */
-    @Secured
-    @GetMapping("/user/info")
-    @ApiOperation("获取用户信息")
-    public Result getUserInfo(@SessionAttribute("curUserId")Long userId){
-        return userService.getUserInfo(userId);
-    }
+//    /**
+//     * description: 获取用户信息
+//     *
+//     */
+//    @Secured
+//    @GetMapping("/user/info")
+//    @ApiOperation("获取用户信息")
+//    public Result getUserInfo(@SessionAttribute("curUserId")Long userId){
+//        return userService.getUserInfo(userId);
+//    }
 
 
 
@@ -87,11 +87,23 @@ public class UserController {
     }
 
 
-    @Secured
+    /**
+     * description: 获取用户信息
+     */
+    @Secured(bindPhone = true)
     @GetMapping("/user/info/options")
     public Result options(@SessionAttribute("curUserId")Long userId){
 
         return userService.findAllOptions(userId);
     }
 
+    /**
+     * description: 常见问题说明
+     */
+    @Secured
+    @GetMapping("/user/help")
+    public Result questionHelp(){
+
+        return userService.questionHelp();
+    }
 }

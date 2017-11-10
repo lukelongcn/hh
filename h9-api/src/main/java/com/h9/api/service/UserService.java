@@ -1,7 +1,6 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
@@ -18,8 +17,10 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,10 @@ public class UserService {
 
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private ArticleRepository articleRepository;
+    @Resource
+    private ArticleTypeRepository articleTypeRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -390,7 +395,11 @@ public class UserService {
         mapVo.put("emotionList", emotionList);
         mapVo.put("jobList", jobList);
         mapVo.put("sexList", sexList);
-
+        User user = userRepository.findOne(userId);
+        mapVo.put("avatar",user.getAvatar());
+        mapVo.put("nickName", user.getNickName());
+        mapVo.put("tel", user.getPhone());
+        mapVo.put("birthday", DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.DAY));
         return Result.success(mapVo);
     }
 
@@ -413,5 +422,21 @@ public class UserService {
         }
 
         return list;
+    }
+
+    public Result questionHelp() {
+
+        ArticleType articleType = articleTypeRepository.findByCode("questionHelp");
+        List<Article> questHelp = articleRepository.findByType(articleType);
+
+        if(questHelp == null) return Result.success();
+        List<Map<String, String>> ListvO = new ArrayList<>();
+        questHelp.forEach(article -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("title", article.getTitle());
+            map.put("articleId",article.getId()+"");
+            ListvO.add(map);
+        });
+        return Result.success(ListvO);
     }
 }

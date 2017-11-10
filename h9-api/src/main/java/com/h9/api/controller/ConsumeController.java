@@ -28,7 +28,7 @@ public class ConsumeController {
     /**
      * description: 手机充值
      */
-    @Secured
+    @Secured(bindPhone = true)
     @PostMapping("/mobile/recharge")
     public Result mobileRecharge(
             @SessionAttribute("curUserId") Long userId,
@@ -54,7 +54,7 @@ public class ConsumeController {
     /**
      * description: 滴滴卡劵列表
      */
-    @Secured
+    @Secured(bindPhone = true)
     @GetMapping("/didiCards")
     public Result didiCardList() {
 
@@ -64,7 +64,7 @@ public class ConsumeController {
     /**
      * description: 兑换滴滴卡
      */
-    @Secured
+    @Secured(bindPhone = true)
     @PutMapping("/didiCard/convert")
     public Result didiCardConvert(@RequestBody @Valid DidiCardDTO didiCardDTO, @SessionAttribute("curUserId") Long userId) {
         return consumeService.didiCardConvert(didiCardDTO, userId);
@@ -73,7 +73,7 @@ public class ConsumeController {
     /**
      * description: 提现
      */
-    @Secured
+    @Secured(bindPhone = true)
     @PostMapping("/withdraw/{bankId}/{code}")
     public Result bankWithdraw(@SessionAttribute("curUserId") Long userId
             , @PathVariable Long bankId, @PathVariable String code) {
