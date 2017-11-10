@@ -291,13 +291,11 @@ public class UserService {
                 //增加双方流水
                 if(balance.compareTo(new BigDecimal(0))>0){
                     //变更微信account
-                    //TODO
                    commonService.setBalance(user.getId(), balance.abs().negate(), 1l, phoneUser.getId(), "", "");
-                    //TODO
                    commonService.setBalance(phoneUser.getId(),balance.abs(),1l,phoneUser.getId(),"","");
-
+                   phoneUser.setOpenId(user.getOpenId());
+                   phoneUser.setUnionId(user.getUnionId());
                 }
-
                 user.setStatus(3);
                 userRepository.save(user);
             }
