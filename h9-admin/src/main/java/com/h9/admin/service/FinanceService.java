@@ -1,24 +1,32 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
+import com.h9.admin.model.vo.LotteryFlowActivityVO;
+import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.basis.JpaRepository;
 import com.h9.common.db.entity.BalanceFlowType;
-import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.WithdrawalsRecord;
+import com.h9.common.db.repo.LotteryFlowRepository;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
+import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +45,8 @@ public class FinanceService {
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private LotteryFlowRepository lotteryFlowRepository;
 
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
         /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
@@ -54,7 +64,7 @@ public class FinanceService {
 
     private String buildWithdrawRecordQueryString(WithdrawRecordQueryDTO withdrawRecordQueryDTO){
         StringBuilder sql = new StringBuilder(
-                "select w.id,w.user_id as userId,w.money,w.create_time as createTime,w.finish_time as finishTime,w.status,u.phone" +
+                "select w.id,w.order_id as orderId,w.user_id as userId,w.money,w.create_time as createTime,w.finish_time as finishTime,w.status,u.phone" +
                         ",ub.name,ub.no as bankCardNo,ub.provice,ub.city,ut.bank_name as bankName" +
                         " from withdrawals_record w,user u,user_bank ub,bank_type ut,user_record ur where w.user_id=u.id and w.user_bank_id = ub.id and ub.bank_type_id = ut.id and w.user_record_id=ur.id "
         );
@@ -86,6 +96,23 @@ public class FinanceService {
         withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.CANCEL.getCode());
         this.withdrawalsRecordRepository.save(withdrawalsRecord);
         return Result.success(this.withdrawalsRecordRepository.save(withdrawalsRecord));
+    }
+
+    public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowFinanceDTO.getPageNumber(), lotteryFlowFinanceDTO.getPageSize(),sort);
+        Page<LotteryFlow> lotteryFlows = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository.buildFinanceSpecification(lotteryFlowFinanceDTO),pageRequest);
+        PageResult<LotteryFlow> pageResult = new PageResult<>(lotteryFlows);
+        return Result.success(this.toLotteryFlowFinanceVO(pageResult));
+    }
+
+    private PageResult<LotteryFlowFinanceVO> toLotteryFlowFinanceVO(PageResult lotteryFlows){
+        List<LotteryFlowFinanceVO> flowFinanceVOList = new ArrayList<>();
+        for(LotteryFlow lotteryFlow:(List<LotteryFlow>)lotteryFlows.getData()){
+            flowFinanceVOList.add(LotteryFlowFinanceVO.toLotteryFlowFinanceVO(lotteryFlow));
+        }
+        lotteryFlows.setData(flowFinanceVOList);
+        return lotteryFlows;
     }
 
 }

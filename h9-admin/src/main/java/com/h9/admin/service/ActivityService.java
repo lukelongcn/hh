@@ -1,10 +1,10 @@
 package com.h9.admin.service;
 
-import com.h9.admin.model.vo.LotteryFlowVO;
+import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.repo.LotteryFlowRepository;
 import com.h9.common.db.repo.UserRepository;
-import com.h9.common.modle.dto.LotteryFlowDTO;
+import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.admin.model.vo.RewardVO;
 import com.h9.common.base.PageResult;
@@ -57,18 +57,18 @@ public class ActivityService {
         return rewards;
     }
 
-    public Result<PageResult<LotteryFlowVO>> getLotteryFlows(LotteryFlowDTO lotteryFlowDTO){
+    public Result<PageResult<LotteryFlowActivityVO>> getLotteryFlows(LotteryFlowActivityDTO lotteryFlowActivityDTO){
         Sort sort = new Sort(Sort.Direction.DESC,"id");
-        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowDTO.getPageNumber(),lotteryFlowDTO.getPageSize(),sort);
-        Page<LotteryFlow> lotteryFlows = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository.buildSpecification(lotteryFlowDTO),pageRequest);
+        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowActivityDTO.getPageNumber(), lotteryFlowActivityDTO.getPageSize(),sort);
+        Page<LotteryFlow> lotteryFlows = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository.buildActivitySpecification(lotteryFlowActivityDTO),pageRequest);
         PageResult<LotteryFlow> pageResult = new PageResult<>(lotteryFlows);
         return Result.success(this.toLotteryFlowVO(pageResult));
     }
 
-    private PageResult<LotteryFlowVO> toLotteryFlowVO(PageResult lotteryFlows){
-        List<LotteryFlowVO> rewardVOList = new ArrayList<>();
+    private PageResult<LotteryFlowActivityVO> toLotteryFlowVO(PageResult lotteryFlows){
+        List<LotteryFlowActivityVO> rewardVOList = new ArrayList<>();
         for(LotteryFlow lotteryFlow:(List<LotteryFlow>)lotteryFlows.getData()){
-            rewardVOList.add(LotteryFlowVO.toLotteryFlowVO(lotteryFlow));
+            rewardVOList.add(LotteryFlowActivityVO.toLotteryFlowActivityVO(lotteryFlow));
         }
         lotteryFlows.setData(rewardVOList);
         return lotteryFlows;
