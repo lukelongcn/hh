@@ -85,10 +85,10 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
                     predicates.add(cb.equal(root.get("reward").get("code").as(String.class), lotteryFlowFinanceDTO.getCode()));
                 }
                 if(lotteryFlowFinanceDTO.getStartTime()!=null){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("startTime").as(Date.class), lotteryFlowFinanceDTO.getStartTime()));
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("createTime").as(Date.class), lotteryFlowFinanceDTO.getStartTime()));
                 }
                 if(lotteryFlowFinanceDTO.getEndTime()!=null){
-                    predicates.add(cb.lessThan(root.get("endTime").as(Date.class), DateUtil.addDays(lotteryFlowFinanceDTO.getEndTime(),1)));
+                    predicates.add(cb.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(lotteryFlowFinanceDTO.getEndTime(),1)));
                 }
                 Predicate[] pre = new Predicate[predicates.size()];
                 return query.where(predicates.toArray(pre)).getRestriction();

@@ -43,15 +43,15 @@ public class LotteryFlowFinanceDTO extends PageDTO{
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartTime(long startTime) {
+        this.startTime = new Date(startTime);
     }
 
     public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndTime(long endTime) {
+        this.endTime =  new Date(endTime);
     }
 }
