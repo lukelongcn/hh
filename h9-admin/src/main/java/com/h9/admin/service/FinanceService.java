@@ -74,7 +74,7 @@ public class FinanceService {
     public Result<WithdrawalsRecord> updateWithdrawRecordStatus(long id){
         this.logger.infov("提现退回，订单id:{0}",id);
         WithdrawalsRecord withdrawalsRecord = this.withdrawalsRecordRepository.findByLockId(id);
-        if(withdrawalsRecord.getStatus()==WithdrawalsRecord.statusEnum.FAIL.getCode()){
+        if(withdrawalsRecord.getStatus()!=WithdrawalsRecord.statusEnum.FAIL.getCode()){
             return Result.fail("该订单不是失败订单");
         }
         Result result = this.commonService.setBalance(withdrawalsRecord.getUserId(),withdrawalsRecord.getMoney(), BalanceFlowType.BalanceFlowTypeEnum.RETURN.getId(),
