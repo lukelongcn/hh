@@ -271,7 +271,9 @@ public class ConsumeService {
         }
         userBank.setDefaultSelect(1);
         bankCardRepository.save(userBank);
-        commonService.newUserRecord(userId, latitude, longitude, request);
+        UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
+        withdrawalsRecord.setUserRecord(userRecord);
+
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
