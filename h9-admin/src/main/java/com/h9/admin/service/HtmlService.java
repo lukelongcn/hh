@@ -39,7 +39,7 @@ public class HtmlService {
         if(one==null){
             return Result.fail("您要删除的网页不存在");
         }
-        one.setStatus(3);
+        one.setStatus(2);
         one.setUpdateTime(new Date());
         htmlContentRepository.save(one);
         return Result.success();

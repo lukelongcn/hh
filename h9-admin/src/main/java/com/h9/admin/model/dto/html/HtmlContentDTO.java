@@ -34,10 +34,10 @@ public class HtmlContentDTO {
     @NotBlank(message = "content不能为null")
     private String content;
     
-    @ApiModelProperty(value = "状态 1 启用 2 禁用 同一个code 只能有一个启用的",required = true)
+    @ApiModelProperty(value = "状态 1 启用 0 禁用 同一个code 只能有一个启用的",required = true)
     @NotNull(message = "status不能为null")
-    @Max(value = 2,message = "请填写正确的status")
-    @Min(value = 1,message = "请填写正确的status")
+    @Max(value = 1,message = "请填写正确的status")
+    @Min(value = 0,message = "请填写正确的status")
     private Integer status = 1;
 
     public Long getId() {

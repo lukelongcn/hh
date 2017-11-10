@@ -3,17 +3,13 @@ package com.h9.api;
 //import com.h9.api.provider.ChinaPayService;
 //import com.h9.api.provider.MobileRechargeService;
 
-import chinapay.PrivateKey;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.SMService;
-import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.GoodsDIDINumber;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.repo.*;
-import com.h9.common.modle.DiDiCardInfo;
-import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.GoodsType;
 
 import org.junit.Test;
@@ -24,9 +20,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -139,7 +132,7 @@ public class ApiApplicationTests {
 
 
     @Resource
-    private OrdersReposiroty ordersReposiroty;
+    private OrdersRepository ordersReposiroty;
 
     @Test
     public void asys() {
