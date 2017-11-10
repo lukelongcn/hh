@@ -1,10 +1,11 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.finance.LotterryFLowRecordDTO;
 import com.h9.admin.model.dto.finance.TransferLotterryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
-import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
+import com.h9.admin.model.vo.LotteryFlowRecordVO;
 import com.h9.admin.model.vo.WithdrawRecordVO;
 import com.h9.admin.service.FinanceService;
 import com.h9.common.base.PageResult;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
 
 /**
  * @author: George
@@ -56,5 +56,13 @@ public class FinanceController {
     @ApiOperation("转账")
     public Result transferFromLotteryFlows( @RequestBody TransferLotterryFLowDTO transferLotterryFLowDTO)  {
         return this.financeService.transferFromLotteryFlows(transferLotterryFLowDTO.getIds());
+    }
+
+    @Secured
+    @GetMapping(value = "/lottery/flow/record/page")
+    @ApiOperation("分页转账列表")
+    public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlows(LotterryFLowRecordDTO lotterryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
+        //return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
+        return  Result.success(new PageResult<LotteryFlowRecordVO>());
     }
 }
