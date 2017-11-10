@@ -45,8 +45,8 @@ public class GoodsType extends BaseEntity {
 
         MOBILE_RECHARGE(1,"手机卡"),
         DIDI_CARD(2, "滴滴卡"),
-        MATERIAL(3,"实物"),
-        VCOINS(4, "V币");
+        MATERIAL(3,"实物");
+//        VCOINS(4, "V币");
         private int code;
         private String desc;
         GoodsTypeEnum(int code, String desc) {
