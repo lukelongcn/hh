@@ -188,6 +188,7 @@ public class LotteryService {
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
                 lotteryUser.setMaxMoney(top1LotteryFlow.getId().equals(lotteryFromDb.getId()));
+                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(),"MM-dd HH:mm"));
                 User user = userRepository.findOne(lotteryFromDb.getUser().getId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());
@@ -201,6 +202,7 @@ public class LotteryService {
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
                 lotteryUser.setUserId(lotteryFromDb.getUserId());
+                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(),"MM-dd HH:mm"));
                 User user = userRepository.findOne(lotteryFromDb.getUserId());
                 lotteryUser.setName(user.getNickName());
                 lotteryUser.setAvatar(user.getAvatar());

@@ -22,29 +22,18 @@ public class FactoryProvider {
     private RestTemplate restTemplate;
 
     public LotteryModel findByLotteryModel(String code) {
-        String result = restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, String.class);
-        if(StringUtils.isEmpty(result)){
-            return null;
-        }
-        return JSONObject.parseObject(result, LotteryModel.class);
+        return restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, LotteryModel.class);
     }
 
 
     public LotteryModel updateLotteryStatus(String code) {
-        String result =  restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, String.class);
-        if(StringUtils.isEmpty(result)){
-            return null;
-        }
-        return JSONObject.parseObject(result, LotteryModel.class);
+        return  restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
     }
 
 
     public ProductModel getProductInfo(String code) {
-        String result =  restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, String.class);
-        if(StringUtils.isEmpty(result)){
-            return null;
-        }
-        return JSONObject.parseObject(result, ProductModel.class);
+        return restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, ProductModel.class);
+
     }
 
 

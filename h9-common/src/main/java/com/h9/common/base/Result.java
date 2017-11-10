@@ -32,6 +32,11 @@ public class Result<T> {
         this.msg = msg;
     }
 
+    public boolean isSuccess(){
+        return code == 0;
+    }
+
+
     public static <T>Result<T> success() {
         return success(null);
     }
