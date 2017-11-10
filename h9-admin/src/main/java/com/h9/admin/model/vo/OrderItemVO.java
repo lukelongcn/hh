@@ -30,6 +30,9 @@ public class OrderItemVO {
     @ApiModelProperty(value ="支付方式")
     private Integer payMethond;
 
+    @ApiModelProperty(value ="支付方式描述")
+    private Integer payMethondDesc;
+
     @ApiModelProperty(value ="订单金额")
     private BigDecimal money = new BigDecimal(0);
 
@@ -57,6 +60,10 @@ public class OrderItemVO {
     @ApiModelProperty(value ="滴滴券号")
     private String didiCardNumber;
 
+    @ApiModelProperty(value ="快递公司名")
+    private String expressName;
+
+
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
@@ -69,6 +76,22 @@ public class OrderItemVO {
                 .collect(Collectors.joining(","));
         orderItemVO.setDidiCardNumber(didi);
         return orderItemVO;
+    }
+
+    public String getExpressName() {
+        return expressName;
+    }
+
+    public void setExpressName(String expressName) {
+        this.expressName = expressName;
+    }
+
+    public Integer getPayMethondDesc() {
+        return payMethondDesc;
+    }
+
+    public void setPayMethondDesc(Integer payMethondDesc) {
+        this.payMethondDesc = payMethondDesc;
     }
 
     public String getDidiCardNumber() {

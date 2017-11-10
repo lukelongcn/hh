@@ -87,6 +87,16 @@ public class Orders extends BaseEntity {
 
     @Column(name = "loginstics_number")
     private String logisticsNumber;
+    @Column(name = "express_name",nullable = false, columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
+    private String expressName;
+
+    public String getExpressName() {
+        return expressName;
+    }
+
+    public void setExpressName(String expressName) {
+        this.expressName = expressName;
+    }
 
     public String getLogisticsNumber() {
         return logisticsNumber;
