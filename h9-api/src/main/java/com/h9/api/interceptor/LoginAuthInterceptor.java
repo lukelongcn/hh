@@ -51,6 +51,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                     userId = userId4phone;
                 }
                 if(!StringUtils.isEmpty(userId4WeChat)){
+                    logger.info("userId4WeChat: "+userId4WeChat);
+                    logger.info(""+secured.bindPhone());
                     if(secured.bindPhone()){
                         throw new UnAuthException(402,"绑定手机号");
                     }
