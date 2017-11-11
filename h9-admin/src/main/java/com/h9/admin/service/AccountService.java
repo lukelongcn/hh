@@ -86,8 +86,8 @@ public class AccountService {
         return Result.success(new PageResult<>(map));
     }
 
-    public Result<List<UserBankVO>> bankInfo(Long userId) {
-        List<UserBankVO> voByUserId = bankCardRepository.findVOByUserId(userId);
-        return Result.success(voByUserId);
+    public Result<PageResult<UserBankVO>> bankInfo(Long userId,PageDTO pageDTO) {
+        Page<UserBankVO> voByUserId = bankCardRepository.findVOByUserId(userId, pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(voByUserId));
     }
 }

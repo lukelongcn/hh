@@ -30,11 +30,12 @@ public class UserBankVO {
     private Date createTime;
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
-
+    @ApiModelProperty(value = "状态")
+    private int status;
     public UserBankVO() {
     }
 
-    public UserBankVO(Long id, Long userId, String name, String no, String province, String city, BigDecimal withdrawalsMoney, Long withdrawalsCount, Date createTime, Date updateTime) {
+    public UserBankVO(Long id, Long userId, String name, String no, String province, String city, BigDecimal withdrawalsMoney, Long withdrawalsCount, Date createTime, Date updateTime,int status) {
         this.id = id;
         this.userId = userId;
         this.name = name;
@@ -45,6 +46,15 @@ public class UserBankVO {
         this.withdrawalsCount = withdrawalsCount;
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public Long getId() {
