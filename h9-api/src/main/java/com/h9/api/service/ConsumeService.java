@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.provider.ChinaPayService;
 import com.h9.common.common.CommonService;
@@ -27,6 +28,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -168,6 +170,7 @@ public class ConsumeService {
             map.put("stock", count);
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
+            map.put("price", goods.getRealPrice());
             list.add(map);
         });
         return Result.success(list);
@@ -212,6 +215,17 @@ public class ConsumeService {
 
         items.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
         items.setGoods(goods);
+
+        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
+        Map<String,String> map = JSONObject.parseObject(globalProperty.getVal(), Map.class);
+
+        map.forEach((k,v) ->{
+            if (k.equals("5")) {
+                items.setImage(v);
+                return;
+            }
+        });
+
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
         voMap.put("money", goods.getRealPrice().toString());
@@ -240,7 +254,7 @@ public class ConsumeService {
         String cardNo = userBank.getNo();
         String usrName = userBank.getName();
         String openBank = bankType.getBankName();
-        String prov = userBank.getProvice();
+        String prov = userBank.getProvince();
         String city = userBank.getCity();
         String transAmt = "101";
         String purpose = "提现";

@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.vo.ArticleVO;
 import com.h9.api.service.ArticleService;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Article;
@@ -22,8 +23,8 @@ public class ArticleController {
     ArticleService articleService;
 
     @ApiOperation(value = "获取文章内容")
-    @GetMapping(value = "/article/{id}",produces = MediaType.TEXT_HTML_VALUE)
-    public Result<Article> finOne(@PathVariable("id")Long id){
-        return articleService.findOne(id);
+    @GetMapping(value = "/article/{id}")
+    public Result<ArticleVO> finOne(@PathVariable("id")Long id){
+        return  articleService.findOne(id);
     }
 }

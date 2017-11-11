@@ -3,7 +3,6 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -40,7 +39,7 @@ public class UserBank extends BaseEntity {
 
 
     @Column(name = "provice", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户省'")
-    private String provice;
+    private String province;
 
     @Column(name = "city", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
     private String city;
@@ -100,12 +99,12 @@ public class UserBank extends BaseEntity {
         this.no = no;
     }
 
-    public String getProvice() {
-        return provice;
+    public String getProvince() {
+        return province;
     }
 
-    public void setProvice(String provice) {
-        this.provice = provice;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {

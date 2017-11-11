@@ -18,7 +18,6 @@ public class UserPersonInfoDTO {
     private String avatar;
     @NotBlank(message = "请填写nickName")
     private String nickName;
-    @NotBlank(message = "请填写sex")
     private String sex;
     private Date birthday;
     private String marriageStatus;

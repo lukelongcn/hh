@@ -41,7 +41,7 @@ public class User extends BaseEntity {
     @Column(name = "avatar", columnDefinition = "varchar(500) default '' COMMENT '用户头像'")
     private String avatar ;
 
-    @Column(name = "nick_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '昵称'")
+    @Column(name = "nick_name", columnDefinition = "varchar(64) default '' COMMENT '昵称'")
     private String nickName;
 
 
