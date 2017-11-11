@@ -8,6 +8,7 @@ import org.jboss.logging.Logger;
 import org.slf4j.MDC;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,16 +47,19 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                     throw new UnAuthException(401,"请重新登录");
                 }
                 String userId = "";
-                if(!StringUtils.isEmpty(userId4WeChat)){
-                    userId = userId4WeChat;
-                }
                 if(!StringUtils.isEmpty(userId4phone)){
                     userId = userId4phone;
-                }else{
+                }
+                if(!StringUtils.isEmpty(userId4WeChat)){
                     if(secured.bindPhone()){
                         throw new UnAuthException(402,"绑定手机号");
                     }
+                    userId = userId4WeChat;
                 }
+                if(StringUtils.isEmpty(userId)){
+                    throw new UnAuthException(401,"请重新登录");
+                }
+
                 MDC.put("userId",userId);
                 httpServletRequest.getSession().removeAttribute("curUserId");
                 httpServletRequest.getSession().setAttribute("curUserId",userId);

@@ -42,14 +42,16 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 }
                 String userId = "";
                 if(!StringUtils.isEmpty(userId4WeChat)){
+                    if(secured.bindPhone()){
+                        throw new UnAuthException(402,"绑定手机号");
+                    }
                     userId = userId4WeChat;
                 }
                 if(!StringUtils.isEmpty(userId4phone)){
                     userId = userId4phone;
-                }else{
-                    if(secured.bindPhone()){
-                        throw new UnAuthException(402,"绑定手机号");
-                    }
+                }
+                if(StringUtils.isEmpty(userId)){
+                    throw new UnAuthException(401,"请重新登录");
                 }
                 MDC.put("userId",userId);
                 httpServletRequest.getSession().removeAttribute("curUserId");
