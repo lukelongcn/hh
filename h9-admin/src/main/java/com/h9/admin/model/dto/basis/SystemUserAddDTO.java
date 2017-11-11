@@ -26,7 +26,7 @@ public class SystemUserAddDTO {
     @NotBlank(message = "密码不能为空")
     private String password;
 
-    @ApiModelProperty(value = "状态",required = true)
+    @ApiModelProperty(value = "状态,1：启用，2：禁用",required = true)
     @NotNull(message = "状态不能为空")
     private Integer status;
 

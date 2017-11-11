@@ -28,7 +28,7 @@ public class SystemUserVO {
     private String roleName;
 
     @ApiModelProperty(value = "状态， 1：启用，2：禁用")
-    private String status;
+    private Integer status;
 
     @ApiModelProperty(value = "注册时间")
     private Date createTime;
@@ -76,11 +76,11 @@ public class SystemUserVO {
         this.roleName = roleName;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
