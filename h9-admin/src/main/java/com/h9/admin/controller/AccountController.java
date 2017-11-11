@@ -3,6 +3,7 @@ package com.h9.admin.controller;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.vo.BalanceFlowVO;
 import com.h9.admin.model.vo.UserAccountVO;
+import com.h9.admin.model.vo.UserBankVO;
 import com.h9.admin.service.AccountService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 账户管理
@@ -47,5 +49,12 @@ public class AccountController {
     @ApiOperation("获取vB流水明细")
     public Result<PageResult<BalanceFlowVO>> accountVCoinsFlow(PageDTO pageDTO, @PathVariable Long userId){
         return accountService.accountVCoinsFlow(pageDTO,userId);
+    }
+
+    @Secured
+    @GetMapping(value = "/{userId}/bankInfo")
+    @ApiOperation("获取vB流水明细")
+    public Result<List<UserBankVO>> bankInfo(@PathVariable Long userId){
+        return accountService.bankInfo(userId);
     }
 }

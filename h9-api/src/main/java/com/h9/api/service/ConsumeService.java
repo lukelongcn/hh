@@ -240,7 +240,7 @@ public class ConsumeService {
         String cardNo = userBank.getNo();
         String usrName = userBank.getName();
         String openBank = bankType.getBankName();
-        String prov = userBank.getProvice();
+        String prov = userBank.getProvince();
         String city = userBank.getCity();
         String transAmt = "101";
         String purpose = "提现";
