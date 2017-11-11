@@ -170,6 +170,7 @@ public class ConsumeService {
             map.put("stock", count);
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
+            map.put("price", goods.getRealPrice());
             list.add(map);
         });
         return Result.success(list);
