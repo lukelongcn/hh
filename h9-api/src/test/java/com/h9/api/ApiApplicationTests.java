@@ -23,6 +23,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -167,17 +169,7 @@ public class ApiApplicationTests {
     @Test
     public void testSpecification() {
 
-        Specification<Orders> specification = new Specification<Orders>() {
-            @Override
-            public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
-//                criteriaBuilder.equal()
-                Join<OrderItems, Orders> join = root.join("orderItems", JoinType.LEFT);
-
-                return criteriaBuilder.equal(join.get("id"), "24");
-//                return criteriaBuilder.equal(root.get("supplierName").as(String.class), "滴滴");
-            }
-        };
 
     }
 }

@@ -303,10 +303,17 @@ public class UserService {
         }else{
             user.setPhone(phone);
             userRepository.save(user);
-            String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
-            redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
-            redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
         }
+
+        String weChatUserId = RedisKey.getWeChatUserId(token);
+        redisBean.expire(weChatUserId, 1, TimeUnit.MICROSECONDS);
+
+        String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
+        redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
+        redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
+
+
+
         return Result.success();
     }
 
