@@ -70,8 +70,8 @@ public class AccountController {
     @Secured
     @GetMapping(value = "/deviceIdInfo")
     @ApiOperation("获取设备编号的信息")
-    public Result<List<UserRecordVO>> deviceIdInfo(@RequestParam Long startTime,
-                                                   @RequestParam Long endTime){
+    public Result<List<UserRecordVO>> deviceIdInfo(@RequestParam(defaultValue = "0") Long startTime,
+                                                   @RequestParam(defaultValue = "0") Long endTime){
         return accountService.deviceIdInfo(new Date(startTime),new Date(endTime));
     }
 }
