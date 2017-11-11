@@ -1,6 +1,8 @@
-package com.h9.admin.model.vo;
+package com.h9.common.modle.vo;
 
+import com.h9.common.db.entity.User;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 
@@ -97,4 +99,12 @@ public class SystemUserVO {
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
     }
+
+    public SystemUserVO() {
+    }
+
+    public SystemUserVO(User user) {
+        BeanUtils.copyProperties(user,this);
+    }
+
 }

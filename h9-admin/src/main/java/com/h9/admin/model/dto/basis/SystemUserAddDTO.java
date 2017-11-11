@@ -1,7 +1,10 @@
 package com.h9.admin.model.dto.basis;
 
+import com.h9.common.db.entity.User;
+import com.h9.common.utils.MD5Util;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -57,5 +60,16 @@ public class SystemUserAddDTO {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public User toUser(User user){
+        if(user==null){
+            user = new User();
+        }
+        BeanUtils.copyProperties(this,user);
+        user.setPassword(MD5Util.getMD5(user.getPassword()));
+        user.setIsAdmin(User.IsAdminEnum.ADMIN.getId());
+        user.setLoginCount(0);
+        return  user;
     }
 }

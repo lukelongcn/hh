@@ -2,9 +2,8 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.basis.*;
-import com.h9.admin.model.dto.community.BannerTypeAddDTO;
-import com.h9.admin.model.vo.SystemUserVO;
-import com.h9.common.db.entity.BannerType;
+import com.h9.admin.service.UserService;
+import com.h9.common.modle.vo.SystemUserVO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;
@@ -30,6 +29,8 @@ public class BasisController {
 
     @Resource
     private BasisService basisService;
+    @Resource
+    private UserService userService;
 
     @Secured
     @PostMapping(value="/param")
@@ -98,23 +99,27 @@ public class BasisController {
     @PostMapping(value="/user")
     @ApiOperation("增加管理员")
     public Result addSystemUser(@Validated @RequestBody SystemUserAddDTO systemUserAddDTO){
-        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
-        return  Result.success();
+        return  this.basisService.addUser(systemUserAddDTO);
     }
 
     @Secured
     @PutMapping(value="/user")
     @ApiOperation("编辑管理员")
-    public Result addSystemUser(@Validated @RequestBody SystemUserEditDTO systemUserEditDTO){
-        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
-        return  Result.success();
+    public Result editSystemUser(@Validated @RequestBody SystemUserEditDTO systemUserEditDTO){
+        return this.basisService.updateUser(systemUserEditDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/user/{id}/status")
+    @ApiOperation("禁用/启用管理员")
+    public Result editSystemUserStatus(@PathVariable long id){
+        return this.basisService.updateUserStatus(id);
     }
 
     @Secured
     @GetMapping(value="/user/page")
     @ApiOperation("分页获取管理员")
-    public Result<PageResult<SystemUserVO>> getBannerTypes(PageDTO pageDTO){
-        //return this.communityService.getBannerTypes(pageDTO);
-        return Result.success(new PageResult<SystemUserVO>());
+    public Result<PageResult<SystemUserVO>> getSystemUsers(PageDTO pageDTO){
+        return this.basisService.getUsers(pageDTO);
     }
 }

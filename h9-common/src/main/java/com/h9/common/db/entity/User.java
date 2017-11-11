@@ -60,7 +60,7 @@ public class User extends BaseEntity {
     private Integer type = 1;
 
     @Column(name = "is_admin",nullable = false,columnDefinition = "tinyint default 0 COMMENT '0:非后台用户 1：后台用户'")
-    private Integer isAdmin = 1;
+    private Integer isAdmin = 0;
 
     @Column(name = "password", columnDefinition = "varchar(36) default '' COMMENT '加密后密码'")
     private String password;

@@ -11,6 +11,8 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +45,8 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30,TimeUnit.MINUTES);
+        user.setLastLoginTime(new Date());
+        this.userRepository.save(user);
         return new Result(0, "登录成功",new LoginResultVO(token,name));
     }
 
