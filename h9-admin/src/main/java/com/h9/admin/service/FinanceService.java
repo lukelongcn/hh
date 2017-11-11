@@ -45,6 +45,12 @@ public class FinanceService {
     private CommonService commonService;
     @Autowired
     private LotteryFlowRepository lotteryFlowRepository;
+    @Autowired
+    private LotteryFlowRecordRepository lotteryFlowRecordRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ConfigService configService;
 
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
         /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
@@ -88,7 +94,7 @@ public class FinanceService {
         if(withdrawalsRecord.getStatus()!=WithdrawalsRecord.statusEnum.FAIL.getCode()){
             return Result.fail("该订单不是失败订单");
         }
-        Result result = this.commonService.setBalance(withdrawalsRecord.getUserId(),withdrawalsRecord.getMoney(), BalanceFlowType.BalanceFlowTypeEnum.RETURN.getId(),
+        Result result = this.commonService.setBalance(withdrawalsRecord.getUserId(),withdrawalsRecord.getMoney(), BalanceFlow.BalanceFlowTypeEnum.RETURN.getId(),
                 withdrawalsRecord.getId(),withdrawalsRecord.getOrderNo(),"银联退回");
         if(result.getCode()==Result.FAILED_CODE){
             this.logger.errorf("改变用户余额失败,msg:{0}",result.getMsg());
@@ -136,6 +142,47 @@ public class FinanceService {
         }
         sql.append(" order by o.id desc");
         return MessageFormat.format(sql.toString(),condition);
+    }
+
+    public Result transferFromLotteryFlows(Set<Long> ids){
+        List<String> errMsgList = new ArrayList<>();
+        LotteryFlowRecord lotteryFlowRecord = new LotteryFlowRecord();
+        for(Long id:ids){
+            LotteryFlowRecord flowRecord = this.lotteryFlowRecordRepository.findByLotteryFlow_Id(id);
+            if(flowRecord!=null){
+                errMsgList.add("id为"+id+"的记录已转过账");
+                continue;
+            }
+            LotteryFlow flow = this.lotteryFlowRepository.findByLockId(id);
+            Result  result = this.commonService.setBalance(flow.getUser().getId(),flow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                    flow.getId(), flow.getId().toString(),"小品会");
+            flowRecord = new LotteryFlowRecord();
+            if(result.getCode()==Result.FAILED_CODE){
+                errMsgList.add("手机号:"+flow.getUser().getPhone()+"余额不足");
+                flowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.FAIL.getId());
+            }else{
+                flowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.SUCCESS.getId());
+                long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
+                Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                        flow.getId(),flow.getId().toString(),"小品会");
+                if(r.getCode()==Result.FAILED_CODE){
+                    r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                            flow.getId(),flow.getId().toString(),"小品会");
+                    if(r.getCode()==Result.FAILED_CODE){
+                        this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
+                        errMsgList.add("收款方修改账户余额出错，lotteryFlow.id为"+flow.getId());
+                    }
+                }
+            }
+            flowRecord.setLotteryFlow(flow);
+            long userId = Long.valueOf((String)HttpUtil.getHttpSession().getAttribute("curUserId"));
+            flowRecord.setUser(this.userRepository.findOne(userId));
+            this.lotteryFlowRecordRepository.save(flowRecord);
+        }
+        if(errMsgList.size()>0){
+            return Result.fail(errMsgList.toString());
+        }
+        return Result.success("成功");
     }
 
 }

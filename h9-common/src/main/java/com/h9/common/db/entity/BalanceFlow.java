@@ -127,4 +127,37 @@ public class BalanceFlow extends BaseEntity {
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
+
+    public enum BalanceFlowTypeEnum {
+        WITHDRAW(1,"提现"),
+        RETURN(2,"银联退回"),
+        XIAPPINHUI(3,"小品会"),
+        RECHARGE_PHONE_FARE(4,"充话费"),
+        DIDI_EXCHANGE(5,"滴滴兑换"),
+        ROUNDABOUT(6,"大转盘");
+
+        BalanceFlowTypeEnum(long id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private long id;
+        private String name;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }
