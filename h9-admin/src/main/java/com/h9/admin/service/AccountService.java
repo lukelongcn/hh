@@ -2,23 +2,21 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.vo.BalanceFlowVO;
 import com.h9.admin.model.vo.UserAccountVO;
+import com.h9.admin.model.vo.UserBankVO;
+import com.h9.admin.model.vo.UserRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.VCoinsFlow;
-import com.h9.common.db.repo.BalanceFlowRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.db.repo.UserRepository;
-import com.h9.common.db.repo.VCoinsFlowRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.Config;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,9 +34,14 @@ public class AccountService {
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private VCoinsFlowRepository vCoinsFlowRepository;
-    
+    @Resource
+    private BankCardRepository bankCardRepository;
     @Resource
     private ConfigService configService;
+    @Resource
+    private LotteryRepository lotteryRepository;
+    @Resource
+    private LotteryLogRepository lotteryLogRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
         Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest());
@@ -86,5 +89,15 @@ public class AccountService {
             return balanceFlowVO;
         });
         return Result.success(new PageResult<>(map));
+    }
+
+    public Result<List<UserBankVO>> bankInfo(Long userId) {
+        List<UserBankVO> voByUserId = bankCardRepository.findVOByUserId(userId);
+        return Result.success(voByUserId);
+    }
+
+    public Result<List<UserRecordVO>> rewardInfo(Date startTime, Date endTime, String key) {
+        List<UserRecordVO> userList = lotteryLogRepository.getUserList(startTime, endTime, StringUtils.isEmpty(key) ? null : "%" + key + "%");
+        return Result.success(userList);
     }
 }

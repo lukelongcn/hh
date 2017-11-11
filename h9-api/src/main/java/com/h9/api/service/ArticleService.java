@@ -1,7 +1,10 @@
 package com.h9.api.service;
 
+import com.h9.api.model.vo.ArticleVO;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Article;
 import com.h9.common.db.repo.ArticleRepository;
+import com.h9.common.utils.DateUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -19,6 +22,10 @@ public class ArticleService {
 
     @ApiOperation(value = "获取文章内容")
     public Result findOne(Long id){
-        return Result.success(articleReposiroty.findOne(id));
+        Article article =  articleReposiroty.findOne(id);
+        ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
+        articleVO.setStartTime(DateUtil.formatDate(article.getStartTime(), DateUtil.FormatType.GBK_MINUTE));
+        articleVO.setEndTime(DateUtil.formatDate(article.getEndTime(), DateUtil.FormatType.GBK_MINUTE));
+        return Result.success(articleVO);
     }
 }
