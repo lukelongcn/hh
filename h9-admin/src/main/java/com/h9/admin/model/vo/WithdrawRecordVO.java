@@ -172,7 +172,7 @@ public class WithdrawRecordVO {
         withdrawRecordVO.setBankName(MapUtils.getString(map,"bank_name"));
         BeanUtils.
         withdrawRecordVO.setCity(MapUtils.getString(map,"city"));
-        withdrawRecordVO.setProvice(MapUtils.getString(map,"provice"));
+        withdrawRecordVO.setProvince(MapUtils.getString(map,"provice"));
         withdrawRecordVO.setCreateTime(DateUtil.formatDate(MapUtils.getString(map,"create_time"),DateUtil.FormatType.SECOND));
         withdrawRecordVO.setFinishTime(DateUtil.formatDate(MapUtils.getString(map,"finish_time"),DateUtil.FormatType.SECOND));
         withdrawRecordVO.setId(MapUtils.getLong(map,"id"));

@@ -170,6 +170,7 @@ public class ConsumeService {
             map.put("stock", count);
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
+            map.put("price", goods.getRealPrice());
             list.add(map);
         });
         return Result.success(list);
@@ -253,7 +254,7 @@ public class ConsumeService {
         String cardNo = userBank.getNo();
         String usrName = userBank.getName();
         String openBank = bankType.getBankName();
-        String prov = userBank.getProvice();
+        String prov = userBank.getProvince();
         String city = userBank.getCity();
         String transAmt = "101";
         String purpose = "提现";

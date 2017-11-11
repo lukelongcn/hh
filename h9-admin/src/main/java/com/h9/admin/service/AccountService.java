@@ -2,17 +2,12 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.vo.BalanceFlowVO;
 import com.h9.admin.model.vo.UserAccountVO;
+import com.h9.admin.model.vo.UserBankVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.VCoinsFlow;
-import com.h9.common.db.repo.BalanceFlowRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.db.repo.UserRepository;
-import com.h9.common.db.repo.VCoinsFlowRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.Config;
 import org.springframework.data.domain.Page;
@@ -36,7 +31,10 @@ public class AccountService {
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private VCoinsFlowRepository vCoinsFlowRepository;
-    
+    @Resource
+    private BankCardRepository bankCardRepository;
+    @Resource
+    private WithdrawalsRecordRepository withdrawalsRecordRepository;
     @Resource
     private ConfigService configService;
     
@@ -86,5 +84,10 @@ public class AccountService {
             return balanceFlowVO;
         });
         return Result.success(new PageResult<>(map));
+    }
+
+    public Result<PageResult<UserBankVO>> bankInfo(Long userId,PageDTO pageDTO) {
+        Page<UserBankVO> voByUserId = bankCardRepository.findVOByUserId(userId, pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(voByUserId));
     }
 }

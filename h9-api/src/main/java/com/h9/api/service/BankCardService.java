@@ -7,7 +7,6 @@ import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -57,7 +56,7 @@ public class BankCardService {
         BankType bankType = bankTypeRepository.findOne(typeId);
         if (bankType == null) return Result.fail("此银行类型不存在");
         userBank.setBankType(bankType);
-        userBank.setProvice(bankCardDTO.getProvice());
+        userBank.setProvince(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
         userBank.setStatus(1);
         userBank.setDefaultSelect(1);
