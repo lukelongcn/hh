@@ -222,7 +222,7 @@ public class ConsumeService {
         return Result.success(voMap);
     }
 
-    public Result bankWithDraw(Long userId, Long bankId, String code, Long longitude, Long latitude, HttpServletRequest request) {
+    public Result bankWithDraw(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
 
         User user = userRepository.findOne(userId);
         //验证短信
