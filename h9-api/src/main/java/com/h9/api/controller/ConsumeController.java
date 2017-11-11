@@ -79,8 +79,8 @@ public class ConsumeController {
     public Result bankWithdraw(@SessionAttribute("curUserId") Long userId
             , @PathVariable Long bankId
             , @PathVariable String code
-            , @RequestParam(required = false) double longitude
-            , @RequestParam(required = false) double latitude, HttpServletRequest request) {
+            , @RequestParam(required = false,defaultValue = "0") double longitude
+            , @RequestParam(required = false,defaultValue = "0") double latitude, HttpServletRequest request) {
 
         return consumeService.bankWithDraw(userId, bankId, code,longitude,latitude,request);
     }
