@@ -46,7 +46,7 @@ public class FinanceController {
 
     @Secured
     @GetMapping(value = "/lottery/flow/page")
-    @ApiOperation("分页获取抢红包参与列表")
+    @ApiOperation("分页未转账列表")
     public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
         return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
     }
@@ -60,10 +60,19 @@ public class FinanceController {
 
     @Secured
     @GetMapping(value = "/lottery/flow/record/page")
-    @ApiOperation("分页转账列表")
-    public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlows(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
+    @ApiOperation("分页已转账列表")
+    public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlowRecords(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
         //return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
         //return  Result.success(new PageResult<LotteryFlowRecordVO>());
         return this.financeService.getLotteryFlowRecords(lotteryFLowRecordDTO);
     }
+
+    @Secured
+    @PutMapping(value="/lottery/flow/record/{id}/status")
+    @ApiOperation("重新转账")
+    public Result transferFromLotteryFlowRecord( @PathVariable long id)  {
+        return this.financeService.transferFromLotteryFlowRecord(id);
+    }
+
+
 }

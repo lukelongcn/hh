@@ -1,11 +1,11 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.basis.*;
+import com.h9.admin.model.dto.community.BannerTypeAddDTO;
+import com.h9.admin.model.vo.SystemUserVO;
+import com.h9.common.db.entity.BannerType;
 import com.h9.common.modle.dto.PageDTO;
-import com.h9.admin.model.dto.basis.BankTypeAddDTO;
-import com.h9.admin.model.dto.basis.BankTypeEditDTO;
-import com.h9.admin.model.dto.basis.GlobalPropertyAddDTO;
-import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -92,5 +92,29 @@ public class BasisController {
     @ApiOperation("获取统计的积分和奖励数据")
     public Result statisticsLottery(){
         return basisService.statisticsLottery();
+    }
+
+    @Secured
+    @PostMapping(value="/user")
+    @ApiOperation("增加管理员")
+    public Result addSystemUser(@Validated @RequestBody SystemUserAddDTO systemUserAddDTO){
+        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
+        return  Result.success();
+    }
+
+    @Secured
+    @PutMapping(value="/user")
+    @ApiOperation("编辑管理员")
+    public Result addSystemUser(@Validated @RequestBody SystemUserEditDTO systemUserEditDTO){
+        //return this.communityService.addBannerType(bannerTypeDTO.toBannerType());
+        return  Result.success();
+    }
+
+    @Secured
+    @GetMapping(value="/user/page")
+    @ApiOperation("分页获取管理员")
+    public Result<PageResult<SystemUserVO>> getBannerTypes(PageDTO pageDTO){
+        //return this.communityService.getBannerTypes(pageDTO);
+        return Result.success(new PageResult<SystemUserVO>());
     }
 }
