@@ -109,7 +109,6 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = StringUtils.isNotEmpty(user.getPhone())?RedisKey.getTokenUserIdKey(token):RedisKey.getWeChatUserId(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
-//        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 
@@ -387,6 +386,7 @@ public class UserService {
 
 
         String educationCode = userExtends.getEducation();
+
         List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class),educationCode);
 
         String marriageStatus = userExtends.getMarriageStatus();
