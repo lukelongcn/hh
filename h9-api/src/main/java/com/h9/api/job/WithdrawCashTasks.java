@@ -21,7 +21,7 @@ public class WithdrawCashTasks {
     @Resource
     private ConsumeService consumeService;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void run(){
 
         logger.info("withdrawCashTasks run ........");

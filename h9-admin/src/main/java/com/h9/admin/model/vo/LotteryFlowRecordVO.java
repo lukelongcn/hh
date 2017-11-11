@@ -40,6 +40,11 @@ public class LotteryFlowRecordVO {
     @ApiModelProperty(value = "发奖时间" )
     private Date transferTime;
 
+    @ApiModelProperty(value = "状态" )
+    private Long status;
+
+    @ApiModelProperty(value = "操作人" )
+    private String operator;
 
     public Long getId() {
         return id;
@@ -106,6 +111,22 @@ public class LotteryFlowRecordVO {
         this.transferTime = transferTime;
     }
 
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
+        this.status = status;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
     public static LotteryFlowRecordVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
         LotteryFlowRecordVO lotteryFlowFinanceVO = new LotteryFlowRecordVO();
         BeanUtils.copyProperties(lotteryFlow, lotteryFlowFinanceVO);
@@ -115,7 +136,7 @@ public class LotteryFlowRecordVO {
         return lotteryFlowFinanceVO;
     }
 
-    public static List<LotteryFlowRecordVO> toLotteryFlowFinanceVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
+    public static List<LotteryFlowRecordVO> toLotteryFlowRecordVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
         if(maps==null){
             return null;
         }else{
