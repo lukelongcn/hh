@@ -109,7 +109,6 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = StringUtils.isNotEmpty(user.getPhone())?RedisKey.getTokenUserIdKey(token):RedisKey.getWeChatUserId(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
-//        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 
@@ -290,10 +289,12 @@ public class UserService {
                 //增加双方流水
                 if(balance.compareTo(new BigDecimal(0))>0){
                     //变更微信account
-                   commonService.setBalance(user.getId(), balance.abs().negate(), 1l, phoneUser.getId(), "", "");
+                    //TODO 更改流水类型
+                   commonService.setBalance(user.getId(), balance.abs().negate(), 1L, phoneUser.getId(), "", "");
                    commonService.setBalance(phoneUser.getId(),balance.abs(),1l,phoneUser.getId(),"","");
                    phoneUser.setOpenId(user.getOpenId());
                    phoneUser.setUnionId(user.getUnionId());
+                   userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
                 userRepository.save(user);
@@ -304,7 +305,9 @@ public class UserService {
         }
 
         String weChatUserId = RedisKey.getWeChatUserId(token);
+        //TODO you wen ti
         redisBean.expire(weChatUserId, 1, TimeUnit.MICROSECONDS);
+        redisBean.setStringValue(weChatUserId,"",1,TimeUnit.SECONDS);
 
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
@@ -383,6 +386,7 @@ public class UserService {
 
 
         String educationCode = userExtends.getEducation();
+
         List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class),educationCode);
 
         String marriageStatus = userExtends.getMarriageStatus();
