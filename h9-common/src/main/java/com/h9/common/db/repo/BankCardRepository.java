@@ -3,8 +3,6 @@ package com.h9.common.db.repo;
 import com.h9.admin.model.vo.UserBankVO;
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.UserBank;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +31,6 @@ public interface BankCardRepository extends BaseRepository<UserBank> {
             "(select count(w) from WithdrawalsRecord w where w.status=3 and w.userBank.id=u.id)," +
             "u.createTime,u.updateTime,u.status) from UserBank u " +
             " where u.userId=?1")
-    Page<UserBankVO> findVOByUserId(Long userId, Pageable pageable);
+    List<UserBankVO> findVOByUserId(Long userId);
 
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 账户管理
@@ -53,8 +54,8 @@ public class AccountController {
     @Secured
     @GetMapping(value = "/{userId}/bankInfo")
     @ApiOperation("获取银行卡信息")
-    public Result<PageResult<UserBankVO>> bankInfo(@PathVariable Long userId,PageDTO pageDTO){
-        return accountService.bankInfo(userId,pageDTO);
+    public Result<List<UserBankVO>> bankInfo(@PathVariable Long userId){
+        return accountService.bankInfo(userId);
     }
     
     

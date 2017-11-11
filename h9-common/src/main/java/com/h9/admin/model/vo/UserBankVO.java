@@ -30,7 +30,7 @@ public class UserBankVO {
     private Date createTime;
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态 1:正常 2禁用 3解绑")
     private int status;
     public UserBankVO() {
     }
