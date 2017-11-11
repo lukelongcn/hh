@@ -1,4 +1,4 @@
-package com.h9.admin.model.dto.finance;
+package com.h9.common.modle.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -10,7 +10,7 @@ import java.util.Set;
  * @author: George
  * @date: 2017/11/10 20:03
  */
-public class LotterryFLowRecordDTO {
+public class LotteryFLowRecordDTO extends PageDTO{
     @ApiModelProperty(value = "手机号码")
     private String phone;
 
@@ -54,15 +54,15 @@ public class LotterryFLowRecordDTO {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartTime(long startTime) {
+        this.startTime = new Date(startTime);
     }
 
     public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndTime(long endTime) {
+        this.endTime = new Date(endTime);
     }
 }
