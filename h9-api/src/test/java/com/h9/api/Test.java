@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -340,25 +341,40 @@ public class Test {
 
     @org.junit.Test
     public void testStream() {
-        List<String[]> collect = Arrays.asList("hello", "world").stream()
-                .map(word -> word.split(""))
-                .collect(Collectors.toList());
 
-        List<String> list = Arrays.asList("hello", "world").stream()
-                .map(word -> word.split(""))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toList());
+//        byte[] bytes = new byte[4];
+//        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+//        buffer.putInt(0x1234);
+//        System.out.println(Arrays.toString(bytes));
+//        bytes[0] = 1;
+//        buffer.flip();
+//        System.out.println(buffer.get());
 
-        Stream<String> stream = Arrays.stream(new String[]{"hello", "world"});
+        ByteBuffer buffer = ByteBuffer.allocate(64);
 
-        boolean h = stream.anyMatch(el -> el.contains("h"));
-        System.out.println(h);
+        buffer.putInt(1);
+        buffer.putInt(2);
+        buffer.putInt(3);
+        System.out.println("write mode");
+        buffer.flip();
+        System.out.println(buffer.limit());
+        System.out.println(buffer.position());
+        System.out.println(buffer.capacity());
 
-        Stream<String> stream2 = Arrays.stream(new String[]{"hello", "world","ja"});
-        boolean allMatch = stream2.allMatch(el -> el.length() > 2);
-        System.out.println("allMatch : "+allMatch);
+        System.out.println("read mode");
+        buffer.flip();
+        System.out.println(buffer.limit());
+        System.out.println(buffer.position());
+        System.out.println(buffer.capacity());
 
-        Stream<String> parallel = Arrays.stream(new String[]{"hello", "world"}).parallel();
+        buffer.flip();
+        System.out.println("----");
+        int anInt = buffer.getInt();
+        int anInt1 = buffer.getInt();
+        System.out.println("read data");
+        System.out.println(anInt);
+        System.out.println(anInt1);
+        System.out.println("read data");
     }
 
 }
