@@ -11,10 +11,20 @@ public class ImeiUserRecordVO {
     private Long userId;
     @ApiModelProperty(value = "串号")
     private String imei;
-    @ApiModelProperty(value = "开瓶次数")
+    @ApiModelProperty(value = "关联账号数")
     private Long relevanceCount;
     @ApiModelProperty(value = "参与次数")
     private Long joinCount;
+
+
+    public ImeiUserRecordVO() {
+    }
+
+    public ImeiUserRecordVO(Long userId, String imei, Long joinCount) {
+        this.userId = userId;
+        this.imei = imei;
+        this.joinCount = joinCount;
+    }
 
     public Long getUserId() {
         return userId;
