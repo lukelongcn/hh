@@ -385,6 +385,7 @@ public class UserService {
 
 
         String educationCode = userExtends.getEducation();
+
         List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class),educationCode);
 
         String marriageStatus = userExtends.getMarriageStatus();
