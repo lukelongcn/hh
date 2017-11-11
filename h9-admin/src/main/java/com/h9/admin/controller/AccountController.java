@@ -60,10 +60,18 @@ public class AccountController {
     @Secured
     @GetMapping(value = "/rewardInfo")
     @ApiOperation("获取用户的获奖信息")
-    public Result<List<UserRecordVO>> rewardInfo(@RequestParam Date startTime,
-                                                 @RequestParam Date endTime,
-                                                 @RequestParam String key){
-        return accountService.rewardInfo(startTime,endTime,key);
+    public Result<List<UserRecordVO>> rewardInfo(@RequestParam Long startTime,
+                                                 @RequestParam Long endTime,
+                                                 @RequestParam(defaultValue = "") String key){
+        return accountService.rewardInfo(new Date(startTime),new Date(endTime),key);
     }
-    
+
+
+    @Secured
+    @GetMapping(value = "/deviceIdInfo")
+    @ApiOperation("获取设备编号的信息")
+    public Result<List<UserRecordVO>> deviceIdInfo(@RequestParam Long startTime,
+                                                   @RequestParam Long endTime){
+        return accountService.deviceIdInfo(new Date(startTime),new Date(endTime));
+    }
 }

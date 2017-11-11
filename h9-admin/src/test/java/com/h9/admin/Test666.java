@@ -21,6 +21,6 @@ public class Test666 {
 
     @Test
     public void contextLoads() {
-        accountService.rewardInfo(new Date(0), new Date(), "");
+        accountService.deviceIdInfo(new Date(0), new Date());
     }
 }

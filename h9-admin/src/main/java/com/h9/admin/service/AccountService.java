@@ -1,9 +1,6 @@
 package com.h9.admin.service;
 
-import com.h9.admin.model.vo.BalanceFlowVO;
-import com.h9.admin.model.vo.UserAccountVO;
-import com.h9.admin.model.vo.UserBankVO;
-import com.h9.admin.model.vo.UserRecordVO;
+import com.h9.admin.model.vo.*;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -39,9 +36,9 @@ public class AccountService {
     @Resource
     private ConfigService configService;
     @Resource
-    private LotteryRepository lotteryRepository;
-    @Resource
     private LotteryLogRepository lotteryLogRepository;
+    @Resource
+    private UserRecordRepository userRecordRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
         Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest());
@@ -99,5 +96,10 @@ public class AccountService {
     public Result<List<UserRecordVO>> rewardInfo(Date startTime, Date endTime, String key) {
         List<UserRecordVO> userList = lotteryLogRepository.getUserList(startTime, endTime, StringUtils.isEmpty(key) ? null : "%" + key + "%");
         return Result.success(userList);
+    }
+
+    public Result<List<UserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
+        List<Object[]> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
+        return null;
     }
 }
