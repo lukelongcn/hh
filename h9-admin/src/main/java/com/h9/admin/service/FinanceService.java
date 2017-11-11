@@ -176,13 +176,17 @@ public class FinanceService {
                 long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
                 Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
                         flow.getId(),flow.getId().toString(),"小品会");
-                if(r.getCode()==Result.FAILED_CODE){
+               /* if(r.getCode()==Result.FAILED_CODE){
                     r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
                             flow.getId(),flow.getId().toString(),"小品会");
                     if(r.getCode()==Result.FAILED_CODE){
                         this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
                         errMsgList.add("收款方修改账户余额出错，lotteryFlow.id为"+flow.getId());
                     }
+                }*/
+                if(r.getCode()==Result.FAILED_CODE){
+                    this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
+                    errMsgList.add("收款方修改账户余额出错，lotteryFlow.id为"+flow.getId());
                 }
             }
             flowRecord.setLotteryFlow(flow);
@@ -235,6 +239,29 @@ public class FinanceService {
         }
         sql.append(" order by o.id desc");
         return MessageFormat.format(sql.toString(),condition);
+    }
+
+    public Result transferFromLotteryFlowRecord(long id){
+
+        LotteryFlowRecord lotteryFlowRecord = this.lotteryFlowRecordRepository.findByLockId(id);
+        if(lotteryFlowRecord.getStatus()!=LotteryFlowRecord.LotteryFlowRecordStatusEnum.FAIL.getId()){
+            return Result.fail("改记录不为转账失败记录");
+        }
+        LotteryFlow lotteryFlow =lotteryFlowRecord.getLotteryFlow();
+        Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                lotteryFlow.getId(), lotteryFlow.getId().toString(),"小品会");
+        if(result.getCode()==Result.FAILED_CODE){
+            return Result.fail("余额不足，转账失败");
+        }
+        long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
+        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                lotteryFlow.getId(),lotteryFlow.getId().toString(),"小品会");
+        if(r.getCode()==Result.FAILED_CODE){
+            this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",lotteryFlow.getId());
+        }
+        lotteryFlowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.SUCCESS.getId());
+        this.lotteryFlowRecordRepository.save(lotteryFlowRecord);
+        return Result.success("成功");
     }
 
 }

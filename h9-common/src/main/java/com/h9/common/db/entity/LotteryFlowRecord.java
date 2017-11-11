@@ -11,8 +11,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 /**
  * @author: George
  * @date: 2017/11/10 14:41
+ * name="活动参与记录的转账记录"
  */
-@Entity(name="活动参与记录的转账记录")
+@Entity()
 @Table(name = "lottery_flow_record",uniqueConstraints = {@UniqueConstraint(columnNames={"lottery_flow_id"})})
 public class LotteryFlowRecord  extends BaseEntity {
     @Id

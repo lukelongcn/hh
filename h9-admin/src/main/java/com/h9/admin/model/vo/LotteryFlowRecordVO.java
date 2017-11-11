@@ -40,7 +40,7 @@ public class LotteryFlowRecordVO {
     @ApiModelProperty(value = "发奖时间" )
     private Date transferTime;
 
-    @ApiModelProperty(value = "状态" )
+    @ApiModelProperty(value = "转账状态，1：成功，2：失败" )
     private Long status;
 
     @ApiModelProperty(value = "操作人" )
