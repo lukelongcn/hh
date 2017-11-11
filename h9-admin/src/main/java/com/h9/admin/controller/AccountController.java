@@ -4,18 +4,17 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.vo.BalanceFlowVO;
 import com.h9.admin.model.vo.UserAccountVO;
 import com.h9.admin.model.vo.UserBankVO;
+import com.h9.admin.model.vo.UserRecordVO;
 import com.h9.admin.service.AccountService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,7 +56,14 @@ public class AccountController {
     public Result<List<UserBankVO>> bankInfo(@PathVariable Long userId){
         return accountService.bankInfo(userId);
     }
-    
-    
+
+    @Secured
+    @GetMapping(value = "/rewardInfo")
+    @ApiOperation("获取用户的获奖信息")
+    public Result<List<UserRecordVO>> rewardInfo(@RequestParam Date startTime,
+                                                 @RequestParam Date endTime,
+                                                 @RequestParam String key){
+        return accountService.rewardInfo(startTime,endTime,key);
+    }
     
 }
