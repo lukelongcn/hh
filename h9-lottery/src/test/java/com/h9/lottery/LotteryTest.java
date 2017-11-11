@@ -55,23 +55,23 @@ public class LotteryTest {
     @Transactional
     public void contextLoads() {
 
-//        generateCode();
+        generateCode();
 
-        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
-        logger.debugv(JSONObject.toJSONString(lotteryRemark));
-        Map profileJob = configService.getMapConfig("profileJob");
-        logger.debugv(JSONObject.toJSONString(profileJob));
-        List<Config> profileJob1 = configService.getMapListConfig("profileJob");
-        logger.debugv(JSONObject.toJSONString(profileJob1));
-
-        String withdrawMax = configService.getStringConfig("withdrawMax");
-        logger.debugv(JSONObject.toJSONString(withdrawMax));
+//        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
+//        logger.debugv(JSONObject.toJSONString(lotteryRemark));
+//        Map profileJob = configService.getMapConfig("profileJob");
+//        logger.debugv(JSONObject.toJSONString(profileJob));
+//        List<Config> profileJob1 = configService.getMapListConfig("profileJob");
+//        logger.debugv(JSONObject.toJSONString(profileJob1));
+//
+//        String withdrawMax = configService.getStringConfig("withdrawMax");
+//        logger.debugv(JSONObject.toJSONString(withdrawMax));
     }
 
     private void generateCode() {
         Activity one = activityRepository.findOne(8L);
         Product product = productRepository.findOne(1L);
-        for(int i=0;i<=1000;i++) {
+        for(int i=0;i<=50;i++) {
             try {
                 Reward reward = new Reward();
                 reward.setMoney(new BigDecimal(18));

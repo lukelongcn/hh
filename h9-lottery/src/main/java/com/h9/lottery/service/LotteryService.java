@@ -365,8 +365,11 @@ public class LotteryService {
         ProductModel productInfo = factoryProvider.getProductInfo(code);
         Product product = null;
         if (productInfo != null) {
-            product = productInfo.covert();
-            product = productRepository.saveAndFlush(product);
+            try {
+                product = productInfo.covert();
+                product = productRepository.saveAndFlush(product);
+            } catch (Exception e) {
+            }
         }
         reward = new Reward();
         // 关联上商品信息

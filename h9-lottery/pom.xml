@@ -12,9 +12,10 @@
 
     <groupId>com.h9.lottery</groupId>
     <artifactId>h9-lottery</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
     <dependencies>
-
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
