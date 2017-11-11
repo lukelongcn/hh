@@ -6,13 +6,20 @@ import com.h9.admin.model.vo.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
+import com.h9.common.constant.Constants;
 import com.h9.common.db.basis.JpaRepository;
-import com.h9.common.db.entity.BalanceFlowType;
+import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.LotteryFlow;
+import com.h9.common.db.entity.LotteryFlowRecord;
 import com.h9.common.db.entity.WithdrawalsRecord;
+import com.h9.common.db.repo.LotteryFlowRecordRepository;
 import com.h9.common.db.repo.LotteryFlowRepository;
+import com.h9.common.db.repo.UserRepository;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.HttpUtil;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: George
@@ -175,7 +184,7 @@ public class FinanceService {
                 }
             }
             flowRecord.setLotteryFlow(flow);
-            long userId = Long.valueOf((String)HttpUtil.getHttpSession().getAttribute("curUserId"));
+            long userId = Long.valueOf((String) HttpUtil.getHttpSession().getAttribute("curUserId"));
             flowRecord.setUser(this.userRepository.findOne(userId));
             this.lotteryFlowRecordRepository.save(flowRecord);
         }
