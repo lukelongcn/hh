@@ -60,8 +60,8 @@ public class AccountController {
     @Secured
     @GetMapping(value = "/rewardInfo")
     @ApiOperation("获取用户的获奖信息")
-    public Result<List<UserRecordVO>> rewardInfo(@RequestParam Long startTime,
-                                                 @RequestParam Long endTime,
+    public Result<List<UserRecordVO>> rewardInfo(@RequestParam(defaultValue = "0") Long startTime,
+                                                 @RequestParam(defaultValue = "0") Long endTime,
                                                  @RequestParam(defaultValue = "") String key){
         return accountService.rewardInfo(new Date(startTime),new Date(endTime),key);
     }
