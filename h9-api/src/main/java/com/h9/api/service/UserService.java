@@ -109,7 +109,6 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = StringUtils.isNotEmpty(user.getPhone())?RedisKey.getTokenUserIdKey(token):RedisKey.getWeChatUserId(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
-//        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         return LoginResultVO.convert(user, token);
     }
 
