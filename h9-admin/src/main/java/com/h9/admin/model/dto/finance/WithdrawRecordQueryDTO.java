@@ -19,6 +19,17 @@ public class WithdrawRecordQueryDTO extends PageDTO{
     @ApiModelProperty(value = "状态")
     private Integer status;
 
+    @ApiModelProperty(value = "用户id")
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public String getPhone() {
         return phone;
     }

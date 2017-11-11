@@ -1,7 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.dto.finance.LotterryFLowRecordDTO;
+import com.h9.common.modle.dto.LotteryFLowRecordDTO;
 import com.h9.admin.model.dto.finance.TransferLotterryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
@@ -61,8 +61,9 @@ public class FinanceController {
     @Secured
     @GetMapping(value = "/lottery/flow/record/page")
     @ApiOperation("分页转账列表")
-    public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlows(LotterryFLowRecordDTO lotterryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
+    public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlows(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
         //return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
-        return  Result.success(new PageResult<LotteryFlowRecordVO>());
+        //return  Result.success(new PageResult<LotteryFlowRecordVO>());
+        return this.financeService.getLotteryFlowRecords(lotteryFLowRecordDTO);
     }
 }
