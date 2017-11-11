@@ -22,7 +22,7 @@ public class ArticleController {
     ArticleService articleService;
 
     @ApiOperation(value = "获取文章内容")
-    @GetMapping(value = "/article/{id}",produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/article/{id}")
     public Result<Article> finOne(@PathVariable("id")Long id){
         return articleService.findOne(id);
     }
