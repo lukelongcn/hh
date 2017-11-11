@@ -290,10 +290,12 @@ public class UserService {
                 //增加双方流水
                 if(balance.compareTo(new BigDecimal(0))>0){
                     //变更微信account
-                   commonService.setBalance(user.getId(), balance.abs().negate(), 1l, phoneUser.getId(), "", "");
+                    //TODO 更改流水类型
+                   commonService.setBalance(user.getId(), balance.abs().negate(), 1L, phoneUser.getId(), "", "");
                    commonService.setBalance(phoneUser.getId(),balance.abs(),1l,phoneUser.getId(),"","");
                    phoneUser.setOpenId(user.getOpenId());
                    phoneUser.setUnionId(user.getUnionId());
+                   userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
                 userRepository.save(user);
