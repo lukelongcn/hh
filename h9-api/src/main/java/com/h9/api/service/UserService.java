@@ -294,6 +294,7 @@ public class UserService {
                    commonService.setBalance(phoneUser.getId(),balance.abs(),1l,phoneUser.getId(),"","");
                    phoneUser.setOpenId(user.getOpenId());
                    phoneUser.setUnionId(user.getUnionId());
+                   userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
                 userRepository.save(user);
