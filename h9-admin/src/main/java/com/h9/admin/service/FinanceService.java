@@ -1,7 +1,6 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
-import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
@@ -9,7 +8,6 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.basis.JpaRepository;
 import com.h9.common.db.entity.BalanceFlowType;
-import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.WithdrawalsRecord;
 import com.h9.common.db.repo.LotteryFlowRepository;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
@@ -20,7 +18,6 @@ import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -28,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +74,9 @@ public class FinanceService {
         }
         if(withdrawRecordQueryDTO.getStatus()!=null&&withdrawRecordQueryDTO.getStatus()!=0){
             sql.append(" and w.status=").append(withdrawRecordQueryDTO.getStatus());
+        }
+        if(withdrawRecordQueryDTO.getUserId()!=null){
+            sql.append(" and w.user_id=").append(withdrawRecordQueryDTO.getUserId());
         }
         sql.append(" order by w.id desc");
         return sql.toString();
