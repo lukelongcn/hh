@@ -15,7 +15,7 @@ import java.util.Map;
  * @author: George
  * @date: 2017/11/8 13:52
  */
-public class LotteryFlowFinanceVO {
+public class LotteryFlowRecordVO {
     @ApiModelProperty(value = "id" )
     private Long id;
 
@@ -28,18 +28,19 @@ public class LotteryFlowFinanceVO {
     @ApiModelProperty(value = "手机号码")
     private String phone;
 
+    @ApiModelProperty(value = "用户余额" )
+    private BigDecimal balance = new BigDecimal(0);
+
     @ApiModelProperty(value = "金额" )
     private BigDecimal money = new BigDecimal(0);
 
-    @ApiModelProperty(value = "发奖时间" )
+    @ApiModelProperty(value = "转账时间" )
     private Date createTime;
 
-   /* @ApiModelProperty(value = "转账状态" )
-    private Integer transferStatus;
-
-    @ApiModelProperty(value = "转账时间" )
+    @ApiModelProperty(value = "发奖时间" )
     private Date transferTime;
-*/
+
+
     public Long getId() {
         return id;
     }
@@ -89,12 +90,12 @@ public class LotteryFlowFinanceVO {
         this.createTime = createTime;
     }
 
-  /*  public Integer getTransferStatus() {
-        return transferStatus;
+    public BigDecimal getBalance() {
+        return balance;
     }
 
-    public void setTransferStatus(Integer transferStatus) {
-        this.transferStatus = transferStatus;
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 
     public Date getTransferTime() {
@@ -103,10 +104,10 @@ public class LotteryFlowFinanceVO {
 
     public void setTransferTime(Date transferTime) {
         this.transferTime = transferTime;
-    }*/
+    }
 
-    public static LotteryFlowFinanceVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
-        LotteryFlowFinanceVO lotteryFlowFinanceVO = new LotteryFlowFinanceVO();
+    public static LotteryFlowRecordVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
+        LotteryFlowRecordVO lotteryFlowFinanceVO = new LotteryFlowRecordVO();
         BeanUtils.copyProperties(lotteryFlow, lotteryFlowFinanceVO);
         lotteryFlowFinanceVO.setCode(lotteryFlow.getReward().getCode());
         lotteryFlowFinanceVO.setPhone(lotteryFlow.getUser().getPhone());
@@ -114,13 +115,13 @@ public class LotteryFlowFinanceVO {
         return lotteryFlowFinanceVO;
     }
 
-    public static List<LotteryFlowFinanceVO> toLotteryFlowFinanceVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
+    public static List<LotteryFlowRecordVO> toLotteryFlowFinanceVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
         if(maps==null){
             return null;
         }else{
-            List<LotteryFlowFinanceVO> lotteryFlowFinanceVOS = new ArrayList<>();
+            List<LotteryFlowRecordVO> lotteryFlowFinanceVOS = new ArrayList<>();
             for(Map map:maps){
-                LotteryFlowFinanceVO lotteryFlowFinanceVO = new LotteryFlowFinanceVO();
+                LotteryFlowRecordVO lotteryFlowFinanceVO = new LotteryFlowRecordVO();
                 org.apache.commons.beanutils.BeanUtils.populate(lotteryFlowFinanceVO,map);
                 lotteryFlowFinanceVOS.add(lotteryFlowFinanceVO);
             }

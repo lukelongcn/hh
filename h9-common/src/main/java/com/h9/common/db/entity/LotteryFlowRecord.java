@@ -3,6 +3,7 @@ package com.h9.common.db.entity;
 import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.Constraint;
 import java.math.BigDecimal;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -11,8 +12,8 @@ import static javax.persistence.GenerationType.IDENTITY;
  * @author: George
  * @date: 2017/11/10 14:41
  */
-@Entity
-@Table(name = "lottery_flow_record")
+@Entity(name="活动参与记录的转账记录")
+@Table(name = "lottery_flow_record",uniqueConstraints = {@UniqueConstraint(columnNames={"lottery_flow_id"})})
 public class LotteryFlowRecord  extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
@@ -61,5 +62,34 @@ public class LotteryFlowRecord  extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public enum LotteryFlowRecordStatusEnum {
+        SUCCESS(1,"成功"),
+        FAIL(2,"失败");
+
+        LotteryFlowRecordStatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }
