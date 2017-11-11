@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Secured {
-    boolean bindPhone() default false;
+    boolean bindPhone() default true;
 }

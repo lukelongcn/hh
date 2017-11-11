@@ -14,9 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.LockModeType;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -105,4 +107,8 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
 
    @Query("select sum(l.money) from LotteryFlow l")
    BigDecimal getLotteryCount();
+
+   @Query("select o from LotteryFlow o where o.id=?1")
+   @Lock(LockModeType.PESSIMISTIC_WRITE)
+    LotteryFlow findByLockId(long id);
 }

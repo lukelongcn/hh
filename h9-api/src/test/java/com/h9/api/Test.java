@@ -358,7 +358,7 @@ public class Test {
         boolean allMatch = stream2.allMatch(el -> el.length() > 2);
         System.out.println("allMatch : "+allMatch);
 
-
+        Stream<String> parallel = Arrays.stream(new String[]{"hello", "world"}).parallel();
     }
 
 }

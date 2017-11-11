@@ -99,6 +99,7 @@ public class CommonService {
     public UserRecord newUserRecord(Long userId, double latitude, double longitude,HttpServletRequest request) {
         UserRecord userRecord = new UserRecord();
         userRecord.setUserId(userId);
+
         userRecord.setLatitude(latitude);
         userRecord.setLongitude(longitude);
         try{
