@@ -3,6 +3,7 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.Article;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.User;
+import com.h9.common.utils.DateUtil;
 import org.springframework.beans.BeanUtils;
 
 import java.text.DateFormat;
@@ -27,9 +28,9 @@ public class ArticleVO {
 
     private String url;//跳转链接
 
-    private Date startTime;//开始时间
+    private String startTime;//开始时间
 
-    private Date endTime;//结束时间
+    private String endTime;//结束时间
 
     private Integer recommend = 1;//1 推荐 2 不推荐
 
@@ -42,81 +43,68 @@ public class ArticleVO {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public ArticleType getArticleType() {
         return articleType;
-    }
-
-
-    public String getTitle() {
-        return title;
-    }
-
-
-    public String getContent() {
-        return content;
-    }
-
-
-    public String getUrl() {
-        return url;
-    }
-
-    public Date getStartTime() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.parse("2008-08-08 ");
-    }
-
-
-    public Date getEndTime() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return  sdf.parse("2008-08-08");
-    }
-
-    public Integer getRecommend() {
-        return recommend;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setArticleType(ArticleType articleType) {
         this.articleType = articleType;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    public String getContent() {
+        return content;
+    }
+
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public void setStartTime(Date startTime) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date start= format.parse("2008-08-08");
-            this.startTime = start;
-        } catch (ParseException e) {
-        }
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setEndTime(Date endTime) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date end= format.parse("2008-08-08");
-            this.endTime = end;
-        } catch (ParseException e) {
-        }
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public Integer getRecommend() {
+        return recommend;
     }
 
     public void setRecommend(Integer recommend) {
