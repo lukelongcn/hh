@@ -137,7 +137,7 @@ public class AccountService {
                 }
             }
         }
-        return Result.success();
+        return Result.success("添加成功");
     }
 
     public Result<List<SystemBlackList>> addBlackImei(BlackIMEIDTO blackIMEIDTO) {
