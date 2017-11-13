@@ -32,7 +32,7 @@ public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
             "from LotteryLog ll,User u  " +
             "where u.id=ll.userId " +
             "and ll.createTime between ?1 and ?2 " +
-            "and (?3 is null or ll.userId like ?3 or u.phone like ?3)")
+            "and (?3 is null or u.phone like ?3 or ll.userId like ?3  )")
     List<UserRecordVO> getUserList(Date startTime, Date endTime, String key);
 
 }
