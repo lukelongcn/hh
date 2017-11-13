@@ -30,14 +30,14 @@ public class FileController {
     @Resource
     private FileService fileService;
 
-//    /**
-//     * description: 上传文件
-//     */
-//
-//    @PostMapping("/file/upload")
-//    public Result upload(MultipartFile file) {
-//        return fileService.fileUpload(file);
-//    }
+    /**
+     * description: 上传文件
+     */
+
+    @PostMapping("/file/upload")
+    public Result upload(MultipartFile file) {
+        return fileService.fileUpload(file);
+    }
 
 
 
@@ -45,10 +45,10 @@ public class FileController {
      * description: 上传文件
      */
 
-    @PostMapping("/file/upload")
+    @PostMapping("/file/upload2")
     public Result upload(MultipartFile[] file) {
 
-        if(file.length <=0){
+        if(file == null || file.length <=0){
             return Result.fail("请选择图片");
         }
 
