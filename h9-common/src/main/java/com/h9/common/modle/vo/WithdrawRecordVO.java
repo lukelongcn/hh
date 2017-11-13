@@ -1,6 +1,6 @@
-package com.h9.admin.model.vo;
+package com.h9.common.modle.vo;
 
-import com.h9.common.utils.DateUtil;
+import com.h9.common.db.entity.WithdrawalsRecord;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.BeanUtils;
@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George
@@ -61,6 +58,9 @@ public class WithdrawRecordVO {
 
     @ApiModelProperty(value = "开户城市")
     private String city;
+
+    @ApiModelProperty(value = "提现描述")
+    private String remarks;
 
     public Long getId() {
         return id;
@@ -166,6 +166,14 @@ public class WithdrawRecordVO {
         this.orderId = orderId;
     }
 
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
 /* public static WithdrawRecordVO toWithdrawRecordVO(Map map){
      *//*   WithdrawRecordVO withdrawRecordVO = new WithdrawRecordVO();
         withdrawRecordVO.setBankCardNo(MapUtils.getString(map,"no"));
@@ -192,4 +200,16 @@ public class WithdrawRecordVO {
             return withdrawRecordVOS;
         }
     }
+
+    public WithdrawRecordVO() {
+    }
+
+    public WithdrawRecordVO(WithdrawalsRecord withdrawalsRecord) {
+        BeanUtils.copyProperties(withdrawalsRecord,this);
+        this.setBankName(withdrawalsRecord.getUserBank().getName());
+        this.setBankCardNo(withdrawalsRecord.getUserBank().getNo());
+        this.setProvice(withdrawalsRecord.getUserBank().getProvince());
+        this.setCity(withdrawalsRecord.getUserBank().getProvince());
+    }
+
 }

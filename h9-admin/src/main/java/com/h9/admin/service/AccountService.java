@@ -10,7 +10,10 @@ import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.Config;
+import com.h9.common.modle.vo.WithdrawRecordVO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -44,6 +47,8 @@ public class AccountService {
     private UserRecordRepository userRecordRepository;
     @Resource
     private SystemBlackListRepository systemBlackListRepository;
+    @Resource
+    private WithdrawalsRecordRepository withdrawalsRecordRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
         Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest());
@@ -91,6 +96,13 @@ public class AccountService {
             return balanceFlowVO;
         });
         return Result.success(new PageResult<>(map));
+    }
+
+    public Result<PageResult<WithdrawRecordVO>> accountWithdrawFlow(PageDTO pageDTO, Long userId) {
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        PageRequest pageRequest = this.withdrawalsRecordRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize(),sort);
+        Page<WithdrawRecordVO> withdrawRecordVOS = this.withdrawalsRecordRepository.findByUserId(userId,pageRequest);
+        return Result.success(new PageResult<>(withdrawRecordVOS));
     }
 
     public Result<List<UserBankVO>> bankInfo(Long userId) {
