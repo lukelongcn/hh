@@ -34,6 +34,7 @@ public class HomeVO {
             ArticleType articleType = article.getArticleType();
 //            vo.setImgUrl(article.);
             vo.setContent("");
+//            vo.setImgUrl(article);
             vo.setTitle(article.getTitle());
             vo.setCode(articleType.getCode());
             vo.setLink(article.getUrl());
