@@ -1,6 +1,8 @@
-package com.h9.admin.model.vo;
+package com.h9.common.modle.vo;
 
+import com.h9.common.db.entity.User;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 
@@ -26,7 +28,7 @@ public class SystemUserVO {
     private String roleName;
 
     @ApiModelProperty(value = "状态， 1：启用，2：禁用")
-    private String status;
+    private Integer status;
 
     @ApiModelProperty(value = "注册时间")
     private Date createTime;
@@ -74,11 +76,11 @@ public class SystemUserVO {
         this.roleName = roleName;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -97,4 +99,12 @@ public class SystemUserVO {
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
     }
+
+    public SystemUserVO() {
+    }
+
+    public SystemUserVO(User user) {
+        BeanUtils.copyProperties(user,this);
+    }
+
 }

@@ -1,10 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.vo.BalanceFlowVO;
-import com.h9.admin.model.vo.UserAccountVO;
-import com.h9.admin.model.vo.UserBankVO;
-import com.h9.admin.model.vo.UserRecordVO;
+import com.h9.admin.model.vo.*;
 import com.h9.admin.service.AccountService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -63,15 +60,15 @@ public class AccountController {
     public Result<List<UserRecordVO>> rewardInfo(@RequestParam(defaultValue = "0") Long startTime,
                                                  @RequestParam(defaultValue = "0") Long endTime,
                                                  @RequestParam(defaultValue = "") String key){
-        return accountService.rewardInfo(new Date(startTime),new Date(endTime),key);
+        return accountService.rewardInfo(new Date(startTime),endTime==0?new Date():new Date(endTime),key);
     }
 
 
     @Secured
     @GetMapping(value = "/deviceIdInfo")
     @ApiOperation("获取设备编号的信息")
-    public Result<List<UserRecordVO>> deviceIdInfo(@RequestParam(defaultValue = "0") Long startTime,
-                                                   @RequestParam(defaultValue = "0") Long endTime){
-        return accountService.deviceIdInfo(new Date(startTime),new Date(endTime));
+    public Result<List<ImeiUserRecordVO>> deviceIdInfo(@RequestParam(defaultValue = "0") Long startTime,
+                                                       @RequestParam(defaultValue = "0") Long endTime){
+        return accountService.deviceIdInfo(new Date(startTime),endTime==0?new Date():new Date(endTime));
     }
 }

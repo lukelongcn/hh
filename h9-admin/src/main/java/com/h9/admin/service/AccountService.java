@@ -98,8 +98,9 @@ public class AccountService {
         return Result.success(userList);
     }
 
-    public Result<List<UserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
-        List<Object[]> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
-        return null;
+    public Result<List<ImeiUserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
+        List<ImeiUserRecordVO> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
+        userRecordByTime.forEach(imeiUserRecordVO -> imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
+        return Result.success(userRecordByTime);
     }
 }

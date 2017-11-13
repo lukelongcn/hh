@@ -1,6 +1,7 @@
 package com.h9.common.db.repo;
 
 
+import com.h9.admin.model.vo.ImeiUserRecordVO;
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.UserRecord;
 import org.springframework.data.jpa.repository.Query;
@@ -18,13 +19,18 @@ import java.util.List;
 @Repository
 public interface UserRecordRepository extends BaseRepository<UserRecord> {
     
-    @Query(value = "select u.id,ur.imei," +
-            "SELECT COUNT(s.*) FROM (select distinct u1.user_id from user_record u1 where u1.imei = ur.imei) s," +
-            "(select count(l2) from lottery_log l2 where l2.user_id in (select distinct u1.user_id from user_record u1 where u1.imei = ur.imei)))" +
-            " from user_record ur,User u " +
-            "where u.id=ur.user_id " +
-            "and ur.create_time between ?1 and ?2 ",nativeQuery = true)
-    List<Object[]> getUserRecordByTime(Date startTime, Date endTime);
-    
+    @Query(value = "select DISTINCT new com.h9.admin.model.vo.ImeiUserRecordVO(u.id,ur.imei," +
+            "(select count(l2) from LotteryLog l2 where l2.userId in (select distinct u1.userId from UserRecord u1 where u1.imei = ur.imei))" +
+            ") from UserRecord ur,User u " +
+            "where u.id=ur.userId " +
+            "and ur.createTime between ?1 and ?2 AND ur.imei IS NOT null")
+    List<ImeiUserRecordVO> getUserRecordByTime(Date startTime, Date endTime);
 
+    /**
+     * 根据imei查找关联账号数
+     * @param imei
+     * @return
+     */
+    @Query(value = "SELECT COUNT(*) FROM (select distinct u1.user_id from user_record u1 where u1.imei = ?1) s",nativeQuery = true)
+    Long findRelevanceCount(String imei);
 }

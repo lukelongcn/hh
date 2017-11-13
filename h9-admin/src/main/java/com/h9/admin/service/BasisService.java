@@ -1,17 +1,15 @@
 package com.h9.admin.service;
 
-import com.h9.admin.model.dto.basis.BankTypeAddDTO;
-import com.h9.admin.model.dto.basis.BankTypeEditDTO;
-import com.h9.admin.model.dto.basis.GlobalPropertyEditDTO;
+import com.h9.admin.model.dto.basis.*;
 import com.h9.admin.model.vo.StatisticsItemVO;
+import com.h9.common.db.entity.*;
+import com.h9.common.modle.vo.SystemUserVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BankType;
-import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.db.entity.WithdrawalsRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.GlobalPropertyVO;
+import com.h9.common.utils.MD5Util;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +41,8 @@ public class BasisService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private VCoinsFlowRepository vCoinsFlowRepository;
+    @Resource
+    private UserRepository userRepository;
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
             return Result.fail("标识已存在");
@@ -126,5 +126,58 @@ public class BasisService {
         list.add(new StatisticsItemVO("V币",totalVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总V币"));
         list.add(new StatisticsItemVO("剩余V币",userVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"剩余V币总量"));
         return Result.success(list);
+    }
+
+    public Result addUser(SystemUserAddDTO systemUserAddDTO){
+        User user = this.userRepository.findByPhone(systemUserAddDTO.getPhone());
+        if(user!=null){
+            return Result.fail("用户已存在");
+        }
+        User u = this.userRepository.save(systemUserAddDTO.toUser(user));
+        UserAccount userAccount = new UserAccount();
+        userAccount.setBalance(BigDecimal.ZERO);
+        userAccount.setUserId(u.getId());
+        userAccount.setvCoins(BigDecimal.ZERO);
+        this.userAccountRepository.saveAndFlush(userAccount);
+        return Result.success("成功");
+    }
+
+    public Result updateUser(SystemUserEditDTO systemUserEditDTO){
+        User user = this.userRepository.findOne(systemUserEditDTO.getId());
+        if(user==null){
+            return Result.fail("用户不存在");
+        }
+        if(user.getIsAdmin()!=User.IsAdminEnum.ADMIN.getId()){
+            return Result.fail("该用户不是后台用户");
+        }
+        user.setPassword(MD5Util.getMD5(systemUserEditDTO.getPassword()));
+        user.setNickName(systemUserEditDTO.getNickName());
+        user.setStatus(systemUserEditDTO.getStatus());
+        this.userRepository.save(user);
+        return Result.success("成功");
+    }
+
+    public Result updateUserStatus(long id){
+        User user = this.userRepository.findOne(id);
+        if(user==null){
+            return Result.fail("用户不存在");
+        }
+        if(user.getIsAdmin()!=User.IsAdminEnum.ADMIN.getId()){
+            return Result.fail("该用户不是后台用户");
+        }
+        if(user.getStatus()==User.StatusEnum.DISABLED.getId()){
+            user.setStatus(User.StatusEnum.ENABLED.getId());
+        }else{
+            user.setStatus(User.StatusEnum.DISABLED.getId());
+        }
+        this.userRepository.save(user);
+        return Result.success("成功");
+    }
+
+    public Result<PageResult<SystemUserVO>> getUsers(PageDTO pageDTO){
+        PageRequest pageRequest = this.bankTypeRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<SystemUserVO> systemUserVOS = this.userRepository.findAllByPage(pageRequest);
+        PageResult<SystemUserVO> pageResult = new PageResult<>(systemUserVOS);
+        return Result.success(pageResult);
     }
 }

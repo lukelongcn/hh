@@ -305,6 +305,7 @@ public class UserService {
         }
 
         String weChatUserId = RedisKey.getWeChatUserId(token);
+        //TODO you wen ti
         redisBean.expire(weChatUserId, 1, TimeUnit.MICROSECONDS);
         redisBean.setStringValue(weChatUserId,"",1,TimeUnit.SECONDS);
 
