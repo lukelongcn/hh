@@ -2,6 +2,8 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
 import com.h9.admin.model.vo.StatisticsItemVO;
+import com.h9.common.common.ConfigService;
+import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.*;
 import com.h9.common.modle.vo.SystemUserVO;
 import com.h9.common.base.PageResult;
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: George
@@ -43,8 +46,11 @@ public class BasisService {
     private VCoinsFlowRepository vCoinsFlowRepository;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private ConfigService configService;
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
+            //TODO 添加至 redis 缓存中
             return Result.fail("标识已存在");
         }
         return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
@@ -59,6 +65,7 @@ public class BasisService {
             return Result.fail("标识已存在");
         }
         BeanUtils.copyProperties(globalPropertyEditDTO,globalProperty);
+        this.configService.expireConfig(globalPropertyEditDTO.getCode());
         return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
     }
 
@@ -131,14 +138,20 @@ public class BasisService {
     public Result addUser(SystemUserAddDTO systemUserAddDTO){
         User user = this.userRepository.findByPhone(systemUserAddDTO.getPhone());
         if(user!=null){
-            return Result.fail("用户已存在");
+            if(user.getIsAdmin()==User.IsAdminEnum.ADMIN.getId()){
+                return Result.fail("用户已存在");
+            }else{
+                user.setStatus(User.IsAdminEnum.ADMIN.getId());
+                this.userRepository.save(systemUserAddDTO.toUser(user));
+            }
+        }else{
+            User u = this.userRepository.save(systemUserAddDTO.toUser(user));
+            UserAccount userAccount = new UserAccount();
+            userAccount.setBalance(BigDecimal.ZERO);
+            userAccount.setUserId(u.getId());
+            userAccount.setvCoins(BigDecimal.ZERO);
+            this.userAccountRepository.save(userAccount);
         }
-        User u = this.userRepository.save(systemUserAddDTO.toUser(user));
-        UserAccount userAccount = new UserAccount();
-        userAccount.setBalance(BigDecimal.ZERO);
-        userAccount.setUserId(u.getId());
-        userAccount.setvCoins(BigDecimal.ZERO);
-        this.userAccountRepository.saveAndFlush(userAccount);
         return Result.success("成功");
     }
 
