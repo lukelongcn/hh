@@ -32,7 +32,7 @@ public class HomeVO {
 
             Article article = (Article) obj;
             ArticleType articleType = article.getArticleType();
-            vo.setImgUrl(article.getUrl());
+//            vo.setImgUrl(article.);
             vo.setContent("");
             vo.setTitle(article.getTitle());
             vo.setCode(articleType.getCode());
@@ -46,9 +46,10 @@ public class HomeVO {
         if (clazz.getSimpleName().equalsIgnoreCase("Banner")) {
 
             Banner banner = (Banner) obj;
-            vo.setImgUrl(banner.getUrl());
+            vo.setImgUrl(banner.getIcon());
             vo.setContent(banner.getContent());
             vo.setTitle(banner.getTitle());
+            vo.setLink(banner.getUrl());
             BannerType bannerType = banner.getBannerType();
             vo.setCode(bannerType.getCode());
             vo.setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
