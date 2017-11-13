@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * Created by 李圆
@@ -27,4 +28,12 @@ public class ArticleController {
     public Result<ArticleVO> finOne(@PathVariable("id")Long id){
         return  articleService.findOne(id);
     }
+
+    @ResponseBody
+    @ApiOperation(value = "获取json文章内容")
+    @GetMapping(value = "/articleJson/{id}")
+    public Result json(@PathVariable("id")Long id){
+        return  articleService.json(id);
+    }
+
 }
