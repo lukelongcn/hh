@@ -13,6 +13,7 @@ import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -62,6 +63,8 @@ public class UserService {
     @Resource
     private ArticleTypeRepository articleTypeRepository;
 
+    @Resource
+    private ConfigService configService;
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO) {
@@ -125,8 +128,14 @@ public class UserService {
         CharSequence charSequence = phone.subSequence(4, 8);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
-        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
-        user.setAvatar(defaultHead.getVal());
+//        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
+
+        String defaultHead = configService.getStringConfig("defaultHead");
+        if (StringUtils.isBlank(defaultHead)) {
+            logger.info("没有在参数配置中找到默认头像的配置");
+            defaultHead = "";
+        }
+        user.setAvatar(defaultHead);
         return user;
     }
 
@@ -290,9 +299,8 @@ public class UserService {
                 //增加双方流水
                 if(balance.compareTo(new BigDecimal(0))>0){
                     //变更微信account
-                    //TODO 更改流水类型
-                   commonService.setBalance(user.getId(), balance.abs().negate(), 1L, phoneUser.getId(), "", "");
-                   commonService.setBalance(phoneUser.getId(),balance.abs(),1l,phoneUser.getId(),"","");
+                   commonService.setBalance(user.getId(), balance.abs().negate(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
+                   commonService.setBalance(phoneUser.getId(),balance.abs(),BalanceFlow.FlowType.ACCOUNT_TRANSFER,phoneUser.getId(),"","");
                    phoneUser.setOpenId(user.getOpenId());
                    phoneUser.setUnionId(user.getUnionId());
                    userRepository.save(phoneUser);
@@ -306,9 +314,7 @@ public class UserService {
         }
 
         String weChatUserId = RedisKey.getWeChatUserId(token);
-        //TODO you wen ti
         redisBean.expire(weChatUserId, 1, TimeUnit.MICROSECONDS);
-        redisBean.setStringValue(weChatUserId,"",1,TimeUnit.SECONDS);
 
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
@@ -380,24 +386,33 @@ public class UserService {
     public Result findAllOptions(Long userId) {
 
         UserExtends userExtends = userExtendsReposiroty.findByUserId(userId);
-        GlobalProperty profileEmotion = globalPropertyRepository.findByCode("profileEmotion");
-        GlobalProperty profileEducation = globalPropertyRepository.findByCode("profileEducation");
-        GlobalProperty profileJob = globalPropertyRepository.findByCode("profileJob");
-        GlobalProperty profileSex = globalPropertyRepository.findByCode("profileSex");
+
+//        GlobalProperty profileEmotion = globalPropertyRepository.findByCode("profileEmotion");
+        Map profileEmotion = configService.getMapConfig("profileEmotion");
+//        GlobalProperty profileEducation = globalPropertyRepository.findByCode("profileEducation");
+        Map profileEducation = configService.getMapConfig("profileEducation");
+
+//        GlobalProperty profileJob = globalPropertyRepository.findByCode("profileJob");
+        Map profileJob = configService.getMapConfig("profileJob");
+
+
+//        GlobalProperty profileSex = globalPropertyRepository.findByCode("profileSex");
+        Map profileSex = configService.getMapConfig("profileSex");
 
 
         String educationCode = userExtends.getEducation();
 
-        List<String> educationList = map2list(JSONObject.parseObject(profileEducation.getVal(), Map.class),educationCode);
+        List<String> educationList = map2list(profileEducation,educationCode);
 
         String marriageStatus = userExtends.getMarriageStatus();
-        List<String> emotionList = map2list(JSONObject.parseObject(profileEmotion.getVal(), Map.class),marriageStatus);
+        List<String> emotionList = map2list(profileEmotion,marriageStatus);
 
         String jobCode = userExtends.getJob();
-        List<String> jobList = map2list(JSONObject.parseObject(profileJob.getVal(), Map.class),jobCode);
+        List<String> jobList = map2list(profileJob,jobCode);
 
         Integer sex = userExtends.getSex();
-        List<String> sexList = map2list(JSONObject.parseObject(profileSex.getVal(), Map.class),sex+"");
+        List<String> sexList = map2list(profileSex,sex+"");
+
         Map<String, Object> mapVo = new HashMap<>();
         mapVo.put("educationList", educationList);
         mapVo.put("emotionList", emotionList);
@@ -408,6 +423,7 @@ public class UserService {
         mapVo.put("nickName", user.getNickName());
         mapVo.put("tel", user.getPhone());
         mapVo.put("birthday", DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.DAY));
+
         return Result.success(mapVo);
     }
 
