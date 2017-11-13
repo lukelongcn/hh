@@ -22,6 +22,6 @@ public interface SystemBlackListRepository extends BaseRepository<SystemBlackLis
     Page<BlackAccountVO> findAllAccount(Pageable pageable);
 
     @Query("select new com.h9.admin.model.vo.BlackAccountVO(s.id,s.imei,s.createTime,s.endTime,s.cause)" +
-            " from SystemBlackList s where s.userId is not null and s.status = 1")
+            " from SystemBlackList s where s.imei is not null and s.status = 1")
     Page<BlackAccountVO> findAllImei(Pageable pageable);
 }
