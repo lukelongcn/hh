@@ -172,7 +172,7 @@ public class LotteryService {
         lotteryResult.setNowTime(nowTime);
 
         Date updateTime = lotteryRepository.findByRewardLastTime(reward);
-        Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.MINUTE);
+        Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.SECOND);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
         lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
