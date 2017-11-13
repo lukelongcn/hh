@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -57,6 +58,9 @@ public class ArticleDTO {
     @NotNull(message = "startTime不能为null")
     private Date startTime;
 
+    @ApiModelProperty(value = "文章图片",required = true)
+    @NotBlank(message = "文章图片不能为空")
+    private String imgUrl;
 
     public String getUserName() {
         return userName;
@@ -136,5 +140,13 @@ public class ArticleDTO {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }
