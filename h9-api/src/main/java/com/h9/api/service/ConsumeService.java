@@ -9,11 +9,13 @@ import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMService;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,6 +89,8 @@ public class ConsumeService {
     private String merId;
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private ConfigService configService;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -216,9 +220,10 @@ public class ConsumeService {
         items.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
         items.setGoods(goods);
 
-        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
-        Map<String,String> map = JSONObject.parseObject(globalProperty.getVal(), Map.class);
+//        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
+//        Map<String,String> map = JSONObject.parseObject(globalProperty.getVal(), Map.class);
 
+        Map<String,String> map = configService.getMapConfig("balanceFlowImg");
         map.forEach((k,v) ->{
             if (k.equals("5")) {
                 items.setImage(v);
@@ -390,8 +395,15 @@ public class ConsumeService {
 
         Map<String, Object> infoVO = new HashMap<>();
         infoVO.put("bankList", bankList);
-        GlobalProperty globalProperty = globalPropertyRepository.findByCode("withdrawMax");
-        String max = globalProperty.getVal();
+//        GlobalProperty globalProperty = globalPropertyRepository.findByCode("withdrawMax");
+//        String max = globalProperty.getVal();
+
+        String max = configService.getStringConfig("withdrawMax");
+        if(StringUtils.isBlank(max)) {
+            max = "100";
+            logger.error("没有找到提现最大值参数，默认为: "+max);
+        }
+
         infoVO.put("withdrawalCount", max);
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         infoVO.put("balance",userAccount.getBalance());

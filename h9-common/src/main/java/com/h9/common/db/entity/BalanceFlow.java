@@ -36,8 +36,22 @@ public class BalanceFlow extends BaseEntity {
 //    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
 //    private BalanceFlowType balanceFlowType;
 
+
+    /**
+     * description: {"1":"提现","2":"银联退回","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
+     * @see FlowType
+     */
     @Column(name = "flow_type",columnDefinition = "varchar(200) default '' COMMENT '流水类型'")
     private Long flowType;
+
+    public static class FlowType{
+        public static final long WITHDRAW = 1;
+        public static final long REFUND = 2;
+        public static final long DIDI_CONVERT = 5;
+        public static final long MOBILE_RECHAGE = 6;
+        public static final long DA_ZHUAN_PAN = 8;
+        public static final long ACCOUNT_TRANSFER = 9;
+    }
 
     @Column(name = "remarks", columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
     private String remarks;

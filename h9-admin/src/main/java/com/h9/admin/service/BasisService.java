@@ -45,6 +45,7 @@ public class BasisService {
     private UserRepository userRepository;
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
+            //TODO 添加至 redis 缓存中
             return Result.fail("标识已存在");
         }
         return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
