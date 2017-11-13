@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +49,6 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
         int contentLength = httpServletRequest.getContentLength();
         if (contentLength != -1) {
-
             byte buffer[] = new byte[contentLength];
             for (int i = 0; i < contentLength; ) {
 
@@ -59,7 +59,10 @@ public class RequestLogInterceptor implements HandlerInterceptor {
                 }
                 i += readlen;
             }
-            logger.info("request param: " + new java.lang.String(buffer));
+            HandlerMethod handlerMethod = (HandlerMethod) o;
+            // 从方法处理器中获取出要调用的方法
+            Method m = handlerMethod.getMethod();
+            this.printParam(m,buffer);
         }else{
             logger.info("request param: " + new java.lang.String(paramStr));
         }
@@ -80,5 +83,33 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
 
+    }
+
+    //打印参数
+    private void printParam(Method m,byte[] buffer){
+        // 获取出方法上的Access注解
+        PrintParam printParam = m.getAnnotation(PrintParam.class);
+        if(printParam !=null){
+            if(printParam.printType()==PrintType.NOT_PRINT){
+                Map map = JSONObject.parseObject(new String(buffer),Map.class);
+                if(printParam.notPrint().length>0){
+                    for(String key: printParam.notPrint()){
+                        map.remove(key);
+                    }
+                }
+                logger.info("request param: " + JSONObject.toJSONString(map));
+            }else if(printParam.printType()==PrintType.PRINT){
+                if(printParam.print().length>0){
+                    Map map = JSONObject.parseObject(new String(buffer),Map.class);
+                    Map printMap = new HashMap();
+                    for(String key: printParam.print()){
+                        printMap.put(key,map.get(key));
+                    }
+                    logger.info("request param: " + JSONObject.toJSONString(printMap));
+                }
+            }
+        }else{
+            logger.info("request param: " + new java.lang.String(buffer));
+        }
     }
 }

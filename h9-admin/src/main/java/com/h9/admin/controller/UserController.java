@@ -1,18 +1,17 @@
 package com.h9.admin.controller;
 
-import com.h9.admin.interceptor.NotPrintParam;
+import com.h9.admin.interceptor.PrintParam;
+import com.h9.admin.interceptor.PrintType;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.SystemUserDTO;
 import com.h9.admin.model.vo.LoginResultVO;
 import com.h9.admin.service.UserService;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.Subject;
 import javax.validation.Valid;
 
 /**
@@ -47,7 +46,7 @@ public class UserController {
         int i = 1/0;
     }
 
-    @NotPrintParam
+    @PrintParam(printType = PrintType.PRINT,print = {"name"})
     @PostMapping("/login")
     @ApiOperation(value = "登录") // hidden=true隐藏接口
     public Result<LoginResultVO> login( @Valid @RequestBody SystemUserDTO systemUserDTO) {
