@@ -25,6 +25,10 @@ public class HomeVO {
     private String createTime;
     private String type;
 
+    private String typeName;
+
+
+
     public static HomeVO convert(Class clazz, Object obj) {
 
         HomeVO vo = new HomeVO();
@@ -32,7 +36,7 @@ public class HomeVO {
 
             Article article = (Article) obj;
             ArticleType articleType = article.getArticleType();
-//            vo.setImgUrl(article.);
+            vo.setImgUrl(article.getImgUrl());
             vo.setContent("");
 //            vo.setImgUrl(article);
             vo.setTitle(article.getTitle());
@@ -41,6 +45,7 @@ public class HomeVO {
             vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
             vo.setType("article");
             vo.setContent(article.getTitle());
+            vo.setTypeName(articleType.getName());
             return vo;
         }
 
@@ -59,6 +64,14 @@ public class HomeVO {
         }
 
         return null;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     public String getType() {

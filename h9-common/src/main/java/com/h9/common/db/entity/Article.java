@@ -60,6 +60,7 @@ public class Article extends BaseEntity {
     }
 
 
+
     public String getImgUrl() {
         return imgUrl;
     }
