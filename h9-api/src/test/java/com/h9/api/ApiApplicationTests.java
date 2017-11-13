@@ -3,16 +3,15 @@ package com.h9.api;
 //import com.h9.api.provider.ChinaPayService;
 //import com.h9.api.provider.MobileRechargeService;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.SMService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.GoodsDIDINumber;
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
-import com.h9.common.db.entity.GoodsType;
 
+import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +32,7 @@ import java.util.concurrent.Future;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApiApplicationTests {
+
 
     @Test
     public void contextLoads() {
@@ -169,7 +169,72 @@ public class ApiApplicationTests {
     @Test
     public void testSpecification() {
 
+    }
 
+     Logger logger = Logger.getLogger(ApiApplicationTests.class);
+
+
+    @Resource
+    private UserRepository userRepository;
+
+    @Resource
+    private UserAccountRepository userAccountRepository;
+
+    @Resource
+    UserExtendsReposiroty userExtendsReposiroty;
+
+
+    @Test
+    public void saveUser(){
+        User user = initUserInfo("13066886409");
+        int loginCount = user.getLoginCount();
+        user.setLoginCount(++loginCount);
+        user.setLastLoginTime(new Date());
+        user = userRepository.saveAndFlush(user);
+        logger.debugv(JSONObject.toJSONString(user));
+
+        logger.debugv("-----------------------------------");
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(user.getId());
+        logger.debugv(JSONObject.toJSONString(userAccount));
+        userAccount = userAccountRepository.saveAndFlush(userAccount);
+        logger.debugv(JSONObject.toJSONString(userAccount));
+
+        logger.debugv("-----------------------------------");
+        UserExtends userExtends = new UserExtends();
+        userExtends.setUserId(user.getId());
+        logger.debugv(JSONObject.toJSONString(userExtends));
+        userExtendsReposiroty.save(userExtends);
+        logger.debugv(JSONObject.toJSONString(userExtends));
 
     }
+
+    @Resource
+    private GlobalPropertyRepository globalPropertyRepository;
+
+
+    /**
+     * description: 初化一个用户，并返回这个用户对象
+     */
+    private User initUserInfo(String phone) {
+        if (phone == null) return null;
+        User user = new User();
+        user.setAvatar("");
+        user.setLoginCount(0);
+        user.setPhone(phone);
+        CharSequence charSequence = phone.subSequence(4, 8);
+        user.setNickName(phone.replace(charSequence, "****"));
+        user.setLastLoginTime(new Date());
+        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
+        user.setAvatar(defaultHead.getVal());
+        return user;
+    }
+
+
+
+
+
 }
+
+
+
