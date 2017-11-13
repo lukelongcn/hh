@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 账户服务
@@ -100,12 +101,19 @@ public class AccountService {
 
     public Result<List<UserRecordVO>> rewardInfo(Date startTime, Date endTime, String key) {
         List<UserRecordVO> userList = lotteryLogRepository.getUserList(startTime, endTime, StringUtils.isEmpty(key) ? null : "%" + key + "%");
+        userList = userList.stream().filter(userRecordVO ->
+                systemBlackListRepository.findByUserIdAndStatus(userRecordVO.getUserId(),1) == null) //过滤已加入黑名单的数据
+                .collect(Collectors.toList());
         return Result.success(userList);
     }
 
     public Result<List<ImeiUserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
         List<ImeiUserRecordVO> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
-        userRecordByTime.forEach(imeiUserRecordVO -> imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
+        userRecordByTime.forEach(imeiUserRecordVO -> 
+                imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
+        userRecordByTime = userRecordByTime.stream().filter(imeiUserRecordVO -> 
+                systemBlackListRepository.findByImeiAndStatus(imeiUserRecordVO.getImei(),1) == null) //过滤已加入黑名单的数据
+                .collect(Collectors.toList());
         return Result.success(userRecordByTime);
     }
 
