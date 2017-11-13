@@ -45,6 +45,9 @@ public class LotteryFlowActivityVO {
     @ApiModelProperty(value = "创建时间" )
     private Date createTime;
 
+    @ApiModelProperty(value = "地址" )
+    private String address;
+
     public Long getId() {
         return id;
     }
@@ -133,17 +136,28 @@ public class LotteryFlowActivityVO {
         this.createTime = createTime;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public static LotteryFlowActivityVO toLotteryFlowActivityVO(LotteryFlow lotteryFlow){
         LotteryFlowActivityVO lotteryFlowActivityVO = new LotteryFlowActivityVO();
+        BeanUtils.copyProperties(lotteryFlow.getReward(), lotteryFlowActivityVO);
+        BeanUtils.copyProperties(lotteryFlow.getUser(), lotteryFlowActivityVO);
+        BeanUtils.copyProperties(lotteryFlow.getUserRecord(), lotteryFlowActivityVO);
         BeanUtils.copyProperties(lotteryFlow, lotteryFlowActivityVO);
-        lotteryFlowActivityVO.setCode(lotteryFlow.getReward().getCode());
-        lotteryFlowActivityVO.setPhone(lotteryFlow.getUser().getPhone());
-        lotteryFlowActivityVO.setIp(lotteryFlow.getUserRecord().getIp());
-        lotteryFlowActivityVO.setLatitude(lotteryFlow.getUserRecord().getLatitude());
-        lotteryFlowActivityVO.setLongitude(lotteryFlow.getUserRecord().getLongitude());
-        lotteryFlowActivityVO.setUserId(lotteryFlow.getUser().getId());
-        lotteryFlowActivityVO.setPhoneType(lotteryFlow.getUserRecord().getPhoneType());
-        lotteryFlowActivityVO.setVersion(lotteryFlow.getUserRecord().getVersion());
+//        lotteryFlowActivityVO.setCode(lotteryFlow.getReward().getCode());
+//        lotteryFlowActivityVO.setPhone(lotteryFlow.getUser().getPhone());
+//        lotteryFlowActivityVO.setIp(lotteryFlow.getUserRecord().getIp());
+//        lotteryFlowActivityVO.setLatitude(lotteryFlow.getUserRecord().getLatitude());
+//        lotteryFlowActivityVO.setLongitude(lotteryFlow.getUserRecord().getLongitude());
+//        lotteryFlowActivityVO.setUserId(lotteryFlow.getUser().getId());
+//        lotteryFlowActivityVO.setPhoneType(lotteryFlow.getUserRecord().getPhoneType());
+//        lotteryFlowActivityVO.setVersion(lotteryFlow.getUserRecord().getVersion());
         return lotteryFlowActivityVO;
     }
 }
