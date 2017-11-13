@@ -233,10 +233,17 @@ public class ApiApplicationTests {
 
     @Test
     public void TestAccount(){
-        String token = "95f9a19d-5783-4d49-b8b4-43cdf5305618";
+//        String token = "570b2acf-c4c9-48b5-a682-9086a8245f41";
+        String token = "df8bb12e-d3ac-44e5-8ce1-f0e1c3f34625";
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         String id = redisBean.getStringValue(tokenUserIdKey);
         System.out.println(id);
+
+        System.out.println("---------");
+        String weChatUserId = RedisKey.getWeChatUserId("1a68be9d-3c70-4147-aa5a-346ddf7fadd0");
+        System.out.println(weChatUserId);
+        System.out.println("---");
+        System.out.println(redisBean.getStringValue(weChatUserId));
     }
 
 

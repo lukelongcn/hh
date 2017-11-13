@@ -29,10 +29,4 @@ public class ArticleController {
         return  articleService.findOne(id);
     }
 
-    @ApiOperation(value = "获取json文章内容")
-    @GetMapping(value = "/articleJson/{id}")
-    public @ResponseBody Result json(@PathVariable("id")Long id){
-        return  articleService.json(id);
-    }
-
 }

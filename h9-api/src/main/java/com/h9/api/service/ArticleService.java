@@ -36,17 +36,4 @@ public class ArticleService {
         return Result.success(articleVO);
     }
 
-    @ApiOperation(value = "获取文章json数据")
-    public @ResponseBody Result json(Long id){
-        Article article =  articleReposiroty.findOne(id);
-        ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
-        articleVO.setStartTime(DateUtil.formatDate(article.getStartTime(), DateUtil.FormatType.MINUTE));
-        articleVO.setEndTime(DateUtil.formatDate(article.getEndTime(), DateUtil.FormatType.MINUTE));
-
-        Map<Long, ArticleVO> map = new HashMap<Long, ArticleVO>();
-        map.put(article.getId(), articleVO);
-        return Result.success(map);
-    }
-
-
 }

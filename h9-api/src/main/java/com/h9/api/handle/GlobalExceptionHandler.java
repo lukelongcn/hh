@@ -1,6 +1,7 @@
 package com.h9.api.handle;
 
 import com.h9.common.base.Result;
+import org.apache.tomcat.util.ExceptionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -24,13 +25,14 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Object hanldeException(Exception e) {
 
-        logger.info(e.getMessage(), e);
+
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         } else if (e instanceof NoHandlerFoundException) {
             return new Result(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase());
         } else if (e instanceof MissingServletRequestParameterException) {
-            return new Result(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase());
+            logger.info(e.getMessage(), e);
+            return new Result(HttpStatus.BAD_REQUEST.value(), ""+ org.apache.commons.lang3.exception.ExceptionUtils.getMessage(e));
         } else if (e instanceof MethodArgumentNotValidException) {
             String msg = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError().getDefaultMessage();
             return new Result(1, msg);
@@ -38,8 +40,10 @@ public class GlobalExceptionHandler {
             UnAuthException unAuthException = (UnAuthException) e;
             return new Result(unAuthException.getCode(), e.getMessage());
         }else if(e instanceof HttpMessageNotReadableException){
+            logger.info(e.getMessage(), e);
             return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
         } else {
+            logger.info(e.getMessage(), e);
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }
     }
