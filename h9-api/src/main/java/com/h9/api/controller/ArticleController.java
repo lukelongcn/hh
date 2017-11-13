@@ -31,7 +31,7 @@ public class ArticleController {
 
     @ApiOperation(value = "获取json文章内容")
     @GetMapping(value = "/articleJson/{id}")
-    public Map<String,String> json(@PathVariable("id")Long id){
+    public Map<String,ArticleVO> json(@PathVariable("id")Long id){
         return  articleService.json(id);
     }
 }

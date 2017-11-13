@@ -36,14 +36,14 @@ public class ArticleService {
 
     @ApiOperation(value = "获取文章json数据")
     @ResponseBody
-    public Map<String,String> json(Long id){
+    public Map<String,ArticleVO> json(Long id){
         Article article =  articleReposiroty.findOne(id);
         ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
         articleVO.setStartTime(DateUtil.formatDate(article.getStartTime(), DateUtil.FormatType.MINUTE));
         articleVO.setEndTime(DateUtil.formatDate(article.getEndTime(), DateUtil.FormatType.MINUTE));
 
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("key", "articleVO");
+        Map<String, ArticleVO> map = new HashMap<String, ArticleVO>();
+        map.put("key", articleVO);
         return map;
     }
 }
