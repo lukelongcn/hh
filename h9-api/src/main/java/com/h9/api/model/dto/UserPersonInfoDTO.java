@@ -56,7 +56,8 @@ public class UserPersonInfoDTO {
     public void setBirthday(String birthday) {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Date bir = format.parse("1995-09-04");
+//            Date bir = format.parse("1995-09-04");
+            Date bir = format.parse(birthday);
             this.birthday = bir;
         } catch (ParseException e) {
         }
