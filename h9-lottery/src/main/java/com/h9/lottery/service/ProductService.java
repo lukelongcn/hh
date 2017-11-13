@@ -60,6 +60,7 @@ public class ProductService {
         if(result!=null) return result;
 
 //      TODO  黑名单 改成配置的
+        //TODO 黑名单判断
         int date = -60 * 1;
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
         long errCount = productLogRepository.findByUserId(userId, startDate);

@@ -3,6 +3,7 @@ package com.h9.lottery.service;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
@@ -58,6 +59,8 @@ public class LotteryService {
     private LotteryFlowRepository lotteryFlowRepository;
     @Resource
     private CommonService commonService;
+    @Resource
+    private ConfigService configService;
 
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -81,6 +84,7 @@ public class LotteryService {
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
 
+        //TODO 黑名单判断
         //  检查第三方库有没有数据
         Result result = exitsReward(lotteryVo.getCode());
         if (result != null) {
@@ -172,7 +176,7 @@ public class LotteryService {
         lotteryResult.setNowTime(nowTime);
 
         Date updateTime = lotteryRepository.findByRewardLastTime(reward);
-        Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.MINUTE);
+        Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.SECOND);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
         lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
@@ -308,7 +312,9 @@ public class LotteryService {
         List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
-        int count = list.size();
+
+        List<String> remarkList = configService.getStringListConfig("lotteryRemark");
+        int count = remarkList.size();
         for (int i = 0; i < lotteries.size(); i++) {
             BigDecimal rewardMoney = moneyMap.get(i + 1);
             Lottery lottery = lotteries.get(i);
@@ -317,20 +323,15 @@ public class LotteryService {
             Long userId = lottery.getUserId();
             User user = userRepository.findOne(userId);
             lotteryFlow.setUser(user);
-            lotteryFlow.setDesc(list.get(i % count));
+            lotteryFlow.setDesc(remarkList.get(i % count));
             lotteryFlow.setRemarks("抢红包");
             lotteryFlows.add(lotteryFlow);
         }
         return lotteryFlows;
     }
 
-    static List<String> list = new ArrayList<>();
 
-    static {
-        list.add("一杯高炉酒，红包啥都有");
-        list.add("换个姿势抢，红包会更多");
-        list.add("与君共饮一杯酒！");
-    }
+
 
 
     public Result<PageResult<LotteryFlowDTO>> history(Long userId, int page, int limit) {

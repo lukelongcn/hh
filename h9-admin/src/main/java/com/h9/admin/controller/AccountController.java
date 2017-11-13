@@ -9,6 +9,7 @@ import com.h9.common.db.entity.SystemBlackList;
 import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.vo.WithdrawRecordVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -49,6 +50,13 @@ public class AccountController {
     @ApiOperation("获取vB流水明细")
     public Result<PageResult<BalanceFlowVO>> accountVCoinsFlow(PageDTO pageDTO, @PathVariable Long userId){
         return accountService.accountVCoinsFlow(pageDTO,userId);
+    }
+
+    @Secured
+    @GetMapping(value = "/withdraw/flow/{userId}")
+    @ApiOperation("获取提现流水明细")
+    public Result<PageResult<WithdrawRecordVO>> accountWithdrawFlow(PageDTO pageDTO, @PathVariable Long userId){
+        return accountService.accountWithdrawFlow(pageDTO,userId);
     }
 
     @Secured

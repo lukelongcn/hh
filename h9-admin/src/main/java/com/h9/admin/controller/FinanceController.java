@@ -6,7 +6,7 @@ import com.h9.admin.model.dto.finance.TransferLotterryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.LotteryFlowRecordVO;
-import com.h9.admin.model.vo.WithdrawRecordVO;
+import com.h9.common.modle.vo.WithdrawRecordVO;
 import com.h9.admin.service.FinanceService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;

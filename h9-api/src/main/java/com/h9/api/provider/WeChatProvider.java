@@ -1,10 +1,16 @@
 package com.h9.api.provider;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
+import com.h9.common.base.Result;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.script.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Base64;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -95,6 +103,116 @@ public class WeChatProvider {
         logger.debug(JSONObject.toJSONString(weChatUser));
         return weChatUser;
     }
+
+
+
+    public  String getTicketTokenUrl() {
+        return MessageFormat.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", jsAppId, jsSecret);
+    }
+
+    public String getTicketUrl(String token) {
+        return MessageFormat.format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi", token);
+    }
+
+    @Resource
+    private RedisBean redisBean;
+
+    public String getWeChatAccessToken() {
+        String access_token = redisBean.getStringValue(RedisKey.wechatAccessToken);
+        if (!StringUtils.isEmpty(access_token)) {
+            return access_token;
+        }
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String accessTokenReponse = restTemplate.getForObject(getTicketTokenUrl(), String.class);
+            Map<String, Object> map = JSONObject.parseObject(accessTokenReponse, Map.class);
+            access_token = (String) map.get("access_token");
+            Integer expires_in = (Integer) map.get("expires_in");
+            if (!StringUtils.isEmpty(access_token)) {
+                redisBean.setStringValue(RedisKey.wechatAccessToken, access_token, expires_in - 60, TimeUnit.SECONDS);
+                return access_token;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.debug("微信获取access_token失败", ex);
+        }
+        return null;
+    }
+
+
+    public String getTicket() {
+        String ticket = redisBean.getStringValue(RedisKey.wechatTicket);
+        if (!StringUtils.isEmpty(ticket)) {
+            return ticket;
+        }
+        String accessToken = getWeChatAccessToken();
+        if (StringUtils.isEmpty(accessToken)) {
+            return accessToken;
+        }
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String accessTokenReponse = restTemplate.getForObject(getTicketUrl(accessToken), String.class);
+            Map<String, Object> map = JSONObject.parseObject(accessTokenReponse, Map.class);
+            ticket = (String) map.get("ticket");
+            Integer expires_in = (Integer) map.get("expires_in");
+            if (!StringUtils.isEmpty(ticket)) {
+                redisBean.setStringValue(RedisKey.wechatTicket, ticket, expires_in - 60, TimeUnit.SECONDS);
+                return ticket;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.debug("微信获取ticket失败", ex);
+        }
+        return null;
+    }
+
+
+
+    public Result<WechatConfig> getConfig(String url) {
+        WechatConfig config = new WechatConfig();
+        String ticket = getTicket();
+        config.setSignature(getSHA1(ticket, config.getTimestamp(), config.getNonceStr(), url));
+        config.setAppId(jsAppId);
+        return Result.success(config);
+    }
+
+    /**
+     * 用SHA1算法生成安全签名
+     *
+     * @param ticket    票据
+     * @param timestamp 时间戳
+     * @param nonce     随机字符串
+     * @param url       微信分享本地链接
+     * @return 安全签名
+     * @throws
+     */
+    public static String getSHA1(String ticket, String timestamp, String nonce, String url) {
+        try {
+            StringBuffer sb = new StringBuffer();
+            String str = sb
+                    .append("jsapi_ticket=")
+                    .append(ticket)
+                    .append("&noncestr=")
+                    .append(nonce)
+                    .append("&timestamp=")
+                    .append(timestamp)
+                    .append("&url=")
+                    .append(url)
+                    .toString();
+            // SHA1签名生成
+            return DigestUtils.sha1DigestAsHex(str);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+
+
+
+
 
 
 }
