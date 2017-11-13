@@ -116,10 +116,10 @@ public class UserService {
         if (StringUtils.isNotEmpty(user.getPhone())) {
             tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
             String key = RedisKey.getWeChatUserId(token);
-            redisBean.setStringValue(key,"",1,TimeUnit.SECONDS);
-        }else{
+            redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
+        } else {
             String key = RedisKey.getTokenUserIdKey(token);
-            redisBean.setStringValue(key,"",1,TimeUnit.SECONDS);
+            redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
             tokenUserIdKey = RedisKey.getWeChatUserId(token);
         }
 
@@ -286,7 +286,7 @@ public class UserService {
     }
 
     @Transactional
-    public Result bindPhone(Long userId,String token, String code, String phone) {
+    public Result bindPhone(Long userId, String token, String code, String phone) {
 
         User user = getCurrentUser(userId);
         if (user == null) return Result.fail("此用户不存在");
@@ -300,26 +300,26 @@ public class UserService {
         redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
 
         User phoneUser = userRepository.findByPhone(phone);
-        if(phoneUser != null){
-            if(StringUtils.isNotEmpty(phoneUser.getOpenId())){
+        if (phoneUser != null) {
+            if (StringUtils.isNotEmpty(phoneUser.getOpenId())) {
                 return Result.fail("此手机已被其他用户绑定了");
-            }else{
+            } else {
                 //迁移资金积累
                 UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
                 BigDecimal balance = userAccount.getBalance();
                 //增加双方流水
-                if(balance.compareTo(new BigDecimal(0))>0){
+                if (balance.compareTo(new BigDecimal(0)) > 0) {
                     //变更微信account
-                   commonService.setBalance(user.getId(), balance.abs().negate(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
-                   commonService.setBalance(phoneUser.getId(),balance.abs(),BalanceFlow.FlowType.ACCOUNT_TRANSFER,phoneUser.getId(),"","");
-                   phoneUser.setOpenId(user.getOpenId());
-                   phoneUser.setUnionId(user.getUnionId());
-                   userRepository.save(phoneUser);
+                    commonService.setBalance(user.getId(), balance.abs().negate(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
+                    commonService.setBalance(phoneUser.getId(), balance.abs(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
+                    phoneUser.setOpenId(user.getOpenId());
+                    phoneUser.setUnionId(user.getUnionId());
+                    userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
                 userRepository.save(user);
             }
-        }else{
+        } else {
             user.setPhone(phone);
             userRepository.save(user);
         }
@@ -329,8 +329,7 @@ public class UserService {
 
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
-        redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
-
+        redisBean.setStringValue(tokenUserIdKey, user.getId() + "");
 
 
         return Result.success();
@@ -413,16 +412,16 @@ public class UserService {
 
         String educationCode = userExtends.getEducation();
 
-        List<String> educationList = map2list(profileEducation,educationCode);
+        List<String> educationList = map2list(profileEducation, educationCode);
 
         String marriageStatus = userExtends.getMarriageStatus();
-        List<String> emotionList = map2list(profileEmotion,marriageStatus);
+        List<String> emotionList = map2list(profileEmotion, marriageStatus);
 
         String jobCode = userExtends.getJob();
-        List<String> jobList = map2list(profileJob,jobCode);
+        List<String> jobList = map2list(profileJob, jobCode);
 
         Integer sex = userExtends.getSex();
-        List<String> sexList = map2list(profileSex,sex+"");
+        List<String> sexList = map2list(profileSex, sex + "");
 
         Map<String, Object> mapVo = new HashMap<>();
         mapVo.put("educationList", educationList);
@@ -430,7 +429,7 @@ public class UserService {
         mapVo.put("jobList", jobList);
         mapVo.put("sexList", sexList);
         User user = userRepository.findOne(userId);
-        mapVo.put("avatar",user.getAvatar());
+        mapVo.put("avatar", user.getAvatar());
         mapVo.put("nickName", user.getNickName());
         mapVo.put("tel", user.getPhone());
         mapVo.put("birthday", DateUtil.formatDate(userExtends.getBirthday(), DateUtil.FormatType.DAY));
@@ -438,9 +437,9 @@ public class UserService {
         return Result.success(mapVo);
     }
 
-    private  List<Map<String,String>> map2list(Map<String, String> map,String code) {
+    private List<Map<String, String>> map2list(Map<String, String> map, String code) {
 
-        List<Map<String,String>> list = new ArrayList<>();
+        List<Map<String, String>> list = new ArrayList<>();
         Set<String> ketSet = map.keySet();
 
         for (String key : ketSet) {
@@ -450,7 +449,7 @@ public class UserService {
             temp.put("value", map.get(key));
             if (key.equals(code)) {
                 temp.put("select", "1");
-            }else{
+            } else {
                 temp.put("select", "0");
             }
             list.add(temp);
@@ -464,12 +463,12 @@ public class UserService {
         ArticleType articleType = articleTypeRepository.findByCode("questionHelp");
         List<Article> questHelp = articleRepository.findByType(articleType);
 
-        if(questHelp == null) return Result.success();
+        if (questHelp == null) return Result.success();
         List<Map<String, String>> ListvO = new ArrayList<>();
         questHelp.forEach(article -> {
             Map<String, String> map = new HashMap<>();
             map.put("title", article.getTitle());
-            map.put("articleId",article.getId()+"");
+            map.put("articleId", article.getId() + "");
             ListvO.add(map);
         });
         return Result.success(ListvO);

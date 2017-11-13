@@ -84,6 +84,7 @@ public class LotteryService {
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
 
+        //TODO 黑名单判断
         //  检查第三方库有没有数据
         Result result = exitsReward(lotteryVo.getCode());
         if (result != null) {
