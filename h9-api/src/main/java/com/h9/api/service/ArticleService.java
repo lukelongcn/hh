@@ -37,8 +37,7 @@ public class ArticleService {
     }
 
     @ApiOperation(value = "获取文章json数据")
-    @ResponseBody
-    public Result json(Long id){
+    public @ResponseBody Result json(Long id){
         Article article =  articleReposiroty.findOne(id);
         ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
         articleVO.setStartTime(DateUtil.formatDate(article.getStartTime(), DateUtil.FormatType.MINUTE));
