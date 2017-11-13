@@ -109,9 +109,8 @@ public class UserController {
 
 
     /**
-     * description: 常见问题说明
-     */
-    @Secured
+     * description: 微信
+配置     */
     @GetMapping("/wechat/config")
     public Result Config(HttpServletRequest request){
         String refer = request.getHeader("Referer");
