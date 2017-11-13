@@ -5,9 +5,13 @@ import com.h9.admin.model.vo.*;
 import com.h9.admin.service.AccountService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.SystemBlackList;
+import com.h9.common.modle.dto.BlackAccountDTO;
+import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -63,12 +67,40 @@ public class AccountController {
         return accountService.rewardInfo(new Date(startTime),endTime==0?new Date():new Date(endTime),key);
     }
 
-
     @Secured
     @GetMapping(value = "/deviceIdInfo")
     @ApiOperation("获取设备编号的信息")
     public Result<List<ImeiUserRecordVO>> deviceIdInfo(@RequestParam(defaultValue = "0") Long startTime,
                                                        @RequestParam(defaultValue = "0") Long endTime){
         return accountService.deviceIdInfo(new Date(startTime),endTime==0?new Date():new Date(endTime));
+    }
+
+    @Secured
+    @PostMapping(value = "/black/Account")
+    @ApiOperation("添加账号到黑名单")
+    public Result<List<SystemBlackList>> addBlackAccount(@Validated @RequestBody BlackAccountDTO blackAccountDTO){
+        return accountService.addBlackAccount(blackAccountDTO);
+    }
+
+    @Secured
+    @PostMapping(value = "/black/imei")
+    @ApiOperation("添加imei到黑名单")
+    public Result<List<SystemBlackList>> addBlackImei(@Validated @RequestBody BlackIMEIDTO blackAccountDTO){
+        return accountService.addBlackImei(blackAccountDTO);
+    }
+
+
+    @Secured
+    @GetMapping(value = "/black/account/list")
+    @ApiOperation("获取账号黑名单列表")
+    public Result<PageResult<BlackAccountVO>> blackAccountList(PageDTO pageDTO){
+        return accountService.blackAccountList(pageDTO);
+    }
+
+    @Secured
+    @GetMapping(value = "/black/imei/list")
+    @ApiOperation("获取imei黑名单列表")
+    public Result<PageResult<BlackAccountVO>> blackIMEIList(PageDTO pageDTO){
+        return accountService.blackIMEIList(pageDTO);
     }
 }
