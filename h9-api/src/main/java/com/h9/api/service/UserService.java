@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
+import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.SMService;
@@ -462,4 +463,11 @@ public class UserService {
         });
         return Result.success(ListvO);
     }
+
+
+    public Result<WechatConfig> getConfig(String url) {
+        return weChatProvider.getConfig(url);
+    }
+
+
 }
