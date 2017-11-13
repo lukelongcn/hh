@@ -25,6 +25,10 @@ public class HomeVO {
     private String createTime;
     private String type;
 
+    private String typeName;
+
+
+
     public static HomeVO convert(Class clazz, Object obj) {
 
         HomeVO vo = new HomeVO();
@@ -32,23 +36,26 @@ public class HomeVO {
 
             Article article = (Article) obj;
             ArticleType articleType = article.getArticleType();
-            vo.setImgUrl(article.getUrl());
+            vo.setImgUrl(article.getImgUrl());
             vo.setContent("");
+//            vo.setImgUrl(article);
             vo.setTitle(article.getTitle());
             vo.setCode(articleType.getCode());
             vo.setLink(article.getUrl());
             vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
             vo.setType("article");
             vo.setContent(article.getTitle());
+            vo.setTypeName(articleType.getName());
             return vo;
         }
 
         if (clazz.getSimpleName().equalsIgnoreCase("Banner")) {
 
             Banner banner = (Banner) obj;
-            vo.setImgUrl(banner.getUrl());
+            vo.setImgUrl(banner.getIcon());
             vo.setContent(banner.getContent());
             vo.setTitle(banner.getTitle());
+            vo.setLink(banner.getUrl());
             BannerType bannerType = banner.getBannerType();
             vo.setCode(bannerType.getCode());
             vo.setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
@@ -57,6 +64,14 @@ public class HomeVO {
         }
 
         return null;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     public String getType() {

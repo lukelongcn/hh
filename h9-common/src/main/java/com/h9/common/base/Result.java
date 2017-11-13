@@ -38,7 +38,7 @@ public class Result<T> {
 
 
     public static <T>Result<T> success() {
-        return success(null);
+        return success("成功");
     }
 
     public static <T>Result<T> success(T t) {

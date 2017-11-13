@@ -89,7 +89,7 @@ public class BankCardService {
         }
         userBank.setStatus(3);
         bankCardRepository.save(userBank);
-        return Result.success("绑定成功");
+        return Result.success("解绑成功");
     }
 
     /**

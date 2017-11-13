@@ -84,4 +84,13 @@ public class RedisKey {
         return MessageFormat.format("config:{0}:type",code);
     }
 
+    public static String wechatAccessToken = "wechat:accesstoken";
+    public static String wechatTicket = "wechat:ticket";
+
+
+
+
 }
+
+
+

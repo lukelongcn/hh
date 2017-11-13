@@ -6,6 +6,7 @@ import com.h9.api.model.vo.MyCouponsVO;
 import com.h9.api.model.vo.UserAccountInfoVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,8 @@ public class AccountService {
     private OrdersRepository ordersReposiroty;
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private ConfigService configService;
 
 
     public Result getBalanceFlow(Long userId, int page, int limit) {
@@ -51,8 +54,12 @@ public class AccountService {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(userId, pageRequest);
         PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
-        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
-        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+
+//        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
+//        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+
+        Map iconMap = configService.getMapConfig("balanceFlowImg");
+
         return Result.success(flowPageResult.result2Result(bf -> new BalanceFlowVO(bf, iconMap)));
 
     }
@@ -61,8 +68,12 @@ public class AccountService {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
-        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
-        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+
+//        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
+//        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
+
+        Map iconMap = configService.getMapConfig("balanceFlowImg");
+
         return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc,iconMap)));
     }
 
