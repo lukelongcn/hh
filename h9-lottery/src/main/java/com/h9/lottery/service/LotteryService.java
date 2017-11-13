@@ -135,6 +135,13 @@ public class LotteryService {
         }
     }
 
+    //TODO unfinish
+//    /**
+//     * description: 判断userId 或者Imei 在黑名单中
+//     */
+//    public boolean onBlackUser(Long userId,String imei){
+//
+//    }
 
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
