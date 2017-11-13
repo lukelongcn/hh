@@ -7,8 +7,12 @@ import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.utils.DateUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 李圆
@@ -27,5 +31,19 @@ public class ArticleService {
         articleVO.setStartTime(DateUtil.formatDate(article.getStartTime(), DateUtil.FormatType.GBK_MINUTE));
         articleVO.setEndTime(DateUtil.formatDate(article.getEndTime(), DateUtil.FormatType.GBK_MINUTE));
         return Result.success(articleVO);
+    }
+
+
+    @ApiOperation(value = "获取文章json数据")
+    @ResponseBody
+    public Map<String,String> json(Long id){
+        Article article =  articleReposiroty.findOne(id);
+        ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
+        articleVO.setStartTime(DateUtil.formatDate(article.getStartTime(), DateUtil.FormatType.MINUTE));
+        articleVO.setEndTime(DateUtil.formatDate(article.getEndTime(), DateUtil.FormatType.MINUTE));
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key", "articleVO");
+        return map;
     }
 }
