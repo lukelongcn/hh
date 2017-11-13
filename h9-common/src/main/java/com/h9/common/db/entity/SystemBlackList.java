@@ -1,10 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
-import org.hibernate.dialect.unique.DB2UniqueDelegate;
 
 import javax.persistence.*;
-
 import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -49,7 +47,41 @@ public class SystemBlackList extends BaseEntity {
 
     @Column(name = "order_id", columnDefinition = "bigint(20) default null COMMENT '关联订单id'")
     private Long orderId;
+    
+    @Column(name = "imei", columnDefinition = "varchar(50) default null COMMENT '设备号,与用户id不能同时存在'")
+    private String imei;
 
+    public String getCause() {
+        return cause;
+    }
+
+    public void setCause(String cause) {
+        this.cause = cause;
+    }
+
+    public Long getRewardId() {
+        return rewardId;
+    }
+
+    public void setRewardId(Long rewardId) {
+        this.rewardId = rewardId;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
+    }
 
     public Long getId() {
         return id;

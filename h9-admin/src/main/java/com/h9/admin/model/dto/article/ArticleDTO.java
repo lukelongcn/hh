@@ -11,8 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * @author: George
- * @date: 2017/11/4 17:24
+ * 2017/11/4 17:24
  */
 @ApiModel("文章")
 public class ArticleDTO {

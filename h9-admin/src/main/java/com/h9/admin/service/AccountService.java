@@ -6,6 +6,8 @@ import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.modle.dto.BlackAccountDTO;
+import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.Config;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +42,8 @@ public class AccountService {
     private LotteryLogRepository lotteryLogRepository;
     @Resource
     private UserRecordRepository userRecordRepository;
+    @Resource
+    private SystemBlackListRepository systemBlackListRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
         Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest());
@@ -98,8 +103,84 @@ public class AccountService {
         return Result.success(userList);
     }
 
-    public Result<List<UserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
-        List<Object[]> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
-        return null;
+    public Result<List<ImeiUserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
+        List<ImeiUserRecordVO> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
+        userRecordByTime.forEach(imeiUserRecordVO -> imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
+        return Result.success(userRecordByTime);
+    }
+
+    public Result<List<SystemBlackList>> addBlackAccount(BlackAccountDTO blackAccountDTO) {
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.YEAR, 100);
+        Integer status = blackAccountDTO.getStatus();
+        for (Long userId : blackAccountDTO.getUserIds()) {
+            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByUserIdAndStatus(userId, 1);
+            if (status == 1) {
+                if (byUserIdAndStatus != null) {
+                    return Result.fail("此账号已经被加入黑名单了");
+                } else {
+                    systemBlackListRepository.save(createBlackList(instance, "账号黑名单", userId, null));
+                }
+            }else if (status == 2) {
+                if (byUserIdAndStatus != null) {
+                    saveOpenBlackListData(byUserIdAndStatus);
+                } else {
+                    return Result.fail("你要解禁的账号不存在");
+                }
+            }
+        }
+        return Result.success();
+    }
+
+    public Result<List<SystemBlackList>> addBlackImei(BlackIMEIDTO blackIMEIDTO) {
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.YEAR, 100);
+        Integer status = blackIMEIDTO.getStatus();
+        for (String imei : blackIMEIDTO.getImeis()) {
+            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByImeiAndStatus(imei, 1);
+            if (status == 1) {
+                if (byUserIdAndStatus != null) {
+                    return Result.fail("此imei已经被加入黑名单了");
+                } else {
+                    systemBlackListRepository.save(createBlackList(instance, "imei黑名单", null, imei));
+                }
+            }else if (status == 2) {
+                if (byUserIdAndStatus != null) {
+                    saveOpenBlackListData(byUserIdAndStatus);
+                } else {
+                    return Result.fail("你要解禁的账号不存在");
+                } 
+            }
+        }
+        return Result.success();
+    }
+
+    private void saveOpenBlackListData(SystemBlackList byUserIdAndStatus) {
+        byUserIdAndStatus.setStatus(2);
+        byUserIdAndStatus.setUpdateTime(new Date());
+        byUserIdAndStatus.setEndTime(new Date());
+        systemBlackListRepository.save(byUserIdAndStatus);
+    }
+
+    private SystemBlackList createBlackList(Calendar instance,String cause,Long userId,String imei) {
+        SystemBlackList systemBlackList = new SystemBlackList();
+        systemBlackList.setCause(cause);
+        systemBlackList.setStartTime(new Date());
+        systemBlackList.setEndTime(instance.getTime());
+        systemBlackList.setImei(imei);
+        systemBlackList.setStatus(1);
+        systemBlackList.setUserId(userId);
+        systemBlackList.setCreateTime(new Date());
+        return systemBlackList;
+    }
+
+    public Result<PageResult<BlackAccountVO>> blackAccountList(PageDTO pageDTO) {
+        return Result.success(new PageResult<>(systemBlackListRepository.findAllAccount(pageDTO.toPageRequest())));
+    }
+
+    public Result<PageResult<BlackAccountVO>> blackIMEIList(PageDTO pageDTO) {
+        Page<BlackAccountVO> allImei = systemBlackListRepository.findAllImei(pageDTO.toPageRequest());
+        allImei.forEach(blackAccountVO -> blackAccountVO.setRelevanceCount(userRecordRepository.findRelevanceCount(blackAccountVO.getImei())));
+        return Result.success(new PageResult<>(allImei));
     }
 }
