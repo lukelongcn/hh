@@ -30,7 +30,7 @@ import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
- *
+ * <p>
  * ProductService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/7
  * Time: 19:21
@@ -50,6 +50,9 @@ public class ProductService {
     @Resource
     private FactoryProvider factoryProvider;
 
+    @Resource
+    private LotteryService lotteryService;
+
 
     @Transactional
     public Result<AuthenticityVO> getAuthenticity(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -57,20 +60,25 @@ public class ProductService {
         ProductLog productLog = recordLog(userId, lotteryVo, userRecord);
         String code = lotteryVo.getCode();
         Result result = findByCode(code);
-        if(result!=null) return result;
+        if (result != null) return result;
 
 //      TODO  黑名单 改成配置的
+        String imei = request.getHeader("imei");
+        if (lotteryService.onBlackUser(userId, imei)) {
+
+            return Result.fail("系统繁忙，请稍后再试");
+        }
         int date = -60 * 1;
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
         long errCount = productLogRepository.findByUserId(userId, startDate);
         long userCode = productLogRepository.findByUserId(userId, code);
-        if(errCount>3&&userCode<=0){
+        if (errCount > 3 && userCode <= 0) {
             return Result.fail("您的错误次数已经到达上限，请稍后再试");
         }
         Product product4Update = productRepository.findByCode4Update(code);
         BigDecimal count = product4Update.getCount();
 
-        if(count.compareTo(new BigDecimal(0))==0){
+        if (count.compareTo(new BigDecimal(0)) == 0) {
             product4Update.setFisrtTime(new Date());
         }
         product4Update.setCount(count.add(new BigDecimal(1)));
@@ -84,7 +92,7 @@ public class ProductService {
 
         productLogRepository.save(productLog);
         ProductFlow productFlow = new ProductFlow();
-        BeanUtils.copyProperties(productLog,productFlow,"id");
+        BeanUtils.copyProperties(productLog, productFlow, "id");
         productFlowRepository.save(productFlow);
         productRepository.save(product4Update);
 
@@ -98,37 +106,35 @@ public class ProductService {
         return Result.success(authenticityVO);
     }
 
-    public ProductLog recordLog(Long userId, LotteryDto lotteryVo, UserRecord userRecord){
+    public ProductLog recordLog(Long userId, LotteryDto lotteryVo, UserRecord userRecord) {
         ProductLog productLog = new ProductLog();
-        productLog .setCode(lotteryVo.getCode());
+        productLog.setCode(lotteryVo.getCode());
         productLog.setUserId(userId);
         productLog.setUserRecord(userRecord);
         return productLogRepository.saveAndFlush(productLog);
     }
 
-    public Result findByCode(String code){
+    public Result findByCode(String code) {
         Product product = productRepository.findByCode(code);
-        if(product != null){
+        if (product != null) {
             return null;
         }
         ProductModel productInfo = factoryProvider.getProductInfo(code);
-        if(productInfo == null){
+        if (productInfo == null) {
             return Result.fail("服务器繁忙，请稍后再试");
         }
         int state = productInfo.getState();
-        if(state == 2){
+        if (state == 2) {
             return Result.fail("未能查询到该商品信息");
-        }else if(state == 4){
+        } else if (state == 4) {
             return Result.fail("服务器繁忙，请稍后再试");
-        }else{
+        } else {
             product = productInfo.covert();
             productRepository.saveAndFlush(product);
             return null;
         }
 
     }
-
-
 
 
 }

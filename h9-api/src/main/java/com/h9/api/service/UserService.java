@@ -111,7 +111,13 @@ public class UserService {
     private LoginResultVO getLoginResult(User user) {
         //生成token
         String token = UUID.randomUUID().toString();
-        String tokenUserIdKey = StringUtils.isNotEmpty(user.getPhone())?RedisKey.getTokenUserIdKey(token):RedisKey.getWeChatUserId(token);
+
+        String tokenUserIdKey = "";
+        if (StringUtils.isNotEmpty(user.getPhone())) {
+            tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
+        } else {
+            tokenUserIdKey = RedisKey.getWeChatUserId(token);
+        }
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30, TimeUnit.DAYS);
         return LoginResultVO.convert(user, token);
     }
@@ -306,7 +312,6 @@ public class UserService {
                    userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
-                user.setPhone(phone);
                 userRepository.save(user);
             }
         }else{
@@ -320,6 +325,8 @@ public class UserService {
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
         redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
+
+
 
         return Result.success();
     }
@@ -426,11 +433,7 @@ public class UserService {
         return Result.success(mapVo);
     }
 
-    public UserService() {
-        super();
-    }
-
-    private  List<Map<String,String>> map2list(Map<String, String> map, String code) {
+    private  List<Map<String,String>> map2list(Map<String, String> map,String code) {
 
         List<Map<String,String>> list = new ArrayList<>();
         Set<String> ketSet = map.keySet();
