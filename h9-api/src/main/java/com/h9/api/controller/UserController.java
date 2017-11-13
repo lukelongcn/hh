@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -104,5 +105,16 @@ public class UserController {
     public Result questionHelp(){
 
         return userService.questionHelp();
+    }
+
+
+    /**
+     * description: 常见问题说明
+     */
+    @Secured
+    @GetMapping("/wechat/config")
+    public Result Config(HttpServletRequest request){
+        String refer = request.getHeader("Referer");
+        return userService.getConfig(refer);
     }
 }
