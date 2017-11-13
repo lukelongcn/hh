@@ -306,6 +306,7 @@ public class UserService {
                    userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
+                user.setPhone(phone);
                 userRepository.save(user);
             }
         }else{
@@ -319,8 +320,6 @@ public class UserService {
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
         redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
-
-
 
         return Result.success();
     }
@@ -427,7 +426,11 @@ public class UserService {
         return Result.success(mapVo);
     }
 
-    private  List<Map<String,String>> map2list(Map<String, String> map,String code) {
+    public UserService() {
+        super();
+    }
+
+    private  List<Map<String,String>> map2list(Map<String, String> map, String code) {
 
         List<Map<String,String>> list = new ArrayList<>();
         Set<String> ketSet = map.keySet();
