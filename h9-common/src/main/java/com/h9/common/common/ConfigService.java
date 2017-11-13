@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,6 +41,10 @@ public class ConfigService {
         Object valueRedis1 = getConfigFromCache(code);
         if (valueRedis1 != null) return valueRedis1;
         return getConfigFromDb(code);
+    }
+
+    public void expireConfig(String code) {
+       this.redisBean.expire(RedisKey.getConfigValue(code),1, TimeUnit.MILLISECONDS);
     }
 
     public String getStringConfig(String code) {
