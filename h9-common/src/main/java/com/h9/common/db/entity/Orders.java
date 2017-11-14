@@ -45,10 +45,10 @@ public class Orders extends BaseEntity {
     @Column(name = "addressId")
     private Long addressId;
 
-    @Column(name = "user_name", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
+    @Column(name = "user_name",  columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
     private String userName;
 
-    @Column(name = "user_phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
+    @Column(name = "user_phone",  columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
     private String userPhone;
 
     @Column(name = "user_addres", columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")

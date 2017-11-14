@@ -40,6 +40,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             Secured secured = handlerMethod.getMethodAnnotation(Secured.class);
             if (secured != null) {
                 if (StringUtils.isBlank(token)) throw new UnAuthException(401,"未知用户");
+
                 // token 失效检查
                 String userId4phone = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
                 String userId4WeChat = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
@@ -58,6 +59,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                     }
                     userId = userId4WeChat;
                 }
+                MDC.put("userId",userId);
+
                 if(StringUtils.isEmpty(userId)){
                     throw new UnAuthException(401,"请重新登录");
                 }

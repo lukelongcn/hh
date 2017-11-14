@@ -131,7 +131,12 @@ public class AccountService {
 
     public Result<List<SystemBlackList>> addBlackAccount(BlackAccountDTO blackAccountDTO) {
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.YEAR, 100);
+        String blackDeadTimeUid = configService.getStringConfig("blackDeadTimeUid");
+        if (StringUtils.isEmpty(blackDeadTimeUid)) {
+            instance.add(Calendar.SECOND, Integer.parseInt(blackDeadTimeUid));
+        } else {
+            instance.add(Calendar.YEAR, 100);
+        }
         Integer status = blackAccountDTO.getStatus();
         for (Long userId : blackAccountDTO.getUserIds()) {
             SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByUserIdAndStatus(userId, 1);
@@ -154,7 +159,13 @@ public class AccountService {
 
     public Result<List<SystemBlackList>> addBlackImei(BlackIMEIDTO blackIMEIDTO) {
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.YEAR, 100);
+        String blackDeadTimeImei = configService.getStringConfig("blackDeadTimeImei");
+        if (StringUtils.isEmpty(blackDeadTimeImei)) {
+            instance.add(Calendar.SECOND, Integer.parseInt(blackDeadTimeImei));
+        } else {
+            instance.add(Calendar.YEAR, 100);
+        }
+        
         Integer status = blackIMEIDTO.getStatus();
         for (String imei : blackIMEIDTO.getImeis()) {
             SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByImeiAndStatus(imei, 1);

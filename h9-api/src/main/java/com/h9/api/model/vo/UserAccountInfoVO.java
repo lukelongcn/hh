@@ -18,18 +18,26 @@ public class UserAccountInfoVO {
     private String imgUrl;
     private String nickName;
     private Integer withdrawalCount;
+    private String tel;
 
-    public UserAccountInfoVO (User user, UserAccount userAccount,String cardNum,List<Map<String,String>> bankList){
+    public UserAccountInfoVO (User user, UserAccount userAccount,String cardNum,String tel){
         this.balance = userAccount.getBalance().toString();
         this.vb = userAccount.getvCoins().toString();
         this.cardNum = cardNum;
         this.imgUrl = user.getAvatar();
         this.nickName = user.getNickName();
         this.withdrawalCount = 10000;
+        this.tel = tel;
     }
 
 
+    public String getTel() {
+        return tel;
+    }
 
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
 
     public Integer getWithdrawalCount() {
         return withdrawalCount;

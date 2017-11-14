@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 /**
  * 
  * Created by Gonyb on 2017/11/13.
@@ -24,4 +26,7 @@ public interface SystemBlackListRepository extends BaseRepository<SystemBlackLis
     @Query("select new com.h9.admin.model.vo.BlackAccountVO(s.id,s.imei,s.createTime,s.endTime,s.cause)" +
             " from SystemBlackList s where s.imei is not null and s.status = 1")
     Page<BlackAccountVO> findAllImei(Pageable pageable);
+
+    @Query(value = "select o from SystemBlackList o where ?3 > o.startTime and ?3 < o.endTime and o.status = 1 and (o.userId = ?1 or o.imei = ?2)")
+    SystemBlackList findByUserIdOrImei(Long userId, String imei, Date date);
 }
