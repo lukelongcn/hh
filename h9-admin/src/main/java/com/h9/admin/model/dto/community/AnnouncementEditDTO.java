@@ -1,6 +1,8 @@
 package com.h9.admin.model.dto.community;
 
+import com.h9.common.db.entity.Announcement;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,5 +21,10 @@ public class AnnouncementEditDTO extends AnnouncementAddDTO{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Announcement toAnnouncement(Announcement announcement){
+        BeanUtils.copyProperties(this,announcement);
+        return  announcement;
     }
 }

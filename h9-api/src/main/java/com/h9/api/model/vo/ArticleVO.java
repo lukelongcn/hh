@@ -32,6 +32,8 @@ public class ArticleVO {
 
     private String endTime;//结束时间
 
+    protected String createTime ;//创建时间
+
     private Integer recommend = 1;//1 推荐 2 不推荐
 
 
@@ -109,5 +111,13 @@ public class ArticleVO {
 
     public void setRecommend(Integer recommend) {
         this.recommend = recommend;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

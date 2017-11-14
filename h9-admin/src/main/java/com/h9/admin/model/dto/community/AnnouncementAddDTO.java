@@ -1,7 +1,9 @@
 package com.h9.admin.model.dto.community;
 
+import com.h9.common.db.entity.Announcement;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -39,11 +41,8 @@ public class AnnouncementAddDTO {
     @NotNull(message = "状态不能为空")
     private Integer enable;
 
-    @ApiModelProperty(value = "开始时间",required = true)
-    private Date startTime;
-
-    @ApiModelProperty(value = "结束时间",required = true)
-    private Date endTime;
+    @ApiModelProperty(value = "发布时间",required = true)
+    private Date publishTime;
 
     @ApiModelProperty(value = "排序",required = true)
     @NotNull(message = "排序不能为空")
@@ -93,20 +92,12 @@ public class AnnouncementAddDTO {
         this.enable = enable;
     }
 
-    public Date getStartTime() {
-        return startTime;
+    public Date getPublishTime() {
+        return publishTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setPublishTime(long publishTime) {
+        this.publishTime = new Date(publishTime);
     }
 
     public Integer getSort() {
@@ -123,5 +114,11 @@ public class AnnouncementAddDTO {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public Announcement toAnnouncement(){
+        Announcement announcement = new Announcement();
+        BeanUtils.copyProperties(this,announcement);
+        return  announcement;
     }
 }

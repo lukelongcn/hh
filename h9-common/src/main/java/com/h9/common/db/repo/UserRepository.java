@@ -29,7 +29,7 @@ public interface UserRepository extends BaseRepository<User> {
 
 
     @Query(value = "select o from User o where o.phone=?1 and o.password=?2 and o.isAdmin=?3")
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+   //@Lock(LockModeType.PESSIMISTIC_WRITE)
     User findByPhoneAndPasswordAndIsAdmin(String phone, String password, Integer isAdmin);
 
     @Query("select new com.h9.common.modle.vo.SystemUserVO(o) from User o  order by o.id desc ")
