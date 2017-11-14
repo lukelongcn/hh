@@ -141,8 +141,8 @@ public class ArticleDTO {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartTime(long startTime) {
+        this.startTime = new Date(startTime);
     }
 
     public String getImgUrl() {

@@ -188,4 +188,11 @@ public class CommunityService {
         if
         return Result.success(this.goodsReposiroty.save(goodsEditDTO.toGoods()));
     }*/
+
+    /*public Result<Announcement> addActivity(Announcement announcement){
+        if(this.activityRepository.findByCode(activity.getCode())!=null){
+            return Result.fail("关键字已存在");
+        }
+        return Result.success(this.activityRepository.save(activity));
+    }*/
 }
