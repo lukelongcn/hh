@@ -86,7 +86,7 @@ public class UserInfo {
         user.setId(id);
         user.setPhone(phone);
         user.setCreateTime(RegisterTime);
-        user.setAvatar(Username);
+        user.setAvatar(Userimg);
         user.setNickName(Username);
         user.setLoginCount(1);
         user.setLastLoginTime(RegisterTime);

@@ -1,10 +1,13 @@
 package com.transfer.db.repo;
 
 
-import com.h9.common.base.BaseRepository;
 import com.transfer.db.BasicRepository;
 import com.transfer.db.entity.UserInfo;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @ClassName: UserRepository

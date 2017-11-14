@@ -79,7 +79,7 @@ public class LotteryTest {
                 String shortUrl = CodeUtil.shortUrl(uuid, CodeUtil.genRandomStrCode(8));
                 reward.setCode(shortUrl);
                 logger.debugv(shortUrl);
-                reward.setActivity(one);
+                reward.setActivityId(1L);
                 reward.setMd5Code(MD5Util.getMD5(shortUrl));
                 Reward reward1 = rewardRepository.saveAndFlush(reward);
                 logger.debugv(shortUrl+ " " + JSONObject.toJSONString(reward1));
