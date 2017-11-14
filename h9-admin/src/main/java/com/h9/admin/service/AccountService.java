@@ -206,11 +206,11 @@ public class AccountService {
     }
 
     public Result<PageResult<BlackAccountVO>> blackAccountList(PageDTO pageDTO) {
-        return Result.success(new PageResult<>(systemBlackListRepository.findAllAccount(pageDTO.toPageRequest())));
+        return Result.success(new PageResult<>(systemBlackListRepository.findAllAccount(new Date(),pageDTO.toPageRequest())));
     }
 
     public Result<PageResult<BlackAccountVO>> blackIMEIList(PageDTO pageDTO) {
-        Page<BlackAccountVO> allImei = systemBlackListRepository.findAllImei(pageDTO.toPageRequest());
+        Page<BlackAccountVO> allImei = systemBlackListRepository.findAllImei(new Date(),pageDTO.toPageRequest());
         allImei.forEach(blackAccountVO -> blackAccountVO.setRelevanceCount(userRecordRepository.findRelevanceCount(blackAccountVO.getImei())));
         return Result.success(new PageResult<>(allImei));
     }
