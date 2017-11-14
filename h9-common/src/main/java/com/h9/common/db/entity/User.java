@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -28,10 +27,10 @@ public class User extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = AUTO, generator = "h9-apiSeq")
+    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
     
-    @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
+    @Column(name = "phone", columnDefinition = "varchar(11) default '' COMMENT '手机号'")
     private String phone;
 
     @Column(name = "open_id",  columnDefinition = "varchar(64) default null COMMENT '微信openId'")
@@ -65,6 +64,8 @@ public class User extends BaseEntity {
 
     @Column(name = "password", columnDefinition = "varchar(36) default '' COMMENT '加密后密码'")
     private String password;
+    @Column(name = "uuid", columnDefinition = "varchar(64) default '' COMMENT 'uuid'")
+    private String uuid;
 
     public User() {
     }
