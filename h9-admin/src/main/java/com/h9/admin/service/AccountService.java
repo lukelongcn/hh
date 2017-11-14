@@ -114,7 +114,7 @@ public class AccountService {
     public Result<List<UserRecordVO>> rewardInfo(Date startTime, Date endTime, String key) {
         List<UserRecordVO> userList = lotteryLogRepository.getUserList(startTime, endTime, StringUtils.isEmpty(key) ? null : "%" + key + "%");
         userList = userList.stream().filter(userRecordVO ->
-                systemBlackListRepository.findByUserIdAndStatus(userRecordVO.getUserId(),1) == null) //过滤已加入黑名单的数据
+                systemBlackListRepository.findByUserIdAndStatus(userRecordVO.getUserId(),new Date()) == null) //过滤已加入黑名单的数据
                 .collect(Collectors.toList());
         return Result.success(userList);
     }
@@ -124,7 +124,7 @@ public class AccountService {
         userRecordByTime.forEach(imeiUserRecordVO -> 
                 imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
         userRecordByTime = userRecordByTime.stream().filter(imeiUserRecordVO -> 
-                systemBlackListRepository.findByImeiAndStatus(imeiUserRecordVO.getImei(),1) == null) //过滤已加入黑名单的数据
+                systemBlackListRepository.findByImeiAndStatus(imeiUserRecordVO.getImei(),new Date()) == null) //过滤已加入黑名单的数据
                 .collect(Collectors.toList());
         return Result.success(userRecordByTime);
     }
@@ -132,14 +132,14 @@ public class AccountService {
     public Result<List<SystemBlackList>> addBlackAccount(BlackAccountDTO blackAccountDTO) {
         Calendar instance = Calendar.getInstance();
         String blackDeadTimeUid = configService.getStringConfig("blackDeadTimeUid");
-        if (StringUtils.isEmpty(blackDeadTimeUid)) {
+        if (!StringUtils.isEmpty(blackDeadTimeUid)) {
             instance.add(Calendar.SECOND, Integer.parseInt(blackDeadTimeUid));
         } else {
             instance.add(Calendar.YEAR, 100);
         }
         Integer status = blackAccountDTO.getStatus();
         for (Long userId : blackAccountDTO.getUserIds()) {
-            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByUserIdAndStatus(userId, 1);
+            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByUserIdAndStatus(userId, new Date());
             if (status == 1) {
                 if (byUserIdAndStatus != null) {
                     return Result.fail("此账号已经被加入黑名单了");
@@ -154,13 +154,13 @@ public class AccountService {
                 }
             }
         }
-        return Result.success("添加成功");
+        return Result.success();
     }
 
     public Result<List<SystemBlackList>> addBlackImei(BlackIMEIDTO blackIMEIDTO) {
         Calendar instance = Calendar.getInstance();
         String blackDeadTimeImei = configService.getStringConfig("blackDeadTimeImei");
-        if (StringUtils.isEmpty(blackDeadTimeImei)) {
+        if (!StringUtils.isEmpty(blackDeadTimeImei)) {
             instance.add(Calendar.SECOND, Integer.parseInt(blackDeadTimeImei));
         } else {
             instance.add(Calendar.YEAR, 100);
@@ -168,7 +168,7 @@ public class AccountService {
         
         Integer status = blackIMEIDTO.getStatus();
         for (String imei : blackIMEIDTO.getImeis()) {
-            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByImeiAndStatus(imei, 1);
+            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByImeiAndStatus(imei, new Date());
             if (status == 1) {
                 if (byUserIdAndStatus != null) {
                     return Result.fail("此imei已经被加入黑名单了");
@@ -206,11 +206,11 @@ public class AccountService {
     }
 
     public Result<PageResult<BlackAccountVO>> blackAccountList(PageDTO pageDTO) {
-        return Result.success(new PageResult<>(systemBlackListRepository.findAllAccount(pageDTO.toPageRequest())));
+        return Result.success(new PageResult<>(systemBlackListRepository.findAllAccount(new Date(),pageDTO.toPageRequest())));
     }
 
     public Result<PageResult<BlackAccountVO>> blackIMEIList(PageDTO pageDTO) {
-        Page<BlackAccountVO> allImei = systemBlackListRepository.findAllImei(pageDTO.toPageRequest());
+        Page<BlackAccountVO> allImei = systemBlackListRepository.findAllImei(new Date(),pageDTO.toPageRequest());
         allImei.forEach(blackAccountVO -> blackAccountVO.setRelevanceCount(userRecordRepository.findRelevanceCount(blackAccountVO.getImei())));
         return Result.success(new PageResult<>(allImei));
     }

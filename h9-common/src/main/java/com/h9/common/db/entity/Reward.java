@@ -28,9 +28,12 @@ public class Reward extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "activity_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '活动id'")
-    private Activity activity;
+//    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    @JoinColumn(name = "activity_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '活动id'")
+//    private Activity activity;
+
+    @Column(name = "activity_id", columnDefinition = "bigint(20) default null COMMENT ''")
+    private Long activityId;
 
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '奖励条码'")
     private String code;
@@ -80,12 +83,12 @@ public class Reward extends BaseEntity {
         this.id = id;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public Long getActivityId() {
+        return activityId;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
     }
 
     public String getCode() {
