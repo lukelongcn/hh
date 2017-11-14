@@ -1,9 +1,11 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.article.ArticleDTO;
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.Article;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.repo.ArticleRepository;
@@ -12,6 +14,7 @@ import com.h9.common.modle.dto.PageDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -26,6 +29,8 @@ public class ArticleService {
     private ArticleTypeRepository articleTypeRepository;
     @Resource
     private ArticleRepository articleRepository;
+    @Resource
+    private ConfigService configService;
 
     public Result<PageResult<ArticleType>> categoryList(PageDTO pageDTO) {
         Page<ArticleType> all = articleTypeRepository.findAll(pageDTO.toPageRequest());
@@ -74,6 +79,7 @@ public class ArticleService {
 
     public Result<PageResult<Article>> articleList(PageDTO pageDTO) {
         Page<Article> all = articleRepository.findAll(pageDTO.toPageRequest());
+        all.forEach(this::setArticleUrl);
         return Result.success(new PageResult<>(all));
     }
 
@@ -82,6 +88,7 @@ public class ArticleService {
         if(one==null){
             return Result.fail("您访问的文章不存在");
         }
+        setArticleUrl(one);
         return Result.success(one);
     }
 
@@ -128,5 +135,19 @@ public class ArticleService {
         article.setUpdateTime(new Date());
         articleRepository.save(article);
         return Result.success(article);
+    }
+    
+    private void setArticleUrl(Article article){
+        String url = article.getUrl();
+        if (StringUtils.isEmpty(url)) {
+            String preLink = configService.getStringConfig("preLink");
+            if (!StringUtils.isEmpty(preLink)) {
+                article.setUrl(JSONObject.parseObject(preLink).getString("article") + article.getId());
+            }
+        } else {
+            if(!url.contains("url:")){
+                article.setUrl("url:"+article.getUrl());
+            }
+        } 
     }
 }
