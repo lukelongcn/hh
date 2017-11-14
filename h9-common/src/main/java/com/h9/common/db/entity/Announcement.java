@@ -31,8 +31,6 @@ public class Announcement extends BaseEntity {
     @Column(name = "url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
     private String url;
 
-    @Column(name = "user_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户名'")
-    private String userName;
 
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 0禁用 2删除'")
     private Integer enable;
@@ -50,9 +48,12 @@ public class Announcement extends BaseEntity {
 
     @Column(name = "img_url", columnDefinition = "varchar(200) COMMENT '文章显示图片'")
     private String imgUrl;
+
     public Long getId() {
         return id;
     }
+
+
 
     public String getImgUrl() {
         return imgUrl;
@@ -90,13 +91,7 @@ public class Announcement extends BaseEntity {
         this.url = url;
     }
 
-    public String getUserName() {
-        return userName;
-    }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public Integer getEnable() {
         return enable;

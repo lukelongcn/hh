@@ -1,9 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Article;
-import com.h9.common.db.entity.ArticleType;
-import com.h9.common.db.entity.Banner;
-import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.entity.*;
 import com.h9.common.utils.DateUtil;
 
 import java.text.DateFormat;
@@ -44,7 +41,7 @@ public class HomeVO {
             vo.setCode(articleType.getCode());
             String link = articlePreUrl + article.getId();
             if (!link.startsWith("url:")) {
-                link += "url:";
+                link = "url:"+link;
             }
             vo.setLink(link);
 //            vo.setLink(article.getUrl());
@@ -72,6 +69,29 @@ public class HomeVO {
         return null;
     }
 
+    @SuppressWarnings("Duplicates")
+    public static HomeVO convert(Announcement announcement,String articlePreUrl) {
+
+
+        HomeVO vo = new HomeVO();
+
+        vo.setImgUrl(announcement.getImgUrl());
+        vo.setContent("");
+        vo.setTitle(announcement.getTitle());
+
+        String link = articlePreUrl + announcement.getId();
+        if (!link.startsWith("url:")) {
+            link += "url:";
+        }
+        vo.setLink(link);
+        vo.setCreateTime(DateUtil.formatDate(announcement.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+        vo.setType("article");
+        vo.setContent(announcement.getTitle());
+        vo.setTypeName("公告");
+        return vo;
+
+
+    }
 
     @SuppressWarnings("Duplicates")
     public static HomeVO convert(Class clazz, Object obj) {
