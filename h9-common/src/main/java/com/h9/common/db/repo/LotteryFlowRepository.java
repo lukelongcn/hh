@@ -57,7 +57,7 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
                     Join<LotteryFlow,User> join = root.join("user", JoinType.INNER);
                     predicates.add(cb.equal(join.get("phone").as(String.class), lotteryFlowActivityDTO.getPhone()));
                 }
-                if(lotteryFlowActivityDTO.getCode()!=null){
+                if(!StringUtils.isEmpty(lotteryFlowActivityDTO.getCode())){
                     predicates.add(cb.equal(root.get("reward").get("code").as(String.class), lotteryFlowActivityDTO.getCode()));
                 }
                 if(lotteryFlowActivityDTO.getStatus()!=null&& lotteryFlowActivityDTO.getStatus()!=0){
