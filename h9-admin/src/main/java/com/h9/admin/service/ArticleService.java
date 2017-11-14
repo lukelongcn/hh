@@ -69,8 +69,6 @@ public class ArticleService {
         if(one==null){
             return Result.fail("分类不存在");
         }
-        one.setEnable(2);
-        one.setUpdateTime(new Date());
         articleTypeRepository.save(one);
         return Result.success();
     }
@@ -95,9 +93,7 @@ public class ArticleService {
         if(one==null){
             return Result.fail("您要删除的文章不存在");
         }
-        one.setEnable(2);
-        one.setUpdateTime(new Date());
-        articleRepository.save(one);
+        articleRepository.delete(one);
         return Result.success();
     }
 
