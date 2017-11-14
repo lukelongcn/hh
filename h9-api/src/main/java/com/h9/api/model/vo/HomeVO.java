@@ -80,9 +80,9 @@ public class HomeVO {
         vo.setTitle(announcement.getTitle());
 
         String link = articlePreUrl + announcement.getId();
-        if (!link.startsWith("url:")) {
-            link += "url:";
-        }
+//        if (!link.startsWith("url:")) {
+//            link += "url:";
+//        }
         vo.setLink(link);
         vo.setCreateTime(DateUtil.formatDate(announcement.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         vo.setType("article");
