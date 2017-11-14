@@ -10,15 +10,13 @@ import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.transfer.db.entity.UserInfo;
 import com.transfer.db.repo.UserInfoRepository;
-import jdk.nashorn.internal.ir.WhileNode;
-import jdk.nashorn.internal.objects.annotations.Where;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -50,22 +48,27 @@ public class UserService {
     public void user(){
 
         int page = 1;
-        int limit = 200;
+        int limit = 10;
         int totalPage = 1;
         PageResult<UserInfo> userInfoPageResult;
-        do{
-            userInfoPageResult = userInfoRepository.findAll(page, limit);
+        Sort sort = new Sort(Sort.Direction .ASC,"id");
+//        do{
+        userInfoPageResult = userInfoRepository.findAll(page, limit,sort);
 //            totalPage = (int) userInfoPageResult.getTotalPage();
-            List<UserInfo> userInfos = userInfoPageResult.getData();
-            userInfos.forEach(this::covertUser);
-        } while (page>totalPage||userInfoPageResult.getCount()==0);
+        List<UserInfo> userInfos = userInfoPageResult.getData();
+        for (UserInfo userInfo:userInfos){
+            covertUser(userInfo);
+        }
+
+//        } while (page>totalPage||userInfoPageResult.getCount()==0);
 
 
     }
 
-    public void covertUser(UserInfo userInfo){
-        if(StringUtils.isNotEmpty(userInfo.getOpenID())
-                ||StringUtils.isNotEmpty(userInfo.getPhone())) {
+    @Transactional
+    private void covertUser(UserInfo userInfo){
+//        if(StringUtils.isNotEmpty(userInfo.getOpenID())
+//                ||StringUtils.isNotEmpty(userInfo.getPhone())) {
             User user = userInfo.corvert();
             if(StringUtils.isEmpty(user.getAvatar())){
                 user.setAvatar(getDefaultHead());
@@ -82,11 +85,11 @@ public class UserService {
             if(integralCount!=null){
                 userAccount.setvCoins(new BigDecimal(integralCount));
             }
-            UserAccount account = userAccountRepository.save(userAccount);
+            userAccountRepository.save(userAccount);
             UserExtends userExtends = new UserExtends();
             userExtends.setUserId(user.getId());
             userExtendsRepository.save(userExtends);
-        }
+//        }
     }
 
 

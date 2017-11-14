@@ -397,6 +397,7 @@ public class LotteryService {
         reward.setProduct(product);
         reward.setMoney(lotteryModel.getBouns());
         reward.setCode(code);
+        reward.setActivityId(1L);
         reward.setMd5Code(MD5Util.getMD5(code));
         rewardRepository.saveAndFlush(reward);
         return null;
