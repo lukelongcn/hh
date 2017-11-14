@@ -168,10 +168,6 @@ public class UserService {
                 smService.sendSMS(phone, content);
             }
 
-            if ("test".equals(currentEnvironment)) {
-                smService.sendSMS(phone, content);
-            }
-
 
             String key = RedisKey.getSmsCodeKey(phone, smsType);
             redisBean.setStringValue(key, code);
