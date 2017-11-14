@@ -61,6 +61,8 @@ public class LotteryService {
     private CommonService commonService;
     @Resource
     private ConfigService configService;
+    @Resource
+    private SystemBlackListRepository systemBlackListRepository;
 
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -84,7 +86,12 @@ public class LotteryService {
             return Result.fail("您的扫码数量已经超过当天限制了");
         }
 
-        //TODO 黑名单判断
+        String imei = request.getHeader("imei");
+
+        if (onBlackUser(userId, imei)) {
+            return Result.fail("系统繁忙，请稍后再试");
+        }
+
         //  检查第三方库有没有数据
         Result result = exitsReward(lotteryVo.getCode());
         if (result != null) {
@@ -135,6 +142,15 @@ public class LotteryService {
         }
     }
 
+    /**
+     * description: 判断userId 或者Imei 在黑名单中
+     */
+    public boolean onBlackUser(Long userId, String imei) {
+
+        SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
+
+        return systemBlackList != null;
+    }
 
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
@@ -163,7 +179,7 @@ public class LotteryService {
 
         User findUser = userRepository.findOne(userId);
         String tel = "";
-        if (findUser != null){
+        if (findUser != null) {
             tel = findUser.getPhone() == null ? "" : findUser.getPhone();
         }
         lotteryResult.setTel(tel);
@@ -329,9 +345,6 @@ public class LotteryService {
         }
         return lotteryFlows;
     }
-
-
-
 
 
     public Result<PageResult<LotteryFlowDTO>> history(Long userId, int page, int limit) {

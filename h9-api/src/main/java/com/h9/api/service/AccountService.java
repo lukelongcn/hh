@@ -88,25 +88,8 @@ public class AccountService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
         Object cardCount = orderItemReposiroty.findCardCount(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
-        List<Map<String, String>> bankList = new ArrayList<>();
-//        List<UserBank> userBankList = userBankRepository.findByUserId(userId);
 
-//        userBankList.forEach(bank -> {
-//
-//            if (bank.getStatus() == 1) {
-//                Map<String, String> map = new HashMap<>();
-//                map.put("bankImg", bank.getBankType().getBankImg());
-//                map.put("name", bank.getVal());
-//                String no = bank.getNo();
-//                int length = no.length();
-//                no = no.substring(length - 4, length);
-//                map.put("no", no);
-//                map.put("id", bank.getId() + "");
-//                bankList.add(map);
-//            }
-//
-//        });
-        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "", bankList);
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "",user.getPhone() );
         return Result.success(userAccountInfoVO);
     }
 
