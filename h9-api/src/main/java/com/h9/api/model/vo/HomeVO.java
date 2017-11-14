@@ -43,6 +43,9 @@ public class HomeVO {
             vo.setTitle(article.getTitle());
             vo.setCode(articleType.getCode());
             String link = articlePreUrl + article.getId();
+            if (!link.startsWith("url:")) {
+                link += "url:";
+            }
             vo.setLink(link);
 //            vo.setLink(article.getUrl());
             vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
