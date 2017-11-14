@@ -59,20 +59,20 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "每人总次数",required = true)
     @NotNull(message = "每人总次数不能为空")
-    @Min(value = 0,message = "排序号不能小于0")
-    @Max(value = 127,message = "排序号不能大于127")
+    @Min(value = 0,message = "每人总次数不能小于0")
+    @Max(value = 127,message = "每人总次数不能大于127")
     private Integer personTotalNumber = 0;
 
     @ApiModelProperty(value = "每人每天次数",required = true)
     @NotNull(message = "每人每天次数不能为空")
-    @Min(value = 0,message = "排序号不能小于0")
-    @Max(value = 127,message = "排序号不能大于127")
+    @Min(value = 0,message = "每人每天次数不能小于0")
+    @Max(value = 127,message = "每人每天次数不能大于127")
     private Integer personDailyNumber = 0;
 
     @ApiModelProperty(value = "每人每天中奖次数",required = true)
     @NotNull(message = "每人每天中奖次数不能为空")
-    @Min(value = 0,message = "排序号不能小于0")
-    @Max(value = 127,message = "排序号不能大于127")
+    @Min(value = 0,message = "每人每天中奖次数不能小于0")
+    @Max(value = 127,message = "每人每天中奖次数不能大于127")
     private Integer personDailyTargetNumber = 0;
 
     @ApiModelProperty(value = "时间间隔",required = true)
