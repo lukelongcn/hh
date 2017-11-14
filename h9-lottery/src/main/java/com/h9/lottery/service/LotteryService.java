@@ -19,10 +19,11 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
 @Service
 public class LotteryService {
 
+    Logger logger = Logger.getLogger(LotteryService.class);
 
     @Resource
     private RewardRepository rewardRepository;
@@ -385,11 +387,12 @@ public class LotteryService {
         }
         ProductModel productInfo = factoryProvider.getProductInfo(code);
         Product product = null;
-        if (productInfo != null) {
+        if (productInfo != null&& productInfo.getState()!=2&& productInfo.getState()!=3) {
             try {
                 product = productInfo.covert();
                 product = productRepository.saveAndFlush(product);
             } catch (Exception e) {
+                logger.debug(e.getMessage(),e);
             }
         }
         reward = new Reward();
