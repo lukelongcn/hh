@@ -16,8 +16,10 @@ import java.util.Date;
  */
 @Repository
 public interface SystemBlackListRepository extends BaseRepository<SystemBlackList> {
-    SystemBlackList findByUserIdAndStatus(Long userId,Integer status);
-    SystemBlackList findByImeiAndStatus(String imei,Integer status);
+    @Query("select s from SystemBlackList s where s.userId=?1 and s.status=1 and s.endTime>?3")
+    SystemBlackList findByUserIdAndStatus(Long userId,Date now);
+    @Query("select s from SystemBlackList s where s.imei=?1 and s.status=1 and s.endTime>?3")
+    SystemBlackList findByImeiAndStatus(String imei,Date now);
     
     @Query("select new com.h9.admin.model.vo.BlackAccountVO(s.id,s.userId,u.nickName,u.phone,u.openId,s.createTime,s.endTime,s.cause)" +
             " from SystemBlackList s,User u where s.userId is not null and s.status = 1 and u.id=s.userId")
