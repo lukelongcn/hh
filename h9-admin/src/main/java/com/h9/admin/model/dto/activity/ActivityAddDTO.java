@@ -32,7 +32,7 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "是否回复关键字推送活动 0：不推送  1：推送",required = true)
     @NotNull(message = "是否回复关键字推送活动不能为空")
-    @Size(max = 4)
+    //@Size(max = 4)
     private Integer isPush = 0;
 
     @ApiModelProperty(value = "活动规则",required = true)
@@ -46,7 +46,7 @@ public class ActivityAddDTO {
 
     @ApiModelProperty(value = "是否需要手机号 0：需要  1：不需要",required = true)
     @NotNull(message = "是否需要手机号不能为空")
-    @Size(max = 4)
+    //@Size(max = 4)
     private Integer needPhone = 0;
 
     @ApiModelProperty(value = "是否需要短信验证 0：需要  1：不需要",required = true)
