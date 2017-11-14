@@ -32,7 +32,7 @@ public class ArticleVO {
 
     private String endTime;//结束时间
 
-    protected Date createTime ;//创建时间
+    protected String createTime ;//创建时间
 
     private Integer recommend = 1;//1 推荐 2 不推荐
 
@@ -113,11 +113,11 @@ public class ArticleVO {
         this.recommend = recommend;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

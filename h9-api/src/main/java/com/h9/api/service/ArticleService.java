@@ -31,7 +31,7 @@ public class ArticleService {
     public Result findOne(Long id){
         Article article =  articleReposiroty.findOne(id);
         ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
-        articleVO.setStartTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.MINUTE));
+        articleVO.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.MINUTE));
         return Result.success(articleVO);
     }
 
