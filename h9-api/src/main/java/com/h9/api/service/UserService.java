@@ -1,6 +1,5 @@
 package com.h9.api.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
@@ -51,7 +50,7 @@ public class UserService {
     @Resource
     private UserAccountRepository userAccountRepository;
     @Resource
-    private UserExtendsReposiroty userExtendsReposiroty;
+    private UserExtendsRepository userExtendsRepository;
     @Resource
     private CommonService commonService;
 
@@ -91,7 +90,7 @@ public class UserService {
             UserExtends userExtends = new UserExtends();
             userExtends.setUserId(userFromDb.getId());
             userExtends.setSex(1);
-            userExtendsReposiroty.save(userExtends);
+            userExtendsRepository.save(userExtends);
         } else {
             int loginCount = user.getLoginCount();
             user.setLoginCount(++loginCount);
@@ -234,7 +233,7 @@ public class UserService {
     public Result updatePersonInfo(Long userId, UserPersonInfoDTO personInfoDTO) {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("此用户不存在");
-        UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
+        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
         String avatar = personInfoDTO.getAvatar();
         if (StringUtils.isNotBlank(avatar))
             user.setAvatar(avatar);
@@ -276,7 +275,7 @@ public class UserService {
         if (StringUtils.isNotBlank(nickName))
             user.setNickName(nickName);
         userRepository.save(user);
-        userExtendsReposiroty.save(userExtends);
+        userExtendsRepository.save(userExtends);
         return Result.success();
     }
 
@@ -334,7 +333,7 @@ public class UserService {
 
     public Result getUserInfo(Long userId) {
         User user = userRepository.findOne(userId);
-        UserExtends userExtends = userExtendsReposiroty.findByUserId(user.getId());
+        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
         UserInfoVO vo = UserInfoVO.convert(user, userExtends);
         return Result.success(vo);
     }
@@ -376,7 +375,7 @@ public class UserService {
             UserExtends userExtends = new UserExtends();
             userExtends.setUserId(userFromDb.getId());
             userExtends.setSex(userInfo.getSex());
-            userExtendsReposiroty.save(userExtends);
+            userExtendsRepository.save(userExtends);
 
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(user.getId());
@@ -391,7 +390,7 @@ public class UserService {
 
     public Result findAllOptions(Long userId) {
 
-        UserExtends userExtends = userExtendsReposiroty.findByUserId(userId);
+        UserExtends userExtends = userExtendsRepository.findByUserId(userId);
 
 //        GlobalProperty profileEmotion = globalPropertyRepository.findByCode("profileEmotion");
         Map profileEmotion = configService.getMapConfig("profileEmotion");

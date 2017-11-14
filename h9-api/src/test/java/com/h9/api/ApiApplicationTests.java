@@ -16,14 +16,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.*;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -181,7 +177,7 @@ public class ApiApplicationTests {
     private UserAccountRepository userAccountRepository;
 
     @Resource
-    UserExtendsReposiroty userExtendsReposiroty;
+    UserExtendsRepository userExtendsRepository;
 
 
     @Test
@@ -204,7 +200,7 @@ public class ApiApplicationTests {
         UserExtends userExtends = new UserExtends();
         userExtends.setUserId(user.getId());
         logger.debugv(JSONObject.toJSONString(userExtends));
-        userExtendsReposiroty.save(userExtends);
+        userExtendsRepository.save(userExtends);
         logger.debugv(JSONObject.toJSONString(userExtends));
 
     }

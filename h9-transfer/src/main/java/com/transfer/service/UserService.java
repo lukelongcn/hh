@@ -58,8 +58,6 @@ public class UserService {
 //            totalPage = (int) userInfoPageResult.getTotalPage();
             List<UserInfo> userInfos = userInfoPageResult.getData();
             userInfos.forEach(this::covertUser);
-
-
         } while (page>totalPage||userInfoPageResult.getCount()==0);
 
 

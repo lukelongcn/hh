@@ -251,6 +251,7 @@ public class LotteryService {
         return Result.success(lotteryResult);
     }
 
+
     @Transactional
     public Result lottery(Long curUserId, String code) {
         Reward reward = rewardRepository.findByCode4Update(code);
