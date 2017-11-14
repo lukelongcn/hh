@@ -4,9 +4,6 @@ package com.h9.api.controller;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.springframework.web.bind.annotation.*;
 
 
