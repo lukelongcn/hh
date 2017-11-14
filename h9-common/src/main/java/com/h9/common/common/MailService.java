@@ -20,6 +20,7 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
+        //TODO 替换成邮件组
         message.setTo("756034624@qq.com");
         message.setSubject(subject);
         message.setText(content);
