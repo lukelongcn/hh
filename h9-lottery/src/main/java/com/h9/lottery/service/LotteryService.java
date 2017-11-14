@@ -43,8 +43,6 @@ public class LotteryService {
 
 
     @Resource
-    private LotteryConfig lotteryConfig;
-    @Resource
     private RewardRepository rewardRepository;
 
     @Resource
@@ -63,6 +61,8 @@ public class LotteryService {
     private ConfigService configService;
     @Resource
     private SystemBlackListRepository systemBlackListRepository;
+    @Resource
+    private LotteryConfig lotteryConfig;
 
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -115,7 +115,7 @@ public class LotteryService {
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             return Result.success(lotteryResultDto);
         } else {
-//        如果没有参加，参加活动
+            //第一次参数这个活动
             if (status == END.getCode()) {
 //                如果已经结束
                 return Result.fail("红包活动已经结束");
@@ -132,12 +132,18 @@ public class LotteryService {
                 lottery.setRoomUser(2);
                 lotteryResultDto.setRoomUser(true);
             }
+            //延长结束时间 finishTime
+            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
+            reward.setFinishTime(endDate);
+
             reward.setPartakeCount(partakeCount + 1);
+
             rewardRepository.save(reward);
             lottery.setReward(reward);
             lottery.setUserId(userId);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
+
             return Result.success(lotteryResultDto);
         }
     }
@@ -250,6 +256,7 @@ public class LotteryService {
 
         return Result.success(lotteryResult);
     }
+
 
     @Transactional
     public Result lottery(Long curUserId, String code) {

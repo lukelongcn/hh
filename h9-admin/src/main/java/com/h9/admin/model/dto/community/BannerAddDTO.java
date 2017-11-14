@@ -29,7 +29,7 @@ public class BannerAddDTO {
     private String title;
 
     @ApiModelProperty(value = "动作",required = true)
-    @NotBlank(message = "动作")
+    //@NotBlank(message = "动作")
     private String url;
 
     @ApiModelProperty(value = "图标url",required = true)

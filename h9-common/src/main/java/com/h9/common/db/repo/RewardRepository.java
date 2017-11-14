@@ -63,4 +63,9 @@ public interface RewardRepository extends BaseRepository<Reward> {
         };
     }
 
+    /**
+     * description: 查询结束时间少于当前时间,并且状态等于 1 或 2 的
+     */
+    @Query("select o from Reward  o where (o.status = 1 or o.status = 2) and o.finishTime  <= ?1")
+    List<Reward> findByEndTimeAndStatus(Date date);
 }

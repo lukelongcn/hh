@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -27,7 +28,7 @@ public class User extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
+    @GeneratedValue(strategy = AUTO, generator = "h9-apiSeq")
     private Long id;
     
     @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
