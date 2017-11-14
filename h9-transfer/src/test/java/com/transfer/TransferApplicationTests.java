@@ -5,6 +5,7 @@ import com.h9.common.base.PageResult;
 import com.transfer.db.entity.UserInfo;
 import com.transfer.db.repo.UserInfoRepository;
 
+import com.transfer.service.UserService;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,17 +21,15 @@ public class TransferApplicationTests {
 
 	private Logger logger = Logger.getLogger(TransferApplicationTests.class);
 	@Resource
-	private UserInfoRepository userInfoRepository;
+	private UserService userService;
 
 	@Test
 	public void contextLoads() {
 		logger.debugv(" ----*************###############+++++++++++++++++++");
-		PageResult<UserInfo> all = userInfoRepository.findAll(1, 100);
+		userService.user();
+
 		logger.debugv(" ----*************###############+++++++++++++++++++");
-		logger.debugv(" ----" +JSONObject.toJSONString(all));
-		List<UserInfo> data = all.getData();
-		logger.debugv(" ----*************###############+++++++++++++++++++");
-		logger.debugv(JSONObject.toJSONString(data));
+
 
 	}
 

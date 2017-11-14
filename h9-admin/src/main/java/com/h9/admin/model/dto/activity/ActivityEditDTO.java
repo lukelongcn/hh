@@ -17,7 +17,7 @@ public class ActivityEditDTO extends  ActivityAddDTO{
 
     @ApiModelProperty(value = "id",required = true)
     @NotNull(message = "id不能为空")
-    @Max(value = 20,message = "id不能大于20")
+    //@Max(value = 20,message = "id不能大于20")
     private Long id;
 
     public Long getId() {

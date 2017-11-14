@@ -2,15 +2,18 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.provider.WeChatProvider;
+import com.h9.common.base.Result;
 import com.h9.common.db.repo.AgreementRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.soap.Text;
 import java.io.IOException;
 
 /**
@@ -37,12 +40,21 @@ public class CommonController {
         return agreementRepository.agreement(code);
     }
 
+
+    @ApiOperation(value = "获取content")
+    @GetMapping(value = "/pageJson/{code}")
+    public Result agreementJson(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
+       String content = agreementRepository.agreement(code);
+        return Result.success("获取成功",content);
+    }
+
+
     @Resource
     private WeChatProvider weChatProvider;
 
     /*****
      * @param appId 需要获取授权的appId
-     * @param  url回调路径 需要base64编码
+     * @param  //url回调路径 需要base64编码
      * @param response
      * @throws IOException
      */
