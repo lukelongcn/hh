@@ -116,7 +116,9 @@ public class ArticleDTO {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        if(url!=null){
+            this.url = url;
+        }
     }
 
     public Integer getEnable() {
