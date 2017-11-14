@@ -6,6 +6,7 @@ package com.h9.api;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.SMService;
+import com.h9.common.common.MailService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -14,8 +15,11 @@ import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -242,7 +246,16 @@ public class ApiApplicationTests {
         System.out.println(redisBean.getStringValue(weChatUserId));
     }
 
+    @Autowired
+    private JavaMailSender mailSender;
 
+    @Resource
+    private MailService mailService;
+    @Test
+    public void testMail(){
+        boolean b = mailService.sendtMail("hello", "content");
+        System.out.println(b);
+    }
 
 }
 

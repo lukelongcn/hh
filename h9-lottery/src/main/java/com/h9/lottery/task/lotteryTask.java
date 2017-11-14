@@ -38,8 +38,6 @@ public class lotteryTask {
     @Scheduled(fixedRate = 5000)
     public void run() {
 
-        logger.info("lotteryTask scan ......................");
-
         List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
 
         rewardList.stream()
