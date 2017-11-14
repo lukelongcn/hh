@@ -2,6 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.model.vo.HomeVO;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.Article;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.Banner;
@@ -24,6 +25,8 @@ public class HomeService {
     private BannerRepository bannerRepository;
     @Resource
     private ArticleRepository articleRepository;
+    @Resource
+    private ConfigService configService;
 
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
@@ -44,11 +47,14 @@ public class HomeService {
             });
         }
 
+        Map<String,String> preLink = configService.getMapConfig("preLink");
+        String articlelink = preLink.get("article");
         List<Article> articleList = articleRepository.findActiveArticle(new Date());
+
         if (!CollectionUtils.isEmpty(articleList)) {
             articleList.forEach(article -> {
                 ArticleType articleType = article.getArticleType();
-                HomeVO convert = HomeVO.convert(Article.class, article);
+                HomeVO convert = HomeVO.convert(Article.class, article,articlelink);
 
                 List<HomeVO> list = voMap.get(articleType.getCode());
                 if (list == null) {
