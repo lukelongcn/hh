@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -26,6 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableJpaRepositories(basePackages="com.h9.common.db.repo")
 @EntityScan(basePackages = "com.h9.common.db.entity")
 @ServletComponentScan
+@EnableScheduling
 public class LotteryApplication  {
 
     static Logger logger = Logger.getLogger(LotteryApplication.class);

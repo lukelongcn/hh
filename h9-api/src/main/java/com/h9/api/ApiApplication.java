@@ -31,7 +31,6 @@ import static org.jboss.logging.Logger.getLogger;
 @EntityScan(basePackages = "com.h9.common.db.entity")
 @ServletComponentScan
 @EnableScheduling
-
 public class ApiApplication {
 
     static Logger logger = getLogger(ApiApplication.class);
