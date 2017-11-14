@@ -114,7 +114,12 @@ public class ArticleService {
         BeanUtils.copyProperties(articleDTO,article);
         article.setId(null);
         article.setArticleType(one);
-        article.setCreateTime(new Date());
+        if(articleDTO.getStartTime()!=null){
+            article.setCreateTime(articleDTO.getStartTime());
+        }else{
+            article.setCreateTime(new Date());
+        }
+
         articleRepository.save(article);
         return Result.success(article);
     }
@@ -132,6 +137,11 @@ public class ArticleService {
         }
         BeanUtils.copyProperties(articleDTO,article);
         article.setArticleType(one);
+        if(articleDTO.getStartTime()!=null){
+            article.setCreateTime(articleDTO.getStartTime());
+        }else{
+            article.setCreateTime(new Date());
+        }
         article.setUpdateTime(new Date());
         articleRepository.save(article);
         return Result.success(article);
