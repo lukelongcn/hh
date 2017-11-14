@@ -13,7 +13,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * description: 公告表
  */
 @Entity
-@Table(name = "article")
+@Table(name = "announcement")
 public class Announcement extends BaseEntity {
 
 
@@ -21,9 +21,6 @@ public class Announcement extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "article_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '标题类型'")
-    private ArticleType articleType;
 
     @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")
     private String title;
@@ -67,14 +64,6 @@ public class Announcement extends BaseEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ArticleType getArticleType() {
-        return articleType;
-    }
-
-    public void setArticleType(ArticleType articleType) {
-        this.articleType = articleType;
     }
 
     public String getTitle() {
