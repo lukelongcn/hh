@@ -114,7 +114,7 @@ public class AccountService {
     public Result<List<UserRecordVO>> rewardInfo(Date startTime, Date endTime, String key) {
         List<UserRecordVO> userList = lotteryLogRepository.getUserList(startTime, endTime, StringUtils.isEmpty(key) ? null : "%" + key + "%");
         userList = userList.stream().filter(userRecordVO ->
-                systemBlackListRepository.findByUserIdAndStatus(userRecordVO.getUserId(),1) == null) //过滤已加入黑名单的数据
+                systemBlackListRepository.findByUserIdAndStatus(userRecordVO.getUserId(),new Date()) == null) //过滤已加入黑名单的数据
                 .collect(Collectors.toList());
         return Result.success(userList);
     }
@@ -124,7 +124,7 @@ public class AccountService {
         userRecordByTime.forEach(imeiUserRecordVO -> 
                 imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
         userRecordByTime = userRecordByTime.stream().filter(imeiUserRecordVO -> 
-                systemBlackListRepository.findByImeiAndStatus(imeiUserRecordVO.getImei(),1) == null) //过滤已加入黑名单的数据
+                systemBlackListRepository.findByImeiAndStatus(imeiUserRecordVO.getImei(),new Date()) == null) //过滤已加入黑名单的数据
                 .collect(Collectors.toList());
         return Result.success(userRecordByTime);
     }
@@ -139,7 +139,7 @@ public class AccountService {
         }
         Integer status = blackAccountDTO.getStatus();
         for (Long userId : blackAccountDTO.getUserIds()) {
-            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByUserIdAndStatus(userId, 1);
+            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByUserIdAndStatus(userId, new Date());
             if (status == 1) {
                 if (byUserIdAndStatus != null) {
                     return Result.fail("此账号已经被加入黑名单了");
@@ -168,7 +168,7 @@ public class AccountService {
         
         Integer status = blackIMEIDTO.getStatus();
         for (String imei : blackIMEIDTO.getImeis()) {
-            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByImeiAndStatus(imei, 1);
+            SystemBlackList byUserIdAndStatus = systemBlackListRepository.findByImeiAndStatus(imei, new Date());
             if (status == 1) {
                 if (byUserIdAndStatus != null) {
                     return Result.fail("此imei已经被加入黑名单了");
