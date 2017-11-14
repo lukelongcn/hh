@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -43,7 +42,7 @@ public class ArticleDTO {
     private Integer recommend = 1;
     
     @ApiModelProperty(value = "外部链接")
-    private String url;
+    private String url = "";
     
     @ApiModelProperty(value = "1 启用 0禁用",required = true)
     @NotNull(message = "enable不能为null")
@@ -52,6 +51,8 @@ public class ArticleDTO {
     private Integer enable;
     
     @ApiModelProperty(value = "排序 数字越大越靠前",required = true)
+    @Max(value = 100,message = "sort最大值不能超过100")
+    @Min(value = 0,message = "请输入正确的sort")
     private Integer sort = 1;
     
     @ApiModelProperty(value = "发布时间",required = true)

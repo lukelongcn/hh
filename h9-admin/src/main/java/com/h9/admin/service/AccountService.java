@@ -132,7 +132,7 @@ public class AccountService {
     public Result<List<SystemBlackList>> addBlackAccount(BlackAccountDTO blackAccountDTO) {
         Calendar instance = Calendar.getInstance();
         String blackDeadTimeUid = configService.getStringConfig("blackDeadTimeUid");
-        if (StringUtils.isEmpty(blackDeadTimeUid)) {
+        if (!StringUtils.isEmpty(blackDeadTimeUid)) {
             instance.add(Calendar.SECOND, Integer.parseInt(blackDeadTimeUid));
         } else {
             instance.add(Calendar.YEAR, 100);
@@ -154,13 +154,13 @@ public class AccountService {
                 }
             }
         }
-        return Result.success("添加成功");
+        return Result.success();
     }
 
     public Result<List<SystemBlackList>> addBlackImei(BlackIMEIDTO blackIMEIDTO) {
         Calendar instance = Calendar.getInstance();
         String blackDeadTimeImei = configService.getStringConfig("blackDeadTimeImei");
-        if (StringUtils.isEmpty(blackDeadTimeImei)) {
+        if (!StringUtils.isEmpty(blackDeadTimeImei)) {
             instance.add(Calendar.SECOND, Integer.parseInt(blackDeadTimeImei));
         } else {
             instance.add(Calendar.YEAR, 100);

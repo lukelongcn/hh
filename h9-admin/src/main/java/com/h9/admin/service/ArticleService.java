@@ -1,6 +1,5 @@
 package com.h9.admin.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.article.ArticleDTO;
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.common.base.PageResult;
@@ -14,7 +13,6 @@ import com.h9.common.modle.dto.PageDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -138,16 +136,16 @@ public class ArticleService {
     }
     
     private void setArticleUrl(Article article){
-        String url = article.getUrl();
-        if (StringUtils.isEmpty(url)) {
-            String preLink = configService.getStringConfig("preLink");
-            if (!StringUtils.isEmpty(preLink)) {
-                article.setUrl(JSONObject.parseObject(preLink).getString("article") + article.getId());
-            }
-        } else {
-            if(!url.contains("url:")){
-                article.setUrl("url:"+article.getUrl());
-            }
-        } 
+//        String url = article.getUrl();
+//        if (StringUtils.isEmpty(url)) {
+//            Map preLink = configService.getMapConfig("preLink");
+//            if (!StringUtils.isEmpty(preLink)) {
+//                article.setUrl(preLink.get("article").toString() + article.getId());
+//            }
+//        } else {
+//            if(!url.contains("url:")){
+//                article.setUrl("url:"+article.getUrl());
+//            }
+//        } 
     }
 }
