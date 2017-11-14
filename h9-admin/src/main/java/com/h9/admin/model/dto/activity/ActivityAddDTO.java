@@ -3,6 +3,7 @@ package com.h9.admin.model.dto.activity;
 import com.h9.common.db.entity.Activity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
@@ -21,12 +22,12 @@ public class ActivityAddDTO {
 
 
     @ApiModelProperty(value = "名称",required = true)
-    @NotEmpty(message = "名称不能为空")
+    @NotBlank(message = "名称不能为空")
     @Size(max = 128, message = "名称过长")
     private String activityName;
 
     @ApiModelProperty(value = "关键字",required = true)
-    @NotEmpty(message = "关键字不能为空")
+    @NotBlank(message = "关键字不能为空")
     @Size(max = 32, message = "关键字过长")
     private String code;
 
@@ -36,6 +37,7 @@ public class ActivityAddDTO {
     private Integer isPush = 0;
 
     @ApiModelProperty(value = "活动规则",required = true)
+    @NotBlank(message = "活动规则不能为空")
     private String activityDesc;
 
     @ApiModelProperty(value = "活动开始时间")
