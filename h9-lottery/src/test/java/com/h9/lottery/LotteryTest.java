@@ -10,6 +10,8 @@ import com.h9.common.db.repo.ProductRepository;
 import com.h9.common.db.repo.RewardRepository;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.MD5Util;
+import com.h9.lottery.provider.FactoryProvider;
+import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.CodeUtil;
 import org.jboss.logging.Logger;
 import org.junit.Test;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.jboss.logging.Logger.getLogger;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,7 +41,7 @@ import java.util.UUID;
 @SpringBootTest
 @TransactionConfiguration(defaultRollback=false)
 public class LotteryTest {
-     Logger logger = Logger.getLogger(LotteryTest.class);
+     Logger logger = getLogger(LotteryTest.class);
 
     @Resource
     private RewardRepository rewardRepository;
@@ -49,13 +53,20 @@ public class LotteryTest {
 
     @Resource
     private ConfigService configService;
+    
+    @Resource
+    private FactoryProvider factoryProvider;
+    
 
 
     @Test
     @Transactional
     public void contextLoads() {
 
-        generateCode();
+        ProductModel pr = factoryProvider.getProductInfo("eee");
+        logger.debugv(JSONObject.toJSONString(pr));
+
+//        generateCode();
 
 //        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
 //        logger.debugv(JSONObject.toJSONString(lotteryRemark));
@@ -68,28 +79,28 @@ public class LotteryTest {
 //        logger.debugv(JSONObject.toJSONString(withdrawMax));
     }
 
-    private void generateCode() {
-        Activity one = activityRepository.findOne(8L);
-        Product product = productRepository.findOne(1L);
-        for(int i=0;i<=50;i++) {
-            try {
-                Reward reward = new Reward();
-                reward.setMoney(new BigDecimal(18));
-                String uuid = UUID.randomUUID().toString();
-                String shortUrl = CodeUtil.shortUrl(uuid, CodeUtil.genRandomStrCode(8));
-                reward.setCode(shortUrl);
-                logger.debugv(shortUrl);
-                reward.setActivityId(1L);
-                reward.setMd5Code(MD5Util.getMD5(shortUrl));
-                Reward reward1 = rewardRepository.saveAndFlush(reward);
-                logger.debugv(shortUrl+ " " + JSONObject.toJSONString(reward1));
-            } catch (Exception e) {
-                logger.debug(e.getMessage(),e);;
-            } finally {
-            }
-        }
-        logger.debugv("完成");
-    }
+//    private void generateCode() {
+//        Activity one = activityRepository.findOne(8L);
+//        Product product = productRepository.findOne(1L);
+//        for(int i=0;i<=50;i++) {
+//            try {
+//                Reward reward = new Reward();
+//                reward.setMoney(new BigDecimal(18));
+//                String uuid = UUID.randomUUID().toString();
+//                String shortUrl = CodeUtil.shortUrl(uuid, CodeUtil.genRandomStrCode(8));
+//                reward.setCode(shortUrl);
+//                logger.debugv(shortUrl);
+//                reward.setActivityId(1L);
+//                reward.setMd5Code(MD5Util.getMD5(shortUrl));
+//                Reward reward1 = rewardRepository.saveAndFlush(reward);
+//                logger.debugv(shortUrl+ " " + JSONObject.toJSONString(reward1));
+//            } catch (Exception e) {
+//                logger.debug(e.getMessage(),e);;
+//            } finally {
+//            }
+//        }
+//        logger.debugv("完成");
+//    }
 
 
 }

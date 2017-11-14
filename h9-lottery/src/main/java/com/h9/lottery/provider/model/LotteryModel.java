@@ -1,5 +1,7 @@
 package com.h9.lottery.provider.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 /**
@@ -10,10 +12,15 @@ import java.math.BigDecimal;
  * Time: 18:15
  */
 public class LotteryModel {
+    @JsonProperty("State")
     private int State;
+    @JsonProperty("Msg")
     private String Msg;
+    @JsonProperty("Bouns")
     private BigDecimal Bouns = new BigDecimal(0);
+    @JsonProperty("SeedAmount")
     private BigDecimal SeedAmount = new BigDecimal(0);
+    @JsonProperty("Intergal")
     private BigDecimal Intergal = new BigDecimal(0);
 
 

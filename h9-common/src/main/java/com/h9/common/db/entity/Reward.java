@@ -71,7 +71,7 @@ public class Reward extends BaseEntity {
     private Integer startType = 1;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id",referencedColumnName="id",columnDefinition = "bigint(20) default null COMMENT ''")
+    @JoinColumn(name = "product_id",referencedColumnName="id",columnDefinition = "bigint(20) default null COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Product product;
 
 
