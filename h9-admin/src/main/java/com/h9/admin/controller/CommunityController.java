@@ -143,4 +143,11 @@ public class CommunityController {
     public Result<Goods> addGoods(@PathVariable long id){
         return this.communityService.updateGoodsStatus(id);
     }
+
+    @Secured
+    @PostMapping(value="/announcement")
+    @ApiOperation("增加公告")
+    public Result<Activity> addAnnouncement(@Validated @RequestBody ActivityAddDTO activityAddDTO){
+        return this.communityService.addActivity(activityAddDTO.toActivity());
+    }
 }
