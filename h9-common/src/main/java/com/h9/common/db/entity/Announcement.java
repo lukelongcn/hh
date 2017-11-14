@@ -49,6 +49,10 @@ public class Announcement extends BaseEntity {
     @Column(name = "img_url", columnDefinition = "varchar(200) COMMENT '文章显示图片'")
     private String imgUrl;
 
+    @Temporal(TIMESTAMP)
+    @Column(name = "publish_time", columnDefinition = "datetime COMMENT '发布时间'")
+    private Date publishTime;
+
     public Long getId() {
         return id;
     }
@@ -123,6 +127,43 @@ public class Announcement extends BaseEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public Date getPublishTime() {
+        return publishTime;
+    }
+
+    public void setPublishTime(Date publishTime) {
+        this.publishTime = publishTime;
+    }
+
+    public enum EnableEnum {
+        DISABLED(0,"禁用"),
+        ENABLED(1,"启用");
+
+        EnableEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 
 }
