@@ -28,10 +28,6 @@ public class ArticleVO {
 
     private String url;//跳转链接
 
-    private String startTime;//开始时间
-
-    private String endTime;//结束时间
-
     protected String createTime ;//创建时间
 
     private Integer recommend = 1;//1 推荐 2 不推荐
@@ -87,22 +83,6 @@ public class ArticleVO {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
     }
 
     public Integer getRecommend() {
