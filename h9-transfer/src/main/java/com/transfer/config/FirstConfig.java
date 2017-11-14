@@ -20,7 +20,7 @@ import java.util.Properties;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * FirstConfig:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/13
  * Time: 15:11
