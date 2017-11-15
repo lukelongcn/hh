@@ -91,7 +91,6 @@ public class UserController {
     /**
      * description: 常见问题说明
      */
-    @Secured
     @GetMapping("/user/help")
     public Result questionHelp(){
 
