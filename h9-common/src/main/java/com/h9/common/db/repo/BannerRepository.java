@@ -24,7 +24,7 @@ public interface BannerRepository extends BaseRepository<Banner> {
 
     Banner findByIdNotAndTitle(long id,String title);
 
-    @Query("select o from Banner o where o.bannerType.id = ?1  order by o.sort desc , o.id desc ")
+    @Query("select o from Banner o where o.bannerType.id = ?1  order by o.enable desc , o.sort desc , o.id desc ")
     Page<Banner> findAllByBannerType_Id(long banner_type_id,Pageable page);
 
     @Query("select o from Banner o where o.bannerType.id = ?1")

@@ -15,6 +15,6 @@ public interface ActivityRepository extends BaseRepository<Activity> {
 
     Activity findByIdNotAndCode(long id,String code);
 
-    @Query("select o from Activity o  order by o.id desc ")
+    @Query("select o from Activity o  order by o.enable desc ,o.id desc ")
     Page<Activity> findAllByPage(Pageable page);
 }

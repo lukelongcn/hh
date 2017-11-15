@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ArticleTypeRepository extends BaseRepository<ArticleType> {
     ArticleType findByCode(String code);
-    @Query("select a from ArticleType a where a.enable<>2 order by a.sort desc,a.id desc ")
+    @Query("select a from ArticleType a where a.enable<>2 order by a.enable desc , a.sort desc,a.id desc ")
     Page<ArticleType> findAll(Pageable pageable);
     
     @Query("select a from ArticleType a where a.enable<>2 and a.id=?1")

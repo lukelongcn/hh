@@ -25,7 +25,7 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query(value = "select * from goods  where status = 1 and real_price = ?1 and goods_type_id = 2 limit 0,1",nativeQuery = true)
     Goods findByTop1(BigDecimal realPrice);
 
-    @Query("select o from Goods o  order by o.id desc ")
+    @Query("select o from Goods o  order by o.status asc , o.id desc ")
     Page<Goods> findAllByPage(Pageable page);
 
 }
