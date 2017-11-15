@@ -326,7 +326,7 @@ public class ConsumeService {
     private String currentEnvironment;
 
     public Result cz(Long userId) {
-        if (!"dev".equals(currentEnvironment)) return Result.fail("此环境不支持");
+        if ("product".equals(currentEnvironment)) return Result.fail("此环境不支持");
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         userAccount.setBalance(new BigDecimal(201));
         userAccountRepository.save(userAccount);

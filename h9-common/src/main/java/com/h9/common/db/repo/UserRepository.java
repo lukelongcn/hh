@@ -34,4 +34,10 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select new com.h9.common.modle.vo.SystemUserVO(o) from User o  order by o.id desc ")
     Page<SystemUserVO> findAllByPage(Pageable page);
+
+
+    //////////////////////////////////数据迁移方法//////////////////////
+    User findByH9UserId(Long userId);
+
+
 }
