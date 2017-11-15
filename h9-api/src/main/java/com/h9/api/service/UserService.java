@@ -159,16 +159,24 @@ public class UserService {
             return registerSMS(phone);
 
         } else {
+            String key = RedisKey.getSmsCodeKey(phone, smsType);
             String code = RandomStringUtils.random(4, "0123456789");
-            String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
+            String content ="";
 
             if ("dev".equals(currentEnvironment)) {
                 code = "0000";
+                content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
             } else {
+                String redisCodeValue = redisBean.getStringValue(key);
+                if (!StringUtils.isBlank(redisCodeValue)) {
+                    code = redisCodeValue;
+                    logger.info("重复验证码："+code);
+                }
+                content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
                 smService.sendSMS(phone, content);
             }
 
-            String key = RedisKey.getSmsCodeKey(phone, smsType);
+
             logger.info("手机号："+phone+" ，验证码："+code);
             redisBean.setStringValue(key, code,10,TimeUnit.MINUTES);
 
@@ -202,12 +210,21 @@ public class UserService {
 
         logger.info("今天已发送次: " + count);
         String code = RandomStringUtils.random(4, "0123456789");
-        String content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
+        String content = "";
         Result returnMsg;
         if ("dev".equals(currentEnvironment)) {
             returnMsg = new Result(0, "");
             code = "0000";
+            content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
         } else {
+            //十分钟内的验证码码一样。
+            String codeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode());
+            String codeKeyValue = redisBean.getStringValue(codeKey);
+            if (!StringUtils.isBlank(codeKeyValue)) {
+                logger.info("重复证码");
+                code = codeKeyValue;
+            }
+            content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
             returnMsg = smService.sendSMS(phone, content);
         }
         //处理结果
