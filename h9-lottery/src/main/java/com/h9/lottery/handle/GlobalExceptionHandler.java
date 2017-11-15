@@ -28,6 +28,8 @@ public class GlobalExceptionHandler {
     @Resource
     private MailService mailService;
 
+    public static long time = System.currentTimeMillis();
+
     @Value("${h9.current.envir}")
     private String currentEnvironment;
 
@@ -53,6 +55,10 @@ public class GlobalExceptionHandler {
         } else {
             logger.info(e.getMessage(), e);
             mailService.sendtMail("徽酒服务器错误"+currentEnvironment, ExceptionUtils.getMessage(e));
+            if(System.currentTimeMillis()-time >5* 60 *1000) {
+                mailService.sendtMail("徽酒服务器错误" + currentEnvironment, ExceptionUtils.getMessage(e));
+                time = System.currentTimeMillis();
+            }
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(),"服务器繁忙，请稍后再试");
         }
     }
