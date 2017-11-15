@@ -168,9 +168,9 @@ public class UserService {
                 smService.sendSMS(phone, content);
             }
 
-
             String key = RedisKey.getSmsCodeKey(phone, smsType);
-            redisBean.setStringValue(key, code);
+            logger.info("手机号："+phone+" ，验证码："+code);
+            redisBean.setStringValue(key, code,10,TimeUnit.MINUTES);
 
             return Result.success("发送成功");
         }
