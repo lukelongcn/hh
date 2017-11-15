@@ -42,7 +42,7 @@ public interface BasicRepository<T> extends JpaRepository<T,Long>,JpaSpecificati
         if(page<1) page = 1;
         if(size < 1) size = 20;
 //       防止请求页数过大，整垮服务器
-        if(size>100) size = 100;
+        if(size>1000) size = 1000;
         return new PageRequest(page-1, size,sort);
     }
 

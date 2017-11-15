@@ -55,8 +55,8 @@ public class SMService {
                 .queryParam("format", "json")
                 .build().toUri();
 //        -----------------------------------------------------------------
-        String res = restTemplate.getForObject(uri, String.class);
-        ReturnMsg returnMsg = JSONObject.parseObject(res, ReturnMsg.class);
+        ReturnMsg returnMsg = restTemplate.getForObject(uri, ReturnMsg.class);
+//        ReturnMsg returnMsg = JSONObject.parseObject(res, );
 //        --------------------------------------------------------------------
 
 //        ReturnMsg returnMsg = new ReturnMsg();

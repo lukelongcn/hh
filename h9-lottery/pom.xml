@@ -54,6 +54,7 @@
                 <directory>src/main/resources/profiles/${package.environment}</directory>
             </resource>
 
+
         </resources>
     </build>
 
@@ -64,9 +65,13 @@
             <properties>
                 <package.environment>dev</package.environment>
             </properties>
+
+
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+
+
         </profile>
     </profiles>
 
