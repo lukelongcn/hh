@@ -153,21 +153,22 @@ public class UserService {
 
         SMSTypeEnum smstypeEnum = SMSTypeEnum.findByCode(smsType);
         if (smstypeEnum == null) return Result.fail("请传入正确的短信类别");
-
         if (smsType == SMSTypeEnum.REGISTER.getCode()) {
-
             return registerSMS(phone);
 
         } else {
             String key = RedisKey.getSmsCodeKey(phone, smsType);
-            String code = RandomStringUtils.random(4, "0123456789");
-            String content ="";
 
+            String code = redisBean.getStringValue(key);
+            if(StringUtils.isEmpty(code)){
+                 code = RandomStringUtils.random(4, "0123456789");
+            }
+            String content ="";
             if ("dev".equals(currentEnvironment)) {
                 code = "0000";
                 content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
             } else {
-                String redisCodeValue = redisBean.getStringValue(key);
+                String redisCodeValue = code;
                 if (!StringUtils.isBlank(redisCodeValue)) {
                     code = redisCodeValue;
                     logger.info("重复验证码："+code);
