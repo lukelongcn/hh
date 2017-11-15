@@ -381,7 +381,7 @@ public class LotteryService {
         if (state == 2) {
             return Result.fail("兑奖码已兑奖完毕");
         } else if (state == 3) {
-            return Result.fail("兑奖码已兑奖完毕");
+            return Result.fail("兑奖码不正确，请确认");
         } else if (state == 4) {
             return Result.fail("服务繁忙，请稍后再试");
         }
