@@ -6,7 +6,7 @@ import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
-import com.h9.api.provider.SMService;
+import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
@@ -42,7 +42,7 @@ public class UserService {
     @Resource
     private RedisBean redisBean;
     @Resource
-    private SMService smService;
+    private SMSProvide smService;
     @Resource
     private UserRepository userRepository;
     @Resource
@@ -61,6 +61,8 @@ public class UserService {
     private ArticleRepository articleRepository;
     @Resource
     private ArticleTypeRepository articleTypeRepository;
+    @Resource
+    private SmsService smsService;
 
     @Resource
     private ConfigService configService;
@@ -142,110 +144,6 @@ public class UserService {
         }
         user.setAvatar(defaultHead);
         return user;
-    }
-
-    /**
-     * description:
-     *
-     * @see com.h9.api.enums.SMSTypeEnum 短信类别
-     */
-    public Result sendSMS(String phone, int smsType) {
-
-        SMSTypeEnum smstypeEnum = SMSTypeEnum.findByCode(smsType);
-        if (smstypeEnum == null) return Result.fail("请传入正确的短信类别");
-        if (smsType == SMSTypeEnum.REGISTER.getCode()) {
-            return registerSMS(phone);
-
-        } else {
-            String key = RedisKey.getSmsCodeKey(phone, smsType);
-
-            String code = redisBean.getStringValue(key);
-            if(StringUtils.isEmpty(code)){
-                 code = RandomStringUtils.random(4, "0123456789");
-            }
-            String content ="";
-            if ("dev".equals(currentEnvironment)) {
-                code = "0000";
-                content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
-            } else {
-                String redisCodeValue = code;
-                if (!StringUtils.isBlank(redisCodeValue)) {
-                    code = redisCodeValue;
-                    logger.info("重复验证码："+code);
-                }
-                content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
-                smService.sendSMS(phone, content);
-            }
-
-
-            logger.info("手机号："+phone+" ，验证码："+code);
-            redisBean.setStringValue(key, code,10,TimeUnit.MINUTES);
-
-            return Result.success("发送成功");
-        }
-
-    }
-
-    private Result registerSMS(String phone) {
-        //短信限制 一分钟一次lastSendKey
-        String lastSendKey = String.format(RedisKey.getLastSendKey(phone), phone);
-        String lastSendValue = redisBean.getStringValue(lastSendKey);
-        if (!StringUtils.isBlank(lastSendValue)) {
-            return new Result(1, "系统繁忙,请稍后再试~");
-        }
-        //短信限制 一天最多十次
-        String countKey = String.format(RedisKey.getSendCountKey(phone), phone);
-        String countStr = redisBean.getStringValue(countKey);
-        int count = 0;
-        if (countStr != null) {
-            try {
-                count = Integer.valueOf(countStr);
-                if (count > 9) return new Result(1, "系统繁忙,请稍后再试~");
-            } catch (NumberFormatException e) {
-                logger.info(e.getMessage(), e);
-                redisBean.setStringValue(countKey, 0 + "", 1, TimeUnit.DAYS);
-            }
-        } else {
-            redisBean.setStringValue(countKey, 0 + "", 1, TimeUnit.DAYS);
-        }
-
-        logger.info("今天已发送次: " + count);
-        String code = RandomStringUtils.random(4, "0123456789");
-        String content = "";
-        Result returnMsg;
-        if ("dev".equals(currentEnvironment)) {
-            returnMsg = new Result(0, "");
-            code = "0000";
-            content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
-        } else {
-            //十分钟内的验证码码一样。
-            String codeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode());
-            String codeKeyValue = redisBean.getStringValue(codeKey);
-            if (!StringUtils.isBlank(codeKeyValue)) {
-                logger.info("重复证码");
-                code = codeKeyValue;
-            }
-            content = "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
-            returnMsg = smService.sendSMS(phone, content);
-        }
-        //处理结果
-        if (returnMsg != null && returnMsg.getCode() != 0) {
-            //失败
-            SMSLog smsLog = new SMSLog(content, phone, false);
-            smsLogReposiroty.save(smsLog);
-            return new Result(1, "请稍后再试");
-        } else {
-            //成功
-            SMSLog smsLog = new SMSLog(content, phone, true);
-            smsLogReposiroty.save(smsLog);
-            redisBean.setStringValue(lastSendKey, System.currentTimeMillis() + "", 60, TimeUnit.SECONDS);
-            //发送次数加1,1天超时
-            redisBean.setStringValue(countKey, ((++count)) + "", 1, TimeUnit.DAYS);
-            String codeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode());
-            logger.info("用户:" + phone + " code:" + code);
-            redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
-            return new Result(0, "短信发送成功");
-        }
     }
 
 
@@ -350,12 +248,6 @@ public class UserService {
     }
 
 
-    public Result getUserInfo(Long userId) {
-        User user = userRepository.findOne(userId);
-        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
-        UserInfoVO vo = UserInfoVO.convert(user, userExtends);
-        return Result.success(vo);
-    }
 
 
     public User getCurrentUser(Long userId) {

@@ -35,7 +35,7 @@ public interface RewardRepository extends BaseRepository<Reward> {
     Reward findByCode(String code);
 
     @Transactional
-    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from Reward r where r.code =?1")
     Reward findByCode4Update(String code);
 
