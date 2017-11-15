@@ -38,27 +38,17 @@ public class UserController {
         return userService.loginFromPhone(userLoginDTO);
     }
 
-    /**
-     * description: 注册登录
-     */
-    @GetMapping("/user/sms/{phone}/1")
-    @ApiOperation("发送验证码")
-    public Result sendLoginSMS(@SessionAttribute("curUserId") Long userId,@PathVariable("phone") String phone,@PathVariable Integer type){
-        return smsService.sendSMSCode(userId,phone, type);
-    }
+
 
 
     /**
      * description: 发送验证码
      */
-    @Secured
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送验证码")
-    public Result sendSMS(@SessionAttribute("curUserId") Long userId,@PathVariable("phone") String phone,@PathVariable Integer type){
-        return smsService.sendSMSCode(userId,phone, type);
+    public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type){
+        return smsService.sendSMSCode(null,phone, type);
     }
-
-
 
 
 
@@ -86,7 +76,7 @@ public class UserController {
      */
     @Secured(bindPhone = false)
     @PostMapping("/user/phone/bind")
-    public Result bindPhone(@SessionAttribute("curUserId")Long userId,
+    public Result bindPhone(@SessionAttribute(value = "curUserId")Long userId,
                             @RequestHeader("token") String token,
                             @Valid@RequestBody UserLoginDTO personInfoDTO
     ){
