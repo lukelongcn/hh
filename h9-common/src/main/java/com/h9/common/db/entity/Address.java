@@ -18,45 +18,39 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "address")
 public class Address extends BaseEntity {
 
-
     @Id
-    @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '用户名'")
-    private String name;
+    @Column(name = "old_ID")
+    private Long oldId;
+    @Column(name = "Userid")
 
-    @Column(name = "sex",nullable = false,columnDefinition = "int default 0 COMMENT '性别'")
-    private Integer sex;
+    private Long Userid;
+    @Column(name = "Consignee")
 
-    @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
-    private String phone;
-    
-    @Column(name = "province", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '省'")
-    private String province;
-    
-    @Column(name = "city", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '城市'")
-    private String city;
-    
-    @Column(name = "district", nullable = false, columnDefinition = "varchar(36) default '' COMMENT '区'")
-    private String district;
+    private String Consignee;
+    @Column(name = "ConsigneePhone")
 
-    @Column(name = "address", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '收货地址'")
-    private String address;
+    private String ConsigneePhone;
+    @Column(name = "Receivingaddress")
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 整常，2已删除'")
-    private Integer status = 1;
+    private String Receivingaddress;
+    @Column(name = "ADefault")
 
-    @Column(name = "city_path", nullable = false, columnDefinition = "varchar(25) default '' COMMENT '城市路径'")
-    private String cityPath;
+    private Integer ADefault;
+    @Column(name = "Province")
 
-    @Column(name = "an_int",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址'")
-    private Integer defaultAddress = 1;
+    private String Province;
+    @Column(name = "City")
 
-    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
-    private Long userId;
+    private String City;
 
+    @Column(name = "District")
+    private String District;
+
+    @Column(name = "ProvincialCity")
+    private String ProvincialCity;
 
     public Long getId() {
         return id;
@@ -66,95 +60,85 @@ public class Address extends BaseEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Long getOldId() {
+        return oldId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOldId(Long oldId) {
+        this.oldId = oldId;
     }
 
-    public Integer getSex() {
-        return sex;
+    public Long getUserid() {
+        return Userid;
     }
 
-    public void setSex(Integer sex) {
-        this.sex = sex;
+    public void setUserid(Long userid) {
+        Userid = userid;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getConsignee() {
+        return Consignee;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setConsignee(String consignee) {
+        Consignee = consignee;
     }
 
-    public String getAddress() {
-        return address;
+    public String getConsigneePhone() {
+        return ConsigneePhone;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setConsigneePhone(String consigneePhone) {
+        ConsigneePhone = consigneePhone;
     }
 
-    public Integer getStatus() {
-        return status;
+    public String getReceivingaddress() {
+        return Receivingaddress;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setReceivingaddress(String receivingaddress) {
+        Receivingaddress = receivingaddress;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Integer getADefault() {
+        return ADefault;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setADefault(Integer ADefault) {
+        this.ADefault = ADefault;
     }
 
     public String getProvince() {
-        return province;
+        return Province;
     }
 
     public void setProvince(String province) {
-        this.province = province;
+        Province = province;
     }
 
     public String getCity() {
-        return city;
+        return City;
     }
 
     public void setCity(String city) {
-        this.city = city;
+        City = city;
     }
 
     public String getDistrict() {
-        return district;
+        return District;
     }
 
     public void setDistrict(String district) {
-        this.district = district;
+        District = district;
     }
 
-    public String getAddressDetail() {
-        return province+city+district+address;
+    public String getProvincialCity() {
+        return ProvincialCity;
     }
 
-    public String getCityPath() {
-        return cityPath;
+    public void setProvincialCity(String provincialCity) {
+        ProvincialCity = provincialCity;
     }
 
-    public void setCityPath(String cityPath) {
-        this.cityPath = cityPath;
-    }
 
-    public Integer getDefaultAddress() {
-        return defaultAddress;
-    }
-
-    public void setDefaultAddress(Integer defaultAddress) {
-        this.defaultAddress = defaultAddress;
-    }
 }
