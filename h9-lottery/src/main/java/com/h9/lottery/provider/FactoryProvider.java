@@ -39,6 +39,7 @@ public class FactoryProvider {
 
 
     public LotteryModel updateLotteryStatus(String code) {
+
         try {
             LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
             logger.debugv(code+":update "+JSONObject.toJSONString(lotteryModel));

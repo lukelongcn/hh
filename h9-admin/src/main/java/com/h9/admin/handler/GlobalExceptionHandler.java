@@ -47,6 +47,9 @@ public class GlobalExceptionHandler {
         } else if (e instanceof MethodArgumentNotValidException) {
             String msg = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError().getDefaultMessage();
             return new Result(1, msg);
+        }else if (e instanceof BindException) {
+            String msg = ((BindException) e).getBindingResult().getFieldError().getDefaultMessage();
+            return new Result(1, msg);
         }else if(e instanceof UnAuthException){
             UnAuthException unAuthException = (UnAuthException) e;
             return new Result(401, e.getMessage());

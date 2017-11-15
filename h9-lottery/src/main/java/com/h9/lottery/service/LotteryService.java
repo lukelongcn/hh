@@ -373,7 +373,10 @@ public class LotteryService {
         if (reward != null) {
             return null;
         }
+        long start = System.currentTimeMillis();
         LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
+        long end = System.currentTimeMillis();
+        logger.debugv(""+((end-start)/1000l));
         if (lotteryModel == null) {
             return Result.fail("服务繁忙，请稍后再试");
         }

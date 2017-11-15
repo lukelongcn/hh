@@ -7,6 +7,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -43,6 +44,9 @@ public class GlobalExceptionHandler {
         } else if (e instanceof MissingServletRequestParameterException) {
             logger.info(e.getMessage(), e);
             return new Result(HttpStatus.BAD_REQUEST.value(), "参数错误",ExceptionUtils.getMessage(e));
+        }else if (e instanceof BindException) {
+            String msg = ((BindException) e).getBindingResult().getFieldError().getDefaultMessage();
+            return new Result(1, msg);
         } else if (e instanceof MethodArgumentNotValidException) {
             String msg = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError().getDefaultMessage();
             return new Result(1, msg);
