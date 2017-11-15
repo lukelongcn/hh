@@ -113,9 +113,13 @@ public class SmsService {
     }
 
 
+
+
+
     //校验信息
     private Result sendSMSValdite(String phone, int smsType) {
         if(smsType== SMSTypeEnum.CASH_RECHARGE.getCode()){
+
 
         }else if(smsType== SMSTypeEnum.DIDI_CARD.getCode()){
 
