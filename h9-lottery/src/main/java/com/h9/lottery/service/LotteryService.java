@@ -381,7 +381,7 @@ public class LotteryService {
         if (state == 2) {
             return Result.fail("兑奖码已兑奖完毕");
         } else if (state == 3) {
-            return Result.fail("兑奖码已兑奖完毕");
+            return Result.fail("兑奖码不正确，请确认");
         } else if (state == 4) {
             return Result.fail("服务繁忙，请稍后再试");
         }
@@ -398,7 +398,12 @@ public class LotteryService {
         reward = new Reward();
         // 关联上商品信息
         reward.setProduct(product);
-        reward.setMoney(lotteryModel.getBouns());
+        BigDecimal intergal = lotteryModel.getIntergal();
+        BigDecimal money = lotteryModel.getBouns();
+        if(intergal.compareTo(new BigDecimal(0))>=0){
+            money = intergal.divide(new BigDecimal(10));
+        }
+        reward.setMoney(money);
         reward.setCode(code);
         reward.setActivityId(1L);
         reward.setMd5Code(MD5Util.getMD5(code));

@@ -33,10 +33,6 @@ public class AnnouncementAddDTO {
     @NotBlank(message = "跳转链接不能为空")
     private String url;
 
-    @ApiModelProperty(value = "用户名",required = true)
-    @NotBlank(message = "用户名不能为空")
-    private String userName;
-
     @ApiModelProperty(value = "状态：1：启用，0：禁用",required = true)
     @NotNull(message = "状态不能为空")
     private Integer enable;
@@ -51,6 +47,10 @@ public class AnnouncementAddDTO {
     @ApiModelProperty(value = "文章图片",required = true)
     @NotBlank(message = "文章图片不能为空")
     private String imgUrl;
+
+    @ApiModelProperty(value = "作者",required = true)
+    @NotBlank(message = "作者不能为空")
+    private String userName;
 
     public String getTitle() {
         return title;
