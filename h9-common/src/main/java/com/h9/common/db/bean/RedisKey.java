@@ -15,27 +15,12 @@ public class RedisKey {
     /**
      * description: %s 占位符为手机号码
      */
-    private static String lastSendKey = "h9:sms:lastSend:%s";
-    /**
-     * description: %s 占位符为手机号码
-     */
-    private static String sendCountKey = "h9:sms:count:%s";
-    /**
-     * description: %s 占位符为手机号码
-     */
     private static String smsCodeKey = "h9:sms:code:%s:type:%s";
-    /**
-     * description: %s 占位符为UserId
-     */
-    private static String tokenKey ="h9:token:%s";
     /**
      * description: %s 占位符为token
      */
     private static String tokenUserIdKey = "h9:userId:%s";
-    /**
-     * description: %s 占位符为token
-     */
-    public static final String adminTokenUserIdKey = "h9:admin:userId:%s";
+
 
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
@@ -45,26 +30,12 @@ public class RedisKey {
         return String.format("h9:wechat:userId:%s",token);
     }
 
-    public static String getLastSendKey(String phone) {
-        return String.format(lastSendKey, phone);
-    }
 
-    public static String getSendCountKey(String phone) {
-        return String.format(sendCountKey, phone);
-    }
 
-    public static String getSmsCodeKey(String phone,int type) {
-        return String.format(smsCodeKey, phone,type);
-    }
 
     public static void main(String[] args) {
         String smsCodeKey = getSmsCodeKey("17673140753", 1);
         System.out.println(smsCodeKey);
-    }
-
-    public static String getTokenKey(Long userId) {
-        return String.format(tokenKey,userId);
-
     }
 
     public static String getAdminTokenUserIdKey(String token){
@@ -97,9 +68,7 @@ public class RedisKey {
         return MessageFormat.format("sms:code:count:{0}:{1}",type,phone);
     }
 
-
-    //短信一分钟控制
-    public static String getSmsCode(String phone,int type){
+    public static String getSmsCodeKey(String phone,int type) {
         return MessageFormat.format("sms:code:{0}:{1}",type,phone);
     }
 

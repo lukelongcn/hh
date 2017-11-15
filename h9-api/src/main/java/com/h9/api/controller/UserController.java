@@ -39,13 +39,28 @@ public class UserController {
     }
 
     /**
+     * description: 注册登录
+     */
+    @GetMapping("/user/sms/{phone}/1")
+    @ApiOperation("发送验证码")
+    public Result sendLoginSMS(@SessionAttribute("curUserId") Long userId,@PathVariable("phone") String phone,@PathVariable Integer type){
+        return smsService.sendSMSCode(userId,phone, type);
+    }
+
+
+    /**
      * description: 发送验证码
      */
+    @Secured
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送验证码")
-    public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type){
-        return smsService.sendSMSCode(phone, type);
+    public Result sendSMS(@SessionAttribute("curUserId") Long userId,@PathVariable("phone") String phone,@PathVariable Integer type){
+        return smsService.sendSMSCode(userId,phone, type);
     }
+
+
+
+
 
     /**
      * description: 修改个人信息
