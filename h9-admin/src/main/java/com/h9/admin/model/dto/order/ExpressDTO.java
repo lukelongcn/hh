@@ -18,23 +18,23 @@ public class ExpressDTO {
     
     
     @ApiModelProperty(value = "收货人名称",required = true)
-    @NotBlank(message = "userName不能为null")
+    @NotBlank(message = "收货人名称不能为空")
     private String userName;
     
     @ApiModelProperty(value = "收货人手机",required = true)
-    @NotBlank(message = "userPhone不能为null")
+    @NotBlank(message = "收货人手机不能为空")
     private String userPhone;
 
     @ApiModelProperty(value = "收货地址",required = true)
-    @NotBlank(message = "userAddress不能为null")
+    @NotBlank(message = "收货地址不能为空")
     private String userAddres;
     
     @ApiModelProperty(value = "快递公司",required = true)
-    @NotBlank(message = "expressName不能为null")
+    @NotBlank(message = "快递公司不能为空")
     private String expressName;
 
     @ApiModelProperty(value = "快递单号",required = true)
-    @NotBlank(message = "logisticsNumber不能为null")
+    @NotBlank(message = "快递单号不能为空")
     private String logisticsNumber;
 
     public Long getId() {
