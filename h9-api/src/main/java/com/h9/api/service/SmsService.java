@@ -30,9 +30,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class SmsService {
 
-
-    @Value("${h9.current.envir}")
-    private String currentEnvironment;
+//    h9.sendMessage = false
+    @Value("${h9.sendMessage}")
+    private String sendMessage;
     @Resource
     private RedisBean redisBean;
 
@@ -86,7 +86,14 @@ public class SmsService {
             code = RandomStringUtils.random(4, "0123456789");
         }
         String content = getContent(smsType, code);
-        Result returnMsg = smsProvide.sendSMS(phone, content);
+        Result returnMsg = null;
+        if("true".equals(sendMessage)){
+            returnMsg = smsProvide.sendSMS(phone, content);
+        }else{
+            code = "0000";
+            returnMsg = Result.success("验证码 0000");
+        }
+
         if (returnMsg != null && returnMsg.getCode() != 0) {
             //失败
             SMSLog smsLog = new SMSLog(content, phone, code, false);

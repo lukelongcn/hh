@@ -203,9 +203,9 @@ public class LotteryService {
         Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.SECOND);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
-        lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
-
-        if (lastDate.before(nowDate)) {
+        long differentDate = lastDate.getTime() - nowDate.getTime();
+        lotteryResult.setDifferentDate(differentDate>0?differentDate:0);
+        if (differentDate<=0) {
             lottery(null, code);
         }
 
