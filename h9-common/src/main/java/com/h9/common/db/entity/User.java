@@ -20,7 +20,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Date: 2017/10/26
  * Time: 11:16
  */
-
+//,uniqueConstraints = @UniqueConstraint(columnNames="userId")
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
@@ -64,8 +64,13 @@ public class User extends BaseEntity {
 
     @Column(name = "password", columnDefinition = "varchar(36) default '' COMMENT '加密后密码'")
     private String password;
+
+
     @Column(name = "uuid", columnDefinition = "varchar(64) default '' COMMENT 'uuid'")
     private String uuid;
+
+    @Column(name = "h9_user_id", columnDefinition = "bigint(20) default null COMMENT '徽9原有用户id'")
+    private Long h9UserId;
 
     public User() {
     }
@@ -165,6 +170,22 @@ public class User extends BaseEntity {
 
     public void setUnionId(String unionId) {
         this.unionId = unionId;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public Long getH9UserId() {
+        return h9UserId;
+    }
+
+    public void setH9UserId(Long h9UserId) {
+        this.h9UserId = h9UserId;
     }
 
     public enum IsAdminEnum{
