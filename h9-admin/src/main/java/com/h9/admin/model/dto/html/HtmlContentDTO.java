@@ -20,24 +20,24 @@ public class HtmlContentDTO {
     private Long id;
 
     @ApiModelProperty(value = "名称",required = true)
-    @NotBlank(message = "name不能为null")
+    @NotBlank(message = "名称不能为空")
     private String name;
     @ApiModelProperty(value = "标示",required = true)
-    @NotBlank(message = "code不能为null")
+    @NotBlank(message = "标示不能为空")
     private String code;
     
     @ApiModelProperty(value = "标题",required = true)
-    @NotBlank(message = "title不能为null")
+    @NotBlank(message = "标题不能为空")
     private String title;
 
     @ApiModelProperty(value = "内容",required = true)
-    @NotBlank(message = "content不能为null")
+    @NotBlank(message = "内容不能为空")
     private String content;
     
     @ApiModelProperty(value = "状态 1 启用 0 禁用 同一个code 只能有一个启用的",required = true)
-    @NotNull(message = "status不能为null")
-    @Max(value = 1,message = "请填写正确的status")
-    @Min(value = 0,message = "请填写正确的status")
+    @NotNull(message = "状态不能为空")
+    @Max(value = 1,message = "请填写正确的状态")
+    @Min(value = 0,message = "请填写正确的状态")
     private Integer status = 1;
 
     public Long getId() {

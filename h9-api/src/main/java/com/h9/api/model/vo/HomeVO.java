@@ -3,11 +3,6 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.*;
 import com.h9.common.utils.DateUtil;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by itservice on 2017/10/30.
@@ -21,116 +16,47 @@ public class HomeVO {
     private String code;
     private String createTime;
     private String type;
-
+    private String userName;
     private String typeName;
 
-
-    @SuppressWarnings("Duplicates")
-    public static HomeVO convert(Class clazz, Object obj, String articlePreUrl) {
-
-
-        HomeVO vo = new HomeVO();
-        if (clazz.getSimpleName().equalsIgnoreCase("Article")) {
-
-            Article article = (Article) obj;
-            ArticleType articleType = article.getArticleType();
-            vo.setImgUrl(article.getImgUrl());
-            vo.setContent("");
-//            vo.setImgUrl(article);
-            vo.setTitle(article.getTitle());
-            vo.setCode(articleType.getCode());
-            String link = articlePreUrl + article.getId();
-//            if (!link.startsWith("url:")) {
-//                link = "url:"+link;
-//            }
-            vo.setLink(link);
-//            vo.setLink(article.getUrl());
-            vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
-            vo.setType("article");
-            vo.setContent(article.getTitle());
-            vo.setTypeName(articleType.getName());
-            return vo;
-        }
-
-        if (clazz.getSimpleName().equalsIgnoreCase("Banner")) {
-
-            Banner banner = (Banner) obj;
-            vo.setImgUrl(banner.getIcon());
-            vo.setContent(banner.getContent());
-            vo.setTitle(banner.getTitle());
-            vo.setLink(banner.getUrl());
-            BannerType bannerType = banner.getBannerType();
-            vo.setCode(bannerType.getCode());
-            vo.setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
-            vo.setType("banner");
-            return vo;
-        }
-
-        return null;
+    public HomeVO( Article article,String articlePreUrl) {
+        ArticleType articleType = article.getArticleType();
+        setImgUrl(article.getImgUrl());
+        setContent("");
+        setTitle(article.getTitle());
+        setCode(articleType.getCode());
+        String link = articlePreUrl + article.getId();
+        setLink(link);
+        setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+        setType("article");
+        setContent(article.getTitle());
+        setUserName(article.getUserName());
+        setTypeName(articleType.getName());
     }
 
-    @SuppressWarnings("Duplicates")
-    public static HomeVO convert(Announcement announcement,String articlePreUrl) {
+    public HomeVO(Banner banner) {
+        setImgUrl(banner.getIcon());
+        setContent(banner.getContent());
+        setTitle(banner.getTitle());
+        setLink(banner.getUrl());
+        BannerType bannerType = banner.getBannerType();
+        setCode(bannerType.getCode());
+        setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+        setType("banner");
+    }
 
-
-        HomeVO vo = new HomeVO();
-
-        vo.setImgUrl(announcement.getImgUrl());
-        vo.setContent("");
-        vo.setTitle(announcement.getTitle());
-
+    public HomeVO(Announcement announcement,String articlePreUrl) {
+        setImgUrl(announcement.getImgUrl());
+        setContent("");
+        setTitle(announcement.getTitle());
         String link = articlePreUrl + announcement.getId();
-//        if (!link.startsWith("url:")) {
-//            link += "url:";
-//        }
-        vo.setLink(link);
-        vo.setCreateTime(DateUtil.formatDate(announcement.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
-        vo.setType("article");
-        vo.setContent(announcement.getTitle());
-        vo.setTypeName("公告");
-        return vo;
-
-
+        setLink(link);
+        setCreateTime(DateUtil.formatDate(announcement.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+        setType("article");
+        setContent(announcement.getTitle());
+        setTypeName("公告");
     }
 
-    @SuppressWarnings("Duplicates")
-    public static HomeVO convert(Class clazz, Object obj) {
-
-        HomeVO vo = new HomeVO();
-        if (clazz.getSimpleName().equalsIgnoreCase("Article")) {
-
-            Article article = (Article) obj;
-            ArticleType articleType = article.getArticleType();
-            vo.setImgUrl(article.getImgUrl());
-            vo.setContent("");
-//            vo.setImgUrl(article);
-            vo.setTitle(article.getTitle());
-            vo.setCode(articleType.getCode());
-            //TODO
-            vo.setLink(article.getUrl());
-            vo.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
-            vo.setType("article");
-            vo.setContent(article.getTitle());
-            vo.setTypeName(articleType.getName());
-            return vo;
-        }
-
-        if (clazz.getSimpleName().equalsIgnoreCase("Banner")) {
-
-            Banner banner = (Banner) obj;
-            vo.setImgUrl(banner.getIcon());
-            vo.setContent(banner.getContent());
-            vo.setTitle(banner.getTitle());
-            vo.setLink(banner.getUrl());
-            BannerType bannerType = banner.getBannerType();
-            vo.setCode(bannerType.getCode());
-            vo.setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
-            vo.setType("banner");
-            return vo;
-        }
-
-        return null;
-    }
 
     public String getTypeName() {
         return typeName;
@@ -194,5 +120,13 @@ public class HomeVO {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
