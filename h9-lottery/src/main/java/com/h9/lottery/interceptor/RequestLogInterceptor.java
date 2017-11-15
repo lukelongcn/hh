@@ -1,7 +1,10 @@
 package com.h9.lottery.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+
+import org.jboss.logging.MDC;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,6 +25,8 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
+        String token = httpServletRequest.getHeader("token");
+        if(StringUtils.isNotEmpty(token))MDC.put("token",token.substring(0,16));
 
         String method = httpServletRequest.getMethod();
         if(HttpMethod.OPTIONS.name().equals(method)){
@@ -57,6 +62,6 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-
+        MDC.remove("token");
     }
 }
