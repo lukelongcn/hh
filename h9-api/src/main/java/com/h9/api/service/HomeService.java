@@ -36,7 +36,7 @@ public class HomeService {
         if (!CollectionUtils.isEmpty(bannerList)) {
             bannerList.forEach(banner -> {
                 BannerType bannerType = banner.getBannerType();
-                HomeVO convert = HomeVO.convert(Banner.class, banner);
+                HomeVO convert = new HomeVO(banner);
                 List<HomeVO> list = voMap.get(bannerType.getCode());
                 if (list == null) {
                     List<HomeVO> tempList = new ArrayList<>();
@@ -55,8 +55,7 @@ public class HomeService {
         if (!CollectionUtils.isEmpty(articleList)) {
             articleList.forEach(article -> {
                 ArticleType articleType = article.getArticleType();
-                HomeVO convert = HomeVO.convert(Article.class, article, articlelink);
-
+                HomeVO convert = new HomeVO( article, articlelink);
                 List<HomeVO> list = voMap.get(articleType.getCode());
                 if (list == null) {
                     List<HomeVO> tempList = new ArrayList<>();
@@ -73,7 +72,7 @@ public class HomeService {
 
         List<HomeVO> collect = announcementList.stream()
                 .map(announcement -> {
-                    HomeVO convert = HomeVO.convert(announcement, articlelink);
+                    HomeVO convert = new HomeVO(announcement, articlelink);
                     return convert;
                 })
                 .collect(Collectors.toList());
