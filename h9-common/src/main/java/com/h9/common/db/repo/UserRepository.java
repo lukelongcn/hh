@@ -24,7 +24,7 @@ public interface UserRepository extends BaseRepository<User> {
 
     User findByPhone(String phone);
 
-    @Query("select u from User u where u.openId = ?1 and u.status<>2")
+    @Query("select u from User u where u.openId = ?1 and u.status<>3")
     User findByOpenId(String openId);
 
 
