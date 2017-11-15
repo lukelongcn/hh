@@ -1,5 +1,6 @@
 package com.transfer.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.User;
@@ -47,39 +48,47 @@ public class UserService {
     @Transactional
     public void user(){
 
-        int page = 1;
-        int limit = 10;
-        int totalPage = 1;
+        int page = 0;
+        int limit = 200;
+        int totalPage = 0;
         PageResult<UserInfo> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction .ASC,"id");
-//        do{
-        userInfoPageResult = userInfoRepository.findAll(page, limit,sort);
-//            totalPage = (int) userInfoPageResult.getTotalPage();
-        List<UserInfo> userInfos = userInfoPageResult.getData();
-        for (UserInfo userInfo:userInfos){
-            covertUser(userInfo);
-        }
+        do{
+            page = page + 1;
+            userInfoPageResult = userInfoRepository.findAll(page, limit,sort);
+            totalPage = (int) userInfoPageResult.getTotalPage();
+            List<UserInfo> userInfos = userInfoPageResult.getData();
+            for (UserInfo userInfo:userInfos){
+                covertUser(userInfo);
+            }
 
-//        } while (page>totalPage||userInfoPageResult.getCount()==0);
-
+            float rate = (float) page * 100 / (float) totalPage;
+            if(page<=1&&userInfoPageResult.getCount()!=0)
+                logger.debugv("用户迁移进度 " + rate + "% " + page + "/" +totalPage );
+        } while (page<=1&&userInfoPageResult.getCount()!=0);
 
     }
 
     @Transactional
     private void covertUser(UserInfo userInfo){
-//        if(StringUtils.isNotEmpty(userInfo.getOpenID())
-//                ||StringUtils.isNotEmpty(userInfo.getPhone())) {
+        if(StringUtils.isNotEmpty(userInfo.getOpenID())
+                ||StringUtils.isNotEmpty(userInfo.getPhone())) {
+            User h9UserId = userRepository.findByH9UserId(userInfo.getId());
+            if (h9UserId != null) {
+                return;
+            }
             User user = userInfo.corvert();
             if(StringUtils.isEmpty(user.getAvatar())){
                 user.setAvatar(getDefaultHead());
             }
-            user = userRepository.save(user);
-
+            user = userRepository.saveAndFlush(user);
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(user.getId());
-            if(userInfo.getMoneyCount()!=null){
+            BigDecimal moneyCount = userInfo.getMoneyCount();
+            if(moneyCount !=null){
                 //TODO做负数处理
-                userAccount.setBalance(userInfo.getMoneyCount());
+                BigDecimal balance = moneyCount.compareTo(new BigDecimal(0))>=0?moneyCount:new BigDecimal(0);
+                userAccount.setBalance(balance);
             }
             Integer integralCount = userInfo.getIntegralCount();
             if(integralCount!=null){
@@ -89,7 +98,8 @@ public class UserService {
             UserExtends userExtends = new UserExtends();
             userExtends.setUserId(user.getId());
             userExtendsRepository.save(userExtends);
-//        }
+        }
+
     }
 
 
