@@ -17,15 +17,12 @@ public class MailService {
     private JavaMailSender mailSender;
 
     public boolean sendtMail(String subject,String content) {
-
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
-        //TODO 替换成邮件组
-        message.setTo("756034624@qq.com");
+        message.setTo("hjsqserver@hey900.com");
         message.setSubject(subject);
         message.setText(content);
         mailSender.send(message);
-
         return true;
     }
 }
