@@ -16,6 +16,9 @@ public class SMSLog extends BaseEntity{
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(name = "type",nullable = false,columnDefinition = "int default 0 COMMENT '类型'")
+    private Integer type;
+    
     @Column(name = "content", nullable = false, columnDefinition = "varchar(255) default '' COMMENT '短信内容'")
     private String content;
 
@@ -24,6 +27,10 @@ public class SMSLog extends BaseEntity{
 
     @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
     private String phone;
+
+    public SMSLog( ) {
+    }
+
 
     public SMSLog(String content, String phone,String code, boolean status) {
         this.content = content;
@@ -79,6 +86,13 @@ public class SMSLog extends BaseEntity{
         this.code = code;
     }
 
-    public SMSLog( ) {
+    public Integer getType() {
+        return type;
     }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+
 }

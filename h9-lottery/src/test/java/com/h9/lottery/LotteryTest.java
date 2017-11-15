@@ -11,6 +11,7 @@ import com.h9.common.db.repo.RewardRepository;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.MD5Util;
 import com.h9.lottery.provider.FactoryProvider;
+import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.CodeUtil;
 import org.jboss.logging.Logger;
@@ -63,7 +64,7 @@ public class LotteryTest {
     @Transactional
     public void contextLoads() {
 
-        ProductModel pr = factoryProvider.getProductInfo("eee");
+        LotteryModel pr = factoryProvider.findByLotteryModel("6123456973");
         logger.debugv(JSONObject.toJSONString(pr));
 
 //        generateCode();

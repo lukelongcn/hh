@@ -80,7 +80,7 @@ public class SmsService {
 
         String code;
         String codeKey = RedisKey.getSmsCode(phone,smsType);
-        code= redisBean.getStringValue(countKey);
+        code= redisBean.getStringValue(codeKey);
         if(StringUtils.isEmpty(code)){
             code = RandomStringUtils.random(4, "0123456789");
         }
@@ -89,11 +89,13 @@ public class SmsService {
         if (returnMsg != null && returnMsg.getCode() != 0) {
             //失败
             SMSLog smsLog = new SMSLog(content, phone,code,false);
+            smsLog.setType(smsType);
             smsLogReposiroty.save(smsLog);
             return Result.fail( "请稍后再试");
         } else {
             //成功
             SMSLog smsLog = new SMSLog(content, phone,code, true);
+            smsLog.setType(smsType);
             smsLogReposiroty.save(smsLog);
             //短信发送成功，一分钟后才能发第二条
             redisBean.setStringValue(lastSendKey, System.currentTimeMillis() + "", 60, TimeUnit.SECONDS);
