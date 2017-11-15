@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -37,7 +38,7 @@ public class ApiApplication {
     public static String chinaPayKeyPath = null;
 
     public static void main(String[] args) {
-        SpringApplication.run(ApiApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(ApiApplication.class, args);
         logger.debugv(StartBanner.BANNER);
 
         chinaPayKeyPath = System.getProperty("user.dir");
@@ -46,9 +47,10 @@ public class ApiApplication {
         logger.info("私钥位置: "+chinaPayKeyPath);
         boolean exists = new File(chinaPayKeyPath).exists();
         logger.info("存在: "+exists);
-//        if (!exists) {
-//            logger.info("银联私钥不存在,启动终止!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//        }
+
+        Environment environment = context.getBean(Environment.class);
+        String enviroment = environment.getProperty("h9.current.envir");
+        logger.info("当前环境："+enviroment);
 
     }
 

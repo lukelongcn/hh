@@ -6,6 +6,7 @@ package com.h9.api;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.SMService;
+import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -234,7 +235,7 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 //        String token = "570b2acf-c4c9-48b5-a682-9086a8245f41";
-        String token = "df8bb12e-d3ac-44e5-8ce1-f0e1c3f34625";
+        String token = "703fb2c7-1660-473e-8e48-e9810088f9fe";
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         String id = redisBean.getStringValue(tokenUserIdKey);
         System.out.println(id);
@@ -251,11 +252,14 @@ public class ApiApplicationTests {
 
     @Resource
     private MailService mailService;
+
     @Test
     public void testMail(){
-        boolean b = mailService.sendtMail("hello", "content");
-        System.out.println(b);
+        Result result = smService.sendSMS("18597848648", "您的校验码是：" + "1234" + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！");
+        System.out.println(result);
     }
+
+
 
 }
 
