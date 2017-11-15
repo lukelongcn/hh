@@ -87,6 +87,21 @@ public class RedisKey {
     public static String wechatAccessToken = "wechat:accesstoken";
     public static String wechatTicket = "wechat:ticket";
 
+    //短信一分钟控制
+    public static String getSmsCodeCountDown(String phone,int type){
+        return MessageFormat.format("sms:code:countdown{0}:{1}",type,phone);
+    }
+
+    //短信一分钟控制
+    public static String getSmsCodeCount(String phone,int type){
+        return MessageFormat.format("sms:code:count:{0}:{1}",type,phone);
+    }
+
+
+    //短信一分钟控制
+    public static String getSmsCode(String phone,int type){
+        return MessageFormat.format("sms:code:{0}:{1}",type,phone);
+    }
 
 
 

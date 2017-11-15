@@ -69,7 +69,7 @@ public class SmsService {
         String countStr = redisBean.getStringValue(countKey);
 
         int count = 0;
-        if (StringUtils.isEmpty(countStr)) {
+        if (!StringUtils.isEmpty(countStr)) {
             count = Integer.valueOf(countStr);
         }
 
@@ -81,7 +81,7 @@ public class SmsService {
         String code;
         String codeKey = RedisKey.getSmsCode(phone,smsType);
         code= redisBean.getStringValue(countKey);
-        if(StringUtils.isEmpty(codeKey)){
+        if(StringUtils.isEmpty(code)){
             code = RandomStringUtils.random(4, "0123456789");
         }
         String content = getContent(smsType,code);

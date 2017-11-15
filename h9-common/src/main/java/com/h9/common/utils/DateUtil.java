@@ -203,7 +203,10 @@ public class DateUtil {
         return cal.getTime();
     }
 
-    // 获得当天24点时间
+    /***
+     * 获得当天24点时间
+      */
+
     public static Date getTimesNight() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 23);

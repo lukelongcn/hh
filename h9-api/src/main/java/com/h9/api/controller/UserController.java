@@ -58,18 +58,6 @@ public class UserController {
         return userService.updatePersonInfo(userId,personInfoDTO);
     }
 
-//    /**
-//     * description: 获取用户信息
-//     *
-//     */
-//    @Secured
-//    @GetMapping("/user/info")
-//    @ApiOperation("获取用户信息")
-//    public Result getUserInfo(@SessionAttribute("curUserId")Long userId){
-//        return userService.getUserInfo(userId);
-//    }
-
-
 
     @GetMapping("/wechat/login")
     public Result getCode(@RequestParam(value = "code",required = false)

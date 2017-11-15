@@ -24,8 +24,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object hanldeException(Exception e) {
-
-
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         } else if (e instanceof NoHandlerFoundException) {
