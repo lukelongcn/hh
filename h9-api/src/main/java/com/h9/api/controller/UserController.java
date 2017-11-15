@@ -4,6 +4,7 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.service.SmsService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
@@ -25,6 +26,8 @@ import javax.validation.constraints.NotNull;
 public class UserController {
     @Resource
     private UserService userService;
+    @Resource
+    private SmsService smsService;
 
     /**
      * description: 手机号登录
@@ -41,7 +44,7 @@ public class UserController {
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送验证码")
     public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type){
-        return userService.sendSMS(phone, type);
+        return smsService.sendSMSCode(phone, type);
     }
 
     /**

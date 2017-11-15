@@ -5,7 +5,7 @@ package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
-import com.h9.api.provider.SMService;
+import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import com.h9.common.db.bean.RedisBean;
@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
@@ -41,7 +40,7 @@ public class ApiApplicationTests {
     }
 
     @Resource
-    private SMService smService;
+    private SMSProvide smService;
     @Resource
     private RestTemplate restTemplate;
     @Resource
