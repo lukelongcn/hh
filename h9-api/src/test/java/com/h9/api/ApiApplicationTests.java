@@ -254,8 +254,16 @@ public class ApiApplicationTests {
 
     @Test
     public void testMail(){
-        Result result = smService.sendSMS("18597848648", "您的校验码是：" + "1234" + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！");
-        System.out.println(result);
+        User user = userRepository.findOne(3L);
+        user.setPhone("");
+        user.setOpenId("");
+        userRepository.save(user);
+
+        User use2r = userRepository.findOne(9681L);
+        use2r.setPhone("");
+        use2r.setOpenId("");
+        userRepository.save(use2r);
+
     }
 
 

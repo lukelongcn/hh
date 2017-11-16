@@ -30,6 +30,7 @@ public interface GlobalPropertyRepository extends BaseRepository<GlobalProperty>
     @Query("select new com.h9.common.modle.vo.GlobalPropertyVO(o) from GlobalProperty o  order by o.id desc ")
     Page<GlobalPropertyVO> findAllByPage(Pageable page);
 
+    @SuppressWarnings("Convert2Lambda")
     default Specification<GlobalProperty> buildActivitySpecification(String key){
         return  new Specification<GlobalProperty>() {
             @Override
