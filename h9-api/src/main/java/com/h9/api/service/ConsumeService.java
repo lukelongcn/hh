@@ -125,7 +125,7 @@ public class ConsumeService {
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "￥" + realPrice.setScale(2, RoundingMode.DOWN));
+            map.put("money", ""+ realPrice.setScale(2, RoundingMode.DOWN));
             return Result.success("充值成功", map);
         } else {
             throw new RuntimeException("充值失败");
@@ -304,7 +304,7 @@ public class ConsumeService {
 
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "￥" + balance.setScale(2, RoundingMode.DOWN));
+            map.put("money", ""+balance.setScale(2, RoundingMode.DOWN));
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             return Result.success(map);
