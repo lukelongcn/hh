@@ -88,7 +88,7 @@ public class SmsService {
         String content = getContent(smsType, code);
         Result returnMsg = null;
         logger.debugv("sendMessage="+sendMessage);
-        if(true == sendMessage){
+        if(sendMessage){
             returnMsg = smsProvide.sendSMS(phone, content);
         }else{
             code = "0000";

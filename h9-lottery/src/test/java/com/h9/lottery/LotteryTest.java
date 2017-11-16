@@ -6,9 +6,11 @@ import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.Product;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.repo.ActivityRepository;
+import com.h9.common.db.repo.ProductLogRepository;
 import com.h9.common.db.repo.ProductRepository;
 import com.h9.common.db.repo.RewardRepository;
 import com.h9.common.modle.vo.Config;
+import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,6 +60,18 @@ public class LotteryTest {
     
     @Resource
     private FactoryProvider factoryProvider;
+
+    @Resource
+    private ProductLogRepository productLogRepository;
+
+
+    @Test
+    @Transactional
+    public void testContextLoads() {
+        Date date = DateUtil.formatDate("2017-11-15 14:57:12", DateUtil.FormatType.SECOND);
+        long byUserId = productLogRepository.findByUserId(28L, date);
+        logger.debugv("byUserId"+byUserId);
+    }
     
 
 
