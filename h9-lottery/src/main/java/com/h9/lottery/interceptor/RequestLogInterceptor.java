@@ -26,7 +26,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         String token = httpServletRequest.getHeader("token");
-        if(StringUtils.isNotEmpty(token))MDC.put("token",token.substring(0,16));
+        if(StringUtils.isNotEmpty(token))MDC.put("token",token.substring(0,8));
 
         String method = httpServletRequest.getMethod();
         if(HttpMethod.OPTIONS.name().equals(method)){
