@@ -229,7 +229,6 @@ public class UserService {
                    userRepository.save(phoneUser);
                 }
                 user.setStatus(User.StatusEnum.INVALID.getId());
-
                 user.setNickName(phoneUser.getNickName());
                 user.setAvatar(phoneUser.getAvatar());
 
