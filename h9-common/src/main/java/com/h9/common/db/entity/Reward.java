@@ -41,9 +41,6 @@ public class Reward extends BaseEntity {
     private BigDecimal money = new BigDecimal(0);
 
 
-    @Column(name = "reward_url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '红包路径'")
-    private String rewardUrl;
-
     /***
      * @see StatusEnum
      */
@@ -103,14 +100,6 @@ public class Reward extends BaseEntity {
         this.money = money;
     }
 
-
-    public String getRewardUrl() {
-        return rewardUrl;
-    }
-
-    public void setRewardUrl(String rewardUrl) {
-        this.rewardUrl = rewardUrl;
-    }
 
     /***
      * @see StatusEnum
