@@ -21,22 +21,22 @@ public class ArticleDTO {
     private Long id;
     
     @ApiModelProperty(value = "类别id",required = true)
-    @NotNull(message = "类别id不能为null")
+    @NotNull(message = "类别不能为空")
     private Long articleTypeId;
     
     @ApiModelProperty(value = "标题",required = true)
-    @NotBlank(message = "title不能为null")
+    @NotBlank(message = "标题不能为空")
     private String title;
     
     @ApiModelProperty(value = "内容",required = true)
-    @NotBlank(message = "content不能为null")
+    @NotBlank(message = "内容不能为空")
     private String content;
 
     @ApiModelProperty(value = "作者名字",required = true)
     private String userName = "";
     
     @ApiModelProperty(value = "是否推荐到首页 1推荐 2不推荐",required = true)
-    @NotNull(message = "recommend不能为null")
+    @NotNull(message = "是否推荐到首页不能为空")
     @Max(value = 2,message = "请填写正确的recommend")
     @Min(value = 1,message = "请填写正确的recommend")
     private Integer recommend = 1;
@@ -44,19 +44,19 @@ public class ArticleDTO {
     @ApiModelProperty(value = "外部链接")
     private String url = "";
     
-    @ApiModelProperty(value = "1 启用 0禁用",required = true)
-    @NotNull(message = "enable不能为null")
-    @Max(value = 1,message = "请填写正确的enable")
-    @Min(value = 0,message = "请填写正确的enable")
+    @ApiModelProperty(value = "状态：1：启用，0：禁用",required = true)
+    @NotNull(message = "状态不能为空")
+    @Max(value = 1,message = "请填写正确的状态")
+    @Min(value = 0,message = "请填写正确的状态")
     private Integer enable;
     
     @ApiModelProperty(value = "排序 数字越大越靠前",required = true)
-    @Max(value = 100,message = "sort最大值不能超过100")
-    @Min(value = 0,message = "请输入正确的sort")
+    @Max(value = 100,message = "排序最大值不能超过100")
+    @Min(value = 0,message = "请输入正确的排序")
     private Integer sort = 1;
     
     @ApiModelProperty(value = "发布时间",required = true)
-    @NotNull(message = "startTime不能为null")
+    @NotNull(message = "发布时间不能为空")
     private Date startTime;
 
     @ApiModelProperty(value = "文章图片",required = true)
@@ -141,8 +141,8 @@ public class ArticleDTO {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartTime(long startTime) {
+        this.startTime = new Date(startTime);
     }
 
     public String getImgUrl() {

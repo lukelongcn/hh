@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.article.ArticleDTO;
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.common.base.PageResult;
@@ -13,6 +14,7 @@ import com.h9.common.modle.dto.PageDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -69,6 +71,8 @@ public class ArticleService {
         if(one==null){
             return Result.fail("分类不存在");
         }
+        one.setEnable(2);
+        one.setUpdateTime(new Date());
         articleTypeRepository.save(one);
         return Result.success();
     }
@@ -93,7 +97,9 @@ public class ArticleService {
         if(one==null){
             return Result.fail("您要删除的文章不存在");
         }
-        articleRepository.delete(one);
+        one.setEnable(2);
+        one.setUpdateTime(new Date());
+        articleRepository.save(one);
         return Result.success();
     }
 
@@ -109,6 +115,11 @@ public class ArticleService {
         article.setId(null);
         article.setArticleType(one);
         article.setCreateTime(new Date());
+        if(articleDTO.getStartTime()!=null){
+            article.setPublishTime(articleDTO.getStartTime());
+        }else{
+            article.setPublishTime(new Date());
+        }
         articleRepository.save(article);
         return Result.success(article);
     }
@@ -127,21 +138,26 @@ public class ArticleService {
         BeanUtils.copyProperties(articleDTO,article);
         article.setArticleType(one);
         article.setUpdateTime(new Date());
+        if(articleDTO.getStartTime()!=null){
+            article.setPublishTime(articleDTO.getStartTime());
+        }else{
+            article.setPublishTime(new Date());
+        }
         articleRepository.save(article);
         return Result.success(article);
     }
-    
+
     private void setArticleUrl(Article article){
-//        String url = article.getUrl();
-//        if (StringUtils.isEmpty(url)) {
-//            Map preLink = configService.getMapConfig("preLink");
-//            if (!StringUtils.isEmpty(preLink)) {
-//                article.setUrl(preLink.get("article").toString() + article.getId());
-//            }
-//        } else {
-//            if(!url.contains("url:")){
-//                article.setUrl("url:"+article.getUrl());
-//            }
-//        } 
+        String url = article.getUrl();
+        if (StringUtils.isEmpty(url)) {
+            String preLink = configService.getStringConfig("preLink");
+            if (!StringUtils.isEmpty(preLink)) {
+                article.setUrl(JSONObject.parseObject(preLink).getString("article") + article.getId());
+            }
+        } else {
+            if(!url.contains("url:")){
+                article.setUrl("url:"+article.getUrl());
+            }
+        }
     }
 }

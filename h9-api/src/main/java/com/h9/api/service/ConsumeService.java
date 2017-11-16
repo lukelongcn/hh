@@ -6,7 +6,7 @@ import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
-import com.h9.api.provider.SMService;
+import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
@@ -42,7 +42,7 @@ public class ConsumeService {
     @Resource
     private RedisBean redisBean;
     @Resource
-    private SMService smService;
+    private SMSProvide smService;
     @Resource
     private UserRepository userRepository;
     @Resource
@@ -326,7 +326,7 @@ public class ConsumeService {
     private String currentEnvironment;
 
     public Result cz(Long userId) {
-        if (!"dev".equals(currentEnvironment)) return Result.fail("此环境不支持");
+        if ("product".equals(currentEnvironment)) return Result.fail("此环境不支持");
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         userAccount.setBalance(new BigDecimal(201));
         userAccountRepository.save(userAccount);

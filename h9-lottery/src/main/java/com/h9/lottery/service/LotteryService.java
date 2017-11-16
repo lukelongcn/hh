@@ -19,10 +19,11 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
 @Service
 public class LotteryService {
 
+    Logger logger = Logger.getLogger(LotteryService.class);
 
     @Resource
     private RewardRepository rewardRepository;
@@ -201,9 +203,9 @@ public class LotteryService {
         Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.SECOND);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
-        lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
-
-        if (lastDate.before(nowDate)) {
+        long differentDate = lastDate.getTime() - nowDate.getTime();
+        lotteryResult.setDifferentDate(differentDate>0?differentDate:0);
+        if (differentDate<=0) {
             lottery(null, code);
         }
 
@@ -371,7 +373,10 @@ public class LotteryService {
         if (reward != null) {
             return null;
         }
+        long start = System.currentTimeMillis();
         LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
+        long end = System.currentTimeMillis();
+        logger.debugv(""+((end-start)/1000l));
         if (lotteryModel == null) {
             return Result.fail("服务繁忙，请稍后再试");
         }
@@ -379,23 +384,29 @@ public class LotteryService {
         if (state == 2) {
             return Result.fail("兑奖码已兑奖完毕");
         } else if (state == 3) {
-            return Result.fail("兑奖码已兑奖完毕");
+            return Result.fail("兑奖码不正确，请确认");
         } else if (state == 4) {
             return Result.fail("服务繁忙，请稍后再试");
         }
         ProductModel productInfo = factoryProvider.getProductInfo(code);
         Product product = null;
-        if (productInfo != null) {
+        if (productInfo != null&& productInfo.getState()!=2&& productInfo.getState()!=3) {
             try {
                 product = productInfo.covert();
                 product = productRepository.saveAndFlush(product);
             } catch (Exception e) {
+                logger.debug(e.getMessage(),e);
             }
         }
         reward = new Reward();
         // 关联上商品信息
         reward.setProduct(product);
-        reward.setMoney(lotteryModel.getBouns());
+        BigDecimal intergal = lotteryModel.getIntergal();
+        BigDecimal money = lotteryModel.getBouns();
+        if(intergal.compareTo(new BigDecimal(0))>=0){
+            money = intergal.divide(new BigDecimal(10));
+        }
+        reward.setMoney(money);
         reward.setCode(code);
         reward.setActivityId(1L);
         reward.setMd5Code(MD5Util.getMD5(code));

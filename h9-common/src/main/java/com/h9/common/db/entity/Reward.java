@@ -19,7 +19,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Time: 10:21
  */
 @Entity
-@Table(name = "reward")
+@Table(name = "reward",uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class Reward extends BaseEntity {
 
 
@@ -27,10 +27,6 @@ public class Reward extends BaseEntity {
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
-
-//    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//    @JoinColumn(name = "activity_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '活动id'")
-//    private Activity activity;
 
     @Column(name = "activity_id", columnDefinition = "bigint(20) default null COMMENT ''")
     private Long activityId;
@@ -71,7 +67,7 @@ public class Reward extends BaseEntity {
     private Integer startType = 1;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id",referencedColumnName="id",columnDefinition = "bigint(20) default null COMMENT ''")
+    @JoinColumn(name = "product_id",referencedColumnName="id",columnDefinition = "bigint(20) default null COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Product product;
 
 

@@ -91,6 +91,8 @@ public class UserInfo {
         user.setLoginCount(1);
         user.setLastLoginTime(RegisterTime);
         user.setPassword(password);
+        user.setUuid(UserGuid);
+        user.setH9UserId(id);
         return user;
 
     }

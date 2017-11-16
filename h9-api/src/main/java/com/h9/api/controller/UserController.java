@@ -4,6 +4,7 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.service.SmsService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
@@ -25,6 +26,8 @@ import javax.validation.constraints.NotNull;
 public class UserController {
     @Resource
     private UserService userService;
+    @Resource
+    private SmsService smsService;
 
     /**
      * description: 手机号登录
@@ -35,14 +38,19 @@ public class UserController {
         return userService.loginFromPhone(userLoginDTO);
     }
 
+
+
+
     /**
      * description: 发送验证码
      */
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送验证码")
     public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type){
-        return userService.sendSMS(phone, type);
+        return smsService.sendSMSCode(null,phone, type);
     }
+
+
 
     /**
      * description: 修改个人信息
@@ -54,18 +62,6 @@ public class UserController {
                                  @Valid@RequestBody UserPersonInfoDTO personInfoDTO){
         return userService.updatePersonInfo(userId,personInfoDTO);
     }
-
-//    /**
-//     * description: 获取用户信息
-//     *
-//     */
-//    @Secured
-//    @GetMapping("/user/info")
-//    @ApiOperation("获取用户信息")
-//    public Result getUserInfo(@SessionAttribute("curUserId")Long userId){
-//        return userService.getUserInfo(userId);
-//    }
-
 
 
     @GetMapping("/wechat/login")
@@ -80,7 +76,7 @@ public class UserController {
      */
     @Secured(bindPhone = false)
     @PostMapping("/user/phone/bind")
-    public Result bindPhone(@SessionAttribute("curUserId")Long userId,
+    public Result bindPhone(@SessionAttribute(value = "curUserId")Long userId,
                             @RequestHeader("token") String token,
                             @Valid@RequestBody UserLoginDTO personInfoDTO
     ){
@@ -100,10 +96,8 @@ public class UserController {
     /**
      * description: 常见问题说明
      */
-    @Secured
     @GetMapping("/user/help")
     public Result questionHelp(){
-
         return userService.questionHelp();
     }
 

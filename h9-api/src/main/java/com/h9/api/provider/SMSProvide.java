@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Component
-public class SMService {
+public class SMSProvide {
 
     public static final String smsUrl = "http://106.ihuyi.com/webservice/sms.php?method=Submit";
     public static final String appId = "cf_tianlitai";
@@ -54,16 +54,8 @@ public class SMService {
                 .queryParam("time", time)
                 .queryParam("format", "json")
                 .build().toUri();
-//        -----------------------------------------------------------------
-        String res = restTemplate.getForObject(uri, String.class);
-        ReturnMsg returnMsg = JSONObject.parseObject(res, ReturnMsg.class);
-//        --------------------------------------------------------------------
 
-//        ReturnMsg returnMsg = new ReturnMsg();
-//        returnMsg.setCode(2);
-//        returnMsg.setMsg("成功");
-//        returnMsg.setSmsid("0");
-
+        ReturnMsg returnMsg = restTemplate.getForObject(uri, ReturnMsg.class);
         //处理结果
         if (returnMsg != null && returnMsg.getCode() != 2) {
             return new Result(1, returnMsg.getMsg());

@@ -59,6 +59,10 @@ public class Article extends BaseEntity {
         return id;
     }
 
+    @Temporal(TIMESTAMP)
+    @Column(name = "publish_time", columnDefinition = "datetime COMMENT '发布时间'")
+    private Date publishTime;
+
 
 
     public String getImgUrl() {
@@ -151,5 +155,13 @@ public class Article extends BaseEntity {
 
     public void setRecommend(Integer recommend) {
         this.recommend = recommend;
+    }
+
+    public Date getPublishTime() {
+        return publishTime;
+    }
+
+    public void setPublishTime(Date publishTime) {
+        this.publishTime = publishTime;
     }
 }

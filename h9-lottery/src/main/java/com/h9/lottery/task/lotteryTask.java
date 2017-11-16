@@ -38,18 +38,12 @@ public class lotteryTask {
     @Scheduled(fixedRate = 5000)
     public void run() {
 
-        logger.info("lotteryTask scan ......................");
-
         List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
 
-        rewardList.stream()
-                //过滤后,留下此类状态的
-                .filter(reward -> reward.getStatus() == Reward.StatusEnum.TO_BEGIN.getCode()
-                        || reward.getStatus() == Reward.StatusEnum.PART_START.getCode())
-                .forEach(reward -> {
-                    logger.info("rewardId: " + reward.getId() + "结束");
-                    reward.setStatus(Reward.StatusEnum.END.getCode());
+        rewardList.stream().forEach(reward -> {
+                    logger.info("rewardId: " + reward.getId() + "开始");
                     lotteryService.lottery(null, reward.getCode());
+            logger.info("rewardId: " + reward.getId() + "结束");
                 });
 
     }

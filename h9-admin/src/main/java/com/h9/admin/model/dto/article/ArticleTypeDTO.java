@@ -20,15 +20,15 @@ public class ArticleTypeDTO {
     @NotNull(message = "id不能为空",groups = Edit.class)
     private Long id;
 
-    @NotBlank(message = "分类名不能为null")
+    @NotBlank(message = "分类名不能为空")
     @Length(max = 10,message = "分类名称过长")
     private String name;
     
     private int sort = 1;
     
-    @Min(value = 0,message = "请传入正确的enable")
-    @Max(value = 1,message = "请传入正确的enable")
-    @NotNull(message = "enable不能为空")
+    @Min(value = 0,message = "请传入正确的状态")
+    @Max(value = 1,message = "请传入正确的状态")
+    @NotNull(message = "状态不能为空")
     private Integer enable;
 
 

@@ -34,6 +34,8 @@ public class CommunityService {
     private GoodsReposiroty goodsReposiroty;
     @Autowired
     private GoodsTypeReposiroty goodsTypeReposiroty;
+    @Autowired
+    private AnnouncementReposiroty announcementReposiroty;
 
     public Result<BannerType> addBannerType(BannerType bannerType){
         if(this.bannerTypeRepository.findByCode(bannerType.getCode())!=null){
@@ -188,4 +190,31 @@ public class CommunityService {
         if
         return Result.success(this.goodsReposiroty.save(goodsEditDTO.toGoods()));
     }*/
+
+    public Result<Announcement> addAnnouncement(Announcement announcement){
+        return Result.success(this.announcementReposiroty.save(announcement));
+    }
+
+    public Result<Announcement> updateAnnouncement(AnnouncementEditDTO announcementEditDTO){
+        Announcement announcement = this.announcementReposiroty.findOne(announcementEditDTO.getId());
+        announcement = announcementEditDTO.toAnnouncement(announcement);
+        return Result.success(this.announcementReposiroty.save(announcement));
+    }
+
+    public Result<Announcement> updateAnnouncementStatus(long id){
+        Announcement announcement = this.announcementReposiroty.findOne(id);
+        if(announcement.getEnable()==Announcement.EnableEnum.DISABLED.getId()){
+            announcement.setEnable(Announcement.EnableEnum.ENABLED.getId());
+        }else{
+            announcement.setEnable(Announcement.EnableEnum.DISABLED.getId());
+        }
+        return Result.success(this.announcementReposiroty.save(announcement));
+    }
+
+    public Result<PageResult<Announcement>> getAnnouncements(PageDTO pageDTO){
+        PageRequest pageRequest = this.announcementReposiroty.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageRequest);
+        PageResult<Announcement> pageResult = new PageResult<>(announcements);
+        return Result.success(pageResult);
+    }
 }
