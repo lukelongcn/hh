@@ -65,7 +65,7 @@ public class LotteryTest {
     private ProductLogRepository productLogRepository;
 
 
-    @Test
+//    @Test
     @Transactional
     public void testContextLoads() {
         Date date = DateUtil.formatDate("2017-11-15 14:57:12", DateUtil.FormatType.SECOND);
@@ -75,7 +75,7 @@ public class LotteryTest {
     
 
 
-    @Test
+//    @Test
     @Transactional
     public void contextLoads() {
 
