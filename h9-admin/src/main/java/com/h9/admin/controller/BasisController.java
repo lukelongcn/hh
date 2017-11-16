@@ -50,7 +50,7 @@ public class BasisController {
     @Secured
     @GetMapping(value="/param/page")
     @ApiOperation("分页获取参数")
-    public Result<PageResult<GlobalPropertyVO>> getActivities(PageDTO pageDTO,@ApiParam(value = "名称或参数标识") @RequestParam String key){
+    public Result<PageResult<GlobalPropertyVO>> getActivities(PageDTO pageDTO,@ApiParam(value = "名称或参数标识") @RequestParam(required = false) String key){
         return this.basisService.getGlobalProperties(key,pageDTO);
     }
 

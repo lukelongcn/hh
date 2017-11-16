@@ -35,13 +35,14 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             String token = httpServletRequest.getHeader("token");
             Secured secured = ((HandlerMethod) o).getMethodAnnotation(Secured.class);
             if (secured != null) {
-                if (StringUtils.isBlank(token)) throw new UnAuthException("未知用户");
+                if (StringUtils.isBlank(token)) {
+                    throw new UnAuthException("未知用户");
+                }
                 String userId = redisBean.getStringValue(RedisKey.getAdminTokenUserIdKey(token));
                 if(StringUtils.isEmpty(userId)){
                     throw new UnAuthException("请登录");
                 }
                 redisBean.expire(RedisKey.getAdminTokenUserIdKey(token),TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
-               // httpServletRequest.getSession().removeAttribute("curUserId");
                 httpServletRequest.getSession().setAttribute("curUserId",userId);
             }
 
