@@ -69,10 +69,12 @@ public class BasisService {
         return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
     }
 
-    public Result<PageResult<GlobalPropertyVO>> getGlobalProperties(PageDTO pageDTO){
+    public Result<PageResult<GlobalPropertyVO>> getGlobalProperties(String key,PageDTO pageDTO){
         PageRequest pageRequest = this.globalPropertyRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
-        Page<GlobalPropertyVO> globalPropertys = this.globalPropertyRepository.findAllByPage(pageRequest);
-        PageResult<GlobalPropertyVO> pageResult = new PageResult<>(globalPropertys);
+        Page<GlobalProperty> globalProperties = this.globalPropertyRepository.findAll(this.globalPropertyRepository
+                .buildActivitySpecification(key),pageRequest);
+        Page<GlobalPropertyVO> globalPropertyVOPage = GlobalPropertyVO.toGlobalPropertyVO(globalProperties);
+        PageResult<GlobalPropertyVO> pageResult = new PageResult<>(globalPropertyVOPage);
         return Result.success(pageResult);
     }
 

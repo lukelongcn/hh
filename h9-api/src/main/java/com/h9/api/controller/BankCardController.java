@@ -61,6 +61,9 @@ public class BankCardController {
     }
 
 
+    /**
+     * description: 所有支持的银行列表
+     */
     @Secured
     @GetMapping("/my/bankcards")
     public Result myBankCards(@SessionAttribute("curUserId")long userId){

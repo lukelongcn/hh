@@ -13,6 +13,7 @@ import com.h9.common.db.entity.GlobalProperty;
 import com.h9.common.modle.vo.GlobalPropertyVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,8 +50,8 @@ public class BasisController {
     @Secured
     @GetMapping(value="/param/page")
     @ApiOperation("分页获取参数")
-    public Result<PageResult<GlobalPropertyVO>> getActivities(PageDTO pageDTO){
-        return this.basisService.getGlobalProperties(pageDTO);
+    public Result<PageResult<GlobalPropertyVO>> getActivities(PageDTO pageDTO,@ApiParam(value = "名称或参数标识") @RequestParam String key){
+        return this.basisService.getGlobalProperties(key,pageDTO);
     }
 
     @Secured
