@@ -322,7 +322,6 @@ public class LotteryService {
         BigDecimal money = reward.getMoney();
         int size = lotteryList.size();
         Map<Integer, BigDecimal> moneyMap = new HashMap<>();
-
         if (size == 1) {
             moneyMap.put(1, money);
         } else if (size == 2) {
@@ -334,7 +333,9 @@ public class LotteryService {
             moneyMap.put(3, money.multiply(new BigDecimal(10)).divide(new BigDecimal(100)));
         }
         //获取随机中奖人数
-        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
+        int index = size <= 3 ? size : 3;
+        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList,index);
+        lotteries.clear();
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
 
