@@ -184,8 +184,8 @@ public class ConsumeService {
         String phone = user.getPhone();
         String smsCodeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.DIDI_CARD.getCode());
         String value = redisBean.getStringValue(smsCodeKey);
-
         if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
+        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
         BigDecimal accountBalance = userAccount.getBalance();
@@ -246,6 +246,7 @@ public class ConsumeService {
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
         String redisCode = redisBean.getStringValue(smsCodeKey);
         if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
         UserBank userBank = userBankRepository.findOne(bankId);
         BankType bankType = userBank.getBankType();
