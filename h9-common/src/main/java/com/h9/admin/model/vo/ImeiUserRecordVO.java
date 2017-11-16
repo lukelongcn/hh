@@ -7,8 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
  * Created by Gonyb on 2017/11/10.
  */
 public class ImeiUserRecordVO {
-    @ApiModelProperty(value = "用户id ")
-    private Long userId;
     @ApiModelProperty(value = "串号")
     private String imei;
     @ApiModelProperty(value = "关联账号数")
@@ -20,18 +18,9 @@ public class ImeiUserRecordVO {
     public ImeiUserRecordVO() {
     }
 
-    public ImeiUserRecordVO(Long userId, String imei, Long joinCount) {
-        this.userId = userId;
+    public ImeiUserRecordVO(String imei, Long joinCount) {
         this.imei = imei;
         this.joinCount = joinCount;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getImei() {
