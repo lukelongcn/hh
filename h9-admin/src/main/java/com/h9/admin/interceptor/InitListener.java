@@ -60,7 +60,6 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
     }
 
     private void initArticleType(){
-        this.savetArticleType("公告","noticeArticle",1);
         this.savetArticleType("推荐文章","recommendArticle",1);
     }
 

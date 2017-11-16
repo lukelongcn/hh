@@ -79,8 +79,6 @@ public class ProductService {
         //记录扫描记录
         ProductLog productLog = recordLog(userId, lotteryVo, userRecord);
 
-
-
         Result result = findByCode(code);
         if (result != null) return result;
 

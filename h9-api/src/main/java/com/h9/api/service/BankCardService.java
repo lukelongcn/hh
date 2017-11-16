@@ -6,6 +6,7 @@ import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.utils.CharacterFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by 李圆
@@ -52,6 +55,11 @@ public class BankCardService {
         userBank.setUserId(userId);
         userBank.setName(bankCardDTO.getName());
         userBank.setNo(bankCardDTO.getNo());
+
+        if (CharacterFilter.containChinese(bankCardDTO.getNo())) {
+            return Result.fail("请输入纯数字的银行卡");
+        }
+
         Long typeId = bankCardDTO.getBankTypeId();
         BankType bankType = bankTypeRepository.findOne(typeId);
         if (bankType == null) return Result.fail("此银行类型不存在");
@@ -129,8 +137,12 @@ public class BankCardService {
                         map.put("bankImg", bank.getBankType().getBankImg());
                         map.put("name", bank.getBankType().getBankName());
                         String no = bank.getNo();
-                        int length = no.length();
-                        map.put("no", no);
+
+                        StringBuilder sbNo = new StringBuilder();
+                        sbNo.append(no.substring(0, 4));
+                        sbNo.append("**** **** ****");
+                        sbNo.append(no.substring(no.length() - 4,no.length()));
+                        map.put("no", sbNo.toString());
                         map.put("id", bank.getId() + "");
                         map.put("color", bank.getBankType().getColor());
                         bankList.add(map);

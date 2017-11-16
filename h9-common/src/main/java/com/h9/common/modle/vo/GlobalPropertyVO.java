@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.entity.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 
 import java.util.*;
 
@@ -143,6 +144,10 @@ public class GlobalPropertyVO {
         GlobalPropertyVO globalPropertyVO = new GlobalPropertyVO();
         BeanUtils.copyProperties(globalProperty,globalPropertyVO);
         return globalPropertyVO;
+    }
+
+    public static Page<GlobalPropertyVO> toGlobalPropertyVO(Page<GlobalProperty> globalPropertyPage){
+        return  globalPropertyPage.map(globalProperty -> new GlobalPropertyVO(globalProperty));
     }
 
     public GlobalPropertyVO() {

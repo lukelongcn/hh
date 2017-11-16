@@ -101,9 +101,9 @@ public class CommunityService {
         return Result.success(this.bannerRepository.save(b));
     }
 
-    public Result<PageResult<Banner>> getBanners(long banner_type_id,PageDTO pageDTO){
+    public Result<PageResult<Banner>> getBanners(long bannerTypeId,PageDTO pageDTO){
         PageRequest pageRequest = this.bannerRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
-        Page<Banner> banners = this.bannerRepository.findAllByBannerType_Id(banner_type_id,pageRequest);
+        Page<Banner> banners = this.bannerRepository.findAllByBannerType_Id(bannerTypeId,pageRequest);
         PageResult<Banner> pageResult = new PageResult<>(banners);
         return Result.success(pageResult);
     }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -36,7 +37,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Object hanldeException(Exception e) {
+    public Object hanldeException(Exception e, HttpServletRequest httpServletRequest) {
+
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
         } else if (e instanceof NoHandlerFoundException) {
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler {
         } else {
             logger.info(e.getMessage(), e);
             if(System.currentTimeMillis()-time >5* 60 *1000) {
-                mailService.sendtMail("徽酒服务器错误" + currentEnvironment, ExceptionUtils.getMessage(e));
+                mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: "+httpServletRequest.getRequestURL()+ExceptionUtils.getMessage(e));
                 time = System.currentTimeMillis();
             }
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(),"服务器繁忙，请稍后再试");

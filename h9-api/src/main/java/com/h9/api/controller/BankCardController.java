@@ -61,6 +61,9 @@ public class BankCardController {
     }
 
 
+    /**
+     * description: 我的银行卡
+     */
     @Secured
     @GetMapping("/my/bankcards")
     public Result myBankCards(@SessionAttribute("curUserId")long userId){

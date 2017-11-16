@@ -20,6 +20,9 @@ public class LotteryDto {
     private double latitude;
 
     public String getCode() {
+//        if(code.contains()){
+//
+//        }
         return code;
     }
 

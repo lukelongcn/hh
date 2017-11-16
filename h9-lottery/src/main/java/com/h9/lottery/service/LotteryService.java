@@ -40,6 +40,7 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
  * Time: 14:50
  */
 @Service
+@Transactional
 public class LotteryService {
 
     Logger logger = Logger.getLogger(LotteryService.class);
@@ -109,7 +110,9 @@ public class LotteryService {
         if (status == StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
-        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
+
+        User user = userRepository.findOne(userId);
+        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery != null) {
 //          放回是否开奖
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
@@ -142,7 +145,7 @@ public class LotteryService {
 
             rewardRepository.save(reward);
             lottery.setReward(reward);
-            lottery.setUserId(userId);
+            lottery.setUser(user);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
 
@@ -179,7 +182,7 @@ public class LotteryService {
         if (reward == null) {
             return Result.fail("红包不存在");
         }
-        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
+        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery == null || reward.getPartakeCount() == 0) {
             return Result.fail("您没有参与该活动");
         }
@@ -233,10 +236,9 @@ public class LotteryService {
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
                 lotteryUser.setMaxMoney(top1LotteryFlow.getId().equals(lotteryFromDb.getId()));
                 lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
-                User user = userRepository.findOne(lotteryFromDb.getUser().getId());
-                lotteryUser.setName(user.getNickName());
-                lotteryUser.setAvatar(user.getAvatar());
-                lotteryUser.setMe(userId.equals(lotteryUser.getUserId()));
+                lotteryUser.setName(lotteryFromDb.getUser().getNickName());
+                lotteryUser.setAvatar(lotteryFromDb.getUser().getAvatar());
+                lotteryUser.setMe(lotteryFromDb.getUser().equals(lotteryUser.getUserId()));
                 lotteryUsers.add(lotteryUser);
             }
         } else {
@@ -245,11 +247,10 @@ public class LotteryService {
                 Lottery lotteryFromDb = lotteryList.get(i);
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
-                lotteryUser.setUserId(lotteryFromDb.getUserId());
+                lotteryUser.setUserId(lotteryFromDb.getUser().getId());
                 lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
-                User user = userRepository.findOne(lotteryFromDb.getUserId());
-                lotteryUser.setName(user.getNickName());
-                lotteryUser.setAvatar(user.getAvatar());
+                lotteryUser.setName(lotteryFromDb.getUser().getNickName());
+                lotteryUser.setAvatar(lotteryFromDb.getUser().getAvatar());
                 lotteryUser.setMe(userId.equals(lotteryUser.getUserId()));
                 lotteryUsers.add(lotteryUser);
             }
@@ -346,7 +347,7 @@ public class LotteryService {
             Lottery lottery = lotteries.get(i);
             lottery.setMoney(rewardMoney);
             LotteryFlow lotteryFlow = new LotteryFlow(lottery);
-            Long userId = lottery.getUserId();
+            Long userId = lottery.getUser().getId();
             User user = userRepository.findOne(userId);
             lotteryFlow.setUser(user);
             lotteryFlow.setDesc(remarkList.get(i % count));

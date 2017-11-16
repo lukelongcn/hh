@@ -45,7 +45,7 @@ public class ConsumeController {
     /**
      * description: 获取可充值的面额
      */
-    @Secured
+    @Secured()
     @GetMapping("/mobile/denomination")
     public Result rechargeDenomination(@SessionAttribute("curUserId") Long userId) {
 
