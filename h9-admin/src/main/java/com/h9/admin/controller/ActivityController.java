@@ -36,7 +36,6 @@ public class ActivityController {
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
     public Result<PageResult<LotteryFlowActivityVO>> getLotteryFlows(LotteryFlowActivityDTO lotteryFlowActivityDTO){
-       // return Result.success(new PageResult<LotteryFlowActivityVO>());
         return this.activityService.getLotteryFlows(lotteryFlowActivityDTO);
     }
 
