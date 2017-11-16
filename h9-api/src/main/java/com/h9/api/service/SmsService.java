@@ -56,6 +56,7 @@ public class SmsService {
             return Result.fail("短信类型不对");
         }
         Result result = sendSMSValdite(userId,phone, smsType);
+
         if (result != null) {
             return result;
         }
