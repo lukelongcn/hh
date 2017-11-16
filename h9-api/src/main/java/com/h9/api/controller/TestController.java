@@ -15,24 +15,34 @@ import org.springframework.web.bind.annotation.*;
  * Time: 10:26
  */
 @RestController
-@RequestMapping("/test")
 @Api(value = "测试相关接口",description = "测试相关接口")
 public class TestController {
 
     /**
      * description: 手机号登录
      */
-    @GetMapping("/hello")
+    @GetMapping("/test/hello")
     public Result phoneLogin(){
         System.out.println("hello 11111111111");
+        int i = 1/0;
         show();
         return Result.success();
     }
 
+    @GetMapping("/test/hello2")
+    public Result phoneLogin2(){
+        return Result.success();
+    }
 
     public static  void show(){
         System.out.println("im show");
     }
 
+//    @GetMapping("/error")
+//    public String error(){
+//        System.out.println("er");
+//
+//        return "e";
+//    }
 
 }
