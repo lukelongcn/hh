@@ -56,6 +56,7 @@ public class SMSProvide {
                 .build().toUri();
 
         ReturnMsg returnMsg = restTemplate.getForObject(uri, ReturnMsg.class);
+        if(returnMsg!=null) logger.debugv(JSONObject.toJSONString(returnMsg));
         //处理结果
         if (returnMsg != null && returnMsg.getCode() != 2) {
             return new Result(1, returnMsg.getMsg());

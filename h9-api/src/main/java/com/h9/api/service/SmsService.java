@@ -32,7 +32,7 @@ public class SmsService {
 
 //    h9.sendMessage = false
     @Value("${h9.sendMessage}")
-    private String sendMessage;
+    private boolean sendMessage;
     @Resource
     private RedisBean redisBean;
 
@@ -87,7 +87,8 @@ public class SmsService {
         }
         String content = getContent(smsType, code);
         Result returnMsg = null;
-        if("true".equals(sendMessage)){
+        logger.debugv("sendMessage="+sendMessage);
+        if(true == sendMessage){
             returnMsg = smsProvide.sendSMS(phone, content);
         }else{
             code = "0000";

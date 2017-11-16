@@ -128,7 +128,7 @@ public class ProductService {
         }
         int state = productInfo.getState();
         if (state == 2) {
-            return Result.fail("未能查询到该商品信息");
+            return Result.fail("您所查询的防伪码不存在，谨防假冒！或与公司客服人员联系！");
         } else if (state == 4) {
             return Result.fail("服务器繁忙，请稍后再试");
         } else {

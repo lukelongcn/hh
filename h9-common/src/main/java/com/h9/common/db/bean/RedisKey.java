@@ -60,7 +60,7 @@ public class RedisKey {
 
     //短信一分钟控制
     public static String getSmsCodeCountDown(String phone,int type){
-        return MessageFormat.format("sms:code:countdown{0}:{1}",type,phone);
+        return MessageFormat.format("sms:code:countdown:{0}:{1}",type,phone);
     }
 
     //短信一分钟控制

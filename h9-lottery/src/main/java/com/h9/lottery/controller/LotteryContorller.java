@@ -77,7 +77,6 @@ public class LotteryContorller {
             @RequestParam(value = "page",required = false) int page,
             @RequestParam(value = "limit",required = false) int limit
     ){
-
         return lotteryService.history(userId,page,limit);
     }
 
