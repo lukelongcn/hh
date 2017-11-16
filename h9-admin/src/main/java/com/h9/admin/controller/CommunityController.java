@@ -8,7 +8,6 @@ import com.h9.admin.service.CommunityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
-//import com.h9.common.db.entity.BannerType;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -72,10 +71,10 @@ public class CommunityController {
     }
 
     @Secured
-    @GetMapping(value="/banner/page/{banner_type_id}")
+    @GetMapping(value="/banner/page/{bannerTypeId}")
     @ApiOperation("分页获取功能")
-    public Result<PageResult<Banner>> getBanners(@PathVariable long banner_type_id, PageDTO pageDTO){
-        return this.communityService.getBanners(banner_type_id,pageDTO);
+    public Result<PageResult<Banner>> getBanners(@PathVariable long bannerTypeId, PageDTO pageDTO){
+        return this.communityService.getBanners(bannerTypeId,pageDTO);
     }
 
     @Secured
