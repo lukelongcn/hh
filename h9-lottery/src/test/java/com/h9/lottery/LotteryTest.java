@@ -79,10 +79,10 @@ public class LotteryTest {
     @Transactional
     public void contextLoads() {
 
-        LotteryModel pr = factoryProvider.findByLotteryModel("6123456973");
-        logger.debugv(JSONObject.toJSONString(pr));
+//        LotteryModel pr = factoryProvider.findByLotteryModel("6123456973");
+//        logger.debugv(JSONObject.toJSONString(pr));
 
-//        generateCode();
+        generateCode();
 
 //        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
 //        logger.debugv(JSONObject.toJSONString(lotteryRemark));
@@ -95,28 +95,28 @@ public class LotteryTest {
 //        logger.debugv(JSONObject.toJSONString(withdrawMax));
     }
 
-//    private void generateCode() {
-//        Activity one = activityRepository.findOne(8L);
-//        Product product = productRepository.findOne(1L);
-//        for(int i=0;i<=50;i++) {
-//            try {
-//                Reward reward = new Reward();
-//                reward.setMoney(new BigDecimal(18));
-//                String uuid = UUID.randomUUID().toString();
-//                String shortUrl = CodeUtil.shortUrl(uuid, CodeUtil.genRandomStrCode(8));
-//                reward.setCode(shortUrl);
-//                logger.debugv(shortUrl);
-//                reward.setActivityId(1L);
-//                reward.setMd5Code(MD5Util.getMD5(shortUrl));
-//                Reward reward1 = rewardRepository.saveAndFlush(reward);
-//                logger.debugv(shortUrl+ " " + JSONObject.toJSONString(reward1));
-//            } catch (Exception e) {
-//                logger.debug(e.getMessage(),e);;
-//            } finally {
-//            }
-//        }
-//        logger.debugv("完成");
-//    }
+    private void generateCode() {
+        Activity one = activityRepository.findOne(8L);
+        Product product = productRepository.findOne(1L);
+        for(int i=0;i<=50;i++) {
+            try {
+                Reward reward = new Reward();
+                reward.setMoney(new BigDecimal(18));
+                String uuid = UUID.randomUUID().toString();
+                String shortUrl = CodeUtil.shortUrl(uuid, CodeUtil.genRandomStrCode(8));
+                reward.setCode(shortUrl);
+                logger.debugv(shortUrl);
+                reward.setActivityId(1L);
+                reward.setMd5Code(MD5Util.getMD5(shortUrl));
+                Reward reward1 = rewardRepository.saveAndFlush(reward);
+                logger.debugv(shortUrl+ " " + JSONObject.toJSONString(reward1));
+            } catch (Exception e) {
+                logger.debug(e.getMessage(),e);;
+            } finally {
+            }
+        }
+        logger.debugv("完成");
+    }
 
 
 }
