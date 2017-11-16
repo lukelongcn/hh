@@ -57,25 +57,31 @@ public class ProductService {
 
     @Transactional
     public Result<AuthenticityVO> getAuthenticity(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
-        UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
-        ProductLog productLog = recordLog(userId, lotteryVo, userRecord);
-        String code = lotteryVo.getCode();
-        Result result = findByCode(code);
-        if (result != null) return result;
 
-//      TODO  黑名单 改成配置的
+        UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
+        String code = lotteryVo.getCode();
+
+        //       黑名单 改成配置的
         String imei = request.getHeader("imei");
         if (lotteryService.onBlackUser(userId, imei)) {
-
-            return Result.fail("系统繁忙，请稍后再试");
+            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
+
         int date = -60 * 1;
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
         long errCount = productLogRepository.findByUserId(userId, startDate);
+//        当前的条码是否是未扫过码
         long userCode = productLogRepository.findByUserId(userId, code);
         if (errCount > 3 && userCode <= 0) {
             return Result.fail("您的错误次数已经到达上限，请稍后再试");
         }
+
+        //记录扫描记录
+        ProductLog productLog = recordLog(userId, lotteryVo, userRecord);
+
+        Result result = findByCode(code);
+        if (result != null) return result;
+
         Product product4Update = productRepository.findByCode4Update(code);
         BigDecimal count = product4Update.getCount();
 
