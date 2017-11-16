@@ -121,11 +121,12 @@ public class AccountService {
 
     public Result<List<ImeiUserRecordVO>> deviceIdInfo(Date startTime, Date endTime) {
         List<ImeiUserRecordVO> userRecordByTime = userRecordRepository.getUserRecordByTime(startTime, endTime);
-        userRecordByTime.forEach(imeiUserRecordVO -> 
-                imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
-        userRecordByTime = userRecordByTime.stream().filter(imeiUserRecordVO -> 
+        userRecordByTime = userRecordByTime.stream().filter(imeiUserRecordVO ->
                 systemBlackListRepository.findByImeiAndStatus(imeiUserRecordVO.getImei(),new Date()) == null) //过滤已加入黑名单的数据
                 .collect(Collectors.toList());
+        userRecordByTime.forEach(imeiUserRecordVO -> 
+                imeiUserRecordVO.setRelevanceCount(userRecordRepository.findRelevanceCount(imeiUserRecordVO.getImei())));
+        
         return Result.success(userRecordByTime);
     }
 

@@ -39,16 +39,19 @@ public class lotteryTask {
     public void run() {
 
         List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
+        if(rewardList == null){
+            return;
+        }
+        for (Reward reward : rewardList) {
+            try {
+                logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
+                lotteryService.lottery(null, reward.getCode());
+                logger.info("rewardId: " + reward.getId() + "结束");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        rewardList.stream()
-                //过滤后,留下此类状态的
-                .filter(reward -> reward.getStatus() == Reward.StatusEnum.TO_BEGIN.getCode()
-                        || reward.getStatus() == Reward.StatusEnum.PART_START.getCode())
-                .forEach(reward -> {
-                    logger.info("rewardId: " + reward.getId() + "结束");
-                    reward.setStatus(Reward.StatusEnum.END.getCode());
-                    lotteryService.lottery(null, reward.getCode());
-                });
+        }
 
     }
 }

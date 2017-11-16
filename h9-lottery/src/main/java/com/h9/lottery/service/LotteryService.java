@@ -91,7 +91,7 @@ public class LotteryService {
         String imei = request.getHeader("imei");
 
         if (onBlackUser(userId, imei)) {
-            return Result.fail("系统繁忙，请稍后再试");
+            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
 
         //  检查第三方库有没有数据
@@ -203,9 +203,9 @@ public class LotteryService {
         Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.SECOND);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
-        lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
-
-        if (lastDate.before(nowDate)) {
+        long differentDate = lastDate.getTime() - nowDate.getTime();
+        lotteryResult.setDifferentDate(differentDate>0?differentDate:0);
+        if (differentDate<=0) {
             lottery(null, code);
         }
 
@@ -322,7 +322,6 @@ public class LotteryService {
         BigDecimal money = reward.getMoney();
         int size = lotteryList.size();
         Map<Integer, BigDecimal> moneyMap = new HashMap<>();
-
         if (size == 1) {
             moneyMap.put(1, money);
         } else if (size == 2) {
@@ -334,7 +333,9 @@ public class LotteryService {
             moneyMap.put(3, money.multiply(new BigDecimal(10)).divide(new BigDecimal(100)));
         }
         //获取随机中奖人数
-        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList, size <= 3 ? size : 3);
+        int index = size <= 3 ? size : 3;
+        List<Lottery> lotteriesRandom = randomDataUtil.generateRandomPermutation(lotteryList,index);
+        lotteries.clear();
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
 
@@ -373,7 +374,10 @@ public class LotteryService {
         if (reward != null) {
             return null;
         }
+        long start = System.currentTimeMillis();
         LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
+        long end = System.currentTimeMillis();
+        logger.debugv(""+((end-start)/1000l));
         if (lotteryModel == null) {
             return Result.fail("服务繁忙，请稍后再试");
         }

@@ -32,7 +32,7 @@ import static org.jboss.logging.Logger.getLogger;
  */
 @Component
 public class UserService {
-    
+
     Logger logger = getLogger(UserService.class);
     @Resource
     private UserInfoRepository userInfoRepository;
@@ -45,65 +45,70 @@ public class UserService {
     @Resource
     private ConfigService configService;
 
-    @Transactional
-    public void user(){
+    public void user() {
 
         int page = 0;
-        int limit = 200;
+        int limit = 500;
         int totalPage = 0;
+
         PageResult<UserInfo> userInfoPageResult;
-        Sort sort = new Sort(Sort.Direction .ASC,"id");
-        do{
+        Sort sort = new Sort(Sort.Direction.ASC, "id");
+        do {
             page = page + 1;
-            userInfoPageResult = userInfoRepository.findAll(page, limit,sort);
+            userInfoPageResult = userInfoRepository.findAll(page, limit, sort);
             totalPage = (int) userInfoPageResult.getTotalPage();
             List<UserInfo> userInfos = userInfoPageResult.getData();
-            for (UserInfo userInfo:userInfos){
+            for (UserInfo userInfo : userInfos) {
                 covertUser(userInfo);
             }
 
+            logger.info("page: "+page+" totalPage: "+totalPage);
             float rate = (float) page * 100 / (float) totalPage;
-            if(page<=1&&userInfoPageResult.getCount()!=0)
-                logger.debugv("用户迁移进度 " + rate + "% " + page + "/" +totalPage );
-        } while (page<=1&&userInfoPageResult.getCount()!=0);
+            if (page <= 1 && userInfoPageResult.getCount() != 0)
+                logger.debugv("用户迁移进度 " + rate + "% " + page + "/" + totalPage);
+        } while (userInfoPageResult.getCount() != 0);
 
     }
 
     @Transactional
-    private void covertUser(UserInfo userInfo){
-        if(StringUtils.isNotEmpty(userInfo.getOpenID())
-                ||StringUtils.isNotEmpty(userInfo.getPhone())) {
+    private void covertUser(UserInfo userInfo) {
+        if (StringUtils.isNotEmpty(userInfo.getOpenID())
+                || StringUtils.isNotEmpty(userInfo.getPhone())) {
             User h9UserId = userRepository.findByH9UserId(userInfo.getId());
+
             if (h9UserId != null) {
                 return;
             }
+
             User user = userInfo.corvert();
-            if(StringUtils.isEmpty(user.getAvatar())){
+            if (StringUtils.isEmpty(user.getAvatar())) {
                 user.setAvatar(getDefaultHead());
             }
             user = userRepository.saveAndFlush(user);
             UserAccount userAccount = new UserAccount();
             userAccount.setUserId(user.getId());
             BigDecimal moneyCount = userInfo.getMoneyCount();
-            if(moneyCount !=null){
+            if (moneyCount != null) {
                 //TODO做负数处理
-                BigDecimal balance = moneyCount.compareTo(new BigDecimal(0))>=0?moneyCount:new BigDecimal(0);
+                BigDecimal balance = moneyCount.compareTo(new BigDecimal(0)) >= 0 ? moneyCount : new BigDecimal(0);
                 userAccount.setBalance(balance);
             }
             Integer integralCount = userInfo.getIntegralCount();
-            if(integralCount!=null){
+            if (integralCount != null) {
                 userAccount.setvCoins(new BigDecimal(integralCount));
             }
             userAccountRepository.save(userAccount);
             UserExtends userExtends = new UserExtends();
             userExtends.setUserId(user.getId());
+            userExtends.setImgId(userInfo.getImgId());
+
             userExtendsRepository.save(userExtends);
         }
 
     }
 
 
-    public String getDefaultHead(){
+    public String getDefaultHead() {
         String defaultHead = configService.getStringConfig("defaultHead");
         if (StringUtils.isBlank(defaultHead)) {
             logger.info("没有在参数配置中找到默认头像的配置");

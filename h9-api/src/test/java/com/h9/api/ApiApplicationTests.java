@@ -234,7 +234,7 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 //        String token = "570b2acf-c4c9-48b5-a682-9086a8245f41";
-        String token = "703fb2c7-1660-473e-8e48-e9810088f9fe";
+        String token = "5544325a-860d-4621-8546-b0e02d7452b9";
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         String id = redisBean.getStringValue(tokenUserIdKey);
         System.out.println(id);

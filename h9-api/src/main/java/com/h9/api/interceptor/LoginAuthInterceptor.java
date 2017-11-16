@@ -34,40 +34,40 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
         if (o instanceof HandlerMethod) {
+
             //获限token
             String token = httpServletRequest.getHeader("token");
             HandlerMethod handlerMethod = (HandlerMethod) o;
             Secured secured = handlerMethod.getMethodAnnotation(Secured.class);
             if (secured != null) {
-                if (StringUtils.isBlank(token)) throw new UnAuthException(401,"未知用户");
-
+                if (StringUtils.isBlank(token)) throw new UnAuthException(401, "未知用户");
                 // token 失效检查
                 String userId4phone = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
                 String userId4WeChat = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
-                if(StringUtils.isEmpty(userId4WeChat)&&StringUtils.isEmpty(userId4phone)){
-                    throw new UnAuthException(401,"请重新登录");
+                if (StringUtils.isEmpty(userId4WeChat) && StringUtils.isEmpty(userId4phone)) {
+                    throw new UnAuthException(401, "请重新登录");
                 }
                 String userId = "";
-                if(!StringUtils.isEmpty(userId4phone)){
+                if (!StringUtils.isEmpty(userId4phone)) {
                     userId = userId4phone;
                 }
-                if(!StringUtils.isEmpty(userId4WeChat)){
-                    logger.info("userId4WeChat: "+userId4WeChat);
-                    logger.info(""+secured.bindPhone());
-                    if(secured.bindPhone()){
-                        throw new UnAuthException(402,"绑定手机号");
+                if (!StringUtils.isEmpty(userId4WeChat)) {
+                    logger.info("userId4WeChat: " + userId4WeChat);
+                    logger.info("" + secured.bindPhone());
+                    if (secured.bindPhone()) {
+                        throw new UnAuthException(402, "绑定手机号");
                     }
                     userId = userId4WeChat;
                 }
-                MDC.put("userId",userId);
+                MDC.put("userId", userId);
 
-                if(StringUtils.isEmpty(userId)){
-                    throw new UnAuthException(401,"请重新登录");
+                if (StringUtils.isEmpty(userId)) {
+                    throw new UnAuthException(401, "请重新登录");
                 }
 
-                MDC.put("userId",userId);
+                MDC.put("userId", userId);
                 httpServletRequest.getSession().removeAttribute("curUserId");
-                httpServletRequest.getSession().setAttribute("curUserId",userId);
+                httpServletRequest.getSession().setAttribute("curUserId", userId);
             }
         }
         return true;
@@ -75,11 +75,9 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-
     }
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-
     }
 }

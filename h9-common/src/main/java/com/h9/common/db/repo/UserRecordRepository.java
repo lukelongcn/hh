@@ -19,11 +19,10 @@ import java.util.List;
 @Repository
 public interface UserRecordRepository extends BaseRepository<UserRecord> {
     
-    @Query(value = "select DISTINCT new com.h9.admin.model.vo.ImeiUserRecordVO(u.id,ur.imei," +
+    @Query(value = "select DISTINCT new com.h9.admin.model.vo.ImeiUserRecordVO(ur.imei," +
             "(select count(l2) from LotteryLog l2 where l2.userId in (select distinct u1.userId from UserRecord u1 where u1.imei = ur.imei))" +
-            ") from UserRecord ur,User u " +
-            "where u.id=ur.userId " +
-            "and ur.createTime between ?1 and ?2 AND ur.imei IS NOT null")
+            ") from UserRecord ur" +
+            " where ur.createTime between ?1 and ?2 AND ur.imei IS NOT null")
     List<ImeiUserRecordVO> getUserRecordByTime(Date startTime, Date endTime);
 
     /**

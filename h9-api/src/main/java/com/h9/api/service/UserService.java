@@ -75,6 +75,7 @@ public class UserService {
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode()), phone));
         if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+            redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
         }
         User user = userRepository.findByPhone(phone);
         if (user == null) {
@@ -203,8 +204,8 @@ public class UserService {
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
-        String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
 
+        String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码已失效");
         if (!redisCode.equals(code)) return Result.fail("验证码错误");
@@ -234,15 +235,13 @@ public class UserService {
             user.setPhone(phone);
             userRepository.save(user);
         }
-
+        redisBean.expire(key, 1, TimeUnit.SECONDS);
         String weChatUserId = RedisKey.getWeChatUserId(token);
         redisBean.expire(weChatUserId, 1, TimeUnit.MICROSECONDS);
 
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
         redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
-
-
 
         return Result.success();
     }

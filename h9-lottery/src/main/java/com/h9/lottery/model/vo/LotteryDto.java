@@ -1,5 +1,6 @@
 package com.h9.lottery.model.vo;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -13,7 +14,7 @@ import javax.persistence.Column;
  * Time: 15:26
  */
 public class LotteryDto {
-    @NotEmpty(message = "条码不存在")
+    @NotBlank(message = "条码不存在")
     private String code;
     private double longitude;
     private double latitude;

@@ -8,6 +8,7 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.SMSLog;
 import com.h9.common.db.repo.SMSLogReposiroty;
+import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +30,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class SmsService {
 
-
-    @Value("${h9.current.envir}")
-    private String currentEnvironment;
+//    h9.sendMessage = false
+    @Value("${h9.sendMessage}")
+    private boolean sendMessage;
     @Resource
     private RedisBean redisBean;
-    
+
     Logger logger = Logger.getLogger(SmsService.class);
 
     @Resource
@@ -49,23 +50,23 @@ public class SmsService {
      *
      * @see com.h9.api.enums.SMSTypeEnum 短信类别
      */
-    public Result sendSMSCode(String phone, int smsType) {
+    public Result sendSMSCode(Long userId,String phone, int smsType) {
         SMSTypeEnum smstypeEnum = SMSTypeEnum.findByCode(smsType);
         if (smstypeEnum == null) {
             return Result.fail("短信类型不对");
         }
-        Result result = sendSMSValdite(phone, smsType);
+        Result result = sendSMSValdite(userId,phone, smsType);
         if (result != null) {
             return result;
         }
         //短信限制 一分钟一次lastSendKey
-        String lastSendKey = RedisKey.getSmsCodeCountDown(phone,smsType);
+        String lastSendKey = RedisKey.getSmsCodeCountDown(phone, smsType);
         String lastSendValue = redisBean.getStringValue(lastSendKey);
         if (!StringUtils.isBlank(lastSendValue)) {
             return new Result(1, "短信发送过于频繁,请一分钟再试~");
         }
         //短信限制 一天最多十次
-        String countKey = RedisKey.getSmsCodeCount(phone,smsType);
+        String countKey = RedisKey.getSmsCodeCount(phone, smsType);
         String countStr = redisBean.getStringValue(countKey);
 
         int count = 0;
@@ -74,59 +75,70 @@ public class SmsService {
         }
 
         int smsOneDayCount = configHanler.getSmsOneDayCount();
-        if(count > smsOneDayCount){
-            return  Result.fail("短信发送过于频繁,请稍后再试~");
+        if (count > smsOneDayCount) {
+            return Result.fail("短信发送过于频繁,请稍后再试~");
         }
 
         String code;
-        String codeKey = RedisKey.getSmsCode(phone,smsType);
-        code= redisBean.getStringValue(codeKey);
-        if(StringUtils.isEmpty(code)){
+        String codeKey = RedisKey.getSmsCodeKey(phone, smsType);
+        code = redisBean.getStringValue(codeKey);
+        if (StringUtils.isEmpty(code)) {
             code = RandomStringUtils.random(4, "0123456789");
         }
-        String content = getContent(smsType,code);
-        Result returnMsg = smsProvide.sendSMS(phone, content);
+        String content = getContent(smsType, code);
+        Result returnMsg = null;
+        logger.debugv("sendMessage="+sendMessage);
+        if(true == sendMessage){
+            returnMsg = smsProvide.sendSMS(phone, content);
+        }else{
+            code = "0000";
+            returnMsg = Result.success("验证码 0000");
+        }
+
         if (returnMsg != null && returnMsg.getCode() != 0) {
             //失败
-            SMSLog smsLog = new SMSLog(content, phone,code,false);
+            SMSLog smsLog = new SMSLog(content, phone, code, false);
             smsLog.setType(smsType);
             smsLogReposiroty.save(smsLog);
-            return Result.fail( "请稍后再试");
+            return Result.fail("请稍后再试");
         } else {
             //成功
-            SMSLog smsLog = new SMSLog(content, phone,code, true);
+            SMSLog smsLog = new SMSLog(content, phone, code, true);
             smsLog.setType(smsType);
             smsLogReposiroty.save(smsLog);
             //短信发送成功，一分钟后才能发第二条
             redisBean.setStringValue(lastSendKey, System.currentTimeMillis() + "", 60, TimeUnit.SECONDS);
             //发送次数加1,1天超时
-            redisBean.setStringValue(countKey, (count+1) + "");
+            redisBean.setStringValue(countKey, (count + 1) + "");
             redisBean.expire(countKey, DateUtil.getTimesNight());
             //存储短信记录
             redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
-            return  Result.success("短信发送成功");
+            return Result.success("短信发送成功");
         }
     }
 
-    private String getContent(int type,String code){
+    private String getContent(int type, String code) {
         return "您的校验码是：" + code + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！";
     }
 
 
-
+    private UserRepository userRepository;
 
 
     //校验信息
-    private Result sendSMSValdite(String phone, int smsType) {
-        if(smsType== SMSTypeEnum.CASH_RECHARGE.getCode()){
+    private Result sendSMSValdite(Long userId,String phone, int smsType) {
+
+        if (smsType == SMSTypeEnum.CASH_RECHARGE.getCode()) {
 
 
-        }else if(smsType== SMSTypeEnum.DIDI_CARD.getCode()){
+        } else if (smsType == SMSTypeEnum.DIDI_CARD.getCode()) {
 
-        }else if(smsType== SMSTypeEnum.MOBILE_RECHARGE.getCode()){
+        } else if (smsType == SMSTypeEnum.MOBILE_RECHARGE.getCode()) {
 
         }
         return null;
     }
+
+
 
 }
