@@ -83,7 +83,7 @@ public class UserInfo {
 
     public User corvert(){
         User user = new User();
-        user.setId(id);
+
         user.setPhone(phone);
         user.setCreateTime(RegisterTime);
         user.setAvatar(Userimg);
@@ -93,6 +93,7 @@ public class UserInfo {
         user.setPassword(password);
         user.setUuid(UserGuid);
         user.setH9UserId(id);
+        user.setOpenId(OpenID);
         return user;
 
     }
