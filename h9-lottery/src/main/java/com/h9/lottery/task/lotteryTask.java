@@ -39,12 +39,19 @@ public class lotteryTask {
     public void run() {
 
         List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
+        if(rewardList == null){
+            return;
+        }
+        for (Reward reward : rewardList) {
+            try {
+                logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
+                lotteryService.lottery(null, reward.getCode());
+                logger.info("rewardId: " + reward.getId() + "结束");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        rewardList.stream().forEach(reward -> {
-                    logger.info("rewardId: " + reward.getId() + "开始");
-                    lotteryService.lottery(null, reward.getCode());
-            logger.info("rewardId: " + reward.getId() + "结束");
-                });
+        }
 
     }
 }
