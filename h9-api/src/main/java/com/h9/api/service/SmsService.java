@@ -7,7 +7,9 @@ import com.h9.common.common.ConfigHanler;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.SMSLog;
+import com.h9.common.db.entity.UserAccount;
 import com.h9.common.db.repo.SMSLogReposiroty;
+import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +47,8 @@ public class SmsService {
     private SMSProvide smsProvide;
     @Resource
     private ConfigHanler configHanler;
+    @Resource
+    private UserAccountRepository userAccountRepository;
 
     /**
      * description:
@@ -62,10 +67,11 @@ public class SmsService {
             return Result.fail("短信类型不对");
         }
 
+        //TODO 客户端调完放开
         // 把登录注册的短信移抽取出去，其他类型的短信发送都是要登录才能使用的。
-        if(smsType == SMSTypeEnum.REGISTER.getCode()){
-            return Result.fail("请求错误");
-        }
+//        if(smsType == SMSTypeEnum.REGISTER.getCode()){
+//            return Result.fail("请求错误");
+//        }
 
         Result result = sendSMSValdite(userId, phone, smsType);
 
@@ -142,16 +148,11 @@ public class SmsService {
     //校验信息
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
-        if (smsType == SMSTypeEnum.CASH_RECHARGE.getCode()) {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
 
-        }
-
-        if (smsType == SMSTypeEnum.DIDI_CARD.getCode()) {
-
-        }
-
-        if (smsType == SMSTypeEnum.MOBILE_RECHARGE.getCode()) {
-
+        if (balance.compareTo(new BigDecimal(0)) <= 0) {
+            return Result.fail("余额不足");
         }
         return null;
     }

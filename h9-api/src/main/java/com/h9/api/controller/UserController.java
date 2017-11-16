@@ -47,9 +47,11 @@ public class UserController {
     @Secured(bindPhone = false)
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送非注册验证码")
-    public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type){
-        return smsService.sendSMSCode(null,phone, type);
+    public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type,@SessionAttribute("curUserId")Long userId){
+        return smsService.sendSMSCode(userId,phone, type);
     }
+
+
 
 
     /**
