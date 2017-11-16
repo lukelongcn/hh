@@ -18,7 +18,7 @@ import java.util.Date;
 @Repository
 public interface ProductLogRepository extends BaseRepository<ProductLog> {
 
-    @Query("select count(pl.code) from  ProductLog pl where pl.userId = ?1 and pl.createTime>?2 and pl.product = null" )
+    @Query("select count(pl.code) from  ProductLog pl where pl.userId = ?1 and pl.createTime>?2 and productId is null" )
     long findByUserId(Long userId, Date startDate);
 
     @Query("select count(pl.code) from  ProductLog pl where pl.userId = ?1  and pl.code = ?2" )
