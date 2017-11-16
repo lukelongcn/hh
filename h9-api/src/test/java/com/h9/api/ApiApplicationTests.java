@@ -34,7 +34,7 @@ import java.util.concurrent.Future;
 public class ApiApplicationTests {
 
 
-    @Test
+    ////@Test
     public void contextLoads() {
 
     }
@@ -45,7 +45,7 @@ public class ApiApplicationTests {
     private RestTemplate restTemplate;
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
-//    @Test
+//    ////@Test
 //    public void TestMsm() {
 //        String mobile = "17673140753";
 //        Result result = smService.sendSMS(mobile);
@@ -58,7 +58,7 @@ public class ApiApplicationTests {
     @Resource
     private RedisBean redisBean;
 
-    //    @Test
+    //    ////@Test
     public void redisTest() {
         String key = String.format("h9:sms:count:%s", "17673140753");
         redisBean.setStringValue(key, "0");
@@ -67,7 +67,7 @@ public class ApiApplicationTests {
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
 
-    //    @Test
+    //    ////@Test
     public void test() {
         String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
         String stringValue = redisBean.getStringValue(key);
@@ -83,8 +83,8 @@ public class ApiApplicationTests {
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
 
-    @Test
-//    @Test
+    ////@Test
+//    ////@Test
     public void mobileRecharge() {
 
 
@@ -93,7 +93,7 @@ public class ApiApplicationTests {
     @Resource
     GoodsDIDINumberRepository goodsDIDINumberRepository;
 
-    @Test
+    ////@Test
     public void didiCardInit() {
 
         GoodsType goodsType = goodsTypeReposiroty.findOne(2L);
@@ -112,7 +112,7 @@ public class ApiApplicationTests {
 
     //    @Resource
 //    private ChinaPayService chinaPayService;
-    @Test
+    ////@Test
     public void testcp() {
 
         String merId = "808080211881410";
@@ -139,7 +139,7 @@ public class ApiApplicationTests {
     @Resource
     private OrdersRepository ordersReposiroty;
 
-    @Test
+    ////@Test
     public void asys() {
         Future<List<Orders>> allAsy = ordersReposiroty.findAllAsy();
         try {
@@ -154,7 +154,7 @@ public class ApiApplicationTests {
     }
 
 
-    @Test
+    ////@Test
     public void testKey() {
 //        InputStream is = this.getClass().getClassLoader().getResourceAsStream("MerPrK_808080211881410_20171102154758.key");
 //        PrivateKey key = new PrivateKey();
@@ -166,7 +166,7 @@ public class ApiApplicationTests {
     @Resource
     OrdersRepository ordersRepository;
 
-    @Test
+    //@Test
     public void testSpecification() {
 
     }
@@ -184,7 +184,7 @@ public class ApiApplicationTests {
     UserExtendsRepository userExtendsRepository;
 
 
-    @Test
+    //@Test
     public void saveUser(){
         User user = initUserInfo("13066886409");
         int loginCount = user.getLoginCount();
@@ -231,7 +231,7 @@ public class ApiApplicationTests {
     }
 
 
-    @Test
+    //@Test
     public void TestAccount(){
 //        String token = "570b2acf-c4c9-48b5-a682-9086a8245f41";
         String token = "5544325a-860d-4621-8546-b0e02d7452b9";
@@ -252,17 +252,20 @@ public class ApiApplicationTests {
     @Resource
     private MailService mailService;
 
-    @Test
+    //@Test
     public void testMail(){
+
         User user = userRepository.findOne(3L);
         user.setPhone("");
         user.setOpenId("");
         userRepository.save(user);
-
+        logger.info("hello.........");
+        System.out.println("hhllo");
         User use2r = userRepository.findOne(9681L);
         use2r.setPhone("");
         use2r.setOpenId("");
         userRepository.save(use2r);
+
 
     }
 
