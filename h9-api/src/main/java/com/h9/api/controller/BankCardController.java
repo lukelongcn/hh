@@ -62,7 +62,7 @@ public class BankCardController {
 
 
     /**
-     * description: 所有支持的银行列表
+     * description: 我的银行卡
      */
     @Secured
     @GetMapping("/my/bankcards")
