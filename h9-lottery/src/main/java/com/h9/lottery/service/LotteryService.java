@@ -109,7 +109,7 @@ public class LotteryService {
         if (status == StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
-        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
+        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery != null) {
 //          放回是否开奖
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
@@ -179,7 +179,7 @@ public class LotteryService {
         if (reward == null) {
             return Result.fail("红包不存在");
         }
-        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward);
+        Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery == null || reward.getPartakeCount() == 0) {
             return Result.fail("您没有参与该活动");
         }
