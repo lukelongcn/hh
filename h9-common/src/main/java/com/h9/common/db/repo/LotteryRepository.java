@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Repository
 public interface LotteryRepository extends BaseRepository<Lottery> {
-    @Query("select l from Lottery l where l.userId=?1 and l.reward.id")
+    @Query("select l from Lottery l where l.userId=?1 and l.reward.id=?2")
     Lottery findByUserIdAndReward(Long userId, Long id);
 
     @Query("select l from Lottery l where l.reward = ?1 order by l.createTime desc ")
