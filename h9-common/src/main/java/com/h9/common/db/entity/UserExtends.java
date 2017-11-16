@@ -43,6 +43,17 @@ public class UserExtends extends BaseEntity {
     private String job="";
 
 
+    @Column(name = "img_id")
+    private Long imgId;
+
+    public Long getImgId() {
+        return imgId;
+    }
+
+    public void setImgId(Long imgId) {
+        this.imgId = imgId;
+    }
+
     public Long getUserId() {
         return userId;
     }

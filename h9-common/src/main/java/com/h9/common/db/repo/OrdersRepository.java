@@ -17,7 +17,11 @@ import java.util.concurrent.Future;
 public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("SELECT o from Orders o where o.user.id=?1 order by o.id desc")
     Page<Orders> findByUser(Long userId, Pageable pageable);
-    
+
+
+    @Query("SELECT o from Orders o where o.user.id=?1 and o.orderType = ?2 order by o.id desc")
+    Page<Orders> findDiDiCardByUser(Long userId,Integer orderType, Pageable pageable);
+
     default PageResult<Orders> findByUser(Long userId, int page, int limit){
         Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));
         return new PageResult(byUser);
