@@ -18,6 +18,7 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.ProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.apache.bcel.classfile.Code;
+import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,8 @@ import java.util.Date;
 @Component
 public class ProductService {
 
+    private Logger logger = Logger.getLogger(ProductService.class);
+
     @Resource
     private CommonService commonService;
     @Resource
@@ -46,10 +49,8 @@ public class ProductService {
     private ProductFlowRepository productFlowRepository;
     @Resource
     private ProductLogRepository productLogRepository;
-
     @Resource
     private FactoryProvider factoryProvider;
-
     @Resource
     private LotteryService lotteryService;
 
@@ -80,15 +81,14 @@ public class ProductService {
 
         if (count.compareTo(new BigDecimal(0)) == 0) {
             product4Update.setFisrtTime(new Date());
+            product4Update.setFisrtAddress(userRecord.getAddress());
         }
         product4Update.setCount(count.add(new BigDecimal(1)));
 
-        Date lastTime = product4Update.getLastTime();
+        Date fisrtTime = product4Update.getFisrtTime();
         product4Update.setLastTime(new Date());
         productLog.setProduct(product4Update);
-        String address = product4Update.getAddress();
         product4Update.setAddress(userRecord.getAddress());
-
 
         productLogRepository.save(productLog);
         ProductFlow productFlow = new ProductFlow();
@@ -100,9 +100,9 @@ public class ProductService {
         authenticityVO.setProductName(product4Update.getName());
         authenticityVO.setSupplierName(product4Update.getSupplierName());
         authenticityVO.setSupplierDistrict(product4Update.getSupplierDistrict());
-        authenticityVO.setLastQueryTime(DateUtil.formatDate(lastTime, DateUtil.FormatType.GBK_SECOND));
-        authenticityVO.setLastQueryAddress(address);
-        authenticityVO.setQueryCount(count);
+        authenticityVO.setLastQueryTime(DateUtil.formatDate(fisrtTime, DateUtil.FormatType.GBK_SECOND));
+        authenticityVO.setLastQueryAddress(product4Update.getFisrtAddress());
+        authenticityVO.setQueryCount(product4Update.getCount());
         return Result.success(authenticityVO);
     }
 
@@ -119,7 +119,10 @@ public class ProductService {
         if (product != null) {
             return null;
         }
+        long start = System.currentTimeMillis();
         ProductModel productInfo = factoryProvider.getProductInfo(code);
+        long end = System.currentTimeMillis();
+        logger.debugv(""+((end-start)/1000l));
         if (productInfo == null) {
             return Result.fail("服务器繁忙，请稍后再试");
         }

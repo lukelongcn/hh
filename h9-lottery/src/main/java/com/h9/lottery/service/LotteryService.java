@@ -203,9 +203,9 @@ public class LotteryService {
         Date lastDate = DateUtil.getDate(updateTime, lotteryConfig.getDelay(), Calendar.SECOND);
         String endTime = DateUtil.formatDate(lastDate, DateUtil.FormatType.SECOND);
         lotteryResult.setEndTime(endTime);
-        lotteryResult.setDifferentDate(lastDate.getTime() - nowDate.getTime());
-
-        if (lastDate.before(nowDate)) {
+        long differentDate = lastDate.getTime() - nowDate.getTime();
+        lotteryResult.setDifferentDate(differentDate>0?differentDate:0);
+        if (differentDate<=0) {
             lottery(null, code);
         }
 
@@ -373,7 +373,10 @@ public class LotteryService {
         if (reward != null) {
             return null;
         }
+        long start = System.currentTimeMillis();
         LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
+        long end = System.currentTimeMillis();
+        logger.debugv(""+((end-start)/1000l));
         if (lotteryModel == null) {
             return Result.fail("服务繁忙，请稍后再试");
         }

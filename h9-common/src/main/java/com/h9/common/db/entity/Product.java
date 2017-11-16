@@ -54,6 +54,9 @@ public class Product extends BaseEntity {
     @Column(name = "last_time", columnDefinition = "datetime COMMENT '上次扫描时间'")
     private Date lastTime;
 
+    @Column(name = "fisrt_address",  columnDefinition = "varchar(256) default '' COMMENT '第一次查询位置'")
+    private String fisrtAddress;
+
 
     public Long getId() {
         return id;
@@ -125,5 +128,13 @@ public class Product extends BaseEntity {
 
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
+    }
+
+    public String getFisrtAddress() {
+        return fisrtAddress;
+    }
+
+    public void setFisrtAddress(String fisrtAddress) {
+        this.fisrtAddress = fisrtAddress;
     }
 }

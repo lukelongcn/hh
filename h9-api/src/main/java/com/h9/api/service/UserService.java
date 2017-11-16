@@ -203,8 +203,8 @@ public class UserService {
         if (user == null) return Result.fail("此用户不存在");
 
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
-        String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
 
+        String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码已失效");
         if (!redisCode.equals(code)) return Result.fail("验证码错误");
@@ -241,8 +241,6 @@ public class UserService {
         String tokenUserIdKey = RedisKey.getTokenUserIdKey(token);
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
         redisBean.setStringValue(tokenUserIdKey,user.getId()+"");
-
-
 
         return Result.success();
     }

@@ -6,6 +6,7 @@ import com.h9.common.db.entity.Product;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.LockModeType;
 
@@ -19,7 +20,7 @@ import javax.persistence.LockModeType;
 public interface ProductRepository extends BaseRepository<Product> {
 
     Product findByCode(String code);
-
+    @Transactional
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select p from Product p where p.code = ?1")
     Product findByCode4Update(String code);
