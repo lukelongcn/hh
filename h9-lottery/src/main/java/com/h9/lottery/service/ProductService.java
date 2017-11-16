@@ -71,7 +71,8 @@ public class ProductService {
         }
         int date = -60 * 1;
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
-        long errCount = productLogRepository.findByUserId(userId, startDate);
+        Date endDate = new Date(startDate.getTime()+60000);
+        long errCount = productLogRepository.findByUserId(userId, startDate, endDate);
         long userCode = productLogRepository.findByUserId(userId, code);
         if (errCount > 3 && userCode <= 0) {
             return Result.fail("您的错误次数已经到达上限，请稍后再试");
