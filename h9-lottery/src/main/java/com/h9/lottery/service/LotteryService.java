@@ -91,7 +91,7 @@ public class LotteryService {
         String imei = request.getHeader("imei");
 
         if (onBlackUser(userId, imei)) {
-            return Result.fail("您的账号异常，请稍后再试");
+            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
 
         //  检查第三方库有没有数据
