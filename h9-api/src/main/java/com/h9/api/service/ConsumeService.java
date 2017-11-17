@@ -153,7 +153,7 @@ public class ConsumeService {
         mapVo.put("priceList", list);
         mapVo.put("tel", user.getPhone());
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        mapVo.put("balance", userAccount.getBalance());
+        mapVo.put("balance", userAccount.getBalance().setScale(2,RoundingMode.DOWN).toString());
         return Result.success(mapVo);
     }
 
