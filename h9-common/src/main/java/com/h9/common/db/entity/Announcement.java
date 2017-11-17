@@ -28,7 +28,7 @@ public class Announcement extends BaseEntity {
     @Column(name = "content", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '内容'")
     private String content;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
+    @Column(name = "url",  columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
     private String url;
 
 

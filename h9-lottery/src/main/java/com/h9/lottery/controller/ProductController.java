@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiParam;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +32,8 @@ public class ProductController {
     @GetMapping("/product/check")
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
-                          @SessionAttribute("curUserId") long userId,
+                          @RequestHeader(value = "token",required = false) String token,
                           @Valid @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request){
-        return productService.getAuthenticity(userId,lotteryVo,request);
+        return productService.getAuthenticity(token,lotteryVo,request);
     }
 }

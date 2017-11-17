@@ -22,8 +22,8 @@ public class HtmlContentDTO {
     @ApiModelProperty(value = "名称",required = true)
     @NotBlank(message = "名称不能为空")
     private String name;
-    @ApiModelProperty(value = "标示",required = true)
-    @NotBlank(message = "标示不能为空")
+    @ApiModelProperty(value = "标识",required = true)
+    @NotBlank(message = "标识不能为空")
     private String code;
     
     @ApiModelProperty(value = "标题",required = true)
