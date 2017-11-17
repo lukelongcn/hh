@@ -161,6 +161,7 @@ public class SmsService {
     @SuppressWarnings("Duplicates")
     public Result sendSMSCode(String phone) {
 
+        //
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);
