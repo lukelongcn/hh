@@ -23,8 +23,12 @@ public class ArticleTypeDTO {
     @NotBlank(message = "分类名不能为空")
     @Length(max = 10,message = "分类名称过长")
     private String name;
-    
-    private int sort = 1;
+
+    @ApiModelProperty(value = "排序",required = true)
+    //@NotNull(message = "排序不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
+    private Integer sort = 1;
     
     @Min(value = 0,message = "请传入正确的状态")
     @Max(value = 1,message = "请传入正确的状态")
@@ -40,11 +44,11 @@ public class ArticleTypeDTO {
         this.name = name;
     }
 
-    public int getSort() {
+    public Integer getSort() {
         return sort;
     }
 
-    public void setSort(int sort) {
+    public void setSort(Integer sort) {
         this.sort = sort;
     }
 

@@ -26,7 +26,7 @@ public class ArticleType extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '文章类型名称'")
     private String name;
 
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '文章类型标识'")
+    @Column(name = "code",  columnDefinition = "varchar(64) default '' COMMENT '文章类型标识'")
     private String code = "";
 
 

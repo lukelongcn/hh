@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -87,7 +88,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     //打印参数
     private void printParam(Method m,byte[] buffer){
-        // 获取出方法上的Access注解
+        // 获取方法上的PrintParam注解
         PrintParam printParam = m.getAnnotation(PrintParam.class);
         if(printParam !=null){
             if(printParam.printType()==PrintType.NOT_PRINT){
@@ -96,6 +97,10 @@ public class RequestLogInterceptor implements HandlerInterceptor {
                     for(String key: printParam.notPrint()){
                         map.remove(key);
                     }
+                    /*Iterator<String> notPrintIterator = printParam.notPrint();
+                    while () {
+
+                    }*/
                 }
                 logger.info("request param: " + JSONObject.toJSONString(map));
             }else if(printParam.printType()==PrintType.PRINT){

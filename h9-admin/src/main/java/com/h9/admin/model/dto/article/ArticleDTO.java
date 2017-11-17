@@ -33,6 +33,7 @@ public class ArticleDTO {
     private String content;
 
     @ApiModelProperty(value = "作者名字",required = true)
+    @NotBlank(message = "作者不能为空")
     private String userName = "";
     
     @ApiModelProperty(value = "是否推荐到首页 1推荐 2不推荐",required = true)
@@ -49,14 +50,15 @@ public class ArticleDTO {
     @Max(value = 1,message = "请填写正确的状态")
     @Min(value = 0,message = "请填写正确的状态")
     private Integer enable;
-    
-    @ApiModelProperty(value = "排序 数字越大越靠前",required = true)
-    @Max(value = 100,message = "排序最大值不能超过100")
-    @Min(value = 0,message = "请输入正确的排序")
+
+    @ApiModelProperty(value = "排序",required = true)
+    //@NotNull(message = "排序不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
     private Integer sort = 1;
-    
+
     @ApiModelProperty(value = "发布时间",required = true)
-    @NotNull(message = "发布时间不能为空")
+    //@NotNull(message = "发布时间不能为空")
     private Date startTime;
 
     @ApiModelProperty(value = "文章图片",required = true)

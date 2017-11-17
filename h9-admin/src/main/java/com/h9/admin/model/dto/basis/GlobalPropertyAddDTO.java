@@ -43,6 +43,7 @@ public class GlobalPropertyAddDTO {
     private List<Map<String,Object>> val;
 
     @ApiModelProperty(value = "说明",required = true)
+    @NotBlank(message = "说明不能为空")
     @Size(max = 512,message = "说明过长")
     private String description;
 

@@ -43,7 +43,7 @@ public class Activity extends BaseEntity {
     @Column(name = "share_count",nullable = false,columnDefinition = "int default 0 COMMENT '奖励可以分享使用次数'")
     private Integer shareCount = 0;
 
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '奖励口令'")
+    @Column(name = "code", columnDefinition = "varchar(32) default '' COMMENT '奖励口令'")
     private String code;
 
     @Column(name = "is_push",nullable = false,columnDefinition = "tinyint default 0 COMMENT '回复关键字是否推送活动 0：不推送  1：推送'")
@@ -59,15 +59,15 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_icon",  columnDefinition = "varchar(256) default '' COMMENT '图片路径'")
     private String activityIcon;
 
-    @Column(name = "activity_desc", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '活动描述'")
+    @Column(name = "activity_desc",  columnDefinition = "varchar(128) default '' COMMENT '活动描述'")
     private String activityDesc;
 
     @Temporal(TIMESTAMP)
-    @Column(name = "start_time", columnDefinition = "datetime COMMENT '活动开始时间'")
+    @Column(name = "start_time",nullable = false, columnDefinition = "datetime COMMENT '活动开始时间'")
     private Date startTime;
 
     @Temporal(TIMESTAMP)
-    @Column(name = "end_time", columnDefinition = "datetime COMMENT '活动结束时间'")
+    @Column(name = "end_time",nullable = false, columnDefinition = "datetime COMMENT '活动结束时间'")
     private Date endTime;
 
     @Column(name = "need_phone",nullable = false,columnDefinition = "tinyint default 0 COMMENT '是否需要手机号 0：需要  1：不需要'")
