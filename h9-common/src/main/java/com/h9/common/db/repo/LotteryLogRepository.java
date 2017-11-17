@@ -20,11 +20,18 @@ import java.util.List;
 @Repository
 public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
 
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.reward is null ")
+    BigDecimal getLotteryErrorCount(Long userId,Date startDate);
+
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.reward is not null ")
+    BigDecimal getLotteryCount(Long userId,Date startDate);
+
+
     @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime between ?2 and ?3 ")
     BigDecimal getLotteryCount(Long userId,Date startDate,Date endDate);
 
-    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.code = ?2")
-    BigDecimal getLotteryCount(Long userId,String code);
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.code = ?2 and ll.createTime > ?3")
+    BigDecimal getLotteryCount(Long userId,String code,Date date);
     
     @Query("select distinct new com.h9.admin.model.vo.UserRecordVO(ll.userId,u.nickName,u.phone,u.openId," +
             "(select count(l1) from Lottery l1 where l1.user.id=u.id and l1.roomUser=1)," +  //开瓶次数
