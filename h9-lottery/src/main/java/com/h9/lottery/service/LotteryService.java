@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -71,38 +72,53 @@ public class LotteryService {
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
+
+
+
         //检查用户参与活动次数,是否超标
-        Date startDate = new Date();
-        Date monthmorning = DateUtil.getTimesMonthmorning(startDate);
-        Date timesMonthnight = DateUtil.getTimesMonthnight(startDate);
-        BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, monthmorning, timesMonthnight);
+        Date startDate = DateUtil.getDate(new Date(), lotteryConfig.getDayMaxLotteryTime(), Calendar.SECOND);
+        //正确的扫码数量限制
+        BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, startDate);
+
+        //        当前的条码是否是新码
+        BigDecimal userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode(),startDate);
         if (lotteryCount == null) {
             lotteryCount = new BigDecimal(0);
         }
-
-//        当前的条码是否是新码
-        BigDecimal userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode());
-
-        if (lotteryCount.compareTo(new BigDecimal(lotteryConfig.getDayMaxotteryCount())) > 0
+        logger.debugv("lotteryCount {0} userLotteryCount {1}",lotteryCount,userLotteryCount);
+        if (lotteryCount.compareTo(new BigDecimal(lotteryConfig.getDayMaxLotteryCount())) > 0
                 && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
 //            这个码没有被扫过，是新码,并且当天数量超标了
-            return Result.fail("您的扫码数量已经超过当天限制了");
+            return Result.fail("您的扫码数量已经超过限制了");
+        }
+
+        Date startErrorDate = DateUtil.getDate(new Date(), lotteryConfig.getMaxLotteryErrorTime(), Calendar.SECOND);
+        userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode(),startErrorDate);
+        //正确的扫码数量限制
+        BigDecimal lotteryErrorCount = lotteryLogRepository.getLotteryErrorCount(userId, startErrorDate);
+        if (lotteryErrorCount == null) {
+            lotteryErrorCount = new BigDecimal(0);
+        }
+        logger.debugv("lotteryErrorCount {0} userLotteryCount {1}",lotteryErrorCount,userLotteryCount);
+        if (lotteryErrorCount.compareTo(new BigDecimal(lotteryConfig.getMaxLotteryErrorCount())) > 0
+                && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
+            return Result.fail("您的扫码错误数量已经超过限制");
         }
 
         String imei = request.getHeader("imei");
-
         if (onBlackUser(userId, imei)) {
             return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
 
         //  检查第三方库有没有数据
-        Result result = exitsReward(lotteryVo.getCode());
-        if (result != null) {
+        Result<Reward> result = exitsReward(lotteryVo.getCode());
+        //记录扫码记录
+        record(userId,result.getData(),lotteryVo, userRecord);
+        if (!result.isSuccess()) {
             return result;
         }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
-        //记录扫码记录
-        record(userId, reward, lotteryVo, userRecord);
+
         if (reward == null) {
             return Result.fail("奖励条码不存在");
         }
@@ -163,7 +179,7 @@ public class LotteryService {
         return systemBlackList != null;
     }
 
-    private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
+    private void record(Long userId, Reward reward,  LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
         lotteryLog.setUserRecord(userRecord);
@@ -373,7 +389,7 @@ public class LotteryService {
     public Result exitsReward(String code) {
         Reward reward = rewardRepository.findByCode(code);
         if (reward != null) {
-            return null;
+            return Result.success(reward);
         }
         long start = System.currentTimeMillis();
         LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
@@ -413,7 +429,7 @@ public class LotteryService {
         reward.setActivityId(1L);
         reward.setMd5Code(MD5Util.getMD5(code));
         rewardRepository.saveAndFlush(reward);
-        return null;
+        return Result.success(reward);
     }
 
 

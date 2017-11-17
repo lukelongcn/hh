@@ -1,14 +1,10 @@
 package com.h9.lottery.config;
 
 import com.h9.common.common.ConfigService;
-import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by itservice on 2017/11/10.
@@ -19,15 +15,52 @@ public class LotteryConfig {
     private ConfigService configService;
 
     private Logger logger = Logger.getLogger(this.getClass());
-    // 获取最大扫码次数
-    public int getDayMaxotteryCount() {
 
-        String dayMaxotteryCount = configService.getStringConfig("dayMaxlotteryCount");
-        Integer max = null;
+    // 获取最大扫码次数
+    public int getDayMaxLotteryTime() {
+        String dayMaxotteryCount = configService.getStringConfig("lottery:max:time");
+        Integer time = -3600;
+        try {
+            time = Integer.valueOf(dayMaxotteryCount);
+        } catch (NumberFormatException e) {
+            logger.info("获取最大扫码次数失败！默认值：max: "+time);
+        }
+        return time;
+    }
+
+    // 获取最大扫码次数
+    public int getDayMaxLotteryCount() {
+
+        String dayMaxotteryCount = configService.getStringConfig("lottery:max:count");
+        Integer max = 20;
         try {
             max = Integer.valueOf(dayMaxotteryCount);
         } catch (NumberFormatException e) {
-            max = 10;
+            logger.info("获取最大扫码次数失败！默认值：max: "+max);
+        }
+        return max;
+    }
+
+    // 获取红包抽奖错误最大扫码次数
+    public int getMaxLotteryErrorTime() {
+        String time = configService.getStringConfig("lottery:error:max:time");
+        Integer maxTime = -3600;
+        try {
+            maxTime = Integer.valueOf(time);
+        } catch (NumberFormatException e) {
+            logger.info("获取最大扫码次数失败！默认值：max: "+maxTime);
+        }
+        return maxTime;
+    }
+
+
+    // 获取红包抽奖错误最大扫码次数
+    public int getMaxLotteryErrorCount() {
+        String dayMaxotteryCount = configService.getStringConfig("lottery:error:max:count");
+        Integer max = 3;
+        try {
+            max = Integer.valueOf(dayMaxotteryCount);
+        } catch (NumberFormatException e) {
             logger.info("获取最大扫码次数失败！默认值：max: "+max);
         }
         return max;
