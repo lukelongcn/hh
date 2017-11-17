@@ -12,9 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PrintParam {
-    public String[] print() default {};
-    public String[] notPrint() default {};
-
-    public PrintType printType() default PrintType.NOT_ALL;
-
+    String[] print() default {};
+    String[] notPrint() default {};
+    PrintType printType() default PrintType.ALL_NOT;
 }
