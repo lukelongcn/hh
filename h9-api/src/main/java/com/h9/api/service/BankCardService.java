@@ -46,8 +46,22 @@ public class BankCardService {
         UserBank user = bankCardRepository.findByNo(bankCardDTO.getNo());
         if (user != null) {
             if (user.getUserId().equals(userId)) {
+                Long typeId = bankCardDTO.getBankTypeId();
+                BankType bankType = bankTypeRepository.findOne(typeId);
+                if (bankType == null) return Result.fail("此银行类型不存在");
+                user.setBankType(bankType);
+                user.setProvince(bankCardDTO.getProvice());
+                user.setCity(bankCardDTO.getCity());
                 user.setStatus(1);
-                return Result.fail("该卡已被本人绑定");
+                user.setName(bankCardDTO.getName());
+                //设置 为默认银行卡
+                UserBank defaultBank = bankCardRepository.getDefaultBank(userId);
+                if (defaultBank != null) {
+                    defaultBank.setDefaultSelect(0);
+                    bankCardRepository.save(defaultBank);
+                }
+                user.setDefaultSelect(1);
+                return Result.success("绑定成功");
             }
             return Result.fail("该卡已被他人绑定");
         }
@@ -67,7 +81,6 @@ public class BankCardService {
         userBank.setProvince(bankCardDTO.getProvice());
         userBank.setCity(bankCardDTO.getCity());
         userBank.setStatus(1);
-        userBank.setDefaultSelect(1);
 
         //设置 为默认银行卡
         UserBank defaultBank = bankCardRepository.getDefaultBank(userId);
