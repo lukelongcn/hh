@@ -153,7 +153,7 @@ public class ConsumeService {
         mapVo.put("priceList", list);
         mapVo.put("tel", user.getPhone());
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        mapVo.put("balance", userAccount.getBalance());
+        mapVo.put("balance", userAccount.getBalance().setScale(2,RoundingMode.DOWN).toString());
         return Result.success(mapVo);
     }
 
@@ -319,7 +319,7 @@ public class ConsumeService {
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            return Result.fail("请确认银行卡号是不正确");
+            return Result.fail("请确认银行卡号、等信息是否正确");
         }
     }
 

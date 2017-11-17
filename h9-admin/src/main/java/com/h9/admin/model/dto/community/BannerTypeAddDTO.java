@@ -31,11 +31,13 @@ public class BannerTypeAddDTO {
     private Integer enable;
 
    // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-   @ApiModelProperty(value = "开始时间")
+   @ApiModelProperty(value = "上线开始时间")
+   @NotNull(message = "上线开始时间不能为空")
     private Date startTime;
 
    // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-   @ApiModelProperty(value = "结束时间")
+   @ApiModelProperty(value = "上线结束时间")
+   @NotNull(message = "上线结束时间不能为空")
     private Date endTime;
 
     public String getName() {

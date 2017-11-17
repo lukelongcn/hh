@@ -8,6 +8,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -40,15 +42,19 @@ public class BannerAddDTO {
     @NotNull(message = "状态不能为空")
     private Integer enable;
 
-    @ApiModelProperty(value = "开始时间")
+    @ApiModelProperty(value = "上线开始时间")
+    @NotNull(message = "上线开始时间不能为空")
     private Date startTime;
 
-    @ApiModelProperty(value = "结束时间")
+    @ApiModelProperty(value = "上线结束时间")
+    @NotNull(message = "上线结束时间不能为空")
     private Date endTime;
 
     @ApiModelProperty(value = "排序",required = true)
-    @NotNull(message = "排序不能为空")
-    private Integer sort = 1;
+    //@NotNull(message = "排序不能为空")
+    @Min(value = 0,message = "排序号不能小于0")
+    @Max(value = 127,message = "排序号不能大于127")
+    private Integer sort =1;
 
     @ApiModelProperty(value = "字体颜色")
     private String fontColor;

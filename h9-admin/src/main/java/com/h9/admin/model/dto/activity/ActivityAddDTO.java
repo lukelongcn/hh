@@ -27,23 +27,25 @@ public class ActivityAddDTO {
     private String activityName;
 
     @ApiModelProperty(value = "关键字",required = true)
-    @NotBlank(message = "关键字不能为空")
+//    @NotBlank(message = "关键字不能为空")
     @Size(max = 32, message = "关键字过长")
     private String code;
 
     @ApiModelProperty(value = "是否回复关键字推送活动 0：不推送  1：推送",required = true)
-    @NotNull(message = "是否回复关键字推送活动不能为空")
+//    @NotNull(message = "是否回复关键字推送活动不能为空")
     //@Size(max = 4)
     private Integer isPush = 0;
 
     @ApiModelProperty(value = "活动规则",required = true)
-    @NotBlank(message = "活动规则不能为空")
+//    @NotBlank(message = "活动规则不能为空")
     private String activityDesc;
 
     @ApiModelProperty(value = "活动开始时间")
+    @NotNull(message = "活动开始时间不能为空")
     private Date startTime;
 
     @ApiModelProperty(value = "活动结束时间")
+    @NotNull(message = "活动结束时间不能为空")
     private Date endTime;
 
     @ApiModelProperty(value = "是否需要手机号 0：需要  1：不需要",required = true)

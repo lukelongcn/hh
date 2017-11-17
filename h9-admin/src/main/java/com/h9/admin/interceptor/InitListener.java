@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,7 +55,8 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
 
     private void saveBannerType(String name, String code, Integer enable){
         if(this.bannerTypeRepository.findByCode(code)==null){
-            BannerType bannerType = new BannerType(name,code,enable);
+            Date date = new Date();
+            BannerType bannerType = new BannerType(name,code,enable,date,date);
             this.bannerTypeRepository.save(bannerType);
         }
     }
