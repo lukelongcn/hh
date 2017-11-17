@@ -30,7 +30,7 @@ public class AnnouncementAddDTO {
     private String content;
 
     @ApiModelProperty(value = "跳转链接",required = true)
-    @NotBlank(message = "跳转链接不能为空")
+//    @NotBlank(message = "跳转链接不能为空")
     private String url;
 
     @ApiModelProperty(value = "状态：1：启用，0：禁用",required = true)
@@ -41,15 +41,15 @@ public class AnnouncementAddDTO {
     private Date publishTime;
 
     @ApiModelProperty(value = "排序",required = true)
-    @NotNull(message = "排序不能为空")
+//    @NotNull(message = "排序不能为空")
     private Integer sort = 1;
 
     @ApiModelProperty(value = "文章图片",required = true)
-    @NotBlank(message = "文章图片不能为空")
+//    @NotBlank(message = "文章图片不能为空")
     private String imgUrl;
 
     @ApiModelProperty(value = "作者",required = true)
-    @NotBlank(message = "作者不能为空")
+//    @NotBlank(message = "作者不能为空")
     private String userName;
 
     public String getTitle() {

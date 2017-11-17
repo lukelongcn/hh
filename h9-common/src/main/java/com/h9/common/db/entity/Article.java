@@ -29,7 +29,7 @@ public class Article extends BaseEntity {
     @Column(name = "content", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '内容'")
     private String content;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
+    @Column(name = "url",  columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
     private String url;
 
     @Column(name = "user_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户名'")
@@ -53,7 +53,7 @@ public class Article extends BaseEntity {
     private Integer recommend = 1;
 
 
-    @Column(name = "img_url", columnDefinition = "varchar(200) COMMENT '文章显示图片'")
+    @Column(name = "img_url", nullable = false,columnDefinition = "varchar(200) COMMENT '文章显示图片'")
     private String imgUrl;
     public Long getId() {
         return id;

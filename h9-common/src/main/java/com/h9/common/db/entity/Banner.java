@@ -37,7 +37,7 @@ public class Banner extends BaseEntity {
     @Column(name = "content", columnDefinition = "varchar(512) default '' COMMENT '内容'")
     private String content;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
+    @Column(name = "url",  columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
     private String url;
     
     @Column(name = "icon", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '显示路径'")
@@ -48,11 +48,11 @@ public class Banner extends BaseEntity {
     private Integer enable;
 
     @Temporal(TIMESTAMP)
-    @Column(name = "start_time", columnDefinition = "datetime COMMENT '开始时间'")
+    @Column(name = "start_time",nullable = false, columnDefinition = "datetime COMMENT '开始时间'")
     private Date startTime;
 
     @Temporal(TIMESTAMP)
-    @Column(name = "end_time", columnDefinition = "datetime COMMENT '结束时间'")
+    @Column(name = "end_time",nullable = false, columnDefinition = "datetime COMMENT '结束时间'")
     private Date endTime;
 
     @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")

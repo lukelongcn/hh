@@ -56,11 +56,11 @@ public class GoodsAddDTO {
     private String description;
 
     @ApiModelProperty(value = "上架开始时间",required = true)
-    @NotNull(message = "上架开始时间不能为空")
+    //@NotNull(message = "上架开始时间不能为空")
     private Date startTime;
 
     @ApiModelProperty(value = "上架结束时间",required = true)
-    @NotNull(message = "上架结束时间不能为空")
+    //@NotNull(message = "上架结束时间不能为空")
     private Date endTime;
 
     @ApiModelProperty(value = "库存",required = true)

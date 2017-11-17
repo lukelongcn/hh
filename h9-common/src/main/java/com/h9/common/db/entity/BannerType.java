@@ -38,11 +38,11 @@ public class BannerType extends BaseEntity {
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")
     private Integer enable;
 
-    @Column(name = "start_time",columnDefinition = "datetime COMMENT '开始时间'")
+    @Column(name = "start_time",nullable = false,columnDefinition = "datetime COMMENT '开始时间'")
     @Temporal(TIMESTAMP)
     private Date startTime;
 
-    @Column(name = "end_time",columnDefinition = "datetime COMMENT '结束时间'")
+    @Column(name = "end_time",nullable = false,columnDefinition = "datetime COMMENT '结束时间'")
     @Temporal(TIMESTAMP)
     private Date endTime;
 
@@ -118,6 +118,14 @@ public class BannerType extends BaseEntity {
         this.name = name;
         this.code = code;
         this.enable = enable;
+    }
+
+    public BannerType(String name, String code, Integer enable, Date startTime, Date endTime) {
+        this.name = name;
+        this.code = code;
+        this.enable = enable;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public enum EnableEnum {
