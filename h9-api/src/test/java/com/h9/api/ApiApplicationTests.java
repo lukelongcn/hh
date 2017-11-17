@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +35,7 @@ import java.util.concurrent.Future;
 public class ApiApplicationTests {
 
 
-    @Test
+    ////@Test
     public void contextLoads() {
 
     }
@@ -45,7 +46,7 @@ public class ApiApplicationTests {
     private RestTemplate restTemplate;
     @Resource
     private SMSLogReposiroty smsLogReposiroty;
-//    @Test
+//    ////@Test
 //    public void TestMsm() {
 //        String mobile = "17673140753";
 //        Result result = smService.sendSMS(mobile);
@@ -58,7 +59,7 @@ public class ApiApplicationTests {
     @Resource
     private RedisBean redisBean;
 
-    //    @Test
+    //    ////@Test
     public void redisTest() {
         String key = String.format("h9:sms:count:%s", "17673140753");
         redisBean.setStringValue(key, "0");
@@ -67,7 +68,7 @@ public class ApiApplicationTests {
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
 
-    //    @Test
+    //    ////@Test
     public void test() {
         String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
         String stringValue = redisBean.getStringValue(key);
@@ -83,8 +84,8 @@ public class ApiApplicationTests {
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
 
-    @Test
-//    @Test
+    ////@Test
+//    ////@Test
     public void mobileRecharge() {
 
 
@@ -93,7 +94,7 @@ public class ApiApplicationTests {
     @Resource
     GoodsDIDINumberRepository goodsDIDINumberRepository;
 
-    @Test
+    ////@Test
     public void didiCardInit() {
 
         GoodsType goodsType = goodsTypeReposiroty.findOne(2L);
@@ -112,7 +113,7 @@ public class ApiApplicationTests {
 
     //    @Resource
 //    private ChinaPayService chinaPayService;
-    @Test
+    ////@Test
     public void testcp() {
 
         String merId = "808080211881410";
@@ -139,7 +140,7 @@ public class ApiApplicationTests {
     @Resource
     private OrdersRepository ordersReposiroty;
 
-    @Test
+    ////@Test
     public void asys() {
         Future<List<Orders>> allAsy = ordersReposiroty.findAllAsy();
         try {
@@ -154,7 +155,7 @@ public class ApiApplicationTests {
     }
 
 
-    @Test
+    ////@Test
     public void testKey() {
 //        InputStream is = this.getClass().getClassLoader().getResourceAsStream("MerPrK_808080211881410_20171102154758.key");
 //        PrivateKey key = new PrivateKey();
@@ -166,7 +167,7 @@ public class ApiApplicationTests {
     @Resource
     OrdersRepository ordersRepository;
 
-    @Test
+    //@Test
     public void testSpecification() {
 
     }
@@ -184,7 +185,7 @@ public class ApiApplicationTests {
     UserExtendsRepository userExtendsRepository;
 
 
-    @Test
+    //@Test
     public void saveUser(){
         User user = initUserInfo("13066886409");
         int loginCount = user.getLoginCount();
@@ -231,7 +232,7 @@ public class ApiApplicationTests {
     }
 
 
-    @Test
+    //@Test
     public void TestAccount(){
 //        String token = "570b2acf-c4c9-48b5-a682-9086a8245f41";
         String token = "5544325a-860d-4621-8546-b0e02d7452b9";
@@ -252,11 +253,7 @@ public class ApiApplicationTests {
     @Resource
     private MailService mailService;
 
-    @Test
-    public void testMail(){
-        Result result = smService.sendSMS("18597848648", "您的校验码是：" + "1234" + "。请不要把校验码泄露给其他人。如非本人操作，可不用理会！");
-        System.out.println(result);
-    }
+
 
 
 
