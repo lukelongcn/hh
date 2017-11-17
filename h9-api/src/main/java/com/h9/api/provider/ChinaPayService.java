@@ -18,8 +18,26 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by itservice on 2017/11/3.
+/**  responseCode:
+     0000      	接收成功	提交成功
+     0100       接收失败	商户提交的字段长度、格式错误
+     0101		商户验签错误
+     0102		手续费计算出错
+     0103		商户备付金帐户金额不足
+     0104		操作拒绝
+     0105	    待查询	重复交易
+
+    stat:
+     s	成功	交易成功	状态码为小写字母s
+     2	处理中	交易已接受
+     3	处理中	财务已确认
+     4	处理中	财务处理中
+     5	处理中	已发往银行	ChinaPay已将代付交易发往银行。后续若银行返回结果，该状态会相应更新。
+     6	失败	银行已退单	银行退单，交易失败。
+     7	处理中	重汇已提交
+     8	处理中	重汇已发送	ChinaPay已将代付交易发往银行。后续若银行返回结果，该状态会相应更新。
+     9	失败	重汇已退单	银行对重汇的代付交易退单，交易失败。
+
  */
 
 @Service

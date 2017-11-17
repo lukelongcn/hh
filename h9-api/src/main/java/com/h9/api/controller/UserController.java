@@ -44,7 +44,7 @@ public class UserController {
     /**
      * description: 发送验证码
      */
-    @Secured(bindPhone = false)
+//    @Secured(bindPhone = false)
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送非注册验证码")
     public Result sendSMS(@PathVariable("phone") String phone,@PathVariable Integer type,@SessionAttribute("curUserId")Long userId){
