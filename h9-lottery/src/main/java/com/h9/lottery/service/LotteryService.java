@@ -73,8 +73,6 @@ public class LotteryService {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
 
-
-
         //检查用户参与活动次数,是否超标
         Date startDate = DateUtil.getDate(new Date(), lotteryConfig.getDayMaxLotteryTime(), Calendar.SECOND);
         //正确的扫码数量限制
@@ -88,7 +86,6 @@ public class LotteryService {
         logger.debugv("lotteryCount {0} userLotteryCount {1}",lotteryCount,userLotteryCount);
         if (lotteryCount.compareTo(new BigDecimal(lotteryConfig.getDayMaxLotteryCount())) > 0
                 && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
-//            这个码没有被扫过，是新码,并且当天数量超标了
             return Result.fail("您的扫码数量已经超过限制了");
         }
 

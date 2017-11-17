@@ -64,14 +64,14 @@ public class LotteryTest {
     @Resource
     private ProductLogRepository productLogRepository;
 
-
-//    @Test
-    @Transactional
-    public void testContextLoads() {
-        Date date = DateUtil.formatDate("2017-11-15 14:57:12", DateUtil.FormatType.SECOND);
-        long byUserId = productLogRepository.findByUserId(28L, date);
-        logger.debugv("byUserId"+byUserId);
-    }
+//
+////    @Test
+//    @Transactional
+//    public void testContextLoads() {
+//        Date date = DateUtil.formatDate("2017-11-15 14:57:12", DateUtil.FormatType.SECOND);
+//        long byUserId = productLogRepository.findByUserId(28L, date);
+//        logger.debugv("byUserId"+byUserId);
+//    }
     
 
 
