@@ -51,6 +51,10 @@ public class LotteryContorller {
     public Result startCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @SessionAttribute("curUserId") long userId
                             ,@PathVariable("code") String code){
+        logger.debugv("userId {0} code {1}" ,userId, code);
+        if(code.contains("1h9.cc/")){
+            code =  code.replace("1h9.cc/", "");
+        }
         return lotteryService.lottery(userId,code);
     }
 
@@ -62,6 +66,9 @@ public class LotteryContorller {
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
             @SessionAttribute("curUserId") long userId,@PathVariable("code") String code){
         logger.debugv("userId {0} code {1}" ,userId, code);
+        if(code.contains("1h9.cc")){
+            code =  code.replace("1h9.cc/", "");
+        }
         return lotteryService.getLotteryRoom(userId,code);
     }
 
