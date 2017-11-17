@@ -24,7 +24,7 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
     @Query("select l from Lottery l where l.user.id=?1 and l.reward.id=?2")
     Lottery findByUserIdAndReward(Long userId, Long id);
 
-    @Query("select l from Lottery l where l.reward = ?1 order by l.createTime desc ")
+    @Query("select l from Lottery l where l.reward = ?1 order by l.createTime asc ")
     List<Lottery> findByReward(Reward reward);
 
     @Query("select count(l) from Lottery l where l.reward = ?1")
