@@ -44,7 +44,6 @@ public class UserController {
     /**
      * description: 发送验证码
      */
-    // TODO 客户端改后放开
     @Secured(bindPhone = false)
     @GetMapping("/user/sms/{phone}/{type}")
     @ApiOperation("发送非注册验证码")
