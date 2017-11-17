@@ -255,6 +255,13 @@ public class ConsumeService {
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 
+        String withdrawMax = configService.getStringConfig("withdrawMax");
+        BigDecimal max = new BigDecimal(withdrawMax);
+
+        if (balance.compareTo(max) <= 0) {
+            return Result.fail("超过了每日额度");
+        }
+
         String cardNo = userBank.getNo();
         String usrName = userBank.getName();
         String openBank = bankType.getBankName();
