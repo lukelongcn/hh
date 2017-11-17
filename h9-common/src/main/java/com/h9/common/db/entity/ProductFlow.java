@@ -38,6 +38,10 @@ public class ProductFlow extends BaseEntity {
     @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
     private UserRecord userRecord;
 
+    @Column(name = "imei",  columnDefinition = "varchar(64) default '' COMMENT '机器唯一码'")
+    private String imei;
+
+
 
     public Long getId() {
         return id;
@@ -79,5 +83,11 @@ public class ProductFlow extends BaseEntity {
         this.code = code;
     }
 
+    public String getImei() {
+        return imei;
+    }
 
+    public void setImei(String imei) {
+        this.imei = imei;
+    }
 }

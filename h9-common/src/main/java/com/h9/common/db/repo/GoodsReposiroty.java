@@ -16,6 +16,7 @@ import java.util.List;
  */
 public interface GoodsReposiroty extends BaseRepository<Goods>{
 
+    @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     List<Goods> findByGoodsType(GoodsType goodsType);
 
 

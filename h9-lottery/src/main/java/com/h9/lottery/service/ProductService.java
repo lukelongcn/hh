@@ -2,6 +2,8 @@ package com.h9.lottery.service;
 
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.Product;
 import com.h9.common.db.entity.ProductFlow;
 import com.h9.common.db.entity.ProductLog;
@@ -58,28 +60,33 @@ public class ProductService {
     private LotteryConfig lotteryConfig;
 
     @Transactional
-    public Result<AuthenticityVO> getAuthenticity(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
+    public Result<AuthenticityVO> getAuthenticity(String token, LotteryDto lotteryVo, HttpServletRequest request) {
+        Long userId = token2userId(token);
 
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
         String code = lotteryVo.getCode();
 
         //       黑名单 改成配置的
         String imei = request.getHeader("imei");
+        if(StringUtils.isEmpty(imei)){
+            return Result.fail("服务器繁忙，请稍后刷新使用");
+        }
         if (lotteryService.onBlackUser(userId, imei)) {
             return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
 
         int date = lotteryConfig.getIntervalTime();
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
-        long errCount = productLogRepository.findByUserId(userId, startDate);
+        long errCount = productLogRepository.findByUserId(imei, startDate);
+        logger.debugv("-------errCount:"+errCount);
 //        当前的条码是否是未扫过码
-        long userCode = productLogRepository.findByUserId(userId, code);
+        long userCode = productLogRepository.findByUserId(imei, code);
         if (errCount > lotteryConfig.getErrorTimes() && userCode <= 0) {
             return Result.fail("您的错误次数已经到达上限，请稍后再试");
         }
 
         //记录扫描记录
-        ProductLog productLog = recordLog(userId, lotteryVo, userRecord);
+        ProductLog productLog = recordLog(userId,imei, lotteryVo, userRecord);
 
         Result result = findByCode(code);
         if (result != null) return result;
@@ -114,10 +121,11 @@ public class ProductService {
         return Result.success(authenticityVO);
     }
 
-    public ProductLog recordLog(Long userId, LotteryDto lotteryVo, UserRecord userRecord) {
+    public ProductLog recordLog(Long userId, String imei,LotteryDto lotteryVo, UserRecord userRecord) {
         ProductLog productLog = new ProductLog();
         productLog.setCode(lotteryVo.getCode());
         productLog.setUserId(userId);
+        productLog.setImei(imei);
         productLog.setUserRecord(userRecord);
         return productLogRepository.saveAndFlush(productLog);
     }
@@ -145,6 +153,23 @@ public class ProductService {
             return null;
         }
 
+    }
+
+    @Resource
+    private RedisBean redisBean;
+
+    public Long token2userId(String token){
+        String userIdByPhone = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
+        if(!StringUtils.isEmpty(userIdByPhone)){
+            return Long.parseLong(userIdByPhone);
+        }
+
+        String userIdByWechat = redisBean.getStringValue(RedisKey.getWeChatUserId(token));
+        if(!StringUtils.isEmpty(userIdByWechat)){
+            return Long.parseLong(userIdByWechat);
+        }
+
+        return null;
     }
 
 
