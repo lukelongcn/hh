@@ -50,8 +50,16 @@ public class BankCardService {
                 BankType bankType = bankTypeRepository.findOne(typeId);
                 if (bankType == null) return Result.fail("此银行类型不存在");
                 user.setBankType(bankType);
-                user.setProvince(bankCardDTO.getProvice());
-                user.setCity(bankCardDTO.getCity());
+                String provice = bankCardDTO.getProvice();
+                if (provice.contains("省")) {
+                    provice =provice.replace("省", "");
+                }
+                user.setProvince(provice);
+                String city = bankCardDTO.getCity();
+                if (city.contains("市")) {
+                    city= city.replace("市", "");
+                }
+                user.setCity(city);
                 user.setStatus(1);
                 user.setName(bankCardDTO.getName());
                 //设置 为默认银行卡
