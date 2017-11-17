@@ -62,9 +62,11 @@ public class ChinaPayService {
         String path = ApiApplication.chinaPayKeyPath;
         boolean buildOK = key.buildKey(merId, 0, path);
         if (!buildOK) {
-            System.out.println("没有找到私钥文件");
+            logger.info("构建私钥对象失败");
+
         }
-        System.out.println(buildOK);
+        logger.info("构建私钥对象成功");
+
         SecureLink secureLink = new SecureLink(key);
         char[] encode = Base64.encode(s.getBytes());
         String sign = secureLink.Sign(new String(encode));

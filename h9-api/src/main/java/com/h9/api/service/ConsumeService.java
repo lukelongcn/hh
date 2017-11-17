@@ -319,7 +319,7 @@ public class ConsumeService {
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            return Result.fail("请确认银行卡号是不正确");
+            return Result.fail("请确认银行卡号、等信息是否正确");
         }
     }
 
