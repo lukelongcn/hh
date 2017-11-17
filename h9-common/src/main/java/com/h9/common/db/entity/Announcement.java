@@ -53,7 +53,7 @@ public class Announcement extends BaseEntity {
     @Column(name = "publish_time", columnDefinition = "datetime COMMENT '发布时间'")
     private Date publishTime;
 
-    @Column(name = "user_name", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '用户名'")
+    @Column(name = "user_name",columnDefinition = "varchar(128) default '' COMMENT '用户名'")
     private String userName;
 
     public Long getId() {
