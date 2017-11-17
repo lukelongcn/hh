@@ -112,7 +112,7 @@ public class ConsumeService {
 //        userAccountRepository.changeBalance(subtract, userId);
         userAccount.setBalance(subtract);
 
-        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
+        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
@@ -200,7 +200,7 @@ public class ConsumeService {
         if (goods == null) return Result.fail("商品不存在");
         goods.setStatus(0);
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode() , "滴滴");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode() , "徽酒");
         orders.setUser(user);
 
         ordersReposiroty.saveAndFlush(orders);
@@ -258,9 +258,9 @@ public class ConsumeService {
         String withdrawMax = configService.getStringConfig("withdrawMax");
         BigDecimal max = new BigDecimal(withdrawMax);
 
-        if (balance.compareTo(max) <= 0) {
-            return Result.fail("超过了每日额度");
-        }
+//        if (balance.compareTo(max) >= 0) {
+//            return Result.fail("超过了每日额度");
+//        }
 
         String cardNo = userBank.getNo();
         String usrName = userBank.getName();
