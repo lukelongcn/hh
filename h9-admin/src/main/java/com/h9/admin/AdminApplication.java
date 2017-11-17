@@ -7,8 +7,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
@@ -24,9 +26,14 @@ public class AdminApplication {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(AdminApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(AdminApplication.class, args);
         Logger logger = Logger.getLogger(AdminApplication.class);
         logger.debugv(StartBanner.BANNER);
+
+
+        Environment environment = run.getBean(Environment.class);
+        String enviroment = environment.getProperty("h9.current.envir");
+        logger.info("当前环境："+enviroment);
     }
 
     @Bean
