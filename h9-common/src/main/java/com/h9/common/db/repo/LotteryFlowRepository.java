@@ -35,7 +35,7 @@ import java.util.List;
 @Repository
 public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
 
-    @Query("select l from LotteryFlow l where l.reward = ?1 order by l.createTime desc ")
+    @Query("select l from LotteryFlow l where l.reward = ?1 order by  l.createTime  ")
     List<LotteryFlow> findByReward(Reward reward);
 
 
