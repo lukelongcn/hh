@@ -118,14 +118,15 @@ public class CommunityService {
     }
 
     public Result<Activity> addActivity(Activity activity){
-        if(this.activityRepository.findByCode(activity.getCode())!=null){
+        if(activity.getCode()!=null&&this.activityRepository.findByCode(activity.getCode())!=null){
             return Result.fail("关键字已存在");
         }
         return Result.success(this.activityRepository.save(activity));
     }
 
     public Result<Activity> updateActivity(ActivityEditDTO activityEditDTO){
-        if(this.activityRepository.findByIdNotAndCode(activityEditDTO.getId(),activityEditDTO.getCode())!=null){
+        if(activityEditDTO.getCode()!=null&&this.activityRepository.findByIdNotAndCode(activityEditDTO.getId()
+                ,activityEditDTO.getCode())!=null){
             return Result.fail("关键字已存在");
         }
         Activity a = this.activityRepository.findOne(activityEditDTO.getId());

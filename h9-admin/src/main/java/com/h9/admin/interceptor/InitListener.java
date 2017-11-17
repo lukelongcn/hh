@@ -62,10 +62,10 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
     }
 
     private void initArticleType(){
-        this.savetArticleType("推荐文章","recommendArticle",1);
+        this.saveArticleType("推荐文章","recommendArticle",1);
     }
 
-    private void savetArticleType(String name, String code, Integer enable){
+    private void saveArticleType(String name, String code, Integer enable){
         if(this.articleTypeRepository.findByCode(code)==null){
             ArticleType articleType = new ArticleType(name,code,enable);
             this.articleTypeRepository.save(articleType);
