@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * SmsService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/15
  * Time: 11:40
@@ -67,11 +67,10 @@ public class SmsService {
             return Result.fail("短信类型不对");
         }
 
-        //TODO 客户端调完放开
         // 把登录注册的短信移抽取出去，其他类型的短信发送都是要登录才能使用的。
-//        if(smsType == SMSTypeEnum.REGISTER.getCode()){
-//            return Result.fail("请求错误");
-//        }
+        if(smsType == SMSTypeEnum.REGISTER.getCode()){
+            return Result.fail("此接口此失效");
+        }
 
         Result result = sendSMSValdite(userId, phone, smsType);
 
@@ -148,12 +147,18 @@ public class SmsService {
     //校验信息
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
-        UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        BigDecimal balance = userAccount.getBalance();
 
-        if (balance.compareTo(new BigDecimal(0)) <= 0) {
-            return Result.fail("余额不足");
+        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode()) {
+
+            UserAccount userAccount = userAccountRepository.findByUserId(userId);
+            BigDecimal balance = userAccount.getBalance();
+
+            if (balance.compareTo(new BigDecimal(0)) <= 0) {
+                return Result.fail("余额不足");
+            }
         }
+
+
         return null;
     }
 
@@ -161,6 +166,7 @@ public class SmsService {
     @SuppressWarnings("Duplicates")
     public Result sendSMSCode(String phone) {
 
+        //
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);

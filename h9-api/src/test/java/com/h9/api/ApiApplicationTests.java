@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -252,22 +253,7 @@ public class ApiApplicationTests {
     @Resource
     private MailService mailService;
 
-    //@Test
-    public void testMail(){
 
-        User user = userRepository.findOne(3L);
-        user.setPhone("");
-        user.setOpenId("");
-        userRepository.save(user);
-        logger.info("hello.........");
-        System.out.println("hhllo");
-        User use2r = userRepository.findOne(9681L);
-        use2r.setPhone("");
-        use2r.setOpenId("");
-        userRepository.save(use2r);
-
-
-    }
 
 
 

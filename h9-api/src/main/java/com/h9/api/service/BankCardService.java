@@ -65,6 +65,7 @@ public class BankCardService {
             }
             return Result.fail("该卡已被他人绑定");
         }
+
         UserBank userBank = new UserBank();
         userBank.setUserId(userId);
         userBank.setName(bankCardDTO.getName());
