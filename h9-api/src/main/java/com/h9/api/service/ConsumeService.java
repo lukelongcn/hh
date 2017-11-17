@@ -117,7 +117,7 @@ public class ConsumeService {
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
-        orderItems.setMoney(new BigDecimal(50));
+        orderItems.setMoney(goods.getRealPrice());
         orderItems.setName("手机话费充值");
 
         orderItemReposiroty.saveAndFlush(orderItems);
@@ -319,7 +319,7 @@ public class ConsumeService {
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            return Result.fail("请确认银行卡号、等信息是否正确");
+            return Result.fail("请确认银行卡信息是否正确");
         }
     }
 

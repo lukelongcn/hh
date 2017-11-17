@@ -28,6 +28,7 @@ public class ProductController {
     @Resource
     private ProductService productService;
 
+    @Secured(bindPhone = false)
     @GetMapping("/product/check")
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")

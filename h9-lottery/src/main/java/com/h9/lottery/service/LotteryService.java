@@ -117,7 +117,7 @@ public class LotteryService {
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
 
         if (reward == null) {
-            return Result.fail("奖励条码不存在");
+            return Result.fail("很遗憾您没有中奖");
         }
         Integer status = reward.getStatus();
         if (status == StatusEnum.FAILD.getCode()) {

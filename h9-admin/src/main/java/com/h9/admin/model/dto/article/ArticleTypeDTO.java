@@ -28,7 +28,7 @@ public class ArticleTypeDTO {
     //@NotNull(message = "排序不能为空")
     @Min(value = 0,message = "排序号不能小于0")
     @Max(value = 127,message = "排序号不能大于127")
-    private Integer sort = 1;
+    private Integer sort ;
     
     @Min(value = 0,message = "请传入正确的状态")
     @Max(value = 1,message = "请传入正确的状态")
@@ -49,7 +49,7 @@ public class ArticleTypeDTO {
     }
 
     public void setSort(Integer sort) {
-        this.sort = sort;
+        this.sort = sort==null?1:sort;
     }
 
     public Integer getEnable() {

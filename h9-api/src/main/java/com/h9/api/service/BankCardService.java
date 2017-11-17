@@ -42,6 +42,15 @@ public class BankCardService {
      */
     public Result addBankCard(Long userId, BankCardDTO bankCardDTO) {
 
+        String provice = bankCardDTO.getProvice();
+        if (provice.contains("省")) {
+            provice =provice.replace("省", "");
+        }
+        String city = bankCardDTO.getCity();
+        if (city.contains("市")) {
+            city= city.replace("市", "");
+        }
+
         //判断银行卡号是否已被绑定
         UserBank user = bankCardRepository.findByNo(bankCardDTO.getNo());
         if (user != null) {
@@ -50,15 +59,7 @@ public class BankCardService {
                 BankType bankType = bankTypeRepository.findOne(typeId);
                 if (bankType == null) return Result.fail("此银行类型不存在");
                 user.setBankType(bankType);
-                String provice = bankCardDTO.getProvice();
-                if (provice.contains("省")) {
-                    provice.replace("省", "");
-                }
                 user.setProvince(provice);
-                String city = bankCardDTO.getCity();
-                if (city.contains("市")) {
-                    city.replace("市", "");
-                }
                 user.setCity(city);
                 user.setStatus(1);
                 user.setName(bankCardDTO.getName());
@@ -87,8 +88,8 @@ public class BankCardService {
         BankType bankType = bankTypeRepository.findOne(typeId);
         if (bankType == null) return Result.fail("此银行类型不存在");
         userBank.setBankType(bankType);
-        userBank.setProvince(bankCardDTO.getProvice());
-        userBank.setCity(bankCardDTO.getCity());
+        userBank.setProvince(provice);
+        userBank.setCity(city);
         userBank.setStatus(1);
 
         //设置 为默认银行卡

@@ -54,7 +54,7 @@ public class BannerAddDTO {
     //@NotNull(message = "排序不能为空")
     @Min(value = 0,message = "排序号不能小于0")
     @Max(value = 127,message = "排序号不能大于127")
-    private Integer sort =1;
+    private Integer sort ;
 
     @ApiModelProperty(value = "字体颜色")
     private String fontColor;
@@ -120,7 +120,7 @@ public class BannerAddDTO {
     }
 
     public void setSort(Integer sort) {
-        this.sort = sort;
+        this.sort = sort==null?1:sort;
     }
 
     public String getFontColor() {

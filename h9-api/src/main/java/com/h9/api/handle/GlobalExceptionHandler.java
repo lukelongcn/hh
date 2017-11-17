@@ -18,6 +18,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -75,7 +76,10 @@ public class GlobalExceptionHandler {
         // 以上错误都不匹配
         logger.info(e.getMessage(), e);
         if (System.currentTimeMillis() - time > 5 * 60 * 1000) {
-            mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: " + request.getRequestURL() + ExceptionUtils.getStackTrace(e));
+
+            String content = "url: " + request.getRequestURL() +" "+ ExceptionUtils.getStackTrace(e);
+            content += request.getHeader("token");
+            mailService.sendtMail("徽酒服务器错误" + currentEnvironment, content);
             time = System.currentTimeMillis();
         }
 

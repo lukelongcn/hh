@@ -27,7 +27,7 @@ public class HomeVO {
         setCode(articleType.getCode());
         String link = articlePreUrl + article.getId();
         setLink(link);
-        setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
+        setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.DAY));
         setType("article");
         setContent(article.getTitle());
         setUserName(article.getUserName());
