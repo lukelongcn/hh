@@ -237,20 +237,7 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 
-        List<UserBank> all = userBankRepository.findAll();
-        all.stream().forEach(userBank -> {
-            String province = userBank.getProvince();
-            String city = userBank.getCity();
-
-            province.contains("省");
-            province = province.replace("省", "");
-            city = city.replace("市", "");
-
-            userBank.setProvince(province);
-            userBank.setCity(city);
-
-            userBankRepository.save(userBank);
-        });
+        redisBean.setStringValue("sms:code:count:3:17328627797", "0");
 
     }
 
