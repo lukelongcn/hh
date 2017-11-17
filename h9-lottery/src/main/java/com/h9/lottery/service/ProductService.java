@@ -12,6 +12,7 @@ import com.h9.common.db.repo.ProductRepository;
 import com.h9.common.db.repo.UserRecordRepository;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.NetworkUtil;
+import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.model.vo.AuthenticityVO;
 import com.h9.lottery.model.vo.LotteryDto;
 import com.h9.lottery.provider.FactoryProvider;
@@ -53,7 +54,8 @@ public class ProductService {
     private FactoryProvider factoryProvider;
     @Resource
     private LotteryService lotteryService;
-
+    @Resource
+    private LotteryConfig lotteryConfig;
 
     @Transactional
     public Result<AuthenticityVO> getAuthenticity(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -67,12 +69,12 @@ public class ProductService {
             return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
 
-        int date = -60 * 1;
+        int date = lotteryConfig.getIntervalTime();
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
         long errCount = productLogRepository.findByUserId(userId, startDate);
 //        当前的条码是否是未扫过码
         long userCode = productLogRepository.findByUserId(userId, code);
-        if (errCount > 3 && userCode <= 0) {
+        if (errCount > lotteryConfig.getErrorTimes() && userCode <= 0) {
             return Result.fail("您的错误次数已经到达上限，请稍后再试");
         }
 
