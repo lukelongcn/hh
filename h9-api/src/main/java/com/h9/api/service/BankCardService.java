@@ -52,12 +52,12 @@ public class BankCardService {
                 user.setBankType(bankType);
                 String provice = bankCardDTO.getProvice();
                 if (provice.contains("省")) {
-                    provice.replace("省", "");
+                    provice =provice.replace("省", "");
                 }
                 user.setProvince(provice);
                 String city = bankCardDTO.getCity();
                 if (city.contains("市")) {
-                    city.replace("市", "");
+                    city= city.replace("市", "");
                 }
                 user.setCity(city);
                 user.setStatus(1);
