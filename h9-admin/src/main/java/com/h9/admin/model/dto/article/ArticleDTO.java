@@ -136,7 +136,7 @@ public class ArticleDTO {
     }
 
     public void setSort(Integer sort) {
-        this.sort = sort;
+        this.sort = sort==null?1:sort;
     }
 
     public Date getStartTime() {
