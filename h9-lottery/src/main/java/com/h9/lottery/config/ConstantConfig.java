@@ -19,7 +19,7 @@ public class ConstantConfig {
 
     public static void init(Environment environment) {
         Lottery_QR_PATH = environment.getProperty("lottery.qr.path");
-        Lottery_QR_FORWARD_PATH = environment.getProperty("lottery.qr.forward.path ");
+        Lottery_QR_FORWARD_PATH = environment.getProperty("lottery.qr.forward.path");
         logger.debugv("qr path {0}",Lottery_QR_PATH);
         logger.debugv("qr path {0}",Lottery_QR_FORWARD_PATH);
     }
