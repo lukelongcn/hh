@@ -112,11 +112,11 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
 
-        BigDecimal subtract = balance.subtract(realPrice);
+//        BigDecimal subtract = balance.subtract(realPrice);
 //        userAccountRepository.changeBalance(subtract, userId);
 //        userAccount.setBalance(subtract);
 
-        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
+        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
