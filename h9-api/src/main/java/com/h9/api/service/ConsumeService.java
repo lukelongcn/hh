@@ -229,7 +229,7 @@ public class ConsumeService {
         }
 
         if (goods == null) return Result.fail("商品不存在");
-        goods.setStatus(0);
+
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
         orders.setUser(user);
