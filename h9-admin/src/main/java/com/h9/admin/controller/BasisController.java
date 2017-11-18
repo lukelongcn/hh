@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.net.BindException;
 
 /**
  * @author: George
@@ -36,7 +37,7 @@ public class BasisController {
     @Secured
     @PostMapping(value="/param")
     @ApiOperation("增加参数")
-    public Result<GlobalPropertyVO> addGlobalProperty(@Validated @RequestBody GlobalPropertyAddDTO globalPropertyAddDTO){
+    public Result<GlobalPropertyVO> addGlobalProperty(@Validated @RequestBody GlobalPropertyAddDTO globalPropertyAddDTO) throws BindException {
         return this.basisService.addGlobalProperty(globalPropertyAddDTO.toGlobalProperty());
     }
 
