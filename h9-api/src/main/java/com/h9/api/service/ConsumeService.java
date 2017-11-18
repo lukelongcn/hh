@@ -92,6 +92,8 @@ public class ConsumeService {
     @Resource
     private ConfigService configService;
 
+    @Resource
+    private OfPayRecordReposiroty ofPayRecordReposiroty;
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
@@ -119,6 +121,15 @@ public class ConsumeService {
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
+        //保存充值记录（包括失败成功）
+        try {
+            MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
+            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
+            ofPayRecordReposiroty.save(ofPayRecord);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+        }
+
         orderItems.setMoney(goods.getRealPrice());
         orderItems.setName("手机话费充值");
 
@@ -132,6 +143,24 @@ public class ConsumeService {
         } else {
             throw new RuntimeException("充值失败");
         }
+    }
+
+    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo){
+
+        OfPayRecord ofPayRecord = new OfPayRecord();
+        ofPayRecord.setErrMsg(orderinfo.getErr_msg());
+        ofPayRecord.setRetcode(orderinfo.getRetcode());
+        ofPayRecord.setOrderid(orderinfo.getOrderid());
+        ofPayRecord.setCardid(orderinfo.getCardid());
+        ofPayRecord.setCardnum(orderinfo.getCardnum());
+        ofPayRecord.setOrdercash(orderinfo.getOrdercash());
+        ofPayRecord.setCardname(orderinfo.getCardname());
+        ofPayRecord.setSporderId(orderinfo.getSporder_id());
+        ofPayRecord.setGameUserid(orderinfo.getGame_userid());
+        ofPayRecord.setGameState(orderinfo.getGame_state());
+
+        return ofPayRecord;
+
     }
 
     public Result rechargeDenomination(Long userId) {
