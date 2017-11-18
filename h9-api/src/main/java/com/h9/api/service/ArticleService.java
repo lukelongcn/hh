@@ -30,6 +30,9 @@ public class ArticleService {
     @ApiOperation(value = "获取文章内容")
     public Result findOne(Long id){
         Article article =  articleReposiroty.findOne(id);
+        if(article == null){
+            return Result.fail("文章不存在");
+        }
         ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
         articleVO.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.DAY));
         return Result.success(articleVO);

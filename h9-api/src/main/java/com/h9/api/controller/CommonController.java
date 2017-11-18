@@ -37,7 +37,15 @@ public class CommonController {
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/page/{code}",produces = MediaType.TEXT_HTML_VALUE)
     public String agreement(@PathVariable("code") String code){
-        return agreementRepository.agreement(code);
+        String content = "<html>\n" +
+                "<head>\n" +
+                "<title>用户使用APP协议</title>\n" +
+                "</head>\n" +
+                "<body>"+
+                agreementRepository.agreement(code) +
+                "</body>\n" +
+                "</html>";
+        return content;
     }
 
 
