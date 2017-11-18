@@ -278,10 +278,10 @@ public class SmsService {
             errorCount ++;
             redisBean.setStringValue(errorCodeCountKey,String.valueOf(errorCount),9,TimeUnit.MINUTES);
 
-            if(errorCount > 3){
+            if(errorCount >= 3){
 
                 result.setCode(3);
-                result.setMsg("错误最大次数超过了3次");
+                result.setMsg("错误次数已达到最大次数");
 
 
             }
