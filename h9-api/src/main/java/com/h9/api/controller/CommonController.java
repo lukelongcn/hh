@@ -37,9 +37,10 @@ public class CommonController {
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/page/{code}",produces = MediaType.TEXT_HTML_VALUE)
     public String agreement(@PathVariable("code") String code){
+        String title = agreementRepository.getTitle(code);
         String content = "<html>\n" +
                 "<head>\n" +
-                "<title>用户使用APP协议</title>\n" +
+                "<title>"+title+"</title>\n" +
                 "<style type=\"text/css\">\n" +
                 "body{font-size:14px;}\n" +
                 "</style>"+
@@ -55,7 +56,18 @@ public class CommonController {
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/pageJson/{code}")
     public Result agreementJson(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
-       String content = agreementRepository.agreement(code);
+        String title = agreementRepository.getTitle(code);
+        String content = "<html>\n" +
+                "<head>\n" +
+                "<title>"+title+"</title>\n" +
+                "<style type=\"text/css\">\n" +
+                "body{font-size:14px;}\n" +
+                "</style>"+
+                "</head>\n" +
+                "<body>"+
+                agreementRepository.agreement(code) +
+                "</body>\n" +
+                "</html>";
         return Result.success("获取成功",content);
     }
 
