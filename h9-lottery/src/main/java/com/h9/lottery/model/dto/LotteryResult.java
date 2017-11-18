@@ -15,6 +15,7 @@ public class LotteryResult {
     private String qrCode;
     private String code;
     private boolean lottery;
+    private int userCount = 0;
     private boolean roomUser;
     private BigDecimal money = new BigDecimal(0);
     private List<LotteryUser> lotteryUsers;
@@ -110,6 +111,14 @@ public class LotteryResult {
 
     public void setRefreshTime(BigDecimal refreshTime) {
         this.refreshTime = refreshTime;
+    }
+
+    public int getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(int userCount) {
+        this.userCount = userCount;
     }
 }
 

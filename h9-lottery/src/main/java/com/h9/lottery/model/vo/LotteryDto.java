@@ -1,5 +1,6 @@
 package com.h9.lottery.model.vo;
 
+import com.h9.lottery.config.ConstantConfig;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +21,7 @@ public class LotteryDto {
     private double latitude;
 
     public String getCode() {
-        if(code.contains("1h9.cc/")){
-           return code.replace("1h9.cc/", "");
-        }
-        return code;
+        return ConstantConfig.path2Code(code);
     }
 
     public void setCode(String code) {
