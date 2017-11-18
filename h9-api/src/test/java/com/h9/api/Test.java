@@ -22,8 +22,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,8 +45,11 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String parentPath = Test.class.getClassLoader().getResource("").getPath();
-        System.out.println(parentPath);
+        BigDecimal bigDecimal = new BigDecimal(12.2);
+        DecimalFormat format = new DecimalFormat("0.00");
+        String format1 = format.format(bigDecimal);
+        BigDecimal bigDecimal1 = bigDecimal.setScale(2, RoundingMode.CEILING);
+        System.out.println(format1);
     }
 
     @org.junit.Test
