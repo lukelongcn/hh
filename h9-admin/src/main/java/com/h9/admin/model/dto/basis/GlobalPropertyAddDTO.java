@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -40,6 +41,7 @@ public class GlobalPropertyAddDTO {
 
     @ApiModelProperty(value = "参数值",required = true)
     @NotEmpty(message = "参数值不能为空")
+    @Valid
     private List<Map<String,Object>> val;
 
     @ApiModelProperty(value = "说明",required = true)

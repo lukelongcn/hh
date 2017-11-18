@@ -5,6 +5,7 @@ package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
@@ -13,17 +14,26 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 
+import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -234,24 +244,15 @@ public class ApiApplicationTests {
 
     @Resource
     UserBankRepository userBankRepository;
+    @Resource
+    private WithdrawalsRecordRepository withdrawalsRecordReposiroty;
     @Test
     public void TestAccount(){
 
-        List<UserBank> all = userBankRepository.findAll();
-        all.stream().forEach(userBank -> {
-            String province = userBank.getProvince();
-            String city = userBank.getCity();
-
-            province.contains("省");
-            province = province.replace("省", "");
-            city = city.replace("市", "");
-
-            userBank.setProvince(province);
-            userBank.setCity(city);
-
-            userBankRepository.save(userBank);
-        });
-
+//        redisBean.setStringValue("sms:code:count:3:18770812669", "0");
+        Object todayWithdrawMoney =  withdrawalsRecordReposiroty.findByTodayWithdrawMoney(7L);
+//        BigDecimal bigDecimal = new BigDecimal(todayWithdrawMoney);
+//        System.out.println(bigDecimal);
     }
 
     @Autowired
@@ -259,9 +260,6 @@ public class ApiApplicationTests {
 
     @Resource
     private MailService mailService;
-
-
-
 
 
 }
