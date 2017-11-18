@@ -226,7 +226,7 @@ public class ConsumeService {
 
 //        if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
 
-        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), user.getPhone(), didiCardDTO.getCode());
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.DIDI_CARD.getCode(), user.getPhone(), didiCardDTO.getCode());
         if (verifyResult != null) return verifyResult;
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
@@ -292,7 +292,7 @@ public class ConsumeService {
 
 //        if (!code.equals(redisCode)) return Result.fail("验证码不正确");
 
-        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), user.getPhone(), code);
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.CASH_RECHARGE.getCode(), user.getPhone(), code);
         if (verifyResult != null) return verifyResult;
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);

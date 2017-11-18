@@ -213,7 +213,7 @@ public class UserService {
 
 //        if (!redisCode.equals(code)) return Result.fail("验证码错误");
 
-        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), user.getPhone(), code);
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_MOBILE.getCode(), user.getPhone(), code);
         if (verifyResult != null) return verifyResult;
 
         redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
