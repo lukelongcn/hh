@@ -249,7 +249,7 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 
-//        redisBean.setStringValue("sms:code:count:5:12345678912", "0");
+        redisBean.setStringValue("sms:code:count:3:18770812669", "0");
 //        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
     }
 

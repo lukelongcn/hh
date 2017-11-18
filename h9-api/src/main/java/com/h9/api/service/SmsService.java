@@ -255,7 +255,7 @@ public class SmsService {
     public Result verifySmsCodeByType(Long userId, int type, String tel, String code){
 
         // 验证短信
-        String key = RedisKey.getSmsCodeKey(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
+        String key = RedisKey.getSmsCodeKey(tel, type);
         String codeValue = redisBean.getStringValue(key);
 
         if(StringUtils.isBlank(codeValue)) return Result.fail("请先发送短信验证码");
