@@ -5,8 +5,10 @@ import com.h9.api.service.ArticleService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by 李圆
@@ -21,7 +23,7 @@ public class ArticleController {
 
     @ApiOperation(value = "获取文章内容")
     @GetMapping(value = "/article/{id}")
-    public Result<ArticleVO> finOne(@PathVariable("id")Long id){
+    public Result<ArticleVO> finOne(@NotNull(message="请输入文章标识")@PathVariable("id")Long id){
         return  articleService.findOne(id);
     }
 
