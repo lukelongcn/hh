@@ -9,6 +9,8 @@ import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -47,6 +49,7 @@ public class AccountService {
     private GlobalPropertyRepository globalPropertyRepository;
     @Resource
     private ConfigService configService;
+    private Logger logger = Logger.getLogger(this.getClass());
 
 
     public Result getBalanceFlow(Long userId, int page, int limit) {
@@ -74,7 +77,7 @@ public class AccountService {
 
         Map iconMap = configService.getMapConfig("balanceFlowImg");
 
-        return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc,iconMap)));
+        return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc, iconMap)));
     }
 
     public BigDecimal getAccountBalance(Long userId) {
@@ -88,15 +91,19 @@ public class AccountService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
         Object cardCount = orderItemReposiroty.findCardCount(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
-
-        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "",user.getPhone() );
+        String max = configService.getStringConfig("withdrawMax");
+        if (StringUtils.isBlank(max)) {
+            max = "100";
+            logger.error("没有找到提现最大值参数，默认为: " + max);
+        }
+        UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "", user.getPhone(),max);
         return Result.success(userAccountInfoVO);
     }
 
     public Result couponeList(Long userId, int page, int limit) {
 
         PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
-        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId,GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), pageRequest);
+        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), pageRequest);
 
         return Result.success(new PageResult<>(orders).result2Result(ord -> {
 

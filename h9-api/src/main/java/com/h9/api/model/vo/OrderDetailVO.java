@@ -44,7 +44,7 @@ public class OrderDetailVO {
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
 
-        vo.setRechargeMoney(MoneyUtils.formatMoney(order.getMoney()));
+        vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
         if(order.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()){
             vo.setAccepterName("");
             vo.setAddress(order.getUserAddres());

@@ -249,10 +249,7 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 
-//        redisBean.setStringValue("sms:code:count:3:18770812669", "0");
-        Object todayWithdrawMoney =  withdrawalsRecordReposiroty.findByTodayWithdrawMoney(7L);
-//        BigDecimal bigDecimal = new BigDecimal(todayWithdrawMoney);
-//        System.out.println(bigDecimal);
+        redisBean.setStringValue("sms:code:count:5:12345678912", "0");
     }
 
     @Autowired
