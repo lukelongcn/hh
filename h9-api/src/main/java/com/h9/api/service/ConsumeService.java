@@ -115,6 +115,12 @@ public class ConsumeService {
 //        BigDecimal subtract = balance.subtract(realPrice);
 //        userAccountRepository.changeBalance(subtract, userId);
 //        userAccount.setBalance(subtract);
+        //校验 code
+        String tel = mobileRechargeDTO.getTel();
+        String key = RedisKey.getSmsCodeKey(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
+        String codeValue = redisBean.getStringValue(key);
+
+        if(!mobileRechargeDTO.getCode().equals(codeValue)) return Result.fail("验证码不正确");
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
