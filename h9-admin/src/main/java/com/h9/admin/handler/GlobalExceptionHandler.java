@@ -1,5 +1,6 @@
 package com.h9.admin.handler;
 
+import com.h9.admin.validation.ParamException;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -51,6 +52,9 @@ public class GlobalExceptionHandler {
             return new Result(1, msg);
         }else if (e instanceof BindException) {
             String msg = ((BindException) e).getBindingResult().getFieldError().getDefaultMessage();
+            return new Result(1, msg);
+        }else if (e instanceof ParamException) {
+            String msg = ((ParamException) e).getMessage();
             return new Result(1, msg);
         }else if(e instanceof UnAuthException){
             UnAuthException unAuthException = (UnAuthException) e;
