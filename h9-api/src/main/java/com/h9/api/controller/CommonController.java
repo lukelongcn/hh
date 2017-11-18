@@ -40,6 +40,9 @@ public class CommonController {
         String content = "<html>\n" +
                 "<head>\n" +
                 "<title>用户使用APP协议</title>\n" +
+                "<style type=\"text/css\">\n" +
+                "body{font-size:14px;}\n" +
+                "</style>"+
                 "</head>\n" +
                 "<body>"+
                 agreementRepository.agreement(code) +
