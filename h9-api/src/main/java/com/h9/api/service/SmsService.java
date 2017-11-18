@@ -65,7 +65,10 @@ public class SmsService {
      */
     public Result sendSMSCode(Long userId, String phone, int smsType) {
 
-        phone = userRepository.findOne(userId).getPhone();
+        String tempPhone = userRepository.findOne(userId).getPhone();
+        if (StringUtils.isNotBlank(tempPhone)) {
+            phone = tempPhone;
+        }
         SMSTypeEnum smstypeEnum = SMSTypeEnum.findByCode(smsType);
         if (smstypeEnum == null) {
             return Result.fail("短信类型不对");
