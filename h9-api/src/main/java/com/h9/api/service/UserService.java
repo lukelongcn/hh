@@ -210,7 +210,12 @@ public class UserService {
         String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码已失效");
-        if (!redisCode.equals(code)) return Result.fail("验证码错误");
+
+//        if (!redisCode.equals(code)) return Result.fail("验证码错误");
+
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), user.getPhone(), code);
+        if (verifyResult != null) return verifyResult;
+
         redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
 
         User phoneUser = userRepository.findByPhone(phone);

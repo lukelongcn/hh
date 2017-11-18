@@ -68,6 +68,10 @@ public class Result<T> {
         return new Result<>(FAILED_CODE, msg);
     }
 
+    public static <T>Result<T> fail(String msg,int code) {
+        return new Result<>(code, msg);
+    }
+
     public static final int SUCCESS_CODE = 0;
     public static final int FAILED_CODE = 1;
 
