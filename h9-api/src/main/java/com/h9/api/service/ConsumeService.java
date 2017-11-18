@@ -266,7 +266,14 @@ public class ConsumeService {
 
         //当天提现的金额
         Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
-        BigDecimal castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        BigDecimal castTodayWithdrawMoney = null;
+
+        if(todayWithdrawMoney == null){
+            castTodayWithdrawMoney = new BigDecimal(0);
+        }else{
+            castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        }
+
         BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
         if (willWithdrawMoney.compareTo(max) > 0) {
             return Result.fail("提现金额超过每日额度");
