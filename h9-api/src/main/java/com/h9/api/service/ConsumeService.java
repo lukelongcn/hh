@@ -114,7 +114,7 @@ public class ConsumeService {
 
         BigDecimal subtract = balance.subtract(realPrice);
 //        userAccountRepository.changeBalance(subtract, userId);
-        userAccount.setBalance(subtract);
+//        userAccount.setBalance(subtract);
 
         Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
