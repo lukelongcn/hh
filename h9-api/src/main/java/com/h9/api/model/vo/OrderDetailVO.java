@@ -6,6 +6,7 @@ import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
 import org.springframework.util.CollectionUtils;
 
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * Created by itservice on 2017/11/1.
  */
 public class OrderDetailVO {
+
     private String company = "";
     private String orderStatus = "";
     private Integer orderType;
@@ -27,18 +29,27 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber="";
+    /**
+     * description: 充值面额
+     */
+    private String rechargeMoney = "";
+
+
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
         vo.setOrderStatus("已完成");
         vo.setOrderType(order.getOrderType());
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
+        vo.setTel(order.getUserPhone());
+
+        vo.setRechargeMoney(order.getMoney().setScale(2, RoundingMode.DOWN).toString());
         if(order.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()){
             vo.setAccepterName("");
-            vo.setTel(order.getUserPhone());
             vo.setAddress(order.getUserAddres());
             vo.setLogisticsNumber(order.getLogisticsNumber());
         }
+
         List<OrderItems> orderItems = order.getOrderItems();
         if (!CollectionUtils.isEmpty(orderItems)) {
             vo.setCouponsNumber(orderItems.get(0).getDidiCardNumber());
@@ -57,6 +68,14 @@ public class OrderDetailVO {
 
         vo.setGoodsInfoList(goodsInfos);
         return vo;
+    }
+
+    public String getRechargeMoney() {
+        return rechargeMoney;
+    }
+
+    public void setRechargeMoney(String rechargeMoney) {
+        this.rechargeMoney = rechargeMoney;
     }
 
     public String getLogisticsNumber() {

@@ -189,12 +189,12 @@ public class Test {
         String merId = "808080211881410";
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        String merSeqId = "4";
+        String merSeqId = "21";
         String cardNo = "6210984280001561104";
-        String usrName = "李圆";
-        String openBank = "中国邮政储蓄银行";
-        String prov = "江西";
-        String city = "赣州";
+        String usrName = "李圆123";
+        String openBank = "邮政";
+        String prov = "";
+        String city = "";
         String transAmt = "101";
         String purpose = "提现";
         String version = "20151207";
@@ -203,8 +203,8 @@ public class Test {
         String s = merId + merDate + merSeqId + cardNo + usrName + openBank + prov + city + transAmt + purpose + version;
 
         PrivateKey key = new PrivateKey();
-//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
-        String path = ApiApplication.chinaPayKeyPath;
+        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        String path = ApiApplication.chinaPayKeyPath;
         boolean buildOK = key.buildKey(merId, 0, path);
         if(!buildOK){
             System.out.println("没有找到私钥文件");
@@ -241,6 +241,79 @@ public class Test {
         params.add("chkValue",sign);
         HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
         ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        String returnData = res.getBody();
+        System.out.println(returnData);
+        System.out.println(res);
+    }
+
+
+    @org.junit.Test
+    public void chinapayTest3() {
+        String url = "http://sfj-test.chinapay.com/dac/SinPayServletGBK";
+        String merId = "808080211881410";
+        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+        String merDate = format.format(new Date());
+        String merSeqId = "103";
+        String cardNo = "6212264000073350908";
+        String usrName = "龙登辉";
+        String openBank = "工商";
+        String prov = "广东";
+        String city = "深圳";
+        String transAmt = "101";
+        String purpose = "提现";
+        String version = "20151207";
+        String signFlag = "1";
+        String termType = "7";
+        String s = merId + merDate + merSeqId + cardNo + usrName + openBank + prov + city + transAmt + purpose + version;
+
+        PrivateKey key = new PrivateKey();
+        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
+//        String path = ApiApplication.chinaPayKeyPath;
+        boolean buildOK = key.buildKey(merId, 0, path);
+        if(!buildOK){
+            System.out.println("没有找到私钥文件");
+        }
+        System.out.println(buildOK);
+        SecureLink secureLink = new SecureLink(key);
+        char[] encode = Base64.encode(s.getBytes());
+        String sign = secureLink.Sign(new String(encode));
+
+        boolean b = secureLink.verifyAuthToken(new String(encode), sign);
+        System.out.println("sing result : "+b);
+        System.out.println("------");
+        System.out.println(sign);
+        System.out.println("------");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("merId",merId);
+        params.add("merDate",merDate);
+        System.out.println(merDate);
+        params.add("merSeqId",merSeqId);
+        params.add("cardNo",cardNo);
+        params.add("usrName",usrName);
+        params.add("openBank",openBank);
+        params.add("prov",prov);
+        params.add("city",city);
+        params.add("transAmt",transAmt);
+        params.add("purpose",purpose);
+//        params.add("subBank",);
+        params.add("flag","01");
+        params.add("version",version);
+        params.add("signFlag",signFlag);
+        params.add("chkValue",sign);
+        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(params,headers);
+        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        String returnData = res.getBody();
+
+        int start = returnData.indexOf("chkValue=")+9;
+        String chkValue = returnData.substring(start, returnData.length());
+        System.out.println("returnData : "+returnData);
+        System.out.println("chkValue : "+chkValue);
+
         System.out.println(res);
     }
 
