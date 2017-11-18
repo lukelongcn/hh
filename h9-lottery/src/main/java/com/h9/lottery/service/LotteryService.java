@@ -342,7 +342,7 @@ public class LotteryService {
             moneyMap.put(1, money.multiply(new BigDecimal(70)).divide(new BigDecimal(100)));
             moneyMap.put(2, money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)));
         } else {
-            moneyMap.put(1, money.multiply(new BigDecimal(40)).divide(new BigDecimal(100)));
+            moneyMap.put(1, money.multiply(new BigDecimal(60)).divide(new BigDecimal(100)));
             moneyMap.put(2, money.multiply(new BigDecimal(30)).divide(new BigDecimal(100)));
             moneyMap.put(3, money.multiply(new BigDecimal(10)).divide(new BigDecimal(100)));
         }
@@ -428,6 +428,7 @@ public class LotteryService {
         rewardRepository.saveAndFlush(reward);
         return Result.success(reward);
     }
+
 
 
 }
