@@ -2,10 +2,12 @@ package com.h9.api.provider;
 
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.OfPayRecord;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -28,9 +30,11 @@ public class MobileRechargeService {
 
     private Logger logger = Logger.getLogger(this.getClass());
     private static final String url = "http://apitest.ofpay.com/onlineorder.do";
-    private static final String userId = "A08566";
-    private static final String userpws = MD5Util.getMD5("of111111");
-    private static final String keyStr = "OFCARD";
+    @Value("${ofpay.userid}")
+    private String userId;
+    @Value("${ofpay.userpwd}")
+    private String userpws;
+    private String keyStr = "OFCARD";
     private RestTemplate restTemplate = new RestTemplate();
 
     //md5_str检验码的计算方法:
@@ -39,6 +43,7 @@ public class MobileRechargeService {
     //2: KeyStr(秘钥) 必须由客户提供欧飞商务进行绑定
 
     public Result recharge(MobileRechargeDTO mobileRechargeDTO) {
+        String userpwsmd5 = MD5Util.getMD5(userpws);
         String cardid = "140101";
         String cardnum = "50";
         String sporderId = "test001234567";
@@ -50,14 +55,14 @@ public class MobileRechargeService {
         String version = "6.0";
         MultiValueMap<String, String> map = new LinkedMultiValueMap();
         map.add("userid", userId);
-        map.add("userpws", userpws);
+        map.add("userpws", userpwsmd5);
         map.add("cardid", cardid);
         map.add("cardnum", cardnum);
         map.add("sporder_id", sporderId);
         map.add("sporder_time", sporder_time);
         map.add("game_userid", game_userid);
         map.add("version", version);
-        String s = userId + userpws + cardid + cardnum + sporderId + sporder_time + game_userid;
+        String s = userId + userpwsmd5 + cardid + cardnum + sporderId + sporder_time + game_userid;
         s += keyStr;
         String md5 = MD5Util.getMD5(s);
         map.add("md5_str", md5.toUpperCase());
@@ -72,9 +77,9 @@ public class MobileRechargeService {
             Orderinfo rechargeResult = (Orderinfo) unmarshaller.unmarshal(new StringReader(body));
 
             if (rechargeResult.retcode.equals("1")) {
-                return Result.success("充值成功");
+                return Result.success("充值成功",rechargeResult);
             } else {
-                return Result.success("充值失败");
+                return Result.success("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
             logger.info(e.getMessage(), e);
@@ -83,7 +88,6 @@ public class MobileRechargeService {
 
         return Result.success("充值失败");
     }
-
 
 
 
@@ -99,6 +103,7 @@ public class MobileRechargeService {
         private String sporder_id;
         private String game_userid;
         private String game_state;
+
 
         public String getErr_msg() {
             return err_msg;

@@ -1,5 +1,6 @@
 package com.h9.admin.handler;
 
+import com.h9.admin.validation.ParamException;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -52,6 +53,9 @@ public class GlobalExceptionHandler {
         }else if (e instanceof BindException) {
             String msg = ((BindException) e).getBindingResult().getFieldError().getDefaultMessage();
             return new Result(1, msg);
+        }else if (e instanceof ParamException) {
+            String msg = ((ParamException) e).getMessage();
+            return new Result(1, msg);
         }else if(e instanceof UnAuthException){
             UnAuthException unAuthException = (UnAuthException) e;
             return new Result(401, e.getMessage());
@@ -61,7 +65,7 @@ public class GlobalExceptionHandler {
         } else {
             logger.info(e.getMessage(), e);
             if(System.currentTimeMillis()-time >5* 60 *1000) {
-                mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: "+httpServletRequest.getRequestURL()+ExceptionUtils.getMessage(e));
+                mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: "+httpServletRequest.getRequestURL()+ExceptionUtils.getStackTrace(e));
                 time = System.currentTimeMillis();
             }
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(),"服务器繁忙，请稍后再试");

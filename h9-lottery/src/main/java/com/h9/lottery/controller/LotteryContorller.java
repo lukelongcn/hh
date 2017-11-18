@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -46,29 +48,23 @@ public class LotteryContorller {
 
 
     @Secured(bindPhone = false)
-    @PostMapping("/{code}/start")
+    @GetMapping("/start")
     @ApiOperation(value = "开始抽奖")
     public Result startCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @SessionAttribute("curUserId") long userId
-                            ,@PathVariable("code") String code){
-        logger.debugv("userId {0} code {1}" ,userId, code);
-        if(code.contains("1h9.cc/")){
-            code =  code.replace("1h9.cc/", "");
-        }
+                            ,@RequestParam("code") String code){
+        logger.debugv("start userId {0} code {1}" ,userId, code);
         return lotteryService.lottery(userId,code);
     }
 
 
     @Secured(bindPhone = false)
-    @GetMapping("/room/{code}")
+    @GetMapping("/room")
     @ApiOperation(value = "奖励房间")
     public Result<LotteryResult> getLotteryRoom(
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
-            @SessionAttribute("curUserId") long userId,@PathVariable("code") String code){
-        logger.debugv("userId {0} code {1}" ,userId, code);
-        if(code.contains("1h9.cc")){
-            code =  code.replace("1h9.cc/", "");
-        }
+            @SessionAttribute("curUserId") long userId,@RequestParam("code") String code){
+        logger.debugv("room userId {0} code {1}" ,userId, code);
         return lotteryService.getLotteryRoom(userId,code);
     }
 
@@ -85,6 +81,15 @@ public class LotteryContorller {
             @RequestParam(value = "limit",required = false) int limit
     ){
         return lotteryService.history(userId,page,limit);
+    }
+
+
+    @GetMapping("/forward/{code}")
+    @ApiOperation(value = "扫码抽奖")
+    public void forward(@PathVariable("code") String code, HttpServletResponse response) throws IOException {
+        String forward = lotteryService.forward(code);
+        logger.debugv("forward path:{0}",forward);
+        response.sendRedirect(forward);
     }
 
 

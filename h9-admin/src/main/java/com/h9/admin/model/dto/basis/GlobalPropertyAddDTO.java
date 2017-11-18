@@ -2,6 +2,7 @@ package com.h9.admin.model.dto.basis;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.h9.admin.validation.ParamException;
 import com.h9.common.db.entity.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
@@ -9,9 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class GlobalPropertyAddDTO {
         return v;
     }
 
-    public void setVal(List val) {
+    public void setVal(List<Map<String,Object>> val) {
         this.val = val;
     }
 
@@ -107,8 +106,14 @@ public class GlobalPropertyAddDTO {
         this.description = description;
     }
 
-    public GlobalProperty toGlobalProperty(){
-
+    public GlobalProperty toGlobalProperty() throws ParamException{
+        for (Map<String, Object> v : val) {
+            for (Map.Entry entry : v.entrySet()) {
+                if (entry.getValue() == null || StringUtils.isBlank(entry.getValue().toString())) {
+                    throw new ParamException("值不能为空");
+                }
+            }
+        }
         GlobalProperty globalProperty = new GlobalProperty();
         BeanUtils.copyProperties(this,globalProperty);
         return globalProperty;

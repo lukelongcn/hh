@@ -75,7 +75,7 @@ public class LotteryTest {
     
 
 
-//    @Test
+    @Test
     @Transactional
     public void contextLoads() {
 
