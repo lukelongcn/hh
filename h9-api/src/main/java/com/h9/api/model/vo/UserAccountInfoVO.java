@@ -2,6 +2,7 @@ package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.User;
 import com.h9.common.db.entity.UserAccount;
+import com.h9.common.utils.MoneyUtils;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class UserAccountInfoVO {
     private String tel;
 
     public UserAccountInfoVO (User user, UserAccount userAccount,String cardNum,String tel){
-        this.balance = userAccount.getBalance().setScale(2, RoundingMode.DOWN).toString();
+        this.balance = MoneyUtils.formatMoney(userAccount.getBalance());
         this.vb = userAccount.getvCoins().toString();
         this.cardNum = cardNum;
         this.imgUrl = user.getAvatar();

@@ -14,6 +14,7 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
@@ -126,7 +127,7 @@ public class ConsumeService {
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "" + realPrice.setScale(2, RoundingMode.DOWN));
+            map.put("money", MoneyUtils.formatMoney(realPrice));
             return Result.success("充值成功", map);
         } else {
             throw new RuntimeException("充值失败");
@@ -154,7 +155,7 @@ public class ConsumeService {
         mapVo.put("priceList", list);
         mapVo.put("tel", user.getPhone());
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        mapVo.put("balance", userAccount.getBalance().setScale(2, RoundingMode.DOWN).toString());
+        mapVo.put("balance", MoneyUtils.formatMoney(userAccount.getBalance()));
         return Result.success(mapVo);
     }
 
@@ -321,7 +322,7 @@ public class ConsumeService {
 
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "" + balance.setScale(2, RoundingMode.DOWN));
+            map.put("money", "" + MoneyUtils.formatMoney(balance));
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             return Result.success(map);
