@@ -76,11 +76,10 @@ public class MobileRechargeService {
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Orderinfo rechargeResult = (Orderinfo) unmarshaller.unmarshal(new StringReader(body));
 
-            OfPayRecord ofPayRecord = new OfPayRecord();
             if (rechargeResult.retcode.equals("1")) {
-                return Result.success("充值成功",ofPayRecord);
+                return Result.success("充值成功",rechargeResult);
             } else {
-                return Result.success("充值失败",ofPayRecord);
+                return Result.success("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
             logger.info(e.getMessage(), e);
