@@ -14,6 +14,7 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
@@ -91,6 +92,8 @@ public class ConsumeService {
     @Resource
     private ConfigService configService;
 
+    @Resource
+    private OfPayRecordReposiroty ofPayRecordReposiroty;
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
@@ -111,13 +114,22 @@ public class ConsumeService {
 
         BigDecimal subtract = balance.subtract(realPrice);
 //        userAccountRepository.changeBalance(subtract, userId);
-        userAccount.setBalance(subtract);
+//        userAccount.setBalance(subtract);
 
         Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
         Result result = mobileRechargeService.recharge(mobileRechargeDTO);
+        //保存充值记录（包括失败成功）
+        try {
+            MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
+            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
+            ofPayRecordReposiroty.save(ofPayRecord);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+        }
+
         orderItems.setMoney(goods.getRealPrice());
         orderItems.setName("手机话费充值");
 
@@ -126,11 +138,29 @@ public class ConsumeService {
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "" + realPrice.setScale(2, RoundingMode.DOWN));
+            map.put("money", MoneyUtils.formatMoney(realPrice));
             return Result.success("充值成功", map);
         } else {
             throw new RuntimeException("充值失败");
         }
+    }
+
+    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo){
+
+        OfPayRecord ofPayRecord = new OfPayRecord();
+        ofPayRecord.setErrMsg(orderinfo.getErr_msg());
+        ofPayRecord.setRetcode(orderinfo.getRetcode());
+        ofPayRecord.setOrderid(orderinfo.getOrderid());
+        ofPayRecord.setCardid(orderinfo.getCardid());
+        ofPayRecord.setCardnum(orderinfo.getCardnum());
+        ofPayRecord.setOrdercash(orderinfo.getOrdercash());
+        ofPayRecord.setCardname(orderinfo.getCardname());
+        ofPayRecord.setSporderId(orderinfo.getSporder_id());
+        ofPayRecord.setGameUserid(orderinfo.getGame_userid());
+        ofPayRecord.setGameState(orderinfo.getGame_state());
+
+        return ofPayRecord;
+
     }
 
     public Result rechargeDenomination(Long userId) {
@@ -154,7 +184,7 @@ public class ConsumeService {
         mapVo.put("priceList", list);
         mapVo.put("tel", user.getPhone());
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        mapVo.put("balance", userAccount.getBalance().setScale(2, RoundingMode.DOWN).toString());
+        mapVo.put("balance", MoneyUtils.formatMoney(userAccount.getBalance()));
         return Result.success(mapVo);
     }
 
@@ -199,7 +229,7 @@ public class ConsumeService {
         }
 
         if (goods == null) return Result.fail("商品不存在");
-        goods.setStatus(0);
+
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
         orders.setUser(user);
@@ -265,7 +295,14 @@ public class ConsumeService {
 
         //当天提现的金额
         Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
-        BigDecimal castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        BigDecimal castTodayWithdrawMoney = null;
+
+        if(todayWithdrawMoney == null){
+            castTodayWithdrawMoney = new BigDecimal(0);
+        }else{
+            castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        }
+
         BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
         if (willWithdrawMoney.compareTo(max) > 0) {
             return Result.fail("提现金额超过每日额度");
@@ -321,7 +358,7 @@ public class ConsumeService {
 
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "" + balance.setScale(2, RoundingMode.DOWN));
+            map.put("money", "" + MoneyUtils.formatMoney(balance));
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             return Result.success(map);

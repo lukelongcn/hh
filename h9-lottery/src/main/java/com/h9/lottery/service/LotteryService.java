@@ -7,8 +7,10 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
+import com.h9.lottery.config.ConstantConfig;
 import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -191,6 +194,7 @@ public class LotteryService {
 
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
+        code = ConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -210,7 +214,7 @@ public class LotteryService {
 
         lotteryResult.setCode(code);
         lotteryResult.setRefreshTime(new BigDecimal(lotteryConfig.getLotteryRefresh()));
-
+        lotteryResult.setUserCount(reward.getPartakeCount());
         Date nowDate = new Date();
         String nowTime = DateUtil.formatDate(nowDate, DateUtil.FormatType.SECOND);
         lotteryResult.setNowTime(nowTime);
@@ -235,7 +239,7 @@ public class LotteryService {
             lotteryResult.setMoney(lotteryFlow.getMoney());
         }
 
-        lotteryResult.setQrCode("" + code);
+        lotteryResult.setQrCode(ConstantConfig.Lottery_QR_PATH + code);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
         if (islottery) {
             LotteryFlow top1LotteryFlow = lotteryFlowRepository.findTop1ByRewardOrderByMoneyDesc(reward);
@@ -276,6 +280,7 @@ public class LotteryService {
 
     @Transactional
     public Result lottery(Long curUserId, String code) {
+        code = ConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -430,5 +435,22 @@ public class LotteryService {
     }
 
 
+    public String forward(String code){
+        //todo
+        return concatUrl(ConstantConfig.Lottery_QR_FORWARD_PATH,code);
+    }
+
+
+    public String concatUrl(String url, String code) {
+        StringBuffer stringBuffer = new StringBuffer(url);
+        if (url.contains("?")) {
+            stringBuffer.append("&");
+        } else {
+            stringBuffer.append("?");
+        }
+        stringBuffer.append("barcode=");
+        stringBuffer.append(code);
+        return stringBuffer.toString();
+    }
 
 }

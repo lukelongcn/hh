@@ -4,6 +4,7 @@ import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.math.RoundingMode;
@@ -43,7 +44,7 @@ public class OrderDetailVO {
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
 
-        vo.setRechargeMoney(order.getMoney().setScale(2, RoundingMode.DOWN).toString());
+        vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
         if(order.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()){
             vo.setAccepterName("");
             vo.setAddress(order.getUserAddres());
