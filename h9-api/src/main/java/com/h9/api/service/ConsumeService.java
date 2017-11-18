@@ -20,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -112,7 +113,7 @@ public class ConsumeService {
 //        userAccountRepository.changeBalance(subtract, userId);
         userAccount.setBalance(subtract);
 
-        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "滴滴");
+        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
@@ -125,7 +126,7 @@ public class ConsumeService {
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", ""+ realPrice.setScale(2, RoundingMode.DOWN));
+            map.put("money", "" + realPrice.setScale(2, RoundingMode.DOWN));
             return Result.success("充值成功", map);
         } else {
             throw new RuntimeException("充值失败");
@@ -153,7 +154,7 @@ public class ConsumeService {
         mapVo.put("priceList", list);
         mapVo.put("tel", user.getPhone());
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        mapVo.put("balance", userAccount.getBalance().setScale(2,RoundingMode.DOWN).toString());
+        mapVo.put("balance", userAccount.getBalance().setScale(2, RoundingMode.DOWN).toString());
         return Result.success(mapVo);
     }
 
@@ -200,7 +201,7 @@ public class ConsumeService {
         if (goods == null) return Result.fail("商品不存在");
         goods.setStatus(0);
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode() , "滴滴");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
         orders.setUser(user);
 
         ordersReposiroty.saveAndFlush(orders);
@@ -221,8 +222,8 @@ public class ConsumeService {
 //        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
 //        Map<String,String> map = JSONObject.parseObject(globalProperty.getVal(), Map.class);
 
-        Map<String,String> map = configService.getMapConfig("balanceFlowImg");
-        map.forEach((k,v) ->{
+        Map<String, String> map = configService.getMapConfig("balanceFlowImg");
+        map.forEach((k, v) -> {
             if (k.equals("5")) {
                 items.setImage(v);
                 return;
@@ -258,8 +259,17 @@ public class ConsumeService {
         String withdrawMax = configService.getStringConfig("withdrawMax");
         BigDecimal max = new BigDecimal(withdrawMax);
 
-        if (balance.compareTo(max) <= 0) {
-            return Result.fail("超过了每日额度");
+//        if (balance.compareTo(max) >= 0) {
+//            return Result.fail("超过了每日额度");
+//        }
+
+        //当天提现的金额
+        Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
+        BigDecimal castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
+        if (willWithdrawMoney.compareTo(max) > 0) {
+            return Result.fail("提现金额超过每日额度");
+
         }
 
         String cardNo = userBank.getNo();
@@ -290,7 +300,7 @@ public class ConsumeService {
 
         //设置默认银行卡
         UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
-        if(defaulBank != null){
+        if (defaulBank != null) {
             defaulBank.setDefaultSelect(0);
             bankCardRepository.save(defaulBank);
         }
@@ -311,7 +321,7 @@ public class ConsumeService {
 
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", ""+balance.setScale(2, RoundingMode.DOWN));
+            map.put("money", "" + balance.setScale(2, RoundingMode.DOWN));
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             return Result.success(map);
@@ -359,7 +369,7 @@ public class ConsumeService {
 
                 if (cpReturnData.contains("|s|")) {
                     //此笔交易银行显示已完成了，把订单状态改变
-                    logger.info("提现记录Id:"+wr.getId());
+                    logger.info("提现记录Id:" + wr.getId());
                     wr.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
                 }
 
@@ -380,7 +390,7 @@ public class ConsumeService {
 
     @SuppressWarnings("Duplicates")
     public Result withdraInfo(Long userId) {
-        List<UserBank> userBankList = bankCardRepository.findByUserIdAndStatus(userId,1);
+        List<UserBank> userBankList = bankCardRepository.findByUserIdAndStatus(userId, 1);
         List<Map<String, String>> bankList = new ArrayList<>();
         userBankList.forEach(bank -> {
 
@@ -405,14 +415,14 @@ public class ConsumeService {
 //        String max = globalProperty.getVal();
 
         String max = configService.getStringConfig("withdrawMax");
-        if(StringUtils.isBlank(max)) {
+        if (StringUtils.isBlank(max)) {
             max = "100";
-            logger.error("没有找到提现最大值参数，默认为: "+max);
+            logger.error("没有找到提现最大值参数，默认为: " + max);
         }
 
         infoVO.put("withdrawalCount", max);
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        infoVO.put("balance",userAccount.getBalance());
+        infoVO.put("balance", userAccount.getBalance());
         return Result.success(infoVO);
     }
 }

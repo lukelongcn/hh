@@ -27,7 +27,7 @@ public class UserAccountInfoVO {
         this.cardNum = cardNum;
         this.imgUrl = user.getAvatar();
         this.nickName = user.getNickName();
-        this.withdrawalCount = 10000;
+//        this.withdrawalCount = 10000;
         this.tel = tel;
     }
 

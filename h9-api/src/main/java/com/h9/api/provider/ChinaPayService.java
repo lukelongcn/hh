@@ -82,7 +82,6 @@ public class ChinaPayService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("merId", merId);
         params.add("merDate", merDate);
-        System.out.println(merDate);
         params.add("merSeqId", payParam.getMerSeqId());
         params.add("cardNo", payParam.getCardNo());
         params.add("usrName", payParam.getUsrName());
