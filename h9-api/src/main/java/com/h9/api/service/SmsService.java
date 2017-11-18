@@ -263,7 +263,7 @@ public class SmsService {
         String key = RedisKey.getSmsCodeKey(tel, type);
         String codeValue = redisBean.getStringValue(key);
 
-        if(StringUtils.isBlank(codeValue)) return Result.fail("请先发送短信验证码");
+        if(StringUtils.isBlank(codeValue)) return Result.fail("验证码错误");
 
         Result result = new Result();
         if (!codeValue.equals(code)) {
