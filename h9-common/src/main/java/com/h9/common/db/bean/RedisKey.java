@@ -21,6 +21,7 @@ public class RedisKey {
      */
     private static String tokenUserIdKey = "h9:userId:%s";
 
+    private static String errorCodeCountKey = "h9:sms:code:errorCount:userId:%s:type:%s";
 
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
@@ -72,8 +73,10 @@ public class RedisKey {
         return MessageFormat.format("sms:code:{0}:{1}",type,phone);
     }
 
+    public static String getErrorCodeCountKey(Long userId,int type) {
 
-
+        return String.format(errorCodeCountKey,userId,type);
+    }
 }
 
 
