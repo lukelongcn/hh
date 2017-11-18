@@ -112,11 +112,17 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
 
-        BigDecimal subtract = balance.subtract(realPrice);
+//        BigDecimal subtract = balance.subtract(realPrice);
 //        userAccountRepository.changeBalance(subtract, userId);
 //        userAccount.setBalance(subtract);
+        //校验 code
+        String tel = mobileRechargeDTO.getTel();
+        String key = RedisKey.getSmsCodeKey(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
+        String codeValue = redisBean.getStringValue(key);
 
-        Orders order = orderService.initOrder(user.getNickName(), new BigDecimal(50), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
+        if(!mobileRechargeDTO.getCode().equals(codeValue)) return Result.fail("验证码不正确");
+
+        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");

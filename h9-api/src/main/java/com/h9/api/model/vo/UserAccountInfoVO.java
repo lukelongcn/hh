@@ -22,13 +22,13 @@ public class UserAccountInfoVO {
     private Integer withdrawalCount;
     private String tel;
 
-    public UserAccountInfoVO (User user, UserAccount userAccount,String cardNum,String tel){
+    public UserAccountInfoVO(User user, UserAccount userAccount, String cardNum, String tel, String max){
         this.balance = MoneyUtils.formatMoney(userAccount.getBalance());
         this.vb = userAccount.getvCoins().toString();
         this.cardNum = cardNum;
         this.imgUrl = user.getAvatar();
         this.nickName = user.getNickName();
-//        this.withdrawalCount = 10000;
+        this.withdrawalCount =Integer.valueOf(max);
         this.tel = tel;
     }
 
