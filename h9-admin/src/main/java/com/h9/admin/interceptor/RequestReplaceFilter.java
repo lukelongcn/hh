@@ -12,6 +12,7 @@ import java.io.IOException;
 
 /**
  * 替换Request对象
+ * 不过滤内部请求，如服务器内部使用forward转发请求和<%@ include file="/index.jsp"%>的情况
  */
 @Component
 public class RequestReplaceFilter extends OncePerRequestFilter {

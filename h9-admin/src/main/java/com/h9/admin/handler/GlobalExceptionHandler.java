@@ -65,7 +65,12 @@ public class GlobalExceptionHandler {
         } else {
             logger.info(e.getMessage(), e);
             if(System.currentTimeMillis()-time >5* 60 *1000) {
-                mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: "+httpServletRequest.getRequestURL()+ExceptionUtils.getStackTrace(e));
+                StringBuilder subject = new StringBuilder("");
+                StringBuilder content = new StringBuilder("");
+                subject.append("徽酒后台服务器错误").append(currentEnvironment);
+                content.append("url: ").append(httpServletRequest.getRequestURL()).append(" ").append(httpServletRequest.getMethod())
+                        .append("\n ").append(ExceptionUtils.getStackTrace(e));
+                mailService.sendtMail( subject.toString() , content.toString());
                 time = System.currentTimeMillis();
             }
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(),"服务器繁忙，请稍后再试");
