@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.script.DigestUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -85,23 +86,33 @@ public class WeChatProvider {
 
 
     public OpenIdCode getOpenId(String appId, String secret, String code) {
-        String url = MessageFormat.format("https://api.weixin.qq.com/" +
-                "sns/oauth2/access_token" +
-                "?appid={0}&secret={1}" +
-                "&code={2}&grant_type=authorization_code", appId, secret, code);
-        OpenIdCode openIdCode = restTemplate.getForObject(url, OpenIdCode.class);
-        logger.debug(JSONObject.toJSONString(openIdCode));
-        return openIdCode;
+        try {
+            String url = MessageFormat.format("https://api.weixin.qq.com/" +
+                    "sns/oauth2/access_token" +
+                    "?appid={0}&secret={1}" +
+                    "&code={2}&grant_type=authorization_code", appId, secret, code);
+            OpenIdCode openIdCode = restTemplate.getForObject(url, OpenIdCode.class);
+            logger.debug(JSONObject.toJSONString(openIdCode));
+            return openIdCode;
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
     public WeChatUser getUserInfo(OpenIdCode openIdCode) {
-        String url = MessageFormat.format("https://api.weixin.qq.com/sns/userinfo" +
-                        "?access_token={0}&openid={1}&lang=zh_CN",
-                openIdCode.getAccess_token(), openIdCode.getOpenid());
-        WeChatUser weChatUser = restTemplate.getForObject(url, WeChatUser.class);
-        logger.debug(JSONObject.toJSONString(weChatUser));
-        return weChatUser;
+        try {
+            String url = MessageFormat.format("https://api.weixin.qq.com/sns/userinfo" +
+                            "?access_token={0}&openid={1}&lang=zh_CN",
+                    openIdCode.getAccess_token(), openIdCode.getOpenid());
+            WeChatUser weChatUser = restTemplate.getForObject(url, WeChatUser.class);
+            logger.debug(JSONObject.toJSONString(weChatUser));
+            return weChatUser;
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
