@@ -42,10 +42,11 @@ public class MobileRechargeService {
 //    包体=userid+userpws+cardid+cardnum+sporder_id+sporder_time+ game_userid
     //2: KeyStr(秘钥) 必须由客户提供欧飞商务进行绑定
 
-    public Result recharge(MobileRechargeDTO mobileRechargeDTO) {
+    public Result recharge(MobileRechargeDTO mobileRechargeDTO,Long id) {
         String userpwsmd5 = MD5Util.getMD5(userpws);
         String cardid = "140101";
         String cardnum = "50";
+        //商户订单号
         String sporderId = "test001234567";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 //        String sporder_time = formatter.format(new Date());

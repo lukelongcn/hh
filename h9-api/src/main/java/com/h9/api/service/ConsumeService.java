@@ -96,6 +96,9 @@ public class ConsumeService {
     private OfPayRecordReposiroty ofPayRecordReposiroty;
     private Logger logger = Logger.getLogger(this.getClass());
 
+    @Resource
+    private SmsService smsService;
+
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
@@ -117,30 +120,32 @@ public class ConsumeService {
 //        userAccount.setBalance(subtract);
         //校验 code
         String tel = mobileRechargeDTO.getTel();
-        String key = RedisKey.getSmsCodeKey(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
-        String codeValue = redisBean.getStringValue(key);
 
-        if(!mobileRechargeDTO.getCode().equals(codeValue)) return Result.fail("验证码不正确");
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
+        if (verifyResult != null) return verifyResult;
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO);
-        //保存充值记录（包括失败成功）
-        try {
-            MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
-            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
-            ofPayRecordReposiroty.save(ofPayRecord);
-        } catch (Exception e) {
-            logger.info(e.getMessage(),e);
-        }
 
         orderItems.setMoney(goods.getRealPrice());
         orderItems.setName("手机话费充值");
 
         orderItemReposiroty.saveAndFlush(orderItems);
         userAccountRepository.save(userAccount);
+
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO,orderItems.getId());
+        //保存充值记录（包括失败成功）
+        try {
+            MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
+            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
+            ofPayRecordReposiroty.save(ofPayRecord);
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+        }
+
+
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
@@ -151,7 +156,7 @@ public class ConsumeService {
         }
     }
 
-    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo){
+    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo) {
 
         OfPayRecord ofPayRecord = new OfPayRecord();
         ofPayRecord.setErrMsg(orderinfo.getErr_msg());
@@ -221,7 +226,12 @@ public class ConsumeService {
         String phone = user.getPhone();
         String smsCodeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.DIDI_CARD.getCode());
         String value = redisBean.getStringValue(smsCodeKey);
-        if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
+
+//        if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
+
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.DIDI_CARD.getCode(), user.getPhone(), didiCardDTO.getCode());
+        if (verifyResult != null) return verifyResult;
+
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -282,7 +292,12 @@ public class ConsumeService {
         //验证短信
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
         String redisCode = redisBean.getStringValue(smsCodeKey);
-        if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+
+//        if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.CASH_RECHARGE.getCode(), user.getPhone(), code);
+        if (verifyResult != null) return verifyResult;
+
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
         UserBank userBank = userBankRepository.findOne(bankId);
@@ -303,9 +318,9 @@ public class ConsumeService {
         Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
         BigDecimal castTodayWithdrawMoney = null;
 
-        if(todayWithdrawMoney == null){
+        if (todayWithdrawMoney == null) {
             castTodayWithdrawMoney = new BigDecimal(0);
-        }else{
+        } else {
             castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
         }
 

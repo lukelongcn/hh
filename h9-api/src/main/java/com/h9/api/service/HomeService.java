@@ -7,6 +7,7 @@ import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.AnnouncementReposiroty;
 import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.db.repo.BannerRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -55,7 +56,11 @@ public class HomeService {
         if (!CollectionUtils.isEmpty(articleList)) {
             articleList.forEach(article -> {
                 ArticleType articleType = article.getArticleType();
-                HomeVO convert = new HomeVO( article, articlelink);
+
+                String url = article.getUrl();
+                //有外链接取外链接,没有拼上文章详情地址
+                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink : url);
+
                 List<HomeVO> list = voMap.get(articleType.getCode());
                 if (list == null) {
                     List<HomeVO> tempList = new ArrayList<>();

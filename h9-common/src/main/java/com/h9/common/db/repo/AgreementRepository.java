@@ -20,4 +20,11 @@ public interface AgreementRepository extends BaseRepository<HtmlContent> {
     String agreement(String code);
 
 
+    /**
+     * 返回页面标题
+     * @param code
+     * @return
+     */
+    @Query("select title from HtmlContent where code=?1 ")
+    String getTitle(String code);
 }

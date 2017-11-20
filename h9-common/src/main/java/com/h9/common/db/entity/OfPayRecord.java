@@ -1,5 +1,7 @@
 package com.h9.common.db.entity;
 
+import com.h9.common.base.BaseEntity;
+
 import javax.persistence.*;
 
 /**
@@ -7,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "ofpay_record")
-public class OfPayRecord {
+public class OfPayRecord extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

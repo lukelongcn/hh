@@ -17,7 +17,7 @@ public class LotteryResult {
     private boolean lottery;
     private int userCount = 0;
     private boolean roomUser;
-    private BigDecimal money = new BigDecimal(0);
+    private String money ="0";
     private List<LotteryUser> lotteryUsers;
     private String endTime;
     private long differentDate;
@@ -49,11 +49,12 @@ public class LotteryResult {
         this.code = code;
     }
 
-    public BigDecimal getMoney() {
+
+    public String getMoney() {
         return money;
     }
 
-    public void setMoney(BigDecimal money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 

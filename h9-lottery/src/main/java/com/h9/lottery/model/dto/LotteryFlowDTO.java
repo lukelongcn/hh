@@ -4,6 +4,7 @@ import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,7 +18,7 @@ import java.util.Date;
  */
 public class LotteryFlowDTO {
 
-    private BigDecimal money = new BigDecimal(0);
+    private String money = "0";
     private String month;
     private String createTime;
     private String remarks;
@@ -31,16 +32,16 @@ public class LotteryFlowDTO {
         Date createDate = lotteryFlow.getCreateTime();
         createTime = DateUtil.formatDate(createDate, DateUtil.FormatType.SECOND);
         month = DateUtil.formatDate(createDate, DateUtil.FormatType.GBK_MONTH);
-        money = lotteryFlow.getMoney();
+        money = MoneyUtils.formatMoney(lotteryFlow.getMoney());
         remarks = lotteryFlow.getRemarks();
     }
 
 
-    public BigDecimal getMoney() {
+    public String getMoney() {
         return money;
     }
 
-    public void setMoney(BigDecimal money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 
