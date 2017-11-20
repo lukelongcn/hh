@@ -51,6 +51,7 @@ public class HomeService {
 
         Map<String, String> preLink = configService.getMapConfig("preLink");
         String articlelink = preLink.get("article");
+
         List<Article> articleList = articleRepository.findActiveArticle(new Date());
 
         if (!CollectionUtils.isEmpty(articleList)) {
@@ -59,7 +60,7 @@ public class HomeService {
 
                 String url = article.getUrl();
                 //有外链接取外链接,没有拼上文章详情地址
-                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink+ article.getId()  : url);
+                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink+ article.getId() : url);
 
                 List<HomeVO> list = voMap.get(articleType.getCode());
                 if (list == null) {
@@ -75,9 +76,11 @@ public class HomeService {
 
         List<Announcement> announcementList = announcementReposiroty.findActived(new Date());
 
+        String announcemented = preLink.get("announcement");
         List<HomeVO> collect = announcementList.stream()
                 .map(announcement -> {
-                    HomeVO convert = new HomeVO(announcement, articlelink);
+                    String url = announcement.getUrl();
+                    HomeVO convert = new HomeVO(announcement, StringUtils.isBlank(url) ? announcemented+ announcement.getId() : url);
                     return convert;
                 })
                 .collect(Collectors.toList());

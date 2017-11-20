@@ -50,4 +50,5 @@ public class Address {
 
     @Column(name = "ProvincialCity")
     private String ProvincialCity;
+
 }

@@ -24,7 +24,7 @@ public class AnnouncementController {
     AnnouncementServise announcementServise;
 
     @ApiOperation(value = "获取公告内容")
-    @GetMapping(value = "/account/noticeDetail/{id}")
+    @GetMapping(value = "/announcement/{id}")
     public Result<AnnouncementVO> finOne(@NotNull(message="请输入公告标识")@PathVariable("id")Long id){
         return  announcementServise.findOne(id);
     }

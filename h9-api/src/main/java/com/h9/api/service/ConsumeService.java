@@ -273,8 +273,9 @@ public class ConsumeService {
         if(changeResult.getCode() == 1){
             return changeResult;
         }
+
         ordersReposiroty.saveAndFlush(orders);
-        OrderItems items = new OrderItems("滴滴卡兑换", "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
+        OrderItems items = new OrderItems(goods.getName(), "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
         //
