@@ -77,7 +77,6 @@ public class UserService {
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode()), phone));
         if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
-            redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
         }
         User user = userRepository.findByPhone(phone);
         if (user == null) {
@@ -102,8 +101,8 @@ public class UserService {
             user.setLastLoginTime(new Date());
             user = userRepository.saveAndFlush(user);
         }
-
         LoginResultVO vo = getLoginResult(user);
+        redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
         return Result.success(vo);
     }
 
@@ -216,7 +215,7 @@ public class UserService {
 //        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_MOBILE.getCode(), user.getPhone(), code);
 //        if (verifyResult != null) return verifyResult;
 
-        redisBean.setStringValue(key, "", 3, TimeUnit.MINUTES);
+
 
         User phoneUser = userRepository.findByPhone(phone);
         if (phoneUser != null) {
@@ -264,6 +263,8 @@ public class UserService {
         redisBean.expire(tokenUserIdKey, 30, TimeUnit.DAYS);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "");
 
+        //失效验证码
+        redisBean.setStringValue(key, "", 1, TimeUnit.MINUTES);
         return Result.success();
     }
 
