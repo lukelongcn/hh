@@ -124,6 +124,11 @@ public class ConsumeService {
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
         if (verifyResult != null) return verifyResult;
 
+        String smsCodeCount = RedisKey.getSmsCodeCount(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
+        redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
+
+
+
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
@@ -225,14 +230,11 @@ public class ConsumeService {
 
         String phone = user.getPhone();
         String smsCodeKey = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.DIDI_CARD.getCode());
-        String value = redisBean.getStringValue(smsCodeKey);
 
 //        if (!didiCardDTO.getCode().equalsIgnoreCase(value)) return Result.fail("验证码不正确");
 
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.DIDI_CARD.getCode(), user.getPhone(), didiCardDTO.getCode());
         if (verifyResult != null) return verifyResult;
-
-        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
         BigDecimal accountBalance = userAccount.getBalance();
@@ -280,9 +282,11 @@ public class ConsumeService {
         voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
-        redisBean.setStringValue(smsCodeKey, "", 1, TimeUnit.SECONDS);
         orderItemReposiroty.save(items);
         goodsDIDINumberRepository.save(goodsDIDINumber);
+
+        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
+
         return Result.success(voMap);
     }
 
@@ -298,7 +302,7 @@ public class ConsumeService {
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.CASH_RECHARGE.getCode(), user.getPhone(), code);
         if (verifyResult != null) return verifyResult;
 
-        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
+
 
         UserBank userBank = userBankRepository.findOne(bankId);
         BankType bankType = userBank.getBankType();
@@ -355,6 +359,7 @@ public class ConsumeService {
         BeanUtils.copyProperties(payParam, withdrawalsRequest);
         withdrawalsRequest.setBankReturnData(result.getData().toString());
         withdrawalsRequest.setMerDate(merDate);
+        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
         //设置默认银行卡
         UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
