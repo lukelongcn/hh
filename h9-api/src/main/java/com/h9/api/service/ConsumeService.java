@@ -130,7 +130,16 @@ public class ConsumeService {
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
 
         orderItems.setMoney(goods.getRealPrice());
-        orderItems.setName("手机话费充值");
+
+        Map<String, String> mapImgList = configService.getMapConfig("balanceFlowImg");
+        mapImgList.forEach((k, v) -> {
+            if (k.equals("6")) {
+                orderItems.setImage(v);
+                return;
+            }
+        });
+
+        orderItems.setName(goods.getName());
 
         orderItemReposiroty.saveAndFlush(orderItems);
         userAccountRepository.save(userAccount);
@@ -140,6 +149,9 @@ public class ConsumeService {
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
             OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
+            //减库存
+            Integer stock = goods.getStock();
+            goods.setStock(--stock);
             ofPayRecordReposiroty.save(ofPayRecord);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
@@ -275,6 +287,7 @@ public class ConsumeService {
                 return;
             }
         });
+
 
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
