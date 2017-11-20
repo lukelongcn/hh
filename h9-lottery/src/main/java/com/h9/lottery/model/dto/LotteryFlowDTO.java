@@ -18,7 +18,7 @@ import java.util.Date;
  */
 public class LotteryFlowDTO {
 
-    private String money = "0";
+    private String money = "0.00";
     private String month;
     private String createTime;
     private String remarks;
