@@ -39,6 +39,9 @@ public class CommonController {
     @GetMapping(value = "/page/{code}",produces = MediaType.TEXT_HTML_VALUE)
     public String agreement(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
         HtmlContent htmlContent = agreementRepository.findByCode(code);
+        if(htmlContent == null){
+            return "页面不存在";
+        }
         if(htmlContent.getTitle() == null){
             return "404:页面丢失，标题不存在";
         }
@@ -58,6 +61,9 @@ public class CommonController {
     @GetMapping(value = "/pageJson/{code}")
     public Result agreementJson(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
         HtmlContent htmlContent = agreementRepository.findByCode(code);
+        if(htmlContent == null){
+            return Result.fail("页面不存在");
+        }
         if(htmlContent.getTitle() == null){
             return Result.fail("404:页面丢失，标题不存在");
         }
