@@ -281,9 +281,8 @@ public class SmsService {
         String key = RedisKey.getSmsCodeKey(tel, type);
         String codeValue = redisBean.getStringValue(key);
 
-
         Result result = new Result();
-        if (!codeValue.equals(code) || StringUtils.isBlank(codeValue)) {
+        if (StringUtils.isBlank(codeValue) || !codeValue.equals(code)  ) {
             //
             result.setCode(1);
             result.setMsg("验证码不正确");
@@ -309,7 +308,6 @@ public class SmsService {
             return result;
         }
         //clean sms code
-
         redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
         return null;
     }
