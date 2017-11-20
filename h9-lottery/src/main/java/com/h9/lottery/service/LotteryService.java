@@ -133,7 +133,7 @@ public class LotteryService {
         if (lottery != null) {
 //          放回是否开奖
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
-            lotteryResultDto.setRoomUser(lottery.getRoomUser() == 1);
+            lotteryResultDto.setRoomUser(lottery.getRoomUser() == 2);
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             return Result.success(lotteryResultDto);
         } else {
