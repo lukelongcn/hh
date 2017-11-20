@@ -241,7 +241,7 @@ public class UserService {
                 user.setAvatar(phoneUser.getAvatar());
 
                 //信息转移
-                UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getH9UserId());
+                UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getId());
                 UserExtends userExtends = userExtendsRepository.findByUserId(userId);
 
                 BeanUtils.copyProperties(phoneUserExtends, userExtends,"userId");
