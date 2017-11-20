@@ -53,7 +53,7 @@ public class Lottery extends BaseEntity {
     @Column(name = "finish_time", columnDefinition = "datetime COMMENT '获奖时间'")
     private Date finishTime;
 
-    @Column(name = "room_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 房间主人 2 普通用户'")
+    @Column(name = "room_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 普通用户 2 房主'")
     private Integer roomUser = 1;
 
     public Long getId() {
