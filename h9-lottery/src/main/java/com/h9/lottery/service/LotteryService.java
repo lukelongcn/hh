@@ -250,7 +250,7 @@ public class LotteryService {
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryUser.setUserId(lotteryFromDb.getUser().getId());
-                lotteryUser.setMoney(lotteryFromDb.getMoney());
+                lotteryUser.setMoney(MoneyUtils.formatMoney(lotteryFromDb.getMoney()));
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
                 lotteryUser.setMaxMoney(top1LotteryFlow.getId().equals(lotteryFromDb.getId()));
                 lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
