@@ -45,12 +45,12 @@ public class HomeVO {
         setType("banner");
     }
 
-    public HomeVO(Announcement announcement,String articlePreUrl) {
+    public HomeVO(Announcement announcement,String url) {
         setImgUrl(announcement.getImgUrl());
         setContent("");
         setTitle(announcement.getTitle());
-        String link = articlePreUrl + announcement.getId();
-        setLink(link);
+//        String link = articlePreUrl + announcement.getId();
+        setLink(url);
         setCreateTime(DateUtil.formatDate(announcement.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         setType("article");
         setContent(announcement.getTitle());
