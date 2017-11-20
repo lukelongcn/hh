@@ -48,6 +48,16 @@
 			<scope>provided</scope>
 		</dependency>
 
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.commons</groupId>-->
+			<!--<artifactId>commons-csv</artifactId>-->
+			<!--<version>1.5.1-marklogic</version>-->
+		<!--</dependency>-->
+
+
+
 	</dependencies>
 
 
