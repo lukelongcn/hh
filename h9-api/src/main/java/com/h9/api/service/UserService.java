@@ -211,7 +211,7 @@ public class UserService {
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码已失效");
         if (!redisCode.equals(code)) return Result.fail("验证码错误");
-        redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
+        redisBean.setStringValue(key, "", 10, TimeUnit.SECONDS);
 
         User phoneUser = userRepository.findByPhone(phone);
         if (phoneUser != null) {
@@ -221,19 +221,17 @@ public class UserService {
                 //迁移资金积累
                 UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
                 BigDecimal balance = userAccount.getBalance();
-                //增加双方流水
+                //有余额转移余额，增加双方流水
                 if (balance.compareTo(new BigDecimal(0)) > 0) {
                     //变更微信account
                     commonService.setBalance(user.getId(), balance.abs().negate(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
                     commonService.setBalance(phoneUser.getId(), balance.abs(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
-                    phoneUser.setOpenId(user.getOpenId());
-                    phoneUser.setUnionId(user.getUnionId());
-
-                    userRepository.save(phoneUser);
                 }
+                phoneUser.setOpenId(user.getOpenId());
+                phoneUser.setUnionId(user.getUnionId());
+                userRepository.save(phoneUser);
                 user.setStatus(User.StatusEnum.INVALID.getId());
-                user.setNickName(phoneUser.getNickName());
-                user.setAvatar(phoneUser.getAvatar());
+
 
                 //信息转移
                 UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getH9UserId());
