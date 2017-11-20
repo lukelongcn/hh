@@ -216,7 +216,7 @@ public class UserService {
 //        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_MOBILE.getCode(), user.getPhone(), code);
 //        if (verifyResult != null) return verifyResult;
 
-        redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
+        redisBean.setStringValue(key, "", 3, TimeUnit.MINUTES);
 
         User phoneUser = userRepository.findByPhone(phone);
         if (phoneUser != null) {
@@ -226,17 +226,19 @@ public class UserService {
                 //迁移资金积累
                 UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
                 BigDecimal balance = userAccount.getBalance();
-                //有余额转移余额，增加双方流水
+                //增加双方流水
                 if (balance.compareTo(new BigDecimal(0)) > 0) {
                     //变更微信account
                     commonService.setBalance(user.getId(), balance.abs().negate(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
                     commonService.setBalance(phoneUser.getId(), balance.abs(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
-                }
-                phoneUser.setOpenId(user.getOpenId());
-                phoneUser.setUnionId(user.getUnionId());
-                userRepository.save(phoneUser);
-                user.setStatus(User.StatusEnum.INVALID.getId());
+                    phoneUser.setOpenId(user.getOpenId());
+                    phoneUser.setUnionId(user.getUnionId());
 
+                    userRepository.save(phoneUser);
+                }
+                user.setStatus(User.StatusEnum.INVALID.getId());
+                user.setNickName(phoneUser.getNickName());
+                user.setAvatar(phoneUser.getAvatar());
 
                 //信息转移
                 UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getH9UserId());
