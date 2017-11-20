@@ -41,11 +41,8 @@ public class CommonController {
         String content = "<html>\n" +
                 "<head>\n" +
                 "<title>"+title+"</title>\n" +
-                "<style type=\"text/css\">\n" +
-                "body{font-size:14px;}\n" +
-                "</style>"+
                 "</head>\n" +
-                "<body>"+
+                "<body  style=\"font-size:14px;\">"+
                 agreementRepository.agreement(code) +
                 "</body>\n" +
                 "</html>";
@@ -60,11 +57,8 @@ public class CommonController {
         String content = "<html>\n" +
                 "<head>\n" +
                 "<title>"+title+"</title>\n" +
-                "<style type=\"text/css\">\n" +
-                "body{font-size:14px;}\n" +
-                "</style>"+
                 "</head>\n" +
-                "<body>"+
+                "<body  style=\"font-size:14px;\">"+
                 agreementRepository.agreement(code) +
                 "</body>\n" +
                 "</html>";

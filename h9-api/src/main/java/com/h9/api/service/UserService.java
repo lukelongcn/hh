@@ -216,7 +216,7 @@ public class UserService {
 //        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_MOBILE.getCode(), user.getPhone(), code);
 //        if (verifyResult != null) return verifyResult;
 
-        redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
+        redisBean.setStringValue(key, "", 3, TimeUnit.MINUTES);
 
         User phoneUser = userRepository.findByPhone(phone);
         if (phoneUser != null) {
@@ -241,7 +241,7 @@ public class UserService {
                 user.setAvatar(phoneUser.getAvatar());
 
                 //信息转移
-                UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getH9UserId());
+                UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getId());
                 UserExtends userExtends = userExtendsRepository.findByUserId(userId);
 
                 BeanUtils.copyProperties(phoneUserExtends, userExtends,"userId");
@@ -293,6 +293,9 @@ public class UserService {
             return Result.success(loginResult);
         } else {
             WeChatUser userInfo = weChatProvider.getUserInfo(openIdCode);
+            if(userInfo == null||StringUtils.isEmpty(userInfo.getOpenid())){
+                return Result.fail("微信登录失败，获取用户信息失败，请同意授权");
+            }
             user = userInfo.convert();
             user.setLoginCount(1);
             user.setLastLoginTime(new Date());
