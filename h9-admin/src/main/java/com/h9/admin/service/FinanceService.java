@@ -102,8 +102,8 @@ public class FinanceService {
     public Result<WithdrawalsRecord> updateWithdrawRecordStatus(long id){
         this.logger.infov("提现退回，订单id:{0}",id);
         WithdrawalsRecord withdrawalsRecord = this.withdrawalsRecordRepository.findByLockId(id);
-        if(withdrawalsRecord.getStatus()!=WithdrawalsRecord.statusEnum.FAIL.getCode()){
-            return Result.fail("该订单不是失败订单");
+        if(withdrawalsRecord.getStatus()!=WithdrawalsRecord.statusEnum.WITHDRA_EXPCETION.getCode()){
+            return Result.fail("该订单不是提现异常订单");
         }
         Result result = this.commonService.setBalance(withdrawalsRecord.getUserId(),withdrawalsRecord.getMoney(), BalanceFlow.BalanceFlowTypeEnum.RETURN.getId(),
                 withdrawalsRecord.getId(),withdrawalsRecord.getOrderNo(),"银联退回");
@@ -112,7 +112,7 @@ public class FinanceService {
             return Result.fail("改变用户余额失败");
         }
         withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.CANCEL.getCode());
-        this.withdrawalsRecordRepository.save(withdrawalsRecord);
+//        this.withdrawalsRecordRepository.save(withdrawalsRecord);
         return Result.success(this.withdrawalsRecordRepository.save(withdrawalsRecord));
     }
 
