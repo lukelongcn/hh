@@ -128,7 +128,14 @@ public class ConsumeService {
         order.setUser(user);
         orderItems.setOrders(order);
         commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO);
+
+        orderItems.setMoney(goods.getRealPrice());
+        orderItems.setName("手机话费充值");
+
+        orderItemReposiroty.saveAndFlush(orderItems);
+        userAccountRepository.save(userAccount);
+
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO,orderItems.getId());
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
@@ -138,11 +145,7 @@ public class ConsumeService {
             logger.info(e.getMessage(), e);
         }
 
-        orderItems.setMoney(goods.getRealPrice());
-        orderItems.setName("手机话费充值");
 
-        orderItemReposiroty.saveAndFlush(orderItems);
-        userAccountRepository.save(userAccount);
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));

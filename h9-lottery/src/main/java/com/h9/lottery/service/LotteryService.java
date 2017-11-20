@@ -10,6 +10,7 @@ import com.h9.common.db.repo.*;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
+import com.h9.common.utils.MoneyUtils;
 import com.h9.lottery.config.ConstantConfig;
 import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
@@ -236,7 +237,7 @@ public class LotteryService {
         //TODO
         LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
         if (lotteryFlow != null) {
-            lotteryResult.setMoney(lotteryFlow.getMoney());
+            lotteryResult.setMoney(MoneyUtils.formatMoney(lotteryFlow.getMoney()));
         }
 
         lotteryResult.setQrCode(ConstantConfig.Lottery_QR_PATH + code);
