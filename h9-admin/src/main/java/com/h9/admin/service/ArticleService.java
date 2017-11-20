@@ -11,13 +11,15 @@ import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.modle.dto.PageDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 文章服务
@@ -79,7 +81,8 @@ public class ArticleService {
 
     public Result<PageResult<Article>> articleList(PageDTO pageDTO) {
         Page<Article> all = articleRepository.findAll(pageDTO.toPageRequest());
-        all.forEach(this::setArticleUrl);
+        Map preLink = configService.getMapConfig("preLink");
+        all.forEach(item->this.setArticleUrl(item,preLink));
         return Result.success(new PageResult<>(all));
     }
 
@@ -149,14 +152,19 @@ public class ArticleService {
 
     private void setArticleUrl(Article article){
         String url = article.getUrl();
-        if (StringUtils.isEmpty(url)) {
-            String preLink = configService.getStringConfig("preLink");
-            if (!StringUtils.isEmpty(preLink)) {
-                article.setUrl(JSONObject.parseObject(preLink).getString("article") + article.getId());
+        if (StringUtils.isBlank(url)) {
+            Map preLink = configService.getMapConfig("preLink");
+            if (preLink!=null) {
+                article.setUrl(preLink.get("article").toString() + article.getId());
             }
-        } else {
-            if(!url.contains("url:")){
-                article.setUrl("url:"+article.getUrl());
+        }
+    }
+
+    private void setArticleUrl(Article article,Map preLink){
+        String url = article.getUrl();
+        if (StringUtils.isBlank(url)) {
+            if (preLink!=null) {
+                article.setUrl(preLink.get("article").toString() + article.getId());
             }
         }
     }

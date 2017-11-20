@@ -2,17 +2,21 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.activity.ActivityEditDTO;
 import com.h9.admin.model.dto.community.*;
+import com.h9.common.common.ConfigService;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * @author: George
@@ -36,6 +40,8 @@ public class CommunityService {
     private GoodsTypeReposiroty goodsTypeReposiroty;
     @Autowired
     private AnnouncementReposiroty announcementReposiroty;
+    @Autowired
+    private ConfigService configService;
 
     public Result<BannerType> addBannerType(BannerType bannerType){
         if(this.bannerTypeRepository.findByCode(bannerType.getCode())!=null){
@@ -215,7 +221,18 @@ public class CommunityService {
     public Result<PageResult<Announcement>> getAnnouncements(PageDTO pageDTO){
         PageRequest pageRequest = this.announcementReposiroty.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
         Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageRequest);
+        Map preLink = configService.getMapConfig("preLink");
+        announcements.forEach(item->this.setAnnouncementUrl(item,preLink));
         PageResult<Announcement> pageResult = new PageResult<>(announcements);
         return Result.success(pageResult);
+    }
+
+    private void setAnnouncementUrl(Announcement announcement,Map preLink){
+        String url = announcement.getUrl();
+        if (StringUtils.isBlank(url)) {
+            if (preLink!=null) {
+                announcement.setUrl(preLink.get("article").toString() + announcement.getId());
+            }
+        }
     }
 }
