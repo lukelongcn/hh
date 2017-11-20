@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.springframework.beans.BeanUtils;
 
 
@@ -22,7 +23,7 @@ import java.util.Set;
 public class BalanceFlowVO {
 
 
-    private BigDecimal money = new BigDecimal(0);
+    private String money = "0.00";
     private String month;
     private String remarks;
     private String imgUrl;
@@ -33,7 +34,7 @@ public class BalanceFlowVO {
         Date createTime = balanceFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = balanceFlow.getRemarks();
-        money = balanceFlow.getMoney();
+        money = MoneyUtils.formatMoney(balanceFlow.getMoney());
         this.createTime = DateUtil.formatDate(balanceFlow.getCreateTime(), DateUtil.FormatType.SECOND);
         Set<String> keySet = iconMap.keySet();
 
@@ -78,12 +79,12 @@ public class BalanceFlowVO {
         this.imgUrl = imgUrl;
     }
 
-    public BigDecimal getMoney() {
+
+    public String getMoney() {
         return money;
     }
 
-
-    public void setMoney(BigDecimal money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 

@@ -21,6 +21,9 @@ public class RedisKey {
      */
     private static String tokenUserIdKey = "h9:userId:%s";
 
+    /**
+     * description: 短信验证码错误次数（区分类型，userId）
+     */
     private static String errorCodeCountKey = "h9:sms:code:errorCount:userId:%s:type:%s";
 
     public static String getTokenUserIdKey(String token){

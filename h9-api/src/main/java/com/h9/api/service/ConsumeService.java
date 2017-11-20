@@ -433,9 +433,9 @@ public class ConsumeService {
 
                 if (cpReturnData.contains("|9|")) {
                     //此笔交易银联打款失败
-                    wr.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
-                    Long userId = wr.getUserId();
-                    commonService.setBalance(userId, wr.getMoney(), 2L, wr.getId(), "", "银联退回");
+                    wr.setStatus(WithdrawalsRecord.statusEnum.WITHDRA_EXPCETION.getCode());
+//                    Long userId = wr.getUserId();
+//                    commonService.setBalance(userId, wr.getMoney(), 2L, wr.getId(), "", "银联退回");
                 }
 
                 withdrawalsRecordReposiroty.save(wr);

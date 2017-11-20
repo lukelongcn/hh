@@ -3,6 +3,7 @@ package com.h9.api.controller;
 import com.h9.api.interceptor.Secured;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.HtmlContent;
 import com.h9.common.db.repo.AgreementRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,14 +37,20 @@ public class CommonController {
      */
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/page/{code}",produces = MediaType.TEXT_HTML_VALUE)
-    public String agreement(@PathVariable("code") String code){
-        String title = agreementRepository.getTitle(code);
+    public String agreement(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
+        HtmlContent htmlContent = agreementRepository.findByCode(code);
+        if(htmlContent == null){
+            return "页面不存在";
+        }
+        if(htmlContent.getTitle() == null){
+            return "404:页面丢失，标题不存在";
+        }
         String content = "<html>\n" +
                 "<head>\n" +
-                "<title>"+title+"</title>\n" +
+                "<title>"+htmlContent.getTitle()+"</title>\n" +
                 "</head>\n" +
                 "<body  style=\"font-size:14px;\">"+
-                agreementRepository.agreement(code) +
+                htmlContent.getContent() +
                 "</body>\n" +
                 "</html>";
         return content;
@@ -53,13 +60,19 @@ public class CommonController {
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/pageJson/{code}")
     public Result agreementJson(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
-        String title = agreementRepository.getTitle(code);
+        HtmlContent htmlContent = agreementRepository.findByCode(code);
+        if(htmlContent == null){
+            return Result.fail("页面不存在");
+        }
+        if(htmlContent.getTitle() == null){
+            return Result.fail("404:页面丢失，标题不存在");
+        }
         String content = "<html>\n" +
                 "<head>\n" +
-                "<title>"+title+"</title>\n" +
+                "<title>"+htmlContent.getTitle()+"</title>\n" +
                 "</head>\n" +
                 "<body  style=\"font-size:14px;\">"+
-                agreementRepository.agreement(code) +
+                htmlContent.getContent() +
                 "</body>\n" +
                 "</html>";
         return Result.success("获取成功",content);
