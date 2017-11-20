@@ -49,7 +49,11 @@ public class LotteryFlow extends BaseEntity {
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '1 未分配奖励 2已分配奖励 3完成'")
     private Integer status = 1;
 
-    @Column(name = "room_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 房间主人 2 普通用户'")
+    /***
+     * @see LotteryFlow.UserEnum
+     * @param roomUser
+     */
+    @Column(name = "room_user",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 2 房间主人 1普通用户'")
     private Integer roomUser = 1;
     
     @Column(name = "remarks", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '备注'")
@@ -113,11 +117,18 @@ public class LotteryFlow extends BaseEntity {
         this.status = status;
     }
 
-
+    /***
+     * @see LotteryFlow.UserEnum
+     * @param roomUser
+     */
     public Integer getRoomUser() {
         return roomUser;
     }
 
+    /***
+     * @see LotteryFlow.UserEnum
+     * @param roomUser
+     */
     public void setRoomUser(Integer roomUser) {
         this.roomUser = roomUser;
     }
@@ -137,4 +148,35 @@ public class LotteryFlow extends BaseEntity {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+    public enum UserEnum{
+        ROOMUSER(2,"房主"),
+        ORTHER(1,"普通用户");
+
+        UserEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
 }

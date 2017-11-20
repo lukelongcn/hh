@@ -133,7 +133,7 @@ public class LotteryService {
         if (lottery != null) {
 //          放回是否开奖
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
-            lotteryResultDto.setRoomUser(lottery.getRoomUser() == 2);
+            lotteryResultDto.setRoomUser(lottery.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             return Result.success(lotteryResultDto);
         } else {
@@ -151,7 +151,7 @@ public class LotteryService {
             int partakeCount = reward.getPartakeCount();
             if (partakeCount == 0) {
                 reward.setUserId(userId);
-                lottery.setRoomUser(2);
+                lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
             }
             //延长结束时间 finishTime
@@ -248,7 +248,7 @@ public class LotteryService {
             for (int i = 0; i < flows.size(); i++) {
                 LotteryFlow lotteryFromDb = flows.get(i);
                 LotteryUser lotteryUser = new LotteryUser();
-                lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
+                lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryUser.setUserId(lotteryFromDb.getUser().getId());
                 lotteryUser.setMoney(lotteryFromDb.getMoney());
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
@@ -264,7 +264,7 @@ public class LotteryService {
             for (int i = 0; i < lotteryList.size(); i++) {
                 Lottery lotteryFromDb = lotteryList.get(i);
                 LotteryUser lotteryUser = new LotteryUser();
-                lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == 2);
+                lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryUser.setUserId(lotteryFromDb.getUser().getId());
                 lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
                 lotteryUser.setName(lotteryFromDb.getUser().getNickName());
