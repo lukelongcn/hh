@@ -67,14 +67,7 @@ public class CommonController {
         if(htmlContent.getTitle() == null){
             return Result.fail("404:页面丢失，标题不存在");
         }
-        String content = "<html>\n" +
-                "<head>\n" +
-                "<title>"+htmlContent.getTitle()+"</title>\n" +
-                "</head>\n" +
-                "<body  style=\"font-size:14px;\">"+
-                htmlContent.getContent() +
-                "</body>\n" +
-                "</html>";
+        String content = htmlContent.getContent();
         return Result.success("获取成功",content);
     }
 
