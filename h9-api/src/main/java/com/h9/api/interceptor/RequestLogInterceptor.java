@@ -99,8 +99,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         long beginTime = startTimeThreadLocal.get();//得到线程绑定的局部变量（开始时间）
         long consumeTime = endTime - beginTime;//3、消耗的时间
         if (consumeTime > consumeMaxTime) {//此处认为处理时间超过500毫秒的请求为慢请求
-            logger.info("lowPerformance: "+consumeTime);
-            logger.info("url: " + httpServletRequest.getRequestURL());
+            logger.info("lowPerformance: "+consumeTime+"url: " + httpServletRequest.getRequestURL());
         }
 
     }

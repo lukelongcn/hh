@@ -318,10 +318,6 @@ public class ConsumeService {
         User user = userRepository.findOne(userId);
         //验证短信
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
-        String redisCode = redisBean.getStringValue(smsCodeKey);
-
-//        if (!code.equals(redisCode)) return Result.fail("验证码不正确");
-
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.CASH_RECHARGE.getCode(), user.getPhone(), code);
         if (verifyResult != null) return verifyResult;
 
@@ -336,10 +332,6 @@ public class ConsumeService {
         String withdrawMax = configService.getStringConfig("withdrawMax");
         BigDecimal max = new BigDecimal(withdrawMax);
 
-//        if (balance.compareTo(max) >= 0) {
-//            return Result.fail("超过了每日额度");
-//        }
-
         //当天提现的金额
         Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
         BigDecimal castTodayWithdrawMoney = null;
@@ -350,10 +342,20 @@ public class ConsumeService {
             castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
         }
 
-        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
-        if (willWithdrawMoney.compareTo(max) > 0) {
-            return Result.fail("提现金额超过每日额度");
+//        if (castTodayWithdrawMoney.compareTo(max) > 0) {
+//            return Result.fail("您今日的提现金额超过每日额度");
+//        }
+//        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
+        //一天提现的金额最大值只能是最在额度值
 
+        BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
+        String transAmt = "101";
+        if(canWithdrawMoney.compareTo(new BigDecimal(0)) <=0){
+            return Result.fail("您今日的提现金额超过每日额度");
+        }else{
+            //TODO 设置提现金额,转化成分
+//            transAmt = canWithdrawMoney;
+            transAmt = "101";
         }
 
         String cardNo = userBank.getNo();
@@ -361,11 +363,10 @@ public class ConsumeService {
         String openBank = bankType.getBankName();
         String prov = userBank.getProvince();
         String city = userBank.getCity();
-        String transAmt = "101";
         String purpose = "提现";
         String signFlag = "1";
 
-        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, new BigDecimal(transAmt), userBank, purpose);
+        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
@@ -397,7 +398,7 @@ public class ConsumeService {
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
-                commonService.setBalance(userId, balance.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
+                commonService.setBalance(userId, canWithdrawMoney, 1L, withdrawalsRecord.getId(), "", "提现");
                 withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
             } else {
                 //转账尚未到用户卡上
