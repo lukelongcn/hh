@@ -158,10 +158,10 @@ public class ConsumeService {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
             OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
             //减库存
-//            Result changeStockResult = goodService.changeStock(goods);
-//            if (changeStockResult.getCode() == 1) {
-//                return changeStockResult;
-//            }
+            Result changeStockResult = goodService.changeStock(goods);
+            if (changeStockResult.getCode() == 1) {
+                return changeStockResult;
+            }
             ofPayRecordReposiroty.save(ofPayRecord);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
@@ -269,12 +269,13 @@ public class ConsumeService {
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
         orders.setUser(user);
         //修改库存
-//        Result changeResult = goodService.changeStock(goods);
-//        if(changeResult.getCode() == 1){
-//            return changeResult;
-//        }
+        Result changeResult = goodService.changeStock(goods);
+        if(changeResult.getCode() == 1){
+            return changeResult;
+        }
+
         ordersReposiroty.saveAndFlush(orders);
-        OrderItems items = new OrderItems("滴滴卡兑换", "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
+        OrderItems items = new OrderItems(goods.getName(), "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
         //
