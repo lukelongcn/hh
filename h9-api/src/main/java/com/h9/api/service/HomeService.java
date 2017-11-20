@@ -59,7 +59,7 @@ public class HomeService {
 
                 String url = article.getUrl();
                 //有外链接取外链接,没有拼上文章详情地址
-                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink : url);
+                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink+ article.getId()  : url);
 
                 List<HomeVO> list = voMap.get(articleType.getCode());
                 if (list == null) {
