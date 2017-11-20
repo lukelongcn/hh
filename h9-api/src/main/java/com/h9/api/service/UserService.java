@@ -231,11 +231,14 @@ public class UserService {
                     //变更微信account
                     commonService.setBalance(user.getId(), balance.abs().negate(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
                     commonService.setBalance(phoneUser.getId(), balance.abs(), BalanceFlow.FlowType.ACCOUNT_TRANSFER, phoneUser.getId(), "", "");
-                    phoneUser.setOpenId(user.getOpenId());
-                    phoneUser.setUnionId(user.getUnionId());
 
-                    userRepository.save(phoneUser);
                 }
+
+                phoneUser.setOpenId(user.getOpenId());
+                phoneUser.setUnionId(user.getUnionId());
+                userRepository.save(phoneUser);
+
+
                 user.setStatus(User.StatusEnum.INVALID.getId());
                 user.setNickName(phoneUser.getNickName());
                 user.setAvatar(phoneUser.getAvatar());
