@@ -11,6 +11,7 @@ import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.modle.dto.PageDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,7 +29,8 @@ public class OrderService {
     private ConfigService configService;
     
     public Result<PageResult<OrderItemVO>> orderList(PageDTO pageDTO) {
-        Page<Orders> all = ordersRepository.findAll(pageDTO.toPageRequest());
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        Page<Orders> all = ordersRepository.findAll(pageDTO.toPageRequest(sort));
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
