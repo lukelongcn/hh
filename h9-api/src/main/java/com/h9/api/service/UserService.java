@@ -293,6 +293,9 @@ public class UserService {
             return Result.success(loginResult);
         } else {
             WeChatUser userInfo = weChatProvider.getUserInfo(openIdCode);
+            if(userInfo == null||StringUtils.isEmpty(userInfo.getOpenid())){
+                return Result.fail("微信登录失败，获取用户信息失败，请同意授权");
+            }
             user = userInfo.convert();
             user.setLoginCount(1);
             user.setLastLoginTime(new Date());

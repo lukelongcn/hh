@@ -90,7 +90,7 @@ public class SmsService {
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, smsType);
         String lastSendValue = redisBean.getStringValue(lastSendKey);
         if (!StringUtils.isBlank(lastSendValue)) {
-            return new Result(1, "短信发送过于频繁,请一分钟再试~");
+            return new Result(1, "短信发送过于频繁,请一分钟后再试~");
         }
         //短信限制 一天最多十次
         String countKey = RedisKey.getSmsCodeCount(phone, smsType);
