@@ -92,12 +92,16 @@ public class ConsumeService {
     @Resource
     private ConfigService configService;
 
+
     @Resource
     private OfPayRecordReposiroty ofPayRecordReposiroty;
     private Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
     private SmsService smsService;
+
+    @Resource
+    private GoodService goodService;
 
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
         OrderItems orderItems = new OrderItems();
@@ -128,7 +132,6 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
 
-
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
@@ -149,14 +152,16 @@ public class ConsumeService {
         orderItemReposiroty.saveAndFlush(orderItems);
         userAccountRepository.save(userAccount);
 
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO,order.getId());
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
             OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
             //减库存
-            Integer stock = goods.getStock();
-            goods.setStock(--stock);
+            Result changeStockResult = goodService.changeStock(goods);
+            if (changeStockResult.getCode() == 1) {
+                return changeStockResult;
+            }
             ofPayRecordReposiroty.save(ofPayRecord);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
@@ -263,7 +268,11 @@ public class ConsumeService {
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
         orders.setUser(user);
-
+        //修改库存
+        Result changeResult = goodService.changeStock(goods);
+        if(changeResult.getCode() == 1){
+            return changeResult;
+        }
         ordersReposiroty.saveAndFlush(orders);
         OrderItems items = new OrderItems("滴滴卡兑换", "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
@@ -314,7 +323,6 @@ public class ConsumeService {
 
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.CASH_RECHARGE.getCode(), user.getPhone(), code);
         if (verifyResult != null) return verifyResult;
-
 
 
         UserBank userBank = userBankRepository.findOne(bankId);
