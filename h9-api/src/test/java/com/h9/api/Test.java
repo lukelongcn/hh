@@ -45,11 +45,9 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        BigDecimal bigDecimal = new BigDecimal(12.2);
-        DecimalFormat format = new DecimalFormat("0.00");
-        String format1 = format.format(bigDecimal);
-        BigDecimal bigDecimal1 = bigDecimal.setScale(2, RoundingMode.CEILING);
-        System.out.println(format1);
+        String s = "111111111111113";
+        String substring = s.substring(0, 14);
+        System.out.println(substring);
     }
 
     @org.junit.Test

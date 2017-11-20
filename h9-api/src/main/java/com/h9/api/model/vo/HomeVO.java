@@ -48,12 +48,16 @@ public class HomeVO {
     public HomeVO(Announcement announcement,String url) {
         setImgUrl(announcement.getImgUrl());
         setContent("");
-        setTitle(announcement.getTitle());
+        String title = announcement.getTitle();
+        if(title.length() >14){
+            title = title.substring(0,14);
+        }
+        setTitle(title);
 //        String link = articlePreUrl + announcement.getId();
         setLink(url);
         setCreateTime(DateUtil.formatDate(announcement.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         setType("article");
-        setContent(announcement.getTitle());
+        setContent(announcement.getContent());
         setTypeName("公告");
     }
 
