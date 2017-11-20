@@ -17,7 +17,7 @@ public class LotteryResult {
     private boolean lottery;
     private int userCount = 0;
     private boolean roomUser;
-    private String money ="0";
+    private String money ="0.00";
     private List<LotteryUser> lotteryUsers;
     private String endTime;
     private long differentDate;

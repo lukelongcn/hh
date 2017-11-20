@@ -307,8 +307,7 @@ public class SmsService {
             redisBean.setStringValue(errorCodeCountKey, String.valueOf(errorCount), 10, TimeUnit.MINUTES);
             return result;
         }
-        //clean sms code
-        redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
+
         return null;
     }
 }

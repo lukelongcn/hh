@@ -15,7 +15,7 @@ public class LotteryUser {
     private String avatar;
     private boolean me;
     private boolean roomUser;
-    private BigDecimal money = new BigDecimal(0);
+    private String money = "0.00";
     private String desc;
     private boolean maxMoney;
     private String createDate;
@@ -53,11 +53,11 @@ public class LotteryUser {
         this.me = me;
     }
 
-    public BigDecimal getMoney() {
+    public String getMoney() {
         return money;
     }
 
-    public void setMoney(BigDecimal money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 
