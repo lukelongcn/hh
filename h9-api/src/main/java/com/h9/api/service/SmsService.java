@@ -55,13 +55,13 @@ public class SmsService {
     /**
      * description:
      *
-     *  @see com.h9.api.enums.SMSTypeEnum 短信类别
-     *  REGISTER(1,"注册,登录"),
-     *  BIND_MOBILE(2, "绑定手机"),
-     *  CASH_RECHARGE(3,"提现"),
-     *  DIDI_CARD(4,"滴滴卡兑换"),
-     *  MOBILE_RECHARGE(5, "手机话费充值"),
-     *  OTHER(0,"其他");
+     * @see com.h9.api.enums.SMSTypeEnum 短信类别
+     * REGISTER(1,"注册,登录"),
+     * BIND_MOBILE(2, "绑定手机"),
+     * CASH_RECHARGE(3,"提现"),
+     * DIDI_CARD(4,"滴滴卡兑换"),
+     * MOBILE_RECHARGE(5, "手机话费充值"),
+     * OTHER(0,"其他");
      */
     public Result sendSMSCode(Long userId, String phone, int smsType) {
 
@@ -75,7 +75,7 @@ public class SmsService {
         }
 
         // 把登录注册的短信移抽取出去，其他类型的短信发送都是要登录才能使用的。
-        if(smsType == SMSTypeEnum.REGISTER.getCode()){
+        if (smsType == SMSTypeEnum.REGISTER.getCode()) {
             return Result.fail("此接口此失效");
         }
 
@@ -90,8 +90,15 @@ public class SmsService {
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, smsType);
         String lastSendValue = redisBean.getStringValue(lastSendKey);
         if (!StringUtils.isBlank(lastSendValue)) {
-            return new Result(1, "短信发送过于频繁,请一分钟再试~");
+            return new Result(1, "短信发送过于频繁,请一分钟后再试~");
         }
+
+        //错误次数大于最大次数限制
+        boolean erroResult = verifyErrorCountIsMax(userId, smsType);
+        if(erroResult){
+            return Result.fail("您的验证码错误已达到最大错误次数，请稍后再试");
+        }
+
         //短信限制 一天最多十次
         String countKey = RedisKey.getSmsCodeCount(phone, smsType);
         String countStr = redisBean.getStringValue(countKey);
@@ -172,6 +179,9 @@ public class SmsService {
     }
 
 
+    /**
+     * description: 发送注册验证码
+     */
     @SuppressWarnings("Duplicates")
     public Result sendSMSCode(String phone) {
 
@@ -180,7 +190,7 @@ public class SmsService {
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);
         if (!StringUtils.isBlank(lastSendValue)) {
-            return new Result(1, "短信发送过于频繁,请一分钟再试~");
+            return new Result(1, "短信发送过于频繁,请一分钟后再试~");
         }
         //短信限制 一天最多十次
         String countKey = RedisKey.getSmsCodeCount(phone, SMSTypeEnum.REGISTER.getCode());
@@ -190,6 +200,7 @@ public class SmsService {
         if (!StringUtils.isEmpty(countStr)) {
             count = Integer.valueOf(countStr);
         }
+
 
         int smsOneDayCount = configHanler.getSmsOneDayCount();
         if (count > smsOneDayCount) {
@@ -237,17 +248,23 @@ public class SmsService {
 
     /**
      * description: 验证用户输入验证码错误最大次数
+     *
      * @return true 达到最大次数
      */
-    public boolean verifyErrorCountIsMax(Long userId,int type){
+    public boolean verifyErrorCountIsMax(Long userId, int type) {
 
         String errorCodeCountKey = RedisKey.getErrorCodeCountKey(userId, type);
 
         String errorCountStr = redisBean.getStringValue(errorCodeCountKey);
-        int errorCount = Integer.valueOf(errorCountStr);
+        int errorCount = 0;
+        if (StringUtils.isBlank(errorCountStr)) {
+            errorCount = 0;
+        }else{
+            errorCount = Integer.valueOf(errorCountStr);
+        }
 
         logger.info("用户Id: " + userId + " ,错误次数: " + errorCount);
-        return !(errorCount >= 3);
+        return errorCount >= 3;
 
     }
 
@@ -255,18 +272,18 @@ public class SmsService {
      * description:
      * 验证，短信验证码
      * 设置用户指定类型验证码的错误次数 +1
-     * @return  Result
+     *
+     * @return Result
      */
-    public Result verifySmsCodeByType(Long userId, int type, String tel, String code){
+    public Result verifySmsCodeByType(Long userId, int type, String tel, String code) {
 
         // 验证短信
         String key = RedisKey.getSmsCodeKey(tel, type);
         String codeValue = redisBean.getStringValue(key);
 
-        if(StringUtils.isBlank(codeValue)) return Result.fail("验证码错误");
 
         Result result = new Result();
-        if (!codeValue.equals(code)) {
+        if (!codeValue.equals(code) || StringUtils.isBlank(codeValue)) {
             //
             result.setCode(1);
             result.setMsg("验证码不正确");
@@ -280,21 +297,20 @@ public class SmsService {
                 errorCount = Integer.valueOf(errorCountStr);
             }
 
-            errorCount ++;
-            redisBean.setStringValue(errorCodeCountKey,String.valueOf(errorCount),9,TimeUnit.MINUTES);
-
-            if(errorCount >= 3){
-
+            if (errorCount >= 2) {
                 result.setCode(3);
-                result.setMsg("错误次数已达到最大次数");
+                result.setMsg("错误次数已达到最大次数,请稍后再试");
 
-
+                return result;
             }
+
+            errorCount++;
+            redisBean.setStringValue(errorCodeCountKey, String.valueOf(errorCount), 10, TimeUnit.MINUTES);
             return result;
         }
         //clean sms code
 
-        redisBean.setStringValue(key,"",1,TimeUnit.SECONDS);
+        redisBean.setStringValue(key, "", 1, TimeUnit.SECONDS);
         return null;
     }
 }

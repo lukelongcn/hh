@@ -119,7 +119,7 @@ public class ConsumeService {
 //        userAccountRepository.changeBalance(subtract, userId);
 //        userAccount.setBalance(subtract);
         //校验 code
-        String tel = mobileRechargeDTO.getTel();
+        String tel = user.getPhone();
 
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
         if (verifyResult != null) return verifyResult;
