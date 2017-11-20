@@ -135,7 +135,7 @@ public class UserService {
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        CharSequence charSequence = phone.subSequence(4, 8);
+        CharSequence charSequence = phone.subSequence(3, 7);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
 //        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
