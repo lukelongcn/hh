@@ -2,13 +2,19 @@ package com.transfer.service;
 
 import com.h9.common.base.PageResult;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.entity.BankBin;
+import com.h9.common.db.repo.BankBinRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import com.transfer.SqlUtils;
 import com.transfer.Util;
+import com.transfer.db.entity.BankInfo;
+import com.transfer.db.entity.C_Cards;
 import com.transfer.db.entity.UserInfo;
+import com.transfer.db.repo.BankInfoRepository;
+import com.transfer.db.repo.C_CardsRepository;
 import com.transfer.db.repo.UserInfoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -38,12 +44,6 @@ public class UserService {
     @Resource
     private UserInfoRepository userInfoRepository;
     @Resource
-    private UserRepository userRepository;
-    @Resource
-    private UserAccountRepository userAccountRepository;
-    @Resource
-    private UserExtendsRepository userExtendsRepository;
-    @Resource
     private ConfigService configService;
 
 
@@ -55,9 +55,17 @@ public class UserService {
         int totalPage = 0;
         PageResult<UserInfo> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "id");
-        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.sql");
+        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.csv");
         BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./user_account.sql");
         BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./user_extends.sql");
+        String header = "insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time,login_count,nick_name,open_id,password,phone,uuid";
+        try {
+            userWtriter.write(header);
+            userWtriter.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         do {
             page = page + 1;
             userInfoPageResult = userInfoRepository.findAll(page, limit, sort);
@@ -103,46 +111,21 @@ public class UserService {
         if (StringUtils.isNotEmpty(userInfo.getOpenID())
                 || StringUtils.isNotEmpty(userInfo.getPhone())) {
             StringBuffer sql = new StringBuffer();
-            sql.append("insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time");
-            sql.append(",login_count,nick_name,open_id,password,phone,uuid) value(");
-            sql.append(userInfo.getId());
-            sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
-
-            sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
-            if(!StringUtils.isEmpty(userInfo.getUserimg())){
-                sql.append(",'"+userInfo.getUserimg()+"'");
-            }else{
-                sql.append(",null");
-            }
-            sql.append(","+userInfo.getId());
-            sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
-            sql.append(","+1);
-            if(!StringUtils.isEmpty(userInfo.getUsername())){
-                sql.append(",'"+ SqlUtils.fomart(userInfo.getUsername())+"'");
-            }else{
-                sql.append(",null");
-            }
-            if(!StringUtils.isEmpty(userInfo.getOpenID())){
-                sql.append(",'"+userInfo.getOpenID()+"'");
-            }else{
-                sql.append(",null");
-            }
-            if(!StringUtils.isEmpty(userInfo.getPassword())){
-                sql.append(",'"+userInfo.getPassword()+"'");
-            }else{
-                sql.append(",null");
-            }
-            if(!StringUtils.isEmpty(userInfo.getPhone())){
-                sql.append(",'"+userInfo.getPhone()+"'");
-            }else{
-                sql.append(",null");
-            }
-            if(!StringUtils.isEmpty(userInfo.getUserGuid())){
-                sql.append(",'"+userInfo.getUserGuid()+"'");
-            }else{
-                sql.append(",null");
-            }
-            sql.append(");");
+//            sql.append("insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time");
+//            sql.append(",login_count,nick_name,open_id,password,phone,uuid) value(");
+            sql.append(userInfo.getId()+",");
+            sql.append(SqlUtils.concatDate());
+            sql.append(SqlUtils.concatDate());
+            sql.append(SqlUtils.concatSql(userInfo.getUserimg()));
+            sql.append(userInfo.getId()+",");
+            sql.append(SqlUtils.concatDate());
+            sql.append(1+",");
+            sql.append(SqlUtils.concatSql(userInfo.getUsername()));
+            sql.append(SqlUtils.concatSql(userInfo.getOpenID()));
+            sql.append(SqlUtils.concatSql(userInfo.getPassword()));
+            sql.append(SqlUtils.concatSql(userInfo.getPhone()));
+            sql.append(SqlUtils.concatSql(userInfo.getUserGuid(),true));
+//            sql.append(");");
             return sql.toString();
         }
         return null;
@@ -153,8 +136,8 @@ public class UserService {
         if (StringUtils.isNotEmpty(userInfo.getOpenID())
                 || StringUtils.isNotEmpty(userInfo.getPhone())) {
             StringBuffer sql = new StringBuffer();
-            sql.append("insert into user_account(user_id,create_time,update_time,balance,v_coins) ");
-            sql.append("value(");
+//            sql.append("insert into user_account(user_id,create_time,update_time,balance,v_coins) ");
+//            sql.append("value(");
             sql.append(userInfo.getId());
             sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
             sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
@@ -168,7 +151,7 @@ public class UserService {
                 integralCount = 0;
             }
             sql.append(","+integralCount);
-            sql.append(");");
+//            sql.append(");");
             return sql.toString();
         }
         return null;
@@ -192,6 +175,10 @@ public class UserService {
 
 
 
+    @Resource
+    private C_CardsRepository c_cardsRepository;
+
+
     public String getDefaultHead() {
         String defaultHead = configService.getStringConfig("defaultHead");
         if (StringUtils.isBlank(defaultHead)) {
@@ -200,4 +187,45 @@ public class UserService {
         }
         return defaultHead;
     }
+
+    @Resource
+    private BankInfoRepository bankInfoRepository;
+
+    public void userCard(){
+        int page = 0;
+        int limit = 1000;
+        int totalPage = 0;
+        PageResult<BankInfo> userInfoPageResult;
+        Sort sort = new Sort(Sort.Direction.ASC, "id");
+        do {
+            page = page + 1;
+            userInfoPageResult = bankInfoRepository.findAll(page, limit, sort);
+            totalPage = (int) userInfoPageResult.getTotalPage();
+            List<BankInfo> userInfos = userInfoPageResult.getData();
+            for (BankInfo userInfo : userInfos) {
+                toBankInfo(userInfo);
+            }
+            logger.info("page: "+page+" totalPage: "+totalPage);
+            float rate = (float) page * 100 / (float) totalPage;
+            if (page <= totalPage && userInfoPageResult.getCount() != 0)
+                logger.debugv("银行卡信息迁移进度 " + rate + "% " + page + "/" + totalPage);
+        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+    }
+    @Resource
+    private BankBinRepository bankBinRepository;
+
+
+    public void toBankInfo(BankInfo userInfo){
+        BankBin bankBin = bankBinRepository.findByBankBin(userInfo.getBankBin());
+        if (bankBin == null) {
+            bankBin = new BankBin();
+            bankBin.setBankBin(userInfo.getBankBin());
+            bankBin.setBankType(userInfo.getNewb());
+            bankBinRepository.save(bankBin);
+        }
+
+    }
+
+
 }
+

@@ -23,6 +23,7 @@ public class Address {
     @Id
     @Column(name = "ID")
     private Long ID;
+
     @Column(name = "Userid")
 
     private Long Userid;
@@ -50,5 +51,6 @@ public class Address {
 
     @Column(name = "ProvincialCity")
     private String ProvincialCity;
+
 
 }

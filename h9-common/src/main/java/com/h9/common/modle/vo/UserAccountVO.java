@@ -1,5 +1,6 @@
-package com.h9.admin.model.vo;
+package com.h9.common.modle.vo;
 
+import com.h9.common.db.entity.User;
 import com.h9.common.db.entity.UserAccount;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
@@ -29,12 +30,21 @@ public class UserAccountVO {
     @ApiModelProperty(value ="注册时间")
     private Date createTime;
 
-    public static UserAccountVO toUserAccountVO(UserAccount userAccount){
+    public static UserAccountVO toUserAccountVO( UserAccount userAccount){
         UserAccountVO userAccountVO = new UserAccountVO();
+        //BeanUtils.copyProperties(user,userAccountVO);
         BeanUtils.copyProperties(userAccount,userAccountVO);
         return userAccountVO;
     }
-    
+
+    public UserAccountVO(User user, UserAccount userAccount){
+        BeanUtils.copyProperties(user,this);
+        BeanUtils.copyProperties(userAccount,this);
+    }
+
+    public UserAccountVO() {
+    }
+
     public Long getUserId() {
         return userId;
     }
