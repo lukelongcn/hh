@@ -398,7 +398,7 @@ public class ConsumeService {
         if (result.getData().toString().startsWith("responseCode=0000")) {
             if (result.getData().toString().contains("stat=s")) {
                 //转账成功
-                commonService.setBalance(userId, canWithdrawMoney, 1L, withdrawalsRecord.getId(), "", "提现");
+                commonService.setBalance(userId, canWithdrawMoney.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
                 withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
             } else {
                 //转账尚未到用户卡上

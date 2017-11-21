@@ -44,7 +44,6 @@ public class HomeVO {
         setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         setType("banner");
     }
-
     public HomeVO(Announcement announcement,String url) {
         setImgUrl(announcement.getImgUrl());
         setContent("");
