@@ -206,7 +206,7 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, String> map = new HashMap<>();
             map.put("id", goods.getId() + "");
-            map.put("price", goods.getPrice().toString());
+            map.put("price", MoneyUtils.formatMoney(goods.getPrice(),"0"));
             map.put("realPrice", goods.getRealPrice().toString());
             list.add(map);
         });
