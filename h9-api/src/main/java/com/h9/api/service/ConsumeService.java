@@ -141,18 +141,14 @@ public class ConsumeService {
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
-        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
+
+        String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
+        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
 
         orderItems.setMoney(goods.getRealPrice());
 
-        Map<String, String> mapImgList = configService.getMapConfig("balanceFlowImg");
-        mapImgList.forEach((k, v) -> {
-            if (k.equals("6")) {
-                orderItems.setImage(v);
-                return;
-            }
-        });
-
+        String balanceFlowImg = configService.getValueFromMap("balanceFlowImg", "6");
+        orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
 
         orderItemReposiroty.saveAndFlush(orderItems);

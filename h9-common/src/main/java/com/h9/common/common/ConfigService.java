@@ -88,6 +88,15 @@ public class ConfigService {
         return configs;
     }
 
+    public  String getValueFromMap(String code,String key){
+        Map<String,String> mapConfig = getMapConfig(code);
+
+        if(mapConfig != null){
+            return mapConfig.get(key);
+        }
+
+        return "";
+    }
 
     private Object getConfigFromDb(String code) {
         GlobalProperty globalProperty = globalPropertyRepository.findByCode(code);
@@ -126,5 +135,7 @@ public class ConfigService {
         }
         return null;
     }
+
+
 }
 
