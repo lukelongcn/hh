@@ -25,7 +25,7 @@ public interface ArticleRepository extends BaseRepository<Article>{
     @Query("select count(a) from Article a where a.articleType.id=?1 and a.enable<>2")
     Long findCountByArticleType(Long articleType);
     
-    @Query("select a from Article a where a.enable<>2 order by a.sort desc,id desc")
+    @Query("select a from Article a where a.enable<>2 order by a.enable desc ,a.sort desc,a.id desc")
     Page<Article> findAll(Pageable pageable);
     
     @Query("select a from Article a where a.enable<>2 and a.id=?1")

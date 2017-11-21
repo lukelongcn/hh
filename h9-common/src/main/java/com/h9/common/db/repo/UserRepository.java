@@ -39,5 +39,7 @@ public interface UserRepository extends BaseRepository<User> {
     //////////////////////////////////数据迁移方法//////////////////////
     User findByH9UserId(Long userId);
 
+   // @Query("select ")
+
 
 }

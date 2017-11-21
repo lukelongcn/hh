@@ -162,6 +162,13 @@ public class CommunityController {
     }
 
     @Secured
+    @DeleteMapping(value="/announcement/{id}")
+    @ApiOperation("删除公告")
+    public Result deleteAnnouncement(@PathVariable long id){
+        return this.communityService.deleteAnnouncement(id);
+    }
+
+    @Secured
     @GetMapping(value="/announcement/page")
     @ApiOperation("分页获取公告")
     public Result<PageResult<Announcement>> getAnnouncements(PageDTO pageDTO){

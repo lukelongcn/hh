@@ -22,7 +22,7 @@ public class GoodService {
     public Result changeStock(Long goodsId){
 
         Goods goods = goodsReposiroty.findOne(goodsId);
-        if(goods != null) return Result.fail("商品不存在");
+        if(goods == null) return Result.fail("商品不存在");
 
         int stock = goods.getStock();
         if(stock <=0){

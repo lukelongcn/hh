@@ -4,11 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.jboss.logging.MDC;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.NamedThreadLocal;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
@@ -22,15 +25,26 @@ import java.util.Map;
 public class RequestLogInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
 
+    private NamedThreadLocal<Long> startTimeThreadLocal = new NamedThreadLocal<Long>("StopWatch-StartTime");
+
+    @Value("${h9.performance.consume.maxTime}")
+    private int consumeMaxTime;
+
     @SuppressWarnings("Duplicates")
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
+        //1、开始时间
+        long beginTime = System.currentTimeMillis();
+        //线程绑定变量（该数据只有当前请求的线程可见）
+        startTimeThreadLocal.set(beginTime);
+
         String token = httpServletRequest.getHeader("token");
-        if(StringUtils.isNotEmpty(token)) MDC.put("token",token.substring(0,8));
+        if (StringUtils.isNotEmpty(token)) MDC.put("token", token.substring(0, 8));
         String method = httpServletRequest.getMethod();
         if (HttpMethod.OPTIONS.name().equals(method)) {
             return false;
         }
+
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
@@ -61,7 +75,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
                 i += readlen;
             }
             logger.info("request param: " + new java.lang.String(buffer));
-        }else{
+        } else {
             logger.info("request param: " + new java.lang.String(paramStr));
         }
 
@@ -81,6 +95,12 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
+        long endTime = System.currentTimeMillis();//2、结束时间
+        long beginTime = startTimeThreadLocal.get();//得到线程绑定的局部变量（开始时间）
+        long consumeTime = endTime - beginTime;//3、消耗的时间
+        if (consumeTime > consumeMaxTime) {//此处认为处理时间超过500毫秒的请求为慢请求
+            logger.info("lowPerformance: "+consumeTime+", url: " + httpServletRequest.getRequestURL());
+        }
 
     }
 
