@@ -15,6 +15,7 @@ import com.h9.common.utils.MD5Util;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,9 +71,10 @@ public class BasisService {
     }
 
     public Result<PageResult<GlobalPropertyVO>> getGlobalProperties(String key,PageDTO pageDTO){
-        PageRequest pageRequest = this.globalPropertyRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        //PageRequest pageRequest = this.globalPropertyRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
         Page<GlobalProperty> globalProperties = this.globalPropertyRepository.findAll(this.globalPropertyRepository
-                .buildActivitySpecification(key),pageRequest);
+                .buildActivitySpecification(key),pageDTO.toPageRequest(sort));
         Page<GlobalPropertyVO> globalPropertyVOPage = GlobalPropertyVO.toGlobalPropertyVO(globalProperties);
         PageResult<GlobalPropertyVO> pageResult = new PageResult<>(globalPropertyVOPage);
         return Result.success(pageResult);

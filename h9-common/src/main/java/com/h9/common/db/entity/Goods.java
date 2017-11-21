@@ -185,8 +185,8 @@ public class Goods extends BaseEntity {
     }
 
     public enum StatusEnum {
-        ONSHELF(0,"上架"),
-        OFFSHELF(1,"下架");
+        ONSHELF(1,"上架"),
+        OFFSHELF(2,"下架");
 
         StatusEnum(int id,String name){
             this.id = id;
