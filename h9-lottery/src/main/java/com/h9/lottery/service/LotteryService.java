@@ -255,7 +255,7 @@ public class LotteryService {
 
                 lotteryUser.setDesc(lotteryFromDb.getDesc());
                 lotteryUser.setMaxMoney(top1LotteryFlow.getId().equals(lotteryFromDb.getId()));
-                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
+                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "HH:mm"));
                 lotteryUser.setName(lotteryFromDb.getUser().getNickName());
                 lotteryUser.setAvatar(lotteryFromDb.getUser().getAvatar());
                 lotteryUser.setMe(lotteryFromDb.getUser().equals(lotteryUser.getUserId()));
@@ -268,7 +268,7 @@ public class LotteryService {
                 LotteryUser lotteryUser = new LotteryUser();
                 lotteryUser.setRoomUser(lotteryFromDb.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryUser.setUserId(lotteryFromDb.getUser().getId());
-                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "MM-dd HH:mm"));
+                lotteryUser.setCreateDate(DateUtil.toFormatDateString(lotteryFromDb.getCreateTime(), "HH:mm"));
                 lotteryUser.setName(lotteryFromDb.getUser().getNickName());
                 lotteryUser.setAvatar(lotteryFromDb.getUser().getAvatar());
                 lotteryUser.setMe(userId.equals(lotteryUser.getUserId()));
