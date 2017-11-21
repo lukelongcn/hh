@@ -15,6 +15,7 @@ import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -111,6 +112,10 @@ public class ConsumeService {
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
 
         BigDecimal balance = userAccount.getBalance();
+
+        String recargeTel = mobileRechargeDTO.getTel();
+
+        if (!MobileUtils.isMobileNO(recargeTel)) return Result.fail("请填写正确的手机号码");
 
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 

@@ -6,6 +6,7 @@ import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.utils.BankCardUtils;
 import com.h9.common.utils.CharacterFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,9 @@ public class BankCardService {
             city= city.replace("市", "");
         }
 
+        if(!BankCardUtils.matchLuhn(bankCardDTO.getNo())){
+            return Result.fail("请填写正确的银行卡号");
+        }
         //判断银行卡号是否已被绑定
         UserBank user = bankCardRepository.findByNo(bankCardDTO.getNo());
         if (user != null) {

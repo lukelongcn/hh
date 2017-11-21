@@ -19,6 +19,7 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MobileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -201,6 +202,8 @@ public class UserService {
     @Transactional
     public Result bindPhone(Long userId, String token, String code, String phone) {
 
+        if (!MobileUtils.isMobileNO(phone)) return Result.fail("请输入正确的手机号码");
+
         User user = getCurrentUser(userId);
         if (user == null) return Result.fail("此用户不存在");
 
@@ -214,7 +217,6 @@ public class UserService {
 
 //        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_MOBILE.getCode(), user.getPhone(), code);
 //        if (verifyResult != null) return verifyResult;
-
 
 
         User phoneUser = userRepository.findByPhone(phone);
@@ -246,7 +248,7 @@ public class UserService {
                 UserExtends phoneUserExtends = userExtendsRepository.findByUserId(phoneUser.getId());
                 UserExtends userExtends = userExtendsRepository.findByUserId(userId);
 
-                BeanUtils.copyProperties(phoneUserExtends, userExtends,"userId");
+                BeanUtils.copyProperties(phoneUserExtends, userExtends, "userId");
 
                 userExtendsRepository.save(userExtends);
                 user.setPhone(phone);
@@ -298,7 +300,7 @@ public class UserService {
             return Result.success(loginResult);
         } else {
             WeChatUser userInfo = weChatProvider.getUserInfo(openIdCode);
-            if(userInfo == null||StringUtils.isEmpty(userInfo.getOpenid())){
+            if (userInfo == null || StringUtils.isEmpty(userInfo.getOpenid())) {
                 return Result.fail("微信登录失败，获取用户信息失败，请同意授权");
             }
             user = userInfo.convert();

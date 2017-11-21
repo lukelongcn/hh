@@ -3,6 +3,7 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 /**
@@ -19,7 +20,7 @@ public class MyCouponsVO {
 
 
     public MyCouponsVO(OrderItems items) {
-        this.price = items.getPrice().toString();
+        this.price = MoneyUtils.formatMoney(items.getPrice());
         this.name = items.getName();
         this.status = "已发放";
         this.createTime = DateUtil.formatDate(items.getCreateTime(), DateUtil.FormatType.MINUTE);
