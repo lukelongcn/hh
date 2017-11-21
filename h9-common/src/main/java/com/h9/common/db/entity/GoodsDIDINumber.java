@@ -28,6 +28,9 @@ public class GoodsDIDINumber {
     @Column(name = "status",columnDefinition = "int COMMENT '1为正常，2为已兑换'")
     private Integer status;
 
+    @Column(name = "old_id", columnDefinition = "bigint(20) default null COMMENT '迁移数据id'")
+    private Long oldId;
+
 
     public Integer getStatus() {
         return status;
@@ -67,5 +70,13 @@ public class GoodsDIDINumber {
 
     public void setMoney(BigDecimal money) {
         this.money = money;
+    }
+
+    public Long getOldId() {
+        return oldId;
+    }
+
+    public void setOldId(Long oldId) {
+        this.oldId = oldId;
     }
 }
