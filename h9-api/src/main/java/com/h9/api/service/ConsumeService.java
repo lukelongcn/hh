@@ -323,6 +323,9 @@ public class ConsumeService {
 
 
         UserBank userBank = userBankRepository.findOne(bankId);
+
+        if(userBank == null) return Result.fail("请选择银行卡");
+
         BankType bankType = userBank.getBankType();
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
 
