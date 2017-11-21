@@ -13,6 +13,7 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -489,7 +490,9 @@ public class ConsumeService {
                 map.put("name", bank.getBankType().getBankName());
                 String no = bank.getNo();
                 int length = no.length();
-                map.put("no", no);
+
+                map.put("no", CharacterFilter.hiddenBankCardInfo(no));
+
                 map.put("id", bank.getId() + "");
                 map.put("color", bank.getBankType().getColor());
                 bankList.add(map);

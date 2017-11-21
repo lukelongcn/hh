@@ -178,11 +178,11 @@ public class SmsService {
 
         if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
             //判断提现额度
-            BigDecimal todayWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
+            BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
 
-            if(todayWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
+            if(todayCanWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
 
-                return Result.fail("您的余额已不足");
+                return Result.fail("您今日可提现金额为零，请明天再来");
             }
 
         }
