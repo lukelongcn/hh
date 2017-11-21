@@ -50,20 +50,6 @@ public class CommunityService {
         return Result.success(this.bannerTypeRepository.save(bannerType));
     }
 
-    public Result<BannerType> updateBannerType(BannerTypeEditDTO bannerType){
-        if(this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(),bannerType.getCode())!=null){
-            return Result.fail("标识已存在");
-        }
-        BannerType b = getNewBannerType(bannerType);
-        return Result.success(this.bannerTypeRepository.save(b));
-    }
-
-    private  BannerType getNewBannerType(BannerTypeEditDTO bannerType){
-        BannerType b = this.bannerTypeRepository.findOne(bannerType.getId());
-        BeanUtils.copyProperties(bannerType,b);
-        return b;
-    }
-
     public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO){
         PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
         Page<BannerType> bannerTypes = this.bannerTypeRepository.findAllByPage(pageRequest);
@@ -225,6 +211,25 @@ public class CommunityService {
         announcements.forEach(item->this.setAnnouncementUrl(item,preLink));
         PageResult<Announcement> pageResult = new PageResult<>(announcements);
         return Result.success(pageResult);
+    }
+
+    public Result deleteAnnouncement(long id){
+        this.announcementReposiroty.delete(id);
+        return Result.success("成功");
+    }
+
+    public Result<BannerType> updateBannerType(BannerTypeEditDTO bannerType){
+        if(this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(),bannerType.getCode())!=null){
+            return Result.fail("标识已存在");
+        }
+        BannerType b = getNewBannerType(bannerType);
+        return Result.success(this.bannerTypeRepository.save(b));
+    }
+
+    private  BannerType getNewBannerType(BannerTypeEditDTO bannerType){
+        BannerType b = this.bannerTypeRepository.findOne(bannerType.getId());
+        BeanUtils.copyProperties(bannerType,b);
+        return b;
     }
 
     private void setAnnouncementUrl(Announcement announcement,Map preLink){
