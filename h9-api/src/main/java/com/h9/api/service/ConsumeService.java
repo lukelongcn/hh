@@ -531,12 +531,12 @@ public class ConsumeService {
 
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) < 0) {
             return new BigDecimal(0);
+        }
+
+        if (canWithdrawMoney.compareTo(balance) >= 0) {
+            return balance;
         } else {
-            if (canWithdrawMoney.compareTo(balance) >= 0) {
-                return balance;
-            } else {
-                return canWithdrawMoney.subtract(balance);
-            }
+            return canWithdrawMoney;
         }
     }
 }
