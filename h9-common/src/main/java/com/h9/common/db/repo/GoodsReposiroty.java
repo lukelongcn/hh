@@ -29,4 +29,5 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query("select o from Goods o  order by o.status asc , o.id desc ")
     Page<Goods> findAllByPage(Pageable page);
 
+
 }
