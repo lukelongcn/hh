@@ -2,6 +2,9 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.UserAccount;
+import com.h9.common.modle.vo.UserAccountVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,4 +28,7 @@ public interface UserAccountRepository extends BaseRepository<UserAccount> {
     UserAccount findByUserIdLock(Long userId);
     @Query("select sum(u.vCoins) from UserAccount u")
     BigDecimal getUserVCoins();
+
+    @Query("select new com.h9.common.modle.vo.UserAccountVO(u,ua) from User u,UserAccount ua where u.id = ua.userId order by u.id desc ")
+    Page<UserAccountVO> findUserAccountVO(Pageable pageable);
 }

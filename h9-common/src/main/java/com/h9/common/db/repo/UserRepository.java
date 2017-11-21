@@ -4,6 +4,7 @@ package com.h9.common.db.repo;
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.User;
 import com.h9.common.modle.vo.SystemUserVO;
+import com.h9.common.modle.vo.UserAccountVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
@@ -39,7 +40,7 @@ public interface UserRepository extends BaseRepository<User> {
     //////////////////////////////////数据迁移方法//////////////////////
     User findByH9UserId(Long userId);
 
-   // @Query("select ")
+
 
 
 }

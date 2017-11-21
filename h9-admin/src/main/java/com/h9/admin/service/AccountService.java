@@ -9,6 +9,7 @@ import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.vo.UserAccountVO;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.modle.vo.WithdrawRecordVO;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class AccountService {
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        /*Sort sort = new Sort(Sort.Direction.DESC,"userId");
         Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest(sort));
         Page<UserAccountVO> map = all.map(userAccount -> {
             User one = userRepository.findOne(userAccount.getUserId());
@@ -63,7 +64,8 @@ public class AccountService {
             } 
             return userAccountVO;
             
-        });
+        });*/
+        Page<UserAccountVO> map = this.userAccountRepository.findUserAccountVO(pageDTO.toPageRequest());
         return Result.success(new PageResult<>(map));
     }
 
