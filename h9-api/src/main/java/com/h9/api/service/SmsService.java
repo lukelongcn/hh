@@ -13,6 +13,7 @@ import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MobileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -199,7 +200,8 @@ public class SmsService {
     @SuppressWarnings("Duplicates")
     public Result sendSMSCode(String phone) {
 
-        //
+
+        if(!MobileUtils.isMobileNO(phone)) return Result.fail("请填写正确的手机号");
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);
