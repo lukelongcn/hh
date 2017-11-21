@@ -249,6 +249,7 @@ public class UserService {
                 BeanUtils.copyProperties(phoneUserExtends, userExtends,"userId");
 
                 userExtendsRepository.save(userExtends);
+                user.setPhone(phone);
                 userRepository.save(user);
             }
         } else {

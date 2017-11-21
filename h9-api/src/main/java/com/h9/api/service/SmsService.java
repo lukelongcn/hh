@@ -50,6 +50,8 @@ public class SmsService {
     private ConfigHanler configHanler;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private ConsumeService consumeService;
 
 
     /**
@@ -94,10 +96,10 @@ public class SmsService {
         }
 
         //错误次数大于最大次数限制
-        boolean erroResult = verifyErrorCountIsMax(userId, smsType);
-        if(erroResult){
-            return Result.fail("您的验证码错误已达到最大错误次数，请稍后再试");
-        }
+//        boolean erroResult = verifyErrorCountIsMax(userId, smsType);
+//        if(erroResult){
+//            return Result.fail("您的验证码错误已达到最大错误次数，请稍后再试");
+//        }
 
         //短信限制 一天最多十次
         String countKey = RedisKey.getSmsCodeCount(phone, smsType);
@@ -172,6 +174,17 @@ public class SmsService {
             if (balance.compareTo(new BigDecimal(0)) <= 0) {
                 return Result.fail("余额不足");
             }
+        }
+
+        if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
+            //判断提现额度
+            BigDecimal todayWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
+
+            if(todayWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
+
+                return Result.fail("您的余额已不足");
+            }
+
         }
 
 
