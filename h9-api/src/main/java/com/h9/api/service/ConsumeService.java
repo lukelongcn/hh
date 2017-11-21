@@ -407,7 +407,7 @@ public class ConsumeService {
 
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
-            map.put("money", "" + MoneyUtils.formatMoney(balance));
+            map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             return Result.success(map);
