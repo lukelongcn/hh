@@ -1,5 +1,7 @@
 package com.h9.common.db.entity;
 
+import com.h9.common.base.BaseEntity;
+
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -9,7 +11,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "goods_didi_number")
-public class GoodsDIDINumber {
+public class GoodsDIDINumber extends BaseEntity{
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq")

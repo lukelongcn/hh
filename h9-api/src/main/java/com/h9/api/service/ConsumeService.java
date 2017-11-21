@@ -270,7 +270,7 @@ public class ConsumeService {
         orders.setUser(user);
         //修改库存
         Result changeResult = goodService.changeStock(goods);
-        if(changeResult.getCode() == 1){
+        if (changeResult.getCode() == 1) {
             return changeResult;
         }
 
@@ -324,7 +324,7 @@ public class ConsumeService {
 
         UserBank userBank = userBankRepository.findOne(bankId);
 
-        if(userBank == null) return Result.fail("请选择银行卡");
+        if (userBank == null) return Result.fail("请选择银行卡");
 
         BankType bankType = userBank.getBankType();
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -353,9 +353,9 @@ public class ConsumeService {
 
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
         String transAmt = "101";
-        if(canWithdrawMoney.compareTo(new BigDecimal(0)) <=0){
+        if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
-        }else{
+        } else {
             //TODO 设置提现金额,转化成分
 //            transAmt = canWithdrawMoney;
             transAmt = "101";
@@ -505,13 +505,38 @@ public class ConsumeService {
 
         String max = configService.getStringConfig("withdrawMax");
         if (StringUtils.isBlank(max)) {
-            max = "100";
+            max = "1000";
             logger.error("没有找到提现最大值参数，默认为: " + max);
         }
 
         infoVO.put("withdrawalCount", max);
-        UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        infoVO.put("balance", userAccount.getBalance());
+        BigDecimal canWithdrawMoney = getUserWithdrawTodayMoney(userId);
+        infoVO.put("balance", canWithdrawMoney);
+
         return Result.success(infoVO);
+    }
+
+    /**
+     * description: 获取指定用户今日还可提现的金额
+     */
+    public BigDecimal getUserWithdrawTodayMoney(Long userId) {
+
+        String max = configService.getStringConfig("withdrawMax");
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+        BigDecimal todayWithdrawMoney = withdrawalsRecordReposiroty.todayWithdrawMoney(userId);
+
+        BigDecimal maxBigDecimal = new BigDecimal(max);
+        BigDecimal canWithdrawMoney = maxBigDecimal.subtract(todayWithdrawMoney);
+
+        if (canWithdrawMoney.compareTo(new BigDecimal(0)) < 0) {
+            return new BigDecimal(0);
+        } else {
+            if (canWithdrawMoney.compareTo(balance) >= 0) {
+                return balance;
+            } else {
+                return canWithdrawMoney.subtract(balance);
+            }
+        }
     }
 }
