@@ -238,8 +238,8 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
-            Object count = goodsDIDINumberRepository.getCount(goods.getId());
-            map.put("stock", count);
+//            Object count = goodsDIDINumberRepository.getCount(goods.getId());
+            map.put("stock", goods.getStock());
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
             map.put("price", goods.getRealPrice());
@@ -305,7 +305,6 @@ public class ConsumeService {
                 return;
             }
         });
-
 
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
