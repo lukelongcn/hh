@@ -2,13 +2,19 @@ package com.transfer.service;
 
 import com.h9.common.base.PageResult;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.entity.BankBin;
+import com.h9.common.db.repo.BankBinRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import com.transfer.SqlUtils;
 import com.transfer.Util;
+import com.transfer.db.entity.BankInfo;
+import com.transfer.db.entity.C_Cards;
 import com.transfer.db.entity.UserInfo;
+import com.transfer.db.repo.BankInfoRepository;
+import com.transfer.db.repo.C_CardsRepository;
 import com.transfer.db.repo.UserInfoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -169,6 +175,10 @@ public class UserService {
 
 
 
+    @Resource
+    private C_CardsRepository c_cardsRepository;
+
+
     public String getDefaultHead() {
         String defaultHead = configService.getStringConfig("defaultHead");
         if (StringUtils.isBlank(defaultHead)) {
@@ -177,4 +187,45 @@ public class UserService {
         }
         return defaultHead;
     }
+
+    @Resource
+    private BankInfoRepository bankInfoRepository;
+
+    public void userCard(){
+        int page = 0;
+        int limit = 1000;
+        int totalPage = 0;
+        PageResult<BankInfo> userInfoPageResult;
+        Sort sort = new Sort(Sort.Direction.ASC, "id");
+        do {
+            page = page + 1;
+            userInfoPageResult = bankInfoRepository.findAll(page, limit, sort);
+            totalPage = (int) userInfoPageResult.getTotalPage();
+            List<BankInfo> userInfos = userInfoPageResult.getData();
+            for (BankInfo userInfo : userInfos) {
+                toBankInfo(userInfo);
+            }
+            logger.info("page: "+page+" totalPage: "+totalPage);
+            float rate = (float) page * 100 / (float) totalPage;
+            if (page <= totalPage && userInfoPageResult.getCount() != 0)
+                logger.debugv("银行卡信息迁移进度 " + rate + "% " + page + "/" + totalPage);
+        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+    }
+    @Resource
+    private BankBinRepository bankBinRepository;
+
+
+    public void toBankInfo(BankInfo userInfo){
+        BankBin bankBin = bankBinRepository.findByBankBin(userInfo.getBankBin());
+        if (bankBin == null) {
+            bankBin = new BankBin();
+            bankBin.setBankBin(userInfo.getBankBin());
+            bankBin.setBankType(userInfo.getNewb());
+            bankBinRepository.save(bankBin);
+        }
+
+    }
+
+
 }
+

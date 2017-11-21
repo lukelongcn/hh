@@ -4,11 +4,12 @@ import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.GoodsDIDINumber;
 import com.h9.common.db.entity.GoodsType;
-import com.h9.common.db.repo.GoodsDIDINumberRepository;
-import com.h9.common.db.repo.GoodsReposiroty;
-import com.h9.common.db.repo.GoodsTypeReposiroty;
+import com.h9.common.db.entity.Orders;
+import com.h9.common.db.repo.*;
 import com.transfer.SqlUtils;
+import com.transfer.db.entity.C_Cards;
 import com.transfer.db.entity.T_CardCodes;
+import com.transfer.db.repo.C_CardsRepository;
 import com.transfer.db.repo.FDidiCardRepository;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Sort;
@@ -88,9 +89,50 @@ public class DiDiCardService {
         didiNumber.setDidiNumber(userInfo.getCardCode());
         didiNumber.setGoodsId(goods.getId());
         didiNumber.setMoney(money);
+        didiNumber.setOldId(userInfo.getID());
         didiNumber.setStatus(userInfo.getType() == 0?2:1);
         goodsDIDINumberRepository.save(didiNumber);
     }
+
+
+    @Resource
+    private C_CardsRepository c_cardsRepository;
+
+    public void userCard(){
+        int page = 0;
+        int limit = 1000;
+        int totalPage = 0;
+        PageResult<C_Cards> userInfoPageResult;
+        Sort sort = new Sort(Sort.Direction.ASC, "ID");
+        do {
+            page = page + 1;
+            userInfoPageResult = c_cardsRepository.findAll(page, limit, sort);
+            totalPage = (int) userInfoPageResult.getTotalPage();
+            List<C_Cards> userInfos = userInfoPageResult.getData();
+            for (C_Cards userInfo : userInfos) {
+                toUserOrder(userInfo);
+            }
+            logger.info("page: "+page+" totalPage: "+totalPage);
+            float rate = (float) page * 100 / (float) totalPage;
+            if (page <= totalPage && userInfoPageResult.getCount() != 0)
+                logger.debugv("滴滴卡券迁移进度 " + rate + "% " + page + "/" + totalPage);
+        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+    }
+
+
+    @Resource
+    private OrdersRepository ordersRepository;
+    @Resource
+    private OrderItemReposiroty orderItemReposiroty;
+
+
+
+    public void toUserOrder(C_Cards c_cards){
+        Orders orders = new Orders();
+        orders.setMoney(c_cards.getCardPrice());
+    }
+
+
 
 
 

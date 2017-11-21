@@ -45,7 +45,10 @@ public class TransferApplicationTests {
         diDiCardService.transferDidiCard();
     }
 
-
+    @Test
+    public void userCard() {
+        userService.userCard();
+    }
 
 
 }

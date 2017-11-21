@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,10 +16,10 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-//@Entity
-//@Table(name = "C_Cards")
+@Entity
+@Table(name = "C_Cards")
 public class C_Cards {
-
+    @Id
     private Integer CardID;
     private String CardName;
     private Date StartDate;
