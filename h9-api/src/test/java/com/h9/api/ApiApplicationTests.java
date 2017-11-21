@@ -251,6 +251,8 @@ public class ApiApplicationTests {
 
         redisBean.setStringValue("sms:code:count:5:18770812669", "0");
 //        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
+
+        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
     }
 
     @Autowired

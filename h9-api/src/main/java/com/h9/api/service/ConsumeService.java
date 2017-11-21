@@ -511,7 +511,9 @@ public class ConsumeService {
 
         infoVO.put("withdrawalCount", max);
         BigDecimal canWithdrawMoney = getUserWithdrawTodayMoney(userId);
-        infoVO.put("balance", canWithdrawMoney);
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        infoVO.put("balance", MoneyUtils.formatMoney(userAccount.getBalance()));
+        infoVO.put("withdrawMoney",MoneyUtils.formatMoney(canWithdrawMoney));
 
         return Result.success(infoVO);
     }
