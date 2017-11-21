@@ -31,7 +31,7 @@ public class MobileUtils {
 
     public static void main(String[] args) {
 
-        boolean mobileTel = isMobileNO("15273140753");
+        boolean mobileTel = isMobileNO("14725836914");
         System.out.println(mobileTel);
     }
 }
