@@ -3,6 +3,7 @@ package com.h9.admin.controller;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.basis.*;
 import com.h9.admin.service.UserService;
+import com.h9.common.modle.vo.ImageVO;
 import com.h9.common.modle.vo.SystemUserVO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.service.BasisService;
@@ -124,5 +125,28 @@ public class BasisController {
     @ApiOperation("分页获取管理员")
     public Result<PageResult<SystemUserVO>> getSystemUsers(PageDTO pageDTO){
         return this.basisService.getUsers(pageDTO);
+    }
+
+
+    @Secured
+    @PostMapping(value="/image")
+    @ApiOperation("增加图片")
+    public Result addImage(@Validated @RequestBody ImageAddDTO imageAddDTO){
+        return  this.basisService.addImage(imageAddDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/image")
+    @ApiOperation("修改图片")
+    public Result addImage(@Validated @RequestBody ImageEditDTO imageEditDTO){
+        return  this.basisService.updateImage(imageEditDTO);
+    }
+
+    @Secured
+    @GetMapping(value="/image/page")
+    @ApiOperation("分页获取图片")
+    public Result<PageResult<ImageVO>> getImages(PageDTO pageDTO,@ApiParam(value = "标题")
+    @RequestParam(required = false) String key){
+        return this.basisService.getImages(key, pageDTO);
     }
 }

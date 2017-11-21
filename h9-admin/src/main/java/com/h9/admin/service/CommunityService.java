@@ -205,12 +205,12 @@ public class CommunityService {
     }
 
     public Result<PageResult<Announcement>> getAnnouncements(PageDTO pageDTO){
-        PageRequest pageRequest = this.announcementReposiroty.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
-        Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageRequest);
+        //PageRequest pageRequest = this.announcementReposiroty.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
+        Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageDTO.toPageRequest());
         Map preLink = configService.getMapConfig("preLink");
         announcements.forEach(item->this.setAnnouncementUrl(item,preLink));
-        PageResult<Announcement> pageResult = new PageResult<>(announcements);
-        return Result.success(pageResult);
+       // PageResult<Announcement> pageResult = new PageResult<>(announcements);
+        return Result.success(new PageResult<>(announcements));
     }
 
     public Result deleteAnnouncement(long id){

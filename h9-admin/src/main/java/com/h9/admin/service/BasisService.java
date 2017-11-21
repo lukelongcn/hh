@@ -1,9 +1,9 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
+import com.h9.common.modle.vo.ImageVO;
 import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.*;
 import com.h9.common.modle.vo.SystemUserVO;
 import com.h9.common.base.PageResult;
@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author: George
@@ -49,6 +48,10 @@ public class BasisService {
     private UserRepository userRepository;
     @Resource
     private ConfigService configService;
+    @Resource
+    private ImageRepository imageRepository;
+
+
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
             //TODO 添加至 redis 缓存中
@@ -195,6 +198,27 @@ public class BasisService {
         PageRequest pageRequest = this.bankTypeRepository.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
         Page<SystemUserVO> systemUserVOS = this.userRepository.findAllByPage(pageRequest);
         PageResult<SystemUserVO> pageResult = new PageResult<>(systemUserVOS);
+        return Result.success(pageResult);
+    }
+
+    public Result addImage(ImageAddDTO imageAddDTO) {
+        return Result.success(this.imageRepository.save(imageAddDTO.toImage()));
+    }
+
+    public Result updateImage(ImageEditDTO imageEditDTO) {
+        Image image = this.imageRepository.findOne(imageEditDTO.getId());
+        if (image==null) {
+            return Result.fail("图片不存在");
+        }
+        image.setTitle(imageEditDTO.getTitle());
+        return Result.success(this.imageRepository.save(image));
+    }
+
+    public Result<PageResult<ImageVO>> getImages(String key, PageDTO pageDTO){
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        Page<Image> imagePage = this.imageRepository.findAll(this.imageRepository.buildImageSpecification(key),
+                pageDTO.toPageRequest(sort));
+        PageResult<ImageVO> pageResult = new PageResult<>(ImageVO.toImageVO(imagePage));
         return Result.success(pageResult);
     }
 }
