@@ -52,7 +52,8 @@ public class AccountService {
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
-        Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest());
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        Page<UserAccount> all = userAccountRepository.findAll(pageDTO.toPageRequest(sort));
         Page<UserAccountVO> map = all.map(userAccount -> {
             User one = userRepository.findOne(userAccount.getUserId());
             UserAccountVO userAccountVO = UserAccountVO.toUserAccountVO(userAccount);

@@ -51,4 +51,8 @@ public class PageDTO {
         if(pageSize>100) pageSize = 100;
         return new PageRequest(pageNumber-1, pageSize,sort);
     }
+
+    public int getStartIndex(){
+        return (this.pageNumber-1)*this.pageSize;
+    }
 }

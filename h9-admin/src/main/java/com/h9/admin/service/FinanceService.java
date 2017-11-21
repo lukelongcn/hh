@@ -68,7 +68,7 @@ public class FinanceService {
         String sql = "select o.* from withdrawals_record o";
         Page<List<Map>> records = this.withdrawalsRecordRepository.findByCondtion(sql,pageRequest);*/
         String sql = this.buildWithdrawRecordQueryString(withdrawRecordQueryDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,withdrawRecordQueryDTO.getPageNumber()-1,withdrawRecordQueryDTO.getPageSize());
+        List<Map> maps = this.jpaRepository.createNativeQuery(sql,withdrawRecordQueryDTO.getStartIndex(),withdrawRecordQueryDTO.getPageSize());
         long total = this.jpaRepository.nativeCount(sql);
         //解决Apache的BeanUtils对日期的支持不是很好的问题
         ConvertUtils.register(new DateConverter(null),java.util.Date.class);
@@ -118,9 +118,9 @@ public class FinanceService {
 
     public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
-        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowFinanceDTO.getPageNumber(), lotteryFlowFinanceDTO.getPageSize(),sort);
+        //PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowFinanceDTO.getPageNumber(), lotteryFlowFinanceDTO.getPageSize(),sort);
         String sql = this.buildLotteryFlowQueryString(lotteryFlowFinanceDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFlowFinanceDTO.getPageNumber()-1,lotteryFlowFinanceDTO.getPageSize());
+        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFlowFinanceDTO.getStartIndex(),lotteryFlowFinanceDTO.getPageSize());
         long total = this.jpaRepository.nativeCount(sql);
         //解决Apache的BeanUtils对日期的支持不是很好的问题
         ConvertUtils.register(new DateConverter(null),java.util.Date.class);
@@ -204,7 +204,7 @@ public class FinanceService {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
         PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFLowRecordDTO.getPageNumber(), lotteryFLowRecordDTO.getPageSize(),sort);
         String sql = this.buildLotteryFlowRecordQueryString(lotteryFLowRecordDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFLowRecordDTO.getPageNumber()-1,lotteryFLowRecordDTO.getPageSize());
+        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFLowRecordDTO.getStartIndex(),lotteryFLowRecordDTO.getPageSize());
         long total = this.jpaRepository.nativeCount(sql);
         //解决Apache的BeanUtils对日期的支持不是很好的问题
         ConvertUtils.register(new DateConverter(null),java.util.Date.class);
