@@ -73,7 +73,13 @@ public class UserService {
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO) {
         String phone = userLoginDTO.getPhone();
+
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
+
+        if(!MobileUtils.isMobileNO(phone)){
+            return Result.fail("请输入正确的手机号码");
+        }
+
         String code = userLoginDTO.getCode();
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode()), phone));
         if (!"dev".equals(currentEnvironment)) {

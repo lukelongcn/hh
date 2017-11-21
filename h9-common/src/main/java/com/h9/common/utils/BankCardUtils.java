@@ -26,7 +26,7 @@ public class BankCardUtils {
     }
 
     public static void main(String[] args) {
-        boolean b = matchLuhn("6212264000073350908");
+        boolean b = matchLuhn("6214857556727321");
         System.out.println(b);
     }
 }
