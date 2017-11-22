@@ -8,12 +8,15 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
@@ -204,13 +207,13 @@ public class CommunityService {
         return Result.success(this.announcementReposiroty.save(announcement));
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+// TODO: 2017/11/22 与获取文章列表实现一样，但是这边有事务的时候set的变化会被提交 
     public Result<PageResult<Announcement>> getAnnouncements(PageDTO pageDTO){
-        PageRequest pageRequest = this.announcementReposiroty.pageRequest(pageDTO.getPageNumber(),pageDTO.getPageSize());
-        Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageRequest);
+        Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageDTO.toPageRequest());
         Map preLink = configService.getMapConfig("preLink");
-        announcements.forEach(item->this.setAnnouncementUrl(item,preLink));
-        PageResult<Announcement> pageResult = new PageResult<>(announcements);
-        return Result.success(pageResult);
+       announcements.forEach(item->this.setAnnouncementUrl(item,preLink));
+        return Result.success(new PageResult<>(announcements));
     }
 
     public Result deleteAnnouncement(long id){

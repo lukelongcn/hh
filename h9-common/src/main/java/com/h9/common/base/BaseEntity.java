@@ -24,7 +24,7 @@ public class BaseEntity implements Serializable {
     @CreationTimestamp
     protected Date createTime ;//创建时间
 
-    @Column(name = "update_time",columnDefinition = "datetime COMMENT '修改时间时间'")
+    @Column(name = "update_time",columnDefinition = "datetime COMMENT '修改时间'")
     @Temporal(TIMESTAMP)
     @UpdateTimestamp
     protected Date updateTime;//更新时间

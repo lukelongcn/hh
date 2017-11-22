@@ -48,6 +48,12 @@ public class LotteryFlowActivityVO {
     @ApiModelProperty(value = "地址" )
     private String address;
 
+    @ApiModelProperty(value = "客户端")
+    private String os;
+
+    @ApiModelProperty(value = "imei")
+    private String imei;
+
     public Long getId() {
         return id;
     }
@@ -142,6 +148,22 @@ public class LotteryFlowActivityVO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 
     public static LotteryFlowActivityVO toLotteryFlowActivityVO(LotteryFlow lotteryFlow){
