@@ -18,9 +18,9 @@ public class Announcement extends BaseEntity {
 
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
-
 
     @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")
     private String title;
