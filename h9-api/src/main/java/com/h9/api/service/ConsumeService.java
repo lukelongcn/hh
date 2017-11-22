@@ -13,7 +13,9 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -111,6 +113,10 @@ public class ConsumeService {
 
         BigDecimal balance = userAccount.getBalance();
 
+        String recargeTel = mobileRechargeDTO.getTel();
+
+        if (!MobileUtils.isMobileNO(recargeTel)) return Result.fail("请填写正确的手机号码");
+
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 
         Goods goods = goodsReposiroty.findOne(mobileRechargeDTO.getId());
@@ -135,18 +141,14 @@ public class ConsumeService {
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
-        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", "话费充值");
+
+        String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
+        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
 
         orderItems.setMoney(goods.getRealPrice());
 
-        Map<String, String> mapImgList = configService.getMapConfig("balanceFlowImg");
-        mapImgList.forEach((k, v) -> {
-            if (k.equals("6")) {
-                orderItems.setImage(v);
-                return;
-            }
-        });
-
+        String balanceFlowImg = configService.getValueFromMap("balanceFlowImg", "6");
+        orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
 
         orderItemReposiroty.saveAndFlush(orderItems);
@@ -205,7 +207,7 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, String> map = new HashMap<>();
             map.put("id", goods.getId() + "");
-            map.put("price", goods.getPrice().toString());
+            map.put("price", MoneyUtils.formatMoney(goods.getPrice(),"0"));
             map.put("realPrice", goods.getRealPrice().toString());
             list.add(map);
         });
@@ -232,8 +234,8 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
-            Object count = goodsDIDINumberRepository.getCount(goods.getId());
-            map.put("stock", count);
+//            Object count = goodsDIDINumberRepository.getCount(goods.getId());
+            map.put("stock", goods.getStock());
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
             map.put("price", goods.getRealPrice());
@@ -270,7 +272,7 @@ public class ConsumeService {
         orders.setUser(user);
         //修改库存
         Result changeResult = goodService.changeStock(goods);
-        if(changeResult.getCode() == 1){
+        if (changeResult.getCode() == 1) {
             return changeResult;
         }
 
@@ -300,7 +302,6 @@ public class ConsumeService {
             }
         });
 
-
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
         voMap.put("money", goods.getRealPrice().toString());
@@ -324,7 +325,7 @@ public class ConsumeService {
 
         UserBank userBank = userBankRepository.findOne(bankId);
 
-        if(userBank == null) return Result.fail("请选择银行卡");
+        if (userBank == null) return Result.fail("请选择银行卡");
 
         BankType bankType = userBank.getBankType();
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -353,9 +354,9 @@ public class ConsumeService {
 
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
         String transAmt = "101";
-        if(canWithdrawMoney.compareTo(new BigDecimal(0)) <=0){
+        if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
-        }else{
+        } else {
             //TODO 设置提现金额,转化成分
 //            transAmt = canWithdrawMoney;
             transAmt = "101";
@@ -489,7 +490,9 @@ public class ConsumeService {
                 map.put("name", bank.getBankType().getBankName());
                 String no = bank.getNo();
                 int length = no.length();
-                map.put("no", no);
+
+                map.put("no", CharacterFilter.hiddenBankCardInfo(no));
+
                 map.put("id", bank.getId() + "");
                 map.put("color", bank.getBankType().getColor());
                 bankList.add(map);
@@ -505,13 +508,40 @@ public class ConsumeService {
 
         String max = configService.getStringConfig("withdrawMax");
         if (StringUtils.isBlank(max)) {
-            max = "100";
+            max = "1000";
             logger.error("没有找到提现最大值参数，默认为: " + max);
         }
 
         infoVO.put("withdrawalCount", max);
+        BigDecimal canWithdrawMoney = getUserWithdrawTodayMoney(userId);
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        infoVO.put("balance", userAccount.getBalance());
+        infoVO.put("balance", MoneyUtils.formatMoney(userAccount.getBalance()));
+        infoVO.put("withdrawMoney",MoneyUtils.formatMoney(canWithdrawMoney));
+
         return Result.success(infoVO);
+    }
+
+    /**
+     * description: 获取指定用户今日还可提现的金额
+     */
+    public BigDecimal getUserWithdrawTodayMoney(Long userId) {
+
+        String max = configService.getStringConfig("withdrawMax");
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+        BigDecimal todayWithdrawMoney = withdrawalsRecordReposiroty.todayWithdrawMoney(userId);
+
+        BigDecimal maxBigDecimal = new BigDecimal(max);
+        BigDecimal canWithdrawMoney = maxBigDecimal.subtract(todayWithdrawMoney);
+
+        if (canWithdrawMoney.compareTo(new BigDecimal(0)) < 0) {
+            return new BigDecimal(0);
+        }
+
+        if (canWithdrawMoney.compareTo(balance) >= 0) {
+            return balance;
+        } else {
+            return canWithdrawMoney;
+        }
     }
 }

@@ -41,4 +41,16 @@ public interface WithdrawalsRecordRepository extends BaseRepository<WithdrawalsR
      */
     @Query(value = "select sum(money) from withdrawals_record where to_days(withdrawals_record.create_time) = TO_DAYS(NOW()) and user_id = ?1 and status = 3",nativeQuery = true)
     Object findByTodayWithdrawMoney(Long userId);
+
+    /**
+     * description: 调用 findByTodayWithdrawMoney 方法查询当天提现的金额
+     *
+     * @return 返回BigDecimal的类型
+     */
+    default BigDecimal todayWithdrawMoney(Long userId){
+        
+        Object money = findByTodayWithdrawMoney(userId);
+        if(money == null) return new BigDecimal(0);
+        return new BigDecimal(String.valueOf(money));
+    }
 }

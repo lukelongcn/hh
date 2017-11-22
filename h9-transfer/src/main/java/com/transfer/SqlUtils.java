@@ -53,9 +53,9 @@ public class SqlUtils {
     public static String concatSql(String sql,boolean isLast){
         String result = "";
         if(!StringUtils.isEmpty(sql)){
-            result = "'" + fomart(sql) ;
+            result = "'" + fomart(sql) +"'";
         }else{
-            result =     "null";
+            result =  "null";
         }
         if(isLast){
             return result;

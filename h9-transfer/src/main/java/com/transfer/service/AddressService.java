@@ -8,6 +8,7 @@ import com.transfer.db.entity.Address;
 import com.transfer.db.entity.UserInfo;
 import com.transfer.db.repo.TargetAddressReposiroty;
 import org.apache.commons.beanutils.BeanUtils;
+import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,63 +27,51 @@ import java.util.List;
 @Service
 public class AddressService {
 
+
+     Logger logger = Logger.getLogger(AddressService.class);
+
     @Resource
     private TargetAddressReposiroty targetAddressReposiroty;
 
-    @Resource
-    private com.h9.common.db.repo.AddressReposiroty myaddressReposiroty;
 
     public void transfernAddress() {
 
-        BufferedWriter buffer = SqlUtils.getBuffer("./address.sql");
+//        BufferedWriter buffer = SqlUtils.getBuffer("./address.sql");
 
         int page = 0;
         int limit = 1000;
         int totalPage = 0;
-        PageResult<UserInfo> userInfoPageResult;
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
-        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.sql");
-        BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./user_account.sql");
-        BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./user_extends.sql");
-//        do {
-//            page = page + 1;
-//            userInfoPageResult = targetAddressReposiroty.findAll(page, limit, sort);
-//            totalPage = (int) userInfoPageResult.getTotalPage();
-//            List<UserInfo> userInfos = userInfoPageResult.getData();
-//            for (UserInfo userInfo : userInfos) {
-////                covertUser(userInfo);
-//                try {
-//                    String sql = covertToUser(userInfo);
-//                    if(sql!=null){
-//                        userWtriter.write(sql);
-//                        userWtriter.newLine();
-//                    }
-//                    String userAccount = covertToUserAccount(userInfo);
-//                    if(userAccount!=null){
-//                        userAccountWtriter.write(userAccount);
-//                        userAccountWtriter.newLine();
-//                    }
-//                    String userExtends = covertToUserExtends(userInfo);
-//                    if(userExtends!=null){
-//                        userExtendsWtriter.write(userExtends);
-//                        userExtendsWtriter.newLine();
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            logger.info("page: "+page+" totalPage: "+totalPage);
-//            float rate = (float) page * 100 / (float) totalPage;
-//            if (page <= totalPage && userInfoPageResult.getCount() != 0)
-//                logger.debugv("用户迁移进度 " + rate + "% " + page + "/" + totalPage);
-//        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+        PageResult<Address> userInfoPageResult;
+        Sort sort = new Sort(Sort.Direction.ASC, "ID");
+        BufferedWriter userWtriter = SqlUtils. getBuffer("./address.sql");
+        do {
+            page = page + 1;
+            userInfoPageResult = targetAddressReposiroty.findAll(page, limit, sort);
+            totalPage = (int) userInfoPageResult.getTotalPage();
+            List<Address> userInfos = userInfoPageResult.getData();
+            for (Address userInfo : userInfos) {
+                try {
+                    String sql = toMyAddressAndSave(userInfo);
+                    if(sql!=null){
+                        userWtriter.write(sql);
+                        userWtriter.newLine();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            logger.info("page: "+page+" totalPage: "+totalPage);
+            float rate = (float) page * 100 / (float) totalPage;
+            if (page <= totalPage && userInfoPageResult.getCount() != 0)
+                logger.debugv("地址迁移进度 " + rate + "% " + page + "/" + totalPage);
+        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
     }
 
     public String toMyAddressAndSave(Address address){
         StringBuffer sqlBuffer = new StringBuffer();
-        sqlBuffer.append("insert into `h9_test`.`address` (`id`,`create_time`, `update_time`, `address`, `city`,`default_address`, " +
-                " `distict`, `name`, `phone`, `province`, `provincial_cyty`, `user_id`) ");
+        sqlBuffer.append("insert into `address` (`id`,`create_time`, `update_time`, `address`, `city`,`default_address`, " +
+                " `distict`, `name`, `phone`, `province`, `provincial_city`, `user_id`) ");
         sqlBuffer.append("value(");
         sqlBuffer.append(address.getID()+",");
         sqlBuffer.append(SqlUtils.concatDate());

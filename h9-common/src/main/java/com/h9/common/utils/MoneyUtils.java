@@ -12,14 +12,18 @@ public class MoneyUtils {
     private MoneyUtils(){}
 
     public static  String formatMoney(BigDecimal money){
-
         DecimalFormat df = new DecimalFormat("0.00");
         return df.format(money);
     }
 
+    public static String formatMoney(BigDecimal money,String pattern){
+        DecimalFormat df = new DecimalFormat(pattern);
+        return df.format(money);
+    }
+
     public static void main(String[] args) {
-        BigDecimal de = new BigDecimal("0.00");
-        String s = formatMoney(de);
-        System.out.println(s);
+        BigDecimal de = new BigDecimal("30");
+
+        System.out.println(formatMoney(de));
     }
 }

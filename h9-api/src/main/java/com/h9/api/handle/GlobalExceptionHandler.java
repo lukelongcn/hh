@@ -50,21 +50,25 @@ public class GlobalExceptionHandler {
 
         if (e instanceof MissingServletRequestParameterException) {
             logger.info(e.getMessage(), e);
+            logger.info("参数错误");
             return new Result(HttpStatus.BAD_REQUEST.value(), "参数错误", ExceptionUtils.getMessage(e));
         }
 
         if (e instanceof BindException) {
             String msg = ((BindException) e).getBindingResult().getFieldError().getDefaultMessage();
+            logger.info(msg);
             return new Result(1, msg);
         }
 
         if (e instanceof MethodArgumentNotValidException) {
             String msg = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError().getDefaultMessage();
+            logger.info(msg);
             return new Result(1, msg);
         }
 
         if (e instanceof UnAuthException) {
             UnAuthException unAuthException = (UnAuthException) e;
+            logger.info(e.getMessage());
             return new Result(unAuthException.getCode(), e.getMessage());
         }
 
@@ -82,7 +86,7 @@ public class GlobalExceptionHandler {
             mailService.sendtMail("徽酒服务器错误" + currentEnvironment, content);
             time = System.currentTimeMillis();
         }
-
+        logger.info("hanldeException 服务器繁忙，请稍后再试");
         return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙，请稍后再试", ExceptionUtils.getStackTrace(e));
     }
 

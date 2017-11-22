@@ -45,6 +45,8 @@ public class RequestLogInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        logger.info("");
+        logger.info("");
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());

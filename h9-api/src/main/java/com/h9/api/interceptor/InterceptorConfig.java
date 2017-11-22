@@ -18,11 +18,12 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
+        //注册 日志打印拦截器
+        registry.addInterceptor(requestLogInterceptor).addPathPatterns("/**");
         //注册 登录权限校验拦截器
 //        registry.addInterceptor(new LoginAuthInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(loginAuthInterceptor).addPathPatterns("/**");
-        //注册 日志打印拦截器
-        registry.addInterceptor(requestLogInterceptor).addPathPatterns("/**");
+
 
     }
 }

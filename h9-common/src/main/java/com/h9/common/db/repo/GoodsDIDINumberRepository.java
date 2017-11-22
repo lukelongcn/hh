@@ -10,9 +10,15 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface GoodsDIDINumberRepository extends BaseRepository<GoodsDIDINumber>{
 
+    /**
+     * description: 查询指定类型的滴滴劵库存
+     */
     @Query(value = "select count(o.id) from GoodsDIDINumber o where o.status = 1 and o.goodsId = ?1 ")
     Object getCount(Long goodId);
 
     @Query(value = "select * from goods_didi_number where goods_id = ?1 and status = 1 limit 0,1",nativeQuery = true)
     GoodsDIDINumber findByGoodsId(Long goodsId);
+
+    @Query(value = "select gdn from GoodsDIDINumber gdn where  gdn.didiNumber = ?1")
+    GoodsDIDINumber findByGoodsAndDidiNumber(String number);
 }

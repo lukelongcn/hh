@@ -39,11 +39,19 @@ public class HomeService {
                 BannerType bannerType = banner.getBannerType();
                 HomeVO convert = new HomeVO(banner);
                 List<HomeVO> list = voMap.get(bannerType.getCode());
+
+
+
                 if (list == null) {
                     List<HomeVO> tempList = new ArrayList<>();
                     tempList.add(convert);
                     voMap.put(bannerType.getCode(), tempList);
                 } else {
+                    if (bannerType.getCode().equals("ideaBanner")) {
+                        if(list.size() >=3){
+                            return;
+                        }
+                    }
                     list.add(convert);
                 }
             });

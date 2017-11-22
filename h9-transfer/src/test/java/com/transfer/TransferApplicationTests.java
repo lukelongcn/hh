@@ -1,6 +1,7 @@
 package com.transfer;
 
 import com.transfer.service.AddressService;
+import com.transfer.service.DiDiCardService;
 import com.transfer.service.UserService;
 import org.jboss.logging.Logger;
 import org.junit.Test;
@@ -30,12 +31,24 @@ public class TransferApplicationTests {
 
     @Resource
     private AddressService addressService;
+
     @Test
     public void transferAddress() {
 
         addressService.transfernAddress();
     }
+    @Resource
+    private DiDiCardService diDiCardService;
 
+    @Test
+    public void transferDidiCard() {
+        diDiCardService.transferDidiCard();
+    }
+
+    @Test
+    public void userCard() {
+        userService.userCard();
+    }
 
 
 }

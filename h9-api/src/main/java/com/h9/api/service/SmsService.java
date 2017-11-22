@@ -13,6 +13,7 @@ import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MobileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -50,6 +51,8 @@ public class SmsService {
     private ConfigHanler configHanler;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private ConsumeService consumeService;
 
 
     /**
@@ -94,10 +97,10 @@ public class SmsService {
         }
 
         //错误次数大于最大次数限制
-        boolean erroResult = verifyErrorCountIsMax(userId, smsType);
-        if(erroResult){
-            return Result.fail("您的验证码错误已达到最大错误次数，请稍后再试");
-        }
+//        boolean erroResult = verifyErrorCountIsMax(userId, smsType);
+//        if(erroResult){
+//            return Result.fail("您的验证码错误已达到最大错误次数，请稍后再试");
+//        }
 
         //短信限制 一天最多十次
         String countKey = RedisKey.getSmsCodeCount(phone, smsType);
@@ -174,6 +177,18 @@ public class SmsService {
             }
         }
 
+        if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
+            //判断提现额度
+            BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
+
+            if(todayCanWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
+
+                return Result.fail("您今日可提现金额为零，请明天再来");
+            }
+
+        }
+
+
 
         return null;
     }
@@ -185,7 +200,8 @@ public class SmsService {
     @SuppressWarnings("Duplicates")
     public Result sendSMSCode(String phone) {
 
-        //
+
+        if(!MobileUtils.isMobileNO(phone)) return Result.fail("请填写正确的手机号");
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);
