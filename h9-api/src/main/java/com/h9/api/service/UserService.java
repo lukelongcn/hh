@@ -82,6 +82,8 @@ public class UserService {
 
         String code = userLoginDTO.getCode();
         String redisCode = redisBean.getStringValue(String.format(RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode()), phone));
+
+        if(StringUtils.isBlank(redisCode)) return Result.fail("验证码不正确");
         if (!"dev".equals(currentEnvironment)) {
             if (!code.equals(redisCode)) return Result.fail("验证码不正确");
         }

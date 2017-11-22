@@ -58,7 +58,7 @@ public class BankCardService {
             city= city.replace("市", "");
         }
         String cardNo = bankCardDTO.getNo();
-        if(!BankCardUtils.matchLuhn(cardNo) && cardNoVerify(cardNo)){
+        if(!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo)){
             return Result.fail("请填写正确的银行卡号");
         }
         //判断银行卡号是否已被绑定
@@ -185,6 +185,9 @@ public class BankCardService {
         return Result.success(bankList);
     }
 
+    /**
+     * description: 更据数据库中数据是否是正确的卡号
+     */
     public boolean cardNoVerify(String cardNo){
 
         if (StringUtils.isBlank(cardNo)) {
