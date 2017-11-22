@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.net.BindException;
+import java.util.List;
 
 /**
  * @author: George
@@ -148,5 +149,12 @@ public class BasisController {
     public Result<PageResult<ImageVO>> getImages(PageDTO pageDTO,@ApiParam(value = "标题")
     @RequestParam(required = false) String key){
         return this.basisService.getImages(key, pageDTO);
+    }
+
+    @Secured
+    @GetMapping(value="/image/folders")
+    @ApiOperation("获取图片可选所属文件夹")
+    public Result<List<String>> getImageFolders() {
+        return this.basisService.getImageFolders();
     }
 }

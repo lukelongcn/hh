@@ -51,6 +51,8 @@ public class BasisService {
     @Resource
     private ImageRepository imageRepository;
 
+    public static final String IMAGE_FOLDER = "imageFolder";
+
 
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
@@ -220,5 +222,9 @@ public class BasisService {
                 pageDTO.toPageRequest(sort));
         PageResult<ImageVO> pageResult = new PageResult<>(ImageVO.toImageVO(imagePage));
         return Result.success(pageResult);
+    }
+
+    public Result<List<String>> getImageFolders(){
+        return Result.success(this.configService.getStringListConfig(IMAGE_FOLDER));
     }
 }
