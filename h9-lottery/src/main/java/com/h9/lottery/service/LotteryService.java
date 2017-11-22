@@ -166,6 +166,7 @@ public class LotteryService {
 
             rewardRepository.save(reward);
             lottery.setReward(reward);
+            logger.info("user 测试："+user);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
