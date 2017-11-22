@@ -53,7 +53,7 @@ public class CommonController {
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         String key = null;
         Auth auth = Auth.create(accessKey, secretKey);
-        StringBuilder savePath = new StringBuilder(imgPath).append(envir);
+        StringBuilder savePath = new StringBuilder("images/").append(envir);
         if(StringUtils.isNotBlank(path)){
             if ("/".equals(path)) {
                 savePath.append(path).append(UUID.randomUUID());
@@ -63,15 +63,16 @@ public class CommonController {
         }else{
             savePath.append("/other/").append(UUID.randomUUID());
         }
-        String upToken = auth.uploadToken(bucket,null,3600,new StringMap()
-                .putNotEmpty("saveKey", savePath.toString()),true);
+        /*String upToken = auth.uploadToken(bucket,null,3600,new StringMap()
+                .putNotEmpty("saveKey", savePath.toString()),false);*/
+        String upToken = auth.uploadToken(bucket,savePath.toString(), 3600, new StringMap().put("insertOnly", 1 ));
         try {
-            Response response = uploadManager.put(file.getInputStream(), key, upToken, null, null);
+            Response response = uploadManager.put(file.getInputStream(), savePath.toString(), upToken, null, null);
             //解析上传成功的结果
             DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
             System.out.println(putRet.key);
             System.out.println(putRet.hash);
-            return Result.success("上传成功",savePath);
+            return Result.success("上传成功",imgPath+"/"+savePath);
         } catch (QiniuException ex) {
             Response r = ex.response;
             System.err.println(r.toString());
