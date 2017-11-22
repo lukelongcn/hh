@@ -2,12 +2,15 @@ package com.h9.api.service;
 
 import com.h9.api.model.dto.BankCardDTO;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.BankBin;
 import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.UserBank;
+import com.h9.common.db.repo.BankBinRepository;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
 import com.h9.common.utils.BankCardUtils;
 import com.h9.common.utils.CharacterFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,6 +38,9 @@ public class BankCardService {
     @Resource
     private BankTypeRepository bankTypeRepository;
 
+    @Resource
+    private BankBinRepository bankBinRepository;
+
     /**
      * 添加银行卡
      *
@@ -51,8 +57,8 @@ public class BankCardService {
         if (city.contains("市")) {
             city= city.replace("市", "");
         }
-
-        if(!BankCardUtils.matchLuhn(bankCardDTO.getNo())){
+        String cardNo = bankCardDTO.getNo();
+        if(!BankCardUtils.matchLuhn(cardNo) && cardNoVerify(cardNo)){
             return Result.fail("请填写正确的银行卡号");
         }
         //判断银行卡号是否已被绑定
@@ -177,5 +183,18 @@ public class BankCardService {
 
                 });
         return Result.success(bankList);
+    }
+
+    public boolean cardNoVerify(String cardNo){
+
+        if (StringUtils.isBlank(cardNo)) {
+            return false;
+        }
+
+        BankBin byBankBinLike = bankBinRepository.findByBankBinLike(cardNo);
+
+        if(byBankBinLike == null) return false;
+
+        return true;
     }
 }

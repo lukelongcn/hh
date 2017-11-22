@@ -249,12 +249,17 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 
-        redisBean.setStringValue("sms:code:count:5:18770812669", "0");
+//        redisBean.setStringValue("sms:code:count:5:18770812669", "0");
 //        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
 
-        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
+//        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
+
+        BankBin byBankBinLike = bankBinRepository.findByBankBinLike("621096%");
+        System.out.println(byBankBinLike);
     }
 
+    @Resource
+    private BankBinRepository bankBinRepository;
     @Autowired
     private JavaMailSender mailSender;
 

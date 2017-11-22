@@ -16,4 +16,6 @@ public interface BankBinRepository extends BaseRepository<BankBin> {
 
     BankBin findByBankBin(String bankBin);
 
+    BankBin findByBankBinLike(String bankBin);
+
 }
