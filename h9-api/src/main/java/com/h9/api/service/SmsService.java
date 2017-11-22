@@ -219,6 +219,7 @@ public class SmsService {
 
 
         int smsOneDayCount = configHanler.getSmsOneDayCount();
+
         if (count > smsOneDayCount) {
             return Result.fail("短信发送过于频繁,请稍后再试~");
         }

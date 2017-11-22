@@ -254,8 +254,8 @@ public class ApiApplicationTests {
 
 //        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
 
-        BankBin byBankBinLike = bankBinRepository.findByBankBinLike("621096%");
-        System.out.println(byBankBinLike);
+        List<Banner> activiBanner = bannerRepository.findActiviBanner(new Date());
+        System.out.println(activiBanner.size());
     }
 
     @Resource
@@ -266,6 +266,8 @@ public class ApiApplicationTests {
     @Resource
     private MailService mailService;
 
+    @Resource
+    private BannerRepository bannerRepository;
 
 }
 
