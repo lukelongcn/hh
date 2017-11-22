@@ -331,7 +331,8 @@ public class LotteryService {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);
             Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
-            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "", "抢红包获取余额");
+            String balanceFlowType = configService.getValueFromMap("balanceFlowType", "10");
+            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "",balanceFlowType);
         }
         return Result.success();
     }
