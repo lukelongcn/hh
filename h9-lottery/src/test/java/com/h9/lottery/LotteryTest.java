@@ -75,27 +75,28 @@ public class LotteryTest {
     
 
 
-//    @Test
-    @Transactional
-    public void contextLoads() {
-
-//        LotteryModel pr = factoryProvider.findByLotteryModel("6123456973");
-//        logger.debugv(JSONObject.toJSONString(pr));
-
-        generateCode();
-
-//        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
-//        logger.debugv(JSONObject.toJSONString(lotteryRemark));
-//        Map profileJob = configService.getMapConfig("profileJob");
-//        logger.debugv(JSONObject.toJSONString(profileJob));
-//        List<Config> profileJob1 = configService.getMapListConfig("profileJob");
-//        logger.debugv(JSONObject.toJSONString(profileJob1));
+////    @Test
+//    @Transactional
+//    public void contextLoads() {
 //
-//        String withdrawMax = configService.getStringConfig("withdrawMax");
-//        logger.debugv(JSONObject.toJSONString(withdrawMax));
-    }
+////        LotteryModel pr = factoryProvider.findByLotteryModel("6123456973");
+////        logger.debugv(JSONObject.toJSONString(pr));
+//
+//        generateCode();
+//
+////        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
+////        logger.debugv(JSONObject.toJSONString(lotteryRemark));
+////        Map profileJob = configService.getMapConfig("profileJob");
+////        logger.debugv(JSONObject.toJSONString(profileJob));
+////        List<Config> profileJob1 = configService.getMapListConfig("profileJob");
+////        logger.debugv(JSONObject.toJSONString(profileJob1));
+////
+////        String withdrawMax = configService.getStringConfig("withdrawMax");
+////        logger.debugv(JSONObject.toJSONString(withdrawMax));
+//    }
 
-    private void generateCode() {
+    @Test
+    public void generateCode() {
         Activity one = activityRepository.findOne(8L);
         Product product = productRepository.findOne(1L);
         for(int i=0;i<=50;i++) {
