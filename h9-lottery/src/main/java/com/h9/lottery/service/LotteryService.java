@@ -137,9 +137,9 @@ public class LotteryService {
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             return Result.success(lotteryResultDto);
         } else {
-            //第一次参数这个活动
+            //  s 第一次参数这个活动
             if (status == END.getCode()) {
-//                如果已经结束
+//                如果已经 结束
                 return Result.fail("红包活动已经结束");
             }
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
