@@ -12,6 +12,7 @@ import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ import java.util.UUID;
  */
 @SuppressWarnings("Duplicates")
 @RestController
-@Api
+@Api("公用")
 @RequestMapping(value = "/common")
 public class CommonController {
 
@@ -39,17 +40,19 @@ public class CommonController {
     private FileService fileService;
 
     @PostMapping("/file/upload")
+    @ApiOperation(value = "图片上传")
     public Result uploadImage(MultipartFile file,String path) {
        return this.fileService.uploadImage(file,path);
     }
 
     @PostMapping("/file/ckeditor/upload")
+    @ApiOperation(value = "ckeditor编辑器图片上传")
     public void uploadImage(MultipartFile upload,int CKEditorFuncNum,HttpServletResponse response) throws IOException {
         Result result = this.fileService.uploadImage(upload,null);
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.println("<script type=\"text/javascript\">");
-        out.println("window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + result.getData() + "',''" + ")");
+        out.println("this.editor.tools.callFunction(" + CKEditorFuncNum + ",'" + result.getData() + "',''" + ")");
         out.println("</script>");
         out.flush();
         out.close();
