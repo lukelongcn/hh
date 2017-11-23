@@ -238,7 +238,7 @@ public class CommunityService {
         String url = announcement.getUrl();
         if (StringUtils.isBlank(url)) {
             if (preLink != null) {
-                announcement.setUrl(preLink.get("article").toString() + announcement.getId());
+                announcement.setJointUrl(preLink.get("article").toString() + announcement.getId());
             }
         }
     }
