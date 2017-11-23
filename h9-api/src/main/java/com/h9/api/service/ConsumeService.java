@@ -143,7 +143,6 @@ public class ConsumeService {
         orderItems.setOrders(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
-        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
 
         orderItems.setMoney(goods.getRealPrice());
 
@@ -164,6 +163,7 @@ public class ConsumeService {
             if (changeStockResult.getCode() == 1) {
                 return changeStockResult;
             }
+            commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
             orderItemReposiroty.saveAndFlush(orderItems);
         } catch (Exception e) {
