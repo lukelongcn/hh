@@ -151,7 +151,7 @@ public class ConsumeService {
         orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
 
-        orderItemReposiroty.saveAndFlush(orderItems);
+
         userAccountRepository.save(userAccount);
 
         Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());
@@ -165,6 +165,7 @@ public class ConsumeService {
                 return changeStockResult;
             }
             ofPayRecordReposiroty.save(ofPayRecord);
+            orderItemReposiroty.saveAndFlush(orderItems);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
         }
