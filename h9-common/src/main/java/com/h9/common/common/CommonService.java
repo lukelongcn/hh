@@ -25,14 +25,14 @@ import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
- *
+ * <p>
  * CommonService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/6
  * Time: 14:50
  */
 @Component
 public class CommonService {
-    
+
     Logger logger = Logger.getLogger(CommonService.class);
 
     @Resource
@@ -44,11 +44,11 @@ public class CommonService {
 
 
     @Transactional
-    public Result setBalance(Long userId, BigDecimal money, Long typeId,Long orderId,String orderNo,String remarks){
+    public Result setBalance(Long userId, BigDecimal money, Long typeId, Long orderId, String orderNo, String remarks) {
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
-        if(newbalance.compareTo(new BigDecimal(0))<0){
+        if (newbalance.compareTo(new BigDecimal(0)) < 0) {
             return Result.fail("余额不足");
         }
         userAccount.setBalance(newbalance);
@@ -76,33 +76,35 @@ public class CommonService {
         return MessageFormat.format("http://api.map.baidu.com/geocoder/v2/?location={0},{1}&output=json&ak=vnCSOl4W7bgaIQH3GtNVTdFXRcU8hcCD", lat, lon);
     }
 
-    public String getAddress(double lat, double lon) {
-        try{
+    public Result<JSONObject> getAddress(double lat, double lon) {
+        try {
             RestTemplate restTemplate = new RestTemplate();
             String forObject = restTemplate.getForObject(getAdressUrl(lat, lon), String.class);
             System.out.println("------" + forObject + "------");
             JSONObject jsonObject = JSONObject.parseObject(forObject);
             if (jsonObject.getInteger("status") == 0) {
                 JSONObject result = jsonObject.getJSONObject("result");
-                return result.getString("formatted_address");
+//                return result.getString("formatted_address");
+
+                return Result.success(jsonObject);
             } else {
-                return org.apache.commons.lang3.StringUtils.EMPTY;
+                return Result.fail();
             }
 
-        }catch (Exception ex){
-            logger.debugv(ex.getMessage(),ex);
+        } catch (Exception ex) {
+            logger.debugv(ex.getMessage(), ex);
         }
-        return org.apache.commons.lang3.StringUtils.EMPTY;
+        return Result.fail();
     }
 
     @Transactional
-    public UserRecord newUserRecord(Long userId, double latitude, double longitude,HttpServletRequest request) {
+    public UserRecord newUserRecord(Long userId, double latitude, double longitude, HttpServletRequest request) {
         UserRecord userRecord = new UserRecord();
         userRecord.setUserId(userId);
 
         userRecord.setLatitude(latitude);
         userRecord.setLongitude(longitude);
-        try{
+        try {
             String refer = request.getHeader("Referer");
             String userAgent = request.getHeader("User-Agent");
             userRecord.setUserAgent(userAgent);
@@ -115,19 +117,32 @@ public class CommonService {
             }
             String version = request.getHeader("version");
             userRecord.setVersion(version);
-            if(latitude!=0&&longitude!=0){
-                String address = getAddress(latitude, longitude);
-                userRecord.setAddress(address);
+            if (latitude != 0 && longitude != 0) {
+
+                Result<JSONObject> addressQueryResult = getAddress(latitude, longitude);
+                if (addressQueryResult.getCode() == 0) {
+
+                    JSONObject data = addressQueryResult.getData();
+                    String detailAddress = data.getString("formatted_address");
+
+                    userRecord.setProvince(data.getString("province"));
+                    userRecord.setCity(data.getString("city"));
+                    userRecord.setDistrict(data.getString("district"));
+                    userRecord.setStreet(data.getString("street"));
+                    userRecord.setStreetNumber(data.getString("street_number"));
+
+                    userRecord.setAddress(detailAddress);
+                }
+
             }
             String imei = request.getHeader("imei");
             userRecord.setImei(imei);
-        }catch (Exception ex){
-            logger.debugv(ex.getMessage(),ex);
+        } catch (Exception ex) {
+            logger.debugv(ex.getMessage(), ex);
         }
 
         return userRecordRepository.saveAndFlush(userRecord);
     }
-
 
 
 }

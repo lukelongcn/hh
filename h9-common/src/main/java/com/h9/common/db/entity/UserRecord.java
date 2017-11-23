@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "userRecord")
+@Table(name = "user_record")
 public class UserRecord extends BaseEntity {
 
 
@@ -65,7 +65,62 @@ public class UserRecord extends BaseEntity {
     @Column(name = "phone_type",  columnDefinition = "varchar(32) default '' COMMENT '手机品牌'")
     private String phoneType;
 
-    
+    @Column(name="province",columnDefinition = "varchar(50) COMMENT '省'")
+    private String province;
+
+    @Column(name="city",columnDefinition = "varchar(50) COMMENT '市'")
+    private String city;
+
+    @Column(name="district",columnDefinition = "varchar(50) COMMENT '区'")
+    private String district;
+
+    @Column(name="street",columnDefinition = "varchar(50) COMMENT '街道'")
+    private String street;
+
+    @Column(name="street_number",columnDefinition = "varchar(50) COMMENT '街道号'")
+    private String streetNumber;
+
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
+    }
+
     public Long getId() {
         return id;
     }

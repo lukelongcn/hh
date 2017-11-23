@@ -238,7 +238,7 @@ public class ConsumeService {
             map.put("stock", goods.getStock());
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
-            map.put("price", goods.getRealPrice());
+            map.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
             list.add(map);
         });
         return Result.success(list);
