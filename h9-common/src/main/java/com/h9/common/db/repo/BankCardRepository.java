@@ -19,7 +19,7 @@ public interface BankCardRepository extends BaseRepository<UserBank> {
     UserBank findById(Long id);
 
     //判断有无对应银行卡存在
-    UserBank findByNo(String no);
+    UserBank findByNoAndStatus(String no,String status);
 
     List<UserBank> findByUserIdAndStatus(Long userId,Integer status);
 
