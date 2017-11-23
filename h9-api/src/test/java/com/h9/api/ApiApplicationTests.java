@@ -8,6 +8,7 @@ import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -177,8 +178,10 @@ public class ApiApplicationTests {
     @Resource
     OrdersRepository ordersRepository;
 
-    //@Test
+    @Test
     public void testSpecification() {
+        String userIdKey = redisBean.getStringValue(RedisKey.getTokenUserIdKey("a7febb21-366d-4fd2-8f18-2498bea2a727"));
+        System.out.println(userIdKey);
 
     }
 
@@ -249,15 +252,19 @@ public class ApiApplicationTests {
     @Test
     public void TestAccount(){
 
-//        redisBean.setStringValue("sms:code:count:5:18770812669", "0");
+        redisBean.setStringValue("sms:code:count:4:18770812669", "0");
+
+        String stringValue = redisBean.getStringValue("sms:code:count:4:18770812669");
+        System.out.println(stringValue);
 //        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
 
 //        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
 
-        List<Banner> activiBanner = bannerRepository.findActiviBanner(new Date());
-        System.out.println(activiBanner.size());
+
     }
 
+    @Resource
+    private ConfigService configService;
     @Resource
     private BankBinRepository bankBinRepository;
     @Autowired

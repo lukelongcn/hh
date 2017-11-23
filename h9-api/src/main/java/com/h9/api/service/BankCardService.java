@@ -58,11 +58,11 @@ public class BankCardService {
             city= city.replace("市", "");
         }
         String cardNo = bankCardDTO.getNo();
-        if(!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo)){
+        if(!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo.substring(0,6))){
             return Result.fail("请填写正确的银行卡号");
         }
         //判断银行卡号是否已被绑定
-        UserBank user = bankCardRepository.findByNo(bankCardDTO.getNo());
+        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(),1);
         if (user != null) {
             if (user.getUserId().equals(userId)) {
                 Long typeId = bankCardDTO.getBankTypeId();

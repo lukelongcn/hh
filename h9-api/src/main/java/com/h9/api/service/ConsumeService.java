@@ -143,7 +143,6 @@ public class ConsumeService {
         orderItems.setOrders(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
-        commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
 
         orderItems.setMoney(goods.getRealPrice());
 
@@ -151,7 +150,7 @@ public class ConsumeService {
         orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
 
-        orderItemReposiroty.saveAndFlush(orderItems);
+
         userAccountRepository.save(userAccount);
 
         Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());
@@ -164,7 +163,9 @@ public class ConsumeService {
             if (changeStockResult.getCode() == 1) {
                 return changeStockResult;
             }
+            commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
+            orderItemReposiroty.saveAndFlush(orderItems);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
         }
