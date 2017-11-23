@@ -86,7 +86,7 @@ public class CommonService {
                 JSONObject result = jsonObject.getJSONObject("result");
 //                return result.getString("formatted_address");
 
-                return Result.success(jsonObject);
+                return Result.success(result);
             } else {
                 return Result.fail();
             }
@@ -121,9 +121,8 @@ public class CommonService {
 
                 Result<JSONObject> addressQueryResult = getAddress(latitude, longitude);
                 if (addressQueryResult.getCode() == 0) {
-
-                    JSONObject data = addressQueryResult.getData();
-                    String detailAddress = data.getString("formatted_address");
+                    String detailAddress = addressQueryResult.getData().getString("formatted_address");
+                    JSONObject data = addressQueryResult.getData().getJSONObject("addressComponent");
 
                     userRecord.setProvince(data.getString("province"));
                     userRecord.setCity(data.getString("city"));
