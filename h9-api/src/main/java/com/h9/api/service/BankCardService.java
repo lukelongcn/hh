@@ -62,7 +62,7 @@ public class BankCardService {
             return Result.fail("请填写正确的银行卡号");
         }
         //判断银行卡号是否已被绑定
-        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(),"1");
+        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(),1);
         if (user != null) {
             if (user.getUserId().equals(userId)) {
                 Long typeId = bankCardDTO.getBankTypeId();
