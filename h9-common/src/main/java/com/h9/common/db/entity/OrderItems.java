@@ -52,13 +52,7 @@ public class OrderItems extends BaseEntity {
     @Column(name="didi_card_number")
     private String didiCardNumber;
 
-    public String getDidiCardNumber() {
-        return didiCardNumber;
-    }
-
-    public void setDidiCardNumber(String didiCardNumber) {
-        this.didiCardNumber = didiCardNumber;
-    }
+    public OrderItems(){}
 
     public OrderItems(String name, String image, BigDecimal price, BigDecimal money, Integer count, Orders orders) {
         this.name = name;
@@ -69,6 +63,14 @@ public class OrderItems extends BaseEntity {
         this.orders = orders;
     }
 
+    public String getDidiCardNumber() {
+        return didiCardNumber;
+    }
+
+    public void setDidiCardNumber(String didiCardNumber) {
+        this.didiCardNumber = didiCardNumber;
+    }
+
     public Goods getGoods() {
         return goods;
     }
@@ -77,7 +79,7 @@ public class OrderItems extends BaseEntity {
         this.goods = goods;
     }
 
-    public OrderItems(){}
+
 
     public Integer getCount() {
         return count;

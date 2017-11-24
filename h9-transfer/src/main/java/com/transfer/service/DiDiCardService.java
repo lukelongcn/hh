@@ -1,16 +1,14 @@
 package com.transfer.service;
 
 import com.h9.common.base.PageResult;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.GoodsDIDINumber;
-import com.h9.common.db.entity.GoodsType;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.transfer.SqlUtils;
 import com.transfer.db.entity.C_Cards;
 import com.transfer.db.entity.T_CardCodes;
 import com.transfer.db.repo.C_CardsRepository;
 import com.transfer.db.repo.FDidiCardRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,6 +18,7 @@ import javax.annotation.Resource;
 import java.io.BufferedWriter;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -62,6 +61,8 @@ public class DiDiCardService {
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
                 logger.debugv("滴滴卡券迁移进度 " + rate + "% " + page + "/" + totalPage);
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+        logger.debugv("-----------------      用户滴滴卡卷迁移开始        --------------");
+        userCard();
     }
 
     public void toDidi(T_CardCodes userInfo ){
@@ -115,7 +116,7 @@ public class DiDiCardService {
             logger.info("page: "+page+" totalPage: "+totalPage);
             float rate = (float) page * 100 / (float) totalPage;
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
-                logger.debugv("滴滴卡券迁移进度 " + rate + "% " + page + "/" + totalPage);
+                logger.debugv("用户滴滴卡券迁移进度 " + rate + "% " + page + "/" + totalPage);
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
     }
 
@@ -125,10 +126,48 @@ public class DiDiCardService {
     @Resource
     private OrderItemReposiroty orderItemReposiroty;
 
+    @Resource
+    private UserRepository userRepository;
+
+
     public void toUserOrder(C_Cards c_cards){
         Orders orders = new Orders();
         orders.setMoney(c_cards.getCardPrice());
+        orders.setSupplierName("滴滴");
+        orders.setOrderType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
+        orders.setNo(UUID.randomUUID().toString().replace("-",""));
+        orders.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
+        orders.setMoney(c_cards.getCardPrice());
+        orders.setPayMoney(c_cards.getCardPrice());
+        orders.setPayStatus(2);
+        orders.setStatus(1);
+        User user = userRepository.findOne(new Long(c_cards.getUserID()));
+        if(user==null){
+            return;
+        }
+        orders.setUser(user);
+        orders = ordersRepository.save(orders);
 
+        String cardCode = c_cards.getCardCode();
+        GoodsDIDINumber goodsDIDINumber = null;
+        if(!StringUtils.isEmpty(cardCode)){
+            goodsDIDINumber = goodsDIDINumberRepository.findByGoodsAndDidiNumber(cardCode);
+        }else{
+            goodsDIDINumber = goodsDIDINumberRepository.findTopOneUnUse();
+        }
+
+        Goods goods = goodsReposiroty.findOne(goodsDIDINumber.getGoodsId());
+
+        OrderItems orderItems = new OrderItems();
+        orderItems.setName(goods.getName());
+        orderItems.setImage(goods.getImg());
+        orderItems.setPrice(goodsDIDINumber.getMoney());
+        orderItems.setMoney(goodsDIDINumber.getMoney());
+        orderItems.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        orderItems.setOrders(orders);
+        orderItems.setGoods(goods);
+        orderItems.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        orderItemReposiroty.save(orderItems);
 
     }
 
