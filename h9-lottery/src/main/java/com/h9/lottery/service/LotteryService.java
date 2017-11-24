@@ -41,7 +41,6 @@ import static com.h9.common.db.entity.Reward.StatusEnum.END;
  * Time: 14:50
  */
 @Service
-@Transactional
 public class LotteryService {
 
     Logger logger = Logger.getLogger(LotteryService.class);
