@@ -77,6 +77,7 @@ public class OrderItemVO {
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
         orderItemVO.setPayStatusDesc(orders.getPayStatus());
+        orderItemVO.setUserId(orders.getUser().getId());
         String collect = orders.getOrderItems().stream()
                 .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
                 .collect(Collectors.joining(","));
