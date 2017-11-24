@@ -27,6 +27,6 @@ public class ResponseLogAspectShow {
 
         logger.info("response content: "+ JSONObject.toJSONString(ret));
         logger.infov("---------------------------------------------");
-        logger.info("");
+
     }
 }
