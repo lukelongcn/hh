@@ -21,4 +21,8 @@ public interface GoodsDIDINumberRepository extends BaseRepository<GoodsDIDINumbe
 
     @Query(value = "select gdn from GoodsDIDINumber gdn where  gdn.didiNumber = ?1")
     GoodsDIDINumber findByGoodsAndDidiNumber(String number);
+
+
+    @Query(value = "select * from goods_didi_number where status = 1 limit 0,1",nativeQuery = true)
+    GoodsDIDINumber findTopOneUnUse();
 }
