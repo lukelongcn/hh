@@ -28,7 +28,7 @@ public class OrderItemVO {
     @ApiModelProperty(value ="用户收货地址")
     private String userAddres;
 
-    @ApiModelProperty(value ="支付方式")
+    @ApiModelProperty(value ="支付方式描述")
     private Integer payMethond;
 
     @ApiModelProperty(value ="支付方式描述")
@@ -39,6 +39,9 @@ public class OrderItemVO {
 
     @ApiModelProperty(value ="需要支付的金额")
     private BigDecimal payMoney = new BigDecimal(0);
+
+    @ApiModelProperty(value ="支付状态描述")
+    private String payStatusDesc ;
 
     @ApiModelProperty(value ="支付状态 1待支付 2 已支付")
     private Integer payStatus = 1;
@@ -73,6 +76,7 @@ public class OrderItemVO {
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
+        orderItemVO.setPayStatusDesc(orders.getPayStatus());
         String collect = orders.getOrderItems().stream()
                 .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
                 .collect(Collectors.joining(","));
@@ -249,6 +253,12 @@ public class OrderItemVO {
     public void setLogisticsNumber(String logisticsNumber) {
         this.logisticsNumber = logisticsNumber;
     }
-    
-    
+
+    public String getPayStatusDesc() {
+        return payStatusDesc;
+    }
+
+    public void setPayStatusDesc(int payStatus) {
+        this.payStatusDesc = Orders.PayStatusEnum.findByCode(payStatus).getDesc();
+    }
 }

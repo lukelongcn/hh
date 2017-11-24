@@ -1,6 +1,7 @@
 package com.h9.admin.model.vo;
 
 import com.h9.common.db.entity.LotteryFlow;
+import com.h9.common.db.entity.UserRecord;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
@@ -49,7 +50,7 @@ public class LotteryFlowActivityVO {
     private String address;
 
     @ApiModelProperty(value = "客户端")
-    private String os;
+    private String client;
 
     @ApiModelProperty(value = "imei")
     private String imei;
@@ -150,12 +151,12 @@ public class LotteryFlowActivityVO {
         this.address = address;
     }
 
-    public String getOs() {
-        return os;
+    public String getClient() {
+        return client;
     }
 
-    public void setOs(String os) {
-        this.os = os;
+    public void setClient(Integer client) {
+        this.client = UserRecord.ClientEnum.getValue(client);
     }
 
     public String getImei() {

@@ -311,4 +311,37 @@ public class Orders extends BaseEntity {
     public void setDeliveryId(Long deliveryId) {
         this.deliveryId = deliveryId;
     }
+
+    public enum PayStatusEnum {
+
+        UNPAID(1, "待支付"),
+        PAID(2, "已支付");
+
+        private int code;
+        private String desc;
+
+        PayStatusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static PayStatusEnum findByCode(int code){
+            PayStatusEnum[] values = values();
+            for(PayStatusEnum smsTypeEnum: values){
+                if(code == smsTypeEnum.getCode()){
+                    return smsTypeEnum;
+                }
+            }
+            return null;
+        }
+    }
 }
