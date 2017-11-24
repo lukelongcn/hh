@@ -37,7 +37,7 @@ public class UserExtends extends BaseEntity {
 
     @Column(name = "education",columnDefinition = "varchar(200) default '本科' COMMENT '小学及以下 1，初中  2 ，高中    3，中专    4，本科 (前端提供)" +
             "，研究生   6，博士及以上 7'")
-    private String education = "本科";
+    private String education = "4";
 
     @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
     private String job="";
