@@ -52,6 +52,7 @@ public class BalanceFlow extends BaseEntity {
         public static final long MOBILE_RECHAGE = 6;
         public static final long DA_ZHUAN_PAN = 8;
         public static final long ACCOUNT_TRANSFER = 9;
+        public static final long LOTTERY = 10;
     }
 
     @Column(name = "remarks", columnDefinition = "varchar(64) default '' COMMENT '资金变动备注'")
