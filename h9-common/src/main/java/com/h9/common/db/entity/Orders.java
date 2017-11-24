@@ -119,7 +119,7 @@ public class Orders extends BaseEntity {
     /**
      * description: 标识订单类别
      *
-     * @see
+     * @see GoodsType.GoodsTypeEnum
      */
     @Column(name = "order_type", columnDefinition = "int default 1 COMMENT'订单类别'")
     private Integer orderType;
