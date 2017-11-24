@@ -7,7 +7,6 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
-import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
@@ -24,16 +23,13 @@ import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.util.UrlPathHelper;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
