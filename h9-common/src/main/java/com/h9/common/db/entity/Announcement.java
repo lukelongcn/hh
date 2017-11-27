@@ -31,7 +31,6 @@ public class Announcement extends BaseEntity {
     @Column(name = "url",  columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")
     private String url;
 
-
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 0禁用 2删除'")
     private Integer enable;
 
@@ -56,11 +55,12 @@ public class Announcement extends BaseEntity {
     @Column(name = "user_name",columnDefinition = "varchar(128) default '' COMMENT '用户名'")
     private String userName;
 
+    @Transient
+    private String jointUrl;//拼接跳转链接
+
     public Long getId() {
         return id;
     }
-
-
 
     public String getImgUrl() {
         return imgUrl;
@@ -97,8 +97,6 @@ public class Announcement extends BaseEntity {
     public void setUrl(String url) {
         this.url = url;
     }
-
-
 
     public Integer getEnable() {
         return enable;
@@ -146,6 +144,14 @@ public class Announcement extends BaseEntity {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getJointUrl() {
+        return jointUrl;
+    }
+
+    public void setJointUrl(String jointUrl) {
+        this.jointUrl = jointUrl;
     }
 
     public enum EnableEnum {
