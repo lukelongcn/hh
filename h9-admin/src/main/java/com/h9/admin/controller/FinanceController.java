@@ -2,7 +2,7 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.common.modle.dto.LotteryFLowRecordDTO;
-import com.h9.admin.model.dto.finance.TransferLotterryFLowDTO;
+import com.h9.admin.model.dto.finance.TransferLotteryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.LotteryFlowRecordVO;
@@ -54,7 +54,7 @@ public class FinanceController {
     @Secured
     @PostMapping(value="/lottery/flow/record")
     @ApiOperation("转账")
-    public Result transferFromLotteryFlows( @RequestBody TransferLotterryFLowDTO transferLotterryFLowDTO)  {
+    public Result transferFromLotteryFlows( @RequestBody TransferLotteryFLowDTO transferLotterryFLowDTO)  {
         return this.financeService.transferFromLotteryFlows(transferLotterryFLowDTO.getIds());
     }
 
