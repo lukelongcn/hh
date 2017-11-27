@@ -49,7 +49,22 @@ public class UserBank extends BaseEntity {
 
     @Column(name = "default_select", nullable = false, columnDefinition = "int default 0 COMMENT '默认选择的银行卡 1 默认 0 为不是默认'")
     private Integer defaultSelect;
-    
+
+    /**
+     * description: 对应CardInfo 表id
+     */
+    @Column(name = "card_id")
+    private Long cardId;
+
+
+
+    public Long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(Long cardId) {
+        this.cardId = cardId;
+    }
 
     public Integer getDefaultSelect() {
         return defaultSelect;
