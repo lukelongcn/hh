@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -69,5 +66,25 @@ public class AccountContoller {
     public Result didiCoupones(@SessionAttribute("curUserId") Long userId
             , @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit) {
         return accountService.couponeList(userId, page, limit);
+    }
+
+    /**
+     * description: vb 转酒元页面展示接口
+     */
+    @Secured
+    @GetMapping("/account/vb/convert")
+    public Result vbConvertInfo(@SessionAttribute("curUserId") Long userId){
+
+        return accountService.convertInfo(userId);
+    }
+
+    /**
+     * description: vb 转酒元
+     */
+    @Secured
+    @PutMapping("/account/vb/convert")
+    public Result vbConvert(){
+
+        return accountService.vbConvert();
     }
 }

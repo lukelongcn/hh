@@ -9,6 +9,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
@@ -18,9 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -116,5 +115,20 @@ public class AccountService {
             return null;
         }));
 
+    }
+
+    public Result convertInfo(Long userId) {
+
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal vbCount = userAccount.getvCoins();
+
+        Map<String, String> mapVo = new HashMap<>();
+        mapVo.put("endTimeTip", DateUtil.formatDate(new Date(), DateUtil.FormatType.MINUTE));
+        mapVo.put("vb", vbCount.intValue() + "");
+        return null;
+    }
+
+    public Result vbConvert() {
+        return null;
     }
 }
