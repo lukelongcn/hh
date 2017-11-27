@@ -37,7 +37,7 @@ public class Address extends BaseEntity {
     private String address;
 
     @Column(name = "default_address",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址'")
-    private Integer defaultAddresss = 1;
+    private Integer defaultAddress = 1;
 
     @Column(name = "province", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '省'")
     private String province;
@@ -49,7 +49,7 @@ public class Address extends BaseEntity {
     private String distict;
 
     @Column(name = "provincial_city", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '城市编号'")
-    private String provincialCyty;
+    private String provincialCity;
 
 
     public Long getId() {
@@ -92,13 +92,6 @@ public class Address extends BaseEntity {
         this.address = address;
     }
 
-    public Integer getDefaultAddresss() {
-        return defaultAddresss;
-    }
-
-    public void setDefaultAddresss(Integer defaultAddresss) {
-        this.defaultAddresss = defaultAddresss;
-    }
 
     public String getProvince() {
         return province;
@@ -124,11 +117,19 @@ public class Address extends BaseEntity {
         this.distict = distict;
     }
 
-    public String getProvincialCyty() {
-        return provincialCyty;
+    public Integer getDefaultAddress() {
+        return defaultAddress;
     }
 
-    public void setProvincialCyty(String provincialCyty) {
-        this.provincialCyty = provincialCyty;
+    public void setDefaultAddress(Integer defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+    public String getProvincialCity() {
+        return provincialCity;
+    }
+
+    public void setProvincialCity(String provincialCity) {
+        this.provincialCity = provincialCity;
     }
 }
