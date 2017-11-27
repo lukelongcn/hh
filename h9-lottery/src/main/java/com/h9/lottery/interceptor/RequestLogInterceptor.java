@@ -32,6 +32,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         if(HttpMethod.OPTIONS.name().equals(method)){
             return false;
         }
+        logger.debugv("\n\r");
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
