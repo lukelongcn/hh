@@ -94,13 +94,9 @@ public class ConsumeController {
     }
 
 
-    //    /**
-//     * description: 扫述充值不没有到账的情况
-//     */
-//    @PostMapping("/withdraw/scan")
-//    public Result orderScan(){
-//        return consumeService.scan();
-//    }
+    /**
+     * description: 提现展示信息
+     */
     @Secured
     @GetMapping("/withdraw/info")
     public Result withdraInfo(@SessionAttribute("curUserId") Long userId) {
