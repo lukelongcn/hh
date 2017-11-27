@@ -27,6 +27,9 @@
 	<dependencies>
 
 
+
+
+
 		<dependency>
 			<groupId>com.h9.common</groupId>
 			<artifactId>h9-common</artifactId>
@@ -40,21 +43,8 @@
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.16.18</version>
-			<scope>provided</scope>
-		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
-		<!--<dependency>-->
-			<!--<groupId>org.apache.commons</groupId>-->
-			<!--<artifactId>commons-csv</artifactId>-->
-			<!--<version>1.5.1-marklogic</version>-->
-		<!--</dependency>-->
 
 
 

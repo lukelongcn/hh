@@ -10,10 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.jboss.logging.Logger;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -30,6 +28,7 @@ public class AccountContoller {
 
     @Resource
     private AccountService accountService;
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Secured
     @ApiOperation(value = "账户余额流水")
@@ -69,5 +68,31 @@ public class AccountContoller {
     public Result didiCoupones(@SessionAttribute("curUserId") Long userId
             , @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit) {
         return accountService.couponeList(userId, page, limit);
+    }
+
+    /**
+     * description: vb 转酒元页面展示接口
+     */
+    @Secured
+    @GetMapping("/account/vb/convert")
+    public Result vbConvertInfo(@SessionAttribute("curUserId") Long userId){
+
+        return accountService.convertInfo(userId);
+    }
+
+    /**
+     * description: vb 转酒元
+     */
+    @Secured
+    @PostMapping("/account/vb/convert")
+    public Result vbConvert(@SessionAttribute("curUserId") Long userId){
+
+        try {
+            return accountService.vbConvert(userId);
+        } catch (Exception e) {
+
+            logger.info(e.getMessage(),e);
+            return Result.fail();
+        }
     }
 }

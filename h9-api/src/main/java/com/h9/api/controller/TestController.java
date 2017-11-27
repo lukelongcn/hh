@@ -31,6 +31,7 @@ public class TestController {
 
     @GetMapping("/test/hello2")
     public Result phoneLogin2(){
+        int i = 1/0;
         return Result.success();
     }
 
