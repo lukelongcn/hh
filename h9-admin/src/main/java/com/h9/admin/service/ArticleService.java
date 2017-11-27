@@ -165,7 +165,7 @@ public class ArticleService {
         String url = article.getUrl();
         if (StringUtils.isBlank(url)) {
             if (preLink!=null) {
-                article.setUrl(preLink.get("article").toString() + article.getId());
+                article.setJointUrl(preLink.get("article").toString() + article.getId());
             }
         }
     }

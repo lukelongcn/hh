@@ -38,7 +38,7 @@ public class BalanceFlow extends BaseEntity {
 
 
     /**
-     * description: {"1":"提现","2":"银联退回","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
+     * description: {"1":"提现","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
      * @see FlowType
      */
     @Column(name = "flow_type",columnDefinition = "varchar(200) default '' COMMENT '流水类型'")
@@ -47,6 +47,7 @@ public class BalanceFlow extends BaseEntity {
     public static class FlowType{
         public static final long WITHDRAW = 1;
         public static final long REFUND = 2;
+        public static final long XIAPPINHUI = 3;
         public static final long DIDI_CONVERT = 5;
         public static final long MOBILE_RECHAGE = 6;
         public static final long DA_ZHUAN_PAN = 8;
@@ -147,9 +148,10 @@ public class BalanceFlow extends BaseEntity {
         WITHDRAW(1,"提现"),
         RETURN(2,"银联退回"),
         XIAPPINHUI(3,"小品会"),
-        RECHARGE_PHONE_FARE(4,"充话费"),
+        RECHARGE_PHONE_FARE(6,"充话费"),
         DIDI_EXCHANGE(5,"滴滴兑换"),
-        ROUNDABOUT(6,"大转盘");
+        ROUNDABOUT(8,"大转盘"),
+        CASH_TRANSFER(9,"资金迁移");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;

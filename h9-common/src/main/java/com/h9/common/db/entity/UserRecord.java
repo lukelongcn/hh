@@ -243,4 +243,47 @@ public class UserRecord extends BaseEntity {
     public void setPhoneType(String phoneType) {
         this.phoneType = phoneType;
     }
+
+    public enum ClientEnum {
+        ANDROID(1,"android"),
+        IOS(2,"ios"),
+        WEIXIN(3,"微信");
+
+        ClientEnum(long id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private long id;
+        private String name;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public static String getValue(Integer id){
+            if (id == null) {
+                return null;
+            }
+            ClientEnum[] values = values();
+            for(ClientEnum clientEnum: values){
+                if(id == clientEnum.getId()){
+                    return clientEnum.getName();
+                }
+            }
+            return null;
+        }
+    }
 }
