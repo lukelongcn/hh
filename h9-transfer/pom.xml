@@ -26,13 +26,7 @@
 
 	<dependencies>
 
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok-maven -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok-maven</artifactId>
-			<version>1.16.18.1</version>
-			<type>pom</type>
-		</dependency>
+
 
 
 
@@ -49,13 +43,7 @@
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.16.18</version>
-			<scope>provided</scope>
-		</dependency>
+
 
 
 

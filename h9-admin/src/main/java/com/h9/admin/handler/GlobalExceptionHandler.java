@@ -70,8 +70,13 @@ public class GlobalExceptionHandler {
                 subject.append("徽酒后台服务器错误").append(currentEnvironment);
                 content.append("url: ").append(httpServletRequest.getRequestURL()).append(" ").append(httpServletRequest.getMethod())
                         .append("\n ").append(ExceptionUtils.getStackTrace(e));
-                mailService.sendtMail( subject.toString() , content.toString());
-                time = System.currentTimeMillis();
+
+                String url = httpServletRequest.getRequestURL().toString();
+                if (!url.startsWith("http://localhost")) {
+
+                    mailService.sendtMail( subject.toString() , content.toString());
+                    time = System.currentTimeMillis();
+                }
             }
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(),"服务器繁忙，请稍后再试");
         }
