@@ -55,7 +55,7 @@ public class UserService {
         int totalPage = 0;
         PageResult<UserInfo> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "id");
-        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.csv");
+        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.sql");
         BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./user_account.sql");
         BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./user_extends.sql");
         String header = "insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time,login_count,nick_name,open_id,password,phone,uuid";
