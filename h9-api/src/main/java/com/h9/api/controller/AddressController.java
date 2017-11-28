@@ -59,7 +59,7 @@ public class AddressController {
      * @return
      */
     @GetMapping(value = "/allCities/{pid}")
-    public Result allCities(@PathVariable("pid")Long pid){
+    public Result allCities(@NotNull(message = "请选择收货省")@PathVariable("pid")Long pid){
         return addressService.allCities(pid);
     }
 
@@ -76,6 +76,14 @@ public class AddressController {
         return addressService.allDisticts();
     }*/
 
+    /**
+     * 添加收货地址
+     * @param userId
+     * @param addressDTO
+     * @return
+     */
+    @Secured
+    @ApiOperation(value = "添加收货地址")
     @PostMapping(value = "/add")
     public Result addAddress(@SessionAttribute("curUserId")Long userId,@Valid@RequestBody AddressDTO addressDTO){
         return addressService.addAddress(userId,addressDTO);
