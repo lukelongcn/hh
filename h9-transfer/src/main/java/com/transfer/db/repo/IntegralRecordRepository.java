@@ -2,6 +2,7 @@ package com.transfer.db.repo;
 
 
 import com.transfer.db.BasicRepository;
+import com.transfer.db.entity.IntegralRecord;
 import com.transfer.service.IntegralRecordService;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @date: 2016年6月27日 下午3:18:36
  */
 @Repository
-public interface IntegralRecordRepository extends BasicRepository<IntegralRecordService> {
+public interface IntegralRecordRepository extends BasicRepository<IntegralRecord> {
 
 
 }

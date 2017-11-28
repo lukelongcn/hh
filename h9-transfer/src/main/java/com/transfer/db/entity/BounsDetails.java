@@ -44,13 +44,13 @@ public class BounsDetails {
     private BigDecimal userBouns;
 
     @Column(name="State")
-    private int State;
+    private Long State;
 
     @Column(name="BounsTime")
     private Date BounsTime;
 
     @Column(name="BounsType")
-    private int BounsType;
+    private Long BounsType;
 
     @Column(name="ToUid")
     private Long ToUid;
@@ -59,10 +59,10 @@ public class BounsDetails {
     private String OratransOId;
 
     @Column(name="TransState")
-    private int TransState;
+    private Long TransState;
 
     @Column(name="clickCount")
-    private int clickCount;
+    private Long clickCount;
 
     @Column(name="Imei")
     private String Imei;
@@ -81,7 +81,7 @@ public class BounsDetails {
     private String Version;
 
     @Column(name="liquorid")
-    private long liquorid;
+    private Long liquorid;
 
     @Column(name="IntegralPoints")
     private BigDecimal IntegralPoints;
