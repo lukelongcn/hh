@@ -5,6 +5,7 @@ import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.modle.DiDiCardInfo;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,6 +20,8 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     List<Goods> findByGoodsType(GoodsType goodsType);
 
+    @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
+    Page<Goods> findByGoodsType(GoodsType goodsType,Pageable pageable);
 
 //    @Query(value = "select new com.h9.common.modle.DiDiCardInfo(o.realPrice,count(o.id))  from Goods o where o.status =1 and o.goodsType = 2 group by o.realPrice")
 //    List<DiDiCardInfo> findRealPriceAndStock();

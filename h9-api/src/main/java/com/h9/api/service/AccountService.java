@@ -148,7 +148,8 @@ public class AccountService {
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
-                .setVb(MoneyUtils.formatMoney(vbCount) + "");
+                .setVb(MoneyUtils.formatMoney(vbCount) + "")
+                .setJiuYuanIcon("");
 
         return Result.success(vo);
     }
@@ -159,6 +160,11 @@ public class AccountService {
         UserAccount userAcount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
         BigDecimal vbCount = userAcount.getvCoins();
+
+        if(vbCount.compareTo(new BigDecimal(0)) <= 0){
+            return Result.fail("您的v币余额已不足");
+        }
+
         String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
         BigDecimal money = vbCount.multiply(new BigDecimal(rateStr));
         Orders order = orderService.initOrder(user.getNickName(), money, user.getPhone(), 4, "徽酒",user);
@@ -173,6 +179,7 @@ public class AccountService {
         vCoinsFlowRepository.save(vCoinsFlow);
         userAcount.setvCoins(new BigDecimal(0));
         return Result.success("兑换成功");
+
     }
 
     public VCoinsFlow generateVBflowObj(Long userId, BigDecimal balance, BigDecimal money, Long orderId,Long flowType){
