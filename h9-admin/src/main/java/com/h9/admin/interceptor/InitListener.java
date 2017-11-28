@@ -6,10 +6,13 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.ArticleType;
 import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.Permission;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.db.repo.BannerTypeRepository;
 
 import com.h9.common.db.repo.GlobalPropertyRepository;
+import com.h9.common.db.repo.PermissionRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -37,6 +40,8 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
     private GlobalPropertyRepository globalPropertyRepository;
     @Resource
     private RedisBean redisBean;
+    @Resource
+    private PermissionRepository permissionRepository;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
@@ -44,7 +49,7 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
        this.initBannerType();
        this.initArticleType();
        this.initCache();
-
+       this.initPermission();
     }
 
     private void initBannerType(){
@@ -82,5 +87,38 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
         }
     }
 
+    private void createPermission(int first, int second,int third, String accessCode, String name, String description,
+                                  Long parentId) {
+        if (this.permissionRepository.findByAccessCode(accessCode) != null) {
+            return;
+        }
+        long id = first*10000+second*100+third;
+        Permission permission = new Permission(id,name,accessCode,parentId,description);
+        this.permissionRepository.save(permission);
+    }
+
+    private void createPermission(int first, int second,int third, String accessCode, String name, String description) {
+        this.createPermission(first, second, third, accessCode, name, description, null);
+    }
+
+    private void initPermission() {
+        this.createPermission(0,0,1,"backstage","后台","后台");
+
+        this.createPermission(1,0,0,"activity_management","活动管理","活动管理",1L);
+
+        this.createPermission(2,0,0,"community_management","社区管理","社区管理",1L);
+
+        this.createPermission(3,0,0,"transaction_management","交易管理","交易管理",1L);
+
+        this.createPermission(4,0,0,"finance_management","财务管理","财务管理",1L);
+
+        this.createPermission(5,0,0,"basis_setting","基础设置","基础设置",1L);
+
+        this.createPermission(5,0,0,"log_management","日志管理","日志管理",1L);
+
+        this.createPermission(99,0,0,"workbench","我的工作台","我的工作台",1L);
+        this.createPermission(99,0,1,"workbench:statistics:lottery","数据统计","我的工作台-数据统计",990000L);
+
+    }
 
 }

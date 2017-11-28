@@ -1,24 +1,16 @@
 package com.transfer.service;
 
 import com.h9.common.base.PageResult;
-import com.h9.common.utils.DateUtil;
 import com.transfer.SqlUtils;
-import com.transfer.Util;
 import com.transfer.db.entity.Address;
-import com.transfer.db.entity.UserInfo;
 import com.transfer.db.repo.TargetAddressReposiroty;
-import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.logging.Logger;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -43,7 +35,7 @@ public class AddressService {
         int totalPage = 0;
         PageResult<Address> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "ID");
-        BufferedWriter userWtriter = SqlUtils. getBuffer("./address.sql");
+        BufferedWriter userWtriter = SqlUtils.getBuffer("./address.sql");
         do {
             page = page + 1;
             userInfoPageResult = targetAddressReposiroty.findAll(page, limit, sort);
@@ -66,6 +58,7 @@ public class AddressService {
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
                 logger.debugv("地址迁移进度 " + rate + "% " + page + "/" + totalPage);
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+        SqlUtils.close(userWtriter);
     }
 
     public String toMyAddressAndSave(Address address){

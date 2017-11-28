@@ -4,6 +4,7 @@ import com.h9.admin.handler.UnAuthException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.repo.GlobalPropertyRepository;
+import com.h9.common.db.repo.PermissionRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -26,6 +27,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     private RedisBean redisBean;
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
+    @Resource
+    private PermissionRepository permissionRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -41,6 +44,9 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 String userId = redisBean.getStringValue(RedisKey.getAdminTokenUserIdKey(token));
                 if(StringUtils.isEmpty(userId)){
                     throw new UnAuthException("请登录");
+                }
+                if (this.permissionRepository.findByUserIdAndAccessCode(Long.valueOf(userId),secured.accessCode()) == null) {
+                    throw new UnAuthException("无权限访问该接口");
                 }
                 redisBean.expire(RedisKey.getAdminTokenUserIdKey(token),TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
                 httpServletRequest.getSession().setAttribute("curUserId",userId);

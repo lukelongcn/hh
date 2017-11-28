@@ -41,7 +41,7 @@ public class BalanceFlow extends BaseEntity {
      * description: {"1":"提现","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
      * @see FlowType
      */
-    @Column(name = "flow_type",columnDefinition = "varchar(200) default '' COMMENT '流水类型'")
+    @Column(name = "flow_type",columnDefinition = "bigint(20) default '' COMMENT '流水类型'")
     private Long flowType;
 
     public static class FlowType{
@@ -68,7 +68,7 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "order_no", columnDefinition = "varchar(32) default '' COMMENT '订单号'")
     private String orderNo;
 
-    @Column(name ="withdrawals_id",columnDefinition = "varchar(200) default '' COMMENT '提现id' ")
+    @Column(name ="withdrawals_id",columnDefinition = "bigint(20) default '' COMMENT '提现id' ")
     private Long withdrawals_id;
 
     public Long getWithdrawals_id() {
