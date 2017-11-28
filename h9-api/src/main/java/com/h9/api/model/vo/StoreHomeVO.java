@@ -16,7 +16,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class StoreHomeVO {
 
-    private Map<String, List<Banner>> banners = new HashMap<>();
+    private Map<String, List<HomeVO>> banners = new HashMap<>();
 
     private String balance = "0";
 

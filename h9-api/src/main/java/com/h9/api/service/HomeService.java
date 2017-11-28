@@ -1,14 +1,12 @@
 package com.h9.api.service;
 
+import com.h9.api.model.vo.GoodsListVO;
 import com.h9.api.model.vo.HomeVO;
 import com.h9.api.model.vo.StoreHomeVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
-import com.h9.common.db.repo.AnnouncementReposiroty;
-import com.h9.common.db.repo.ArticleRepository;
-import com.h9.common.db.repo.BannerRepository;
-import com.h9.common.db.repo.UserAccountRepository;
+import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,8 @@ public class HomeService {
     private AnnouncementReposiroty announcementReposiroty;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private  GoodsReposiroty goodsReposiroty;
 
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
@@ -106,12 +106,19 @@ public class HomeService {
 
         List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(),2);
 
-        Map<String, List<Banner>> banners = bannerList.stream().collect(Collectors.groupingBy(el -> el.getBannerType().getCode()));
+        Map<String, List<HomeVO>> banners = bannerList.stream()
+                .map(HomeVO::new)
+                .collect(Collectors.groupingBy(el ->el.getCode()));
+
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
+        Goods goods = goodsReposiroty.findOne(1317L);
+        GoodsListVO goodsListVO = new GoodsListVO(goods);
+
         StoreHomeVO vo= new StoreHomeVO().setBanners(banners)
-                .setBalance(MoneyUtils.formatMoney(balance));
-//                .setHotGoods();
+                .setBalance(MoneyUtils.formatMoney(balance))
+                .setHotGoods(Arrays.asList(goodsListVO));
+
         return Result.success(vo);
     }
 }
