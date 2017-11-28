@@ -6,7 +6,7 @@ import com.h9.admin.model.dto.finance.TransferLotteryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.LotteryFlowRecordVO;
-import com.h9.common.modle.vo.WithdrawRecordVO;
+import com.h9.common.modle.vo.admin.WithdrawRecordVO;
 import com.h9.admin.service.FinanceService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
  * @date: 2017/11/9 11:32
  */
 @RestController
-@Api(description = "财务")
+@Api(description = "财务管理")
 @RequestMapping(value = "/finance")
 public class FinanceController {
     @Autowired

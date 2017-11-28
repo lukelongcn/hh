@@ -3,15 +3,16 @@ package com.h9.admin.controller;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.basis.*;
 import com.h9.admin.service.UserService;
-import com.h9.common.modle.vo.ImageVO;
-import com.h9.common.modle.vo.SystemUserVO;
+import com.h9.common.modle.vo.admin.basis.ImageVO;
+import com.h9.common.modle.vo.admin.SystemUserVO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BankType;
 import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.modle.vo.GlobalPropertyVO;
+import com.h9.common.modle.vo.admin.basis.GlobalPropertyVO;
+import com.h9.common.modle.vo.admin.basis.VersionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,7 +28,7 @@ import java.util.List;
  * @date: 2017/11/5 14:32
  */
 @RestController
-@Api
+@Api("基础设置")
 @RequestMapping(value = "/basis")
 public class BasisController {
 
@@ -156,5 +157,33 @@ public class BasisController {
     @ApiOperation("获取图片可选所属文件夹")
     public Result<List<String>> getImageFolders() {
         return this.basisService.getImageFolders();
+    }
+
+    @Secured
+    @PostMapping(value="/version")
+    @ApiOperation("增加版本")
+    public Result addVersion(@Validated @RequestBody VersionAddDTO versionAddDTO){
+        return  this.basisService.addVersion(versionAddDTO);
+    }
+
+    @Secured
+    @PutMapping(value="/version")
+    @ApiOperation("编辑版本")
+    public Result editVersion(@Validated @RequestBody VersionEditDTO versionEditDTO){
+        return  this.basisService.updateVersion(versionEditDTO);
+    }
+
+    @Secured
+    @DeleteMapping(value="/version/{id}")
+    @ApiOperation("删除版本")
+    public Result editVersion(@PathVariable long id){
+        return  this.basisService.deleteVersion(id);
+    }
+
+    @Secured
+    @GetMapping(value="/version/page")
+    @ApiOperation("分页获取版本")
+    public Result<PageResult<VersionVO>> getImages(PageDTO pageDTO){
+        return this.basisService.listVersion(pageDTO);
     }
 }

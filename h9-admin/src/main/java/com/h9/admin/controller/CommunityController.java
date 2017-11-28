@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * @date: 2017/11/1 17:07
  */
 @RestController
-@Api(description = "社区")
+@Api(description = "社区管理")
 @RequestMapping(value = "/community")
 public class CommunityController {
 
