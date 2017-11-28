@@ -29,21 +29,21 @@ public class OrderController {
     @Resource
     private OrderService orderService;
     
-    @Secured
+    @Secured(accessCode = "order:list")
     @GetMapping(value = "/list")
     @ApiOperation("获取订单列表")
     public Result<PageResult<OrderItemVO>> orderList(PageDTO pageDTO){
         return orderService.orderList(pageDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "order:express:update")
     @PostMapping(value = "/express")
     @ApiOperation("填写/修改订单物流信息")
     public Result<OrderItemVO> editExpress(ExpressDTO expressDTO){
         return orderService.editExpress(expressDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "express:company")
     @GetMapping(value = "/supportExpress")
     @ApiOperation("获取支持配送的物流公司")
     public Result<List<String>> getSupportExpress(){

@@ -30,42 +30,42 @@ public class FinanceController {
     @Autowired
     private FinanceService financeService;
 
-    @Secured
+    @Secured(accessCode = "withdraw_record:list")
     @GetMapping(value="/withdraw_record/page")
     @ApiOperation("分页获取提现记录")
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
         return this.financeService.getWithdrawRecords(withdrawRecordQueryDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "withdraw_record:back")
     @PostMapping(value="/withdraw_record/{id}/status")
     @ApiOperation("提现退回")
     public Result<WithdrawalsRecord> cancelWithdrawRecord(@PathVariable long id)  {
         return this.financeService.updateWithdrawRecordStatus(id);
     }
 
-    @Secured
+    @Secured(accessCode = "lottery:flow:non_transfer:list")
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页未转账列表")
     public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
         return this.financeService.getLotteryFlows(lotteryFlowFinanceDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "lottery:flow:transfer")
     @PostMapping(value="/lottery/flow/record")
     @ApiOperation("转账")
     public Result transferFromLotteryFlows( @RequestBody TransferLotteryFLowDTO transferLotterryFLowDTO)  {
         return this.financeService.transferFromLotteryFlows(transferLotterryFLowDTO.getIds());
     }
 
-    @Secured
+    @Secured(accessCode = "lottery:flow:record:list")
     @GetMapping(value = "/lottery/flow/record/page")
     @ApiOperation("分页已转账列表")
     public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlowRecords(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
         return this.financeService.getLotteryFlowRecords(lotteryFLowRecordDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "lottery:flow:record:transfer")
     @PutMapping(value="/lottery/flow/record/{id}/status")
     @ApiOperation("重新转账")
     public Result transferFromLotteryFlowRecord( @PathVariable long id)  {
