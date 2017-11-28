@@ -43,8 +43,9 @@ public class AddressService {
      */
     public Result allAddress(Long userId) {
         List<Address>   allAddress = addressRepository.findAddressList(userId);
-        if (CollectionUtils.isEmpty(allAddress))
+        if (CollectionUtils.isEmpty(allAddress)){
             return Result.success("该用户没有存储过地址");
+        }
         return Result.success(allAddress);
     }
 
@@ -55,7 +56,7 @@ public class AddressService {
     public Result allProvices() {
         List<Province> allProvices = provinceRepository.findAllProvinces();
         List<Map<String, String>> provinceList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allProvices)) return Result.success();
+        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
         allProvices.forEach(province -> {
             Map<String, String> pmap = new HashMap<>();
             pmap.put("name", province.getName());
@@ -72,7 +73,7 @@ public class AddressService {
     public Result allCities(Long pid) {
         List<City> allCities = cityRepository.findAllCities(pid);
         List<Map<String, String>> cityList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allCities)) return Result.success();
+        if (CollectionUtils.isEmpty(allCities)){ return Result.success();}
         allCities.forEach(city -> {
             Map<String, String> cmap = new HashMap<>();
             cmap.put("name", city.getName());
@@ -109,4 +110,53 @@ public class AddressService {
     }
 
 
+    /**
+     * 修改地址启用状态
+     * @param userId
+     * @param aid
+     * @return
+     */
+    public Result deleteAddress(Long userId, Long aid) {
+        Address address = addressRepository.findById(aid);
+        if (address == null){ return Result.fail("地址不存在"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        address.setStatus(0);
+        addressRepository.save(address);
+        return Result.success("删除地址成功");
+    }
+
+    /**
+     * 修改收货地址
+     * @param userId
+     * @param aid
+     * @return
+     */
+    public Result updateAddress(Long userId, Long aid,AddressDTO addressDTO) {
+        if (addressRepository.findAddressList(userId) == null){ return Result.fail("修改地址失败"); }
+        Address address = addressRepository.findById(aid);
+        if (address == null){ return Result.fail("地址不存在"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+
+        address.setUserId(userId);
+        address.setName(addressDTO.getName());
+        address.setPhone(addressDTO.getPhone());
+
+        String provinceName = addressDTO.getProvince();
+        String cityName = addressDTO.getCity();
+        address.setProvince(provinceName);
+        address.setCity(cityName);
+
+        Long pid = provinceRepository.findPid(provinceName);
+        Long cid = cityRepository.findCid(pid,cityName);
+        address.setProvincialCity(pid+","+cid);
+
+        address.setDistict(addressDTO.getDistict());
+        address.setAddress(addressDTO.getAddress());
+        // 设置是否为默认地址
+        address.setDefaultAddress(addressDTO.getDefaultAddress());
+        // 使用状态设为开启
+        address.setStatus(1);
+        addressRepository.save(address);
+        return Result.success("地址修改成功");
+    }
 }
