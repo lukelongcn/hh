@@ -36,7 +36,7 @@ public class BasisController {
     @Resource
     private UserService userService;
 
-    @Secured(accessCode = "param:add")
+    //@Secured(accessCode = "param:add")
     @PostMapping(value="/param")
     @ApiOperation("增加参数")
     public Result<GlobalPropertyVO> addGlobalProperty(@Validated @RequestBody GlobalPropertyAddDTO globalPropertyAddDTO) throws BindException {
