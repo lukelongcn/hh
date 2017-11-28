@@ -11,8 +11,6 @@ import com.h9.common.db.repo.AddressRepository;
 import com.h9.common.db.repo.CityRepository;
 import com.h9.common.db.repo.ProvinceRepository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -87,6 +85,22 @@ public class AddressService {
         return Result.success(cityList);
     }
 
+
+    /**
+     * 省市区
+     * @return
+     */
+    public Result allAreas() {
+        return null;
+    }
+
+
+    /**
+     * 添加收货地址
+     * @param userId
+     * @param addressDTO
+     * @return
+     */
     public Result addAddress(Long userId,AddressDTO addressDTO){
 
         Address address = new Address();
@@ -129,6 +143,7 @@ public class AddressService {
         return Result.success("删除地址成功");
     }
 
+
     /**
      * 修改收货地址
      * @param userId
@@ -164,9 +179,6 @@ public class AddressService {
         return Result.success("地址修改成功");
     }
 
-    public Result allAreas() {
-        return null;
-    }
 
     /**
      * 设定默认地址
