@@ -1,6 +1,8 @@
 package com.h9.api.service;
 
 import com.h9.api.model.dto.AddressDTO;
+import com.h9.api.model.vo.AddressVO;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Address;
 import com.h9.common.db.entity.City;
@@ -9,6 +11,8 @@ import com.h9.common.db.repo.AddressRepository;
 import com.h9.common.db.repo.CityRepository;
 import com.h9.common.db.repo.ProvinceRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -41,12 +45,12 @@ public class AddressService {
      * @param userId
      * @return
      */
-    public Result allAddress(Long userId) {
-        List<Address>   allAddress = addressRepository.findAddressList(userId);
-        if (CollectionUtils.isEmpty(allAddress)){
+    public Result allAddress(Long userId, int page, int limit) {
+        PageResult<Address> pageResult = addressRepository.findAddressList(userId, page, limit);
+        if (pageResult == null){
             return Result.success("该用户没有存储过地址");
         }
-        return Result.success(allAddress);
+        return Result.success(pageResult.result2Result(AddressVO::convert));
     }
 
     /**
@@ -132,7 +136,7 @@ public class AddressService {
      * @return
      */
     public Result updateAddress(Long userId, Long aid,AddressDTO addressDTO) {
-        if (addressRepository.findAddressList(userId) == null){ return Result.fail("修改地址失败"); }
+
         Address address = addressRepository.findById(aid);
         if (address == null){ return Result.fail("地址不存在"); }
         if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
@@ -158,5 +162,25 @@ public class AddressService {
         address.setStatus(1);
         addressRepository.save(address);
         return Result.success("地址修改成功");
+    }
+
+    public Result allAreas() {
+        return null;
+    }
+
+    /**
+     * 设定默认地址
+     * @param userId
+     * @param aid
+     * @return
+     */
+    public Result defualtAddress(Long userId, Long aid) {
+        Address address = addressRepository.findById(aid);
+        if (address == null){ return Result.fail("地址不存在"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        address.setDefaultAddress(1);
+        address.setStatus(1);
+        addressRepository.save(address);
+        return Result.success("设定默认地址成功");
     }
 }
