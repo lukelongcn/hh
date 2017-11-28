@@ -39,7 +39,7 @@ public class CommonController {
     @Autowired
     private FileService fileService;
 
-    @PostMapping("/file/upload")
+    @PostMapping("/images/upload")
     @ApiOperation(value = "图片上传")
     public Result uploadImage(MultipartFile file,String path) {
        return this.fileService.uploadImage(file,path);
@@ -57,4 +57,11 @@ public class CommonController {
         out.flush();
         out.close();
     }
+
+    @PostMapping("/file/upload")
+    @ApiOperation(value = "文件上传")
+    public Result uploadFile(MultipartFile file,String path) {
+        return this.fileService.uploadFile(file, path);
+    }
+
 }

@@ -40,15 +40,18 @@ public class FileService {
 
     public Result uploadImage(MultipartFile file, String path) {
         if (file == null) return Result.fail("请选择图片");
-        //构造一个带指定Zone对象的配置类
-        Configuration cfg = new Configuration(Zone.zone2());
-        //...其他参数参考类注释
-        UploadManager uploadManager = new UploadManager(cfg);
-        //...生成上传凭证，然后准备上传
-        //默认不指定key的情况下，以文件内容的hash值作为文件名
-       // String key = null;
-        Auth auth = Auth.create(accessKey, secretKey);
-        StringBuilder key = new StringBuilder("images/").append(envir);
+        path = this.buildFilePath("images",path);
+        return this.upload(file, path);
+    }
+
+    public Result uploadFile(MultipartFile file, String path) {
+        if (file == null) return Result.fail("请选择文件");
+        path = this.buildFilePath("file",path);
+        return this.upload(file, path);
+    }
+
+    private String buildFilePath(String type,String path) {
+        StringBuilder key = new StringBuilder(type).append("/").append(envir);
         if(StringUtils.isNotBlank(path)){
             if ("/".equals(path)) {
                 key.append(path).append(UUID.randomUUID());
@@ -58,6 +61,18 @@ public class FileService {
         }else{
             key.append("/other/").append(UUID.randomUUID());
         }
+        return key.toString();
+    }
+
+    private Result upload(MultipartFile file,String key) {
+        //构造一个带指定Zone对象的配置类
+        Configuration cfg = new Configuration(Zone.zone2());
+        //...其他参数参考类注释
+        UploadManager uploadManager = new UploadManager(cfg);
+        //...生成上传凭证，然后准备上传
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        // String key = null;
+        Auth auth = Auth.create(accessKey, secretKey);
         String upToken = auth.uploadToken(bucket,key.toString(), 3600, new StringMap().put("insertOnly", 1 ));
         try {
             Response response = uploadManager.put(file.getInputStream(), key.toString(), upToken, null, null);

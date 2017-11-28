@@ -120,4 +120,8 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
 
     }
 
+    private void createRole() {
+
+    }
+
 }
