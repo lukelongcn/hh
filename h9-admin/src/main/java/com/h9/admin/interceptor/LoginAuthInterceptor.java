@@ -45,9 +45,9 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 if(StringUtils.isEmpty(userId)){
                     throw new UnAuthException("请登录");
                 }
-                if (this.permissionRepository.findByUserIdAndAccessCode(Long.valueOf(userId),secured.accessCode()) == null) {
+               /* if (this.permissionRepository.findByUserIdAndAccessCode(Long.valueOf(userId),secured.accessCode()) == null) {
                     throw new UnAuthException("无权限访问该接口");
-                }
+                }*/
                 redisBean.expire(RedisKey.getAdminTokenUserIdKey(token),TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
                 httpServletRequest.getSession().setAttribute("curUserId",userId);
             }
