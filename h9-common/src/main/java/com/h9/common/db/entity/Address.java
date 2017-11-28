@@ -51,6 +51,16 @@ public class Address extends BaseEntity {
     @Column(name = "provincial_city", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '城市编号'")
     private String provincialCity;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Long getId() {
         return id;
