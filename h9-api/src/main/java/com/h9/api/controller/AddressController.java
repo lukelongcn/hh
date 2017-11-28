@@ -43,11 +43,21 @@ public class AddressController {
     @Secured
     @ApiOperation(value = "获取地址列表")
     @GetMapping(value = "/allAddresses")
-    public Result allAddress(@SessionAttribute("curUserId")Long userId){
-        return addressService.allAddress(userId);
+    public Result allAddress(@SessionAttribute("curUserId")Long userId,
+                             @RequestParam(defaultValue = "1") Integer page,
+                             @RequestParam(defaultValue = "10") Integer limit){
+        return addressService.allAddress(userId,page,limit);
     }
 
 
+    /**
+     * 省市区
+     * @return
+     */
+    @GetMapping(value = "/allAreas")
+    public Result allAreas(){
+        return addressService.allAreas();
+    }
     /**
      * 所有省
      * @return
@@ -64,9 +74,6 @@ public class AddressController {
     public Result allCities(@NotNull(message = "请选择收货省")@PathVariable("pid")Long pid){
         return addressService.allCities(pid);
     }
-
-
-
     /**
      * 市内所有区
      * @param userId
@@ -77,6 +84,7 @@ public class AddressController {
     public Result allDisticts(){
         return addressService.allDisticts();
     }*/
+
 
     /**
      * 添加收货地址
@@ -108,6 +116,7 @@ public class AddressController {
     /**
      * 修改收货地址
      * @param userId
+     *
      * @param aid
      * @return
      */
@@ -118,6 +127,20 @@ public class AddressController {
                                 @NotNull(message = "请确定要修改的地址id")@PathVariable("aid")Long aid,
                                 @Valid@RequestBody AddressDTO addressDTO){
         return addressService.updateAddress(userId,aid,addressDTO);
+    }
+
+    /**
+     * 设定默认地址
+     * @param userId
+     * @param aid
+     * @return
+     */
+    @Secured
+    @ApiOperation(value = "设定默认地址")
+    @PutMapping(value = "/defualt/{aid}")
+    public Result defualtAddress(@SessionAttribute("curUserId")Long userId,
+                                @NotNull(message = "请确定要设定的默认地址id")@PathVariable("aid")Long aid){
+        return addressService.defualtAddress(userId,aid);
     }
 
 }

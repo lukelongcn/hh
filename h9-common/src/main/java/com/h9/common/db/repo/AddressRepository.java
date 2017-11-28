@@ -1,8 +1,13 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
+import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.Address;
+import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.Orders;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -17,8 +22,13 @@ public interface AddressRepository extends BaseRepository<Address> {
      * @param userId
      * @return
      */
-    @Query("select a from Address a where a.userId = ?1 and status = 1")
-    List<Address> findAddressList(Long userId);
+    @Query("select a from Address a where a.userId = ?1 and status = 1 order by id DESC")
+    Page<Address> findAddressList(Long userId,Pageable pageRequest);
+
+    default PageResult<Address> findAddressList(Long userId, int page, int limit){
+        Page<Address> AddressList = findAddressList(userId, pageRequest(page, limit));
+        return new PageResult(AddressList);
+    }
 
     Address findById(Long id);
 }
