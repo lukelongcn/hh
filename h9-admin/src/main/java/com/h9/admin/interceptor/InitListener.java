@@ -45,7 +45,6 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-//        TODO 初始化数据
        this.initBannerType();
        this.initArticleType();
        this.initCache();
