@@ -5,6 +5,7 @@ import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.OrdersRepository;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,20 @@ public class OrderService {
         order.setPayStatus(1);
         order.setStatus(1);
         order.setOrderType(type);
+        return order;
+    }
+    public Orders initOrder(String nickName, BigDecimal money, String tel,int type,String supplierName,User user) {
+        Orders order = new Orders();
+        order.setUserName(nickName);
+        order.setPayMoney(money);
+        order.setNo("");
+        order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
+        order.setUserPhone(tel);
+        order.setSupplierName(supplierName);
+        order.setPayStatus(1);
+        order.setStatus(1);
+        order.setOrderType(type);
+        order.setUser(user);
         return order;
     }
 
