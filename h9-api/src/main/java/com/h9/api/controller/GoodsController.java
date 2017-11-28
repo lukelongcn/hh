@@ -34,7 +34,7 @@ public class GoodsController {
     }
 
     /**
-     * description: 商品详情 //TODO 未完成
+     * description: 商品详情
      *
      */
     @Secured

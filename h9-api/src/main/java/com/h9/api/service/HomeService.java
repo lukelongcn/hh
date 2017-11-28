@@ -114,7 +114,7 @@ public class HomeService {
         BigDecimal balance = userAccount.getBalance();
         Goods goods = goodsReposiroty.findOne(1317L);
         GoodsListVO goodsListVO = new GoodsListVO(goods);
-
+        //TODO setHotGoods 替换此方法值
         StoreHomeVO vo= new StoreHomeVO().setBanners(banners)
                 .setBalance(MoneyUtils.formatMoney(balance))
                 .setHotGoods(Arrays.asList(goodsListVO));

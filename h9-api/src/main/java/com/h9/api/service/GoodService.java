@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.model.vo.GoodsDetailVO;
 import com.h9.api.model.vo.GoodsListVO;
 import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
@@ -9,6 +10,7 @@ import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.GoodsTypeReposiroty;
+import com.h9.common.utils.MoneyUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -107,6 +109,19 @@ public class GoodService {
 
     public Result goodsDetail(Long id) {
 
-        return null;
+        Goods goods = goodsReposiroty.findOne(id);
+        if(goods == null){
+            return Result.fail("商品不存在");
+        }
+
+        GoodsDetailVO vo = GoodsDetailVO.builder()
+                .img(goods.getImg())
+                .desc(goods.getDescription())
+                .price(MoneyUtils.formatMoney(goods.getPrice()))
+                .name(goods.getName())
+                .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
+                .build();
+
+        return Result.success(vo);
     }
 }
