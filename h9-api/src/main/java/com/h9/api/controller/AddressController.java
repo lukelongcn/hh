@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * Created by 李圆 on 2017/11/27
+ * @author
  */
 @RestController
 @RequestMapping("/address")
@@ -38,11 +39,12 @@ public class AddressController {
     /**
      * 获取地址列表
      * @param userId
-     * @return//@NotNull(message = "参数不能为空")@PathVariable("userId")Long userId){
+     * @return
      */
     @Secured
     @ApiOperation(value = "获取地址列表")
     @GetMapping(value = "/allAddresses")
+    /**@NotNull(message = "参数不能为空")@PathVariable("userId")Long userId){*/
     public Result allAddress(@SessionAttribute("curUserId")Long userId,
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
