@@ -23,16 +23,20 @@ public class GoodsController {
     /**
      * description: 商品列表
      *
-     * @see com.h9.common.db.entity.GoodsType.GoodsTypeEnum 商品类别
+     *　商品类型 1今日新品 2日常家居 3食品饮料 4 所有商品　
      */
     @Secured
     @GetMapping("/goodsList")
     public Result goodsList(@RequestParam(defaultValue = "5") Integer type,
                             @RequestParam(defaultValue = "0") Integer page,
-                            @RequestParam(defaultValue = "10") Integer size) {
-        return goodService.goodsList(type,page,size);
+                            @RequestParam(defaultValue = "10") Integer limit) {
+        return goodService.goodsList(type,page,limit);
     }
 
+    /**
+     * description: 商品详情
+     *
+     */
     @Secured
     @GetMapping("/goods/{id}")
     public Result goodsDetail(@PathVariable Long id){

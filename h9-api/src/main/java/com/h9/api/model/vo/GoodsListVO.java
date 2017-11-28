@@ -12,6 +12,7 @@ public class GoodsListVO {
     private String img;
     private String name;
     private String price;
+    private Long id;
 
     public GoodsListVO(){}
 
@@ -19,5 +20,6 @@ public class GoodsListVO {
         this.img = goods.getImg();
         this.name = goods.getName();
         this.price = MoneyUtils.formatMoney(goods.getRealPrice());
+        this.id = goods.getId();
     }
 }
