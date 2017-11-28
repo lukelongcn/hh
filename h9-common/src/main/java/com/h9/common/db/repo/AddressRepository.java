@@ -19,4 +19,6 @@ public interface AddressRepository extends BaseRepository<Address> {
      */
     @Query("select a from Address a where a.userId = ?1 and status = 1")
     List<Address> findAddressList(Long userId);
+
+    Address findById(Long id);
 }
