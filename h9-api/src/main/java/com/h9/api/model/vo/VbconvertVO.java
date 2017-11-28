@@ -24,5 +24,6 @@ public class VbconvertVO {
 
     private String JiuYuan;
 
+    private String JiuYuanIcon;
 
 }

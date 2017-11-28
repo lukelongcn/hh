@@ -3,10 +3,8 @@ package com.transfer;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankTypeRepository;
 import com.transfer.db.repo.CardInfoRepository;
-import com.transfer.service.AddressService;
-import com.transfer.service.CardInfoService;
-import com.transfer.service.DiDiCardService;
-import com.transfer.service.UserService;
+import com.transfer.db.repo.IntegralRecordRepository;
+import com.transfer.service.*;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,6 +76,23 @@ public class TransferApplicationTests {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Resource
+    private IntegralRecordService integralRecordService;
+
+
+    @Test
+    public void transferData(){
+        integralRecordService.trants();
+    }
+
+    @Resource
+    private BounsDetailService bounsDetailService;
+
+    @Test
+    public void transferBouns(){
+        bounsDetailService.trants();
     }
 
 }
