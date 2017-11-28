@@ -40,7 +40,7 @@ public class AddressController {
      */
     @Secured
     @ApiOperation(value = "获取地址列表")
-    @GetMapping(value = "/allAddresses/{userId}")
+    @GetMapping(value = "/allAddresses")
     public Result allAddress(@SessionAttribute("curUserId")Long userId){
         return addressService.allAddress(userId);
     }
@@ -62,6 +62,8 @@ public class AddressController {
     public Result allCities(@PathVariable("pid")Long pid){
         return addressService.allCities(pid);
     }
+
+
 
     /**
      * 市内所有区
