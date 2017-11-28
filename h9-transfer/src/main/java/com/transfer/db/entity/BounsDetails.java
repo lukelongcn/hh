@@ -19,9 +19,9 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Date: 2017/11/24
  * Time: 18:20
  */
-
-@Getter
-@Setter
+//
+//@Getter
+//@Setter
 @Entity
 @Table(name = "bounsDetails")
 public class BounsDetails {
@@ -89,4 +89,163 @@ public class BounsDetails {
     @Column(name="CollectionTime")
     private Date CollectionTime;
 
+    public String getBounsDetailsOID() {
+        return BounsDetailsOID;
+    }
+
+    public void setBounsDetailsOID(String bounsDetailsOID) {
+        BounsDetailsOID = bounsDetailsOID;
+    }
+
+    public String getBounsOID() {
+        return BounsOID;
+    }
+
+    public void setBounsOID(String bounsOID) {
+        BounsOID = bounsOID;
+    }
+
+    public Long getUserid() {
+        return userid;
+    }
+
+    public void setUserid(Long userid) {
+        this.userid = userid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public BigDecimal getUserBouns() {
+        return userBouns;
+    }
+
+    public void setUserBouns(BigDecimal userBouns) {
+        this.userBouns = userBouns;
+    }
+
+    public Long getState() {
+        return State;
+    }
+
+    public void setState(Long state) {
+        State = state;
+    }
+
+    public Date getBounsTime() {
+        return BounsTime;
+    }
+
+    public void setBounsTime(Date bounsTime) {
+        BounsTime = bounsTime;
+    }
+
+    public Long getBounsType() {
+        return BounsType;
+    }
+
+    public void setBounsType(Long bounsType) {
+        BounsType = bounsType;
+    }
+
+    public Long getToUid() {
+        return ToUid;
+    }
+
+    public void setToUid(Long toUid) {
+        ToUid = toUid;
+    }
+
+    public String getOratransOId() {
+        return OratransOId;
+    }
+
+    public void setOratransOId(String oratransOId) {
+        OratransOId = oratransOId;
+    }
+
+    public Long getTransState() {
+        return TransState;
+    }
+
+    public void setTransState(Long transState) {
+        TransState = transState;
+    }
+
+    public Long getClickCount() {
+        return clickCount;
+    }
+
+    public void setClickCount(Long clickCount) {
+        this.clickCount = clickCount;
+    }
+
+    public String getImei() {
+        return Imei;
+    }
+
+    public void setImei(String imei) {
+        Imei = imei;
+    }
+
+    public String getOs() {
+        return Os;
+    }
+
+    public void setOs(String os) {
+        Os = os;
+    }
+
+    public String getManufacturer() {
+        return Manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        Manufacturer = manufacturer;
+    }
+
+    public String getModel() {
+        return Model;
+    }
+
+    public void setModel(String model) {
+        Model = model;
+    }
+
+    public String getVersion() {
+        return Version;
+    }
+
+    public void setVersion(String version) {
+        Version = version;
+    }
+
+    public Long getLiquorid() {
+        return liquorid;
+    }
+
+    public void setLiquorid(Long liquorid) {
+        this.liquorid = liquorid;
+    }
+
+    public BigDecimal getIntegralPoints() {
+        return IntegralPoints;
+    }
+
+    public void setIntegralPoints(BigDecimal integralPoints) {
+        IntegralPoints = integralPoints;
+    }
+
+    public Date getCollectionTime() {
+        return CollectionTime;
+    }
+
+    public void setCollectionTime(Date collectionTime) {
+        CollectionTime = collectionTime;
+    }
 }

@@ -6,6 +6,7 @@ import com.transfer.SqlUtils;
 import com.transfer.db.entity.BounsDetails;
 import com.transfer.db.repo.BounsDetailsRepository;
 import com.transfer.service.base.BaseService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -32,27 +33,45 @@ public class BounsDetailService extends BaseService<BounsDetails> {
 
     @Override
     public PageResult get(int page, int limit) {
-        return bounsDetailsRepository.findAll(page,limit);
+//        Sort sort = new Sort(Sort.Direction.ASC, "BounsTime");
+        PageResult<BounsDetails> all = bounsDetailsRepository.findAll(page, limit);
+        all.setTotalPage(255);
+        return all;
     }
 
     @Override
     public void getSql(BounsDetails bounsDetails, BufferedWriter userWtriter) throws IOException {
+        if(bounsDetails.getBounsType() == null){
+            return;
+        }
         StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("insert into `vcoins_flow` (`create_time`, `update_time`," +
-                "  `money`,`remarks`, `user_id`, `v_coins_type_id`)");
+        stringBuffer.append("insert into `balance_flow` (`create_time`, `update_time`," +
+                "  `money`,`remarks`, `user_id`, `flow_type`)");
         stringBuffer.append("value(");
         stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(bounsDetails.getBounsTime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(bounsDetails.getBounsTime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(bounsDetails.getUserBouns()+",");
-        if(bounsDetails.getState() == 1){
-            stringBuffer.append("红包");
+        if(bounsDetails.getBounsType() == 0){
+            stringBuffer.append(SqlUtils.concatSql("转入记录"));
+        }else if(bounsDetails.getBounsType() == 2){
+            stringBuffer.append(SqlUtils.concatSql("银联退回"));
+        }else if(bounsDetails.getBounsType() == 8){
+            stringBuffer.append(SqlUtils.concatSql("大转盘"));
+        }else if(bounsDetails.getBounsType() == 1){
+            stringBuffer.append(SqlUtils.concatSql("提现"));
+        }else if(bounsDetails.getBounsType() == 5){
+            stringBuffer.append(SqlUtils.concatSql("小品会转出"));
+        }else if(bounsDetails.getBounsType() == 6){
+            stringBuffer.append(SqlUtils.concatSql("充话费"));
+        }else{
+            stringBuffer.append(SqlUtils.concatSql(null));
         }
         if(bounsDetails.getToUid()!=null){
-            stringBuffer.append(bounsDetails.getUserid()+",");
-        }else{
             stringBuffer.append(bounsDetails.getToUid()+",");
+        }else{
+            stringBuffer.append(bounsDetails.getUserid()+",");
         }
-        stringBuffer.append(bounsDetails.getState());
+        stringBuffer.append(bounsDetails.getBounsType());
         stringBuffer.append(");");
         userWtriter.write(stringBuffer.toString());
         userWtriter.newLine();
