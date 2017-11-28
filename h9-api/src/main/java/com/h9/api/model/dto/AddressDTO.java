@@ -22,7 +22,7 @@ public class AddressDTO {
     private String phone;
 
     // 默认地址
-    private Integer defaultAddresss;
+    private Integer defaultAddress;
 
     // 所在省
     @NotBlank(message = "请填写所在省")
@@ -87,12 +87,12 @@ public class AddressDTO {
         this.phone = phone;
     }
 
-    public Integer getDefaultAddresss() {
-        return defaultAddresss;
+    public Integer getDefaultAddress() {
+        return defaultAddress;
     }
 
-    public void setDefaultAddresss(Integer defaultAddresss) {
-        this.defaultAddresss = defaultAddresss;
+    public void setDefaultAddress(Integer defaultAddress) {
+        this.defaultAddress = defaultAddress;
     }
 
     public String getProvince() {

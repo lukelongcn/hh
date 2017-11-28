@@ -19,6 +19,6 @@ public interface ProvinceRepository  extends BaseRepository<Province> {
     @Query("select p from Province p ")
     List<Province> findAllProvinces();
 
-    @Query("select p from Province p where name = ?1")
-    Long findByName(String name);
+    @Query("select p.id from Province p where p.Name = ?1")
+    Long findPid(String Name);
 }

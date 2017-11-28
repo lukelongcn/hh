@@ -83,10 +83,9 @@ public class AddressService {
     }
 
     public Result addAddress(Long userId,AddressDTO addressDTO){
-        //List<Address>   allAddress = addressRepository.findAddressList(userId);
-        //if(allAddress == null)
+
         Address address = new Address();
-        address.setUserId(addressDTO.getUserId());
+        address.setUserId(userId);
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
@@ -95,12 +94,16 @@ public class AddressService {
         address.setProvince(provinceName);
         address.setCity(cityName);
 
-        Long pid = provinceRepository.findByName(provinceName);
+        Long pid = provinceRepository.findPid(provinceName);
         Long cid = cityRepository.findCid(pid,cityName);
         address.setProvincialCity(pid+","+cid);
 
-        //address.setDistict(addressDTO.getDistict());
+        address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
+        // 设置是否为默认地址
+        address.setDefaultAddress(addressDTO.getDefaultAddress());
+        // 使用状态设为开启
+        address.setStatus(1);
         addressRepository.save(address);
         return Result.success("地址添加成功");
     }

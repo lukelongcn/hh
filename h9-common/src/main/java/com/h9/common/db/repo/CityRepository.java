@@ -24,6 +24,6 @@ public interface CityRepository extends BaseRepository<City> {
      * @param name
      * @return id
      */
-    @Query("select c.id from City c where c.province = ?1 and c.name = ?2")
+    @Query("select c.id from City c where c.province.id = ?1 and c.name = ?2")
     Long findCid(Long pid,String name);
 }
