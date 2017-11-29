@@ -44,7 +44,7 @@ public class GoodService {
     @Resource
     private OrdersRepository ordersRepository;
     @Resource
-    private AddressReposiroty addressReposiroty;
+    private AddressRepository addressRepository;
 
     /**
      * description: 减少商品库 -1
@@ -145,7 +145,7 @@ public class GoodService {
 
     public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) {
         Long addressId = convertGoodsDTO.getAddressId();
-        Address address = addressReposiroty.findOne(addressId);
+        Address address = addressRepository.findOne(addressId);
 
         if(address == null) return Result.fail("地址不存在");
 
