@@ -131,17 +131,7 @@ public class AddressService {
             cityList .add(cmap);
         });
 
-        List<Distict> allDisticts = distictRepository.findAllDisticts();
-        List<Map<String, String>> distictList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allDisticts)){ return Result.success();}
-        allDisticts.forEach(distict -> {
-            Map<String, String> dmap = new HashMap<>();
-            dmap.put("name", distict.getName());
-            dmap.put("id", distict.getId() + "");
-            distictList .add(dmap);
-        });
-
-        List[] lists = {provinceList,cityList,distictList};
+        List[] lists = {provinceList,cityList};
         return Result.success(lists);
     }
 
