@@ -1,8 +1,7 @@
-package com.h9.controller;
+package com.h9.store.controller;
 
 import com.h9.common.base.Result;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**

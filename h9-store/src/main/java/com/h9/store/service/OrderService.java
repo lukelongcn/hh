@@ -1,4 +1,4 @@
-package com.h9.service;
+package com.h9.store.service;
 
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.User;
@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 /**
  * Created by itservice on 2017/10/31.
  */
+@SuppressWarnings("Duplicates")
 @Service
 @Transactional
 public class OrderService {

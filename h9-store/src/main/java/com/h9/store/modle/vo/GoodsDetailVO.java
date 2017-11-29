@@ -1,4 +1,4 @@
-package com.h9.modle.vo;
+package com.h9.store.modle.vo;
 
 import lombok.Builder;
 import lombok.Data;

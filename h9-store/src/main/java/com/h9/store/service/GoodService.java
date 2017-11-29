@@ -1,4 +1,4 @@
-package com.h9.service;
+package com.h9.store.service;
 
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -7,9 +7,9 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
-import com.h9.modle.dto.ConvertGoodsDTO;
-import com.h9.modle.vo.GoodsDetailVO;
-import com.h9.modle.vo.GoodsListVO;
+import com.h9.store.modle.dto.ConvertGoodsDTO;
+import com.h9.store.modle.vo.GoodsDetailVO;
+import com.h9.store.modle.vo.GoodsListVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -129,9 +129,13 @@ public class GoodService {
         if(goods == null) return Result.fail("商品不存在");
 
         User user = userRepository.findOne(userId);
-        //TODO 验证地址所属的用户
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), 12, "徽酒", user);
+        Long addressUserId = address.getUserId();
 
+        if(!addressUserId.equals(userId)) return Result.fail("无效的地址");
+
+        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), 12, "徽酒", user);
+        order.setAddressId(addressId);
+        order.setUserAddres(address.getAddress());
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");

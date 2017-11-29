@@ -1,4 +1,4 @@
-package com.h9.interceptor;
+package com.h9.store.interceptor;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

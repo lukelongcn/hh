@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 /**
  * Created by itservice on 2017/10/31.
  */
+@SuppressWarnings("Duplicates")
 @Service
 @Transactional
 public class OrderService {

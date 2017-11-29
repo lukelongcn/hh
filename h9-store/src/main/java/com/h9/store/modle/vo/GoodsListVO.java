@@ -1,4 +1,4 @@
-package com.h9.modle.vo;
+package com.h9.store.modle.vo;
 
 import com.h9.common.db.entity.Goods;
 import com.h9.common.utils.MoneyUtils;

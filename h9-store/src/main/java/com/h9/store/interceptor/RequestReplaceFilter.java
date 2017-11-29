@@ -1,4 +1,4 @@
-package com.h9.interceptor;
+package com.h9.store.interceptor;
 
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;

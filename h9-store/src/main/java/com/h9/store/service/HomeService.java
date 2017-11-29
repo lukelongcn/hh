@@ -1,4 +1,4 @@
-package com.h9.service;
+package com.h9.store.service;
 
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Banner;
@@ -8,9 +8,9 @@ import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.utils.MoneyUtils;
-import com.h9.modle.vo.GoodsListVO;
-import com.h9.modle.vo.HomeVO;
-import com.h9.modle.vo.StoreHomeVO;
+import com.h9.store.modle.vo.GoodsListVO;
+import com.h9.store.modle.vo.HomeVO;
+import com.h9.store.modle.vo.StoreHomeVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

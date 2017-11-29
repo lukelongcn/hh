@@ -1,4 +1,4 @@
-package com.h9.handle;
+package com.h9.store.handle;
 
 /**
  * description: 用户没有访问权限时使用此异常

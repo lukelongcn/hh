@@ -1,9 +1,9 @@
-package com.h9.controller;
+package com.h9.store.controller;
 
 import com.h9.common.base.Result;
-import com.h9.interceptor.Secured;
-import com.h9.modle.dto.ConvertGoodsDTO;
-import com.h9.service.GoodService;
+import com.h9.store.interceptor.Secured;
+import com.h9.store.modle.dto.ConvertGoodsDTO;
+import com.h9.store.service.GoodService;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +45,9 @@ public class GoodsController {
     }
 
 
+    /**
+     * description: 兑换商品
+     */
     @Secured
     @PostMapping("/goods/convert")
     public Result convertGoods(@Valid@RequestBody ConvertGoodsDTO convertGoodsDTO, @SessionAttribute("curUserId") Long userId){

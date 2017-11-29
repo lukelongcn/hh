@@ -1,4 +1,4 @@
-package com.h9.modle.dto;
+package com.h9.store.modle.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
