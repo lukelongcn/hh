@@ -5,6 +5,8 @@ import com.h9.common.modle.vo.admin.BasisVO;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.Column;
+
 
 /**
  * @author: George
@@ -38,6 +40,9 @@ public class VersionVO extends BasisVO{
 
     @ApiModelProperty(value = "包url")
     private String packageUrl;
+
+    @ApiModelProperty(value = "包名")
+    private String packageName;
 
     public Long getId() {
         return id;
@@ -109,6 +114,14 @@ public class VersionVO extends BasisVO{
 
     public void setUpgradeTypeDesc(String upgradeTypeDesc) {
         this.upgradeTypeDesc = upgradeTypeDesc;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public VersionVO() {

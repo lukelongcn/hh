@@ -42,6 +42,9 @@ public class Version extends BaseEntity {
     @Column(name = "package_url",  columnDefinition = "varchar(256) default '' COMMENT '包url'")
     private String packageUrl;
 
+    @Column(name = "package_name",  columnDefinition = "varchar(64) default '' COMMENT '包名'")
+    private String packageName;
+
     public Long getId() {
         return id;
     }
@@ -96,6 +99,14 @@ public class Version extends BaseEntity {
 
     public void setPackageUrl(String packageUrl) {
         this.packageUrl = packageUrl;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public enum ClientTypeEnum {
