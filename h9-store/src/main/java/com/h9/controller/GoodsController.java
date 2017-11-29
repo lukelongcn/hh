@@ -1,9 +1,9 @@
-package com.h9.api.controller;
+package com.h9.controller;
 
-import com.h9.api.interceptor.Secured;
-import com.h9.api.model.dto.ConvertGoodsDTO;
-import com.h9.api.service.GoodService;
 import com.h9.common.base.Result;
+import com.h9.interceptor.Secured;
+import com.h9.modle.dto.ConvertGoodsDTO;
+import com.h9.service.GoodService;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 

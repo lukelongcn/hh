@@ -15,13 +15,13 @@
         <version>1.5.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
     <modules>
         <module>../h9-api</module>
         <module>../h9-admin</module>
         <module>../h9-common</module>
         <module>../h9-lottery</module>
         <module>../h9-transfer</module>
+        <module>../h9-store</module>
     </modules>
 
     <properties>
