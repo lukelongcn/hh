@@ -44,7 +44,7 @@ public class GoodService {
     @Resource
     private OrdersRepository ordersRepository;
     @Resource
-    private AddressRepository addressReposiroty;
+    private AddressRepository addressRepository;
 
     /**
      * description: 减少商品库 -1
