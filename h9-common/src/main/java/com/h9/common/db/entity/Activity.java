@@ -31,7 +31,7 @@ public class Activity extends BaseEntity {
     private String activityName;
 
     /****
-     * TODO 可能要考虑将时间做成多配置的
+     *  可能要考虑将时间做成多配置的
      */
     @Column(name = "limit_date_type",nullable = false,columnDefinition = "tinyint default 0 COMMENT '奖励次数限制0 不限制 1 秒 2 分 3小时 4天 5周 6月 7 年'")
     private Integer limitDateType = 0;

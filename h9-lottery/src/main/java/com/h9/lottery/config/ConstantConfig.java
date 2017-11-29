@@ -6,7 +6,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:配置文件常量类
  * ConstantConfig:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/18
  * Time: 10:40
