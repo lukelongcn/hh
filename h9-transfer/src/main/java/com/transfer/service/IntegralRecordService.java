@@ -15,7 +15,7 @@ import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:转换V币流水
  * IntegralRecord:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/27
  * Time: 14:46

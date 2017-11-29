@@ -35,7 +35,6 @@ public class BounsDetailService extends BaseService<BounsDetails> {
     public PageResult get(int page, int limit) {
 //        Sort sort = new Sort(Sort.Direction.ASC, "BounsTime");
         PageResult<BounsDetails> all = bounsDetailsRepository.findAll(page, limit);
-        all.setTotalPage(255);
         return all;
     }
 
@@ -75,8 +74,6 @@ public class BounsDetailService extends BaseService<BounsDetails> {
         stringBuffer.append(");");
         userWtriter.write(stringBuffer.toString());
         userWtriter.newLine();
-
-
     }
 
     @Override

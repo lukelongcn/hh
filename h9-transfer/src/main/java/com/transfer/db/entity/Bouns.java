@@ -23,7 +23,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @Entity
 @Table(name = "bouns")
-public class Bouns extends BaseEntity {
+public class Bouns {
 
     @Id
     @Column(name="BounsOID")

@@ -2,6 +2,7 @@ package com.transfer.service.base;
 
 import com.h9.common.base.PageResult;
 import com.transfer.SqlUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import java.io.BufferedWriter;
@@ -11,7 +12,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:
  * BaseService:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/27
  * Time: 14:37
@@ -25,7 +26,9 @@ public abstract class BaseService<T> {
         int limit = 1000;
         int totalPage = 0;
         PageResult<T> userInfoPageResult;
-        BufferedWriter userWtriter = SqlUtils.getBuffer(getPath());
+        String path = getPath();
+        BufferedWriter userWtriter = null;
+        if(!StringUtils.isEmpty(path)) userWtriter = SqlUtils.getBuffer(path);
         do {
             page = page + 1;
             userInfoPageResult =get(page, limit);
@@ -43,7 +46,7 @@ public abstract class BaseService<T> {
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
                 logger.debugv(getTitle()+ rate + "% " + page + "/" + totalPage);
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
-        SqlUtils.close(userWtriter);
+        if(!StringUtils.isEmpty(path))   SqlUtils.close(userWtriter);
     }
 
     public abstract String getPath();
