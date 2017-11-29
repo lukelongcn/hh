@@ -27,30 +27,40 @@ public class Address extends BaseEntity {
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
     private Long userId;
 
-    @Column(name = "name",columnDefinition = "varchar(20) default '' COMMENT '用户名'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(20) default '' COMMENT '用户名'")
     private String name;
 
-    @Column(name = "phone",columnDefinition = "varchar(11) default '' COMMENT '手机号'")
+    @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
     private String phone;
     
-    @Column(name = "address", columnDefinition = "varchar(200) default '' COMMENT '地址'")
+    @Column(name = "address", nullable = false, columnDefinition = "varchar(200) default '' COMMENT '地址'")
     private String address;
-    
-    @Column(name = "default_address",columnDefinition = "tinyint default 1 COMMENT '默认地址'")
+
+    @Column(name = "default_address",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址'")
     private Integer defaultAddress = 1;
 
-    @Column(name = "province",  columnDefinition = "varchar(50) default '' COMMENT '省'")
+    @Column(name = "province", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '省'")
     private String province;
 
-    @Column(name = "city",  columnDefinition = "varchar(50) default '' COMMENT '城市'")
+    @Column(name = "city", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '城市'")
     private String city;
 
-    @Column(name = "distict",  columnDefinition = "varchar(50) default '' COMMENT '区'")
+    @Column(name = "distict", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '区'")
     private String distict;
 
-    @Column(name = "provincial_city", columnDefinition = "varchar(50) default '' COMMENT '城市编号'")
-    private String provincialCyty;
+    @Column(name = "provincial_city", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '城市编号'")
+    private String provincialCity;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Long getId() {
         return id;
@@ -92,13 +102,6 @@ public class Address extends BaseEntity {
         this.address = address;
     }
 
-    public Integer getDefaultAddresss() {
-        return defaultAddress;
-    }
-
-    public void setDefaultAddresss(Integer defaultAddresss) {
-        this.defaultAddress = defaultAddresss;
-    }
 
     public String getProvince() {
         return province;
@@ -124,11 +127,19 @@ public class Address extends BaseEntity {
         this.distict = distict;
     }
 
-    public String getProvincialCyty() {
-        return provincialCyty;
+    public Integer getDefaultAddress() {
+        return defaultAddress;
     }
 
-    public void setProvincialCyty(String provincialCyty) {
-        this.provincialCyty = provincialCyty;
+    public void setDefaultAddress(Integer defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+    public String getProvincialCity() {
+        return provincialCity;
+    }
+
+    public void setProvincialCity(String provincialCity) {
+        this.provincialCity = provincialCity;
     }
 }
