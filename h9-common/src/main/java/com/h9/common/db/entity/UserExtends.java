@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import java.util.Date;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
 
@@ -78,8 +79,6 @@ public class UserExtends extends BaseEntity {
         this.birthday = birthday;
     }
 
-
-
     public void setMarriageStatus(String marriageStatus) {
         this.marriageStatus = marriageStatus;
     }
@@ -104,5 +103,32 @@ public class UserExtends extends BaseEntity {
 
     {
         this.job = job;
+    }
+
+    public enum SexEnum {
+        FEMALE(0, "女"),
+        MALE(1, "男");
+
+        private int code;
+        private String name;
+
+        SexEnum(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static String getNameByCode(int code){
+            SexEnum sexEnum =  stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
+            return sexEnum==null?null:sexEnum.getName();
+        }
+
     }
 }
