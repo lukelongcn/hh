@@ -3,7 +3,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.User;
-import com.h9.common.modle.vo.admin.SystemUserVO;
+import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -28,7 +28,7 @@ public interface UserRepository extends BaseRepository<User> {
    //@Lock(LockModeType.PESSIMISTIC_WRITE)
     User findByPhoneAndPasswordAndIsAdmin(String phone, String password, Integer isAdmin);
 
-    @Query("select new com.h9.common.modle.vo.admin.SystemUserVO(o) from User o  order by o.status asc ,o.id desc ")
+    @Query("select new com.h9.common.modle.vo.admin.basis.SystemUserVO(o) from User o  order by o.status asc ,o.id desc ")
     Page<SystemUserVO> findAllByPage(Pageable page);
 
 

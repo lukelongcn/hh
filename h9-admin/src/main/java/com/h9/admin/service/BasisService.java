@@ -5,7 +5,7 @@ import com.h9.common.modle.vo.admin.basis.ImageVO;
 import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
-import com.h9.common.modle.vo.admin.SystemUserVO;
+import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.repo.*;

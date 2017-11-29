@@ -11,6 +11,10 @@ import org.springframework.beans.BeanUtils;
  * @date: 2017/11/28 17:07
  */
 public class VersionVO extends BasisVO{
+
+    @ApiModelProperty(value = "id")
+    private Long id;
+
     @ApiModelProperty(value = "版本")
     private String version;
 
@@ -34,6 +38,14 @@ public class VersionVO extends BasisVO{
 
     @ApiModelProperty(value = "包url")
     private String packageUrl;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getVersion() {
         return version;
