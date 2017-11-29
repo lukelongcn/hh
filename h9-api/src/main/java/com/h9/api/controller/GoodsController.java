@@ -1,14 +1,14 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.ConvertGoodsDTO;
 import com.h9.api.service.GoodService;
 import com.h9.common.base.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.jboss.logging.Logger;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * Created by itservice on 2017/11/28.
@@ -19,6 +19,7 @@ public class GoodsController {
 
     @Resource
     private GoodService goodService;
+    private Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * description: 商品列表
@@ -41,5 +42,17 @@ public class GoodsController {
     @GetMapping("/goods/{id}")
     public Result goodsDetail(@PathVariable Long id){
         return goodService.goodsDetail(id);
+    }
+
+
+    @Secured
+    @PostMapping("/goods/convert")
+    public Result convertGoods(@Valid@RequestBody ConvertGoodsDTO convertGoodsDTO, @SessionAttribute("curUserId") Long userId){
+        try {
+            return goodService.convertGoods(convertGoodsDTO,userId);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail("兑换失败，请稍后再试");
+        }
     }
 }
