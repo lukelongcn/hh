@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -229,33 +230,93 @@ class UserExtendsVO {
 class UserBankVO {
 
     @Id
-    @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '持卡人名'")
+    @ApiModelProperty(value = "持卡人名")
     private String name;
 
-    @Column(name = "no", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '银行卡号'")
+    @ApiModelProperty(value = "银行卡号")
     private String no;
 
-    @Column(name = "provice", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户省'")
+    @ApiModelProperty(value = "开户省")
     private String province;
 
-    @Column(name = "city", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
+    @ApiModelProperty(value = "开户城市")
     private String city;
 
-    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '1:正常 2禁用 3解绑'")
-    private Integer status = 1;
+    @ApiModelProperty(value = "状态")
+    private String status;
 
-    @Column(name = "default_select", nullable = false, columnDefinition = "int default 0 COMMENT '默认选择的银行卡 1 默认 0 为不是默认'")
-    private Integer defaultSelect;
+    @ApiModelProperty(value = "提现金额")
+    private BigDecimal withdrawMoney;
 
-    /**
-     * description: 对应CardInfo 表id
-     */
-    @Column(name = "card_id")
-    private Long cardId;
+    @ApiModelProperty(value = "提现次数")
+    private Long withdrawCount;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public BigDecimal getWithdrawMoney() {
+        return withdrawMoney;
+    }
+
+    public void setWithdrawMoney(BigDecimal withdrawMoney) {
+        this.withdrawMoney = withdrawMoney;
+    }
+
+    public Long getWithdrawCount() {
+        return withdrawCount;
+    }
+
+    public void setWithdrawCount(Long withdrawCount) {
+        this.withdrawCount = withdrawCount;
+    }
 
     public UserBankVO() {
     }
@@ -265,6 +326,16 @@ class UserBankVO {
 }
 
 class UserAddressVO {
+
+    @ApiModelProperty(value = "id")
+    private Long id;
+
+    @ApiModelProperty(value = "用户名")
+    private String name;
+
+    @ApiModelProperty(value = "手机号")
+    private String phone;
+
     public UserAddressVO() {
     }
 
