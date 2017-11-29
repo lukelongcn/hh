@@ -18,21 +18,21 @@ import org.springframework.web.bind.annotation.*;
  * @date: 2017/11/7 19:42
  */
 @RestController
-@Api
+@Api("活动管理")
 @RequestMapping(value = "/activity")
 public class ActivityController {
 
     @Autowired
     private ActivityService activityService;
 
-    @Secured
+    @Secured(accessCode = "activity:lottery:list")
     @GetMapping(value = "/lottery/page")
     @ApiOperation("分页获取抢红包")
     public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO){
         return this.activityService.getRewards(rewardQueryDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "activity:lottery:flow:list")
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
     public Result<PageResult<LotteryFlowActivityVO>> getLotteryFlows(LotteryFlowActivityDTO lotteryFlowActivityDTO){

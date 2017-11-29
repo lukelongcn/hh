@@ -1,4 +1,4 @@
-package com.h9.common.modle.vo;
+package com.h9.common.modle.vo.admin;
 
 import com.h9.common.db.entity.User;
 import com.h9.common.db.entity.UserAccount;

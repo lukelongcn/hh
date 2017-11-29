@@ -1,9 +1,14 @@
 package com.h9.common.db.entity;
 
+import com.google.common.collect.ImmutableMap;
 import com.h9.common.base.BaseEntity;
+import org.apache.commons.lang3.EnumUtils;
 
 import javax.persistence.*;
 
+import java.util.*;
+
+import static java.util.Arrays.*;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -36,7 +41,6 @@ public class Version extends BaseEntity {
 
     @Column(name = "package_url",  columnDefinition = "varchar(256) default '' COMMENT '包url'")
     private String packageUrl;
-
 
     public Long getId() {
         return id;
@@ -95,9 +99,8 @@ public class Version extends BaseEntity {
     }
 
     public enum ClientTypeEnum {
-
-        IOS(1, "待支付"),
-        ANDROID(2, "已支付");
+        IOS(1, "IOS"),
+        ANDROID(2, "Android");
 
         private int code;
         private String name;
@@ -115,14 +118,38 @@ public class Version extends BaseEntity {
             return name;
         }
 
-        public static String getName(int code){
-            ClientTypeEnum[] values = values();
-            for(ClientTypeEnum clientTypeEnum: values){
-                if(code == clientTypeEnum.getCode()){
-                    return clientTypeEnum.getName();
-                }
-            }
-            return null;
+        public static String getNameByCode(int code){
+            ClientTypeEnum clientTypeEnum =  stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
+            return clientTypeEnum==null?null:clientTypeEnum.getName();
+        }
+
+    }
+
+    public enum UpgradeTypeEnum {
+        NO_SUGGESTION(1, "不提示升级"),
+        SUGGESTION(2, "建议升级"),
+        FORCE(3, "强制升级");
+
+        private int code;
+        private String name;
+
+        UpgradeTypeEnum(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static String getNameByCode(int code){
+            UpgradeTypeEnum upgradeTypeEnum = stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
+            return upgradeTypeEnum==null?null:upgradeTypeEnum.getName();
         }
     }
+
 }

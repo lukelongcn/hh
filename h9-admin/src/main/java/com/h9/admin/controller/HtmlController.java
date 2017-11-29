@@ -28,35 +28,35 @@ public class HtmlController {
     @Resource
     private HtmlService htmlService;
     
-    @Secured
+    @Secured(accessCode = "html:list")
     @GetMapping(value = "/list")
     @ApiOperation("获取单网页list")
     public Result<PageResult<HtmlContent>> list(PageDTO pageDTO){
         return htmlService.list(pageDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "html:get")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取单网页")
     public Result<HtmlContent> getHtml(@PathVariable Long id){
         return htmlService.getHtml(id);
     }
 
-    @Secured
+    @Secured(accessCode = "html:delete")
     @DeleteMapping(value = "/{id}")
     @ApiOperation("删除单网页")
     public Result deleteCategory(@PathVariable Long id){
         return htmlService.deleteHtml(id);
     }
-    
-    @Secured
+
+    @Secured(accessCode = "html:add")
     @PostMapping(value = "/")
     @ApiOperation("新增单网页")
     public Result<HtmlContent> addHtml(@Validated @RequestBody HtmlContentDTO htmlContentDTO){
         return htmlService.addHtml(htmlContentDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "html:update")
     @PutMapping(value = "/")
     @ApiOperation("编辑单网页")
     public Result<HtmlContent> editHtml(@Validated({Edit.class, Default.class}) @RequestBody HtmlContentDTO htmlContentDTO){
