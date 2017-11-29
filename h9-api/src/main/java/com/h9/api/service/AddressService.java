@@ -77,7 +77,7 @@ public class AddressService {
      * @return
      */
     public Result allCities(Long pid) {
-        List<City> allCities = cityRepository.findAllCities();
+        List<City> allCities = cityRepository.findCities(pid);
         List<Map<String, String>> cityList = new ArrayList<>();
         if (CollectionUtils.isEmpty(allCities)){ return Result.success();}
         allCities.forEach(city -> {
@@ -100,7 +100,7 @@ public class AddressService {
         allDisticts.forEach(distict -> {
             Map<String, String> dmap = new HashMap<>();
             dmap.put("name", distict.getName());
-            dmap.put("id", distict.getId() + "");
+            dmap.put("id", distict.getCity().getId() + "");
             distictList .add(dmap);
         });
         return Result.success(distictList);
