@@ -1,4 +1,4 @@
-package com.h9.common.modle.vo.admin;
+package com.h9.common.modle.vo.admin.finance;
 
 import com.h9.common.db.entity.WithdrawalsRecord;
 import io.swagger.annotations.ApiModelProperty;

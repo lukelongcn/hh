@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.WithdrawalsRecord;
-import com.h9.common.modle.vo.admin.WithdrawRecordVO;
+import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
@@ -32,7 +32,7 @@ public interface WithdrawalsRecordRepository extends BaseRepository<WithdrawalsR
     @Query("select o from WithdrawalsRecord o where o.id = ?1")
     WithdrawalsRecord findByLockId(long id);
 
-    @Query("select new com.h9.common.modle.vo.admin.WithdrawRecordVO(w) from WithdrawalsRecord  w,User u where w.userId=u.id and u.id=?1 order by w.id")
+    @Query("select new com.h9.common.modle.vo.admin.finance.WithdrawRecordVO(w) from WithdrawalsRecord  w,User u where w.userId=u.id and u.id=?1 order by w.id")
     Page<WithdrawRecordVO> findByUserId(long userId, Pageable pageable);
 
 

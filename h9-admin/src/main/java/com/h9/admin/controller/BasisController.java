@@ -4,7 +4,7 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.basis.*;
 import com.h9.admin.service.UserService;
 import com.h9.common.modle.vo.admin.basis.ImageVO;
-import com.h9.common.modle.vo.admin.SystemUserVO;
+import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.admin.service.BasisService;
 import com.h9.common.base.PageResult;

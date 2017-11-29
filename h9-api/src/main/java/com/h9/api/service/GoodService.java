@@ -44,7 +44,7 @@ public class GoodService {
     @Resource
     private OrdersRepository ordersRepository;
     @Resource
-    private AddressRepository addressRepository;
+    private AddressRepository addressReposiroty;
 
     /**
      * description: 减少商品库 -1
@@ -154,7 +154,7 @@ public class GoodService {
         if(goods == null) return Result.fail("商品不存在");
 
         User user = userRepository.findOne(userId);
-
+        //TODO 验证地址所属的用户
         Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), 12, "徽酒", user);
 
         ordersRepository.saveAndFlush(order);
