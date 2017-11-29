@@ -26,4 +26,11 @@ public interface CityRepository extends BaseRepository<City> {
      */
     @Query("select c.id from City c where c.province.id = ?1 and c.name = ?2")
     Long findCid(Long pid,String name);
+
+    /**
+     * 所有市信息
+     * @return List<City>
+     */
+    @Query("select c from City c where c.province.id = ?1 order by c.id")
+    List<City> findCities(Long pid);
 }
