@@ -3,7 +3,6 @@ package com.h9.api.service;
 import com.h9.api.model.dto.ConvertGoodsDTO;
 import com.h9.api.model.vo.GoodsDetailVO;
 import com.h9.api.model.vo.GoodsListVO;
-import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -44,7 +43,7 @@ public class GoodService {
     @Resource
     private OrdersRepository ordersRepository;
     @Resource
-    private AddressReposiroty addressReposiroty;
+    private AddressRepository addressReposiroty;
 
     /**
      * description: 减少商品库 -1
@@ -154,7 +153,7 @@ public class GoodService {
         if(goods == null) return Result.fail("商品不存在");
 
         User user = userRepository.findOne(userId);
-
+        //TODO 验证地址所属的用户
         Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), 12, "徽酒", user);
 
         ordersRepository.saveAndFlush(order);
