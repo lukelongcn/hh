@@ -3,6 +3,7 @@ package com.transfer.db.repo;
 
 import com.transfer.db.BasicRepository;
 import com.transfer.db.entity.Bouns;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,6 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BounsRepository extends BasicRepository<Bouns> {
-
-
+    @Query("select b from Bouns b where b.BounsOID=?1")
+    Bouns findOne(String oid);
 }

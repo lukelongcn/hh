@@ -234,7 +234,7 @@ public class LotteryService {
         boolean islottery = status == StatusEnum.END.getCode();
         lotteryResult.setLottery(islottery);
         lotteryResult.setRoomUser(userId.equals(reward.getUserId()));
-        //TODO
+        //
         LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
         if (lotteryFlow != null) {
             lotteryResult.setMoney(MoneyUtils.formatMoney(lotteryFlow.getMoney()));

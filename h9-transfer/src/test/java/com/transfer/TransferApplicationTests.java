@@ -95,4 +95,13 @@ public class TransferApplicationTests {
         bounsDetailService.trants();
     }
 
+    @Resource
+    private BounsService bounsService;
+
+
+    @Test
+    public void transferBounsFlow(){
+        bounsService.trants();
+    }
+
 }

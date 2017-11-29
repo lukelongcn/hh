@@ -30,19 +30,19 @@ public class Lottery extends BaseEntity {
 //    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '奖励领取用户id'")
 //    private Long userId;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励领取用户id'")
     private User user;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name = "reward_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '奖励id'")
     private Reward reward;
 
     @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励领取金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
     private UserRecord userRecord;
 
