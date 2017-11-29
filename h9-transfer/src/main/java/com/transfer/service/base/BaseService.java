@@ -5,6 +5,8 @@ import com.transfer.SqlUtils;
 import org.jboss.logging.Logger;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -18,12 +20,12 @@ public abstract class BaseService<T> {
     
      Logger logger = Logger.getLogger(BaseService.class);
 
-    public void trants(String path){
+    public void trants(){
         int page = 0;
         int limit = 1000;
         int totalPage = 0;
         PageResult<T> userInfoPageResult;
-        BufferedWriter userWtriter = SqlUtils.getBuffer(path);
+        BufferedWriter userWtriter = SqlUtils.getBuffer(getPath());
         do {
             page = page + 1;
             userInfoPageResult =get(page, limit);
@@ -44,10 +46,11 @@ public abstract class BaseService<T> {
         SqlUtils.close(userWtriter);
     }
 
+    public abstract String getPath();
 
     public abstract PageResult get(int page,int limit);
 
-    public abstract void getSql(T t,BufferedWriter userWtriter);
+    public abstract void getSql(T t,BufferedWriter userWtriter) throws IOException;
 
 
     public abstract String getTitle();

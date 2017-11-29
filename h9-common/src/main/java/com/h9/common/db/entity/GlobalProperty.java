@@ -29,7 +29,7 @@ public class GlobalProperty extends BaseEntity  {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '键'")
     private String code;
 
-    @Column(name = "val", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '值'")
+    @Column(name = "val", nullable = false, columnDefinition = "text COMMENT '值'")
     private String val;
 
     @Column(name = "description", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '说明'")

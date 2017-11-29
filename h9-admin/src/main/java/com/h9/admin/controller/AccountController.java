@@ -9,8 +9,8 @@ import com.h9.common.db.entity.SystemBlackList;
 import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
-import com.h9.common.modle.vo.UserAccountVO;
-import com.h9.common.modle.vo.WithdrawRecordVO;
+import com.h9.common.modle.vo.admin.UserAccountVO;
+import com.h9.common.modle.vo.admin.WithdrawRecordVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -32,35 +32,35 @@ public class AccountController {
     @Resource
     private AccountService accountService;
     
-    @Secured
+    @Secured(accessCode = "account:list")
     @GetMapping(value = "/list")
     @ApiOperation("获取账户列表")
     public Result<PageResult<UserAccountVO>> accountList(PageDTO pageDTO){
         return accountService.account(pageDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "account:money:flow:list")
     @GetMapping(value = "/money/flow/{userId}")
     @ApiOperation("获取钱包流水明细")
     public Result<PageResult<BalanceFlowVO>> accountMoneyFlow(PageDTO pageDTO, @PathVariable Long userId){
         return accountService.accountMoneyFlow(pageDTO,userId);
     }
 
-    @Secured
+    @Secured(accessCode = "account:v_coins:flow:list")
     @GetMapping(value = "/vCoins/flow/{userId}")
     @ApiOperation("获取vB流水明细")
     public Result<PageResult<BalanceFlowVO>> accountVCoinsFlow(PageDTO pageDTO, @PathVariable Long userId){
         return accountService.accountVCoinsFlow(pageDTO,userId);
     }
 
-    @Secured
+    @Secured(accessCode = "account:withdraw:flow:list")
     @GetMapping(value = "/withdraw/flow/{userId}")
     @ApiOperation("获取提现流水明细")
     public Result<PageResult<WithdrawRecordVO>> accountWithdrawFlow(PageDTO pageDTO, @PathVariable Long userId){
         return accountService.accountWithdrawFlow(pageDTO,userId);
     }
 
-    @Secured
+    @Secured(accessCode = "account:bank_card")
     @GetMapping(value = "/{userId}/bankInfo")
     @ApiOperation("获取银行卡信息")
     public Result<List<UserBankVO>> bankInfo(@PathVariable Long userId){
@@ -84,14 +84,14 @@ public class AccountController {
         return accountService.deviceIdInfo(new Date(startTime),endTime==0?new Date():new Date(endTime));
     }
 
-    @Secured
+    @Secured(accessCode = "account:black:user_id:add")
     @PostMapping(value = "/black/Account")
     @ApiOperation("添加账号到黑名单")
     public Result<List<SystemBlackList>> addBlackAccount(@Validated @RequestBody BlackAccountDTO blackAccountDTO){
         return accountService.addBlackAccount(blackAccountDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "account:black:imei:add")
     @PostMapping(value = "/black/imei")
     @ApiOperation("添加imei到黑名单")
     public Result<List<SystemBlackList>> addBlackImei(@Validated @RequestBody BlackIMEIDTO blackAccountDTO){
@@ -99,14 +99,14 @@ public class AccountController {
     }
 
 
-    @Secured
+    @Secured(accessCode = "account:black:user_id:list")
     @GetMapping(value = "/black/account/list")
     @ApiOperation("获取账号黑名单列表")
     public Result<PageResult<BlackAccountVO>> blackAccountList(PageDTO pageDTO){
         return accountService.blackAccountList(pageDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "account:black:imei:list")
     @GetMapping(value = "/black/imei/list")
     @ApiOperation("获取imei黑名单列表")
     public Result<PageResult<BlackAccountVO>> blackIMEIList(PageDTO pageDTO){

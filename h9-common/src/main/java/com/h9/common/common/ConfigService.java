@@ -33,6 +33,9 @@ public class ConfigService {
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
 
+    @Resource
+    private MailService mailService;
+
 
     public Object getConfig(String code) {
         if (code == null) {
@@ -50,7 +53,13 @@ public class ConfigService {
     public String getStringConfig(String code) {
         Object config = getConfig(code);
         if (config instanceof String) {
-            return (String) config;
+
+            String configStr = (String) config;
+            if (StringUtils.isBlank(configStr)) {
+                mailService.sendtMail("参数未配置", "参数未配置 (key) "+code);
+            }
+
+            return configStr;
         } else {
             return null;
         }

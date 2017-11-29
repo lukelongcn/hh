@@ -11,7 +11,7 @@ import java.util.Set;
  * @author: George
  * @date: 2017/11/10 20:03
  */
-public class TransferLotterryFLowDTO {
+public class TransferLotteryFLowDTO {
     @ApiModelProperty(value = "ids",required = true)
     @NotEmpty(message = "ids不能为空")
     private Set<Long> ids;

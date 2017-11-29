@@ -1,17 +1,20 @@
 package com.h9.api.service;
 
+import com.h9.api.model.vo.GoodsListVO;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StoreHomeVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
-import com.h9.common.db.repo.AnnouncementReposiroty;
-import com.h9.common.db.repo.ArticleRepository;
-import com.h9.common.db.repo.BannerRepository;
+import com.h9.common.db.repo.*;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,18 +32,20 @@ public class HomeService {
     private ConfigService configService;
     @Resource
     private AnnouncementReposiroty announcementReposiroty;
+    @Resource
+    private UserAccountRepository userAccountRepository;
+    @Resource
+    private  GoodsReposiroty goodsReposiroty;
 
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
         Map<String, List<HomeVO>> voMap = new HashMap<>();
-        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date());
+        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(),1);
         if (!CollectionUtils.isEmpty(bannerList)) {
-            bannerList.forEach(banner -> {
+            bannerList.stream().filter(b -> b.getLocation().equals(1)).forEach(banner -> {
                 BannerType bannerType = banner.getBannerType();
                 HomeVO convert = new HomeVO(banner);
                 List<HomeVO> list = voMap.get(bannerType.getCode());
-
-
 
                 if (list == null) {
                     List<HomeVO> tempList = new ArrayList<>();
@@ -95,5 +100,25 @@ public class HomeService {
         //查询公告
         voMap.put("noticeArticle", collect);
         return Result.success(voMap);
+    }
+
+    public Result storeHome(Long userId) {
+
+        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(),2);
+
+        Map<String, List<HomeVO>> banners = bannerList.stream()
+                .map(HomeVO::new)
+                .collect(Collectors.groupingBy(el ->el.getCode()));
+
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+        Goods goods = goodsReposiroty.findOne(1317L);
+        GoodsListVO goodsListVO = new GoodsListVO(goods);
+        //TODO setHotGoods 替换此方法值
+        StoreHomeVO vo= new StoreHomeVO().setBanners(banners)
+                .setBalance(MoneyUtils.formatMoney(balance))
+                .setHotGoods(Arrays.asList(goodsListVO));
+
+        return Result.success(vo);
     }
 }

@@ -3,7 +3,7 @@ package com.h9.admin.service;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.LotteryFlowRecordVO;
-import com.h9.common.modle.vo.WithdrawRecordVO;
+import com.h9.common.modle.vo.admin.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;

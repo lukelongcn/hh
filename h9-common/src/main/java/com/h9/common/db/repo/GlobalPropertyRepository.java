@@ -2,10 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.db.entity.LotteryFlow;
-import com.h9.common.db.entity.User;
-import com.h9.common.modle.dto.LotteryFlowActivityDTO;
-import com.h9.common.modle.vo.GlobalPropertyVO;
+import com.h9.common.modle.vo.admin.basis.GlobalPropertyVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.criteria.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +23,7 @@ public interface GlobalPropertyRepository extends BaseRepository<GlobalProperty>
 
     GlobalProperty findByIdNotAndCode(long id,String code);
 
-    @Query("select new com.h9.common.modle.vo.GlobalPropertyVO(o) from GlobalProperty o  order by o.id desc ")
+    @Query("select new com.h9.common.modle.vo.admin.basis.GlobalPropertyVO(o) from GlobalProperty o  order by o.id desc ")
     Page<GlobalPropertyVO> findAllByPage(Pageable page);
 
     @SuppressWarnings("Convert2Lambda")
