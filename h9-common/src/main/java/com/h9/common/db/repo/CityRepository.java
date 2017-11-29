@@ -15,8 +15,8 @@ public interface CityRepository extends BaseRepository<City> {
      * 所有市信息
      * @return List<City>
      */
-    @Query("select c from City c where c.province.id = ?1 ")
-    List<City> findAllCities(Long pid);
+    @Query("select c from City c  ")
+    List<City> findAllCities();
 
     /**
      * 查询对应city的id
