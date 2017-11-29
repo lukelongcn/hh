@@ -6,5 +6,5 @@ import com.h9.common.db.entity.Address;
 /**
  * Created by itservice on 2017/11/15.
  */
-public interface AddressReposiroty extends BaseRepository<Address> {
+public interface AddressRepository extends BaseRepository<Address> {
 }
