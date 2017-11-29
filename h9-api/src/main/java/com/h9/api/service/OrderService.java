@@ -38,9 +38,9 @@ public class OrderService {
         order.setOrderType(type);
         return order;
     }
-    public Orders initOrder(String nickName, BigDecimal money, String tel,int type,String supplierName,User user) {
+    public Orders initOrder( BigDecimal money, String tel,int type,String supplierName,User user) {
         Orders order = new Orders();
-        order.setUserName(nickName);
+        order.setUserName(user.getNickName());
         order.setPayMoney(money);
         order.setNo("");
         order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());

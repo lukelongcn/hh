@@ -1,8 +1,7 @@
-package com.h9.common.modle.vo;
+package com.h9.common.modle.vo.admin.finance;
 
 import com.h9.common.db.entity.WithdrawalsRecord;
 import io.swagger.annotations.ApiModelProperty;
-import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;

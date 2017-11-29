@@ -35,9 +35,8 @@ public class Role {
         name = nameToSet;
     }
 
-    public Role(final String nameToSet, final Set<Permission> permissionsToSet) {
-        super();
-        name = nameToSet;
+    public Role(final String name, final Set<Permission> permissionsToSet) {
+        this.name = name;
         permissions = permissionsToSet;
     }
 

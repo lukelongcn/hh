@@ -45,7 +45,6 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-//        TODO 初始化数据
        this.initBannerType();
        this.initArticleType();
        this.initCache();
@@ -118,6 +117,10 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
 
         this.createPermission(99,0,0,"workbench","我的工作台","我的工作台",1L);
         this.createPermission(99,0,1,"workbench:statistics:lottery","数据统计","我的工作台-数据统计",990000L);
+
+    }
+
+    private void createRole() {
 
     }
 

@@ -90,7 +90,6 @@ public class AccountContoller {
         try {
             return accountService.vbConvert(userId);
         } catch (Exception e) {
-
             logger.info(e.getMessage(),e);
             return Result.fail();
         }

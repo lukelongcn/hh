@@ -43,7 +43,6 @@ public class Banner extends BaseEntity {
     @Column(name = "icon", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '显示路径'")
     private String icon;
 
-
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 0禁用'")
     private Integer enable;
 
@@ -61,6 +60,16 @@ public class Banner extends BaseEntity {
     @Column(name = "font_color", columnDefinition = "varchar(10) default '' COMMENT '字体颜色'")
     private String fontColor;
 
+    @Column(name = "location",columnDefinition = "int default 1 COMMENT '显示位置，1为首页，2为酒元商城'")
+    private Integer location;
+
+    public Integer getLocation() {
+        return location;
+    }
+
+    public void setLocation(Integer location) {
+        this.location = location;
+    }
 
     public Long getId() {
         return id;

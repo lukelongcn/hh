@@ -1,4 +1,4 @@
-package com.h9.common.modle.vo;
+package com.h9.common.modle.vo.admin.basis;
 
 import com.h9.common.db.entity.User;
 import io.swagger.annotations.ApiModelProperty;

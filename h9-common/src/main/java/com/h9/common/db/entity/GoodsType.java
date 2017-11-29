@@ -46,8 +46,9 @@ public class GoodsType extends BaseEntity {
         MOBILE_RECHARGE(1,"手机卡"),
         DIDI_CARD(2, "滴滴卡"),
         MATERIAL(3,"实物"),
+        FOODS(5, "食物，饮料"),
+        EVERYDAY_GOODS(6, "日常家居"),
         OTHER(4, "其他");
-
 
         private int code;
         private String desc;
