@@ -167,7 +167,7 @@ public class AccountService {
 
         String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
         BigDecimal money = vbCount.multiply(new BigDecimal(rateStr));
-        Orders order = orderService.initOrder(user.getNickName(), money, user.getPhone(), 4, "徽酒",user);
+        Orders order = orderService.initOrder( money, user.getPhone(), 4, "徽酒",user);
         ordersReposiroty.saveAndFlush(order);
 
         Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");

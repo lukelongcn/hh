@@ -1,25 +1,29 @@
 package com.h9.api.service;
 
+import com.h9.api.model.dto.ConvertGoodsDTO;
 import com.h9.api.model.vo.GoodsDetailVO;
 import com.h9.api.model.vo.GoodsListVO;
 import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.GoodsType;
-import com.h9.common.db.entity.Orders;
-import com.h9.common.db.repo.GoodsReposiroty;
-import com.h9.common.db.repo.GoodsTypeReposiroty;
+import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by itservice on 2017/11/20.
  */
+@Transactional
 @Service
 public class GoodService {
 
@@ -27,6 +31,20 @@ public class GoodService {
     private GoodsReposiroty goodsReposiroty;
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
+    @Resource
+    private OrderService orderService;
+    @Resource
+    private UserRepository userRepository;
+    @Resource
+    private UserAccountRepository userAccountRepository;
+    @Resource
+    private CommonService commonService;
+    @Resource
+    private ConfigService configService;
+    @Resource
+    private OrdersRepository ordersRepository;
+    @Resource
+    private AddressReposiroty addressReposiroty;
 
     /**
      * description: 减少商品库 -1
@@ -123,5 +141,32 @@ public class GoodService {
                 .build();
 
         return Result.success(vo);
+    }
+
+    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) {
+        Long addressId = convertGoodsDTO.getAddressId();
+        Address address = addressReposiroty.findOne(addressId);
+
+        if(address == null) return Result.fail("地址不存在");
+
+        Integer count = convertGoodsDTO.getCount();
+        Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
+        if(goods == null) return Result.fail("商品不存在");
+
+        User user = userRepository.findOne(userId);
+
+        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), 12, "徽酒", user);
+
+        ordersRepository.saveAndFlush(order);
+
+        String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
+        commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
+        order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+        ordersRepository.save(order);
+
+        Map<String, String> mapVo = new HashMap<>();
+        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
+        mapVo.put("goodsName", goods.getName() + "*" + count);
+        return Result.success(mapVo);
     }
 }
