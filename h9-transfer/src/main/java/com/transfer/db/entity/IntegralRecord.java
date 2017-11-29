@@ -54,7 +54,7 @@ public class IntegralRecord {
     private String GoodsName;
 
     @Column(name="RecordIntegral")
-    private int RecordIntegral;
+    private Long RecordIntegral;
 
     @Column(name="RccordGuid")
     private String RccordGuid;

@@ -66,6 +66,8 @@ public class CommonService {
         return Result.success();
     }
 
+
+
     /****
      * 通过经纬都获取地址信息
      * @param lat

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,19 +26,19 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
     @Resource
     private IntegralRecordRepository integralRecordRepository;
 
-    public void get(){
-        trants("./record.sql");
+    @Override
+    public String getPath() {
+        return "./record.sql";
     }
-
 
     @Override
     public PageResult get(int page, int limit) {
-        Sort sort = new Sort(Sort.Direction.ASC, "ID");
-        return integralRecordRepository.findAll(page,limit,sort);
+//        Sort sort = new Sort(Sort.Direction.ASC, "RecordID");
+        return integralRecordRepository.findAll(page,limit);
     }
 
     @Override
-    public void getSql(IntegralRecord integralRecord, BufferedWriter userWtriter) {
+    public void getSql(IntegralRecord integralRecord, BufferedWriter userWtriter) throws IOException {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("insert into `vcoins_flow` (`id`,`create_time`, `update_time`," +
                 "  `money`,`remarks`, `user_id`, `v_coins_type_id`)");
@@ -48,7 +49,11 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
         stringBuffer.append(integralRecord.getGoodsIntegral()+",");
         stringBuffer.append(SqlUtils.concatSql(integralRecord.getGoodsName()));
         stringBuffer.append(integralRecord.getUserId()+",");
+        stringBuffer.append(11);
         stringBuffer.append(");");
+        userWtriter.write(stringBuffer.toString());
+        userWtriter.newLine();
+
     }
 
     @Override

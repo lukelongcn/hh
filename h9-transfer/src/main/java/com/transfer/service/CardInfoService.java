@@ -152,15 +152,15 @@ public class CardInfoService {
 
                 queryStart = System.currentTimeMillis();
                 List<BankType> bankTypeList = bankTypeRepository.findByBankNameContaining(bankName);
-                System.out.println("db query2 time : " + (System.currentTimeMillis() - queryStart));
+//                System.out.println("db query2 time : " + (System.currentTimeMillis() - queryStart));
 
                 BankType bankType = bankTypeList.get(0);
 
                 Province province = provinceReposiroty.findByPid(el.getProvince());
                 City city = cityReposiroty.findByCid(el.getCity());
 
-                String provinceStr = province == null ? province.getName() : "";
-                String cityStr = city == null ? city.getCname() : "";
+                String provinceStr = province != null ? province.getName() : "";
+                String cityStr = city != null ? city.getCname() : "";
                 boolean writeAble = false;
                 if (i == forSize) {
                     writeAble = true;
@@ -168,10 +168,10 @@ public class CardInfoService {
                 if (i % 1000 == 0) {
                     writeAble = true;
                 }
-                System.out.println("前半：" + (System.currentTimeMillis() - start));
+//                System.out.println("前半：" + (System.currentTimeMillis() - start));
                 start = System.currentTimeMillis();
                 writeUserBankToSql(el, userBankBW, provinceStr, cityStr, bankType.getId(), writeAble);
-                System.out.println("后半：" + (System.currentTimeMillis() - start));
+//                System.out.println("后半：" + (System.currentTimeMillis() - start));
 
 
             }
@@ -197,9 +197,8 @@ public class CardInfoService {
         //INSERT INTO `user_bank`(city,default_select,name,no,provice,status,user_id,bank_type_id,card_id) VALUES ( '赣州','1', '李圆', '621321321312', '江西',  '1', '3', '43', '1');
 
         sql.append("INSERT INTO `user_bank`(city,default_select,name,no,provice,status,user_id,bank_type_id,card_id) VALUES ( '");
-        sql.append("'" + city + "','0',");
+        sql.append( city + "','0',");
         sql.append("'" + el.getCardName() + "','");
-        sql.append("'");
         sql.append(el.getAccount());
         sql.append("',");
 

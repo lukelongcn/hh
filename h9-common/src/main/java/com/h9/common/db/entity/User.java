@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
@@ -71,6 +72,10 @@ public class User extends BaseEntity {
 
     @Column(name = "h9_user_id", columnDefinition = "bigint(20) default null COMMENT '徽9原有用户id'")
     private Long h9UserId;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="user_role",joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
+    private Set<Role> roles;
 
     public User() {
     }
@@ -186,6 +191,14 @@ public class User extends BaseEntity {
 
     public void setH9UserId(Long h9UserId) {
         this.h9UserId = h9UserId;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public enum IsAdminEnum{

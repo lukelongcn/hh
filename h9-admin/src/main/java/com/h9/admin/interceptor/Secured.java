@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Secured {
+    String accessCode() default "";
 }

@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ public class AccountContoller {
 
     @Resource
     private AccountService accountService;
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Secured
     @ApiOperation(value = "账户余额流水")
@@ -82,9 +84,14 @@ public class AccountContoller {
      * description: vb 转酒元
      */
     @Secured
-    @PutMapping("/account/vb/convert")
-    public Result vbConvert(){
+    @PostMapping("/account/vb/convert")
+    public Result vbConvert(@SessionAttribute("curUserId") Long userId){
 
-        return accountService.vbConvert();
+        try {
+            return accountService.vbConvert(userId);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail();
+        }
     }
 }

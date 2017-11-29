@@ -1,16 +1,17 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
-import com.h9.common.modle.vo.ImageVO;
+import com.h9.common.modle.vo.admin.basis.ImageVO;
 import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
-import com.h9.common.modle.vo.SystemUserVO;
+import com.h9.common.modle.vo.admin.SystemUserVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
-import com.h9.common.modle.vo.GlobalPropertyVO;
+import com.h9.common.modle.vo.admin.basis.GlobalPropertyVO;
+import com.h9.common.modle.vo.admin.basis.VersionVO;
 import com.h9.common.utils.MD5Util;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -50,6 +51,8 @@ public class BasisService {
     private ConfigService configService;
     @Resource
     private ImageRepository imageRepository;
+    @Resource
+    private VersionRepository versionRepository;
 
     public static final String IMAGE_FOLDER = "imageFolder";
 
@@ -226,5 +229,28 @@ public class BasisService {
 
     public Result<List<String>> getImageFolders(){
         return Result.success(this.configService.getStringListConfig(IMAGE_FOLDER));
+    }
+
+    public Result addVersion(VersionAddDTO versionAddDTO) {
+        return Result.success(this.versionRepository.save(versionAddDTO.toVersion()));
+    }
+
+    public Result updateVersion(VersionEditDTO versionEditDTO) {
+        Version version = this.versionRepository.findOne(versionEditDTO.getId());
+        if (version == null) {
+            return Result.fail("版本不存在");
+        }
+        BeanUtils.copyProperties(versionEditDTO,version);
+        return Result.success(this.versionRepository.save(version));
+    }
+
+    public Result deleteVersion(long id) {
+        this.versionRepository.delete(id);
+        return Result.success("成功");
+    }
+
+    public Result<PageResult<VersionVO>> listVersion(PageDTO pageDTO){
+        Page<VersionVO> versionVOPage = this.versionRepository.findAllByPage(pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(versionVOPage));
     }
 }

@@ -1,18 +1,11 @@
-package com.h9.common.modle.vo;
+package com.h9.common.modle.vo.admin.basis;
 
 import com.h9.common.db.entity.Image;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 
-import javax.persistence.*;
-
 import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George
