@@ -28,7 +28,7 @@ import java.util.List;
  * @date: 2017/11/5 14:32
  */
 @RestController
-@Api("基础设置")
+@Api(description = "基础设置")
 @RequestMapping(value = "/basis")
 public class BasisController {
 

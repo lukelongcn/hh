@@ -32,7 +32,7 @@ import java.util.UUID;
  */
 @SuppressWarnings("Duplicates")
 @RestController
-@Api("公用")
+@Api(description = "公用")
 @RequestMapping(value = "/common")
 public class CommonController {
 

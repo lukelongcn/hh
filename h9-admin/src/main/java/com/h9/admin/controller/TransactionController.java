@@ -24,7 +24,7 @@ import java.util.List;
  * @date: 2017/11/29 17:48
  */
 @RestController
-@Api("交易管理")
+@Api(description = "交易管理")
 @RequestMapping(value = "/transaction")
 public class TransactionController {
 
