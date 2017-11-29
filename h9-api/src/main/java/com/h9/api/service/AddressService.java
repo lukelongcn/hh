@@ -6,9 +6,11 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Address;
 import com.h9.common.db.entity.City;
+import com.h9.common.db.entity.Distict;
 import com.h9.common.db.entity.Province;
 import com.h9.common.db.repo.AddressRepository;
 import com.h9.common.db.repo.CityRepository;
+import com.h9.common.db.repo.DistictRepository;
 import com.h9.common.db.repo.ProvinceRepository;
 
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ public class AddressService {
     ProvinceRepository provinceRepository;
     @Resource
     CityRepository cityRepository;
+    @Resource
+    DistictRepository distictRepository;
 
 
     /**
@@ -86,6 +90,23 @@ public class AddressService {
     }
 
     /**
+     * 市对应的区
+     * @return
+     */
+    public Result allDisticts(Long cid) {
+        List<Distict> allDisticts = distictRepository.findDisticts(cid);
+        List<Map<String, String>> distictList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(allDisticts)){ return Result.success();}
+        allDisticts.forEach(distict -> {
+            Map<String, String> dmap = new HashMap<>();
+            dmap.put("name", distict.getName());
+            dmap.put("id", distict.getId() + "");
+            distictList .add(dmap);
+        });
+        return Result.success(distictList);
+    }
+
+    /**
      * 省市区
      * @return
      */
@@ -110,7 +131,17 @@ public class AddressService {
             cityList .add(cmap);
         });
 
-        List[] lists = {provinceList,cityList};
+        List<Distict> allDisticts = distictRepository.findAllDisticts();
+        List<Map<String, String>> distictList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(allDisticts)){ return Result.success();}
+        allDisticts.forEach(distict -> {
+            Map<String, String> dmap = new HashMap<>();
+            dmap.put("name", distict.getName());
+            dmap.put("id", distict.getId() + "");
+            distictList .add(dmap);
+        });
+
+        List[] lists = {provinceList,cityList,distictList};
         return Result.success(lists);
     }
 
@@ -215,4 +246,6 @@ public class AddressService {
         addressRepository.save(address);
         return Result.success("设定默认地址成功");
     }
+
+
 }
