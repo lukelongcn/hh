@@ -13,7 +13,7 @@ public class H9StoreApplication {
         Logger logger = Logger.getLogger(H9StoreApplication.class);
         ConfigurableApplicationContext context = SpringApplication.run(H9StoreApplication.class, args);
         Environment environment = context.getBean(Environment.class);
-        String enviroment = environment.getProperty("h9.current.envir ");
+        String enviroment = environment.getProperty("h9.current.envir");
         logger.info("当前环境： " + enviroment);
     }
 }

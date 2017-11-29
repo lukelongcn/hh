@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.h9.common.db.entity.GoodsType.GoodsTypeEnum.EVERYDAY_GOODS;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -44,6 +47,63 @@ public class GoodService {
     private OrdersRepository ordersRepository;
     @Resource
     private AddressRepository addressRepository;
+    @Resource
+    private OrderItemReposiroty orderItemReposiroty;
+
+
+    /**
+     * description: 减少商品库 -1
+     */
+    @SuppressWarnings("Duplicates")
+    public Result changeStock(Long goodsId) {
+
+        Goods goods = goodsReposiroty.findOne(goodsId);
+        if (goods == null) return Result.fail("商品不存在");
+
+        int stock = goods.getStock();
+        if (stock <= 0) {
+            return Result.fail("库存不足");
+        }
+
+        goods.setStock(--stock);
+        if (stock <= 0) {
+            goods.setStatus(2);
+        }
+        goodsReposiroty.save(goods);
+        return Result.success();
+    }
+
+    /**
+     * description:
+     * @param count 要减少的库存
+     */
+    @SuppressWarnings("Duplicates")
+    public Result changeStock(Long goodsId,int count) {
+
+        Goods goods = goodsReposiroty.findOne(goodsId);
+        if (goods == null) return Result.fail("商品不存在");
+
+        int stock = goods.getStock();
+        if (stock < count) {
+            return Result.fail("库存不足");
+        }
+
+        stock -=count;
+        goods.setStock(stock);
+        if (stock <= 0) {
+            goods.setStatus(2);
+        }
+        goodsReposiroty.save(goods);
+        return Result.success();
+    }
+
+    public Result changeStock(Goods goods) {
+        return changeStock(goods.getId());
+    }
+
+    public Result changeStock(Goods goods,int count) {
+        return changeStock(goods.getId(),count);
+    }
 
 
     /**
@@ -133,7 +193,11 @@ public class GoodService {
 
         if(!addressUserId.equals(userId)) return Result.fail("无效的地址");
 
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), 12, "徽酒", user);
+        Result result = changeStock(goods,count);
+
+        if(result.getCode() == 1) return result;
+
+        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), EVERYDAY_GOODS.getCode(), "徽酒", user);
         order.setAddressId(addressId);
         order.setUserAddres(address.getAddress());
         ordersRepository.saveAndFlush(order);
@@ -141,7 +205,11 @@ public class GoodService {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+
+        OrderItems orderItems = new OrderItems(goods.getName(),goods.getImg(),goods.getRealPrice(),goods.getPrice(),count,order);
         ordersRepository.save(order);
+        orderItems.setOrders(order);
+        orderItemReposiroty.save(orderItems);
 
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
