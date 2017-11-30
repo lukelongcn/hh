@@ -60,15 +60,15 @@ public class AccountContoller {
         return accountService.accountInfo(userId);
     }
 
-//    /**
-//     * description: 我的滴滴卡劵列表
-//     */
-//    @Secured(bindPhone = true)
-//    @GetMapping("/account/didicoupons")
-//    public Result didiCoupones(@SessionAttribute("curUserId") Long userId
-//            , @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit) {
-//        return accountService.couponeList(userId, page, limit);
-//    }
+    /**
+     * description: 我的滴滴卡劵列表
+     */
+    @Secured(bindPhone = true)
+    @GetMapping("/account/didicoupons")
+    public Result didiCoupones(@SessionAttribute("curUserId") Long userId
+            , @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit) {
+        return accountService.couponeList(userId, page, limit);
+    }
 
     /**
      * description: vb 转酒元页面展示接口

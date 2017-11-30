@@ -19,8 +19,8 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     Page<Orders> findByUser(Long userId, Pageable pageable);
 
 
-//    @Query("SELECT o from Orders o where o.user.id=?1 and o.orderItems.didiCardNumber is not null order by o.id desc")
-//    Page<Orders> findDiDiCardByUser(Long userId, Pageable pageable);
+    @Query("SELECT o from Orders o where o.user.id=?1 and o.goodsType = ?2 order by o.id desc")
+    Page<Orders> findDiDiCardByUser(Long userId,String goodsTypeCode, Pageable pageable);
 
     default PageResult<Orders> findByUser(Long userId, int page, int limit){
         Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));

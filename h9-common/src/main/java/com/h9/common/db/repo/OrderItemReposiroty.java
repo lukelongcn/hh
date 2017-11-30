@@ -19,6 +19,9 @@ public interface OrderItemReposiroty extends BaseRepository<OrderItems> {
             , nativeQuery = true)
     Object findCardCount(Long userId );
 
+//    @Query(value = "select item from OrderItems item where item.orders = ")
+//    Page<OrderItems> findCardList(Long userId, Pageable pageable);
+
 //    /**
 //     * description: 查询指定用户，订单类别
 //     */

@@ -79,6 +79,9 @@ public class Orders extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) COMMENT ''")
     private User user;
 
+    @Column(name = "goods_type",columnDefinition = "varchar(50) COMMENT'商品类型'")
+    private String goodsType;
+
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
@@ -188,6 +191,13 @@ public class Orders extends BaseEntity {
         }
     }
 
+    public String getGoodsType() {
+        return goodsType;
+    }
+
+    public void setGoodsType(String goodsType) {
+        this.goodsType = goodsType;
+    }
 
     public String getOrderType() {
         return orderType;
