@@ -1,13 +1,17 @@
 package com.h9.store.service;
 
+import com.h9.common.base.Result;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.OrdersRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -48,7 +52,11 @@ public class OrderService {
         return order;
     }
 
-
+    public Result<List<Orders>> findConvertOrders(int page, int size){
+        Page<Orders> orders = ordersReposiroty.findByOrderFrom(1, new PageRequest(page, size));
+        List<Orders> orderList = orders.getContent();
+        return Result.success(orderList);
+    }
 
 
 }

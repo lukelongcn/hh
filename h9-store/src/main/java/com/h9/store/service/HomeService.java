@@ -3,6 +3,7 @@ package com.h9.store.service;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.Banner;
 import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.UserAccount;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.GoodsReposiroty;
@@ -33,6 +34,8 @@ public class HomeService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private OrderService orderService;
     public Result storeHome(Long userId) {
 
         List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 2);
@@ -43,12 +46,16 @@ public class HomeService {
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
-        Goods goods = goodsReposiroty.findOne(1317L);
-        GoodsListVO goodsListVO = new GoodsListVO(goods);
-        //TODO setHotGoods 替换此方法值
+
         StoreHomeVO vo = new StoreHomeVO().setBanners(banners)
-                .setBalance(MoneyUtils.formatMoney(balance))
-                .setHotGoods(Arrays.asList(goodsListVO));
+                .setBalance(MoneyUtils.formatMoney(balance));
+
+        Result<List<Orders>> findResult = orderService.findConvertOrders(0, 6);
+        if (findResult.getCode() == 0) {
+            List<Orders> orderList = findResult.getData();
+            List<GoodsListVO> goodsListVO = orderList.stream().map(el -> new GoodsListVO(el.getOrderItems().get(0).getGoods())).collect(Collectors.toList());
+            vo.setHotGoods(goodsListVO);
+        }
 
         return Result.success(vo);
     }

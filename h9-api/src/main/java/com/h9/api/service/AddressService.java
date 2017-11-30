@@ -1,17 +1,13 @@
 package com.h9.api.service;
 
 import com.h9.api.model.dto.AddressDTO;
+import com.h9.api.model.dto.Areas;
 import com.h9.api.model.vo.AddressVO;
+import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.City;
-import com.h9.common.db.entity.Distict;
-import com.h9.common.db.entity.Province;
-import com.h9.common.db.repo.AddressRepository;
-import com.h9.common.db.repo.CityRepository;
-import com.h9.common.db.repo.DistictRepository;
-import com.h9.common.db.repo.ProvinceRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,6 +37,8 @@ public class AddressService {
     @Resource
     DistictRepository distictRepository;
 
+    @Resource
+    private UserRepository userRepository;
 
     /**
      * 地址列表
@@ -113,26 +111,23 @@ public class AddressService {
     public Result allAreas() {
 
         List<Province> allProvices = provinceRepository.findAllProvinces();
-        List<Map<String, String>> provinceList = new ArrayList<>();
+        List<Areas> areasList = new ArrayList<>();
         if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
+
         allProvices.forEach(province -> {
-            Map<String, String> pmap = new HashMap<>();
-            pmap.put("name", province.getName());
-            pmap.put("id", province.getId() + "");
-            provinceList.add(pmap);
-        });
-        List<City> allCities = cityRepository.findAllCities();
-        List<Map<String, String>> cityList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allCities)){ return Result.success();}
-        allCities.forEach(city -> {
-            Map<String, String> cmap = new HashMap<>();
-            cmap.put("name", city.getName());
-            cmap.put("id", city.getProvince().getId() + "");
-            cityList .add(cmap);
+
+            List<City> allCities = cityRepository.findCities(province.getId());
+            List<Areas> cityList = new ArrayList<>();
+            allCities.forEach(city -> {
+                Areas careas=new Areas(city.getId()+"",city.getName());
+                cityList .add(careas);
+            });
+
+            Areas pareas=new Areas(province.getId()+"",province.getName(),cityList);
+            areasList.add(pareas);
         });
 
-        List[] lists = {provinceList,cityList};
-        return Result.success(lists);
+        return Result.success(areasList);
     }
 
 
@@ -161,6 +156,7 @@ public class AddressService {
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
+
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
@@ -213,6 +209,7 @@ public class AddressService {
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
+      //  addressRepository.updateDefault(userId);
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
@@ -238,4 +235,16 @@ public class AddressService {
     }
 
 
+    public Result getDefaultAddress(Long userId) {
+
+        User user = userRepository.findOne(userId);
+        Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
+        if (address != null) {
+            return Result.success(new SimpleAddressVO(address, user));
+        }
+        Address lastUpdateAddress = addressRepository.findByLastUpdate(userId);
+        if (lastUpdateAddress != null)
+            return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
+        return Result.success();
+    }
 }

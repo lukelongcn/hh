@@ -15,14 +15,15 @@ import java.util.List;
  */
 public interface AddressRepository extends BaseRepository<Address> {
     /**
-     *查找地址列表
+     * 查找地址列表
+     *
      * @param userId
      * @return
      */
     @Query("select a from Address a where a.userId = ?1 and status = 1 order by id DESC")
     Page<Address> findAddressList(Long userId, Pageable pageRequest);
 
-    default PageResult<Address> findAddressList(Long userId, int page, int limit){
+    default PageResult<Address> findAddressList(Long userId, int page, int limit) {
         Page<Address> AddressList = findAddressList(userId, pageRequest(page, limit));
         return new PageResult(AddressList);
     }
@@ -30,4 +31,9 @@ public interface AddressRepository extends BaseRepository<Address> {
     Address findById(Long id);
 
     List<Address> findByUserId(Long userId);
+
+    Address findByUserIdAndDefaultAddress(Long userId, Integer defaultValue);
+
+    @Query(value = "select * from address  where user_id =?1 order by update_time desc limit 0,1",nativeQuery = true)
+    Address findByLastUpdate(Long userId);
 }

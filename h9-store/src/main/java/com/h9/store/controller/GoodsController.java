@@ -40,8 +40,8 @@ public class GoodsController {
      */
     @Secured
     @GetMapping("/goods/{id}")
-    public Result goodsDetail(@PathVariable Long id){
-        return goodService.goodsDetail(id);
+    public Result goodsDetail(@PathVariable Long id,@SessionAttribute("curUserId") Long userId){
+        return goodService.goodsDetail(id,userId);
     }
 
 

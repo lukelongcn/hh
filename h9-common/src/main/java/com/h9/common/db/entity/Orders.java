@@ -45,10 +45,10 @@ public class Orders extends BaseEntity {
     @Column(name = "addressId")
     private Long addressId;
 
-    @Column(name = "user_name",  columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
+    @Column(name = "user_name", columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
     private String userName;
 
-    @Column(name = "user_phone",  columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
+    @Column(name = "user_phone", columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
     private String userPhone;
 
     @Column(name = "user_addres", columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")
@@ -56,6 +56,7 @@ public class Orders extends BaseEntity {
 
     /**
      * description: 支付方式
+     *
      * @see PayMethodEnum
      */
     @Column(name = "pay_methond", nullable = false, columnDefinition = "int default 0 COMMENT '支付方式'")
@@ -78,6 +79,9 @@ public class Orders extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) COMMENT ''")
     private User user;
 
+    @Column(name = "goods_type",columnDefinition = "varchar(50) COMMENT'商品类型'")
+    private String goodsType;
+
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
@@ -87,6 +91,7 @@ public class Orders extends BaseEntity {
 
         BALANCE_PAY(1, "余额支付"),
         VBPAY(2, "vb支付");
+
 
         private int code;
         private String desc;
@@ -105,10 +110,10 @@ public class Orders extends BaseEntity {
             return desc;
         }
 
-        public static PayMethodEnum findByCode(int code){
+        public static PayMethodEnum findByCode(int code) {
             PayMethodEnum[] values = values();
-            for(PayMethodEnum smsTypeEnum: values){
-                if(code == smsTypeEnum.getCode()){
+            for (PayMethodEnum smsTypeEnum : values) {
+                if (code == smsTypeEnum.getCode()) {
                     return smsTypeEnum;
                 }
             }
@@ -129,12 +134,23 @@ public class Orders extends BaseEntity {
     @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
     private String expressName;
 
+    @Column(name = "order_from",columnDefinition = "int default 2 COMMENT '订单来源 1为酒元商场 2为其他'")
+    private Integer orderFrom;
+
     public String getExpressName() {
         return expressName;
     }
 
     public void setExpressName(String expressName) {
         this.expressName = expressName;
+    }
+
+    public Integer getOrderFrom() {
+        return orderFrom;
+    }
+
+    public void setOrderFrom(Integer orderFrom) {
+        this.orderFrom = orderFrom;
     }
 
     public String getLogisticsNumber() {
@@ -145,37 +161,43 @@ public class Orders extends BaseEntity {
         this.logisticsNumber = logisticsNumber;
     }
 
-    //    public enum orderTypeEnum{
-//
-//        MOBILE_RECHARGE(1, "话费充值"),
-//        DIDI_COUPON(2,"滴滴兑换"),
-//        OTHER(3, "其他");
-//
-//        private int code;
-//        private String desc;
-//
-//        orderTypeEnum(int code, String desc) {
-//            this.code = code;
-//            this.desc = desc;
-//        }
-//
-//        public int getCode() {
-//            return code;
-//        }
-//
-//        public void setCode(int code) {
-//            this.code = code;
-//        }
-//
-//        public String getDesc() {
-//            return desc;
-//        }
-//
-//        public void setDesc(String desc) {
-//            this.desc = desc;
-//        }
-//    }
+    public enum orderTypeEnum {
 
+        MATERIAL_GOOS(1, "实体商品"),
+        VIRTUAL_GOODS(2, "虚拟商品");
+
+        private int code;
+        private String desc;
+
+        orderTypeEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public String getGoodsType() {
+        return goodsType;
+    }
+
+    public void setGoodsType(String goodsType) {
+        this.goodsType = goodsType;
+    }
 
     public String getOrderType() {
         return orderType;
@@ -335,10 +357,10 @@ public class Orders extends BaseEntity {
             return desc;
         }
 
-        public static PayStatusEnum findByCode(int code){
+        public static PayStatusEnum findByCode(int code) {
             PayStatusEnum[] values = values();
-            for(PayStatusEnum smsTypeEnum: values){
-                if(code == smsTypeEnum.getCode()){
+            for (PayStatusEnum smsTypeEnum : values) {
+                if (code == smsTypeEnum.getCode()) {
                     return smsTypeEnum;
                 }
             }
