@@ -136,7 +136,7 @@ public class AddressController {
      */
     @Secured
     @ApiOperation(value = "设定默认地址")
-    @PutMapping(value = "/defualt/{id}")
+    @PutMapping(value = "/default/{id}")
     public Result defualtAddress(@SessionAttribute("curUserId")Long userId,
                                 @NotNull(message = "请确定要设定的默认地址id")@PathVariable("aid")Long aid){
         return addressService.defualtAddress(userId,aid);
