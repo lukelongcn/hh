@@ -8,6 +8,6 @@ import com.h9.common.db.entity.GoodsType;
  */
 public interface GoodsTypeReposiroty extends BaseRepository<GoodsType>{
 
-    GoodsType findByCode(Integer code);
+    GoodsType findByCode(String code);
 
 }

@@ -34,8 +34,8 @@ public class GoodsType extends BaseEntity {
      * description:
      * @see GoodsTypeEnum
      */
-    @Column(name = "code",nullable = false,columnDefinition = "int default 1 COMMENT ''")
-    private Integer code;
+    @Column(name = "code",nullable = false,columnDefinition = "varchar(50) default '' COMMENT '标识商品类型字段'")
+    private String code;
 //    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 //    @JoinColumn(name = "parent_id",nullable = true,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
     @Column(name = "parent_id")
@@ -43,25 +43,26 @@ public class GoodsType extends BaseEntity {
 
     public enum GoodsTypeEnum{
 
-        MOBILE_RECHARGE(1,"手机卡"),
-        DIDI_CARD(2, "滴滴卡"),
-        MATERIAL(3,"实物"),
-        FOODS(5, "食物，饮料"),
-        EVERYDAY_GOODS(6, "日常家居"),
-        OTHER(4, "其他");
+        MOBILE_RECHARGE("mobile_recharge","手机卡"),
+        DIDI_CARD("didi_card", "滴滴卡"),
+        MATERIAL("material","实物"),
+        FOODS("foods", "食物，饮料"),
+        EVERYDAY_GOODS("everyday_goods", "日常家居"),
+        VB("vb", "V币");
 
-        private int code;
+        private String code;
         private String desc;
-        GoodsTypeEnum(int code, String desc) {
+        GoodsTypeEnum(String code, String desc) {
             this.code = code;
             this.desc = desc;
         }
 
-        public int getCode() {
+
+        public String getCode() {
             return code;
         }
 
-        public void setCode(int code) {
+        public void setCode(String code) {
             this.code = code;
         }
 
@@ -73,10 +74,10 @@ public class GoodsType extends BaseEntity {
             this.desc = desc;
         }
 
-        public static GoodsTypeEnum findByCode(int code){
+        public static GoodsTypeEnum findByCode(String code){
             GoodsTypeEnum[] values = values();
             for(GoodsTypeEnum smsTypeEnum: values){
-                if(code == smsTypeEnum.getCode()){
+                if(code.equals(smsTypeEnum.getCode())){
                     return smsTypeEnum;
                 }
             }
@@ -84,11 +85,12 @@ public class GoodsType extends BaseEntity {
         }
     }
 
-    public Integer getCode() {
+
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

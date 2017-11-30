@@ -17,7 +17,7 @@ public interface OrderItemReposiroty extends BaseRepository<OrderItems> {
      */
     @Query(value = "select count(order_items.id) from orders,order_items where orders.user_id = ?1 and order_items.orders_id = orders.id and orders.order_type = ?2"
             , nativeQuery = true)
-    Object findCardCount(Long userId,int orderType);
+    Object findCardCount(Long userId,String orderType);
 
 //    /**
 //     * description: 查询指定用户，订单类别

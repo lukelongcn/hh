@@ -121,8 +121,8 @@ public class Orders extends BaseEntity {
      *
      * @see GoodsType.GoodsTypeEnum
      */
-    @Column(name = "order_type", columnDefinition = "int default 1 COMMENT'订单类别'")
-    private Integer orderType;
+    @Column(name = "order_type", columnDefinition = "varchar(20) default '' COMMENT'订单类别'")
+    private String orderType;
 
     @Column(name = "loginstics_number")
     private String logisticsNumber;
@@ -176,11 +176,12 @@ public class Orders extends BaseEntity {
 //        }
 //    }
 
-    public Integer getOrderType() {
+
+    public String getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(Integer orderType) {
+    public void setOrderType(String orderType) {
         this.orderType = orderType;
     }
 

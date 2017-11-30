@@ -23,6 +23,9 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     Page<Goods> findByGoodsType(GoodsType goodsType,Pageable pageable);
 
+    @Query(value = "select o from Goods o where o.code = ?1 and o.status = 1")
+    Page<Goods> findByCode(String code,Pageable pageable);
+
 //    @Query(value = "select new com.h9.common.modle.DiDiCardInfo(o.realPrice,count(o.id))  from Goods o where o.status =1 and o.goodsType = 2 group by o.realPrice")
 //    List<DiDiCardInfo> findRealPriceAndStock();
 

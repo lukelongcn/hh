@@ -134,7 +134,8 @@ public class GoodService {
 
         GoodsType goodsType = goodsTypeReposiroty.findOne(Long.valueOf(goodsTypeId));
         if (goodsType == null) return Result.fail("此类别不存在");
-        Page<Goods> pageObj = goodsReposiroty.findByGoodsType(goodsType, new PageRequest(page, size));
+        //TODO CODE字段
+        Page<Goods> pageObj = goodsReposiroty.findByCode("", new PageRequest(page, size));
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -173,6 +174,7 @@ public class GoodService {
                 .price(MoneyUtils.formatMoney(goods.getPrice()))
                 .name(goods.getName())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
+                .stock(goods.getStock())
                 .build();
 
         return Result.success(vo);
