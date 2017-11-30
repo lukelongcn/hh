@@ -108,23 +108,23 @@ public class AccountService {
         return Result.success(userAccountInfoVO);
     }
 
-    public Result couponeList(Long userId, int page, int limit) {
-
-        PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
-        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, pageRequest);
-
-        return Result.success(new PageResult<>(orders).result2Result(ord -> {
-
-            List<OrderItems> list = ord.getOrderItems();
-            if (!CollectionUtils.isEmpty(list)) {
-                OrderItems orderItems = list.get(0);
-                MyCouponsVO myCouponsVO = new MyCouponsVO(orderItems);
-                return myCouponsVO;
-            }
-            return null;
-        }));
-
-    }
+//    public Result couponeList(Long userId, int page, int limit) {
+//
+//        PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
+//        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, pageRequest);
+//
+//        return Result.success(new PageResult<>(orders).result2Result(ord -> {
+//
+//            List<OrderItems> list = ord.getOrderItems();
+//            if (!CollectionUtils.isEmpty(list)) {
+//                OrderItems orderItems = list.get(0);
+//                MyCouponsVO myCouponsVO = new MyCouponsVO(orderItems);
+//                return myCouponsVO;
+//            }
+//            return null;
+//        }));
+//
+//    }
 
     public Result convertInfo(Long userId) {
 
