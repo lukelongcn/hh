@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 /**
  * Created by itservice on 2017/11/15.
  */
@@ -26,4 +28,6 @@ public interface AddressRepository extends BaseRepository<Address> {
     }
 
     Address findById(Long id);
+
+    List<Address> findByUserId(Long userId);
 }

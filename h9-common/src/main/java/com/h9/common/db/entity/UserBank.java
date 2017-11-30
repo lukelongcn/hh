@@ -1,8 +1,11 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+
+import java.math.BigDecimal;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -56,7 +59,11 @@ public class UserBank extends BaseEntity {
     @Column(name = "card_id")
     private Long cardId;
 
+    @Column(name = "withdraw_money", nullable = false, columnDefinition = "DECIMAL(10,2) default 0 COMMENT '提现金额'")
+    private BigDecimal withdrawMoney = new BigDecimal(0);
 
+    @Column(name = "withdraw_count", nullable = false, columnDefinition = "bigint(20) default 0 COMMENT '提现次数'")
+    private Long withdrawCount = 0L;
 
     public Long getCardId() {
         return cardId;
@@ -136,5 +143,21 @@ public class UserBank extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public BigDecimal getWithdrawMoney() {
+        return withdrawMoney;
+    }
+
+    public void setWithdrawMoney(BigDecimal withdrawMoney) {
+        this.withdrawMoney = withdrawMoney;
+    }
+
+    public Long getWithdrawCount() {
+        return withdrawCount;
+    }
+
+    public void setWithdrawCount(Long withdrawCount) {
+        this.withdrawCount = withdrawCount;
     }
 }
