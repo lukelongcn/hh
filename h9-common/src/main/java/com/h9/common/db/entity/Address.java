@@ -36,7 +36,7 @@ public class Address extends BaseEntity {
     @Column(name = "address", nullable = false, columnDefinition = "varchar(200) default '' COMMENT '地址'")
     private String address;
 
-    @Column(name = "default_address",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址'")
+    @Column(name = "default_address",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址 1默认 0不默认'")
     private Integer defaultAddress = 1;
 
     @Column(name = "province", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '省'")
