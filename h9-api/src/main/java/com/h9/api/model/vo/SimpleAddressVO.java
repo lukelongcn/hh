@@ -14,12 +14,13 @@ public class SimpleAddressVO {
     private String name = "";
     private String tel ="";
     private String address="";
-
+    private Long id;
     public SimpleAddressVO(){}
 
     public SimpleAddressVO(Address address, User user){
         this.name = user.getNickName();
         this.tel = user.getPhone();
         this.address = address.getAddress();
+        this.id = address.getId();
     }
 }
