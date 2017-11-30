@@ -67,7 +67,7 @@ public class UserController {
     @GetMapping(value = "/info/{userId}")
     @ApiOperation("获取用户信息")
     public Result<UserVO> getUserInfo(@PathVariable long userId){
-        return Result.success(new UserVO());
+        return this.userService.getUserInfo(userId);
     }
 
 }

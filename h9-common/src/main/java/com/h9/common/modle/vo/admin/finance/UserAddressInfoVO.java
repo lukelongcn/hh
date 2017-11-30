@@ -2,8 +2,11 @@ package com.h9.common.modle.vo.admin.finance;
 
 import com.h9.common.db.entity.Address;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Column;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author: George
@@ -64,8 +67,8 @@ public class UserAddressInfoVO {
         return defaultAddress;
     }
 
-    public void setDefaultAddress(String defaultAddress) {
-        this.defaultAddress = defaultAddress;
+    public void setDefaultAddress(Integer defaultAddress) {
+        this.defaultAddress = Address.DefaultAddressEnum.getNameById(defaultAddress);
     }
 
     public String getStatus() {
@@ -73,12 +76,23 @@ public class UserAddressInfoVO {
     }
 
     public void setStatus(Integer status) {
-        //this.status = ;
+        this.status = Address.StatusEnum.getNameById(status);
     }
 
     public UserAddressInfoVO() {
     }
 
     public UserAddressInfoVO(Address address) {
+        BeanUtils.copyProperties(address,this);
+        this.address = new StringBuilder(address.getProvince()).append(address.getCity()).append(address.getDistict())
+                .append(address.getAddress()).toString();
+    }
+
+    public static UserAddressInfoVO toUserAddressInfoVO(Address address) {
+        return new UserAddressInfoVO(address);
+    }
+
+    public static List<UserAddressInfoVO> toUserAddressInfoVO(List<Address> addressList) {
+        return addressList==null?null:addressList.stream().map(item -> toUserAddressInfoVO(item)).collect(Collectors.toList());
     }
 }

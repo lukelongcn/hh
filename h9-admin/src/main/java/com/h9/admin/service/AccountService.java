@@ -34,12 +34,6 @@ public class AccountService {
     @Resource
     private UserAccountRepository userAccountRepository;
     @Resource
-    private UserRepository userRepository;
-    @Resource
-    private UserExtendsRepository userExtendsRepository;
-    @Resource
-    private UserBankRepository userBankRepository;
-    @Resource
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private VCoinsFlowRepository vCoinsFlowRepository;
@@ -225,13 +219,4 @@ public class AccountService {
         return Result.success(new PageResult<>(allImei));
     }
 
-   /* public Result<UserVO> getUserInfo(long userId) {
-        UserVO userVO = new UserVO();
-        userVO.setUserInfoVO(new UserInfoVO(this.userRepository.findOne(userId)));
-        userVO.setUserExtendsInfoVO(new UserExtendsInfoVO(this.userExtendsRepository.findByUserId(userId)));
-        List<UserBank> userBankList = this.userBankRepository.findByUserId(userId);
-        userVO.setUserBankInfoVOList(UserBankInfoVO.toUserBankVO(userBankList));
-        List<Address> addressList = this.addressRepository.findByUserId(userId);
-        userVO.setUserAddressInfoVOList(UserAddressInfoVO.);
-    }*/
 }
