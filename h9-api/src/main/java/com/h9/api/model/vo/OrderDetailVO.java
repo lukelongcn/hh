@@ -45,7 +45,7 @@ public class OrderDetailVO {
         vo.setTel(order.getUserPhone());
 
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
-        if(order.getOrderType().equals(GoodsType.GoodsTypeEnum.MATERIAL.getCode())){
+        if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOOS.getCode())){
             vo.setAccepterName("");
             vo.setAddress(order.getUserAddres());
             vo.setLogisticsNumber(order.getLogisticsNumber());

@@ -34,6 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
+
 /**
  * Created by itservice on 2017/10/31.
  */
@@ -138,7 +140,7 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
 
-        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(),"徽酒");
+        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode()+"","徽酒");
         order.setUser(user);
         orderItems.setOrders(order);
 
@@ -269,7 +271,7 @@ public class ConsumeService {
         if (goods == null) return Result.fail("商品不存在");
 
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒");
         orders.setUser(user);
         //修改库存
         Result changeResult = goodService.changeStock(goods);

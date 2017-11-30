@@ -49,7 +49,7 @@ public class GoodsType extends BaseEntity {
 
         MOBILE_RECHARGE("mobile_recharge","手机卡"),
         DIDI_CARD("didi_card", "滴滴卡"),
-        MATERIAL("material","实物"),
+//        MATERIAL("material","实物"),
         FOODS("foods", "食物，饮料"),
         EVERYDAY_GOODS("everyday_goods", "日常家居"),
         VB("vb", "V币");

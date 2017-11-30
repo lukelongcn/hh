@@ -174,12 +174,14 @@ public class GoodService {
     }
 
 
-    public Result goodsDetail(Long id) {
+    public Result goodsDetail( Long id,Long userId) {
 
         Goods goods = goodsReposiroty.findOne(id);
         if(goods == null){
             return Result.fail("商品不存在");
         }
+
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
         GoodsDetailVO vo = GoodsDetailVO.builder()
                 .img(goods.getImg())
@@ -188,6 +190,7 @@ public class GoodService {
                 .name(goods.getName())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
                 .stock(goods.getStock())
+                .balance(MoneyUtils.formatMoney(userAccount.getBalance()))
                 .build();
 
         return Result.success(vo);
@@ -212,9 +215,10 @@ public class GoodService {
 
         if(result.getCode() == 1) return result;
 
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), EVERYDAY_GOODS.getCode(), "徽酒", user);
+        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOOS.getCode()+"", "徽酒", user);
         order.setAddressId(addressId);
         order.setUserAddres(address.getAddress());
+        order.setOrderFrom(1);
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");

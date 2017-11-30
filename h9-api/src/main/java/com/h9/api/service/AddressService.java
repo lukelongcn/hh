@@ -41,12 +41,13 @@ public class AddressService {
 
     /**
      * 地址列表
+     *
      * @param userId
      * @return
      */
     public Result allAddress(Long userId, int page, int limit) {
         PageResult<Address> pageResult = addressRepository.findAddressList(userId, page, limit);
-        if (pageResult == null){
+        if (pageResult == null) {
             return Result.success("该用户没有存储过地址");
         }
         return Result.success(pageResult.result2Result(AddressVO::convert));
@@ -54,12 +55,15 @@ public class AddressService {
 
     /**
      * 所有省
+     *
      * @return
      */
     public Result allProvices() {
         List<Province> allProvices = provinceRepository.findAllProvinces();
         List<Map<String, String>> provinceList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allProvices)) {
+            return Result.success();
+        }
         allProvices.forEach(province -> {
             Map<String, String> pmap = new HashMap<>();
             pmap.put("name", province.getName());
@@ -71,47 +75,56 @@ public class AddressService {
 
     /**
      * 省对应的市
+     *
      * @return
      */
     public Result allCities(Long pid) {
         List<City> allCities = cityRepository.findCities(pid);
         List<Map<String, String>> cityList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allCities)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allCities)) {
+            return Result.success();
+        }
         allCities.forEach(city -> {
             Map<String, String> cmap = new HashMap<>();
             cmap.put("name", city.getName());
             cmap.put("id", city.getId() + "");
-            cityList .add(cmap);
+            cityList.add(cmap);
         });
         return Result.success(cityList);
     }
 
     /**
      * 市对应的区
+     *
      * @return
      */
     public Result allDisticts(Long cid) {
         List<Distict> allDisticts = distictRepository.findDisticts(cid);
         List<Map<String, String>> distictList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allDisticts)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allDisticts)) {
+            return Result.success();
+        }
         allDisticts.forEach(distict -> {
             Map<String, String> dmap = new HashMap<>();
             dmap.put("name", distict.getName());
             dmap.put("id", distict.getCity().getId() + "");
-            distictList .add(dmap);
+            distictList.add(dmap);
         });
         return Result.success(distictList);
     }
 
     /**
      * 省市区
+     *
      * @return
      */
     public Result allAreas() {
 
         List<Province> allProvices = provinceRepository.findAllProvinces();
         List<Map<String, String>> provinceList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allProvices)) {
+            return Result.success();
+        }
         allProvices.forEach(province -> {
             Map<String, String> pmap = new HashMap<>();
             pmap.put("name", province.getName());
@@ -120,26 +133,29 @@ public class AddressService {
         });
         List<City> allCities = cityRepository.findAllCities();
         List<Map<String, String>> cityList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allCities)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allCities)) {
+            return Result.success();
+        }
         allCities.forEach(city -> {
             Map<String, String> cmap = new HashMap<>();
             cmap.put("name", city.getName());
             cmap.put("id", city.getProvince().getId() + "");
-            cityList .add(cmap);
+            cityList.add(cmap);
         });
 
-        List[] lists = {provinceList,cityList};
+        List[] lists = {provinceList, cityList};
         return Result.success(lists);
     }
 
 
     /**
      * 添加收货地址
+     *
      * @param userId
      * @param addressDTO
      * @return
      */
-    public Result addAddress(Long userId,AddressDTO addressDTO){
+    public Result addAddress(Long userId, AddressDTO addressDTO) {
 
         Address address = new Address();
         address.setUserId(userId);
@@ -152,8 +168,8 @@ public class AddressService {
         address.setCity(cityName);
 
         Long pid = provinceRepository.findPid(provinceName);
-        Long cid = cityRepository.findCid(pid,cityName);
-        address.setProvincialCity(pid+","+cid);
+        Long cid = cityRepository.findCid(pid, cityName);
+        address.setProvincialCity(pid + "," + cid);
 
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
@@ -168,14 +184,19 @@ public class AddressService {
 
     /**
      * 修改地址启用状态
+     *
      * @param userId
      * @param aid
      * @return
      */
     public Result deleteAddress(Long userId, Long aid) {
         Address address = addressRepository.findById(aid);
-        if (address == null){ return Result.fail("地址不存在"); }
-        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        if (address == null) {
+            return Result.fail("地址不存在");
+        }
+        if (!userId.equals(address.getUserId())) {
+            return Result.fail("无权操作");
+        }
         address.setStatus(0);
         addressRepository.save(address);
         return Result.success("删除地址成功");
@@ -184,15 +205,20 @@ public class AddressService {
 
     /**
      * 修改收货地址
+     *
      * @param userId
      * @param aid
      * @return
      */
-    public Result updateAddress(Long userId, Long aid,AddressDTO addressDTO) {
+    public Result updateAddress(Long userId, Long aid, AddressDTO addressDTO) {
 
         Address address = addressRepository.findById(aid);
-        if (address == null){ return Result.fail("地址不存在"); }
-        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        if (address == null) {
+            return Result.fail("地址不存在");
+        }
+        if (!userId.equals(address.getUserId())) {
+            return Result.fail("无权操作");
+        }
 
         address.setUserId(userId);
         address.setName(addressDTO.getName());
@@ -204,8 +230,8 @@ public class AddressService {
         address.setCity(cityName);
 
         Long pid = provinceRepository.findPid(provinceName);
-        Long cid = cityRepository.findCid(pid,cityName);
-        address.setProvincialCity(pid+","+cid);
+        Long cid = cityRepository.findCid(pid, cityName);
+        address.setProvincialCity(pid + "," + cid);
 
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
@@ -220,14 +246,19 @@ public class AddressService {
 
     /**
      * 设定默认地址
+     *
      * @param userId
      * @param aid
      * @return
      */
     public Result defualtAddress(Long userId, Long aid) {
         Address address = addressRepository.findById(aid);
-        if (address == null){ return Result.fail("地址不存在"); }
-        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        if (address == null) {
+            return Result.fail("地址不存在");
+        }
+        if (!userId.equals(address.getUserId())) {
+            return Result.fail("无权操作");
+        }
         address.setDefaultAddress(1);
         address.setStatus(1);
         addressRepository.save(address);
@@ -239,10 +270,12 @@ public class AddressService {
 
         User user = userRepository.findOne(userId);
         Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
-        if(address != null){
+        if (address != null) {
             return Result.success(new SimpleAddressVO(address, user));
         }
         Address lastUpdateAddress = addressRepository.findByLastUpdate(userId);
-        return Result.success(new SimpleAddressVO(lastUpdateAddress,user));
+        if (lastUpdateAddress != null)
+            return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
+        return Result.success();
     }
 }
