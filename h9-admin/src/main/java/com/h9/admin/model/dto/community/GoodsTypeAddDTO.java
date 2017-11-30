@@ -18,6 +18,10 @@ public class GoodsTypeAddDTO {
     @NotBlank(message = "名称不能为空")
     private String name;
 
+    @ApiModelProperty(value = "标识",required = true)
+    @NotBlank(message = "标识不能为空")
+    private String code;
+
     @ApiModelProperty(value = "状态,1:启用,2:禁用",required = true)
     @NotNull(message = "状态不能为空")
     private Integer status = 1;
@@ -32,6 +36,14 @@ public class GoodsTypeAddDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getStatus() {

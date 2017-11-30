@@ -16,6 +16,8 @@ public interface GoodsTypeReposiroty extends BaseRepository<GoodsType>{
 
     GoodsType findByCode(String code);
 
+    GoodsType findByCodeAndIdNot(String code, Long id);
+
     List<GoodsType> findByStatus(Integer status);
 
     @Query("select new com.h9.common.modle.vo.admin.transaction.GoodsTypeVO(o) from GoodsType o order by o.status asc ,o.id desc ")
