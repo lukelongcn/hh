@@ -35,5 +35,12 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query("select o from Goods o  order by o.status asc , o.id desc ")
     Page<Goods> findAllByPage(Pageable page);
 
+    @Query("select o from Goods o where o.goodsType.code <> 'didi_card' and o.goodsType.code <> 'mobile_recharge' and o.status = 1")
+    Page<Goods> findStoreGoods(Pageable pageable);
 
+    @Query("select o from Goods o where o.goodsType.code =?1 and o.status=1")
+    Page<Goods> findStoreGoods(String code,Pageable pageable);
+
+    @Query("select o from Goods o where o.status = 1 and o.goodsType.code <> 'didi_card' and o.goodsType.code <> 'mobile_recharge' order by o.updateTime desc")
+    Page<Goods> findLastUpdate(Pageable pageable);
 }

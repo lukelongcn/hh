@@ -10,6 +10,7 @@ import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
 import com.h9.store.modle.vo.GoodsListVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -111,15 +112,22 @@ public class GoodService {
      *
      * @see GoodsType.GoodsTypeEnum 商品类别
      * 商品类型 1今日新品 2日常家居 3食品饮料 4 所有商品
+     *
+     *          MOBILE_RECHARGE("mobile_recharge","手机卡"),
+                DIDI_CARD("didi_card", "滴滴卡"),
+                MATERIAL("material","实物"),
+                FOODS("foods", "食物，饮料"),
+                EVERYDAY_GOODS("everyday_goods", "日常家居"),
+                VB("vb", "V币");
      */
     public Result goodsList(Integer type, int page, int size) {
         switch (type) {
             case 1:
                 return todayNewGoods();
             case 2:
-                return goodsPageQuery(6, page, size);
+                return goodsPageQuery("everyday_goods", page, size);
             case 3:
-                return goodsPageQuery(5, page, size);
+                return goodsPageQuery("foods", page, size);
             case 4:
                 return goodsPageQuery(page, size);
             default:
@@ -129,13 +137,14 @@ public class GoodService {
 
     /**
      * description: 分页查询指定goodsType的商品列表
+     *
+     *
      */
-    public Result goodsPageQuery(Integer goodsTypeId, Integer page, Integer size) {
+    public Result goodsPageQuery(String code , Integer page, Integer size) {
 
-        GoodsType goodsType = goodsTypeReposiroty.findOne(Long.valueOf(goodsTypeId));
-        if (goodsType == null) return Result.fail("此类别不存在");
-        //TODO CODE字段
-        Page<Goods> pageObj = goodsReposiroty.findByCode("", new PageRequest(page, size));
+        if(StringUtils.isBlank(code)) return Result.fail("不存在此类型商品");
+
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, new PageRequest(page, size));
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -146,18 +155,22 @@ public class GoodService {
      */
     public Result goodsPageQuery(int page, int size) {
 
-        Page<Goods> pageObj = goodsReposiroty.findAll(new PageRequest(page, size));
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(new PageRequest(page, size));
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
     }
 
     /**
-     * description: 今日新品
+     * description: 今日新品,取更新时间最近5条的
+     *
      */
     public Result todayNewGoods() {
 
-        return Result.success();
+        PageRequest pageRequest = new PageRequest(0,5);
+        Page<Goods> pageObj = goodsReposiroty.findLastUpdate(pageRequest);
+        PageResult<Goods> pageResult = new PageResult(pageObj);
+        return Result.success(pageResult.result2Result(GoodsListVO::new));
     }
 
 
