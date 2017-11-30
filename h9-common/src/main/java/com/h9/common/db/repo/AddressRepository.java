@@ -30,6 +30,8 @@ public interface AddressRepository extends BaseRepository<Address> {
 
     Address findById(Long id);
 
+    List<Address> findByUserId(Long userId);
+
     Address findByUserIdAndDefaultAddress(Long userId, Integer defaultValue);
 
     @Query(value = "select * from address  where user_id =?1 order by update_time desc limit 0,1",nativeQuery = true)
