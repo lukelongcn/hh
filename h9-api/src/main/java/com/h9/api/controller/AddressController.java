@@ -142,4 +142,13 @@ public class AddressController {
         return addressService.defualtAddress(userId,aid);
     }
 
+    /**
+     * description: 查询我的默认地址
+     */
+    @Secured
+    @ApiOperation(value = "查询我的默认地址")
+    @GetMapping(value = "/default")
+    public Result defualtAddress(@SessionAttribute("curUserId")Long userId){
+        return addressService.getDefaultAddress(userId);
+    }
 }

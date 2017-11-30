@@ -2,16 +2,11 @@ package com.h9.api.service;
 
 import com.h9.api.model.dto.AddressDTO;
 import com.h9.api.model.vo.AddressVO;
+import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.City;
-import com.h9.common.db.entity.Distict;
-import com.h9.common.db.entity.Province;
-import com.h9.common.db.repo.AddressRepository;
-import com.h9.common.db.repo.CityRepository;
-import com.h9.common.db.repo.DistictRepository;
-import com.h9.common.db.repo.ProvinceRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,6 +36,8 @@ public class AddressService {
     @Resource
     DistictRepository distictRepository;
 
+    @Resource
+    private UserRepository userRepository;
 
     /**
      * 地址列表
@@ -238,4 +235,14 @@ public class AddressService {
     }
 
 
+    public Result getDefaultAddress(Long userId) {
+
+        User user = userRepository.findOne(userId);
+        Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
+        if(address != null){
+            return Result.success(new SimpleAddressVO(address, user));
+        }
+        Address lastUpdateAddress = addressRepository.findByLastUpdate(userId);
+        return Result.success(new SimpleAddressVO(lastUpdateAddress,user));
+    }
 }
