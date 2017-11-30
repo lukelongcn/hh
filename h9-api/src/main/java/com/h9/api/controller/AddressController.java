@@ -101,45 +101,44 @@ public class AddressController {
     /**
      * 删除收货地址
      * @param userId
-     * @param aid
+     * @param id
      * @return
      */
     @Secured
     @ApiOperation(value = "删除收货地址")
     @PutMapping(value = "/delete/{id}")
     public Result deleteAddress(@SessionAttribute("curUserId")Long userId,
-                                @NotNull(message = "请确定要删除的地址id")@PathVariable("aid")Long aid){
-        return addressService.deleteAddress(userId,aid);
+                                @NotNull(message = "请确定要删除的地址id")@PathVariable("id")Long id){
+        return addressService.deleteAddress(userId,id);
     }
 
     /**
      * 修改收货地址
      * @param userId
-     *
-     * @param aid
+     * @param id
      * @return
      */
     @Secured
     @ApiOperation(value = "修改收货地址")
     @PostMapping(value = "/update/{id}")
     public Result updateAddress(@SessionAttribute("curUserId")Long userId,
-                                @NotNull(message = "请确定要修改的地址id")@PathVariable("aid")Long aid,
+                                @NotNull(message = "请确定要修改的地址id")@PathVariable("id")Long id,
                                 @Valid@RequestBody AddressDTO addressDTO){
-        return addressService.updateAddress(userId,aid,addressDTO);
+        return addressService.updateAddress(userId,id,addressDTO);
     }
 
     /**
      * 设定默认地址
      * @param userId
-     * @param aid
+     * @param id
      * @return
      */
     @Secured
     @ApiOperation(value = "设定默认地址")
     @PutMapping(value = "/default/{id}")
     public Result defualtAddress(@SessionAttribute("curUserId")Long userId,
-                                @NotNull(message = "请确定要设定的默认地址id")@PathVariable("aid")Long aid){
-        return addressService.defualtAddress(userId,aid);
+                                @NotNull(message = "请确定要设定的默认地址id")@PathVariable("id")Long id){
+        return addressService.defualtAddress(userId,id);
     }
 
     /**
