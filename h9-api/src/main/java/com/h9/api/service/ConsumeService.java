@@ -229,7 +229,7 @@ public class ConsumeService {
     public Result didiCardList() {
 //        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
         List<Map<String, Object>> list = new ArrayList<>();
-        GoodsType goodsType = goodsTypeReposiroty.findOne(new Long(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode()));
+        GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         if (goodsType == null) return Result.fail();
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
