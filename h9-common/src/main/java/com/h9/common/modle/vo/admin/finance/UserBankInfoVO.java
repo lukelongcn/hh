@@ -3,6 +3,7 @@ package com.h9.common.modle.vo.admin.finance;
 import com.h9.common.db.entity.Address;
 import com.h9.common.db.entity.UserBank;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Id;
 import java.math.BigDecimal;
@@ -84,7 +85,7 @@ public class UserBankInfoVO {
     }
 
     public void setStatus(Integer status) {
-        //this.status = UserBank.;
+        this.status = UserBank.StatusEnum.getNameById(status);
     }
 
     public BigDecimal getWithdrawMoney() {
@@ -107,6 +108,7 @@ public class UserBankInfoVO {
     }
 
     public UserBankInfoVO(UserBank userBank) {
+        BeanUtils.copyProperties(userBank,this);
     }
 
     public static UserBankInfoVO toUserBankVO(UserBank userBank) {

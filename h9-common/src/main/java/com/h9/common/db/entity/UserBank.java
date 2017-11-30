@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -160,4 +161,57 @@ public class UserBank extends BaseEntity {
     public void setWithdrawCount(Long withdrawCount) {
         this.withdrawCount = withdrawCount;
     }
+
+    public enum StatusEnum {
+        NONE(3,"解绑"),
+        DISABLED(2,"禁用"),
+        ENABLED(1,"正常");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+    }
+    public enum DefaultSelectEnum {
+        NOT_DEFAULT(0,"否"),
+        DEFAULT(1,"是");
+
+        DefaultSelectEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            DefaultSelectEnum defaultSelectEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return defaultSelectEnum==null?null:defaultSelectEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
+    }
+
 }
