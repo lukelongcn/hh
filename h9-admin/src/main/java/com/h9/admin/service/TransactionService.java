@@ -28,6 +28,9 @@ public class TransactionService {
     private GoodsTypeReposiroty goodsTypeReposiroty;
 
     public Result<GoodsType> addGoodsType(GoodsTypeAddDTO goodsTypeAddDTO) {
+        if (this.goodsTypeReposiroty.findByCode(goodsTypeAddDTO.getCode()) != null) {
+            return Result.fail("标识已存在");
+        }
         return Result.success(this.goodsTypeReposiroty.save(goodsTypeAddDTO.toGoodsType()));
     }
 
@@ -35,6 +38,9 @@ public class TransactionService {
         GoodsType goodsType = this.goodsTypeReposiroty.findOne(goodsTypeEditDTO.getId());
         if (goodsType == null) {
             return Result.fail("商品类型不存在");
+        }
+        if (this.goodsTypeReposiroty.findByCodeAndIdNot(goodsTypeEditDTO.getCode(),goodsTypeEditDTO.getId()) != null) {
+            return Result.fail("标识已存在");
         }
         BeanUtils.copyProperties(goodsTypeEditDTO,goodsType);
         return Result.success(this.goodsTypeReposiroty.save(goodsType));

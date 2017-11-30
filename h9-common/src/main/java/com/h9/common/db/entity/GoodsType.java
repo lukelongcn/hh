@@ -4,6 +4,7 @@ import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -15,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "goods_type")
+@Table(name = "goods_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"code"})})
 public class GoodsType extends BaseEntity {
 
 
@@ -27,7 +28,7 @@ public class GoodsType extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '商品分类名称'")
     private String name;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用  2 禁用'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常  2 禁用'")
     private Integer status = 1;
 
     @Column(name = "allow_import",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 是否允许导入数据，1:否，2:是'")
@@ -139,7 +140,7 @@ public class GoodsType extends BaseEntity {
 
     public enum StatusEnum {
         DISABLED(2,"禁用"),
-        ENABLED(1,"启用");
+        ENABLED(1,"正常");
 
         StatusEnum(int id,String name){
             this.id = id;
@@ -148,6 +149,11 @@ public class GoodsType extends BaseEntity {
 
         private int id;
         private String name;
+
+        public static String getNameById(int id){
+            StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
+        }
 
         public int getId() {
             return id;

@@ -17,6 +17,9 @@ public class GoodsTypeVO extends BasisVO{
     @ApiModelProperty(value = "名称")
     private String name;
 
+    @ApiModelProperty(value = "标识")
+    private String code;
+
     @ApiModelProperty(value = "状态,1:启用,2:禁用")
     private Integer status = 1;
 
@@ -37,6 +40,14 @@ public class GoodsTypeVO extends BasisVO{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getStatus() {
@@ -60,5 +71,6 @@ public class GoodsTypeVO extends BasisVO{
 
     public GoodsTypeVO(GoodsType goodsType) {
         BeanUtils.copyProperties(goodsType,this);
+        this.statusDesc = GoodsType.StatusEnum.getNameById(goodsType.getStatus());
     }
 }
