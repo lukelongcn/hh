@@ -30,11 +30,14 @@ public class GoodsType extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用  2 禁用'")
     private Integer status = 1;
 
+    @Column(name = "allow_import",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 是否允许导入数据，1:否，2:是'")
+    private Integer allowImport = 1;
+
     /**
      * description:
      * @see GoodsTypeEnum
      */
-    @Column(name = "code",nullable = false,columnDefinition = "int default 1 COMMENT ''")
+    @Column(name = "code",columnDefinition = "int default 1 COMMENT ''")
     private Integer code;
 //    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 //    @JoinColumn(name = "parent_id",nullable = true,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
@@ -116,6 +119,13 @@ public class GoodsType extends BaseEntity {
         this.status = status;
     }
 
+    public Integer getAllowImport() {
+        return allowImport;
+    }
+
+    public void setAllowImport(Integer allowImport) {
+        this.allowImport = allowImport;
+    }
 
     public Long getParent() {
         return parent;
@@ -123,5 +133,34 @@ public class GoodsType extends BaseEntity {
 
     public void setParent(Long parent) {
         this.parent = parent;
+    }
+
+    public enum StatusEnum {
+        DISABLED(2,"禁用"),
+        ENABLED(1,"启用");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

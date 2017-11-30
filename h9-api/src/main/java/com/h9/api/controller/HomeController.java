@@ -27,13 +27,5 @@ public class HomeController {
     }
 
 
-    /**
-     * description: 酒元商城首页
-     */
-    @Secured
-    @GetMapping("/store/home")
-    public Result storeHome(@SessionAttribute("curUserId") Long userId){
 
-        return homeService.storeHome(userId);
-    }
 }

@@ -66,6 +66,8 @@ public class LotteryService {
     private SystemBlackListRepository systemBlackListRepository;
     @Resource
     private LotteryConfig lotteryConfig;
+    @Resource
+    private WhiteUserListRepository whiteUserListRepository;
 
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -102,9 +104,13 @@ public class LotteryService {
         }
 
         String imei = request.getHeader("imei");
-        if (onBlackUser(userId, imei)) {
-            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+        if (!onWhiteUser(userId)) {
+
+            if (onBlackUser(userId, imei)) {
+                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+            }
         }
+
 
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
@@ -161,7 +167,7 @@ public class LotteryService {
 
             rewardRepository.save(reward);
             lottery.setReward(reward);
-            logger.info("user 测试："+user);
+            logger.info("user 测试：" + user);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
@@ -178,6 +184,11 @@ public class LotteryService {
         SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
 
         return systemBlackList != null;
+    }
+
+    public boolean onWhiteUser(Long userId) {
+        WhiteUserList user = whiteUserListRepository.findByUserId(userId, new Date());
+        return user != null;
     }
 
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
@@ -327,7 +338,7 @@ public class LotteryService {
             Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
             String balanceFlowType = configService.getValueFromMap("balanceFlowType", "10");
-            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "",balanceFlowType);
+            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "", balanceFlowType);
         }
         return Result.success();
     }

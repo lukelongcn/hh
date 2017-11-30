@@ -68,12 +68,22 @@ public class ProductService {
 
         //       黑名单 改成配置的
         String imei = request.getHeader("imei");
+
         if(StringUtils.isEmpty(imei)){
             return Result.fail("服务器繁忙，请稍后刷新使用");
         }
         if (lotteryService.onBlackUser(userId, imei)) {
             return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
         }
+
+
+        if (!lotteryService.onWhiteUser(userId)) {
+
+            if (lotteryService.onBlackUser(userId, imei)) {
+                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+            }
+        }
+
 
         int date = lotteryConfig.getIntervalTime();
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @date: 2017/11/7 19:42
  */
 @RestController
-@Api("活动管理")
+@Api(description = "活动管理")
 @RequestMapping(value = "/activity")
 public class ActivityController {
 

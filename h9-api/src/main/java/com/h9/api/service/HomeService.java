@@ -102,23 +102,5 @@ public class HomeService {
         return Result.success(voMap);
     }
 
-    public Result storeHome(Long userId) {
 
-        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(),2);
-
-        Map<String, List<HomeVO>> banners = bannerList.stream()
-                .map(HomeVO::new)
-                .collect(Collectors.groupingBy(el ->el.getCode()));
-
-        UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        BigDecimal balance = userAccount.getBalance();
-        Goods goods = goodsReposiroty.findOne(1317L);
-        GoodsListVO goodsListVO = new GoodsListVO(goods);
-        //TODO setHotGoods 替换此方法值
-        StoreHomeVO vo= new StoreHomeVO().setBanners(banners)
-                .setBalance(MoneyUtils.formatMoney(balance))
-                .setHotGoods(Arrays.asList(goodsListVO));
-
-        return Result.success(vo);
-    }
 }
