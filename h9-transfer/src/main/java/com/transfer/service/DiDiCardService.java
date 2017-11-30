@@ -134,7 +134,7 @@ public class DiDiCardService {
         Orders orders = new Orders();
         orders.setMoney(c_cards.getCardPrice());
         orders.setSupplierName("滴滴");
-        orders.setOrderType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
+        orders.setOrderType(Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"");
         orders.setNo(UUID.randomUUID().toString().replace("-",""));
         orders.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
         orders.setMoney(c_cards.getCardPrice());

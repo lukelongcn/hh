@@ -98,7 +98,7 @@ public class AccountService {
     public Result accountInfo(Long userId) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
-        Object cardCount = orderItemReposiroty.findCardCount(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
+        Object cardCount = orderItemReposiroty.findCardCount(userId);
         String max = configService.getStringConfig("withdrawMax");
         if (StringUtils.isBlank(max)) {
             max = "100";
@@ -111,7 +111,7 @@ public class AccountService {
     public Result couponeList(Long userId, int page, int limit) {
 
         PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
-        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), pageRequest);
+        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, pageRequest);
 
         return Result.success(new PageResult<>(orders).result2Result(ord -> {
 
@@ -167,7 +167,7 @@ public class AccountService {
 
         String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
         BigDecimal money = vbCount.multiply(new BigDecimal(rateStr));
-        Orders order = orderService.initOrder( money, user.getPhone(), GoodsType.GoodsTypeEnum.VB.getCode(), "徽酒",user);
+        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
         ordersReposiroty.saveAndFlush(order);
 
         Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");
