@@ -5,6 +5,7 @@ import com.h9.store.interceptor.Secured;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.service.GoodService;
 import org.jboss.logging.Logger;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -58,4 +59,6 @@ public class GoodsController {
             return Result.fail("兑换失败，请稍后再试");
         }
     }
+
+
 }

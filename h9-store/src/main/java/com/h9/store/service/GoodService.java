@@ -215,7 +215,9 @@ public class GoodService {
 
         if(result.getCode() == 1) return result;
 
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOOS.getCode()+"", "徽酒", user);
+
+        String code = goods.getGoodsType().getCode();
+        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOOS.getCode()+"", "徽酒", user,code);
         order.setAddressId(addressId);
         order.setUserAddres(address.getAddress());
         order.setOrderFrom(1);
@@ -225,7 +227,7 @@ public class GoodService {
         commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
 
-        OrderItems orderItems = new OrderItems(goods.getName(),goods.getImg(),goods.getRealPrice(),goods.getPrice(),count,order);
+        OrderItems orderItems = new OrderItems(goods,count,order);
         ordersRepository.save(order);
         orderItems.setOrders(order);
         orderItemReposiroty.save(orderItems);
@@ -235,4 +237,5 @@ public class GoodService {
         mapVo.put("goodsName", goods.getName() + "*" + count);
         return Result.success(mapVo);
     }
+
 }

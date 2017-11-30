@@ -142,6 +142,7 @@ public class ConsumeService {
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode()+"","徽酒");
         order.setUser(user);
+        order.setOrderFrom(2);
         orderItems.setOrders(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
@@ -272,6 +273,7 @@ public class ConsumeService {
 
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒");
+        orders.setOrderFrom(2);
         orders.setUser(user);
         orders.setGoodsType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         //修改库存
