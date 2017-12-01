@@ -55,4 +55,9 @@ public class TransactionService {
         List<GoodsType> goodsTypeList = this.goodsTypeReposiroty.findByStatus(GoodsType.StatusEnum.ENABLED.getId());
         return  Result.success(goodsTypeList);
     }
+
+    /*public Result<List<String>> listCardCouponsBatchNo() {
+        List<GoodsType> goodsTypeList = this.goodsTypeReposiroty.findByStatus(GoodsType.StatusEnum.ENABLED.getId());
+        return  Result.success(goodsTypeList);
+    }*/
 }
