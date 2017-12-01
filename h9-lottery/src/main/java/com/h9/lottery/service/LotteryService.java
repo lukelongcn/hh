@@ -187,8 +187,8 @@ public class LotteryService {
     }
 
     public boolean onWhiteUser(Long userId) {
-        WhiteUserList user = whiteUserListRepository.findByUserId(userId, new Date());
-        return user != null;
+        List<WhiteUserList> user = whiteUserListRepository.findByUserId(userId, new Date());
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(user);
     }
 
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {

@@ -1,20 +1,17 @@
 package com.h9.api.service;
 
-import com.h9.api.model.vo.GoodsListVO;
 import com.h9.api.model.vo.HomeVO;
-import com.h9.api.model.vo.StoreHomeVO;
+import com.h9.api.model.vo.UpdateInfoVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.MailService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
-import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,12 +32,14 @@ public class HomeService {
     @Resource
     private UserAccountRepository userAccountRepository;
     @Resource
-    private  GoodsReposiroty goodsReposiroty;
+    private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private MailService mailService;
 
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
         Map<String, List<HomeVO>> voMap = new HashMap<>();
-        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(),1);
+        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 1);
         if (!CollectionUtils.isEmpty(bannerList)) {
             bannerList.stream().filter(b -> b.getLocation().equals(1)).forEach(banner -> {
                 BannerType bannerType = banner.getBannerType();
@@ -53,7 +52,7 @@ public class HomeService {
                     voMap.put(bannerType.getCode(), tempList);
                 } else {
                     if (bannerType.getCode().equals("ideaBanner")) {
-                        if(list.size() >=3){
+                        if (list.size() >= 3) {
                             return;
                         }
                     }
@@ -73,7 +72,7 @@ public class HomeService {
 
                 String url = article.getUrl();
                 //有外链接取外链接,没有拼上文章详情地址
-                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink+ article.getId() : url);
+                HomeVO convert = new HomeVO(article, StringUtils.isBlank(url) ? articlelink + article.getId() : url);
 
                 List<HomeVO> list = voMap.get(articleType.getCode());
                 if (list == null) {
@@ -93,7 +92,7 @@ public class HomeService {
         List<HomeVO> collect = announcementList.stream()
                 .map(announcement -> {
                     String url = announcement.getUrl();
-                    HomeVO convert = new HomeVO(announcement, StringUtils.isBlank(url) ? announcemented+ announcement.getId() : url);
+                    HomeVO convert = new HomeVO(announcement, StringUtils.isBlank(url) ? announcemented + announcement.getId() : url);
                     return convert;
                 })
                 .collect(Collectors.toList());
@@ -105,15 +104,21 @@ public class HomeService {
     @Resource
     VersionRepository versionRepository;
 
-    public Result version(String version,Integer type) {
-        if (type == 0){
-            Version version1= versionRepository.findByVersion(version);
-            return Result.success(version1);
-        }
-        if (type != 0){
-            return Result.success(versionRepository.findByClientType(type));
-        }
+    public Result version(Integer version, Integer type) {
 
-        return Result.fail("版本不存在");
+        //检查是否有新版本
+        Version lastVersion = versionRepository.findLastVersion(type, version);
+        if(lastVersion.getVersionNumber().equals(version)) return Result.success("已是最新版本");
+
+        List<Version> forceUpdateVersion = versionRepository.findForceUpdateVersion(type, version);
+        if (CollectionUtils.isEmpty(forceUpdateVersion)) {
+            //当前版本与最新版本之间没有强制升级版,返回最新版
+            return Result.success(new UpdateInfoVO(lastVersion));
+        }else{
+            //有强制升级版，返回最新版，将升级策略改成强升
+            UpdateInfoVO updateInfoVO = new UpdateInfoVO(lastVersion);
+            updateInfoVO.setUpdateType(3);
+            return Result.success(updateInfoVO);
+        }
     }
 }
