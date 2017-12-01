@@ -205,7 +205,7 @@ public class AddressService {
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
-      //  addressRepository.updateDefault(userId);
+        addressRepository.updateDefault(userId);
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
@@ -221,6 +221,7 @@ public class AddressService {
      * @return
      */
     public Result defualtAddress(Long userId, Long aid) {
+        addressRepository.updateDefault(userId);
         Address address = addressRepository.findById(aid);
         if (address == null){ return Result.fail("地址不存在"); }
         if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
