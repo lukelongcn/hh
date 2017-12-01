@@ -5,12 +5,14 @@ import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
@@ -26,6 +28,8 @@ import java.util.Date;
 import static org.jboss.logging.Logger.getLogger;
 
 @SpringBootApplication
+//@Configuration //22s
+//@EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.h9.common", "com.h9.api"})
 @EnableSwagger2
 @EnableJpaRepositories(basePackages = "com.h9.common.db.repo")

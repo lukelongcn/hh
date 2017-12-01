@@ -23,13 +23,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -291,10 +289,10 @@ public class ConsumeService {
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
-        GoodsDIDINumber goodsDIDINumber = goodsDIDINumberRepository.findByGoodsId(goods.getId());
-        goodsDIDINumber.setStatus(2);
+        CardCoupons cardCoupons = goodsDIDINumberRepository.findByGoodsId(goods.getId());
+        cardCoupons.setStatus(2);
 
-        items.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        items.setDidiCardNumber(cardCoupons.getNo());
         items.setGoods(goods);
 
 //        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
@@ -309,11 +307,11 @@ public class ConsumeService {
         });
 
         Map<String, String> voMap = new HashMap<>();
-        voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
+        voMap.put("didiCardNumber", cardCoupons.getNo());
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
         orderItemReposiroty.save(items);
-        goodsDIDINumberRepository.save(goodsDIDINumber);
+        goodsDIDINumberRepository.save(cardCoupons);
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 

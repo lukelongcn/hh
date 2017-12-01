@@ -13,6 +13,17 @@ public class HelloController {
 
     @GetMapping("/hello")
     public Result hello(){
+        System.out.println("kdfsfdsfdsfdsddddddddddddd");
+        show();
+        show2();
         return Result.success();
+    }
+
+    public void show(){
+        System.out.println("show................");
+    }
+
+    public void show2(){
+        System.out.println("show2222................");
     }
 }

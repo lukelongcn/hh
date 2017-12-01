@@ -31,9 +31,12 @@ public class HomeController {
         return homeService.homeDate();
     }
 
+    /**
+     * description: 版本升级
+     */
     @GetMapping("/version")
     @ApiOperation(value = "版本升级 version:版本 type: IOS:1 安卓：2")
-    public Result version(@RequestParam( value = "version") String version,@RequestParam(value = "type")Integer type){
+    public Result version(@RequestParam( value = "version") Integer version,@RequestParam(value = "type")Integer type){
         return homeService.version(version,type);
     }
 

@@ -152,8 +152,8 @@ public class AddressService {
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
-
         address.setDefaultAddress(addressDTO.getDefaultAddress());
+
         // 使用状态设为开启
         address.setStatus(1);
         addressRepository.save(address);
