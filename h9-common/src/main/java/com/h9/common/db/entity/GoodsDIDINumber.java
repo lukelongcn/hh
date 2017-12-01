@@ -27,7 +27,7 @@ public class GoodsDIDINumber extends BaseEntity{
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "status",columnDefinition = "int COMMENT '1为正常，2为已兑换'")
+    @Column(name = "status",columnDefinition = "int COMMENT '1为正常，2为已兑换,3 禁用'")
     private Integer status;
 
     @Column(name = "old_id", columnDefinition = "bigint(20) default null COMMENT '迁移数据id'")
