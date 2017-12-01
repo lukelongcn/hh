@@ -170,7 +170,7 @@ public class AddressService {
     public Result deleteAddress(Long userId, Long aid) {
         Address address = addressRepository.findById(aid);
         if (address == null){ return Result.fail("地址不存在"); }
-        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("登录用户与地址所属用户不一致，无权操作"); }
         address.setStatus(0);
         addressRepository.save(address);
         return Result.success("删除地址成功");
