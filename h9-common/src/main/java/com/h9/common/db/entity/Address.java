@@ -4,6 +4,7 @@ import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -141,5 +142,55 @@ public class Address extends BaseEntity {
 
     public void setProvincialCity(String provincialCity) {
         this.provincialCity = provincialCity;
+    }
+
+    public enum StatusEnum {
+        DISABLED(0,"禁用"),
+        ENABLED(1,"启用");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+           StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum DefaultAddressEnum {
+        NOT_DEFAULT(0,"否"),
+        DEFAULT(1,"是");
+
+        DefaultAddressEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            DefaultAddressEnum defaultAddressEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return defaultAddressEnum==null?null:defaultAddressEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
     }
 }

@@ -4,7 +4,9 @@ import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class H9StoreApplication {
@@ -15,5 +17,10 @@ public class H9StoreApplication {
         Environment environment = context.getBean(Environment.class);
         String enviroment = environment.getProperty("h9.current.envir");
         logger.info("当前环境： " + enviroment);
+    }
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 }

@@ -13,11 +13,14 @@ import java.util.List;
  */
 public interface OrderItemReposiroty extends BaseRepository<OrderItems> {
     /**
-     * description: 查询指定用户卡劵个数 //TODO 测试一下
+     * description: 查询指定用户卡劵个数
      */
     @Query(value = "select count(order_items.id) from orders,order_items where orders.user_id = ?1 and order_items.orders_id = orders.id and order_items.didi_card_number is not null"
             , nativeQuery = true)
     Object findCardCount(Long userId );
+
+//    @Query(value = "select item from OrderItems item where item.orders = ")
+//    Page<OrderItems> findCardList(Long userId, Pageable pageable);
 
 //    /**
 //     * description: 查询指定用户，订单类别

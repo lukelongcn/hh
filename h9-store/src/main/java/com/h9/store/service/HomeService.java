@@ -53,7 +53,11 @@ public class HomeService {
         Result<List<Orders>> findResult = orderService.findConvertOrders(0, 6);
         if (findResult.getCode() == 0) {
             List<Orders> orderList = findResult.getData();
-            List<GoodsListVO> goodsListVO = orderList.stream().map(el -> new GoodsListVO(el.getOrderItems().get(0).getGoods())).collect(Collectors.toList());
+
+            List<GoodsListVO> goodsListVO = orderList.stream()
+                    .map(el -> new GoodsListVO(el.getOrderItems().get(0).getGoods()))
+                    .collect(Collectors.toList());
+
             vo.setHotGoods(goodsListVO);
         }
 

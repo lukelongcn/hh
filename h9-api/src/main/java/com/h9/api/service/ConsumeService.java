@@ -142,6 +142,7 @@ public class ConsumeService {
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode()+"","徽酒");
         order.setUser(user);
+        order.setOrderFrom(2);
         orderItems.setOrders(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
@@ -229,7 +230,7 @@ public class ConsumeService {
     public Result didiCardList() {
 //        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
         List<Map<String, Object>> list = new ArrayList<>();
-        GoodsType goodsType = goodsTypeReposiroty.findOne(new Long(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode()));
+        GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         if (goodsType == null) return Result.fail();
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
@@ -272,7 +273,9 @@ public class ConsumeService {
 
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒");
+        orders.setOrderFrom(2);
         orders.setUser(user);
+        orders.setGoodsType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         //修改库存
         Result changeResult = goodService.changeStock(goods);
         if (changeResult.getCode() == 1) {

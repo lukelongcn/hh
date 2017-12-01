@@ -1,6 +1,7 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.vo.*;
+import com.h9.admin.model.vo.UserBankVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -9,9 +10,8 @@ import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
-import com.h9.common.modle.vo.admin.finance.UserAccountVO;
+import com.h9.common.modle.vo.admin.finance.*;
 import com.h9.common.modle.vo.Config;
-import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,8 +34,6 @@ public class AccountService {
     @Resource
     private UserAccountRepository userAccountRepository;
     @Resource
-    private UserRepository userRepository;
-    @Resource
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private VCoinsFlowRepository vCoinsFlowRepository;
@@ -51,6 +49,8 @@ public class AccountService {
     private SystemBlackListRepository systemBlackListRepository;
     @Resource
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
+    @Resource
+    private AddressRepository addressRepository;
     
     public Result<PageResult<UserAccountVO>> account(PageDTO pageDTO) {
         /*Sort sort = new Sort(Sort.Direction.DESC,"userId");
@@ -218,4 +218,5 @@ public class AccountService {
         allImei.forEach(blackAccountVO -> blackAccountVO.setRelevanceCount(userRecordRepository.findRelevanceCount(blackAccountVO.getImei())));
         return Result.success(new PageResult<>(allImei));
     }
+
 }
