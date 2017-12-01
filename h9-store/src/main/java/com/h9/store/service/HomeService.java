@@ -46,12 +46,12 @@ public class HomeService {
         StoreHomeVO vo = new StoreHomeVO().setBanners(banners)
                 .setBalance(MoneyUtils.formatMoney(balance));
 
-        Result<List<OrderItems>> findResult = orderService.findHotConvertOrders(0, 6);
+        Result<List<Goods>> findResult = orderService.findHotConvertOrders(0, 6);
         if (findResult.getCode() == 0) {
-            List<OrderItems> orderList = findResult.getData();
+            List<Goods> orderList = findResult.getData();
 
             List<GoodsListVO> goodsListVO = orderList.stream()
-                    .map(el -> new GoodsListVO(el.getGoods()))
+                    .map(el -> new GoodsListVO(el))
                     .collect(Collectors.toList());
 
             vo.setHotGoods(goodsListVO);

@@ -44,5 +44,11 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query("select o from Goods o where o.status = 1 and o.goodsType.code <> 'didi_card' and o.goodsType.code <> 'mobile_recharge' order by o.updateTime desc")
     Page<Goods> findLastUpdate(Pageable pageable);
 
+    /**
+     * description: 查询最后兑换的商品
+     */
+    @Query(value = "select g.* from goods g, goods_type gtype where gtype.`code` <> 'mobile_recharge'" +
+            " and gtype.`code` <> 'didi_card' and g.goods_type_id =gtype.id  order by  g.update_time desc limit 0,6",nativeQuery = true)
+    List<Goods> findLastConvertGoods();
 
 }
