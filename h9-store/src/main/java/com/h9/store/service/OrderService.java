@@ -74,13 +74,15 @@ public class OrderService {
     }
 
     public Result myConvertList(Long userId,int page,int size) {
+
         PageRequest pageRequest = ordersReposiroty.pageRequest(page, size);
         Page<Orders> orderPage = ordersReposiroty.findByUser(userId, 1, pageRequest);
-
         List<Orders> orderList = orderPage.getContent();
+        PageResult<Orders> pageResult = new PageResult(orderPage);
+
         if (CollectionUtils.isNotEmpty(orderList)) {
-            List<OrderListVO> orderListVO = orderList.stream().map(el -> new OrderListVO(el)).collect(Collectors.toList());
-            return Result.success(orderListVO);
+//            List<OrderListVO> orderListVO = orderList.stream().map(el -> new OrderListVO(el)).collect(Collectors.toList());
+            return Result.success(pageResult.result2Result(OrderListVO::new));
         }
         return Result.success();
     }
