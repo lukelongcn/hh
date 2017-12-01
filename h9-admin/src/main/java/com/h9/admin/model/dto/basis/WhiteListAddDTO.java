@@ -63,7 +63,7 @@ public class WhiteListAddDTO {
     }
 
      public WhiteUserList toWhiteUserList() {
-        WhiteUserList whiteUserList = WhiteUserList.builder().build();
+        WhiteUserList whiteUserList = new WhiteUserList();
         BeanUtils.copyProperties(this,whiteUserList);
         return whiteUserList;
     }
