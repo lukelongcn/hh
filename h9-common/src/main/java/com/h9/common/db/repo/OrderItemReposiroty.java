@@ -29,7 +29,5 @@ public interface OrderItemReposiroty extends BaseRepository<OrderItems> {
 //    @Query(value = "select order_items.* from orders,order_items where orders.user_id = ?1 and order_items.orders_id = orders.id and orders.order_type = ?2",nativeQuery = true)
 //    Page<OrderItems> findByUser(Long userId, int orderType, Pageable pageable);
 
-    @Query(value = "select order_items.* from order_items,orders where orders.id = order_items.orders_id " +
-            "and orders.order_from = 1 GROUP BY goods_id order by update_time desc limit 0, 6;",nativeQuery = true)
-    List<OrderItems> findLastConvertGoods();
+
 }

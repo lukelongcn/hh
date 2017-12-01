@@ -68,8 +68,8 @@ public class OrderService {
         return order;
     }
 
-    public Result<List<OrderItems>> findHotConvertOrders(int page, int size){
-        List<OrderItems> goodsList = orderItemReposiroty.findLastConvertGoods();
+    public Result<List<Goods>> findHotConvertOrders(int page, int size){
+        List<Goods> goodsList = goodsReposiroty.findLastConvertGoods();
         return Result.success(goodsList);
     }
 
