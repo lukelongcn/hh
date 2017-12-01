@@ -155,10 +155,10 @@ public class AddressService {
         address.setCity(cityName);
         address.setDistict(areaName);
 
-        String  p_parentCode = chinaRepository.findPid(provinceName);
+      /*  String  p_parentCode = chinaRepository.findPid(provinceName);
         String  c_parentCode = chinaRepository.findCid(p_parentCode,cityName);
         String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);
+        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);*/
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
