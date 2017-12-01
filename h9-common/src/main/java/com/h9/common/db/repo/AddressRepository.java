@@ -6,6 +6,7 @@ import com.h9.common.db.entity.Address;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -36,4 +37,8 @@ public interface AddressRepository extends BaseRepository<Address> {
 
     @Query(value = "select * from address  where user_id =?1 order by update_time desc limit 0,1",nativeQuery = true)
     Address findByLastUpdate(Long userId);
+
+    @Modifying
+    @Query("update Address a set a.defaultAddress = 0 where a.userId = ?1")
+    void updateDefault(Long userId);
 }

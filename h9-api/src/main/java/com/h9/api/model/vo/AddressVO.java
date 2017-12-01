@@ -9,6 +9,10 @@ import org.springframework.beans.BeanUtils;
  * Created by 李圆 on 2017/11/28
  */
 public class AddressVO {
+
+    // 地址id
+    private Long id;
+
     private Long userId;
 
     //收货人姓名
@@ -124,5 +128,13 @@ public class AddressVO {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

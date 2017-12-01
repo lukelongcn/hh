@@ -124,9 +124,9 @@ public class Orders extends BaseEntity {
     /**
      * description: 标识订单类别
      *
-     * @see GoodsType.GoodsTypeEnum
+     * @see orderTypeEnum 订单类型
      */
-    @Column(name = "order_type", columnDefinition = "varchar(20) default '' COMMENT'订单类别'")
+    @Column(name = "order_type", columnDefinition = "varchar(50) default '' COMMENT'订单类别'")
     private String orderType;
 
     @Column(name = "loginstics_number")
