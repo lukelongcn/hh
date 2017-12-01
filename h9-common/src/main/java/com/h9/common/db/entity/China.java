@@ -1,5 +1,7 @@
 package com.h9.common.db.entity;
 
+import com.h9.common.base.BaseEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Table(name = "china")
 @Entity
-public class China {
+public class China extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -34,15 +36,27 @@ public class China {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '名称'")
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_code",referencedColumnName="code",columnDefinition = "varchar(20) default 0 COMMENT '上级编号'")
-    private China parentCode;
+
+    @Column(name = "parent_code",columnDefinition = "varchar(20) default 0 COMMENT '上级编号'")
+    private String parentCode;
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
     private Integer status;
 
     @Column(name = "level",nullable = false,columnDefinition = "tinyint  COMMENT '级别， 1：省，2：市  3：县/区'")
     private Integer level;
+
+
+    @Column(name = "pid",columnDefinition = "tinyint default 1 COMMENT '上级id'")
+    private Long pid;
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
 
     public Long getId() {
         return id;
@@ -68,15 +82,15 @@ public class China {
         this.name = name;
     }
 
-    public China getParentCode() {
+    public String getParentCode() {
         return parentCode;
     }
 
-    public void setParentCode(China parentCode) {
+    public void setParentCode(String parentCode) {
         this.parentCode = parentCode;
     }
 
-    /*public String getParentCode() {
+/*public String getParentCode() {
         return parentCode;
     }
 

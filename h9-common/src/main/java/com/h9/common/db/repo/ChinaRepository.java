@@ -5,6 +5,7 @@ import com.h9.common.db.entity.China;
 import com.h9.common.db.entity.City;
 import com.h9.common.db.entity.Province;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface ChinaRepository extends BaseRepository<China> {
      * @param name
      * @return
      */
-    @Query("select p.parentCode.code from  China p where p.name = ?1")
+    @Query("select p.parentCode from  China p where p.name = ?1")
     String  findPid(String name);
 
     /**
@@ -29,15 +30,8 @@ public interface ChinaRepository extends BaseRepository<China> {
      * @param name
      * @return id
      */
-    @Query("select c.id from China c where c.parentCode.code = ?1 and c.name = ?2 and status = 1")
+    @Query("select c.id from China c where c.parentCode = ?1 and c.name = ?2 and status = 1")
     String findCid(String parentCode,String name);
-
-    /**
-     * 所有子区域信息
-     * @return List<China>
-     */
-    @Query("select c from China c where c.parentCode.code = ?1 and status = 1 order by c.id")
-    List<China> findChlid(String parentCode);
 
     /**
      * 所有省
@@ -46,18 +40,13 @@ public interface ChinaRepository extends BaseRepository<China> {
     @Query("select c from  China c where c.level = 1")
     List<China> findAllProvinces();
 
-    /**
-     * 省对应市
-     * @param parentCode
-     * @return
-     */
-    @Query("select c from  China c where c.parentCode.code = ?1 and c.level = 2")
-    List<China> findCities(String parentCode);
-    /**
-     * 市对应区
-     * @param parentCode
-     * @return
-     */
-    @Query("select c from  China c where c.parentCode.code = ?1 and c.level = 3")
-    List<China> findAreas(String parentCode);
+    @Query("select c from  China c where c.level = ?1")
+    List<China> findByLevel(Integer level);
+
+    @Modifying
+    @Query("update China c set c.pid = ?1 where c.code=?2 ")
+    void updateALL(Long pid,String code);
+
+    China findByCode(String parentcode);
+
 }
