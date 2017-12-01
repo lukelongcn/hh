@@ -5,9 +5,7 @@ package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
-import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
-import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.bean.RedisBean;
@@ -15,27 +13,17 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 
-import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -111,11 +99,11 @@ public class ApiApplicationTests {
         GoodsType goodsType = goodsTypeReposiroty.findOne(2L);
         for (int i = 0; i < 200; i++) {
 
-            GoodsDIDINumber goodsDIDINumber = new GoodsDIDINumber();
-            goodsDIDINumber.setDidiNumber(UUID.randomUUID().toString());
-            goodsDIDINumber.setGoodsId(1310L);
-            goodsDIDINumber.setStatus(1);
-            goodsDIDINumberRepository.save(goodsDIDINumber);
+            CardCoupons cardCoupons = new CardCoupons();
+            cardCoupons.setNo(UUID.randomUUID().toString());
+            cardCoupons.setGoodsId(1310L);
+            cardCoupons.setStatus(1);
+            goodsDIDINumberRepository.save(cardCoupons);
         }
     }
 
