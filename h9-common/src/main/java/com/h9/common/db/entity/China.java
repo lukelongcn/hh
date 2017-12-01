@@ -35,7 +35,7 @@ public class China {
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_code",nullable = false,referencedColumnName="code",columnDefinition = "bigint(20) default 0 COMMENT '上级编号'")
+    @JoinColumn(name = "parent_code",referencedColumnName="code",columnDefinition = "bigint(20) default 0 COMMENT '上级编号'")
     private China parentCode;
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")

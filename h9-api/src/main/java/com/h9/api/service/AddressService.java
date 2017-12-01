@@ -205,7 +205,9 @@ public class AddressService {
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
-        addressRepository.updateDefault(userId);
+        if(addressDTO.getDefaultAddress() == 1){
+            addressRepository.updateDefault(userId);
+        }
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
@@ -240,8 +242,9 @@ public class AddressService {
             return Result.success(new SimpleAddressVO(address, user));
         }
         Address lastUpdateAddress = addressRepository.findByLastUpdate(userId);
-        if (lastUpdateAddress != null)
+        if (lastUpdateAddress != null){
             return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
+        }
         return Result.success();
     }
 }
