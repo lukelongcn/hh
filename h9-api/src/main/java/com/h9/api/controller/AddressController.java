@@ -62,28 +62,6 @@ public class AddressController {
     }
 
 
-    /**
-     * @return 所有省
-     */
-    @GetMapping(value = "/allProvinces")
-    public Result allProvices(){
-        return addressService.allProvices();
-    }
-    /**
-     * @return 省内所有市
-     */
-    @GetMapping(value = "/allCities/{pid}")
-    public Result allCities(@NotNull(message = "请选择收货省")@PathVariable("pid")Long pid){
-        return addressService.allCities(pid);
-    }
-    /**
-     * @return 市内所有区
-     */
-    @GetMapping(value = "/allDisticts/{cid}")
-    public Result allDisticts(Long cid){
-        return addressService.allDisticts(cid);
-    }
-
 
     /**
      * 添加收货地址

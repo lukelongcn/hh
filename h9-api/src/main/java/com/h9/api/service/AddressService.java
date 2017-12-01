@@ -6,8 +6,18 @@ import com.h9.api.model.vo.AddressVO;
 import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.*;
-import com.h9.common.db.repo.*;
+import com.h9.common.db.entity.Address;
+import com.h9.common.db.entity.China;
+import com.h9.common.db.entity.City;
+import com.h9.common.db.entity.Distict;
+import com.h9.common.db.entity.Province;
+import com.h9.common.db.entity.User;
+import com.h9.common.db.repo.AddressRepository;
+import com.h9.common.db.repo.ChinaRepository;
+import com.h9.common.db.repo.CityRepository;
+import com.h9.common.db.repo.DistictRepository;
+import com.h9.common.db.repo.ProvinceRepository;
+import com.h9.common.db.repo.UserRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -34,8 +44,9 @@ public class AddressService {
     ProvinceRepository provinceRepository;
     @Resource
     CityRepository cityRepository;
+
     @Resource
-    DistictRepository distictRepository;
+    ChinaRepository chinaRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -53,56 +64,6 @@ public class AddressService {
         return Result.success(pageResult.result2Result(AddressVO::convert));
     }
 
-    /**
-     * 所有省
-     * @return
-     */
-    public Result allProvices() {
-        List<Province> allProvices = provinceRepository.findAllProvinces();
-        List<Map<String, String>> provinceList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
-        allProvices.forEach(province -> {
-            Map<String, String> pmap = new HashMap<>();
-            pmap.put("name", province.getName());
-            pmap.put("id", province.getId() + "");
-            provinceList.add(pmap);
-        });
-        return Result.success(provinceList);
-    }
-
-    /**
-     * 省对应的市
-     * @return
-     */
-    public Result allCities(Long pid) {
-        List<City> allCities = cityRepository.findCities(pid);
-        List<Map<String, String>> cityList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allCities)){ return Result.success();}
-        allCities.forEach(city -> {
-            Map<String, String> cmap = new HashMap<>();
-            cmap.put("name", city.getName());
-            cmap.put("id", city.getId() + "");
-            cityList .add(cmap);
-        });
-        return Result.success(cityList);
-    }
-
-    /**
-     * 市对应的区
-     * @return
-     */
-    public Result allDisticts(Long cid) {
-        List<Distict> allDisticts = distictRepository.findDisticts(cid);
-        List<Map<String, String>> distictList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allDisticts)){ return Result.success();}
-        allDisticts.forEach(distict -> {
-            Map<String, String> dmap = new HashMap<>();
-            dmap.put("name", distict.getName());
-            dmap.put("id", distict.getCity().getId() + "");
-            distictList .add(dmap);
-        });
-        return Result.success(distictList);
-    }
 
     /**
      * 省市区
@@ -130,6 +91,39 @@ public class AddressService {
         return Result.success(areasList);
     }
 
+    public Result allAres() {
+        List<China> allProvices = chinaRepository.findAllProvinces();
+        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
+
+        List<Areas> areasList = new ArrayList<>();
+        List<Areas> cityList = new ArrayList<>();
+        List<Areas> areaList = new ArrayList<>();
+
+        allProvices.forEach(province -> {
+
+            List<China> allCities = chinaRepository.findCities(province.getCode());
+
+            allCities.forEach(city -> {
+
+                List<China> allAreas = chinaRepository.findAreas(city.getCode());
+
+                allAreas.forEach(area -> {
+                    Areas areas=new Areas(area.getCode(),area.getName());
+                    areaList .add(areas);
+                });
+
+                Areas careas=new Areas(city.getCode(),city.getName(),areaList);
+                cityList .add(careas);
+            });
+
+            Areas pareas=new Areas(province.getCode(),province.getName(),cityList);
+            areasList.add(pareas);
+        });
+
+        return Result.success(areasList);
+    }
+
+
 
     /**
      * 添加收货地址
@@ -146,14 +140,16 @@ public class AddressService {
 
         String provinceName = addressDTO.getProvince();
         String cityName = addressDTO.getCity();
+        String areaName = address.getDistict();
         address.setProvince(provinceName);
         address.setCity(cityName);
+        address.setDistict(areaName);
 
-        Long pid = provinceRepository.findPid(provinceName);
-        Long cid = cityRepository.findCid(pid,cityName);
-        address.setProvincialCity(pid+","+cid);
+        String  p_parentCode = chinaRepository.findPid(provinceName);
+        String  c_parentCode = chinaRepository.findCid(p_parentCode,cityName);
+        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
+        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);
 
-        address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
 
@@ -174,7 +170,7 @@ public class AddressService {
     public Result deleteAddress(Long userId, Long aid) {
         Address address = addressRepository.findById(aid);
         if (address == null){ return Result.fail("地址不存在"); }
-        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("登录用户与地址所属用户不一致，无权操作"); }
         address.setStatus(0);
         addressRepository.save(address);
         return Result.success("删除地址成功");
@@ -209,7 +205,7 @@ public class AddressService {
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
-      //  addressRepository.updateDefault(userId);
+        addressRepository.updateDefault(userId);
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
@@ -225,6 +221,7 @@ public class AddressService {
      * @return
      */
     public Result defualtAddress(Long userId, Long aid) {
+        addressRepository.updateDefault(userId);
         Address address = addressRepository.findById(aid);
         if (address == null){ return Result.fail("地址不存在"); }
         if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
