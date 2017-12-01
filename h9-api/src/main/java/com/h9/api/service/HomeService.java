@@ -102,5 +102,18 @@ public class HomeService {
         return Result.success(voMap);
     }
 
+    @Resource
+    VersionRepository versionRepository;
 
+    public Result version(String version,Integer type) {
+        if (type == 0){
+            Version version1= versionRepository.findByVersion(version);
+            return Result.success(version1);
+        }
+        if (type != 0){
+            return Result.success(versionRepository.findByClientType(type));
+        }
+
+        return Result.fail("版本不存在");
+    }
 }
