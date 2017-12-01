@@ -43,4 +43,6 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
 
     @Query("select o from Goods o where o.status = 1 and o.goodsType.code <> 'didi_card' and o.goodsType.code <> 'mobile_recharge' order by o.updateTime desc")
     Page<Goods> findLastUpdate(Pageable pageable);
+
+
 }
