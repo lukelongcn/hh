@@ -39,6 +39,6 @@ public interface AddressRepository extends BaseRepository<Address> {
     Address findByLastUpdate(Long userId);
 
     @Modifying
-    @Query("update Address a set a.defaultAddress = 1 where a.userId = ?1")
+    @Query("update Address a set a.defaultAddress = 0 where a.userId = ?1")
     void updateDefault(Long userId);
 }
