@@ -1,17 +1,14 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
-import com.h9.common.modle.vo.admin.basis.ImageVO;
+import com.h9.common.modle.vo.admin.basis.*;
 import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.*;
-import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
-import com.h9.common.modle.vo.admin.basis.GlobalPropertyVO;
-import com.h9.common.modle.vo.admin.basis.VersionVO;
 import com.h9.common.utils.MD5Util;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -53,6 +50,8 @@ public class BasisService {
     private ImageRepository imageRepository;
     @Resource
     private VersionRepository versionRepository;
+    @Resource
+    private WhiteUserListRepository whiteUserListRepository;
 
     public static final String IMAGE_FOLDER = "imageFolder";
 
@@ -253,4 +252,51 @@ public class BasisService {
         Page<VersionVO> versionVOPage = this.versionRepository.findAllByPage(pageDTO.toPageRequest());
         return Result.success(new PageResult<>(versionVOPage));
     }
+
+    public Result<String> getNickNameByPhone(String phone) {
+        User user = this.userRepository.findByPhone(phone);
+        if (user == null) {
+            return Result.fail("号码不存在");
+        }
+        return Result.success(user.getNickName());
+    }
+
+    public Result addWhiteList(WhiteListAddDTO whiteListAddDTO) {
+        User user = this.userRepository.findByPhone(whiteListAddDTO.getPhone());
+        if (user == null) {
+            return Result.fail("号码不存在");
+        }
+        WhiteUserList whiteUserList = whiteListAddDTO.toWhiteUserList();
+        whiteUserList.setUserId(user.getId());
+        return Result.success(this.whiteUserListRepository.save(whiteUserList));
+    }
+
+    public Result updateWhiteList(WhiteListEditDTO whiteListEditDTO) {
+        WhiteUserList whiteUserList = this.whiteUserListRepository.findOne(whiteListEditDTO.getId());
+        if (whiteUserList == null) {
+            return Result.fail("白名单不存在");
+        }
+        User user = this.userRepository.findByPhone(whiteListEditDTO.getPhone());
+        if (user == null) {
+            return Result.fail("号码不存在");
+        }
+        BeanUtils.copyProperties(whiteListEditDTO, whiteUserList);
+        whiteUserList.setUserId(user.getId());
+        return Result.success(this.whiteUserListRepository.save(whiteUserList));
+    }
+
+    public Result cancelWhiteList(long id) {
+        WhiteUserList whiteUserList = this.whiteUserListRepository.findOne(id);
+        if (whiteUserList == null) {
+            return Result.fail("白名单不存在");
+        }
+        whiteUserList.setStatus(WhiteUserList.StatusEnum.DISABLED.getId());
+        return Result.success(this.whiteUserListRepository.save(whiteUserList));
+    }
+
+    public Result<PageResult<WhiteListVO>> listWhiteListVO(PageDTO pageDTO){
+        Page<WhiteListVO> whiteListVOPage = this.whiteUserListRepository.findAllByPage(pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(whiteListVOPage));
+    }
+
 }
