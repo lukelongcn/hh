@@ -84,8 +84,8 @@ public class UserAddressInfoVO {
 
     public UserAddressInfoVO(Address address) {
         BeanUtils.copyProperties(address,this);
-        this.address = new StringBuilder(address.getProvince()).append(address.getCity()).append(address.getDistict())
-                .append(address.getAddress()).toString();
+        this.address = new StringBuilder(address.getProvince()).append("省").append(address.getCity()).append("市")
+                .append(address.getDistict()).append(address.getAddress()).toString();
     }
 
     public static UserAddressInfoVO toUserAddressInfoVO(Address address) {
