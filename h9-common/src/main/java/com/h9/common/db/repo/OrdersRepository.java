@@ -34,5 +34,5 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select o from Orders o")
     Future<List<Orders>> findAllAsy();
 
-    Page<Orders> findByOrderFrom(Integer from,Pageable pageable);
+
 }

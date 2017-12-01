@@ -2,8 +2,12 @@ package com.h9.store.service;
 
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.User;
+import com.h9.common.db.repo.GoodsReposiroty;
+import com.h9.common.db.repo.OrderItemReposiroty;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.store.modle.vo.OrderListVO;
@@ -30,6 +34,10 @@ public class OrderService {
     private OrdersRepository ordersReposiroty;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private OrderItemReposiroty orderItemReposiroty;
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
 
     public Orders initOrder(String nickName, BigDecimal money, String tel,String type,String supplierName) {
         Orders order = new Orders();
@@ -60,10 +68,9 @@ public class OrderService {
         return order;
     }
 
-    public Result<List<Orders>> findConvertOrders(int page, int size){
-        Page<Orders> orders = ordersReposiroty.findByOrderFrom(1, new PageRequest(page, size));
-        List<Orders> orderList = orders.getContent();
-        return Result.success(orderList);
+    public Result<List<OrderItems>> findHotConvertOrders(int page, int size){
+        List<OrderItems> goodsList = orderItemReposiroty.findLastConvertGoods();
+        return Result.success(goodsList);
     }
 
     public Result myConvertList(Long userId,int page,int size) {
