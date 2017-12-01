@@ -31,7 +31,7 @@ public class DiDiCardService {
     private FDidiCardRepository fDidiCardRepository;
     Logger logger = Logger.getLogger(DiDiCardService.class);
     @Resource
-    private GoodsDIDINumberRepository goodsDIDINumberRepository;
+    private CardCouponsRepository cardCouponsRepository;
 
     @Resource
     private GoodsReposiroty goodsReposiroty;
@@ -65,7 +65,7 @@ public class DiDiCardService {
 
     public void toDidi(T_CardCodes userInfo ){
 //
-        CardCoupons didiNumber = goodsDIDINumberRepository.findByGoodsAndDidiNumber(userInfo.getCardCode());
+        CardCoupons didiNumber = cardCouponsRepository.findByGoodsAndDidiNumber(userInfo.getCardCode());
         if (didiNumber != null) {
             return;
         }
@@ -90,7 +90,7 @@ public class DiDiCardService {
         didiNumber.setMoney(money);
         didiNumber.setOldId(userInfo.getID());
         didiNumber.setStatus(userInfo.getType() == 0?2:1);
-        goodsDIDINumberRepository.save(didiNumber);
+        cardCouponsRepository.save(didiNumber);
     }
 
 
@@ -149,9 +149,9 @@ public class DiDiCardService {
         String cardCode = c_cards.getCardCode();
         CardCoupons cardCoupons = null;
         if(!StringUtils.isEmpty(cardCode)){
-            cardCoupons = goodsDIDINumberRepository.findByGoodsAndDidiNumber(cardCode);
+            cardCoupons = cardCouponsRepository.findByGoodsAndDidiNumber(cardCode);
         }else{
-            cardCoupons = goodsDIDINumberRepository.findTopOneUnUse();
+            cardCoupons = cardCouponsRepository.findTopOneUnUse();
         }
 
         Goods goods = goodsReposiroty.findOne(cardCoupons.getGoodsId());

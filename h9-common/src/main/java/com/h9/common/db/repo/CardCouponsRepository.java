@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 /**
  * Created by itservice on 2017/11/6.
  */
-public interface GoodsDIDINumberRepository extends BaseRepository<CardCoupons>{
+public interface CardCouponsRepository extends BaseRepository<CardCoupons>{
 
     /**
      * description: 查询指定类型的滴滴劵库存
