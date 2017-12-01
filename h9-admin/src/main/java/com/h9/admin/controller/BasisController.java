@@ -186,4 +186,5 @@ public class BasisController {
     public Result<PageResult<VersionVO>> getImages(PageDTO pageDTO){
         return this.basisService.listVersion(pageDTO);
     }
+
 }
