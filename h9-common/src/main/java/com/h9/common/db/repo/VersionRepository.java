@@ -20,7 +20,7 @@ public interface VersionRepository extends BaseRepository<Version> {
     @Query(value = "select o.* from version o where o.client_type = ?1 and o.version_number > ?2 and upgrade_type = 3",nativeQuery = true)
     List<Version> findForceUpdateVersion(Integer clientType, Integer version);
 
-    @Query(value = "select o.* from version o where o.client_type = ?1 and o.version_number > ?2 order by o.version_number limit 0,1",nativeQuery = true)
+    @Query(value = "select o.* from version o where o.client_type = ?1 and o.version_number > ?2 order by o.version_number desc limit 0,1",nativeQuery = true)
     Version findLastVersion(Integer clientType,Integer version);
 
     Version findByClientType(Integer client_type);
