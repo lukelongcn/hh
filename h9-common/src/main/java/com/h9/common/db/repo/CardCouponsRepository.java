@@ -15,13 +15,13 @@ public interface CardCouponsRepository extends BaseRepository<CardCoupons>{
     @Query(value = "select count(o.id) from CardCoupons o where o.status = 1 and o.goodsId = ?1 ")
     Object getCount(Long goodId);
 
-    @Query(value = "select * from goods_didi_number where goods_id = ?1 and status = 1 limit 0,1",nativeQuery = true)
+    @Query(value = "select * from card_coupons where goods_id = ?1 and status = 1 limit 0,1",nativeQuery = true)
     CardCoupons findByGoodsId(Long goodsId);
 
-    @Query(value = "select gdn from CardCoupons gdn where  gdn.didiNumber = ?1")
-    CardCoupons findByGoodsAndDidiNumber(String number);
+    @Query(value = "select gdn from CardCoupons gdn where  gdn.no = ?1")
+    CardCoupons findByGoodsAndNo(String number);
 
 
-    @Query(value = "select * from goods_didi_number where status = 1 limit 0,1",nativeQuery = true)
+    @Query(value = "select * from card_coupons where status = 1 limit 0,1",nativeQuery = true)
     CardCoupons findTopOneUnUse();
 }
