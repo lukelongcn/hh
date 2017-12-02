@@ -49,9 +49,12 @@ public class UserService {
     public Result<LoginResultVO> login(String name, String password){
         String actualPassword = MD5Util.getMD5(password);
         this.logger.infov("name:{0},password:{1}",name,actualPassword);
-        User user  = this.userRepository.findByPhoneAndPasswordAndIsAdmin(name,actualPassword,User.IsAdminEnum.ADMIN.getId());
+        User user  = this.userRepository.findByPhoneAndIsAdmin(name, User.IsAdminEnum.ADMIN.getId());
         if(user == null){
             return Result.fail("用户不存在");
+        }
+        if(!actualPassword.equals(user.getPassword())){
+            return Result.fail("密码错误");
         }
         if(user.getStatus()!= User.StatusEnum.ENABLED.getId()){
             return Result.fail("该用户已被禁用");

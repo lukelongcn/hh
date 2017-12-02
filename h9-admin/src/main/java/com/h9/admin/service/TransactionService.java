@@ -2,6 +2,10 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.community.GoodsTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeEditDTO;
+import com.h9.common.db.entity.CardCoupons;
+import com.h9.common.db.repo.CardCouponsRepository;
+import com.h9.common.modle.dto.transaction.CardCouponsDTO;
+import com.h9.common.modle.vo.admin.transaction.CardCouponsVO;
 import com.h9.common.modle.vo.admin.transaction.GoodsTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -11,6 +15,7 @@ import com.h9.common.modle.dto.PageDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,8 @@ public class TransactionService {
 
     @Autowired
     private GoodsTypeReposiroty goodsTypeReposiroty;
+    @Autowired
+    private CardCouponsRepository cardCouponsRepository;
 
     public Result<GoodsType> addGoodsType(GoodsTypeAddDTO goodsTypeAddDTO) {
         if (this.goodsTypeReposiroty.findByCode(goodsTypeAddDTO.getCode()) != null) {
@@ -60,4 +67,12 @@ public class TransactionService {
         List<GoodsType> goodsTypeList = this.goodsTypeReposiroty.findByStatus(GoodsType.StatusEnum.ENABLED.getId());
         return  Result.success(goodsTypeList);
     }*/
+
+    public Result<PageResult<CardCouponsVO>> listCardCoupons(CardCouponsDTO cardCouponsDTO) {
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        Page<CardCoupons> cardCouponsPage = this.cardCouponsRepository.findAll(this.cardCouponsRepository
+                .buildSpecification(cardCouponsDTO),cardCouponsDTO.toPageRequest(sort));
+        return  Result.success(new PageResult<>(CardCouponsVO.toCardCouponsVO(cardCouponsPage)));
+    }
+
 }

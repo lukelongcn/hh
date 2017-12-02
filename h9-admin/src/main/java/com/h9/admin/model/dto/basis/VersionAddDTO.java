@@ -29,8 +29,8 @@ public class VersionAddDTO {
     @NotNull(message = "升级类型不能为空")
     private Integer upgradeType;
 
-    @ApiModelProperty(value = "描述",required = true)
-    @NotBlank(message = "描述不能为空")
+    @ApiModelProperty(value = "内容",required = true)
+    @NotBlank(message = "内容不能为空")
     private String description;
 
     @ApiModelProperty(value = "包url",required = true)
