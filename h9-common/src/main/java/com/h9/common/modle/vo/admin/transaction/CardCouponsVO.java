@@ -3,8 +3,10 @@ package com.h9.common.modle.vo.admin.transaction;
 import com.h9.common.db.entity.CardCoupons;
 import com.h9.common.modle.vo.admin.BasisVO;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -50,7 +52,16 @@ public class CardCouponsVO extends BasisVO{
     }
 
     public void setNo(String no) {
-        this.no = no;
+        if (StringUtils.isNotBlank(no) && no.length()>6) {
+            StringBuilder stringBuilder = new StringBuilder(no.substring(0,3));
+            for (int i=3;i<no.length()-3;i++) {
+                stringBuilder.append("*");
+            }
+            stringBuilder.append(no.substring(no.length()-3,no.length()));
+            this.no = stringBuilder.toString();
+        }else {
+            this.no = no;
+        }
     }
 
     public String getStatus() {
@@ -58,7 +69,7 @@ public class CardCouponsVO extends BasisVO{
     }
 
     public void setStatus(Integer status) {
-        this.status = CardCoupons.;
+        this.status = CardCoupons.StatusEnum.getNameById(status);
     }
 
     public String getBatchNo() {
@@ -89,6 +100,13 @@ public class CardCouponsVO extends BasisVO{
     }
 
     public CardCouponsVO(CardCoupons cardCoupons) {
-        BeanUtils.copyProperties();
+        BeanUtils.copyProperties(cardCoupons, this);
+    }
+
+    public static Page<CardCouponsVO> toCardCouponsVO(Page<CardCoupons> cardCouponsPage) {
+        if (cardCouponsPage == null) {
+            return null;
+        }
+        return  cardCouponsPage.map(item -> new CardCouponsVO(item));
     }
 }

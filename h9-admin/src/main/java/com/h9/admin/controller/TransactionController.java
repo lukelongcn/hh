@@ -10,6 +10,8 @@ import com.h9.common.base.Result;
 import com.h9.common.db.entity.BannerType;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.dto.transaction.CardCouponsDTO;
+import com.h9.common.modle.vo.admin.transaction.CardCouponsVO;
 import com.h9.common.modle.vo.admin.transaction.GoodsTypeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -56,5 +59,12 @@ public class TransactionController {
     @ApiOperation("获取所有启用商品类型")
     public Result<List<GoodsType>> listEnableGoodsType(){
         return this.transactionService.listEnableGoodsType();
+    }
+
+    @Secured(accessCode = "card_coupons:list")
+    @GetMapping(value="/card_coupons")
+    @ApiOperation("获取卡券列表")
+    public Result<PageResult<CardCouponsVO>> listCardCoupons(@Validated CardCouponsDTO cardCouponsDTO){
+        return this.transactionService.listCardCoupons(cardCouponsDTO);
     }
 }

@@ -1,14 +1,19 @@
 package com.h9.common.modle.dto.transaction;
 
+import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author: George
  * @date: 2017/12/2 14:38
  */
-public class CardCouponsDTO {
+public class CardCouponsDTO extends PageDTO{
+    @ApiModelProperty(value = "商品id")
+    @NotNull(message = "商品id不能为空")
+    private Long goodsId;
 
     @ApiModelProperty(value = "userId")
     private Long userId;
@@ -22,6 +27,14 @@ public class CardCouponsDTO {
     @ApiModelProperty(value = "状态")
     @NotNull(message = "状态不能为空")
     private Integer status;
+
+    public Long getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
+    }
 
     public Long getUserId() {
         return userId;
