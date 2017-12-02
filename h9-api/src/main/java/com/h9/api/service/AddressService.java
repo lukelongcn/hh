@@ -19,6 +19,7 @@ import com.h9.common.db.repo.DistictRepository;
 import com.h9.common.db.repo.ProvinceRepository;
 import com.h9.common.db.repo.UserRepository;
 
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -38,6 +39,8 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class AddressService {
+
+     Logger logger = Logger.getLogger(AddressService.class);
 
     @Resource
     AddressRepository addressRepository;
@@ -93,11 +96,12 @@ public class AddressService {
 
 
     public Result allArea(){
+        Long startTime = System.currentTimeMillis();
         List<China> allProvices = chinaRepository.findAllProvinces();
-
         if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
-
+        Long end = System.currentTimeMillis();
+        logger.debugv("时间"+(end-startTime));
         return Result.success(areasList);
     }
 

@@ -34,7 +34,7 @@ public class Areas {
     public Areas(China china) {
         id = china.getId();
         name = china.getName();
-        List<China> areas = china.getAreas();
+        List<China> areas = china.getList();
         if (!CollectionUtils.isEmpty(areas)){
             list = areas.stream().map(Areas::new).collect(Collectors.toList());
         }
