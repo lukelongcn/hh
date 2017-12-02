@@ -7,6 +7,7 @@ import com.h9.common.utils.DateUtil;
 import com.transfer.db.entity.T_BlackList;
 import com.transfer.db.repo.T_BlackListRepository;
 import com.transfer.service.base.BaseService;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
@@ -21,6 +22,7 @@ import java.util.Date;
  * Date: 2017/12/2
  * Time: 15:46
  */
+@Component
 public class BlackListService extends BaseService<T_BlackList> {
     
     @Resource
