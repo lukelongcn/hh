@@ -128,6 +128,9 @@ public class AddressService {
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
+        if(addressDTO.getDefaultAddress() == 1){
+            addressRepository.updateDefault(userId);
+        }
         address.setDefaultAddress(addressDTO.getDefaultAddress());
 
         // 使用状态设为开启
