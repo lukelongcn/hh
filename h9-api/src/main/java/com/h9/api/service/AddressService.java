@@ -245,6 +245,6 @@ public class AddressService {
         if (lastUpdateAddress != null){
             return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
         }
-        return Result.success();
+        return Result.fail();
     }
 }
