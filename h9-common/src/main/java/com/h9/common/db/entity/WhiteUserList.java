@@ -17,8 +17,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @Entity
 @Table(name = "white_user_list")
-@Data
-@Builder
 public class WhiteUserList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -43,6 +41,62 @@ public class WhiteUserList extends BaseEntity {
     @Temporal(TIMESTAMP)
     @Column(name = "end_time", columnDefinition = "datetime COMMENT '白名单结束时间'")
     private Date endTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getCause() {
+        return cause;
+    }
+
+    public void setCause(String cause) {
+        this.cause = cause;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
 
     public enum StatusEnum {
         DISABLED(2,"已取消"),

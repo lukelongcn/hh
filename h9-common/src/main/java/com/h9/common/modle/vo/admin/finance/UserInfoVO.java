@@ -23,6 +23,9 @@ public class UserInfoVO {
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
+    @ApiModelProperty(value = "注册时间")
+    private Date createTime;
+
     @ApiModelProperty(value = "最后登陆时间")
     private Date lastLoginTime;
 
@@ -65,6 +68,14 @@ public class UserInfoVO {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public Date getLastLoginTime() {

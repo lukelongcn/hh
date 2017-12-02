@@ -16,6 +16,7 @@ import com.h9.common.modle.vo.admin.basis.VersionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -186,4 +187,40 @@ public class BasisController {
     public Result<PageResult<VersionVO>> getImages(PageDTO pageDTO){
         return this.basisService.listVersion(pageDTO);
     }
+
+    @Secured
+    @GetMapping(value="/user/nick_name")
+    @ApiOperation("根据手机号码获取昵称")
+    public Result<String> getNickName(@NotBlank(message = "请输入手机号码") String phone){
+        return this.basisService.getNickNameByPhone(phone);
+    }
+
+    @Secured(accessCode = "white_list:add")
+    @PostMapping(value="/white_list")
+    @ApiOperation("增加白名单")
+    public Result addWhiteList(@Validated @RequestBody WhiteListAddDTO whiteListAddDTO){
+        return  this.basisService.addWhiteList(whiteListAddDTO);
+    }
+
+    @Secured(accessCode = "white_list:update")
+    @PutMapping(value="/white_list")
+    @ApiOperation("编辑白名单")
+    public Result addWhiteList(@Validated @RequestBody WhiteListEditDTO whiteListEditDTO){
+        return  this.basisService.updateWhiteList(whiteListEditDTO);
+    }
+
+    @Secured(accessCode = "white_list:cancel")
+    @PutMapping(value="/white_list/{id}/status")
+    @ApiOperation("取消白名单")
+    public Result addWhiteList(@PathVariable long id){
+        return  this.basisService.cancelWhiteList(id);
+    }
+
+    @Secured(accessCode = "white_list:list")
+    @GetMapping(value="/white_list")
+    @ApiOperation("获取白名单")
+    public Result listWhiteList(PageDTO pageDTO){
+        return  this.basisService.listWhiteListVO(pageDTO);
+    }
+
 }
