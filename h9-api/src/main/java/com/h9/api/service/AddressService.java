@@ -74,7 +74,6 @@ public class AddressService {
         List<Province> allProvices = provinceRepository.findAllProvinces();
         List<Areas> areasList = new ArrayList<>();
         if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
-
         allProvices.forEach(province -> {
 
             List<City> allCities = cityRepository.findCities(province.getId());
@@ -99,13 +98,25 @@ public class AddressService {
         List<Areas> cityList = new ArrayList<>();
         List<Areas> areaList = new ArrayList<>();
 
+        List<China> allCities = chinaRepository.findByLevel(2);
+        List<China> allAreas = chinaRepository.findByLevel(3);
+        allCities.forEach(citys->{
+
+            allAreas.forEach(areas->{
+                    Areas a =new Areas(areas.getId()+"",areas.getName());
+                    areaList .add(a);
+        });
+            Areas careas=new Areas(citys.getId()+"",citys.getName(),areaList);
+            cityList .add(careas);
+        });
+
+        //List<China> allAreas = chinaRepository.findByLevel(3);
+
         allProvices.forEach(province -> {
 
-            List<China> allCities = chinaRepository.findCities(province.getCode());
+            //List<China> allCities = chinaRepository.findCities(province.getCode());
 
-            allCities.forEach(city -> {
-
-                List<China> allAreas = chinaRepository.findAreas(city.getCode());
+            /*allCities.forEach(city -> {
 
                 allAreas.forEach(area -> {
                     Areas areas=new Areas(area.getCode(),area.getName());
@@ -114,7 +125,7 @@ public class AddressService {
 
                 Areas careas=new Areas(city.getCode(),city.getName(),areaList);
                 cityList .add(careas);
-            });
+            });*/
 
             Areas pareas=new Areas(province.getCode(),province.getName(),cityList);
             areasList.add(pareas);
@@ -122,7 +133,6 @@ public class AddressService {
 
         return Result.success(areasList);
     }
-
 
 
     /**
@@ -145,10 +155,10 @@ public class AddressService {
         address.setCity(cityName);
         address.setDistict(areaName);
 
-        String  p_parentCode = chinaRepository.findPid(provinceName);
+      /*  String  p_parentCode = chinaRepository.findPid(provinceName);
         String  c_parentCode = chinaRepository.findCid(p_parentCode,cityName);
         String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);
+        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);*/
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
@@ -247,4 +257,6 @@ public class AddressService {
         }
         return Result.fail();
     }
+
+
 }
