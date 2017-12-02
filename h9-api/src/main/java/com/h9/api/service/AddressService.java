@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -79,61 +80,26 @@ public class AddressService {
             List<City> allCities = cityRepository.findCities(province.getId());
             List<Areas> cityList = new ArrayList<>();
             allCities.forEach(city -> {
-                Areas careas=new Areas(city.getId()+"",city.getName());
+                Areas careas=new Areas(city.getId(),city.getName());
                 cityList .add(careas);
             });
 
-            Areas pareas=new Areas(province.getId()+"",province.getName(),cityList);
+            Areas pareas=new Areas(province.getId(),province.getName(),cityList);
             areasList.add(pareas);
         });
 
         return Result.success(areasList);
     }
 
-    public Result allAres() {
+
+    public Result allArea(){
         List<China> allProvices = chinaRepository.findAllProvinces();
+
         if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
-
-        List<Areas> areasList = new ArrayList<>();
-        List<Areas> cityList = new ArrayList<>();
-        List<Areas> areaList = new ArrayList<>();
-
-        List<China> allCities = chinaRepository.findByLevel(2);
-        List<China> allAreas = chinaRepository.findByLevel(3);
-        allCities.forEach(citys->{
-
-            allAreas.forEach(areas->{
-                    Areas a =new Areas(areas.getId()+"",areas.getName());
-                    areaList .add(a);
-        });
-            Areas careas=new Areas(citys.getId()+"",citys.getName(),areaList);
-            cityList .add(careas);
-        });
-
-        //List<China> allAreas = chinaRepository.findByLevel(3);
-
-        allProvices.forEach(province -> {
-
-            //List<China> allCities = chinaRepository.findCities(province.getCode());
-
-            /*allCities.forEach(city -> {
-
-                allAreas.forEach(area -> {
-                    Areas areas=new Areas(area.getCode(),area.getName());
-                    areaList .add(areas);
-                });
-
-                Areas careas=new Areas(city.getCode(),city.getName(),areaList);
-                cityList .add(careas);
-            });*/
-
-            Areas pareas=new Areas(province.getCode(),province.getName(),cityList);
-            areasList.add(pareas);
-        });
+        List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
 
         return Result.success(areasList);
     }
-
 
     /**
      * 添加收货地址
@@ -162,6 +128,9 @@ public class AddressService {
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
+        if(addressDTO.getDefaultAddress() == 1){
+            addressRepository.updateDefault(userId);
+        }
         address.setDefaultAddress(addressDTO.getDefaultAddress());
 
         // 使用状态设为开启

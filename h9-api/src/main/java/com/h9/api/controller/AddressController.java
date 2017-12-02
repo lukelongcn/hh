@@ -62,6 +62,10 @@ public class AddressController {
     }
 
 
+    @GetMapping(value = "/allArea")
+    public Result allArea(){
+        return addressService.allArea();
+    }
 
     /**
      * 添加收货地址

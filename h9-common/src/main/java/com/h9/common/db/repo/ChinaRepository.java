@@ -37,7 +37,7 @@ public interface ChinaRepository extends BaseRepository<China> {
      * 所有省
      * @return
      */
-    @Query("select c from  China c where c.level = 1")
+    @Query("select c from  China c where c.pid = null")
     List<China> findAllProvinces();
 
     @Query("select c from  China c where c.level = ?1")
@@ -47,6 +47,19 @@ public interface ChinaRepository extends BaseRepository<China> {
     @Query("update China c set c.pid = ?1 where c.code=?2 ")
     void updateALL(Long pid,String code);
 
-    China findByCode(String parentcode);
+   // List<China> findByPid(Long pid);
+
+    /*//@Query("select c from China c where c.areas.pid = (id = ?1)")
+    List<China> findAreas(Long id);*/
+    @Query("SELECT c FROM China c JOIN c.areas china WHERE c.id = ?1")
+    List<China> findByPid(Long id);
+
+    @Query("SELECT c FROM China c  WHERE c.pid = ?1")
+    List<China> find(Long id);
+
+
+
+
+
 
 }
