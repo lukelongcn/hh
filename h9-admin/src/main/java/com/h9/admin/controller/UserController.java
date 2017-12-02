@@ -4,9 +4,13 @@ import com.h9.admin.interceptor.PrintParam;
 import com.h9.admin.interceptor.PrintType;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.SystemUserDTO;
+import com.h9.admin.model.vo.BlackAccountVO;
 import com.h9.admin.model.vo.LoginResultVO;
 import com.h9.admin.service.UserService;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.vo.admin.finance.UserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +61,13 @@ public class UserController {
     @ApiOperation(value = "退出登录")
     public Result logout(@RequestHeader("token")String token) {
         return  this.userService.logout(token);
+    }
+
+    @Secured(accessCode = "user:detail")
+    @GetMapping(value = "/info/{userId}")
+    @ApiOperation("获取用户信息")
+    public Result<UserVO> getUserInfo(@PathVariable long userId){
+        return this.userService.getUserInfo(userId);
     }
 
 }

@@ -18,9 +18,12 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("SELECT o from Orders o where o.user.id=?1 order by o.id desc")
     Page<Orders> findByUser(Long userId, Pageable pageable);
 
+    @Query("SELECT o from Orders o where o.user.id=?1 and o.orderFrom = ?2 order by o.id desc")
+    Page<Orders> findByUser(Long userId,Integer orderFrom , Pageable pageable);
 
-    @Query("SELECT o from Orders o where o.user.id=?1 and o.orderType = ?2 order by o.id desc")
-    Page<Orders> findDiDiCardByUser(Long userId,Integer orderType, Pageable pageable);
+
+    @Query("SELECT o from Orders o where o.user.id=?1 and o.goodsType = ?2 order by o.id desc")
+    Page<Orders> findDiDiCardByUser(Long userId,String goodsTypeCode, Pageable pageable);
 
     default PageResult<Orders> findByUser(Long userId, int page, int limit){
         Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));
@@ -30,4 +33,6 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Async
     @Query("select o from Orders o")
     Future<List<Orders>> findAllAsy();
+
+
 }

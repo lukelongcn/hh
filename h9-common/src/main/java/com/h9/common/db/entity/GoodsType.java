@@ -4,6 +4,7 @@ import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -15,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "goods_type")
+@Table(name = "goods_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"code"})})
 public class GoodsType extends BaseEntity {
 
 
@@ -27,7 +28,7 @@ public class GoodsType extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '商品分类名称'")
     private String name;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用  2 禁用'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常  2 禁用'")
     private Integer status = 1;
 
     @Column(name = "allow_import",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 是否允许导入数据，1:否，2:是'")
@@ -37,8 +38,8 @@ public class GoodsType extends BaseEntity {
      * description:
      * @see GoodsTypeEnum
      */
-    @Column(name = "code",columnDefinition = "int default 1 COMMENT ''")
-    private Integer code;
+    @Column(name = "code",nullable = false,columnDefinition = "varchar(50) default '' COMMENT '标识商品类型字段'")
+    private String code;
 //    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 //    @JoinColumn(name = "parent_id",nullable = true,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
     @Column(name = "parent_id")
@@ -46,25 +47,26 @@ public class GoodsType extends BaseEntity {
 
     public enum GoodsTypeEnum{
 
-        MOBILE_RECHARGE(1,"手机卡"),
-        DIDI_CARD(2, "滴滴卡"),
-        MATERIAL(3,"实物"),
-        FOODS(5, "食物，饮料"),
-        EVERYDAY_GOODS(6, "日常家居"),
-        OTHER(4, "其他");
+        MOBILE_RECHARGE("mobile_recharge","手机卡"),
+        DIDI_CARD("didi_card", "滴滴卡"),
+//        MATERIAL("material","实物"),
+        FOODS("foods", "食物，饮料"),
+        EVERYDAY_GOODS("everyday_goods", "日常家居"),
+        VB("vb", "V币");
 
-        private int code;
+        private String code;
         private String desc;
-        GoodsTypeEnum(int code, String desc) {
+        GoodsTypeEnum(String code, String desc) {
             this.code = code;
             this.desc = desc;
         }
 
-        public int getCode() {
+
+        public String getCode() {
             return code;
         }
 
-        public void setCode(int code) {
+        public void setCode(String code) {
             this.code = code;
         }
 
@@ -76,10 +78,10 @@ public class GoodsType extends BaseEntity {
             this.desc = desc;
         }
 
-        public static GoodsTypeEnum findByCode(int code){
+        public static GoodsTypeEnum findByCode(String code){
             GoodsTypeEnum[] values = values();
             for(GoodsTypeEnum smsTypeEnum: values){
-                if(code == smsTypeEnum.getCode()){
+                if(code.equals(smsTypeEnum.getCode())){
                     return smsTypeEnum;
                 }
             }
@@ -87,11 +89,12 @@ public class GoodsType extends BaseEntity {
         }
     }
 
-    public Integer getCode() {
+
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -137,7 +140,7 @@ public class GoodsType extends BaseEntity {
 
     public enum StatusEnum {
         DISABLED(2,"禁用"),
-        ENABLED(1,"启用");
+        ENABLED(1,"正常");
 
         StatusEnum(int id,String name){
             this.id = id;
@@ -147,20 +150,18 @@ public class GoodsType extends BaseEntity {
         private int id;
         private String name;
 
-        public int getId() {
-            return id;
+        public static String getNameById(int id){
+            StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public int getId() {
+            return id;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
     }
 }

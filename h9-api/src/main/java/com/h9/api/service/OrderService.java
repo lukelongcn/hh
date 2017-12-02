@@ -26,7 +26,7 @@ public class OrderService {
     @Resource
     private UserService userService;
 
-    public Orders initOrder(String nickName, BigDecimal money, String tel,int type,String supplierName) {
+    public Orders initOrder(String nickName, BigDecimal money, String tel,String type,String supplierName) {
         Orders order = new Orders();
         order.setUserName(nickName);
         order.setPayMoney(money);
@@ -39,7 +39,7 @@ public class OrderService {
         order.setOrderType(type);
         return order;
     }
-    public Orders initOrder( BigDecimal money, String tel,int type,String supplierName,User user) {
+    public Orders initOrder( BigDecimal money, String tel,String type,String supplierName,User user) {
         Orders order = new Orders();
         order.setUserName(user.getNickName());
         order.setPayMoney(money);

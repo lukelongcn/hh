@@ -18,7 +18,7 @@ public class OrderDetailVO {
 
     private String company = "";
     private String orderStatus = "";
-    private Integer orderType;
+    private String orderType;
     private String accepterName = "";
     private String tel= "";
     private String address= "";
@@ -45,7 +45,7 @@ public class OrderDetailVO {
         vo.setTel(order.getUserPhone());
 
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
-        if(order.getOrderType() == GoodsType.GoodsTypeEnum.MATERIAL.getCode()){
+        if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOOS.getCode())){
             vo.setAccepterName("");
             vo.setAddress(order.getUserAddres());
             vo.setLogisticsNumber(order.getLogisticsNumber());
@@ -149,12 +149,11 @@ public class OrderDetailVO {
     }
 
 
-
-    public Integer getOrderType() {
+    public String getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(Integer orderType) {
+    public void setOrderType(String orderType) {
         this.orderType = orderType;
     }
 

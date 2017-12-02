@@ -3,7 +3,6 @@ package com.transfer.service;
 import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
-import com.transfer.SqlUtils;
 import com.transfer.db.entity.C_Cards;
 import com.transfer.db.entity.T_CardCodes;
 import com.transfer.db.repo.C_CardsRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.io.BufferedWriter;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +31,7 @@ public class DiDiCardService {
     private FDidiCardRepository fDidiCardRepository;
     Logger logger = Logger.getLogger(DiDiCardService.class);
     @Resource
-    private GoodsDIDINumberRepository goodsDIDINumberRepository;
+    private CardCouponsRepository cardCouponsRepository;
 
     @Resource
     private GoodsReposiroty goodsReposiroty;
@@ -67,7 +65,7 @@ public class DiDiCardService {
 
     public void toDidi(T_CardCodes userInfo ){
 //
-        GoodsDIDINumber didiNumber = goodsDIDINumberRepository.findByGoodsAndDidiNumber(userInfo.getCardCode());
+        CardCoupons didiNumber = cardCouponsRepository.findByGoodsAndNo(userInfo.getCardCode());
         if (didiNumber != null) {
             return;
         }
@@ -86,13 +84,13 @@ public class DiDiCardService {
             goods.setCode("DIDI90001");
             goods = goodsReposiroty.saveAndFlush(goods);
         }
-        didiNumber = new GoodsDIDINumber();
-        didiNumber.setDidiNumber(userInfo.getCardCode());
+        didiNumber = new CardCoupons();
+        didiNumber.setNo(userInfo.getCardCode());
         didiNumber.setGoodsId(goods.getId());
         didiNumber.setMoney(money);
         didiNumber.setOldId(userInfo.getID());
         didiNumber.setStatus(userInfo.getType() == 0?2:1);
-        goodsDIDINumberRepository.save(didiNumber);
+        cardCouponsRepository.save(didiNumber);
     }
 
 
@@ -134,7 +132,7 @@ public class DiDiCardService {
         Orders orders = new Orders();
         orders.setMoney(c_cards.getCardPrice());
         orders.setSupplierName("滴滴");
-        orders.setOrderType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
+        orders.setOrderType(Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"");
         orders.setNo(UUID.randomUUID().toString().replace("-",""));
         orders.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
         orders.setMoney(c_cards.getCardPrice());
@@ -149,24 +147,24 @@ public class DiDiCardService {
         orders = ordersRepository.save(orders);
 
         String cardCode = c_cards.getCardCode();
-        GoodsDIDINumber goodsDIDINumber = null;
+        CardCoupons cardCoupons = null;
         if(!StringUtils.isEmpty(cardCode)){
-            goodsDIDINumber = goodsDIDINumberRepository.findByGoodsAndDidiNumber(cardCode);
+            cardCoupons = cardCouponsRepository.findByGoodsAndNo(cardCode);
         }else{
-            goodsDIDINumber = goodsDIDINumberRepository.findTopOneUnUse();
+            cardCoupons = cardCouponsRepository.findTopOneUnUse();
         }
 
-        Goods goods = goodsReposiroty.findOne(goodsDIDINumber.getGoodsId());
+        Goods goods = goodsReposiroty.findOne(cardCoupons.getGoodsId());
 
         OrderItems orderItems = new OrderItems();
         orderItems.setName(goods.getName());
         orderItems.setImage(goods.getImg());
-        orderItems.setPrice(goodsDIDINumber.getMoney());
-        orderItems.setMoney(goodsDIDINumber.getMoney());
-        orderItems.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        orderItems.setPrice(cardCoupons.getMoney());
+        orderItems.setMoney(cardCoupons.getMoney());
+        orderItems.setDidiCardNumber(cardCoupons.getNo());
         orderItems.setOrders(orders);
         orderItems.setGoods(goods);
-        orderItems.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        orderItems.setDidiCardNumber(cardCoupons.getNo());
         orderItemReposiroty.save(orderItems);
 
     }

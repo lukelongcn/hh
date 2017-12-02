@@ -23,16 +23,16 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -82,7 +82,7 @@ public class ConsumeService {
     @Resource
     private CommonService commonService;
     @Resource
-    private GoodsDIDINumberRepository goodsDIDINumberRepository;
+    private CardCouponsRepository cardCouponsRepository;
     @Resource
     private WithdrawalsRequestReposiroty withdrawalsRequestReposiroty;
     @Resource
@@ -138,8 +138,9 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
 
-        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode(), "徽酒");
+        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode()+"","徽酒");
         order.setUser(user);
+        order.setOrderFrom(2);
         orderItems.setOrders(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
@@ -227,7 +228,7 @@ public class ConsumeService {
     public Result didiCardList() {
 //        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
         List<Map<String, Object>> list = new ArrayList<>();
-        GoodsType goodsType = goodsTypeReposiroty.findOne(new Long(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode()));
+        GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         if (goodsType == null) return Result.fail();
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
@@ -235,7 +236,7 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
-//            Object count = goodsDIDINumberRepository.getCount(goods.getId());
+//            Object count = cardCouponsRepository.getCount(goods.getId());
             map.put("stock", goods.getStock());
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
@@ -269,8 +270,10 @@ public class ConsumeService {
         if (goods == null) return Result.fail("商品不存在");
 
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), "徽酒");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒");
+        orders.setOrderFrom(2);
         orders.setUser(user);
+        orders.setGoodsType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         //修改库存
         Result changeResult = goodService.changeStock(goods);
         if (changeResult.getCode() == 1) {
@@ -286,10 +289,10 @@ public class ConsumeService {
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
-        GoodsDIDINumber goodsDIDINumber = goodsDIDINumberRepository.findByGoodsId(goods.getId());
-        goodsDIDINumber.setStatus(2);
+        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
+        cardCoupons.setStatus(2);
 
-        items.setDidiCardNumber(goodsDIDINumber.getDidiNumber());
+        items.setDidiCardNumber(cardCoupons.getNo());
         items.setGoods(goods);
 
 //        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
@@ -304,11 +307,11 @@ public class ConsumeService {
         });
 
         Map<String, String> voMap = new HashMap<>();
-        voMap.put("didiCardNumber", goodsDIDINumber.getDidiNumber());
+        voMap.put("didiCardNumber", cardCoupons.getNo());
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
         orderItemReposiroty.save(items);
-        goodsDIDINumberRepository.save(goodsDIDINumber);
+        cardCouponsRepository.save(cardCoupons);
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 

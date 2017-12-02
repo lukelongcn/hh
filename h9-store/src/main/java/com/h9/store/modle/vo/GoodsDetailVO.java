@@ -15,5 +15,7 @@ public class GoodsDetailVO {
     private String price = "";
     private String desc = "";
     private String tip;
+    private int stock = 0;
+    private String balance = "0";
 
 }

@@ -1,9 +1,7 @@
 package com.h9.store.service;
 
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Banner;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.UserAccountRepository;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +30,8 @@ public class HomeService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private OrderService orderService;
     public Result storeHome(Long userId) {
 
         List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 2);
@@ -43,12 +42,20 @@ public class HomeService {
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
-        Goods goods = goodsReposiroty.findOne(1317L);
-        GoodsListVO goodsListVO = new GoodsListVO(goods);
-        //TODO setHotGoods 替换此方法值
+
         StoreHomeVO vo = new StoreHomeVO().setBanners(banners)
-                .setBalance(MoneyUtils.formatMoney(balance))
-                .setHotGoods(Arrays.asList(goodsListVO));
+                .setBalance(MoneyUtils.formatMoney(balance));
+
+        Result<List<Goods>> findResult = orderService.findHotConvertOrders(0, 6);
+        if (findResult.getCode() == 0) {
+            List<Goods> orderList = findResult.getData();
+
+            List<GoodsListVO> goodsListVO = orderList.stream()
+                    .map(el -> new GoodsListVO(el))
+                    .collect(Collectors.toList());
+
+            vo.setHotGoods(goodsListVO);
+        }
 
         return Result.success(vo);
     }

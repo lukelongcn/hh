@@ -14,7 +14,9 @@ import java.util.List;
  */
 public interface GoodsTypeReposiroty extends BaseRepository<GoodsType>{
 
-    GoodsType findByCode(Integer code);
+    GoodsType findByCode(String code);
+
+    GoodsType findByCodeAndIdNot(String code, Long id);
 
     List<GoodsType> findByStatus(Integer status);
 
