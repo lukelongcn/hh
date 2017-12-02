@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -79,61 +80,26 @@ public class AddressService {
             List<City> allCities = cityRepository.findCities(province.getId());
             List<Areas> cityList = new ArrayList<>();
             allCities.forEach(city -> {
-                Areas careas=new Areas(city.getId()+"",city.getName());
+                Areas careas=new Areas(city.getId(),city.getName());
                 cityList .add(careas);
             });
 
-            Areas pareas=new Areas(province.getId()+"",province.getName(),cityList);
+            Areas pareas=new Areas(province.getId(),province.getName(),cityList);
             areasList.add(pareas);
         });
 
         return Result.success(areasList);
     }
 
-    public Result allAres() {
+
+    public Result allArea(){
         List<China> allProvices = chinaRepository.findAllProvinces();
+
         if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
-
-        List<Areas> areasList = new ArrayList<>();
-        List<Areas> cityList = new ArrayList<>();
-        List<Areas> areaList = new ArrayList<>();
-
-        List<China> allCities = chinaRepository.findByLevel(2);
-        List<China> allAreas = chinaRepository.findByLevel(3);
-        allCities.forEach(citys->{
-
-            allAreas.forEach(areas->{
-                    Areas a =new Areas(areas.getId()+"",areas.getName());
-                    areaList .add(a);
-        });
-            Areas careas=new Areas(citys.getId()+"",citys.getName(),areaList);
-            cityList .add(careas);
-        });
-
-        //List<China> allAreas = chinaRepository.findByLevel(3);
-
-        allProvices.forEach(province -> {
-
-            //List<China> allCities = chinaRepository.findCities(province.getCode());
-
-            /*allCities.forEach(city -> {
-
-                allAreas.forEach(area -> {
-                    Areas areas=new Areas(area.getCode(),area.getName());
-                    areaList .add(areas);
-                });
-
-                Areas careas=new Areas(city.getCode(),city.getName(),areaList);
-                cityList .add(careas);
-            });*/
-
-            Areas pareas=new Areas(province.getCode(),province.getName(),cityList);
-            areasList.add(pareas);
-        });
+        List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
 
         return Result.success(areasList);
     }
-
 
     /**
      * 添加收货地址
@@ -155,13 +121,16 @@ public class AddressService {
         address.setCity(cityName);
         address.setDistict(areaName);
 
-      /*  String  p_parentCode = chinaRepository.findPid(provinceName);
-        String  c_parentCode = chinaRepository.findCid(p_parentCode,cityName);
+        String  p_p_code = chinaRepository.findPid(provinceName);
+        String  c_parentCode = chinaRepository.findCid(p_p_code,cityName);
         String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);*/
+        address.setProvincialCity(p_p_code+","+c_parentCode+","+a_parentCode);
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
+        if(addressDTO.getDefaultAddress() == 1){
+            addressRepository.updateDefault(userId);
+        }
         address.setDefaultAddress(addressDTO.getDefaultAddress());
 
         // 使用状态设为开启
@@ -205,12 +174,15 @@ public class AddressService {
 
         String provinceName = addressDTO.getProvince();
         String cityName = addressDTO.getCity();
+        String areaName = address.getDistict();
         address.setProvince(provinceName);
         address.setCity(cityName);
+        address.setDistict(areaName);
 
-        Long pid = provinceRepository.findPid(provinceName);
-        Long cid = cityRepository.findCid(pid,cityName);
-        address.setProvincialCity(pid+","+cid);
+        String  p_code = chinaRepository.findPid(provinceName);
+        String  c_parentCode = chinaRepository.findCid(p_code,cityName);
+        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
+        address.setProvincialCity(p_code+","+c_parentCode+","+a_parentCode);
 
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
