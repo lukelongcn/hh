@@ -96,14 +96,41 @@ public class AddressService {
 
 
     public Result allArea(){
+        List<Areas> formCahce = findFormCahce();
+        if(formCahce!=null){
+            return Result.success(formCahce);
+        }
+        List<Areas> fromDb = findFromDb();
+        if(null == fromDb){
+            return null;
+        }
+        return Result.success(fromDb);
+    }
+
+
+    public List<Areas> findFromDb(){
+        //从数据库获取数据
         Long startTime = System.currentTimeMillis();
         List<China> allProvices = chinaRepository.findAllProvinces();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allProvices)) {
+            return null;
+        }
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
         Long end = System.currentTimeMillis();
         logger.debugv("时间"+(end-startTime));
-        return Result.success(areasList);
+//       TODO 存储到redis
+        return areasList;
     }
+
+
+
+    public List<Areas> findFormCahce(){
+//       TODO 从reids里面取
+        return null;
+    }
+
+
+
 
     /**
      * 添加收货地址
