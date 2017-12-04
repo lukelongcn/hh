@@ -72,6 +72,7 @@ public class Goods extends BaseEntity {
     private Date endTime;
 
 
+
     public Integer getStock() {
         return stock;
     }

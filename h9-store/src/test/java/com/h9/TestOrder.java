@@ -1,56 +1,65 @@
 package com.h9;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.deserializer.AbstractDateDeserializer;
+import com.h9.common.base.PageResult;
+import com.h9.common.base.Result;
+import com.h9.store.modle.dto.ConvertGoodsDTO;
+import com.h9.store.modle.vo.GoodsListVO;
+import com.h9.store.service.GoodService;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by itservice on 2017/11/30.
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class TestOrder {
 
     private static final String host = "http://localhost:6305/h9/api";
     private RestTemplate restTemplate = new RestTemplate();
 
-
+    @Resource
+    private GoodService goodService;
+    /**
+     * description: 测试兑换商品
+     */
     @Test
-    public void test(){
-        String token = Login();
-        System.out.println(token);
-    }
+    public  void converGoodsTest(){
 
-    public String Login(){
-        sendSMS();
-        String tel = "17673140753";
-        String url = host+"/user/phone/login";
+        Long userId = 9676L;
+        Long addressId = 452l;
 
-        Map<String, String> map = new HashMap<>();
-        map.put("code", "0000");
-        map.put("phone", "17673140753");
+        Result result = goodService.goodsList(1, 0, 10);
+        PageResult<GoodsListVO> data = (PageResult)result.getData();
+        List<GoodsListVO> goodsList = data.getData();
+        if (CollectionUtils.isEmpty(goodsList)) {
+            System.out.println("goodsList is empty");
+        }
+        GoodsListVO goods = goodsList.get(0);
 
-        ResponseEntity<String> response = restTemplate.postForEntity( url, JSONObject.toJSON(map), String.class );
-
-        JSONObject resObj = JSONObject.parseObject(response.getBody());
-
-        Object data = resObj.get("data");
-        Object token = JSONObject.parseObject((String) data).get("token");
-        return token.toString();
-    }
-
-
-    public  void sendSMS(){
-
-        String url = host + "/user/register/17673140753";
-        String response = restTemplate.getForObject(url, String.class);
-        System.out.println(response);
+        ConvertGoodsDTO dto = new ConvertGoodsDTO();
+        dto.setCount(1);
+        dto.setAddressId(addressId);
+        dto.setGoodsId(goods.getId());
+        Result convertResult = goodService.convertGoods(dto, userId);
+        System.out.println(JSONObject.toJSON(convertResult));
     }
 }

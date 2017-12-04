@@ -50,22 +50,15 @@ import static javax.persistence.GenerationType.IDENTITY;
         @Column(name = "level",nullable = false,columnDefinition = "tinyint  COMMENT '级别， 1：省，2：市  3：县/区'")
         private Integer level;
 
-        @OneToMany(mappedBy = "pid", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "pid", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
         @OrderBy(" id desc")
-        private List<China> areas = new ArrayList<>();
+        private List<China> list = new ArrayList<>();
 
         @JsonIgnore
-        @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+        @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @JoinColumn(name = "pid", referencedColumnName = "id", columnDefinition = "bigint(40) default 0 COMMENT '上级id'")
         private China pid;
 
-        public List<China> getAreas() {
-            return areas;
-        }
-
-        public void setAreas(List<China> areas) {
-            this.areas = areas;
-        }
 
         public China getPid() {
             return pid;
@@ -130,4 +123,12 @@ import static javax.persistence.GenerationType.IDENTITY;
         public void setLevel(Integer level) {
             this.level = level;
         }
-}
+
+        public List<China> getList() {
+            return list;
+        }
+
+        public void setList(List<China> list) {
+            this.list = list;
+        }
+    }
