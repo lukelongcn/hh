@@ -144,7 +144,7 @@ public class GoodService {
 
         if(StringUtils.isBlank(code)) return Result.fail("不存在此类型商品");
 
-        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, new PageRequest(page, size));
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, goodsReposiroty.pageRequest(page, size) );
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -155,7 +155,7 @@ public class GoodService {
      */
     public Result goodsPageQuery(int page, int size) {
 
-        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(new PageRequest(page, size));
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(goodsReposiroty.pageRequest(page, size) );
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -167,7 +167,8 @@ public class GoodService {
      */
     public Result todayNewGoods() {
 
-        PageRequest pageRequest = new PageRequest(0,5);
+
+        PageRequest pageRequest = goodsReposiroty.pageRequest(0, 5);
         Page<Goods> pageObj = goodsReposiroty.findLastUpdate(pageRequest);
         PageResult<Goods> pageResult = new PageResult(pageObj);
         return Result.success(pageResult.result2Result(GoodsListVO::new));
