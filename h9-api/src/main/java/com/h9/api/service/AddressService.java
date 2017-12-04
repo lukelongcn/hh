@@ -40,7 +40,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class AddressService {
 
-     Logger logger = Logger.getLogger(AddressService.class);
+    Logger logger = Logger.getLogger(AddressService.class);
 
     @Resource
     AddressRepository addressRepository;
@@ -220,7 +220,7 @@ public class AddressService {
     }
 
 
-     public Result getDefaultAddress(Long userId) {
+    public Result getDefaultAddress(Long userId) {
 
         User user = userRepository.findOne(userId);
         Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
