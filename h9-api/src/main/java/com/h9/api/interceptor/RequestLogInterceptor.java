@@ -39,7 +39,9 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         startTimeThreadLocal.set(beginTime);
 
         String token = httpServletRequest.getHeader("token");
-        if (StringUtils.isNotEmpty(token)) MDC.put("token", token.substring(0, 8));
+        if (StringUtils.isNotEmpty(token)) {
+            MDC.put("token", token.substring(0, 8));
+        }
         String method = httpServletRequest.getMethod();
         if (HttpMethod.OPTIONS.name().equals(method)) {
             return false;
@@ -82,7 +84,6 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         }
 
         logger.info("request headers : " + JSONObject.toJSONString(headers));
-//        logger.infov("---------------------------------------------");
         logger.info("");
         logger.infov("-------------------响应信息-------------------");
         logger.info("http code : " + httpServletResponse.getStatus());
@@ -97,10 +98,14 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-        long endTime = System.currentTimeMillis();//2、结束时间
-        long beginTime = startTimeThreadLocal.get();//得到线程绑定的局部变量（开始时间）
-        long consumeTime = endTime - beginTime;//3、消耗的时间
-        if (consumeTime > consumeMaxTime) {//此处认为处理时间超过500毫秒的请求为慢请求
+        //2、结束时间
+        long endTime = System.currentTimeMillis();
+        // 得到线程绑定的局部变量（开始时间）
+        long beginTime = startTimeThreadLocal.get();
+        //3、消耗的时间
+        long consumeTime = endTime - beginTime;
+        //此处认为处理时间超过500毫秒的请求为慢请求
+        if (consumeTime > consumeMaxTime) {
             logger.info("lowPerformance: "+consumeTime+", url: " + httpServletRequest.getRequestURL());
         }
 
