@@ -32,11 +32,6 @@ public class InitAddressListener implements ApplicationListener<ApplicationReady
 
     private void initAddressCache() {
       List<Areas> areasList = addressService.findFromDb();
-       /* for (int i = 0; i < areasList.size(); i++) {
-            Areas areas =  areasList.get(i);
-            Long id= areas.getId();
-            redisBean.setStringValue(id+"",areas.getName());
-        }*/
-
+      redisBean.setObject(RedisKey.addressKey,areasList);
     }
 }

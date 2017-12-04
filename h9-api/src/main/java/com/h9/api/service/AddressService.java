@@ -8,6 +8,7 @@ import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
@@ -41,6 +42,7 @@ public class AddressService {
     @Resource
     RedisBean redisBean;
 
+
     /**
      * 地址列表
      * @param userId
@@ -58,12 +60,12 @@ public class AddressService {
 
     public Result allArea(){
         List<Areas> formCahce = findFormCahce();
-        if(formCahce!=null){
+        if(!CollectionUtils.isEmpty(formCahce)){
             return Result.success(formCahce);
         }
         List<Areas> fromDb = findFromDb();
         if(null == fromDb){
-            return null;
+            return Result.fail("暂无数据");
         }
         return Result.success(fromDb);
     }
@@ -79,15 +81,16 @@ public class AddressService {
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
         Long end = System.currentTimeMillis();
         logger.debugv("时间"+(end-startTime));
-//       TODO 存储到redis
+//        存储到redis
+        redisBean.setObject(RedisKey.addressKey,areasList);
         return areasList;
     }
 
 
 
     public List<Areas> findFormCahce(){
-//       TODO 从reids里面取
-        return redisBean.getList();
+//        从reids里面取
+        return redisBean.getArray(RedisKey.addressKey,Areas.class);
     }
 
 

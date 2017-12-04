@@ -41,7 +41,6 @@ public class RedisBean {
     @Resource(name = "stringRedisTemplate")
     private ZSetOperations<String, String> zsetOps;
 
-    private List list;
 
     public void setObject(String key,Object object){
         String value = JSONObject.toJSONString(object);
@@ -65,13 +64,6 @@ public class RedisBean {
         return null;
     }
 
-    public List getList() {
-        return list;
-    }
-
-    public void setList(List list) {
-        this.list = list;
-    }
 
     public <T> List<T> getArray(String key, Class<T> clazz){
         List list = new ArrayList();
