@@ -20,17 +20,6 @@ public class Areas {
 
     private List list;
 
-    public Areas(Long id,String name,List list){
-         this.id = id;
-         this.name = name;
-         this.list =list;
-    }
-
-    public Areas(Long id,String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public Areas(China china) {
         id = china.getId();
         name = china.getName();
