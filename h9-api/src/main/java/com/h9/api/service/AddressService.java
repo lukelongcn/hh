@@ -18,7 +18,9 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -217,7 +219,8 @@ public class AddressService {
         if (lastUpdateAddress != null){
             return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
         }
-        return Result.fail();
+
+        return Result.fail("",1);
     }
 
 

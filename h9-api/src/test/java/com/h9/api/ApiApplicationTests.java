@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -90,8 +91,7 @@ public class ApiApplicationTests {
 
     }
 
-    @Resource
-    CardCouponsRepository cardCouponsRepository;
+
 
     ////@Test
     public void didiCardInit() {
@@ -252,6 +252,26 @@ public class ApiApplicationTests {
     }
 
     @Resource
+    CardCouponsRepository cardCouponsRepository;
+    @Test
+    public void cardsGenerator(){
+
+        for(int i = 0;i<10000;i++) {
+            if (i / 1000 == 0) {
+                System.out.println(i);
+            }
+            CardCoupons cardCoupons = new CardCoupons();
+            cardCoupons.setBatchNo("20170904");
+            cardCoupons.setNo(UUID.randomUUID().toString().substring(0,10));
+            cardCoupons.setGoodsId(1L);
+            cardCoupons.setMoney(new BigDecimal(20));
+            cardCoupons.setStatus(1);
+
+            cardCouponsRepository.save(cardCoupons);
+//            cardCoupons.setBatchNo();
+        }
+    }
+    @Resource
     private ConfigService configService;
     @Resource
     private BankBinRepository bankBinRepository;
@@ -263,6 +283,14 @@ public class ApiApplicationTests {
 
     @Resource
     private BannerRepository bannerRepository;
+
+    @Resource
+    private AddressRepository addressRepository;
+    @Test
+    public void test22(){
+        Address address = addressRepository.findByUserIdAndDefaultAddress(9677L, 1);
+        System.out.println();
+    }
 
 }
 

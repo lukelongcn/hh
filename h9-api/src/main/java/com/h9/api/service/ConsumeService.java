@@ -138,7 +138,7 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
 
-        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode()+"","徽酒");
+        Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
         order.setUser(user);
         order.setOrderFrom(2);
         orderItems.setOrders(order);
@@ -209,7 +209,7 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, String> map = new HashMap<>();
             map.put("id", goods.getId() + "");
-            map.put("price", MoneyUtils.formatMoney(goods.getPrice(),"0"));
+            map.put("price", MoneyUtils.formatMoney(goods.getPrice(), "0"));
             map.put("realPrice", goods.getRealPrice().toString());
             list.add(map);
         });
@@ -270,7 +270,7 @@ public class ConsumeService {
         if (goods == null) return Result.fail("商品不存在");
 
         //生成订单
-        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒");
+        Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode() + "", "徽酒");
         orders.setOrderFrom(2);
         orders.setUser(user);
         orders.setGoodsType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
@@ -284,15 +284,14 @@ public class ConsumeService {
         OrderItems items = new OrderItems(goods.getName(), "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
-        //
-        //余额操作
-        commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
+
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
         CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
-        if(cardCoupons == null) return Result.fail("卡劵不存在");
+        if (cardCoupons == null) return Result.fail("卡劵不存在");
         cardCoupons.setStatus(2);
-
+        //余额操作
+        commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         items.setDidiCardNumber(cardCoupons.getNo());
         items.setGoods(goods);
 
@@ -300,12 +299,10 @@ public class ConsumeService {
 //        Map<String,String> map = JSONObject.parseObject(globalProperty.getVal(), Map.class);
 
         Map<String, String> map = configService.getMapConfig("balanceFlowImg");
-        map.forEach((k, v) -> {
-            if (k.equals("5")) {
-                items.setImage(v);
-                return;
-            }
-        });
+
+        String value = map.get("5");
+        items.setImage(value);
+
 
         Map<String, String> voMap = new HashMap<>();
         voMap.put("didiCardNumber", cardCoupons.getNo());
@@ -326,7 +323,6 @@ public class ConsumeService {
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.CASH_RECHARGE.getCode(), user.getPhone(), code);
         if (verifyResult != null) return verifyResult;
-
 
         UserBank userBank = userBankRepository.findOne(bankId);
 
@@ -400,7 +396,7 @@ public class ConsumeService {
             bankCardRepository.save(defaulBank);
         }
         userBank.setDefaultSelect(1);
-        bankCardRepository.save(userBank);
+
         UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
         withdrawalsRecord.setUserRecord(userRecord);
 
@@ -413,12 +409,19 @@ public class ConsumeService {
                 //转账尚未到用户卡上
                 withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
             }
+            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
+            oldWithdrawMoney = oldWithdrawMoney.add(balance);
+            Long withdrawCount = userBank.getWithdrawCount();
+            withdrawCount++;
+            userBank.setWithdrawCount(withdrawCount);
+            userBank.setWithdrawMoney(oldWithdrawMoney);
 
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+            bankCardRepository.save(userBank);
             return Result.success(map);
 
         } else {
@@ -431,6 +434,7 @@ public class ConsumeService {
             withdrawalsFails.setBankReturnData(result.getData().toString());
             withdrawalsFailsReposiroty.save(withdrawalsFails);
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
+            bankCardRepository.save(userBank);
             return Result.fail("请确认银行卡信息是否正确");
         }
     }
@@ -521,7 +525,7 @@ public class ConsumeService {
         BigDecimal canWithdrawMoney = getUserWithdrawTodayMoney(userId);
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         infoVO.put("balance", MoneyUtils.formatMoney(userAccount.getBalance()));
-        infoVO.put("withdrawMoney",MoneyUtils.formatMoney(canWithdrawMoney));
+        infoVO.put("withdrawMoney", MoneyUtils.formatMoney(canWithdrawMoney));
 
         return Result.success(infoVO);
     }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
@@ -38,6 +39,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object hanldeException(Exception e, HttpServletRequest request) {
+
+
+        if (e instanceof MethodArgumentTypeMismatchException) {
+            logger.info(e.getMessage(),e);
+            return new Result(1, "请传入正确的参数," + e.getMessage());
+        }
 
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
