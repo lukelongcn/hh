@@ -16,7 +16,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Created by itservice on 2017/11/6.
  */
 @Entity
-@Table(name = "card_coupons")
+@Table(name = "card_coupons",uniqueConstraints =@UniqueConstraint(name = "unique_no",columnNames = "no"))
 public class CardCoupons extends BaseEntity{
 
     @Id
