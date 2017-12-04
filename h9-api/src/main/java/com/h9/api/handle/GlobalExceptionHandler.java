@@ -29,6 +29,8 @@ import java.util.Enumeration;
 public class GlobalExceptionHandler {
     private Logger logger = Logger.getLogger(this.getClass());
 
+    String request_head = "http:localhost";
+
     @Resource
     private MailService mailService;
 
@@ -93,7 +95,7 @@ public class GlobalExceptionHandler {
             String content = "url: " + url +" "+ ExceptionUtils.getStackTrace(e);
             content += request.getHeader("token");
 
-            if (!url.startsWith("http:localhost")) {
+            if (!url.startsWith(request_head)) {
                 mailService.sendtMail("徽酒服务器错误" + currentEnvironment, content);
             }
             time = System.currentTimeMillis();

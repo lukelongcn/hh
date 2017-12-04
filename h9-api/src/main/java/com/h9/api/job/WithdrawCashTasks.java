@@ -14,10 +14,8 @@ import javax.annotation.Resource;
 @Component
 public class WithdrawCashTasks {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    //private Logger logger = Logger.getLogger(this.getClass());
 
-    @Resource
-    private RestTemplate restTemplate;
     @Resource
     private ConsumeService consumeService;
 

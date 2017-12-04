@@ -37,9 +37,7 @@ public interface ChinaRepository extends BaseRepository<China> {
     List<China> findAllProvinces();
 
 
-
-
-
-
+    @Query("select c.name from  China c where c.id = ?1")
+    String  findName(Long id);
 
 }

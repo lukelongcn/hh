@@ -2,12 +2,19 @@ package com.h9.api.model.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  * Created by 李圆 on 2017/11/27
  */
 public class AddressDTO {
+    @NotNull(message = "请填写所在省id")
+    private Long pid;
+    @NotNull(message = "请填写所在市id")
+    private Long cid;
+    @NotNull(message = "请填写所在区id")
+    private Long aid;
 
     private Long userId;
 
@@ -21,31 +28,45 @@ public class AddressDTO {
     @NotBlank(message = "请输入合法的手机号码")
     private String phone;
 
-    // 默认地址
+    /**  默认地址*/
     private Integer defaultAddress;
 
-    // 所在省
-    @NotBlank(message = "请填写所在省")
-    private String province;
 
-    // 所在市
-    @NotBlank(message = "请填写所在市")
-    private String city;
 
-    // 所在区
-    /**@NotBlank(message = "请填写所在区")*/
-    private String distict;
-
-    //详细地址
+    // 详细地址
     @NotBlank(message = "请填写详细地址")
     @Size(max = 100,message = "详细地址过长")
     private String address;
 
-    //省市区编号
+    /** 省市区编号*/
     private String provincialCity;
 
-    //使用状态
+    /** 使用状态 */
     private Integer status;
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getCid() {
+        return cid;
+    }
+
+    public void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    public Long getAid() {
+        return aid;
+    }
+
+    public void setAid(Long aid) {
+        this.aid = aid;
+    }
 
     public Integer getStatus() {
         return status;
@@ -95,31 +116,7 @@ public class AddressDTO {
     public void setDefaultAddress(Integer defaultAddress) {
         this.defaultAddress = defaultAddress;
     }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getDistict() {
-        return distict;
-    }
-
-    public void setDistict(String distict) {
-        this.distict = distict;
-    }
-
+    
     public String getProvincialCity() {
         return provincialCity;
     }

@@ -21,7 +21,6 @@ public class RequestReplaceFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (!(request instanceof CustomServletRequestWrapper)) {
             request = new CustomServletRequestWrapper(request);
-//            logger.info("CustomServletRequestWrapper");
         }else{
             logger.info("not CustomServletRequestWrapper");
         }
