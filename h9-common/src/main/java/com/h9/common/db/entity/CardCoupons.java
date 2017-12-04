@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -22,7 +23,7 @@ public class CardCoupons extends BaseEntity{
     @SequenceGenerator(name = "h9-apiSeq")
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @Column(name = "no", columnDefinition = "varchar(16) default '' COMMENT '卡券号'")
+    @Column(name = "no", columnDefinition = "varchar(32) default '' COMMENT '卡券号'")
     private String no;
     @Column(name="goods_id")
     private Long goodsId;
@@ -30,7 +31,7 @@ public class CardCoupons extends BaseEntity{
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "status",columnDefinition = "int COMMENT '1为正常，2为已兑换,3 禁用'")
+    @Column(name = "status",columnDefinition = "int COMMENT '1为正常，2:已使用,3 禁用'")
     private Integer status;
 
     @Column(name = "old_id", columnDefinition = "bigint(20) default null COMMENT '迁移数据id'")
@@ -116,5 +117,33 @@ public class CardCoupons extends BaseEntity{
 
     public void setGrantTime(Date grantTime) {
         this.grantTime = grantTime;
+    }
+
+    public enum StatusEnum {
+        DISABLED(3,"禁用"),
+        USED(2,"已使用"),
+        ENABLED(1,"正常");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
 }

@@ -82,7 +82,7 @@ public class ConsumeService {
     @Resource
     private CommonService commonService;
     @Resource
-    private GoodsDIDINumberRepository goodsDIDINumberRepository;
+    private CardCouponsRepository cardCouponsRepository;
     @Resource
     private WithdrawalsRequestReposiroty withdrawalsRequestReposiroty;
     @Resource
@@ -236,7 +236,7 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
-//            Object count = goodsDIDINumberRepository.getCount(goods.getId());
+//            Object count = cardCouponsRepository.getCount(goods.getId());
             map.put("stock", goods.getStock());
             map.put("name", goods.getName());
             map.put("goodId", goods.getId());
@@ -289,7 +289,7 @@ public class ConsumeService {
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
-        CardCoupons cardCoupons = goodsDIDINumberRepository.findByGoodsId(goods.getId());
+        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
         cardCoupons.setStatus(2);
 
         items.setDidiCardNumber(cardCoupons.getNo());
@@ -311,7 +311,7 @@ public class ConsumeService {
         voMap.put("money", goods.getRealPrice().toString());
         logger.info("key : " + smsCodeKey);
         orderItemReposiroty.save(items);
-        goodsDIDINumberRepository.save(cardCoupons);
+        cardCouponsRepository.save(cardCoupons);
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 

@@ -268,6 +268,7 @@ public class BasisService {
         }
         WhiteUserList whiteUserList = whiteListAddDTO.toWhiteUserList();
         whiteUserList.setUserId(user.getId());
+        whiteUserList.setStatus(WhiteUserList.StatusEnum.ENABLED.getId());
         return Result.success(this.whiteUserListRepository.save(whiteUserList));
     }
 

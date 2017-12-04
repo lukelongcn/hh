@@ -91,7 +91,7 @@ public class ApiApplicationTests {
     }
 
     @Resource
-    GoodsDIDINumberRepository goodsDIDINumberRepository;
+    CardCouponsRepository cardCouponsRepository;
 
     ////@Test
     public void didiCardInit() {
@@ -103,7 +103,7 @@ public class ApiApplicationTests {
             cardCoupons.setNo(UUID.randomUUID().toString());
             cardCoupons.setGoodsId(1310L);
             cardCoupons.setStatus(1);
-            goodsDIDINumberRepository.save(cardCoupons);
+            cardCouponsRepository.save(cardCoupons);
         }
     }
 

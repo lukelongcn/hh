@@ -203,16 +203,24 @@ public class BasisController {
     }
 
     @Secured(accessCode = "white_list:update")
-    @PostMapping(value="/white_list")
+    @PutMapping(value="/white_list")
     @ApiOperation("编辑白名单")
     public Result addWhiteList(@Validated @RequestBody WhiteListEditDTO whiteListEditDTO){
         return  this.basisService.updateWhiteList(whiteListEditDTO);
     }
 
     @Secured(accessCode = "white_list:cancel")
-    @PostMapping(value="/white_list/{id}/status")
+    @PutMapping(value="/white_list/{id}/status")
     @ApiOperation("取消白名单")
     public Result addWhiteList(@PathVariable long id){
         return  this.basisService.cancelWhiteList(id);
     }
+
+    @Secured(accessCode = "white_list:list")
+    @GetMapping(value="/white_list")
+    @ApiOperation("获取白名单")
+    public Result listWhiteList(PageDTO pageDTO){
+        return  this.basisService.listWhiteListVO(pageDTO);
+    }
+
 }

@@ -13,11 +13,11 @@ public class AddressDTO {
 
     //收货人姓名
     @NotBlank(message = "请填写真实姓名")
-    @Size(max = 32,message = "姓名过长")
+    @Size(max = 20,message = "姓名过长")
     private String name;
 
     // 收货人手机号码
-    @Size(min = 11,max = 11,message = "请填写正确的手机号")
+    @Size(min = 7,max = 16,message = "请填写正确的手机号")
     @NotBlank(message = "请输入合法的手机号码")
     private String phone;
 
@@ -38,6 +38,7 @@ public class AddressDTO {
 
     //详细地址
     @NotBlank(message = "请填写详细地址")
+    @Size(max = 100,message = "详细地址过长")
     private String address;
 
     //省市区编号

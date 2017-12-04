@@ -41,6 +41,21 @@ public class WithdrawalsRecord extends BaseEntity {
     @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'")
     private UserBank userBank;
 
+    @Column(name = "name", columnDefinition = "varchar(32) default '' COMMENT '持卡人名'")
+    private String name;
+
+    @Column(name = "bank_no", columnDefinition = "varchar(64) default '' COMMENT '银行卡号'")
+    private String bankNo;
+
+    @Column(name = "bank_name", columnDefinition = "varchar(64) default '' COMMENT '所属银行'")
+    private String bankName;
+
+    @Column(name = "provice",  columnDefinition = "varchar(64) default '' COMMENT '开户省'")
+    private String province;
+
+    @Column(name = "city", columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
+    private String city;
+
     /**
      * description:
      * @see statusEnum
@@ -197,5 +212,45 @@ public class WithdrawalsRecord extends BaseEntity {
     public void setUserRecord(UserRecord userRecord)
     {
         this.userRecord = userRecord;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBankNo() {
+        return bankNo;
+    }
+
+    public void setBankNo(String bankNo) {
+        this.bankNo = bankNo;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

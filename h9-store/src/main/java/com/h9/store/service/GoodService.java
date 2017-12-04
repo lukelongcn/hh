@@ -184,6 +184,7 @@ public class GoodService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
         GoodsDetailVO vo = GoodsDetailVO.builder()
+                .id(goods.getId())
                 .img(goods.getImg())
                 .desc(goods.getDescription())
                 .price(MoneyUtils.formatMoney(goods.getPrice()))
