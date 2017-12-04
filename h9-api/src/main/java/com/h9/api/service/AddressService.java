@@ -40,7 +40,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class AddressService {
 
-     Logger logger = Logger.getLogger(AddressService.class);
+    Logger logger = Logger.getLogger(AddressService.class);
 
     @Resource
     AddressRepository addressRepository;
