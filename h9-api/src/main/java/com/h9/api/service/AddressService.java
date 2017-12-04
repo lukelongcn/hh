@@ -1,11 +1,13 @@
 package com.h9.api.service;
 
+import com.h9.api.interceptor.InitAddressListener;
 import com.h9.api.model.dto.AddressDTO;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.model.vo.AddressVO;
 import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
@@ -36,6 +38,9 @@ public class AddressService {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    RedisBean redisBean;
+
     /**
      * 地址列表
      * @param userId
@@ -48,7 +53,6 @@ public class AddressService {
         }
         return Result.success(pageResult.result2Result(AddressVO::convert));
     }
-
 
 
 
@@ -83,7 +87,7 @@ public class AddressService {
 
     public List<Areas> findFormCahce(){
 //       TODO 从reids里面取
-        return null;
+        return redisBean.getList();
     }
 
 
