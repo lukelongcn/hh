@@ -30,7 +30,7 @@ public class GoodsController {
     @Secured
     @GetMapping("/goodsList")
     public Result goodsList(@RequestParam(defaultValue = "5") Integer type,
-                            @RequestParam(defaultValue = "0") Integer page,
+                            @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit) {
         return goodService.goodsList(type,page,limit);
     }
