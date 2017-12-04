@@ -54,7 +54,7 @@ public class AddressController {
 
 
 
-    @GetMapping(value = "/allArea")
+    @GetMapping(value = "/allAreas")
     public Result allArea(){
         return addressService.allArea();
     }

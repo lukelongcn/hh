@@ -290,6 +290,7 @@ public class ConsumeService {
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
         CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
+        if(cardCoupons == null) return Result.fail("卡劵不存在");
         cardCoupons.setStatus(2);
 
         items.setDidiCardNumber(cardCoupons.getNo());

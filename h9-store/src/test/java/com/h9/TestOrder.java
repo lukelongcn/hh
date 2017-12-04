@@ -1,6 +1,7 @@
 package com.h9;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.deserializer.AbstractDateDeserializer;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
@@ -20,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +38,18 @@ public class TestOrder {
 
     @Resource
     private GoodService goodService;
+    /**
+     * description: 测试兑换商品
+     */
     @Test
     public  void converGoodsTest(){
 
-        Result result = goodService.goodsList(1, 0, 10);
-        Object data = result.getData();
+        Long userId = 9676L;
+        Long addressId = 452l;
 
-        JSONObject object = JSONObject.parseObject(null);
-        Object dataArray = object.get("data");
-        List<GoodsListVO> goodsList = JSONObject.parseArray(dataArray.toString(), GoodsListVO.class);
+        Result result = goodService.goodsList(1, 0, 10);
+        PageResult<GoodsListVO> data = (PageResult)result.getData();
+        List<GoodsListVO> goodsList = data.getData();
         if (CollectionUtils.isEmpty(goodsList)) {
             System.out.println("goodsList is empty");
         }
@@ -52,9 +57,9 @@ public class TestOrder {
 
         ConvertGoodsDTO dto = new ConvertGoodsDTO();
         dto.setCount(1);
-        dto.setAddressId(452L);
+        dto.setAddressId(addressId);
         dto.setGoodsId(goods.getId());
-        Result convertResult = goodService.convertGoods(dto, 9676L);
+        Result convertResult = goodService.convertGoods(dto, userId);
         System.out.println(JSONObject.toJSON(convertResult));
     }
 }
