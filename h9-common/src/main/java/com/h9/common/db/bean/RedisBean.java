@@ -1,5 +1,6 @@
 package com.h9.common.db.bean;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -63,6 +61,24 @@ public class RedisBean {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public <T> List<T> getArray(String key, Class<T> clazz){
+        List list = new ArrayList();
+        try {
+            String value = valueOps.get(key);
+            logger.infov("redis: getStringValue({0}) = {1}", key, value);
+
+            if (StringUtils.isEmpty(value)) {
+                logger.warnv("redis: getStringValue({0}) = {1}", key, value);
+                return null;
+            }
+            return JSONArray.parseArray(value,clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public ValueOperations<String, String> getValueOps() {
