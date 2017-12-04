@@ -2,10 +2,6 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.China;
-import com.h9.common.db.entity.City;
-import com.h9.common.db.entity.Province;
-
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
