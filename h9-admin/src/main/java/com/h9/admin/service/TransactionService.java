@@ -4,6 +4,7 @@ import com.h9.admin.model.dto.community.GoodsTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeEditDTO;
 import com.h9.common.db.entity.CardCoupons;
 import com.h9.common.db.repo.CardCouponsRepository;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.modle.dto.transaction.CardCouponsDTO;
 import com.h9.common.modle.vo.admin.transaction.CardCouponsVO;
 import com.h9.common.modle.vo.admin.transaction.GoodsTypeVO;
@@ -33,6 +34,8 @@ public class TransactionService {
     private GoodsTypeReposiroty goodsTypeReposiroty;
     @Autowired
     private CardCouponsRepository cardCouponsRepository;
+    @Autowired
+    private GoodsReposiroty goodsReposiroty;
 
     public Result<GoodsType> addGoodsType(GoodsTypeAddDTO goodsTypeAddDTO) {
         if (this.goodsTypeReposiroty.findByCode(goodsTypeAddDTO.getCode()) != null) {
@@ -63,10 +66,25 @@ public class TransactionService {
         return  Result.success(goodsTypeList);
     }
 
-    /*public Result<List<String>> listCardCouponsBatchNo() {
-        List<GoodsType> goodsTypeList = this.goodsTypeReposiroty.findByStatus(GoodsType.StatusEnum.ENABLED.getId());
-        return  Result.success(goodsTypeList);
+   /* public Result addCardCouponsList(CardCouponsListAddDTO cardCouponsListAddDTO) {
+        if (this.goodsReposiroty.findOne(cardCouponsListAddDTO.getGoodsId()) == null) {
+            return Result.fail("商品不存在");
+        }
+        List<String> noList = Arrays.asList(cardCouponsListAddDTO.getNos().split("\n"));
+        List<String> validNoList = new ArrayList<>();
+        noList.forEach(item -> {
+            if (StringUtils.isNotBlank(item)) {
+                validNoList.add(item.replace("\\s*",""));
+            }
+        });
+        String lastNo =
+        return Result.success(this.goodsTypeReposiroty.save(goodsTypeAddDTO.toGoodsType()));
     }*/
+
+    public Result<List<String>> listCardCouponsBatchNo(long goodsId) {
+        List<String> batchNoList = this.cardCouponsRepository.findAllBatchNoByGoodsId(goodsId);
+        return  Result.success(batchNoList);
+    }
 
     public Result<PageResult<CardCouponsVO>> listCardCoupons(CardCouponsDTO cardCouponsDTO) {
         Sort sort = new Sort(Sort.Direction.DESC,"id");

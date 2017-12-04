@@ -160,7 +160,6 @@ public class AddressService {
         if (address == null){ return Result.fail("地址不存在"); }
         if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
 
-        address.setUserId(userId);
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
@@ -185,7 +184,9 @@ public class AddressService {
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
+
         addressRepository.save(address);
+
         return Result.success("地址修改成功");
     }
 
