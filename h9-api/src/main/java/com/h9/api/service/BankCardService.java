@@ -1,13 +1,16 @@
 package com.h9.api.service;
 
+import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.BankCardDTO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BankBin;
 import com.h9.common.db.entity.BankType;
+import com.h9.common.db.entity.User;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankBinRepository;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.BankCardUtils;
 import com.h9.common.utils.CharacterFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +43,10 @@ public class BankCardService {
 
     @Resource
     private BankBinRepository bankBinRepository;
+    @Resource
+    private SmsService smsService;
+    @Resource
+    private UserRepository userRepository;
 
     /**
      * 添加银行卡
@@ -57,10 +64,15 @@ public class BankCardService {
         if (city.contains("市")) {
             city= city.replace("市", "");
         }
+        User findUser = userRepository.findOne(userId);
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_BANKCARD.getCode(), findUser.getPhone(), bankCardDTO.getSmsCode());
+        if(verifyResult != null) return verifyResult;
+
         String cardNo = bankCardDTO.getNo();
         if(!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo.substring(0,6))){
             return Result.fail("请填写正确的银行卡号");
         }
+
         //判断银行卡号是否已被绑定
         UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(),1);
         if (user != null) {

@@ -10,6 +10,7 @@ public enum SMSTypeEnum {
     CASH_RECHARGE(3,"提现"),
     DIDI_CARD(4,"滴滴卡兑换"),
     MOBILE_RECHARGE(5, "手机话费充值"),
+    BIND_BANKCARD(6, "绑定银行卡"),
     OTHER(0,"其他");
 
     SMSTypeEnum(int code, String desc) {
