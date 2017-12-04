@@ -8,6 +8,7 @@ import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
@@ -17,7 +18,9 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -41,6 +44,7 @@ public class AddressService {
     @Resource
     RedisBean redisBean;
 
+
     /**
      * 地址列表
      * @param userId
@@ -58,12 +62,12 @@ public class AddressService {
 
     public Result allArea(){
         List<Areas> formCahce = findFormCahce();
-        if(formCahce!=null){
+        if(!CollectionUtils.isEmpty(formCahce)){
             return Result.success(formCahce);
         }
         List<Areas> fromDb = findFromDb();
         if(null == fromDb){
-            return null;
+            return Result.fail("暂无数据");
         }
         return Result.success(fromDb);
     }
@@ -79,15 +83,16 @@ public class AddressService {
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
         Long end = System.currentTimeMillis();
         logger.debugv("时间"+(end-startTime));
-//       TODO 存储到redis
+//        存储到redis
+        redisBean.setObject(RedisKey.addressKey,areasList);
         return areasList;
     }
 
 
 
     public List<Areas> findFormCahce(){
-//       TODO 从reids里面取
-        return redisBean.getList();
+//        从reids里面取
+        return redisBean.getArray(RedisKey.addressKey,Areas.class);
     }
 
 
@@ -106,17 +111,14 @@ public class AddressService {
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
-        String provinceName = addressDTO.getProvince();
-        String cityName = addressDTO.getCity();
-        String areaName = address.getDistict();
+        String provinceName = chinaRepository.findName(addressDTO.getPid());
+        String cityName = chinaRepository.findName(addressDTO.getCid());
+        String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince(provinceName);
         address.setCity(cityName);
         address.setDistict(areaName);
-
-        String  p_p_code = chinaRepository.findPid(provinceName);
-        String  c_parentCode = chinaRepository.findCid(p_p_code,cityName);
-        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_p_code+","+c_parentCode+","+a_parentCode);
+        //设值地址id
+        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
@@ -163,19 +165,16 @@ public class AddressService {
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
-        String provinceName = addressDTO.getProvince();
-        String cityName = addressDTO.getCity();
-        String areaName = address.getDistict();
+        String provinceName = chinaRepository.findName(addressDTO.getPid());
+        String cityName = chinaRepository.findName(addressDTO.getCid());
+        String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince(provinceName);
         address.setCity(cityName);
         address.setDistict(areaName);
 
-        String  p_code = chinaRepository.findPid(provinceName);
-        String  c_parentCode = chinaRepository.findCid(p_code,cityName);
-        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_code+","+c_parentCode+","+a_parentCode);
+        //设值地址id
+        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
 
-        address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
@@ -220,7 +219,8 @@ public class AddressService {
         if (lastUpdateAddress != null){
             return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
         }
-        return Result.fail();
+
+        return Result.fail("",1);
     }
 
 

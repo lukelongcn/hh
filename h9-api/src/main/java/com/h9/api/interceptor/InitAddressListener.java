@@ -17,26 +17,20 @@ import javax.annotation.Resource;
 
 /**
  * Created by 李圆 on 2017/12/4
+ *
  */
 @Component
 public class InitAddressListener implements ApplicationListener<ApplicationReadyEvent> {
 
     @Resource
     AddressService addressService;
-    @Resource
-    RedisBean redisBean;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         this.initAddressCache();
     }
 
     private void initAddressCache() {
-      List<Areas> areasList = addressService.findFromDb();
-       /* for (int i = 0; i < areasList.size(); i++) {
-            Areas areas =  areasList.get(i);
-            Long id= areas.getId();
-            redisBean.setStringValue(id+"",areas.getName());
-        }*/
-
+       addressService.findFromDb();
     }
 }
