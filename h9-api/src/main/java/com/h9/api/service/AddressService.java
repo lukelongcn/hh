@@ -160,7 +160,6 @@ public class AddressService {
         if (address == null){ return Result.fail("地址不存在"); }
         if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
 
-        address.setUserId(userId);
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
@@ -175,7 +174,7 @@ public class AddressService {
         String  c_parentCode = chinaRepository.findCid(p_code,cityName);
         String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
         address.setProvincialCity(p_code+","+c_parentCode+","+a_parentCode);
-
+        logger.debug("sssss"+address.getId());
         address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
@@ -185,7 +184,9 @@ public class AddressService {
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
+        logger.debug("sssss");
         addressRepository.save(address);
+        logger.debug("sssss"+address);
         return Result.success("地址修改成功");
     }
 
