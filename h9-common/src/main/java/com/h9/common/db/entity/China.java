@@ -50,12 +50,12 @@ import static javax.persistence.GenerationType.IDENTITY;
         @Column(name = "level",nullable = false,columnDefinition = "tinyint  COMMENT '级别， 1：省，2：市  3：县/区'")
         private Integer level;
 
-        @OneToMany(mappedBy = "pid", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "pid", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
         @OrderBy(" id desc")
         private List<China> list = new ArrayList<>();
 
         @JsonIgnore
-        @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+        @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @JoinColumn(name = "pid", referencedColumnName = "id", columnDefinition = "bigint(40) default 0 COMMENT '上级id'")
         private China pid;
 
