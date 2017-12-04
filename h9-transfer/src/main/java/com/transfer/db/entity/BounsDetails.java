@@ -50,7 +50,7 @@ public class BounsDetails {
     private Date BounsTime;
 
     @Column(name="BounsType")
-    private Long BounsType;
+    private Long bounsType;
 
     @Column(name="ToUid")
     private Long ToUid;
@@ -146,11 +146,11 @@ public class BounsDetails {
     }
 
     public Long getBounsType() {
-        return BounsType;
+        return bounsType;
     }
 
     public void setBounsType(Long bounsType) {
-        BounsType = bounsType;
+        this.bounsType = bounsType;
     }
 
     public Long getToUid() {
