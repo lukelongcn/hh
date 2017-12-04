@@ -41,6 +41,7 @@ public class RedisBean {
     @Resource(name = "stringRedisTemplate")
     private ZSetOperations<String, String> zsetOps;
 
+
     public void setObject(String key,Object object){
         String value = JSONObject.toJSONString(object);
         logger.infov("redis: setStringValue({0},{1})", key,value );
@@ -226,6 +227,7 @@ public class RedisBean {
         }
         return listOps.leftPushAll(k, vs);
     }
+
 
 
 }
