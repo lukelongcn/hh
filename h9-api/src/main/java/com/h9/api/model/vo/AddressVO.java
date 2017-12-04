@@ -10,36 +10,36 @@ import org.springframework.beans.BeanUtils;
  */
 public class AddressVO {
 
-    // 地址id
+    /** 地址id */
     private Long id;
 
     private Long userId;
 
-    //收货人姓名
+    /** 收货人姓名 */
     private String name;
 
-    // 收货人手机号码
+    /** 收货人手机号码 */
     private String phone;
 
-    // 默认地址
+    /** 默认地址 */
     private Integer defaultAddress;
 
-    // 所在省
+    /** 所在省 */
     private String province;
 
-    // 所在市
+    /** 所在市 */
     private String city;
 
-    // 所在区
+    /** 所在区 */
     private String distict;
 
-    //详细地址
+    /** 详细地址 */
     private String address;
 
-    //省市区编号
+    /** 省市区编号 */
     private String provincialCity;
 
-    //使用状态
+    /** 使用状态 */
     private Integer status;
 
     public AddressVO(Address address) {

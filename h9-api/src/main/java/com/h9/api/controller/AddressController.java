@@ -44,7 +44,6 @@ public class AddressController {
     @Secured
     @ApiOperation(value = "获取地址列表")
     @GetMapping(value = "/allAddresses")
-    /**@NotNull(message = "参数不能为空")@PathVariable("userId")Long userId){*/
     public Result allAddress(@SessionAttribute("curUserId")Long userId,
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
@@ -52,8 +51,11 @@ public class AddressController {
     }
 
 
-
-
+    /**
+     * 省市区
+     * @return
+     */
+    @ApiOperation(value = "省市区")
     @GetMapping(value = "/allArea")
     public Result allArea(){
         return addressService.allArea();

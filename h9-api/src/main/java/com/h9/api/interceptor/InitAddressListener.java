@@ -17,14 +17,14 @@ import javax.annotation.Resource;
 
 /**
  * Created by 李圆 on 2017/12/4
+ *
  */
 @Component
 public class InitAddressListener implements ApplicationListener<ApplicationReadyEvent> {
 
     @Resource
     AddressService addressService;
-    @Resource
-    RedisBean redisBean;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         this.initAddressCache();

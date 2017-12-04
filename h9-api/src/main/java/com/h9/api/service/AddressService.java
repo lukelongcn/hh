@@ -111,17 +111,14 @@ public class AddressService {
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
-        String provinceName = addressDTO.getProvince();
-        String cityName = addressDTO.getCity();
-        String areaName = address.getDistict();
+        String provinceName = chinaRepository.findName(addressDTO.getPid());
+        String cityName = chinaRepository.findName(addressDTO.getCid());
+        String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince(provinceName);
         address.setCity(cityName);
         address.setDistict(areaName);
-
-        String  p_p_code = chinaRepository.findPid(provinceName);
-        String  c_parentCode = chinaRepository.findCid(p_p_code,cityName);
-        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_p_code+","+c_parentCode+","+a_parentCode);
+        //设值地址id
+        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
 
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
@@ -168,19 +165,16 @@ public class AddressService {
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
-        String provinceName = addressDTO.getProvince();
-        String cityName = addressDTO.getCity();
-        String areaName = address.getDistict();
+        String provinceName = chinaRepository.findName(addressDTO.getPid());
+        String cityName = chinaRepository.findName(addressDTO.getCid());
+        String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince(provinceName);
         address.setCity(cityName);
         address.setDistict(areaName);
 
-        String  p_code = chinaRepository.findPid(provinceName);
-        String  c_parentCode = chinaRepository.findCid(p_code,cityName);
-        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_code+","+c_parentCode+","+a_parentCode);
+        //设值地址id
+        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
 
-        address.setDistict(addressDTO.getDistict());
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
