@@ -1,7 +1,6 @@
-package com.h9.api.interceptor;
+package com.h9.lottery.interceptor;
 
 import org.jboss.logging.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,7 +20,6 @@ public class RequestReplaceFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (!(request instanceof CustomServletRequestWrapper)) {
             request = new CustomServletRequestWrapper(request);
-//            logger.info("CustomServletRequestWrapper");
         }else{
             logger.info("not CustomServletRequestWrapper");
         }
@@ -34,4 +32,8 @@ public class RequestReplaceFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+
+
+
 }
