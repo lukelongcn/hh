@@ -28,20 +28,20 @@ public class AddressDTO {
     @NotBlank(message = "请输入合法的手机号码")
     private String phone;
 
-    // 默认地址
+    /**  默认地址*/
     private Integer defaultAddress;
 
 
 
-    //详细地址
+    // 详细地址
     @NotBlank(message = "请填写详细地址")
     @Size(max = 100,message = "详细地址过长")
     private String address;
 
-    //省市区编号
+    /** 省市区编号*/
     private String provincialCity;
 
-    //使用状态
+    /** 使用状态 */
     private Integer status;
 
     public Long getPid() {
