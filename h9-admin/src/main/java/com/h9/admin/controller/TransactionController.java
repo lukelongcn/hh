@@ -14,7 +14,9 @@ import com.h9.common.modle.dto.transaction.CardCouponsDTO;
 import com.h9.common.modle.vo.admin.transaction.CardCouponsVO;
 import com.h9.common.modle.vo.admin.transaction.GoodsTypeVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +68,11 @@ public class TransactionController {
     @ApiOperation("获取卡券列表")
     public Result<PageResult<CardCouponsVO>> listCardCoupons(@Validated CardCouponsDTO cardCouponsDTO){
         return this.transactionService.listCardCoupons(cardCouponsDTO);
+    }
+
+    @GetMapping(value="/card_coupons/batch_no")
+    @ApiOperation("获取所有卡券批次")
+    public Result<List<String>> listCardCouponsBatchNo(@ApiParam(value = "商品id",required = true) Long goodsId){
+        return this.transactionService.listCardCouponsBatchNo(goodsId);
     }
 }
