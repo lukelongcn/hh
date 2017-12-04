@@ -13,6 +13,7 @@ import com.h9.common.db.repo.UserBankRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.admin.finance.*;
+import com.h9.common.utils.HttpUtil;
 import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,7 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30,TimeUnit.MINUTES);
+        //HttpUtil.setHttpSessionAttr("curUserId",user.getId());
         user.setLastLoginTime(new Date());
         this.userRepository.save(user);
         return new Result(0, "登录成功",new LoginResultVO(token,name));
