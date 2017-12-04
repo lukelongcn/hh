@@ -234,7 +234,7 @@ public class AddressService {
     }
 
 
-    public Result getDefaultAddress(Long userId) {
+     public Result getDefaultAddress(Long userId) {
 
         User user = userRepository.findOne(userId);
         Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
@@ -245,6 +245,6 @@ public class AddressService {
         if (lastUpdateAddress != null){
             return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
         }
-        return Result.success();
+        return Result.fail();
     }
 }
