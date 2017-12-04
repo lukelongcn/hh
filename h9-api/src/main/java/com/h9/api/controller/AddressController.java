@@ -52,14 +52,6 @@ public class AddressController {
     }
 
 
-    /**
-     * 省市区
-     * @return
-     */
-    @GetMapping(value = "/allAreas")
-    public Result allAreas(){
-        return addressService.allAreas();
-    }
 
 
     @GetMapping(value = "/allArea")

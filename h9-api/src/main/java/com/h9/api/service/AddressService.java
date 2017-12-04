@@ -6,31 +6,17 @@ import com.h9.api.model.vo.AddressVO;
 import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.China;
-import com.h9.common.db.entity.City;
-import com.h9.common.db.entity.Distict;
-import com.h9.common.db.entity.Province;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.repo.AddressRepository;
-import com.h9.common.db.repo.ChinaRepository;
-import com.h9.common.db.repo.CityRepository;
-import com.h9.common.db.repo.DistictRepository;
-import com.h9.common.db.repo.ProvinceRepository;
-import com.h9.common.db.repo.UserRepository;
-
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -44,11 +30,6 @@ public class AddressService {
 
     @Resource
     AddressRepository addressRepository;
-    @Resource
-    ProvinceRepository provinceRepository;
-    @Resource
-    CityRepository cityRepository;
-
     @Resource
     ChinaRepository chinaRepository;
 
@@ -69,30 +50,6 @@ public class AddressService {
     }
 
 
-    /**
-     * 省市区
-     * @return
-     */
-    public Result allAreas() {
-
-        List<Province> allProvices = provinceRepository.findAllProvinces();
-        List<Areas> areasList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
-        allProvices.forEach(province -> {
-
-            List<City> allCities = cityRepository.findCities(province.getId());
-            List<Areas> cityList = new ArrayList<>();
-            allCities.forEach(city -> {
-                Areas careas=new Areas(city.getId(),city.getName());
-                cityList .add(careas);
-            });
-
-            Areas pareas=new Areas(province.getId(),province.getName(),cityList);
-            areasList.add(pareas);
-        });
-
-        return Result.success(areasList);
-    }
 
 
     public Result allArea(){
