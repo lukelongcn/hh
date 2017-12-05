@@ -224,6 +224,17 @@ public class Orders extends BaseEntity {
         public void setDesc(String desc) {
             this.desc = desc;
         }
+
+        public static statusEnum findByCode(int code){
+            statusEnum[] values = values();
+            for(statusEnum enumEl : values){
+                if(enumEl.code == code){
+
+                    return enumEl;
+                }
+            }
+            return null;
+        }
     }
 
     public String getGoodsType() {
