@@ -50,8 +50,10 @@ public class BannerType extends BaseEntity {
     private Date endTime;
 
     @Transient
-    private Integer bannerCount;
+    private String locationDesc;
 
+    @Transient
+    private Integer bannerCount;
 
     public Long getId() {
         return id;
@@ -115,6 +117,14 @@ public class BannerType extends BaseEntity {
 
     public void setBannerCount(Integer bannerCount) {
         this.bannerCount = bannerCount;
+    }
+
+    public String getLocationDesc() {
+        return locationDesc;
+    }
+
+    public void setLocationDesc(String locationDesc) {
+        this.locationDesc = locationDesc;
     }
 
     public BannerType() {

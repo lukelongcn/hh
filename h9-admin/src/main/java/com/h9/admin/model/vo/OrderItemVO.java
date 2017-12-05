@@ -49,6 +49,9 @@ public class OrderItemVO {
     @ApiModelProperty(value ="订单状态")
     private Integer status = 1;
 
+    @ApiModelProperty(value ="订单状态描述")
+    private String statusDesc;
+
     @ApiModelProperty(value ="用户id")
     private Long userId;
     
@@ -91,6 +94,8 @@ public class OrderItemVO {
         //统计订单商品数量
         long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderItemVO.setCount(sum);
+        Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
+        orderItemVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
         return orderItemVO;
     }
 
@@ -221,6 +226,14 @@ public class OrderItemVO {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
     }
 
     public Long getUserId() {
