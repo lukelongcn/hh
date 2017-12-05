@@ -2,7 +2,8 @@ package com.h9.admin.model.dto.transaction;
 
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author: George
@@ -10,7 +11,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class CardCouponsListAddDTO {
     @ApiModelProperty(value = "商品id")
-    @NotEmpty(message = "商品id不能为空")
+    @NotNull(message = "商品id不能为空")
     private Long goodsId;
 
     @ApiModelProperty(value = "卡券号")

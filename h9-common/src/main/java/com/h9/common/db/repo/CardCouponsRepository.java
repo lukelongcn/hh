@@ -38,8 +38,8 @@ public interface CardCouponsRepository extends BaseRepository<CardCoupons>{
     @Query(value = "select o.batchNo from CardCoupons o where o.goodsId = ?1 order by o.batchNo desc ")
     List<String> findAllBatchNoByGoodsId(Long goodsId);
 
-    @Query(value = "select o.no from card_coupons o where o.no like '?1%' order by o.no desc limit 1",nativeQuery = true)
-    String findNoByNo(String no);
+    @Query(value = "select o.batch_no from card_coupons o where o.goods_id = ?1 and o.batch_no like ?2% order by o.batch_no desc limit 1",nativeQuery = true)
+    String findLastBatchNo(long goodsId,String dayString);
 
     default Specification<CardCoupons> buildSpecification(CardCouponsDTO cardCouponsDTO) {
         return new Specification<CardCoupons>() {

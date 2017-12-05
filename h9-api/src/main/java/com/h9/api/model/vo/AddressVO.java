@@ -36,8 +36,12 @@ public class AddressVO {
     /** 详细地址 */
     private String address;
 
-    /** 省市区编号 */
-    private String provincialCity;
+    /** 省id */
+    private Long pid;
+
+    private Long cid;
+
+    private Long aid;
 
     /** 使用状态 */
     private Integer status;
@@ -45,6 +49,32 @@ public class AddressVO {
     public AddressVO(Address address) {
         BeanUtils.copyProperties(address,this);
     }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getCid() {
+        return cid;
+    }
+
+    public void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    public Long getAid() {
+        return aid;
+    }
+
+    public void setAid(Long aid) {
+        this.aid = aid;
+    }
+
+
 
     public static AddressVO  convert(Address address){
         return new AddressVO(address);
@@ -112,14 +142,6 @@ public class AddressVO {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getProvincialCity() {
-        return provincialCity;
-    }
-
-    public void setProvincialCity(String provincialCity) {
-        this.provincialCity = provincialCity;
     }
 
     public Integer getStatus() {
