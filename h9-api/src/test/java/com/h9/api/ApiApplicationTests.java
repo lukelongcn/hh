@@ -5,6 +5,7 @@ package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.LoginAuthInterceptor;
+import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -29,10 +31,28 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApiApplicationTests {
+
+
+    @Resource
+    ChinaRepository chinaRepository;
+    @Test
+    public void findFromDb(){
+        //从数据库获取数据
+        Long startTime = System.currentTimeMillis();
+        List<China> allProvices = chinaRepository.findAllProvinces();
+
+        List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
+        Long end = System.currentTimeMillis();
+        logger.debugv("时间"+(end-startTime));
+//        存储到redis
+        redisBean.setObject(RedisKey.addressKey,areasList);
+
+    }
 
 
     ////@Test
