@@ -86,6 +86,14 @@ public class TransactionService {
                 validNoList.add(item.replace("\\s*",""));
             }
         });
+        if (validNoList.size() < 1) {
+            return Result.fail("请输入有效的卡券号");
+        }
+        for (int i = 0;i < validNoList.size();i++) {
+            if (this.cardCouponsRepository.findByNo(validNoList.get(i)) != null) {
+                return Result.fail("券号:"+validNoList.get(i)+",已存在");
+            }
+        }
         Date date = new Date();
         String dayString = DateUtil.formatDate(date,DateUtil.FormatType.NON_SEPARATOR_DAY);
         String lastBatchNo = this.cardCouponsRepository.findLastBatchNo(cardCouponsListAddDTO.getGoodsId(),dayString);

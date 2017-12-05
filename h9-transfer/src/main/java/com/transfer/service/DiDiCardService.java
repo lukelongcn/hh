@@ -65,7 +65,7 @@ public class DiDiCardService {
 
     public void toDidi(T_CardCodes userInfo ){
 //
-        CardCoupons didiNumber = cardCouponsRepository.findByGoodsAndNo(userInfo.getCardCode());
+        CardCoupons didiNumber = cardCouponsRepository.findByNo(userInfo.getCardCode());
         if (didiNumber != null) {
             return;
         }
@@ -149,7 +149,7 @@ public class DiDiCardService {
         String cardCode = c_cards.getCardCode();
         CardCoupons cardCoupons = null;
         if(!StringUtils.isEmpty(cardCode)){
-            cardCoupons = cardCouponsRepository.findByGoodsAndNo(cardCode);
+            cardCoupons = cardCouponsRepository.findByNo(cardCode);
         }else{
             cardCoupons = cardCouponsRepository.findTopOneUnUse();
         }
