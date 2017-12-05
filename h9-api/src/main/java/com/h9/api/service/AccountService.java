@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,6 +62,10 @@ public class AccountService {
     @Resource
     private OrderService orderService;
     private Logger logger = Logger.getLogger(this.getClass());
+    @Resource
+    private UserRecordRepository userRecordRepository;
+    @Resource
+    private VB2MoneyRepository vb2MoneyReposiroty;
 
 
     public Result getBalanceFlow(Long userId, int page, int limit) {
@@ -155,7 +160,7 @@ public class AccountService {
     }
 
     @Transactional
-    public Result vbConvert(Long userId) {
+    public Result vbConvert(Long userId, HttpServletRequest request) {
 
         UserAccount userAcount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
@@ -170,14 +175,23 @@ public class AccountService {
         Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
         ordersReposiroty.saveAndFlush(order);
 
+
+
         Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");
         if (result.getCode() == 1) {
             throw new RuntimeException("转换酒元异常");
         }
         //vb流水
         VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount, order.getId(),11L);
-        vCoinsFlowRepository.save(vCoinsFlow);
+        UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
+        userRecordRepository.saveAndFlush(userRecord);
+
+
+        VB2Money vb2Money = new VB2Money(user.getPhone(), userAcount.getvCoins(), money, userRecord.getIp(),user.getId(),userRecord.getId());
         userAcount.setvCoins(new BigDecimal(0));
+        vb2MoneyReposiroty.save(vb2Money);
+        vCoinsFlowRepository.save(vCoinsFlow);
+        userAccountRepository.save(userAcount);
         return Result.success("兑换成功");
 
     }
