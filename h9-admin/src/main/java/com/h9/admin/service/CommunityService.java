@@ -221,17 +221,15 @@ public class CommunityService {
     }
 
     public Result<BannerType> updateBannerType(BannerTypeEditDTO bannerType) {
+        BannerType b = this.bannerTypeRepository.findOne(bannerType.getId());
+        if (b == null) {
+            return Result.fail("功能类型不存在");
+        }
         if (this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(), bannerType.getCode()) != null) {
             return Result.fail("标识已存在");
         }
-        BannerType b = getNewBannerType(bannerType);
-        return Result.success(this.bannerTypeRepository.save(b));
-    }
-
-    private BannerType getNewBannerType(BannerTypeEditDTO bannerType) {
-        BannerType b = this.bannerTypeRepository.findOne(bannerType.getId());
         BeanUtils.copyProperties(bannerType, b);
-        return b;
+        return Result.success(this.bannerTypeRepository.save(b));
     }
 
     private void setAnnouncementUrl(Announcement announcement, Map preLink) {
