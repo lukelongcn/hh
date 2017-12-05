@@ -211,7 +211,7 @@ public class AddressService {
 
     public Result getDefaultAddress(Long userId) {
 
-        Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
+        Address address = addressRepository.findByUserIdAndDefaultAddressAndStatus(userId, 1,1);
         if (address != null) {
             return Result.success(new AddressVO(address));
         }
