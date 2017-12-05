@@ -35,6 +35,41 @@ public class VB2Money extends BaseEntity{
     @Column(name = "ip",columnDefinition = "varchar(50) default '' COMMENT 'ip'")
     private String ip;
 
+    @Column(name ="user_id")
+    private Long userId;
+
+    @Column(name = "user_record_id")
+    private Long user_record_id;
+
+
+
+    public VB2Money(String tel, BigDecimal vb, BigDecimal money, String ip,Long userId,Long userRecordId) {
+        this.tel = tel;
+        this.vb = vb;
+        this.money = money;
+        this.ip = ip;
+        this.userId = userId;
+        this.user_record_id = userRecordId;
+    }
+
+    public Long getUser_record_id() {
+        return user_record_id;
+    }
+
+    public void setUser_record_id(Long user_record_id) {
+        this.user_record_id = user_record_id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public VB2Money(){}
+
     public Long getId() {
         return id;
     }
