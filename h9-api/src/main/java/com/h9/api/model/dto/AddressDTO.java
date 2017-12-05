@@ -9,11 +9,11 @@ import javax.validation.constraints.Size;
  * Created by 李圆 on 2017/11/27
  */
 public class AddressDTO {
-    @NotNull(message = "请填写所在省id")
+    @NotNull(message = "请填写所在省")
     private Long pid;
-    @NotNull(message = "请填写所在市id")
+    @NotNull(message = "请填写所在市")
     private Long cid;
-    @NotNull(message = "请填写所在区id")
+    @NotNull(message = "请填写所在区")
     private Long aid;
 
     private Long userId;
