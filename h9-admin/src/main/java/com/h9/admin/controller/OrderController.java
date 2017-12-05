@@ -7,8 +7,10 @@ import com.h9.admin.service.OrderService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.dto.transaction.OrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +34,8 @@ public class OrderController {
     @Secured(accessCode = "order:list")
     @GetMapping(value = "/list")
     @ApiOperation("获取订单列表")
-    public Result<PageResult<OrderItemVO>> orderList(PageDTO pageDTO){
-        return orderService.orderList(pageDTO);
+    public Result<PageResult<OrderItemVO>> orderList(@Validated OrderDTO orderDTO){
+        return orderService.orderList(orderDTO);
     }
 
     @Secured(accessCode = "order:express:update")

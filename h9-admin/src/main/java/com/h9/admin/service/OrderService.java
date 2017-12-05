@@ -9,6 +9,7 @@ import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.dto.transaction.OrderDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -28,9 +29,10 @@ public class OrderService {
     @Resource
     private ConfigService configService;
     
-    public Result<PageResult<OrderItemVO>> orderList(PageDTO pageDTO) {
+    public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
-        Page<Orders> all = ordersRepository.findAll(pageDTO.toPageRequest(sort));
+        Page<Orders> all = ordersRepository.findAll(this.ordersRepository.buildSpecification(orderDTO)
+                ,orderDTO.toPageRequest(sort));
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
