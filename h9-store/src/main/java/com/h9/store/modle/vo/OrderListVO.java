@@ -17,6 +17,7 @@ public class OrderListVO {
     private String img;
     private String goodsName;
     private Long orderId;
+    private String supplyIcon;
 
     public OrderListVO(){}
 
@@ -27,5 +28,6 @@ public class OrderListVO {
         this.img = goods.getImg();
         this.goodsName = goods.getName();
         this.orderId = order.getId();
+        this.supplyIcon = "https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r";
     }
 }

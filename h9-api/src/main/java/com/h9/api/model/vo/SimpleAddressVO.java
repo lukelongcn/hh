@@ -35,8 +35,8 @@ public class SimpleAddressVO {
     public SimpleAddressVO(){}
 
     public SimpleAddressVO(Address address, User user){
-        this.name = user.getNickName();
-        this.tel = user.getPhone();
+        this.name = address.getName();
+        this.tel = address.getPhone();
         this.address = address.getAddress();
         this.id = address.getId();
         this.city = address.getCity();

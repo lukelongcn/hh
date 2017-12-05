@@ -13,7 +13,7 @@ public class AddressDTO {
     private Long pid;
     @NotNull(message = "请填写所在市")
     private Long cid;
-    @NotNull(message = "请填写所在区")
+
     private Long aid;
 
     private Long userId;

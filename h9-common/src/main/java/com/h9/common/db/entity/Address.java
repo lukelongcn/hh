@@ -55,6 +55,39 @@ public class Address extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
     private Integer status;
 
+    @Column(name = "pid", columnDefinition = "bigint default 1 COMMENT '省id'")
+    private Long pid;
+
+    @Column(name = "cid", columnDefinition = "bigint default 1 COMMENT '市id'")
+    private Long cid;
+
+    @Column(name = "aid", columnDefinition = "bigint default 1 COMMENT '区id'")
+    private Long aid;
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getCid() {
+        return cid;
+    }
+
+    public void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    public Long getAid() {
+        return aid;
+    }
+
+    public void setAid(Long aid) {
+        this.aid = aid;
+    }
+
     public Integer getStatus() {
         return status;
     }
