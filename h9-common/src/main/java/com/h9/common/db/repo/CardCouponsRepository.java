@@ -29,7 +29,7 @@ public interface CardCouponsRepository extends BaseRepository<CardCoupons>{
     CardCoupons findByGoodsId(Long goodsId);
 
     @Query(value = "select gdn from CardCoupons gdn where  gdn.no = ?1")
-    CardCoupons findByGoodsAndNo(String number);
+    CardCoupons findByNo(String number);
 
 
     @Query(value = "select * from card_coupons where status = 1 limit 0,1",nativeQuery = true)

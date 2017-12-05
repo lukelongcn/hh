@@ -24,7 +24,7 @@ public class CardCouponsDTO extends PageDTO{
     @ApiModelProperty(value = "批次")
     private String batchNo;
 
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态,1:正常，2:已使用,3 禁用")
     @NotNull(message = "状态不能为空")
     private Integer status;
 
