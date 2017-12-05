@@ -4,6 +4,7 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.community.BannerTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeEditDTO;
+import com.h9.admin.model.dto.transaction.CardCouponsListAddDTO;
 import com.h9.admin.service.TransactionService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -74,5 +75,19 @@ public class TransactionController {
     @ApiOperation("获取所有卡券批次")
     public Result<List<String>> listCardCouponsBatchNo(@ApiParam(value = "商品id",required = true) Long goodsId){
         return this.transactionService.listCardCouponsBatchNo(goodsId);
+    }
+
+    @Secured(accessCode = "card_coupons:batch_add")
+    @PostMapping(value="/card_coupons/list")
+    @ApiOperation("批量导入卡券")
+    public Result addCardCouponsList(@Validated @RequestBody CardCouponsListAddDTO cardCouponsListAddDTO){
+        return this.transactionService.addCardCouponsList(cardCouponsListAddDTO);
+    }
+
+    @Secured(accessCode = "card_coupons:status:change")
+    @PutMapping(value="/card_coupons/{id}/status")
+    @ApiOperation("启用/禁用卡券")
+    public Result changeCardCouponsStatus(@PathVariable long id){
+        return this.transactionService.changeCardCouponsStatus(id);
     }
 }
