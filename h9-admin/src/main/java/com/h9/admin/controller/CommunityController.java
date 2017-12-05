@@ -9,12 +9,15 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
 import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.vo.Config;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author: George
@@ -27,6 +30,13 @@ public class CommunityController {
 
     @Autowired
     private CommunityService communityService;
+
+    @Secured
+    @GetMapping(value="/banner_type/location")
+    @ApiOperation("获取功能类别所有位置")
+    public Result<List<Config>> listBannerTypeLocation(){
+        return this.communityService.listBannerTypeLocation();
+    }
 
     @Secured(accessCode = "banner_type:add")
     @PostMapping(value="/banner_type")

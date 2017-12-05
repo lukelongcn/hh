@@ -8,6 +8,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.modle.vo.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +28,8 @@ import java.util.Map;
 @Service
 @Transactional
 public class CommunityService {
+
+    private final String BANNER_TYPE_LOCATION = "bannerTypeLocation";
 
     @Autowired
     private BannerTypeRepository bannerTypeRepository;
@@ -43,6 +47,10 @@ public class CommunityService {
     private AnnouncementReposiroty announcementReposiroty;
     @Autowired
     private ConfigService configService;
+
+    public Result<List<Config>> listBannerTypeLocation() {
+        return Result.success(this.configService.getMapListConfig(BANNER_TYPE_LOCATION));
+    }
 
     public Result<BannerType> addBannerType(BannerType bannerType) {
         if (this.bannerTypeRepository.findByCode(bannerType.getCode()) != null) {
