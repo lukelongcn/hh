@@ -41,7 +41,7 @@ public class HomeService {
         Map<String, List<HomeVO>> voMap = new HashMap<>();
         List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 1);
         if (!CollectionUtils.isEmpty(bannerList)) {
-            bannerList.stream().filter(b -> b.getLocation().equals(1)).forEach(banner -> {
+            bannerList.stream().filter(b -> b.getBannerType().getLocation().equals(1)).forEach(banner -> {
                 BannerType bannerType = banner.getBannerType();
                 HomeVO convert = new HomeVO(banner);
                 List<HomeVO> list = voMap.get(bannerType.getCode());
@@ -104,17 +104,17 @@ public class HomeService {
     @Resource
     VersionRepository versionRepository;
 
-    public Result version(Integer version, Integer type) {
+    public Result version(Integer version, Integer client) {
 
         //检查是否有新版本
-        Version lastVersion = versionRepository.findLastVersion(type, version);
-        if(lastVersion.getVersionNumber().equals(version)) return Result.success("已是最新版本");
+        Version lastVersion = versionRepository.findLastVersion(client, version);
+        if (lastVersion.getVersionNumber().equals(version)) return Result.success("已是最新版本");
 
-        List<Version> forceUpdateVersion = versionRepository.findForceUpdateVersion(type, version);
+        List<Version> forceUpdateVersion = versionRepository.findForceUpdateVersion(client, version);
         if (CollectionUtils.isEmpty(forceUpdateVersion)) {
             //当前版本与最新版本之间没有强制升级版,返回最新版
             return Result.success(new UpdateInfoVO(lastVersion));
-        }else{
+        } else {
             //有强制升级版，返回最新版，将升级策略改成强升
             UpdateInfoVO updateInfoVO = new UpdateInfoVO(lastVersion);
             updateInfoVO.setUpdateType(3);

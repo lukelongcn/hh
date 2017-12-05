@@ -60,17 +60,6 @@ public class Banner extends BaseEntity {
     @Column(name = "font_color", columnDefinition = "varchar(10) default '' COMMENT '字体颜色'")
     private String fontColor;
 
-    @Column(name = "location",columnDefinition = "int default 1 COMMENT '显示位置，1为首页，2为酒元商城'")
-    private Integer location;
-
-    public Integer getLocation() {
-        return location;
-    }
-
-    public void setLocation(Integer location) {
-        this.location = location;
-    }
-
     public Long getId() {
         return id;
     }
