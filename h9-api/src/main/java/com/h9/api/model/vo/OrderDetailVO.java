@@ -37,7 +37,9 @@ public class OrderDetailVO {
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
-        vo.setOrderStatus("已完成");
+
+        Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
+        vo.setOrderStatus(statusEnum.getDesc());
         vo.setOrderType(order.getOrderType());
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());

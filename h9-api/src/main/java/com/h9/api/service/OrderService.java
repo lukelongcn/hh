@@ -13,6 +13,9 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
+import static com.h9.common.db.entity.Orders.orderTypeEnum.MATERIAL_GOODS;
+import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
+
 /**
  * Created by itservice on 2017/10/31.
  */
@@ -28,6 +31,12 @@ public class OrderService {
 
     public Orders initOrder(String nickName, BigDecimal money, String tel,String type,String supplierName) {
         Orders order = new Orders();
+
+        if(type.equals(String.valueOf(MATERIAL_GOODS.getCode()))){
+            order.setStatus(Orders.statusEnum.DELIVER.getCode());
+        }else{
+            order.setStatus(Orders.statusEnum.FINISH.getCode());
+        }
         order.setUserName(nickName);
         order.setPayMoney(money);
         order.setNo("");
@@ -35,12 +44,19 @@ public class OrderService {
         order.setUserPhone(tel);
         order.setSupplierName(supplierName);
         order.setPayStatus(1);
-        order.setStatus(1);
+
         order.setOrderType(type);
         return order;
     }
     public Orders initOrder( BigDecimal money, String tel,String type,String supplierName,User user) {
         Orders order = new Orders();
+
+        if(type.equals(String.valueOf(MATERIAL_GOODS.getCode()))){
+            order.setStatus(Orders.statusEnum.DELIVER.getCode());
+        }else{
+            order.setStatus(Orders.statusEnum.FINISH.getCode());
+        }
+
         order.setUserName(user.getNickName());
         order.setPayMoney(money);
         order.setNo("");

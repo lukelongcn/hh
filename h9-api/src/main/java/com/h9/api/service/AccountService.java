@@ -150,11 +150,12 @@ public class AccountService {
 
         BigDecimal JiuYuan = vbCount.multiply(new BigDecimal(rateStr));
 
+        String icon = configService.getStringConfig("JiuYuanIcon");
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
                 .setVb(MoneyUtils.formatMoney(vbCount) + "")
-                .setJiuYuanIcon("");
+                .setJiuYuanIcon(icon);
 
         return Result.success(vo);
     }
