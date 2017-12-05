@@ -93,6 +93,8 @@ public class ConsumeService {
     private GlobalPropertyRepository globalPropertyRepository;
     @Resource
     private ConfigService configService;
+    @Resource
+    private RechargeRecordRepository rechargeRecordRepository;
 
 
     @Resource
@@ -108,7 +110,6 @@ public class ConsumeService {
     public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
-//        UserAccount userAccount = userAccountRepository.findByUserId(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
 
         BigDecimal balance = userAccount.getBalance();
@@ -125,9 +126,6 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
 
-//        BigDecimal subtract = balance.subtract(realPrice);
-//        userAccountRepository.changeBalance(subtract, userId);
-//        userAccount.setBalance(subtract);
         //校验 code
         String tel = user.getPhone();
 
@@ -136,7 +134,6 @@ public class ConsumeService {
 
         String smsCodeCount = RedisKey.getSmsCodeCount(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
-
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
         order.setUser(user);
@@ -151,9 +148,7 @@ public class ConsumeService {
         orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
 
-
         userAccountRepository.save(userAccount);
-
         Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());
         //保存充值记录（包括失败成功）
         try {
@@ -176,10 +171,17 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
+            saveRechargeRecord(user,goods.getRealPrice());
             return Result.success("充值成功", map);
         } else {
             throw new RuntimeException("充值失败");
         }
+    }
+
+
+    public void saveRechargeRecord(User user,BigDecimal money){
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone());
+        rechargeRecordRepository.save(rechargeRecord);
     }
 
     public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo) {
