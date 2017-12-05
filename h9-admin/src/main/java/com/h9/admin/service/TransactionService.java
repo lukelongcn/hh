@@ -79,7 +79,7 @@ public class TransactionService {
         if (goods == null) {
             return Result.fail("商品不存在");
         }
-        List<String> noList = Arrays.asList(cardCouponsListAddDTO.getNos().split("\r\n"));
+        List<String> noList = Arrays.asList(cardCouponsListAddDTO.getNos().split("\n"));
         List<String> validNoList = new ArrayList<>();
         noList.forEach(item -> {
             if (StringUtils.isNotBlank(item)) {
@@ -93,8 +93,8 @@ public class TransactionService {
         if (lastBatchNo == null || lastBatchNo.length() <= DateUtil.FormatType.NON_SEPARATOR_DAY.getFormat().length()) {
             lastBatchNo = dayString + 1;
         }else {
-            int currentId = Integer.valueOf(lastBatchNo.substring(DateUtil.FormatType.NON_SEPARATOR_DAY.getFormat().length()
-                    ,lastBatchNo.length()))+1;
+            int currentId = Integer.valueOf(lastBatchNo.substring(DateUtil.FormatType.NON_SEPARATOR_DAY.getFormat()
+                            .length(),lastBatchNo.length()))+1;
             lastBatchNo = dayString + currentId;
         }
         List<CardCoupons> cardCouponsList = new ArrayList<>();
