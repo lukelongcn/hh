@@ -4,6 +4,7 @@ import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.modle.dto.transaction.OrderDTO;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,13 +54,13 @@ public interface OrdersRepository extends BaseRepository<Orders> {
                     predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class),orderDTO.getNo()));
                 }
                 if (StringUtils.isNotBlank(orderDTO.getPhone())) {
-                    predicateList.add(criteriaBuilder.equal(root.get("phone").as(String.class),orderDTO.getPhone()));
+                    predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class),orderDTO.getPhone()));
                 }
                 if (orderDTO.getStartTime() != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("startTime").as(Date.class),orderDTO.getStartTime()));
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class),orderDTO.getStartTime()));
                 }
                 if (orderDTO.getEndTime() != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("endTime").as(Date.class),orderDTO.getEndTime()));
+                    predicateList.add(criteriaBuilder.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(orderDTO.getEndTime(),1)));
                 }
                 predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class),orderDTO.getStatus()));
                 Predicate[] pre = new Predicate[predicateList.size()];
