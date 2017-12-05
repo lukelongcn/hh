@@ -2,6 +2,7 @@ package com.h9.api.controller;
 
 import com.google.gson.Gson;
 import com.h9.api.service.FileService;
+import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
@@ -39,19 +40,4 @@ public class FileController {
         return fileService.fileUpload(file);
     }
 
-
-
-    /**
-     * description: 上传文件
-     */
-
-    @PostMapping("/file/upload2")
-    public Result upload(MultipartFile[] file) {
-
-        if(file == null || file.length <=0){
-            return Result.fail("请选择图片");
-        }
-
-        return fileService.fileUpload(file[0]);
-    }
 }
