@@ -288,8 +288,6 @@ public class ApiApplicationTests {
     private AddressRepository addressRepository;
     @Test
     public void test22(){
-        Address address = addressRepository.findByUserIdAndDefaultAddress(9677L, 1);
-        System.out.println();
     }
 
 }
