@@ -1,10 +1,9 @@
 package com.h9.api.service;
 
-import com.h9.api.interceptor.InitAddressListener;
+
 import com.h9.api.model.dto.AddressDTO;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.model.vo.AddressVO;
-import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
@@ -17,10 +16,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 import java.util.stream.Collectors;
 
 
@@ -35,11 +33,9 @@ public class AddressService {
 
     @Resource
     AddressRepository addressRepository;
-    @Resource
-    ChinaRepository chinaRepository;
 
     @Resource
-    private UserRepository userRepository;
+    ChinaRepository chinaRepository;
 
     @Resource
     RedisBean redisBean;
@@ -215,14 +211,13 @@ public class AddressService {
 
     public Result getDefaultAddress(Long userId) {
 
-        User user = userRepository.findOne(userId);
         Address address = addressRepository.findByUserIdAndDefaultAddress(userId, 1);
         if (address != null) {
-            return Result.success(new SimpleAddressVO(address, user));
+            return Result.success(new AddressVO(address));
         }
         Address lastUpdateAddress = addressRepository.findByLastUpdate(userId);
         if (lastUpdateAddress != null){
-            return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
+            return Result.success(new AddressVO(lastUpdateAddress));
         }
 
         return Result.fail("",1);
