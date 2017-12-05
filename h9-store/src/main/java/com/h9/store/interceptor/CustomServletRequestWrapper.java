@@ -39,6 +39,7 @@ public class CustomServletRequestWrapper extends HttpServletRequestWrapper {
         public RequestBodyCachingInputStream(byte[] body) {
             this.body = body;
         }
+        @SuppressWarnings("Duplicates")
         @Override
         public int read() throws IOException {
             if (isFinished()) {
@@ -66,6 +67,7 @@ public class CustomServletRequestWrapper extends HttpServletRequestWrapper {
             // We also never need to call the readListener from this method, as this method will never return false
             return isFinished();
         }
+        @SuppressWarnings("Duplicates")
         @Override
         public void setReadListener(ReadListener listener) {
             if (listener == null) {

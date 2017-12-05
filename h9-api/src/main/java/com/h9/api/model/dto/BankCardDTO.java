@@ -25,6 +25,17 @@ public class BankCardDTO {
     private String provice;
     @NotBlank(message = "请填写city")
     private String city;
+    @NotBlank(message = "请传入短信验证码")
+    private String smsCode;
+
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
+    }
 
     public String getNo() {
         return no;

@@ -1,34 +1,27 @@
 package com.h9.api.service;
 
+import com.h9.api.interceptor.InitAddressListener;
 import com.h9.api.model.dto.AddressDTO;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.model.vo.AddressVO;
 import com.h9.api.model.vo.SimpleAddressVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.China;
-import com.h9.common.db.entity.City;
-import com.h9.common.db.entity.Distict;
-import com.h9.common.db.entity.Province;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.repo.AddressRepository;
-import com.h9.common.db.repo.ChinaRepository;
-import com.h9.common.db.repo.CityRepository;
-import com.h9.common.db.repo.DistictRepository;
-import com.h9.common.db.repo.ProvinceRepository;
-import com.h9.common.db.repo.UserRepository;
-
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -38,18 +31,19 @@ import javax.transaction.Transactional;
 @Transactional
 public class AddressService {
 
+    Logger logger = Logger.getLogger(AddressService.class);
+
     @Resource
     AddressRepository addressRepository;
-    @Resource
-    ProvinceRepository provinceRepository;
-    @Resource
-    CityRepository cityRepository;
-
     @Resource
     ChinaRepository chinaRepository;
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    RedisBean redisBean;
+
 
     /**
      * 地址列表
@@ -66,72 +60,40 @@ public class AddressService {
 
 
     /**
-     * 省市区
+     * 所有地区
      * @return
      */
-    public Result allAreas() {
-
-        List<Province> allProvices = provinceRepository.findAllProvinces();
-        List<Areas> areasList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
-        allProvices.forEach(province -> {
-
-            List<City> allCities = cityRepository.findCities(province.getId());
-            List<Areas> cityList = new ArrayList<>();
-            allCities.forEach(city -> {
-                Areas careas=new Areas(city.getId()+"",city.getName());
-                cityList .add(careas);
-            });
-
-            Areas pareas=new Areas(province.getId()+"",province.getName(),cityList);
-            areasList.add(pareas);
-        });
-
-        return Result.success(areasList);
+    public Result allArea(){
+        List<Areas> formCahce = findFormCahce();
+        if(!CollectionUtils.isEmpty(formCahce)){
+            return Result.success(formCahce);
+        }
+        List<Areas> fromDb = findFromDb();
+        if(null == fromDb){
+            return Result.fail("暂无数据");
+        }
+        return Result.success(fromDb);
     }
 
-    public Result allAres() {
+    public List<Areas> findFromDb(){
+        //从数据库获取数据
+        Long startTime = System.currentTimeMillis();
         List<China> allProvices = chinaRepository.findAllProvinces();
-        if (CollectionUtils.isEmpty(allProvices)){ return Result.success();}
+        if (CollectionUtils.isEmpty(allProvices)) {
+            return null;
+        }
+        List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
+        Long end = System.currentTimeMillis();
+        logger.debugv("时间"+(end-startTime));
+//        存储到redis
+        redisBean.setObject(RedisKey.addressKey,areasList);
+        return areasList;
+    }
 
-        List<Areas> areasList = new ArrayList<>();
-        List<Areas> cityList = new ArrayList<>();
-        List<Areas> areaList = new ArrayList<>();
 
-        List<China> allCities = chinaRepository.findByLevel(2);
-        List<China> allAreas = chinaRepository.findByLevel(3);
-        allCities.forEach(citys->{
-
-            allAreas.forEach(areas->{
-                    Areas a =new Areas(areas.getId()+"",areas.getName());
-                    areaList .add(a);
-        });
-            Areas careas=new Areas(citys.getId()+"",citys.getName(),areaList);
-            cityList .add(careas);
-        });
-
-        //List<China> allAreas = chinaRepository.findByLevel(3);
-
-        allProvices.forEach(province -> {
-
-            //List<China> allCities = chinaRepository.findCities(province.getCode());
-
-            /*allCities.forEach(city -> {
-
-                allAreas.forEach(area -> {
-                    Areas areas=new Areas(area.getCode(),area.getName());
-                    areaList .add(areas);
-                });
-
-                Areas careas=new Areas(city.getCode(),city.getName(),areaList);
-                cityList .add(careas);
-            });*/
-
-            Areas pareas=new Areas(province.getCode(),province.getName(),cityList);
-            areasList.add(pareas);
-        });
-
-        return Result.success(areasList);
+    public List<Areas> findFormCahce(){
+//        从reids里面取
+        return redisBean.getArray(RedisKey.addressKey,Areas.class);
     }
 
 
@@ -148,20 +110,23 @@ public class AddressService {
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
-        String provinceName = addressDTO.getProvince();
-        String cityName = addressDTO.getCity();
-        String areaName = address.getDistict();
+        String provinceName = chinaRepository.findName(addressDTO.getPid());
+        String cityName = chinaRepository.findName(addressDTO.getCid());
+        String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince(provinceName);
         address.setCity(cityName);
         address.setDistict(areaName);
-
-      /*  String  p_parentCode = chinaRepository.findPid(provinceName);
-        String  c_parentCode = chinaRepository.findCid(p_parentCode,cityName);
-        String  a_parentCode = chinaRepository.findCid(c_parentCode,areaName);
-        address.setProvincialCity(p_parentCode+","+c_parentCode+","+a_parentCode);*/
-
+        //设值地址id
+        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
+        address.setPid(addressDTO.getPid());
+        address.setCid(addressDTO.getCid());
+        address.setAid(addressDTO.getAid());
+        //设值详细地址
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
+        if(addressDTO.getDefaultAddress() == 1){
+            addressRepository.updateDefault(userId);
+        }
         address.setDefaultAddress(addressDTO.getDefaultAddress());
 
         // 使用状态设为开启
@@ -199,20 +164,22 @@ public class AddressService {
         if (address == null){ return Result.fail("地址不存在"); }
         if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
 
-        address.setUserId(userId);
         address.setName(addressDTO.getName());
         address.setPhone(addressDTO.getPhone());
 
-        String provinceName = addressDTO.getProvince();
-        String cityName = addressDTO.getCity();
+        String provinceName = chinaRepository.findName(addressDTO.getPid());
+        String cityName = chinaRepository.findName(addressDTO.getCid());
+        String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince(provinceName);
         address.setCity(cityName);
+        address.setDistict(areaName);
 
-        Long pid = provinceRepository.findPid(provinceName);
-        Long cid = cityRepository.findCid(pid,cityName);
-        address.setProvincialCity(pid+","+cid);
-
-        address.setDistict(addressDTO.getDistict());
+        //设值地址id
+        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
+        address.setPid(addressDTO.getPid());
+        address.setCid(addressDTO.getCid());
+        address.setAid(addressDTO.getAid());
+        //设值详细地址
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
@@ -221,7 +188,9 @@ public class AddressService {
         address.setDefaultAddress(addressDTO.getDefaultAddress());
         // 使用状态设为开启
         address.setStatus(1);
+
         addressRepository.save(address);
+
         return Result.success("地址修改成功");
     }
 
@@ -255,7 +224,8 @@ public class AddressService {
         if (lastUpdateAddress != null){
             return Result.success(new SimpleAddressVO(lastUpdateAddress, user));
         }
-        return Result.success();
+
+        return Result.fail("",1);
     }
 
 

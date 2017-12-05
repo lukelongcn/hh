@@ -48,6 +48,21 @@ public class SqlUtils {
         return "'" + DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND) + "',";
     }
 
+    public static String concatDate(Date date){
+        return concatDate(date, new Date());
+    }
+
+    public static String concatDate(Date date, Date defaultDate){
+        if(date==null){
+            if(defaultDate!=null){
+                date = defaultDate;
+            }else{
+                return "null,";
+            }
+        }  return "'" + DateUtil.formatDate(date, DateUtil.FormatType.SECOND) + "',";
+
+    }
+
 
 
     public static String concatSql(String sql,boolean isLast){

@@ -1,6 +1,12 @@
 package com.h9.api.model.dto;
 
+import com.h9.common.db.entity.China;
+
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by 李圆 on 2017/11/30
@@ -8,28 +14,29 @@ import java.util.List;
  * */
 public class Areas {
 
-    private String id;
+    private Long id;
 
     private String name;
 
     private List list;
 
-    public Areas(String id,String name,List<Areas> list){
-         this.id = id;
-         this.name = name;
-         this.list =list;
+    public Areas(China china) {
+        id = china.getId();
+        name = china.getName();
+        List<China> areas = china.getList();
+        if (!CollectionUtils.isEmpty(areas)){
+            list = areas.stream().map(Areas::new).collect(Collectors.toList());
+        }
     }
 
-    public Areas(String id,String name) {
-        this.id = id;
-        this.name = name;
+    public Areas() {
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

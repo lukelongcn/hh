@@ -26,7 +26,7 @@ import static com.h9.common.db.entity.GoodsType.GoodsTypeEnum.EVERYDAY_GOODS;
 /**
  * Created by itservice on 2017/11/20.
  */
-@Transactional
+
 @Service
 public class GoodService {
 
@@ -144,7 +144,7 @@ public class GoodService {
 
         if(StringUtils.isBlank(code)) return Result.fail("不存在此类型商品");
 
-        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, new PageRequest(page, size));
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, goodsReposiroty.pageRequest(page, size) );
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -155,7 +155,7 @@ public class GoodService {
      */
     public Result goodsPageQuery(int page, int size) {
 
-        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(new PageRequest(page, size));
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(goodsReposiroty.pageRequest(page, size) );
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -167,7 +167,8 @@ public class GoodService {
      */
     public Result todayNewGoods() {
 
-        PageRequest pageRequest = new PageRequest(0,5);
+
+        PageRequest pageRequest = goodsReposiroty.pageRequest(0, 5);
         Page<Goods> pageObj = goodsReposiroty.findLastUpdate(pageRequest);
         PageResult<Goods> pageResult = new PageResult(pageObj);
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -184,6 +185,7 @@ public class GoodService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
         GoodsDetailVO vo = GoodsDetailVO.builder()
+                .id(goods.getId())
                 .img(goods.getImg())
                 .desc(goods.getDescription())
                 .price(MoneyUtils.formatMoney(goods.getPrice()))
@@ -196,6 +198,7 @@ public class GoodService {
         return Result.success(vo);
     }
 
+    @Transactional
     public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
@@ -224,8 +227,13 @@ public class GoodService {
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
+        Result payResult = commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
+        if(payResult.getCode() == 1){
+            throw new RuntimeException(payResult.getMsg());
+        }
+
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+
 
         OrderItems orderItems = new OrderItems(goods,count,order);
         ordersRepository.save(order);

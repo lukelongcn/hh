@@ -35,7 +35,7 @@ public class RedisKey {
     }
 
 
-
+    public static String addressKey = "h9:address:areas";
 
     public static void main(String[] args) {
         String smsCodeKey = getSmsCodeKey("17673140753", 1);

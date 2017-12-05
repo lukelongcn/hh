@@ -3,6 +3,7 @@ package com.h9.api.controller;
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.AddressDTO;
 import com.h9.api.service.AddressService;
+import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
 
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,7 +45,6 @@ public class AddressController {
     @Secured
     @ApiOperation(value = "获取地址列表")
     @GetMapping(value = "/allAddresses")
-    /**@NotNull(message = "参数不能为空")@PathVariable("userId")Long userId){*/
     public Result allAddress(@SessionAttribute("curUserId")Long userId,
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
@@ -52,16 +52,18 @@ public class AddressController {
     }
 
 
+
+
     /**
      * 省市区
      * @return
      */
-    @GetMapping(value = "/allAreas")
-    public Result allAreas(){
-        return addressService.allAreas();
+    @PrintReqResLog(printRequestParams = true)
+    @ApiOperation(value = "省市区")
+    @GetMapping(value = "/allArea")
+    public Result allArea(){
+        return addressService.allArea();
     }
-
-
 
     /**
      * 添加收货地址

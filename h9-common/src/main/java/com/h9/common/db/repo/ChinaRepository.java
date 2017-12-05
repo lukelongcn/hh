@@ -2,10 +2,6 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.China;
-import com.h9.common.db.entity.City;
-import com.h9.common.db.entity.Province;
-
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -40,13 +36,8 @@ public interface ChinaRepository extends BaseRepository<China> {
     @Query("select c from  China c where c.level = 1")
     List<China> findAllProvinces();
 
-    @Query("select c from  China c where c.level = ?1")
-    List<China> findByLevel(Integer level);
 
-    @Modifying
-    @Query("update China c set c.pid = ?1 where c.code=?2 ")
-    void updateALL(Long pid,String code);
-
-    China findByCode(String parentcode);
+    @Query("select c.name from  China c where c.id = ?1")
+    String  findName(Long id);
 
 }

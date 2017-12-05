@@ -13,6 +13,7 @@ import com.h9.common.db.repo.UserBankRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.admin.finance.*;
+import com.h9.common.utils.HttpUtil;
 import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,12 @@ public class UserService {
     public Result<LoginResultVO> login(String name, String password){
         String actualPassword = MD5Util.getMD5(password);
         this.logger.infov("name:{0},password:{1}",name,actualPassword);
-        User user  = this.userRepository.findByPhoneAndPasswordAndIsAdmin(name,actualPassword,User.IsAdminEnum.ADMIN.getId());
+        User user  = this.userRepository.findByPhoneAndIsAdmin(name, User.IsAdminEnum.ADMIN.getId());
         if(user == null){
             return Result.fail("用户不存在");
+        }
+        if(!actualPassword.equals(user.getPassword())){
+            return Result.fail("密码错误");
         }
         if(user.getStatus()!= User.StatusEnum.ENABLED.getId()){
             return Result.fail("该用户已被禁用");
@@ -60,6 +64,7 @@ public class UserService {
         String token = UUID.randomUUID().toString();
         String tokenUserIdKey = RedisKey.getAdminTokenUserIdKey(token);
         redisBean.setStringValue(tokenUserIdKey, user.getId() + "", 30,TimeUnit.MINUTES);
+        //HttpUtil.setHttpSessionAttr("curUserId",user.getId());
         user.setLastLoginTime(new Date());
         this.userRepository.save(user);
         return new Result(0, "登录成功",new LoginResultVO(token,name));

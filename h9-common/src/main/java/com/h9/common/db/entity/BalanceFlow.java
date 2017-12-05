@@ -32,10 +32,6 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '变更金额'")
     private BigDecimal money = new BigDecimal(0);
 
-//    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
-//    private BalanceFlowType balanceFlowType;
-
 
     /**
      * description: {"1":"提现","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}

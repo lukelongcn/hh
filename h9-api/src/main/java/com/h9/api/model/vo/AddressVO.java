@@ -10,41 +10,71 @@ import org.springframework.beans.BeanUtils;
  */
 public class AddressVO {
 
-    // 地址id
+    /** 地址id */
     private Long id;
 
     private Long userId;
 
-    //收货人姓名
+    /** 收货人姓名 */
     private String name;
 
-    // 收货人手机号码
+    /** 收货人手机号码 */
     private String phone;
 
-    // 默认地址
+    /** 默认地址 */
     private Integer defaultAddress;
 
-    // 所在省
+    /** 所在省 */
     private String province;
 
-    // 所在市
+    /** 所在市 */
     private String city;
 
-    // 所在区
+    /** 所在区 */
     private String distict;
 
-    //详细地址
+    /** 详细地址 */
     private String address;
 
-    //省市区编号
-    private String provincialCity;
+    /** 省id */
+    private Long pid;
 
-    //使用状态
+    private Long cid;
+
+    private Long aid;
+
+    /** 使用状态 */
     private Integer status;
 
     public AddressVO(Address address) {
         BeanUtils.copyProperties(address,this);
     }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getCid() {
+        return cid;
+    }
+
+    public void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    public Long getAid() {
+        return aid;
+    }
+
+    public void setAid(Long aid) {
+        this.aid = aid;
+    }
+
+
 
     public static AddressVO  convert(Address address){
         return new AddressVO(address);
@@ -112,14 +142,6 @@ public class AddressVO {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getProvincialCity() {
-        return provincialCity;
-    }
-
-    public void setProvincialCity(String provincialCity) {
-        this.provincialCity = provincialCity;
     }
 
     public Integer getStatus() {

@@ -1,15 +1,14 @@
 package com.transfer.db.entity;
 
-import com.h9.common.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.

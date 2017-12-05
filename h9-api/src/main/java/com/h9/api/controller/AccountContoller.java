@@ -14,6 +14,7 @@ import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created with IntelliJ IDEA.
@@ -85,10 +86,10 @@ public class AccountContoller {
      */
     @Secured
     @PostMapping("/account/vb/convert")
-    public Result vbConvert(@SessionAttribute("curUserId") Long userId){
+    public Result vbConvert(@SessionAttribute("curUserId") Long userId,HttpServletRequest request){
 
         try {
-            return accountService.vbConvert(userId);
+            return accountService.vbConvert(userId,request);
         } catch (Exception e) {
             logger.info(e.getMessage(),e);
             return Result.fail();

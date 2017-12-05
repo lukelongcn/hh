@@ -29,12 +29,16 @@ public class HttpUtil {
         getHttpSession().setAttribute(key,val);
     }
 
-    public static Object setHttpSessionAttr(String key){
+    public static Object getHttpSessionAttr(String key){
         return getHttpSession().getAttribute(key);
     }
 
     public static ServletRequestAttributes getServletRequestAttributes(){
         return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    }
+
+    public static Long getCurrentUserId(){
+        return Long.valueOf(getHttpSessionAttr("curUserId").toString());
     }
 
 }
