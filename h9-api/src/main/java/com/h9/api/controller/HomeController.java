@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,10 +34,9 @@ public class HomeController {
      * description: 版本升级
      */
     @GetMapping("/version")
-    @ApiOperation(value = "版本升级 version:版本 type: IOS:1 安卓：2")
-    public Result version(@RequestParam( value = "version") Integer version,@RequestParam(value = "type")Integer type){
-        return homeService.version(version,type);
+    @ApiOperation(value = "版本升级 version:版本 type: IOS:2 安卓：1")
+    public Result version(@RequestHeader( value = "version") Integer version, @RequestHeader(value = "client")Integer client){
+        return homeService.version(version,client);
     }
-
 
 }

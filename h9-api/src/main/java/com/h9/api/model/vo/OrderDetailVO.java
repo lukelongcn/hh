@@ -1,13 +1,11 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,13 +37,15 @@ public class OrderDetailVO {
     public static OrderDetailVO convert(Orders order){
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
-        vo.setOrderStatus("已完成");
+
+        Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
+        vo.setOrderStatus(statusEnum.getDesc());
         vo.setOrderType(order.getOrderType());
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
 
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
-        if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOOS.getCode())){
+        if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode())){
             vo.setAccepterName("");
             vo.setAddress(order.getUserAddres());
             vo.setLogisticsNumber(order.getLogisticsNumber());

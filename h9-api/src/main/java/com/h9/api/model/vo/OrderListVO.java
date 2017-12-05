@@ -29,7 +29,8 @@ public class OrderListVO {
         }).collect(Collectors.toList());
 
         vo.setCompany(orders.getSupplierName());
-        vo.setStatus("已完成");
+        Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
+        vo.setStatus(statusEnum.getDesc());
         vo.setGoodsInfoList(goodsInfoList);
         vo.setOrderId(orders.getId());
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");

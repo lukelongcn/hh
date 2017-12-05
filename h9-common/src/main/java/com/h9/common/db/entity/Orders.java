@@ -72,6 +72,10 @@ public class Orders extends BaseEntity {
     @Column(name = "pay_status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '支付状态 1待支付 2 已支付'")
     private Integer payStatus = 1;
 
+    /**
+     * description:
+     * @see statusEnum
+     */
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
     private Integer status = 1;
 
@@ -163,7 +167,7 @@ public class Orders extends BaseEntity {
 
     public enum orderTypeEnum {
 
-        MATERIAL_GOOS(1, "实体商品"),
+        MATERIAL_GOODS(1, "实体商品"),
         VIRTUAL_GOODS(2, "虚拟商品");
 
         private int code;
@@ -188,6 +192,48 @@ public class Orders extends BaseEntity {
 
         public void setDesc(String desc) {
             this.desc = desc;
+        }
+    }
+
+    public enum statusEnum{
+
+        WAIT_SEND(1,"待发货"),
+        DELIVER(2,"已发货"),
+        FINISH(3, "已完成");
+
+        private int code;
+        private String desc;
+
+        statusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public static statusEnum findByCode(int code){
+            statusEnum[] values = values();
+            for(statusEnum enumEl : values){
+                if(enumEl.code == code){
+
+                    return enumEl;
+                }
+            }
+            return null;
         }
     }
 
