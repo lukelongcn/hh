@@ -19,7 +19,7 @@ public interface BannerRepository extends BaseRepository<Banner> {
      */
     @Query(value = "select * from banner,banner_type where banner.banner_type_id = banner_type.id " +
             "and banner.start_time < ?1 and banner.end_time >?1 and banner.enable = 1 " +
-            "and banner_type.enable = 1 and banner_type.location ?2 order by banner.sort desc,banner.id desc"
+            "and banner_type.enable = 1 and banner_type.location =?2 order by banner.sort desc,banner.id desc"
             ,nativeQuery = true)
     List<Banner> findActiviBanner( Date date,Integer location);
 
