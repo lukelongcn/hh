@@ -11,6 +11,7 @@ import com.h9.common.db.repo.OrderItemReposiroty;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.store.modle.vo.OrderListVO;
+import com.h9.store.modle.vo.OrderListVO2;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,7 +83,7 @@ public class OrderService {
 
         if (CollectionUtils.isNotEmpty(orderList)) {
 //            List<OrderListVO> orderListVO = orderList.stream().map(el -> new OrderListVO(el)).collect(Collectors.toList());
-            return Result.success(pageResult.result2Result(OrderListVO::new));
+            return Result.success(pageResult.result2Result(OrderListVO2::convert));
         }
         return Result.success();
     }
