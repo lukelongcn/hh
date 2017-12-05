@@ -59,7 +59,10 @@ public class AddressService {
     }
 
 
-
+    /**
+     * 所有地区
+     * @return
+     */
     public Result allArea(){
         List<Areas> formCahce = findFormCahce();
         if(!CollectionUtils.isEmpty(formCahce)){
@@ -71,7 +74,6 @@ public class AddressService {
         }
         return Result.success(fromDb);
     }
-
 
     public List<Areas> findFromDb(){
         //从数据库获取数据
@@ -89,13 +91,10 @@ public class AddressService {
     }
 
 
-
     public List<Areas> findFormCahce(){
 //        从reids里面取
         return redisBean.getArray(RedisKey.addressKey,Areas.class);
     }
-
-
 
 
     /**
@@ -119,7 +118,10 @@ public class AddressService {
         address.setDistict(areaName);
         //设值地址id
         address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
-
+        address.setPid(addressDTO.getPid());
+        address.setCid(addressDTO.getCid());
+        address.setAid(addressDTO.getAid());
+        //设值详细地址
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
@@ -174,7 +176,10 @@ public class AddressService {
 
         //设值地址id
         address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
-
+        address.setPid(addressDTO.getPid());
+        address.setCid(addressDTO.getCid());
+        address.setAid(addressDTO.getAid());
+        //设值详细地址
         address.setAddress(addressDTO.getAddress());
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
