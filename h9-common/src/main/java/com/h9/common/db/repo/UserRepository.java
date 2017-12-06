@@ -36,7 +36,7 @@ public interface UserRepository extends BaseRepository<User> {
     User findByPhoneAndIsAdmin(String phone, Integer isAdmin);
 
 
-    @Query("select new com.h9.common.modle.vo.admin.basis.SystemUserVO(o) from User o  order by o.status asc ,o.id desc ")
+    @Query("select new com.h9.common.modle.vo.admin.basis.SystemUserVO(o) from User o where o.isAdmin = 1 order by o.status asc ,o.id desc ")
     Page<SystemUserVO> findAllByPage(Pageable page);
 
 
