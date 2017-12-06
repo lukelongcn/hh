@@ -131,6 +131,7 @@ public class AddressController {
         return addressService.getDefaultAddress(userId);
     }
 
+    @Secured
     @GetMapping(value = "/detail/{id}")
     public Result detailAddress(@SessionAttribute("curUserId")Long userId,@NotNull(message = "请确定要查询的地址id")@PathVariable("id")Long id){
         return addressService.getDetailAddress(userId,id);
