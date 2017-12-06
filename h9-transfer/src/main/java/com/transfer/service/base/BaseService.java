@@ -53,7 +53,7 @@ public abstract class BaseService<T> {
 
     public abstract PageResult get(int page,int limit);
 
-    public abstract void getSql(T t,BufferedWriter userWtriter) throws IOException;
+    public abstract void getSql(T t,BufferedWriter writer) throws IOException;
 
 
     public abstract String getTitle();

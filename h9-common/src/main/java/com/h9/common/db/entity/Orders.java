@@ -91,6 +91,24 @@ public class Orders extends BaseEntity {
     @Fetch(FetchMode.SUBSELECT)
     private List<OrderItems> orderItems = new ArrayList<>();
 
+    /**
+     * description: 标识订单类别
+     *
+     * @see orderTypeEnum 订单类型
+     */
+    @Column(name = "order_type", columnDefinition = "varchar(50) default '' COMMENT'订单类别'")
+    private String orderType;
+
+    @Column(name = "loginstics_number")
+    private String logisticsNumber;
+
+    @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
+    private String expressName;
+
+    @Column(name = "order_from",columnDefinition = "int default 2 COMMENT '订单来源 1为酒元商场 2为其他'")
+    private Integer orderFrom;
+
+
     public enum PayMethodEnum {
 
         BALANCE_PAY(1, "余额支付"),
@@ -125,21 +143,6 @@ public class Orders extends BaseEntity {
         }
     }
 
-    /**
-     * description: 标识订单类别
-     *
-     * @see orderTypeEnum 订单类型
-     */
-    @Column(name = "order_type", columnDefinition = "varchar(50) default '' COMMENT'订单类别'")
-    private String orderType;
-
-    @Column(name = "loginstics_number")
-    private String logisticsNumber;
-    @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
-    private String expressName;
-
-    @Column(name = "order_from",columnDefinition = "int default 2 COMMENT '订单来源 1为酒元商场 2为其他'")
-    private Integer orderFrom;
 
     public String getExpressName() {
         return expressName;
