@@ -49,9 +49,6 @@ public class Address extends BaseEntity {
     @Column(name = "distict", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '区'")
     private String distict;
 
-    @Column(name = "provincial_city", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '城市编号'")
-    private String provincialCity;
-
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
     private Integer status;
 
@@ -167,14 +164,6 @@ public class Address extends BaseEntity {
 
     public void setDefaultAddress(Integer defaultAddress) {
         this.defaultAddress = defaultAddress;
-    }
-
-    public String getProvincialCity() {
-        return provincialCity;
-    }
-
-    public void setProvincialCity(String provincialCity) {
-        this.provincialCity = provincialCity;
     }
 
     public enum StatusEnum {
