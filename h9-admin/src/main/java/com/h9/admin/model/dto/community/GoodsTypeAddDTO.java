@@ -30,6 +30,10 @@ public class GoodsTypeAddDTO {
     @NotNull(message = "是否允许导入数据不能为空")
     private Integer allowImport = 1;
 
+    @ApiModelProperty(value = " 是否是实物，0:否，1:是",required = true)
+    @NotNull(message = "是否是实物不能为空")
+    private Integer isReal;
+
     public String getName() {
         return name;
     }
@@ -60,6 +64,14 @@ public class GoodsTypeAddDTO {
 
     public void setAllowImport(Integer allowImport) {
         this.allowImport = allowImport;
+    }
+
+    public Integer getIsReal() {
+        return isReal;
+    }
+
+    public void setIsReal(Integer isReal) {
+        this.isReal = isReal;
     }
 
     public GoodsType toGoodsType() {
