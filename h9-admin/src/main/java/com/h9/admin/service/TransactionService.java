@@ -142,7 +142,7 @@ public class TransactionService {
             return Result.fail("卡券不存在");
         }
         if (cardCoupons.getStatus() == CardCoupons.StatusEnum.USED.getId()) {
-            return Result.fail("卡券已使用");
+            return Result.fail("卡券已使用,不允许修改卡券状态");
         }
         Goods goods = this.goodsReposiroty.findByLockId(cardCoupons.getGoodsId());
         if (cardCoupons.getStatus() == CardCoupons.StatusEnum.ENABLED.getId()) {
@@ -151,8 +151,6 @@ public class TransactionService {
         }else if (cardCoupons.getStatus() == CardCoupons.StatusEnum.DISABLED.getId()){
             cardCoupons.setStatus(CardCoupons.StatusEnum.ENABLED.getId());
             goods.setStock(goods.getStock()+1);
-        }else {
-            return Result.fail("不允许修改卡券状态");
         }
         CardCoupons coupons = this.cardCouponsRepository.save(cardCoupons);
         this.goodsReposiroty.save(goods);
