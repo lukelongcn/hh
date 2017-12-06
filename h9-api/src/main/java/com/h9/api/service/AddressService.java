@@ -201,7 +201,7 @@ public class AddressService {
         address.setDefaultAddress(1);
         address.setStatus(1);
         addressRepository.save(address);
-        return Result.success("设定默认地址成功");
+        return Result.success("设定成功");
     }
 
 
