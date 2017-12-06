@@ -62,6 +62,8 @@ public class CommunityService {
     public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO) {
         PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
         Page<BannerType> bannerTypes = this.bannerTypeRepository.findAllByPage(pageRequest);
+        List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
+        bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));
         PageResult<BannerType> pageResult = new PageResult<>(bannerTypes);
         return Result.success(pageResult);
     }
@@ -247,5 +249,10 @@ public class CommunityService {
                 announcement.setJointUrl(preLink.get("article").toString() + announcement.getId());
             }
         }
+    }
+
+    private void setBannerTypeLocationDesc(List<Config> configList,BannerType bannerType) {
+        bannerType.setLocationDesc(configList == null || configList.size() == 0 ? null:this.configService
+                .getConfigVal(configList,bannerType.getLocation().toString()));
     }
 }
