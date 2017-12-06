@@ -75,10 +75,6 @@ public class TransactionService {
     }
 
     public Result addCardCouponsList(CardCouponsListAddDTO cardCouponsListAddDTO) {
-        Goods goods = this.goodsReposiroty.findOne(cardCouponsListAddDTO.getGoodsId());
-        if (goods == null) {
-            return Result.fail("商品不存在");
-        }
         List<String> noList = Arrays.asList(cardCouponsListAddDTO.getNos().split("\n"));
         List<String> validNoList = new ArrayList<>();
         noList.forEach(item -> {
@@ -93,6 +89,10 @@ public class TransactionService {
             if (this.cardCouponsRepository.findByNo(validNoList.get(i)) != null) {
                 return Result.fail("券号:"+validNoList.get(i)+",已存在");
             }
+        }
+        Goods goods = this.goodsReposiroty.findByLockId(cardCouponsListAddDTO.getGoodsId());
+        if (goods == null) {
+            return Result.fail("商品不存在");
         }
         Date date = new Date();
         String dayString = DateUtil.formatDate(date,DateUtil.FormatType.NON_SEPARATOR_DAY);
@@ -119,6 +119,8 @@ public class TransactionService {
             cardCouponsList.add(cardCoupons);
         });
         this.cardCouponsRepository.save(cardCouponsList);
+        goods.setStock(goods.getStock()+validNoList.size());
+        this.goodsReposiroty.save(goods);
         return Result.success();
     }
 
@@ -142,12 +144,19 @@ public class TransactionService {
         if (cardCoupons.getStatus() == CardCoupons.StatusEnum.USED.getId()) {
             return Result.fail("卡券已使用");
         }
+        Goods goods = this.goodsReposiroty.findByLockId(cardCoupons.getGoodsId());
         if (cardCoupons.getStatus() == CardCoupons.StatusEnum.ENABLED.getId()) {
             cardCoupons.setStatus(CardCoupons.StatusEnum.DISABLED.getId());
-        }else {
+            goods.setStock(goods.getStock()-1);
+        }else if (cardCoupons.getStatus() == CardCoupons.StatusEnum.DISABLED.getId()){
             cardCoupons.setStatus(CardCoupons.StatusEnum.ENABLED.getId());
+            goods.setStock(goods.getStock()+1);
+        }else {
+            return Result.fail("不允许修改卡券状态");
         }
-        return  Result.success(this.cardCouponsRepository.save(cardCoupons));
+        CardCoupons coupons = this.cardCouponsRepository.save(cardCoupons);
+        this.goodsReposiroty.save(goods);
+        return  Result.success(coupons);
     }
 
 }
