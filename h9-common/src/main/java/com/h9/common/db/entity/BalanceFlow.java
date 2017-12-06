@@ -37,7 +37,7 @@ public class BalanceFlow extends BaseEntity {
      * description: {"1":"提现","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
      * @see FlowType
      */
-    @Column(name = "flow_type",columnDefinition = "bigint(20) default '' COMMENT '流水类型'")
+    @Column(name = "flow_type",columnDefinition = "bigint(20) default null COMMENT '流水类型'")
     private Long flowType;
 
     public static class FlowType{
