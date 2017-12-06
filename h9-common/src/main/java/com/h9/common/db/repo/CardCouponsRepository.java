@@ -35,7 +35,7 @@ public interface CardCouponsRepository extends BaseRepository<CardCoupons>{
     @Query(value = "select * from card_coupons where status = 1 limit 0,1",nativeQuery = true)
     CardCoupons findTopOneUnUse();
 
-    @Query(value = "select o.batchNo from CardCoupons o where o.goodsId = ?1 order by o.batchNo desc ")
+    @Query(value = "select o.batchNo from CardCoupons o where o.goodsId = ?1 group by o.batchNo order by o.batchNo desc ")
     List<String> findAllBatchNoByGoodsId(Long goodsId);
 
     @Query(value = "select o.batch_no from card_coupons o where o.goods_id = ?1 and o.batch_no like ?2% order by o.batch_no desc limit 1",nativeQuery = true)
