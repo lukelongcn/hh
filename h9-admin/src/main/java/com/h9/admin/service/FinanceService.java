@@ -263,6 +263,9 @@ public class FinanceService {
     }
 
     public Result<PageResult<VB2Money>> listVB2Money(String phone, PageDTO pageDTO) {
+        if (StringUtils.isBlank(phone)) {
+            phone = null;
+        }
         Page<VB2Money> vb2MoneyPage = this.vb2MoneyRepository.findByTel(phone,pageDTO.toPageRequest());
         return Result.success(new PageResult<>(vb2MoneyPage));
     }
