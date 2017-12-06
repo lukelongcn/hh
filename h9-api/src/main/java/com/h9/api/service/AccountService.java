@@ -181,7 +181,7 @@ public class AccountService {
             throw new RuntimeException("转换酒元异常");
         }
         //vb流水
-        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount, order.getId(),11L);
+        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), order.getId(),11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
         userRecordRepository.saveAndFlush(userRecord);
 
