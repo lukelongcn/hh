@@ -113,7 +113,6 @@ public class AddressService {
         address.setCity(cityName);
         address.setDistict(areaName);
         //设值地址id
-        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
         address.setPid(addressDTO.getPid());
         address.setCid(addressDTO.getCid());
         address.setAid(addressDTO.getAid());
@@ -169,9 +168,6 @@ public class AddressService {
         address.setProvince(provinceName);
         address.setCity(cityName);
         address.setDistict(areaName);
-
-        //设值地址id
-        address.setProvincialCity(addressDTO.getPid()+","+addressDTO.getCid()+","+addressDTO.getAid());
         address.setPid(addressDTO.getPid());
         address.setCid(addressDTO.getCid());
         address.setAid(addressDTO.getAid());
