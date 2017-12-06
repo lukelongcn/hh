@@ -130,4 +130,17 @@ public class AddressController {
     public Result defualtAddress(@SessionAttribute("curUserId")Long userId){
         return addressService.getDefaultAddress(userId);
     }
+
+    /**
+     * 查询指定地址详情
+     * @param userId
+     * @param id
+     * @return
+     */
+    @Secured
+    @ApiOperation(value = "查询指定地址详情")
+    @GetMapping(value = "/detail/{id}")
+    public Result detailAddress(@SessionAttribute("curUserId")Long userId,@NotNull(message = "请确定要查询的地址id")@PathVariable("id")Long id){
+        return addressService.getDetailAddress(userId,id);
+    }
 }
