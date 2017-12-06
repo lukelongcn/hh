@@ -17,12 +17,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface GoodsInfoRepository extends BasicRepository<GoodsInfo> {
-    @Query("SELECT G FROM GoodsInfo G WHERE G.price<>null")
-    Page<GoodsInfo> findByPrice(Pageable pageable);
-
-    default PageResult<GoodsInfo> findByPrice(int page,int limit){
-        Page<GoodsInfo> byPrice = findByPrice(pageRequest(page, limit));
-        return new PageResult<>(byPrice);
-    }
+//    @Query("SELECT G FROM GoodsInfo G WHERE G.price<>null")
+//    Page<GoodsInfo> findByPrice(Pageable pageable);
+//
+//    default PageResult<GoodsInfo> findByPrice(int page,int limit){
+//        Page<GoodsInfo> byPrice = findByPrice(pageRequest(page, limit));
+//        return new PageResult<>(byPrice);
+//    }
 
 }

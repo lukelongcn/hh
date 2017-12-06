@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.deserializer.AbstractDateDeserializer;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.Goods;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.service.GoodService;
@@ -61,5 +63,13 @@ public class TestOrder {
         dto.setGoodsId(goods.getId());
         Result convertResult = goodService.convertGoods(dto, userId);
         System.out.println(JSONObject.toJSON(convertResult));
+    }
+
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
+    @Test
+    public void test22(){
+        Goods one = goodsReposiroty.findOne(1L);
+        System.out.println();
     }
 }

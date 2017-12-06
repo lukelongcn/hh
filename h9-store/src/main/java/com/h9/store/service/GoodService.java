@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -215,6 +216,12 @@ public class GoodService {
 
         if(result.getCode() == 1) return result;
 
+        //单独判断下余额是否足够
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+        if(balance.compareTo(goods.getRealPrice()) < 0){
+            return Result.fail("余额不足");
+        }
 
         String code = goods.getGoodsType().getCode();
         Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);

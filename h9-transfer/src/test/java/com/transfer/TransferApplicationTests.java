@@ -1,7 +1,9 @@
 package com.transfer;
 
+import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.transfer.db.repo.CardInfoRepository;
 import com.transfer.db.repo.IntegralRecordRepository;
 import com.transfer.service.*;
@@ -102,6 +104,21 @@ public class TransferApplicationTests {
     @Test
     public void transferBounsFlow(){
         bounsService.trants();
+    }
+
+    @Resource
+    private OrderService orderService;
+    @Test
+    public void transferOrders(){
+        orderService.trants();
+    }
+
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
+    @Test
+    public void test2(){
+        Goods one = goodsReposiroty.findOne(1L);
+        System.out.println();
     }
 
 }
