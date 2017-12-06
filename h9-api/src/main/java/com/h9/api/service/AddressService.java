@@ -220,4 +220,10 @@ public class AddressService {
     }
 
 
+    public Result getDetailAddress(Long userId, Long id) {
+        Address address = addressRepository.findById(id);
+        if (address == null){ return Result.fail("地址不存在"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        return Result.success(address);
+    }
 }
