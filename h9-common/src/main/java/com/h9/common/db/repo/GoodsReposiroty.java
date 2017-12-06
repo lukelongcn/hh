@@ -7,8 +7,10 @@ import com.h9.common.modle.DiDiCardInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -50,5 +52,9 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query(value = "select g.* from goods g, goods_type gtype where gtype.`code` <> 'mobile_recharge'" +
             " and gtype.`code` <> 'didi_card' and g.goods_type_id =gtype.id  order by  g.update_time desc limit 0,6",nativeQuery = true)
     List<Goods> findLastConvertGoods();
+
+    @Query("select o from Goods o where id = ?1")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Goods findByLockId(Long id);
 
 }
