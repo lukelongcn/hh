@@ -57,4 +57,9 @@ public class GoodsInfo {
 
     @Column(name ="Price")
     private BigDecimal Price;
+
+    @Column(name ="GoodsSource")
+    private int GoodsSource;
+
+
 }
