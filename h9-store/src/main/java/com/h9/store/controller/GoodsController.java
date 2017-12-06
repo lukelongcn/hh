@@ -29,7 +29,7 @@ public class GoodsController {
      */
     @Secured
     @GetMapping("/goodsList")
-    public Result goodsList(@RequestParam(defaultValue = "5") Integer type,
+    public Result goodsList(@RequestParam(defaultValue = "o_all") String type,
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit) {
         return goodService.goodsList(type,page,limit);

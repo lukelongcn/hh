@@ -41,13 +41,12 @@ public class TestOrder {
     /**
      * description: 测试兑换商品
      */
-    @Test
     public  void converGoodsTest(){
 
         Long userId = 9676L;
         Long addressId = 452l;
 
-        Result result = goodService.goodsList(1, 0, 10);
+        Result result = goodService.goodsList("", 0, 10);
         PageResult<GoodsListVO> data = (PageResult)result.getData();
         List<GoodsListVO> goodsList = data.getData();
         if (CollectionUtils.isEmpty(goodsList)) {
