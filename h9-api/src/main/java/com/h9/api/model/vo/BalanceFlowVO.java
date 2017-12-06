@@ -50,8 +50,9 @@ public class BalanceFlowVO {
         BeanUtils.copyProperties(vCoinsFlow, this);
         Date createTime = vCoinsFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
-        remarks = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
+        remarks = vCoinsFlow.getRemarks();
         imgUrl = iconMap.get(vCoinsFlow.getvCoinsflowType() + "");
+        this.money = MoneyUtils.formatMoney(vCoinsFlow.getMoney());
         this.createTime = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
     }
 

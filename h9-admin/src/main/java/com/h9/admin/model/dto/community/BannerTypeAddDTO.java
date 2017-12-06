@@ -26,6 +26,10 @@ public class BannerTypeAddDTO {
     @NotBlank(message = "标识不能为空")
     private String code;
 
+    @ApiModelProperty(value = "功能位置",required = true)
+    @NotNull(message = "功能位置不能为空")
+    private Integer location;
+
     @ApiModelProperty(value = "状态",required = true)
     @NotNull(message = "状态不能为空")
     private Integer enable;
@@ -54,6 +58,14 @@ public class BannerTypeAddDTO {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Integer getLocation() {
+        return location;
+    }
+
+    public void setLocation(Integer location) {
+        this.location = location;
     }
 
     public Integer getEnable() {

@@ -1,4 +1,4 @@
-package com.h9.api.model.vo;
+package com.h9.store.modle.vo;
 
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by itservice on 2017/11/1.
  */
-public class OrderListVO {
+public class OrderListVO2 {
 
     private Long orderId;
     private String company;
@@ -18,8 +18,8 @@ public class OrderListVO {
 
     private List<GoodsInfo> goodsInfoList;
 
-    public static OrderListVO convert(Orders orders){
-        OrderListVO vo = new OrderListVO();
+    public static OrderListVO2 convert(Orders orders){
+        OrderListVO2 vo = new OrderListVO2();
         List<OrderItems> itemList = orders.getOrderItems();
         List<GoodsInfo> goodsInfoList = itemList.stream().map(item -> {
             GoodsInfo info = new GoodsInfo();

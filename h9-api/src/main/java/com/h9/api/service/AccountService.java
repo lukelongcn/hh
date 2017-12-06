@@ -150,11 +150,12 @@ public class AccountService {
 
         BigDecimal JiuYuan = vbCount.multiply(new BigDecimal(rateStr));
 
+        String icon = configService.getStringConfig("JiuYuanIcon");
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
                 .setVb(MoneyUtils.formatMoney(vbCount) + "")
-                .setJiuYuanIcon("");
+                .setJiuYuanIcon(icon);
 
         return Result.success(vo);
     }
@@ -175,17 +176,14 @@ public class AccountService {
         Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
         ordersReposiroty.saveAndFlush(order);
 
-
-
         Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");
         if (result.getCode() == 1) {
             throw new RuntimeException("转换酒元异常");
         }
         //vb流水
-        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount, order.getId(),11L);
+        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), order.getId(),11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
         userRecordRepository.saveAndFlush(userRecord);
-
 
         VB2Money vb2Money = new VB2Money(user.getPhone(), userAcount.getvCoins(), money, userRecord.getIp(),user.getId(),userRecord.getId());
         userAcount.setvCoins(new BigDecimal(0));

@@ -11,16 +11,59 @@ import java.util.Date;
  * @date: 2017/12/5 14:10
  */
 public class OrderDTO extends PageDTO{
-    @ApiModelProperty(value = "券号")
+    @ApiModelProperty(value = "订单编号")
     private String no;
 
-    @ApiModelProperty(value = "批次")
-    private String batchNo;
+    @ApiModelProperty(value = "手机号")
+    private String phone;
 
-    @ApiModelProperty(value = "开始时间")
+    @ApiModelProperty(value = "下单开始时间")
     private Date startTime;
+
+    @ApiModelProperty(value = "下单结束时间")
+    private Date endTime;
 
     @ApiModelProperty(value = "状态,1:正常，2:已使用,3 禁用")
     @NotNull(message = "状态不能为空")
     private Integer status;
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = new Date(startTime);
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = new Date(endTime);
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }

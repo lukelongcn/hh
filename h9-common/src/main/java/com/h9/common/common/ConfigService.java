@@ -97,6 +97,18 @@ public class ConfigService {
         return configs;
     }
 
+    public String getConfigVal(List<Config> configList, String key) {
+        if (configList == null || configList.size() == 0) {
+            return null;
+        }
+        for (int i = 0; i < configList.size(); i++) {
+            if (configList.get(i).getKey().equals(key)) {
+                return configList.get(i).getVal();
+            }
+        }
+        return null;
+    }
+
     public  String getValueFromMap(String code,String key){
         Map<String,String> mapConfig = getMapConfig(code);
 

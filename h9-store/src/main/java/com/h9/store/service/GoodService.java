@@ -17,11 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.h9.common.db.entity.GoodsType.GoodsTypeEnum.EVERYDAY_GOODS;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -220,7 +217,7 @@ public class GoodService {
 
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOOS.getCode()+"", "徽酒", user,code);
+        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
         order.setAddressId(addressId);
         order.setUserAddres(address.getAddress());
         order.setOrderFrom(1);

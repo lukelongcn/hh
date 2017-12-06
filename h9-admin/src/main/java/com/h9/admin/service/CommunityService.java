@@ -8,6 +8,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
+import com.h9.common.modle.vo.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +28,8 @@ import java.util.Map;
 @Service
 @Transactional
 public class CommunityService {
+
+    private final String BANNER_TYPE_LOCATION = "bannerTypeLocation";
 
     @Autowired
     private BannerTypeRepository bannerTypeRepository;
@@ -44,6 +48,10 @@ public class CommunityService {
     @Autowired
     private ConfigService configService;
 
+    public Result<List<Config>> listBannerTypeLocation() {
+        return Result.success(this.configService.getMapListConfig(BANNER_TYPE_LOCATION));
+    }
+
     public Result<BannerType> addBannerType(BannerType bannerType) {
         if (this.bannerTypeRepository.findByCode(bannerType.getCode()) != null) {
             return Result.fail("标识已存在");
@@ -54,6 +62,8 @@ public class CommunityService {
     public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO) {
         PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
         Page<BannerType> bannerTypes = this.bannerTypeRepository.findAllByPage(pageRequest);
+        List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
+        bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));
         PageResult<BannerType> pageResult = new PageResult<>(bannerTypes);
         return Result.success(pageResult);
     }
@@ -221,17 +231,15 @@ public class CommunityService {
     }
 
     public Result<BannerType> updateBannerType(BannerTypeEditDTO bannerType) {
+        BannerType b = this.bannerTypeRepository.findOne(bannerType.getId());
+        if (b == null) {
+            return Result.fail("功能类型不存在");
+        }
         if (this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(), bannerType.getCode()) != null) {
             return Result.fail("标识已存在");
         }
-        BannerType b = getNewBannerType(bannerType);
-        return Result.success(this.bannerTypeRepository.save(b));
-    }
-
-    private BannerType getNewBannerType(BannerTypeEditDTO bannerType) {
-        BannerType b = this.bannerTypeRepository.findOne(bannerType.getId());
         BeanUtils.copyProperties(bannerType, b);
-        return b;
+        return Result.success(this.bannerTypeRepository.save(b));
     }
 
     private void setAnnouncementUrl(Announcement announcement, Map preLink) {
@@ -241,5 +249,10 @@ public class CommunityService {
                 announcement.setJointUrl(preLink.get("article").toString() + announcement.getId());
             }
         }
+    }
+
+    private void setBannerTypeLocationDesc(List<Config> configList,BannerType bannerType) {
+        bannerType.setLocationDesc(configList == null || configList.size() == 0 ? null:this.configService
+                .getConfigVal(configList,bannerType.getLocation().toString()));
     }
 }
