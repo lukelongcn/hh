@@ -10,6 +10,7 @@ import com.h9.common.db.entity.Orders;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.OrderDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -44,11 +45,16 @@ public class OrderService {
         //只有实物订单才能修改
         if (one.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode())) {
             BeanUtils.copyProperties(expressDTO, one);
+            if (one.getStatus() == Orders.statusEnum.WAIT_SEND.getCode()) {
+                if (StringUtils.isNotBlank(expressDTO.getLogisticsNumber())) {
+                    one.setStatus(Orders.statusEnum.DELIVER.getCode());
+                }
+            }
             ordersRepository.save(one);
             return Result.success(OrderItemVO.toOrderItemVO(one));
         } else {
-            GoodsType.GoodsTypeEnum byCode = GoodsType.GoodsTypeEnum.findByCode(one.getOrderType());
-            return Result.fail("此订单为"+(byCode==null?"未知":byCode.getDesc())+",无法添加物流信息");
+            //GoodsType.GoodsTypeEnum byCode = GoodsType.GoodsTypeEnum.findByCode(one.getOrderType());
+            return Result.fail("此订单不为实体商品,无法添加物流信息");
         } 
     }
 

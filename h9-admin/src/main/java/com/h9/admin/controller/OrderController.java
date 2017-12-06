@@ -11,10 +11,7 @@ import com.h9.common.modle.dto.transaction.OrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -41,7 +38,7 @@ public class OrderController {
     @Secured(accessCode = "order:express:update")
     @PostMapping(value = "/express")
     @ApiOperation("填写/修改订单物流信息")
-    public Result<OrderItemVO> editExpress(ExpressDTO expressDTO){
+    public Result<OrderItemVO> editExpress(@Validated @RequestBody ExpressDTO expressDTO){
         return orderService.editExpress(expressDTO);
     }
 
