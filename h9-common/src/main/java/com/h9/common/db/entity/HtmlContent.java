@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "html_content")
+@Table(name = "html_content",uniqueConstraints = {@UniqueConstraint(columnNames = "code")})
 public class HtmlContent extends BaseEntity {
 
     @Id
