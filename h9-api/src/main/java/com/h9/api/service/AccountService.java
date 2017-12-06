@@ -154,7 +154,7 @@ public class AccountService {
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
-                .setVb(vbCount.setScale(0).toString())
+                .setVb(vbCount.toString())
                 .setJiuYuanIcon(icon);
 
         return Result.success(vo);

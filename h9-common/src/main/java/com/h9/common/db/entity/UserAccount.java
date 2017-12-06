@@ -50,7 +50,7 @@ public class UserAccount extends BaseEntity {
     }
 
     public BigDecimal getvCoins() {
-        return vCoins;
+        return vCoins.setScale(0);
     }
 
     public void setvCoins(BigDecimal vCoins) {
