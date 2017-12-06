@@ -176,8 +176,6 @@ public class AccountService {
         Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
         ordersReposiroty.saveAndFlush(order);
 
-
-
         Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");
         if (result.getCode() == 1) {
             throw new RuntimeException("转换酒元异常");
@@ -186,7 +184,6 @@ public class AccountService {
         VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount, order.getId(),11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
         userRecordRepository.saveAndFlush(userRecord);
-
 
         VB2Money vb2Money = new VB2Money(user.getPhone(), userAcount.getvCoins(), money, userRecord.getIp(),user.getId(),userRecord.getId());
         userAcount.setvCoins(new BigDecimal(0));
