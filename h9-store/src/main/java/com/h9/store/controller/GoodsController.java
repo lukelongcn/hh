@@ -25,7 +25,7 @@ public class GoodsController {
     /**
      * description: 商品列表
      *
-     *　商品类型 1今日新品 2日常家居 3食品饮料 4 所有商品　
+     *　
      */
     @Secured
     @GetMapping("/goodsList")
