@@ -59,6 +59,23 @@ public abstract class BaseService<T> {
     public abstract String getTitle();
 
 
+    public void insertFieldInMid(StringBuilder sql, Object field){
+        sql.append("'");
+        if(field != null){
+            sql.append(field);
+        }
+        sql.append("',");
+    }
+
+    public void insertFieldEnd(StringBuilder sql, Object field){
+        sql.append("'");
+        if(field != null){
+            sql.append(field);
+        }
+        sql.append("'");
+
+    }
+
 
 
 }
