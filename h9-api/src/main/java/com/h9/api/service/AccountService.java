@@ -177,7 +177,9 @@ public class AccountService {
 //        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
 //        ordersReposiroty.saveAndFlush(order);
 
-        commonService.setBalance(userId, money, 11L, null,"", "");
+        String remark = configService.getValueFromMap("balanceFlowType", "11");
+
+        commonService.setBalance(userId, money, 11L, null,"", remark);
         //vb流水
         VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), null,11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
