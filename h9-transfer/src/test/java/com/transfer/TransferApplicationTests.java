@@ -115,10 +115,12 @@ public class TransferApplicationTests {
 
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private GoodsInfoService goodsInfoService;
     @Test
-    public void test2(){
-        Goods one = goodsReposiroty.findOne(1L);
-        System.out.println();
+    public void transferGoodsInfo(){
+       goodsInfoService.trants();
     }
+
 
 }
