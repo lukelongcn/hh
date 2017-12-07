@@ -24,4 +24,9 @@ public interface VersionRepository extends BaseRepository<Version> {
     Version findLastVersion(Integer clientType,Integer version);
 
     Version findByClientType(Integer client_type);
+
+
+    @Query(value = "select o.* from version o where o.client_type = ?1 order by o.create_time desc limit 0,1",nativeQuery = true)
+    Version findNewVersion(Integer clientType);
+
 }
