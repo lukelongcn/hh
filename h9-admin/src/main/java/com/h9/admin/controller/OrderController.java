@@ -2,6 +2,7 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.order.ExpressDTO;
+import com.h9.admin.model.vo.OrderDetailVO;
 import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.admin.service.OrderService;
 import com.h9.common.base.PageResult;
@@ -33,6 +34,13 @@ public class OrderController {
     @ApiOperation("获取订单列表")
     public Result<PageResult<OrderItemVO>> orderList(@Validated OrderDTO orderDTO){
         return orderService.orderList(orderDTO);
+    }
+
+    @Secured(accessCode = "order:detail")
+    @GetMapping(value = "/{id}")
+    @ApiOperation("获取订单详情")
+    public Result<OrderDetailVO> orderList(@PathVariable long id){
+        return orderService.getOrder(id);
     }
 
     @Secured(accessCode = "order:express:update")

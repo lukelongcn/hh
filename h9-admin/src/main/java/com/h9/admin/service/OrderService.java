@@ -1,13 +1,16 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.order.ExpressDTO;
+import com.h9.admin.model.vo.OrderDetailVO;
 import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.RechargeRecord;
 import com.h9.common.db.repo.OrdersRepository;
+import com.h9.common.db.repo.RechargeRecordRepository;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +32,23 @@ public class OrderService {
     private OrdersRepository ordersRepository;
     @Resource
     private ConfigService configService;
+    @Resource
+    private RechargeRecordRepository rechargeRecordRepository;
     
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
         Page<Orders> all = ordersRepository.findAll(this.ordersRepository.buildSpecification(orderDTO)
                 ,orderDTO.toPageRequest(sort));
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
+    }
+
+    public Result<OrderDetailVO> getOrder(long id) {
+        Orders orders = this.ordersRepository.findOne(id);
+        if (orders == null) {
+            return Result.fail("订单不存在");
+        }
+        RechargeRecord rechargeRecord = this.rechargeRecordRepository.findByOrderId(id);
+        return Result.success(OrderDetailVO.toOrderDetailVO(orders,rechargeRecord));
     }
 
     public Result<OrderItemVO> editExpress(ExpressDTO expressDTO) {
