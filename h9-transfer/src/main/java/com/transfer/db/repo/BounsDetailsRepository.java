@@ -25,7 +25,7 @@ public interface BounsDetailsRepository extends BasicRepository<BounsDetails> {
         return new PageResult(findBy(pageRequest(page, limit)));
     }
 
-    @Query("select b from BounsDetails  b where b.bounsType = ?1")
+    @Query("select b from BounsDetails  b where b.oratransOId = ?1 and b.bounsType = 1")
     BounsDetails findByOAndBounsOID(String id);
 
 }

@@ -22,15 +22,6 @@ public class TransferApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(TransferApplication.class, args);
-//      TODO
-//        CardInfoService cardinfoService = (CardInfoService) context.getBean("cardInfoService");
-//
-//        cardinfoService.readPage(new CallBackService() {
-//            @Override
-//            public void doThing() {
-//                CardInfoService bean = context.getBean(CardInfoService.class);
-//            }
-//        });
 
     }
 }

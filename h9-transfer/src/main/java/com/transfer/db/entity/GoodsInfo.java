@@ -56,7 +56,7 @@ public class GoodsInfo {
     private String IdCode;
 
     @Column(name ="Price")
-    private BigDecimal Price;
+    private BigDecimal price;
 
     @Column(name ="GoodsSource")
     private int GoodsSource;

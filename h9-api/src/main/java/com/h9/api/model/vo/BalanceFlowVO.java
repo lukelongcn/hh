@@ -52,7 +52,7 @@ public class BalanceFlowVO {
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = vCoinsFlow.getRemarks();
         imgUrl = iconMap.get(vCoinsFlow.getvCoinsflowType() + "");
-        this.money = MoneyUtils.formatMoney(vCoinsFlow.getMoney());
+        this.money = vCoinsFlow.getMoney().toString();
         this.createTime = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
     }
 

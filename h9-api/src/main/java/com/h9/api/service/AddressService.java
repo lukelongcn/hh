@@ -127,7 +127,7 @@ public class AddressService {
         // 使用状态设为开启
         address.setStatus(1);
         addressRepository.save(address);
-        return Result.success("地址添加成功");
+        return Result.success("保存成功");
     }
 
 

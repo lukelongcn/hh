@@ -9,6 +9,7 @@ import com.transfer.db.entity.Oratrans;
 import com.transfer.db.repo.BounsDetailsRepository;
 import com.transfer.db.repo.OratransRepository;
 import com.transfer.service.base.BaseService;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -67,7 +68,7 @@ public class OratransSerivce extends BaseService<Oratrans> {
         }
         stringBuffer.append(userId+",");
         stringBuffer.append(SqlUtils.concatSql(oratrans.getBakName()));
-        stringBuffer.append(SqlUtils.concatSql(oratrans.getCradNo()));
+        stringBuffer.append(SqlUtils.concatSql(oratrans.getCardNo()));
         stringBuffer.append(SqlUtils.concatSql(oratrans.getCity()));
         stringBuffer.append(SqlUtils.concatSql(oratrans.getUsrName()));
         stringBuffer.append(SqlUtils.concatSql(oratrans.getProv(),false));

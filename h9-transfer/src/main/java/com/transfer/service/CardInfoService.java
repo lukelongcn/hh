@@ -91,20 +91,7 @@ public class CardInfoService {
                     writebankTypeTosql(el, bufferedWriter);
                 }
 
-//                List<BankType> bankTypeList = bankTypeRepository.findByBankNameContaining(bankName);
-
                 BankType bankType = null;
-
-//
-//                Province province = provinceReposiroty.findByPid(el.getProvince());
-//                City city = cityReposiroty.findByCid(el.getCity());
-//
-//                String provinceStr = province == null ? province.getName() : "";
-//                String cityStr = city == null ? city.getCname() : "";
-//
-//                writeUserBankToSql(el, userBankBW, provinceStr, cityStr,bankType.getId());
-
-
             }
 
             page++;
@@ -150,9 +137,7 @@ public class CardInfoService {
                 String findBankName = el.getBankName();
                 String bankName = findBankName.substring(0, 2);
 
-                queryStart = System.currentTimeMillis();
                 List<BankType> bankTypeList = bankTypeRepository.findByBankNameContaining(bankName);
-//                System.out.println("db query2 time : " + (System.currentTimeMillis() - queryStart));
 
                 BankType bankType = bankTypeList.get(0);
 
@@ -168,11 +153,7 @@ public class CardInfoService {
                 if (i % 1000 == 0) {
                     writeAble = true;
                 }
-//                System.out.println("前半：" + (System.currentTimeMillis() - start));
-                start = System.currentTimeMillis();
                 writeUserBankToSql(el, userBankBW, provinceStr, cityStr, bankType.getId(), writeAble);
-//                System.out.println("后半：" + (System.currentTimeMillis() - start));
-
 
             }
 
@@ -263,11 +244,6 @@ public class CardInfoService {
         int page = 0;
 
         Pageable pageable = new PageRequest(page, size);
-//        String simpleName = content.getClass().getSimpleName();
-//        String first = simpleName.substring(0, 1);
-//        String convertfirst = first.toUpperCase();
-//        String reposirotyClass = simpleName.replace("first", convertfirst);
-
         Page<T> cardInfoList = (Page<T>) cardInfoRepository.findAll(pageable);
         System.out.println("page: " + page + " size: " + size + " totalPage: " + cardInfoList.getTotalPages());
 
@@ -280,6 +256,9 @@ public class CardInfoService {
         }
         System.out.println("end-------------------");
     }
+
+
+
 
 
 }
