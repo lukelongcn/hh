@@ -59,7 +59,7 @@ public class OrderItemVO {
     private String goods;
     
     @ApiModelProperty(value ="订单类别 1手机卡 2滴滴卡 3实物")
-    private Integer orderType ;
+    private String orderType ;
     
     @ApiModelProperty(value ="物流单号")
     private String logisticsNumber;
@@ -252,11 +252,11 @@ public class OrderItemVO {
         this.goods = goods;
     }
 
-    public Integer getOrderType() {
+    public String getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(Integer orderType) {
+    public void setOrderType(String orderType) {
         this.orderType = orderType;
     }
 

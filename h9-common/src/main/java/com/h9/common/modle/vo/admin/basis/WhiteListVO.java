@@ -108,5 +108,6 @@ public class WhiteListVO extends BasisVO{
     public WhiteListVO(WhiteUserList whiteUserList, User user) {
         this.nickName = user.getNickName();
         BeanUtils.copyProperties(whiteUserList,this);
+        this.setStatusDesc(WhiteUserList.StatusEnum.getNameById(user.getStatus()));
     }
 }

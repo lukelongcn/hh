@@ -176,8 +176,11 @@ public class AddressService {
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
             addressRepository.updateDefault(userId);
+            address.setDefaultAddress(1);
+        } else {
+            address.setDefaultAddress(0);
         }
-        address.setDefaultAddress(addressDTO.getDefaultAddress());
+
         // 使用状态设为开启
         address.setStatus(1);
 
