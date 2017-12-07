@@ -2,9 +2,17 @@ package com.h9.api.controller;
 
 
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.repo.UserAccountRepository;
+import com.h9.common.db.repo.UserRepository;
 import io.swagger.annotations.Api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 
 /**
@@ -28,4 +36,27 @@ public class TestController {
     }
 
 
+    @Resource
+    private UserRepository userRepository;
+    @Resource
+    private UserAccountRepository userAccountRepository;
+
+    @Value("${h9.current.envir}")
+    private String envir;
+
+    @GetMapping("/test/addvb")
+    public Result addvb(@RequestParam String tel,@RequestParam String money){
+        if (!envir.equals("test")) {
+            return Result.fail("不支持");
+        }
+        try {
+            User user = userRepository.findByPhone(tel);
+            UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+            userAccount.setvCoins(new BigDecimal(money));
+            userAccountRepository.save(userAccount);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.fail(e.getMessage());
+        }
+    }
 }
