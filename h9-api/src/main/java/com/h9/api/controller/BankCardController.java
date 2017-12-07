@@ -3,6 +3,7 @@ package com.h9.api.controller;
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.BankCardDTO;
 
+import com.h9.api.model.dto.BankVerifyDTO;
 import com.h9.api.service.BankCardService;
 import com.h9.common.base.Result;
 
@@ -68,5 +69,14 @@ public class BankCardController {
     @GetMapping("/my/bankcards")
     public Result myBankCards(@SessionAttribute("curUserId")long userId){
         return bankCardService.getMyBankList(userId);
+    }
+
+    /**
+     * description: 验证银行卡
+     */
+    @Secured
+    @PostMapping("/bank/verify")
+    public Result verifyBank(@RequestBody BankVerifyDTO bankVerifyDTO){
+        return bankCardService.verifyBank(bankVerifyDTO);
     }
 }

@@ -31,7 +31,6 @@ public class UserExtends extends BaseEntity {
     @Column(name = "birthday",columnDefinition = "datetime COMMENT '生日'")
     private Date birthday;
 
-
     @Column(name = "marriage_status",columnDefinition = "varchar(200)  COMMENT ''")
     private String marriageStatus = "1";
     @Column(name = "education",columnDefinition = "varchar(200) COMMENT ''")

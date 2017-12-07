@@ -2,6 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.BankCardDTO;
+import com.h9.api.model.dto.BankVerifyDTO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BankBin;
 import com.h9.common.db.entity.BankType;
@@ -211,5 +212,17 @@ public class BankCardService {
         if(byBankBinLike == null) return false;
 
         return true;
+    }
+
+
+    public Result verifyBank(BankVerifyDTO bankVerifyDTO) {
+        boolean result = cardNoVerify(bankVerifyDTO.getBankNo());
+        if(result){
+            return Result.success("验证成功");
+        }else{
+
+            return Result.fail("请填写正确的银行卡号");
+
+        }
     }
 }
