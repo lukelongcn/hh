@@ -287,6 +287,7 @@ public class ConsumeService {
         OrderItems items = new OrderItems(goods.getName(), "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
+//        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
 
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
@@ -315,6 +316,11 @@ public class ConsumeService {
         cardCouponsRepository.save(cardCoupons);
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
+
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.DIDI_CARD.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
+
 
         return Result.success(voMap);
     }
@@ -391,7 +397,8 @@ public class ConsumeService {
         withdrawalsRequest.setBankReturnData(result.getData().toString());
         withdrawalsRequest.setMerDate(merDate);
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
-
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
         //设置默认银行卡
         UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
         if (defaulBank != null) {

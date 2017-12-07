@@ -112,6 +112,9 @@ public class UserService {
         }
         LoginResultVO vo = getLoginResult(user);
         redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.REGISTER.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
         return Result.success(vo);
     }
 
@@ -276,6 +279,9 @@ public class UserService {
 
         //失效验证码
         redisBean.setStringValue(key, "", 1, TimeUnit.MINUTES);
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.BIND_MOBILE.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
         return Result.success();
     }
 
