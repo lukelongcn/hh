@@ -41,4 +41,8 @@ public interface AddressRepository extends BaseRepository<Address> {
     @Modifying
     @Query("update Address a set a.defaultAddress = 0 where a.userId = ?1")
     void updateDefault(Long userId);
+
+    @Modifying
+    @Query("update Address a set a.defaultAddress = 0 where a.userId = ?1 and a.id <> ?2")
+    void updateElseDefault(Long userId, Long aid);
 }
