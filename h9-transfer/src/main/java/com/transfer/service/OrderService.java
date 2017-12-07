@@ -17,7 +17,9 @@ import javax.annotation.Resource;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by itservice on 2017/12/6.
@@ -32,6 +34,8 @@ public class OrderService extends BaseService<GoodsOrder> {
     @Resource
     private UserRepository userRepository;
 
+    private List<Goods> mobileMoneyGoods = new ArrayList<>();
+
     @Override
     public String getPath() {
         return "./goodsOrder.sql";
@@ -44,9 +48,19 @@ public class OrderService extends BaseService<GoodsOrder> {
 
     @Override
     public void getSql(GoodsOrder goodsOrder, BufferedWriter writer) throws IOException {
-        StringBuilder sql = new StringBuilder("INSERT into orders(id,user_id,create_time,address_id" +
-                ",express_name,user_phone,user_name,express_num,province,city,district,money,pay_money,pay_status) values(");
 
+        if(mobileMoneyGoods.size() < 6){
+            mobileMoneyGoods.add(goodsReposiroty.findOne(57L));
+            mobileMoneyGoods.add(goodsReposiroty.findOne(59L));
+            mobileMoneyGoods.add(goodsReposiroty.findOne(60L));
+            mobileMoneyGoods.add(goodsReposiroty.findOne(61L));
+            mobileMoneyGoods.add(goodsReposiroty.findOne(62L));
+            mobileMoneyGoods.add(goodsReposiroty.findOne(63L));
+        }
+
+        StringBuilder sql = new StringBuilder("INSERT into orders(id,user_id,create_time,address_id" +
+                ",express_name,user_phone,user_name,express_num,province,city,district,money,pay_money,pay_status,status) values(");
+        //TODO 订单状态没有转过来，不确定是什么是意思
         sql.append("'");
         sql.append(goodsOrder.getId());
         sql.append("',");
@@ -117,6 +131,7 @@ public class OrderService extends BaseService<GoodsOrder> {
 
         sql.append("'");
         Long goodsId = goodsOrder.getGoodsId();
+        //goodsId 为空是充话费的订单
         Goods goods = null;
         if (goodsId != null) {
             goods = goodsReposiroty.findOne(goodsId);
@@ -124,6 +139,14 @@ public class OrderService extends BaseService<GoodsOrder> {
                 BigDecimal price = goods.getPrice();
                 if (price != null) {
                     sql.append(price);
+                }
+            }
+        }else{
+
+            for(Goods tempGoods : mobileMoneyGoods){
+                if (tempGoods.getName().equals(goodsOrder.getGoodsName())) {
+                    goods = tempGoods;
+                    break;
                 }
             }
         }
@@ -140,8 +163,9 @@ public class OrderService extends BaseService<GoodsOrder> {
 
         sql.append("'");
         sql.append("1");
-        sql.append("'");
+        sql.append("',");
 
+        sql.append(goodsOrder.getOrderState());
 
         sql.append(");");
         sql.append("\n");
