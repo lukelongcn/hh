@@ -19,7 +19,7 @@ public class ConfigHanler {
 
     public int getSmsOneDayCount() {
         int defaultValue = 10;
-        String dayMaxotteryCount = configService.getStringConfig("dayMaxlotteryCount");
+        String dayMaxotteryCount = configService.getStringConfig("sms:OneDay:CountCount");
         try {
             if(StringUtils.isEmpty(dayMaxotteryCount)) defaultValue = Integer.parseInt(dayMaxotteryCount);
         } catch (NumberFormatException e) {
