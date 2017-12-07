@@ -1,6 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.utils.MoneyUtils;
 
 import javax.persistence.*;
 
@@ -50,7 +51,7 @@ public class UserAccount extends BaseEntity {
     }
 
     public BigDecimal getvCoins() {
-        return vCoins.setScale(0);
+        return new BigDecimal(MoneyUtils.formatMoney(vCoins, "0"));
     }
 
     public void setvCoins(BigDecimal vCoins) {
