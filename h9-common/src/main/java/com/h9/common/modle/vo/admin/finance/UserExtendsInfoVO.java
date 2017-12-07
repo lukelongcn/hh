@@ -31,8 +31,8 @@ public class UserExtendsInfoVO {
         return sex;
     }
 
-    public void setSex(Integer sex) {
-        this.sex = sex==null?null: UserExtends.SexEnum.getNameByCode(sex);
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     public Date getBirthday() {

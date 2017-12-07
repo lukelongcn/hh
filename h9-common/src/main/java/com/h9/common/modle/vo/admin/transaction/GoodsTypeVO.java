@@ -5,6 +5,8 @@ import com.h9.common.modle.vo.admin.BasisVO;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.Column;
+
 /**
  * @author: George
  * @date: 2017/11/29 16:38
@@ -21,10 +23,16 @@ public class GoodsTypeVO extends BasisVO{
     private String code;
 
     @ApiModelProperty(value = "状态,1:启用,2:禁用")
-    private Integer status = 1;
+    private Integer status;
 
     @ApiModelProperty(value = "状态描述")
     private String statusDesc;
+
+    @ApiModelProperty(value = "是否是实物，0:否，1:是")
+    private Integer reality;
+
+    @ApiModelProperty(value = "是否是实物描述")
+    private String realityDesc;
 
     public Long getId() {
         return id;
@@ -66,11 +74,28 @@ public class GoodsTypeVO extends BasisVO{
         this.statusDesc = statusDesc;
     }
 
+    public Integer getReality() {
+        return reality;
+    }
+
+    public void setReality(Integer reality) {
+        this.reality = reality;
+    }
+
+    public String getRealityDesc() {
+        return realityDesc;
+    }
+
+    public void setRealityDesc(String realityDesc) {
+        this.realityDesc = realityDesc;
+    }
+
     public GoodsTypeVO() {
     }
 
     public GoodsTypeVO(GoodsType goodsType) {
         BeanUtils.copyProperties(goodsType,this);
         this.statusDesc = GoodsType.StatusEnum.getNameById(goodsType.getStatus());
+        this.realityDesc = GoodsType.RealityEnum.getNameById(goodsType.getReality());
     }
 }
