@@ -51,9 +51,9 @@ public class UserService {
         int totalPage = 0;
         PageResult<UserInfo> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "id");
-        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.sql");
-        BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./user_account.sql");
-        BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./user_extends.sql");
+        BufferedWriter userWtriter = SqlUtils. getBuffer("./sql/user.sql");
+        BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./sql/user_account.sql");
+        BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./sql/user_extends.sql");
         do {
             page = page + 1;
             userInfoPageResult = userInfoRepository.findAll(page, limit, sort);

@@ -34,7 +34,7 @@ public class GoodsInfoService extends BaseService<GoodsInfo>{
 
     @Override
     public String getPath() {
-        return "./goodsInfo.sql";
+        return "./sql/goodsInfo.sql";
     }
 
     @Override

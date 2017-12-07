@@ -38,7 +38,7 @@ public class OrderService extends BaseService<GoodsOrder> {
 
     @Override
     public String getPath() {
-        return "./goodsOrder.sql";
+        return "./sql/goodsOrder.sql";
     }
 
     @Override
