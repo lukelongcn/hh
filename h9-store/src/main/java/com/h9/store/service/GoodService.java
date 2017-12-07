@@ -4,6 +4,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
@@ -199,7 +200,7 @@ public class GoodService {
     }
 
     @Transactional
-    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) {
+    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) throws ServiceException {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
 
@@ -228,8 +229,8 @@ public class GoodService {
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         Result payResult = commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
-        if(payResult.getCode() == 1){
-            throw new RuntimeException(payResult.getMsg());
+        if(!payResult.isSuccess()){
+            throw new ServiceException(payResult);
         }
 
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());

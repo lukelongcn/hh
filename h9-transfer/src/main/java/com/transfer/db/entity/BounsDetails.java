@@ -56,7 +56,7 @@ public class BounsDetails {
     private Long ToUid;
 
     @Column(name="OratransOId")
-    private String OratransOId;
+    private String oratransOId;
 
     @Column(name="TransState")
     private Long TransState;
@@ -162,11 +162,11 @@ public class BounsDetails {
     }
 
     public String getOratransOId() {
-        return OratransOId;
+        return oratransOId;
     }
 
     public void setOratransOId(String oratransOId) {
-        OratransOId = oratransOId;
+        this.oratransOId = oratransOId;
     }
 
     public Long getTransState() {

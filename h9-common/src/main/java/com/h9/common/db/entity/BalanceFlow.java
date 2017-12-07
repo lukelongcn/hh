@@ -64,7 +64,7 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "order_no", columnDefinition = "varchar(32) default '' COMMENT '订单号'")
     private String orderNo;
 
-    @Column(name ="withdrawals_id",columnDefinition = "bigint(20) default '' COMMENT '提现id' ")
+    @Column(name ="withdrawals_id",columnDefinition = "bigint(20) default null COMMENT '提现id' ")
     private Long withdrawals_id;
 
     public Long getWithdrawals_id() {

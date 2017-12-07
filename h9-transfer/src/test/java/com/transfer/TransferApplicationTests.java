@@ -2,6 +2,7 @@ package com.transfer;
 
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.transfer.db.entity.Oratrans;
 import com.transfer.db.repo.CardInfoRepository;
 import com.transfer.db.repo.IntegralRecordRepository;
 import com.transfer.service.*;
@@ -22,48 +23,66 @@ public class TransferApplicationTests {
     private Logger logger = Logger.getLogger(TransferApplicationTests.class);
     @Resource
     private UserService userService;
-
-
-    @Test
-    public void contextLoads() {
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-
-        userService.user();
-
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-    }
-
-    @Resource
-    private AddressService addressService;
-
-    @Test
-    public void transferAddress() {
-        addressService.transfernAddress();
-    }
     @Resource
     private DiDiCardService diDiCardService;
-
-    @Test
-    public void transferDidiCard() {
-        diDiCardService.transferDidiCard();
-    }
-
-    @Test
-    public void userCard() {
-        userService.userCard();
-    }
-
-    @Resource
-    private CardInfoRepository cardInfoReposiroty;
     @Resource
     private CardInfoService cardInfoService;
     @Resource
-    private BankTypeRepository bankTypeRepository;
+    private IntegralRecordService integralRecordService;
+    @Resource
+    private BounsDetailService bounsDetailService;
+    @Resource
+    private BounsService bounsService;
+    @Resource
+    private BlackListService blackListService;
+    @Resource
+    private AddressService addressService;
+    @Resource
+    private AreaPhoneService areaPhoneService;
+
+    @Test
+    public void initUser() {
+        long start = System.currentTimeMillis();
+        userService.user();
+        long end = System.currentTimeMillis();
+        logger.debugv("end - start"+(end-start));
+    }
+
+    @Test
+    public void initAddress() {
+        long start = System.currentTimeMillis();
+        addressService.transfernAddress();
+        long end = System.currentTimeMillis();
+        logger.debugv("end - start"+(end-start));
+    }
+
+
+    @Test
+    public void initDIDICard() {
+        long start = System.currentTimeMillis();
+        diDiCardService.transferDidiCard();
+        long end = System.currentTimeMillis();
+        logger.debugv("end - start"+(end-start));
+    }
+
+    @Test
+    public void initUserCard() {
+        long start = System.currentTimeMillis();
+        userService.userCard();
+        long end = System.currentTimeMillis();
+        logger.debugv("end - start"+(end-start));
+    }
+
+
     @Test
     public void transferBankType(){
         try {
+            long start = System.currentTimeMillis();
             cardInfoService.readBanTypePage();
+            long end = System.currentTimeMillis();
+            logger.debugv("end - start"+(end-start));
         } catch (IOException e) {
+
             e.printStackTrace();
         }
 
@@ -72,36 +91,55 @@ public class TransferApplicationTests {
     @Test
     public void tsansferCardInfo(){
         try {
+            long start = System.currentTimeMillis();
             cardInfoService.readBankINfo();
+            long end = System.currentTimeMillis();
+            logger.debugv("end - start"+(end-start));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @Resource
-    private IntegralRecordService integralRecordService;
-
 
     @Test
-    public void transferData(){
+    public void initVConins(){
+        long start = System.currentTimeMillis();
         integralRecordService.trants();
+        long end = System.currentTimeMillis();
+        logger.debugv("end - start"+(end-start));
     }
-
-    @Resource
-    private BounsDetailService bounsDetailService;
 
     @Test
     public void transferBouns(){
+        long start = System.currentTimeMillis();
         bounsDetailService.trants();
+        long end = System.currentTimeMillis();
+        logger.debugv("end - start"+(end-start));
     }
-
-    @Resource
-    private BounsService bounsService;
 
 
     @Test
     public void transferBounsFlow(){
         bounsService.trants();
+    }
+
+
+    @Test
+    public void initBlackList(){
+        blackListService.trants();
+    }
+
+    @Test
+    public void initAreaPhone(){
+        areaPhoneService.trants();
+    }
+
+    @Resource
+    private OratransSerivce oratransSerivce;
+
+    @Test
+    public void initOratrans(){
+        oratransSerivce.trants();
     }
 
 }
