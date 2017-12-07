@@ -117,18 +117,21 @@ public class GoodService {
                 EVERYDAY_GOODS("everyday_goods", "日常家居"),
                 VB("vb", "V币");
      */
-    public Result goodsList(Integer type, int page, int size) {
+    public Result goodsList(String type, int page, int size) {
+        if(StringUtils.isEmpty(type)){
+            type = "o_all";
+        }
+        GoodsType byCode = goodsTypeReposiroty.findByCode(type);
+        if(byCode!=null){
+            return  goodsPageQuery(type, page, size);
+        }
         switch (type) {
-            case 1:
+            case "o_todayNew":
                 return todayNewGoods();
-            case 2:
-                return goodsPageQuery("everyday_goods", page, size);
-            case 3:
-                return goodsPageQuery("foods", page, size);
-            case 4:
+            case "o_all":
                 return goodsPageQuery(page, size);
             default:
-                return Result.fail("请填写正确的type");
+                return Result.fail("请升级到最新版本");
         }
     }
 

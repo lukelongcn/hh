@@ -25,11 +25,11 @@ public class GoodsController {
     /**
      * description: 商品列表
      *
-     *　商品类型 1今日新品 2日常家居 3食品饮料 4 所有商品　
+     *　
      */
     @Secured
     @GetMapping("/goodsList")
-    public Result goodsList(@RequestParam(defaultValue = "5") Integer type,
+    public Result goodsList(@RequestParam(defaultValue = "o_all") String type,
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit) {
         return goodService.goodsList(type,page,limit);
