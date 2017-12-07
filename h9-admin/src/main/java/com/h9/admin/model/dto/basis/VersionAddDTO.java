@@ -34,11 +34,9 @@ public class VersionAddDTO {
     private String description;
 
     @ApiModelProperty(value = "包url",required = true)
-    @NotBlank(message = "包url不能为空")
     private String packageUrl;
 
     @ApiModelProperty(value = "包名",required = true)
-    @NotBlank(message = "包名不能为空")
     private String packageName;
 
     public String getVersion() {

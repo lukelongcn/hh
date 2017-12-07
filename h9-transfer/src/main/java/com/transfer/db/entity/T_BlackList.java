@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "t_BlackList")
-public class T_BlackList extends BaseEntity {
+public class T_BlackList  {
 
 
     @Id

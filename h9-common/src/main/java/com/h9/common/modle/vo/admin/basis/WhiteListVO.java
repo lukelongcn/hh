@@ -21,7 +21,7 @@ public class WhiteListVO extends BasisVO{
     private String phone;
 
     @ApiModelProperty(value = "状态,1:正常,2:已取消")
-    private Integer status = 1;
+    private Integer status;
 
     @ApiModelProperty(value = "状态描述")
     private String statusDesc ;
@@ -37,6 +37,9 @@ public class WhiteListVO extends BasisVO{
 
     @ApiModelProperty(value = "昵称")
     private String nickName;
+
+    @ApiModelProperty(value = "是否失效")
+    private Boolean isExpired;
 
     public Long getId() {
         return id;
@@ -102,11 +105,21 @@ public class WhiteListVO extends BasisVO{
         this.nickName = nickName;
     }
 
+    public Boolean getIsExpired() {
+        return isExpired;
+    }
+
+    public void setIsExpired(Boolean expired) {
+        isExpired = expired;
+    }
+
     public WhiteListVO() {
     }
 
     public WhiteListVO(WhiteUserList whiteUserList, User user) {
-        this.nickName = user.getNickName();
         BeanUtils.copyProperties(whiteUserList,this);
+        this.nickName = user.getNickName();
+        this.statusDesc = WhiteUserList.StatusEnum.getNameById(user.getStatus());
+        this.isExpired = whiteUserList.getEndTime().before(new Date());
     }
 }

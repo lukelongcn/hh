@@ -4,6 +4,7 @@ import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankTypeRepository;
 import com.h9.common.db.repo.GoodsReposiroty;
+import com.transfer.db.entity.Oratrans;
 import com.transfer.db.repo.CardInfoRepository;
 import com.transfer.db.repo.IntegralRecordRepository;
 import com.transfer.service.*;

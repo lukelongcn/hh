@@ -127,7 +127,7 @@ public class AddressService {
         // 使用状态设为开启
         address.setStatus(1);
         addressRepository.save(address);
-        return Result.success("地址添加成功");
+        return Result.success("保存成功");
     }
 
 
@@ -176,8 +176,11 @@ public class AddressService {
         // 设置是否为默认地址
         if(addressDTO.getDefaultAddress() == 1){
             addressRepository.updateDefault(userId);
+            address.setDefaultAddress(1);
+        } else {
+            address.setDefaultAddress(0);
         }
-        address.setDefaultAddress(addressDTO.getDefaultAddress());
+
         // 使用状态设为开启
         address.setStatus(1);
 
@@ -220,4 +223,10 @@ public class AddressService {
     }
 
 
+    public Result getDetailAddress(Long userId, Long id) {
+        Address address = addressRepository.findById(id);
+        if (address == null){ return Result.fail("地址不存在"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        return Result.success(address);
+    }
 }

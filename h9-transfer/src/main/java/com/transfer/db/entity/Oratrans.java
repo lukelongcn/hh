@@ -34,7 +34,7 @@ public class Oratrans {
 
     private String flag;
 
-    private String cradNo;
+    private String cardNo;
 
     private String usrName;
 

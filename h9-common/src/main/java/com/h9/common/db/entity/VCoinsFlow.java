@@ -58,7 +58,7 @@ public class VCoinsFlow extends BaseEntity {
     }
 
     public BigDecimal getBalance() {
-        return balance;
+        return balance.setScale(0);
     }
 
     public void setBalance(BigDecimal balance) {
@@ -66,7 +66,7 @@ public class VCoinsFlow extends BaseEntity {
     }
 
     public BigDecimal getMoney() {
-        return money;
+        return money.setScale(0);
     }
 
     public void setMoney(BigDecimal money) {

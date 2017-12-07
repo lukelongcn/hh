@@ -2,6 +2,7 @@ package com.h9.api.handle;
 
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
+import com.h9.common.common.ServiceException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,13 @@ public class GlobalExceptionHandler {
             logger.info(e.getMessage(),e);
             return new Result(1, "请传入正确的参数," + e.getMessage());
         }
+
+
+        if (e instanceof ServiceException) {
+            ServiceException serviceException = (ServiceException) e;
+            return new Result(serviceException.getCode(), serviceException.getMessage());
+        }
+
 
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
