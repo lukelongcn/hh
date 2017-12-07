@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.deserializer.AbstractDateDeserializer;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.ServiceException;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.service.GoodService;
@@ -41,7 +42,7 @@ public class TestOrder {
     /**
      * description: 测试兑换商品
      */
-    public  void converGoodsTest(){
+    public  void converGoodsTest() throws ServiceException {
 
         Long userId = 9676L;
         Long addressId = 452l;

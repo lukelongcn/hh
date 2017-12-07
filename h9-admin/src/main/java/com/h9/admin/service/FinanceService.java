@@ -3,6 +3,9 @@ package com.h9.admin.service;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.LotteryFlowRecordVO;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
+import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -10,14 +13,6 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.Constants;
 import com.h9.common.db.basis.JpaRepository;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.LotteryFlow;
-import com.h9.common.db.entity.LotteryFlowRecord;
-import com.h9.common.db.entity.WithdrawalsRecord;
-import com.h9.common.db.repo.LotteryFlowRecordRepository;
-import com.h9.common.db.repo.LotteryFlowRepository;
-import com.h9.common.db.repo.UserRepository;
-import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.modle.dto.LotteryFLowRecordDTO;
 import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import com.h9.common.utils.DateUtil;
@@ -27,6 +22,7 @@ import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -62,6 +58,8 @@ public class FinanceService {
     private UserRepository userRepository;
     @Autowired
     private ConfigService configService;
+    @Autowired
+    private VB2MoneyRepository vb2MoneyRepository;
 
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
         /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
@@ -262,6 +260,14 @@ public class FinanceService {
         lotteryFlowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.SUCCESS.getId());
         this.lotteryFlowRecordRepository.save(lotteryFlowRecord);
         return Result.success("成功");
+    }
+
+    public Result<PageResult<VB2Money>> listVB2Money(String phone, PageDTO pageDTO) {
+        if (StringUtils.isBlank(phone)) {
+            phone = null;
+        }
+        Page<VB2Money> vb2MoneyPage = this.vb2MoneyRepository.findByTel(phone,pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(vb2MoneyPage));
     }
 
 }

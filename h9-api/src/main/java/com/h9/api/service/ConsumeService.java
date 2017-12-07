@@ -9,6 +9,7 @@ import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -107,7 +108,7 @@ public class ConsumeService {
     @Resource
     private GoodService goodService;
 
-    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
+    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) throws ServiceException {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -174,7 +175,7 @@ public class ConsumeService {
             saveRechargeRecord(user,goods.getRealPrice());
             return Result.success("充值成功", map);
         } else {
-            throw new RuntimeException("充值失败");
+            throw new ServiceException(result);
         }
     }
 
@@ -231,7 +232,7 @@ public class ConsumeService {
 //        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
         List<Map<String, Object>> list = new ArrayList<>();
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
-        if (goodsType == null) return Result.fail();
+        if (goodsType == null) return Result.success(list);
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
 
@@ -286,6 +287,7 @@ public class ConsumeService {
         OrderItems items = new OrderItems(goods.getName(), "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
+//        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
 
         //返回数据
         PageRequest pageRequest = new PageRequest(0, 1);
@@ -314,6 +316,11 @@ public class ConsumeService {
         cardCouponsRepository.save(cardCoupons);
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
+
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.DIDI_CARD.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
+
 
         return Result.success(voMap);
     }
@@ -390,7 +397,8 @@ public class ConsumeService {
         withdrawalsRequest.setBankReturnData(result.getData().toString());
         withdrawalsRequest.setMerDate(merDate);
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
-
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
         //设置默认银行卡
         UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
         if (defaulBank != null) {

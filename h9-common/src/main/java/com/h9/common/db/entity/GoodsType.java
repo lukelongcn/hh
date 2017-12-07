@@ -34,6 +34,9 @@ public class GoodsType extends BaseEntity {
     @Column(name = "allow_import",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 是否允许导入数据，1:否，2:是'")
     private Integer allowImport = 1;
 
+    @Column(name = "is_real",nullable = false,columnDefinition = "tinyint default 0 COMMENT ' 是否是实物，0:否，1:是'")
+    private Integer isReal;
+
     /**
      * description:
      * @see GoodsTypeEnum
@@ -136,6 +139,14 @@ public class GoodsType extends BaseEntity {
 
     public void setParent(Long parent) {
         this.parent = parent;
+    }
+
+    public Integer getIsReal() {
+        return isReal;
+    }
+
+    public void setIsReal(Integer isReal) {
+        this.isReal = isReal;
     }
 
     public enum StatusEnum {

@@ -2,6 +2,7 @@ package com.h9.store.handle;
 
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
+import com.h9.common.common.ServiceException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +59,12 @@ public class GlobalExceptionHandler {
             logger.info("参数错误");
             return new Result(HttpStatus.BAD_REQUEST.value(), "参数错误", ExceptionUtils.getMessage(e));
         }
+
+        if (e instanceof ServiceException) {
+            ServiceException serviceException = (ServiceException) e;
+            return new Result(serviceException.getCode(), serviceException.getMessage());
+        }
+
 
         if (e instanceof BindException) {
             String msg = ((BindException) e).getBindingResult().getFieldError().getDefaultMessage();

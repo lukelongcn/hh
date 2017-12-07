@@ -10,6 +10,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.utils.MD5Util;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +54,8 @@ public class BasisService {
     private VersionRepository versionRepository;
     @Resource
     private WhiteUserListRepository whiteUserListRepository;
+    @Resource
+    private VB2MoneyRepository vb2MoneyRepository;
 
     public static final String IMAGE_FOLDER = "imageFolder";
 
@@ -131,18 +135,21 @@ public class BasisService {
         return Result.success(pageResult);
     }
 
-    public Result statisticsLottery() {
+    public Result statistics() {
         BigDecimal lotteryCount = lotteryFlowRepository.getLotteryCount();
         BigDecimal withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode());
         BigDecimal userVCoins = userAccountRepository.getUserVCoins();
         BigDecimal totalVCoins = vCoinsFlowRepository.getGrantVCoins();
+        BigDecimal totalExchangeVB = this.vb2MoneyRepository.sumVB();
         userVCoins = userVCoins == null ? BigDecimal.valueOf(0):userVCoins;
         totalVCoins = totalVCoins == null ? BigDecimal.valueOf(0):totalVCoins;
+        totalExchangeVB = totalExchangeVB == null ? BigDecimal.ZERO : totalExchangeVB;
         List<StatisticsItemVO> list = new ArrayList<>();
         list.add(new StatisticsItemVO("奖金",lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP).toPlainString(),"总奖金（元）"));
         list.add(new StatisticsItemVO("提现金额",withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP).toPlainString(),"总提现奖金（元）"));
         list.add(new StatisticsItemVO("V币",totalVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总V币"));
         list.add(new StatisticsItemVO("剩余V币",userVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"剩余V币总量"));
+        list.add(new StatisticsItemVO("V币兑换酒元",totalExchangeVB.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"V币兑换数量"));
         return Result.success(list);
     }
 
@@ -231,6 +238,10 @@ public class BasisService {
     }
 
     public Result addVersion(VersionAddDTO versionAddDTO) {
+        Result validationResult = this.versionValid(versionAddDTO);
+        if (validationResult.getCode() != Result.SUCCESS_CODE) {
+            return validationResult;
+        }
         return Result.success(this.versionRepository.save(versionAddDTO.toVersion()));
     }
 
@@ -238,6 +249,10 @@ public class BasisService {
         Version version = this.versionRepository.findOne(versionEditDTO.getId());
         if (version == null) {
             return Result.fail("版本不存在");
+        }
+        Result validationResult = this.versionValid(versionEditDTO);
+        if (validationResult.getCode() != Result.SUCCESS_CODE) {
+            return validationResult;
         }
         BeanUtils.copyProperties(versionEditDTO,version);
         return Result.success(this.versionRepository.save(version));
@@ -281,6 +296,9 @@ public class BasisService {
         if (user == null) {
             return Result.fail("号码不存在");
         }
+        if (whiteUserList.getEndTime().before(new Date())) {
+            return Result.fail("有效期内才能编辑");
+        }
         BeanUtils.copyProperties(whiteListEditDTO, whiteUserList);
         whiteUserList.setUserId(user.getId());
         return Result.success(this.whiteUserListRepository.save(whiteUserList));
@@ -298,6 +316,18 @@ public class BasisService {
     public Result<PageResult<WhiteListVO>> listWhiteListVO(PageDTO pageDTO){
         Page<WhiteListVO> whiteListVOPage = this.whiteUserListRepository.findAllByPage(pageDTO.toPageRequest());
         return Result.success(new PageResult<>(whiteListVOPage));
+    }
+
+    public Result versionValid(VersionAddDTO versionEditDTO) {
+        if (versionEditDTO.getClientType() == Version.ClientTypeEnum.ANDROID.getCode()) {
+            if (StringUtils.isBlank(versionEditDTO.getPackageUrl())) {
+                return Result.fail("包url不能为空");
+            }
+            if (StringUtils.isBlank(versionEditDTO.getPackageName())) {
+                return Result.fail("包名不能为空");
+            }
+        }
+        return Result.success();
     }
 
 }

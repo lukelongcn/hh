@@ -9,6 +9,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
@@ -176,10 +177,7 @@ public class AccountService {
         Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
         ordersReposiroty.saveAndFlush(order);
 
-        Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");
-        if (result.getCode() == 1) {
-            throw new RuntimeException("转换酒元异常");
-        }
+        commonService.setBalance(userId, money, 11L, order.getId(), "", "");
         //vb流水
         VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), order.getId(),11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);

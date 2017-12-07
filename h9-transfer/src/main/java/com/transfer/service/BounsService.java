@@ -53,7 +53,6 @@ public class BounsService extends BaseService<BounsDetails> {
     @Override
     public PageResult get(int page, int limit) {
         PageResult all = bounsDetailsRepository.findAll(page, limit);
-        all.setTotalPage(5);
         return all;
     }
 
