@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -294,6 +295,9 @@ public class BasisService {
         User user = this.userRepository.findByPhone(whiteListEditDTO.getPhone());
         if (user == null) {
             return Result.fail("号码不存在");
+        }
+        if (whiteUserList.getEndTime().before(new Date())) {
+            return Result.fail("有效期内才能编辑");
         }
         BeanUtils.copyProperties(whiteListEditDTO, whiteUserList);
         whiteUserList.setUserId(user.getId());
