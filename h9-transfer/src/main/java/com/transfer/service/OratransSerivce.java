@@ -37,7 +37,7 @@ public class OratransSerivce extends BaseService<Oratrans> {
 
     @Override
     public String getPath() {
-        return "./orantrans.sql";
+        return "./sql/orantrans.sql";
     }
 
     @Override

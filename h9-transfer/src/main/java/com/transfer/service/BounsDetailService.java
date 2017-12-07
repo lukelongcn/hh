@@ -28,7 +28,7 @@ public class BounsDetailService extends BaseService<BounsDetails> {
 
     @Override
     public String getPath() {
-        return "./bouns.sql";
+        return "./sql/bouns.sql";
     }
 
     @Override

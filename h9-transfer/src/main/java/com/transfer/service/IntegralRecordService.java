@@ -28,7 +28,7 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
 
     @Override
     public String getPath() {
-        return "./record.sql";
+        return "./sql/record.sql";
     }
 
     @Override

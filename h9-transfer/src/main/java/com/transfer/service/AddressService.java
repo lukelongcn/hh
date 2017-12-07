@@ -35,7 +35,7 @@ public class AddressService {
         int totalPage = 0;
         PageResult<Address> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "ID");
-        BufferedWriter userWtriter = SqlUtils.getBuffer("./address.sql");
+        BufferedWriter userWtriter = SqlUtils.getBuffer("./sql/address.sql");
         do {
             page = page + 1;
             userInfoPageResult = targetAddressReposiroty.findAll(page, limit, sort);

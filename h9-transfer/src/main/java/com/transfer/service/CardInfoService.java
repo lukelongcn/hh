@@ -3,6 +3,7 @@ package com.transfer.service;
 import com.h9.common.db.entity.BankType;
 import com.h9.common.db.repo.BankTypeRepository;
 import com.h9.common.db.repo.UserBankRepository;
+import com.transfer.SqlUtils;
 import com.transfer.db.entity.CardInfo;
 import com.transfer.db.entity.City;
 import com.transfer.db.entity.Province;
@@ -31,7 +32,7 @@ import java.util.List;
 @Service
 public class CardInfoService {
 
-    public String basePath = "d://sql/";
+    public String basePath = "./sql/";
     @Resource
     private CardInfoRepository cardInfoRepository;
 
@@ -55,14 +56,7 @@ public class CardInfoService {
         int size = 5000;
         int page = 0;
 
-        File dirFile = new File(basePath);
-        if (!dirFile.exists()) {
-            dirFile.mkdirs();
-        }
-
-        File bankTypeSqlFile = new File(basePath + "/bankType.sql");
-
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(bankTypeSqlFile));
+        BufferedWriter bufferedWriter = SqlUtils.getBuffer("./sql/card.sql");
 
         Pageable pageable = new PageRequest(page, size);
         Page<CardInfo> cardInfoList = cardInfoRepository.findAll(pageable);
