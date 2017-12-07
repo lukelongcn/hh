@@ -3,6 +3,7 @@ package com.h9.admin.service;
 import com.h9.admin.model.dto.community.GoodsTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeEditDTO;
 import com.h9.admin.model.dto.transaction.CardCouponsListAddDTO;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.CardCoupons;
 import com.h9.common.db.entity.Goods;
 import com.h9.common.db.repo.CardCouponsRepository;
@@ -44,6 +45,8 @@ public class TransactionService {
     private CardCouponsRepository cardCouponsRepository;
     @Autowired
     private GoodsReposiroty goodsReposiroty;
+    @Autowired
+    private ConfigService configService;
 
     public Result<GoodsType> addGoodsType(GoodsTypeAddDTO goodsTypeAddDTO) {
         if (this.goodsTypeReposiroty.findByCode(goodsTypeAddDTO.getCode()) != null) {

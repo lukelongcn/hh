@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UpdateInfoVO {
     private String updateVersion;
-    private Integer updateVersionNumber;
+//    private Integer updateVersionNumber;
 
     private String updateContent;
     /**
@@ -25,7 +25,7 @@ public class UpdateInfoVO {
     public UpdateInfoVO(Version version){
         this.updateContent  = version.getDescription();
         this.updateVersion = version.getVersion();
-        this.updateVersionNumber = version.getVersionNumber();
+//        this.updateVersionNumber = version.getVersionNumber();
         this.updateType = version.getUpgradeType();
         this.downloadUrl = version.getPackageUrl();
     }

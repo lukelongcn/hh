@@ -26,7 +26,7 @@ public class Version extends BaseEntity {
 
     @Column(name = "version", nullable = true,columnDefinition = "varchar(16) default '' COMMENT '版本'")
     private String version;
-
+//
     @Column(name = "version_number",  columnDefinition = "int default 0 COMMENT '版本号'")
     private Integer versionNumber;
 

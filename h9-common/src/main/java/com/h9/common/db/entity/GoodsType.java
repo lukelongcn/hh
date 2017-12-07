@@ -175,4 +175,31 @@ public class GoodsType extends BaseEntity {
         }
 
     }
+
+    public enum RealityEnum {
+        YES(1,"是"),
+        FALSE(0,"否");
+
+        RealityEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            RealityEnum realityEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return realityEnum==null?null:realityEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+    }
 }
