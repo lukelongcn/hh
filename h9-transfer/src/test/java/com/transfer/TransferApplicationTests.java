@@ -1,7 +1,9 @@
 package com.transfer;
 
+import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.transfer.db.entity.Oratrans;
 import com.transfer.db.repo.CardInfoRepository;
 import com.transfer.db.repo.IntegralRecordRepository;
@@ -45,7 +47,7 @@ public class TransferApplicationTests {
         long start = System.currentTimeMillis();
         userService.user();
         long end = System.currentTimeMillis();
-        logger.debugv("end - start"+(end-start));
+        logger.debugv("end - start" + (end - start));
     }
 
     @Test
@@ -53,7 +55,7 @@ public class TransferApplicationTests {
         long start = System.currentTimeMillis();
         addressService.transfernAddress();
         long end = System.currentTimeMillis();
-        logger.debugv("end - start"+(end-start));
+        logger.debugv("end - start" + (end - start));
     }
 
 
@@ -62,7 +64,7 @@ public class TransferApplicationTests {
         long start = System.currentTimeMillis();
         diDiCardService.transferDidiCard();
         long end = System.currentTimeMillis();
-        logger.debugv("end - start"+(end-start));
+        logger.debugv("end - start" + (end - start));
     }
 
     @Test
@@ -70,17 +72,17 @@ public class TransferApplicationTests {
         long start = System.currentTimeMillis();
         userService.userCard();
         long end = System.currentTimeMillis();
-        logger.debugv("end - start"+(end-start));
+        logger.debugv("end - start" + (end - start));
     }
 
 
     @Test
-    public void transferBankType(){
+    public void transferBankType() {
         try {
             long start = System.currentTimeMillis();
             cardInfoService.readBanTypePage();
             long end = System.currentTimeMillis();
-            logger.debugv("end - start"+(end-start));
+            logger.debugv("end - start" + (end - start));
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -89,12 +91,12 @@ public class TransferApplicationTests {
     }
 
     @Test
-    public void tsansferCardInfo(){
+    public void tsansferCardInfo() {
         try {
             long start = System.currentTimeMillis();
             cardInfoService.readBankINfo();
             long end = System.currentTimeMillis();
-            logger.debugv("end - start"+(end-start));
+            logger.debugv("end - start" + (end - start));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -102,35 +104,51 @@ public class TransferApplicationTests {
 
 
     @Test
-    public void initVConins(){
+    public void initVConins() {
         long start = System.currentTimeMillis();
         integralRecordService.trants();
         long end = System.currentTimeMillis();
-        logger.debugv("end - start"+(end-start));
+        logger.debugv("end - start" + (end - start));
     }
 
     @Test
-    public void transferBouns(){
+    public void transferBouns() {
         long start = System.currentTimeMillis();
         bounsDetailService.trants();
         long end = System.currentTimeMillis();
-        logger.debugv("end - start"+(end-start));
+        logger.debugv("end - start" + (end - start));
     }
 
 
     @Test
-    public void transferBounsFlow(){
+    public void transferBounsFlow() {
         bounsService.trants();
     }
 
+    @Resource
+    private OrderService orderService;
 
     @Test
-    public void initBlackList(){
+    public void transferOrders() {
+        orderService.trants();
+    }
+
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
+
+    @Test
+    public void test2() {
+        Goods one = goodsReposiroty.findOne(1L);
+        System.out.println();
+    }
+
+    @Test
+    public void initBlackList() {
         blackListService.trants();
     }
 
     @Test
-    public void initAreaPhone(){
+    public void initAreaPhone() {
         areaPhoneService.trants();
     }
 
@@ -138,8 +156,9 @@ public class TransferApplicationTests {
     private OratransSerivce oratransSerivce;
 
     @Test
-    public void initOratrans(){
+    public void initOratrans() {
         oratransSerivce.trants();
     }
-
 }
+
+
