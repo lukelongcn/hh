@@ -190,7 +190,7 @@ public class AddressService {
         }
         addressRepository.save(address);
 
-        return Result.success("地址修改成功");
+        return Result.success("保存成功");
     }
 
     /**
