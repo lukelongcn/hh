@@ -109,6 +109,50 @@ public class Orders extends BaseEntity {
     private Integer orderFrom;
 
 
+    @Column(name = "express_num",columnDefinition = "int default 1 COMMENT ''")
+    private Integer expressNum;
+
+    @Column(name = "province",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String province;
+
+    @Column(name = "district",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String district;
+
+    @Column(name = "city",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String city;
+
+    public Integer getExpressNum() {
+        return expressNum;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setExpressNum(Integer expressNum) {
+        this.expressNum = expressNum;
+    }
+
     public enum PayMethodEnum {
 
         BALANCE_PAY(1, "余额支付"),
