@@ -129,7 +129,7 @@ public class GoodService {
         }
         switch (type) {
             case "o_todayNew":
-                return todayNewGoods();
+                return todayNewGoods(page,size);
             case "o_all":
                 return goodsPageQuery(page, size);
             default:
@@ -167,10 +167,8 @@ public class GoodService {
      * description: 今日新品,取更新时间最近5条的
      *
      */
-    public Result todayNewGoods() {
-
-
-        PageRequest pageRequest = goodsReposiroty.pageRequest(0, 5);
+    public Result todayNewGoods(int page, int size) {
+        PageRequest pageRequest = goodsReposiroty.pageRequest(page, size);
         Page<Goods> pageObj = goodsReposiroty.findLastUpdate(pageRequest);
         PageResult<Goods> pageResult = new PageResult(pageObj);
         return Result.success(pageResult.result2Result(GoodsListVO::new));

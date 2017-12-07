@@ -174,12 +174,12 @@ public class AccountService {
 
         String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
         BigDecimal money = vbCount.multiply(new BigDecimal(rateStr));
-        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
-        ordersReposiroty.saveAndFlush(order);
+//        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
+//        ordersReposiroty.saveAndFlush(order);
 
-        commonService.setBalance(userId, money, 11L, order.getId(), "", "");
+        commonService.setBalance(userId, money, 11L, null,"", "");
         //vb流水
-        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), order.getId(),11L);
+        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), null,11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
         userRecordRepository.saveAndFlush(userRecord);
 

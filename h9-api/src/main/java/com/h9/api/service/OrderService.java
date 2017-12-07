@@ -48,27 +48,6 @@ public class OrderService {
         order.setOrderType(type);
         return order;
     }
-    public Orders initOrder( BigDecimal money, String tel,String type,String supplierName,User user) {
-        Orders order = new Orders();
-
-        if(type.equals(String.valueOf(MATERIAL_GOODS.getCode()))){
-            order.setStatus(Orders.statusEnum.DELIVER.getCode());
-        }else{
-            order.setStatus(Orders.statusEnum.FINISH.getCode());
-        }
-
-        order.setUserName(user.getNickName());
-        order.setPayMoney(money);
-        order.setNo("");
-        order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
-        order.setUserPhone(tel);
-        order.setSupplierName(supplierName);
-        order.setPayStatus(1);
-        order.setStatus(1);
-        order.setOrderType(type);
-        order.setUser(user);
-        return order;
-    }
 
     public Result orderList(Long userId,Integer page,Integer size) {
         PageResult<Orders> pageResult = ordersReposiroty.findByUser(userId, page, size);

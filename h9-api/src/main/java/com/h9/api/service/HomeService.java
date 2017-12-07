@@ -104,6 +104,13 @@ public class HomeService {
     @Resource
     VersionRepository versionRepository;
 
+
+    /***
+     * 版本号  0
+     * @param version
+     * @param client
+     * @return
+     */
     public Result version(Integer version, Integer client) {
 
         //检查是否有新版本

@@ -25,43 +25,39 @@ public class TransferApplicationTests {
     private Logger logger = Logger.getLogger(TransferApplicationTests.class);
     @Resource
     private UserService userService;
-
-
-    @Test
-    public void contextLoads() {
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-
-        userService.user();
-
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-    }
-
     @Resource
     private AddressService addressService;
-
-    @Test
-    public void transferAddress() {
-        addressService.transfernAddress();
-    }
     @Resource
     private DiDiCardService diDiCardService;
-
-    @Test
-    public void transferDidiCard() {
-        diDiCardService.transferDidiCard();
-    }
-
-    @Test
-    public void userCard() {
-        userService.userCard();
-    }
-
     @Resource
     private CardInfoRepository cardInfoReposiroty;
     @Resource
     private CardInfoService cardInfoService;
     @Resource
     private BankTypeRepository bankTypeRepository;
+
+
+    @Test
+    public void contextLoads() {
+        logger.debugv(" ----*************###############+++++++++++++++++++");
+        userService.user();
+        logger.debugv(" ----*************###############+++++++++++++++++++");
+    }
+
+    @Test
+    public void transferAddress() {
+        addressService.transfernAddress();
+    }
+
+    @Test
+    public void transferDidiCard() {
+        diDiCardService.transferDidiCard();
+    }
+    @Test
+    public void userCard() {
+        userService.userCard();
+    }
+
     @Test
     public void transferBankType(){
         try {
@@ -69,7 +65,6 @@ public class TransferApplicationTests {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Test
