@@ -9,6 +9,7 @@ import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -107,7 +108,7 @@ public class ConsumeService {
     @Resource
     private GoodService goodService;
 
-    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
+    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) throws ServiceException {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -174,7 +175,7 @@ public class ConsumeService {
             saveRechargeRecord(user,goods.getRealPrice());
             return Result.success("充值成功", map);
         } else {
-            throw new RuntimeException("充值失败");
+            throw new ServiceException(result);
         }
     }
 

@@ -4,6 +4,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
@@ -118,18 +119,21 @@ public class GoodService {
                 EVERYDAY_GOODS("everyday_goods", "日常家居"),
                 VB("vb", "V币");
      */
-    public Result goodsList(Integer type, int page, int size) {
+    public Result goodsList(String type, int page, int size) {
+        if(StringUtils.isEmpty(type)){
+            type = "o_all";
+        }
+        GoodsType byCode = goodsTypeReposiroty.findByCode(type);
+        if(byCode!=null){
+            return  goodsPageQuery(type, page, size);
+        }
         switch (type) {
-            case 1:
+            case "o_todayNew":
                 return todayNewGoods();
-            case 2:
-                return goodsPageQuery("everyday_goods", page, size);
-            case 3:
-                return goodsPageQuery("foods", page, size);
-            case 4:
+            case "o_all":
                 return goodsPageQuery(page, size);
             default:
-                return Result.fail("请填写正确的type");
+                return Result.fail("请升级到最新版本");
         }
     }
 
@@ -197,7 +201,7 @@ public class GoodService {
     }
 
     @Transactional
-    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) {
+    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) throws ServiceException {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
 
@@ -232,8 +236,8 @@ public class GoodService {
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         Result payResult = commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
-        if(payResult.getCode() == 1){
-            throw new RuntimeException(payResult.getMsg());
+        if(!payResult.isSuccess()){
+            throw new ServiceException(payResult);
         }
 
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
