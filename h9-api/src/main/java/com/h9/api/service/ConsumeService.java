@@ -172,7 +172,7 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            saveRechargeRecord(user,goods.getRealPrice());
+            saveRechargeRecord(user,goods.getRealPrice(),orderItems.getOrders().getId());
             return Result.success("充值成功", map);
         } else {
             throw new ServiceException(result);
@@ -180,8 +180,8 @@ public class ConsumeService {
     }
 
 
-    public void saveRechargeRecord(User user,BigDecimal money){
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone());
+    public void saveRechargeRecord(User user,BigDecimal money,Long orderId){
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(),orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 

@@ -28,14 +28,26 @@ public class RechargeRecord extends BaseEntity {
     @Column(name = "tel", columnDefinition = "varchar(50) COMMENT '充值的手机号码'")
     private String tel;
 
-    public RechargeRecord(Long userId, BigDecimal money, String userName, String tel) {
+    @Column(name = "order_id")
+    private Long orderId;
+
+    public RechargeRecord(Long userId, BigDecimal money, String userName, String tel,Long orderId) {
         this.userId = userId;
         this.money = money;
         this.userName = userName;
         this.tel = tel;
+        this.orderId = orderId;
     }
 
     public RechargeRecord( ) {
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public String getUserName() {
