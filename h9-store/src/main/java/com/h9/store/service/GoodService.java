@@ -233,8 +233,8 @@ public class GoodService {
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount())).negate();
-        Result payResult = commonService.setBalance(userId, goodsPrice, 12L, order.getId(), "", balanceFlowType);
+        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
+        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
         if(!payResult.isSuccess()){
             throw new ServiceException(payResult);
         }

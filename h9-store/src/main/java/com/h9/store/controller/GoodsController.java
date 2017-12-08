@@ -25,8 +25,6 @@ public class GoodsController {
 
     /**
      * description: 商品列表
-     *
-     *　
      */
     @Secured
     @GetMapping("/goodsList")
@@ -38,7 +36,6 @@ public class GoodsController {
 
     /**
      * description: 商品详情
-     *
      */
     @Secured
     @GetMapping("/goods/{id}")
@@ -54,7 +51,6 @@ public class GoodsController {
     @PostMapping("/goods/convert")
     public Result convertGoods(@Valid@RequestBody ConvertGoodsDTO convertGoodsDTO, @SessionAttribute("curUserId") Long userId) throws ServiceException {
             return goodService.convertGoods(convertGoodsDTO,userId);
-
     }
 
 
