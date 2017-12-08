@@ -221,7 +221,7 @@ public class GoodService {
         //单独判断下余额是否足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
-        if(balance.compareTo(goods.getRealPrice()) < 0){
+        if(balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0){
             return Result.fail("余额不足");
         }
 
@@ -233,13 +233,13 @@ public class GoodService {
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        Result payResult = commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
+        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount())).negate();
+        Result payResult = commonService.setBalance(userId, goodsPrice, 12L, order.getId(), "", balanceFlowType);
         if(!payResult.isSuccess()){
             throw new ServiceException(payResult);
         }
 
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-
 
         OrderItems orderItems = new OrderItems(goods,count,order);
         ordersRepository.save(order);
