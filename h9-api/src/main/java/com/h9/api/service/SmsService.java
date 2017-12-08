@@ -166,8 +166,7 @@ public class SmsService {
     //校验信息
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
-
-        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode()) {
+        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode() && smsType != SMSTypeEnum.BIND_BANKCARD.getCode()) {
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             BigDecimal balance = userAccount.getBalance();

@@ -128,7 +128,15 @@ public class HomeService {
 //            return Result.success(updateInfoVO);
 //        }
 
+
+        if(StringUtils.isBlank(version)){
+            return Result.fail("请传入version");
+        }
+
         Version newVersion = versionRepository.findNewVersion(client);
+        if (newVersion == null) {
+            return Result.success("已是最新版本");
+        }
 
         if (newVersion.getVersion().equals(version)) {
             return Result.success("已是最新版本");

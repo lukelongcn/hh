@@ -48,7 +48,11 @@ public class OrderDetailVO {
         if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"")){
             vo.setAccepterName(order.getUserName());
             vo.setAddress(order.getUserAddres());
-            vo.setLogisticsNumber(order.getExpressNum()+"");
+            if (order.getExpressNum() != null && order.getExpressNum() != 0) {
+                vo.setLogisticsNumber(order.getExpressNum()+"");
+            }else{
+                vo.setLogisticsNumber("");
+            }
         }
 
         List<OrderItems> orderItems = order.getOrderItems();
