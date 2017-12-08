@@ -76,7 +76,7 @@ public class BankCardController {
      */
     @Secured
     @PostMapping("/bank/verify")
-    public Result verifyBank(@RequestBody BankVerifyDTO bankVerifyDTO){
-        return bankCardService.verifyBank(bankVerifyDTO);
+    public Result verifyBank(@RequestBody BankCardDTO bankCardDTO,@SessionAttribute("curUserId")long userId){
+        return bankCardService.verifyBank(bankCardDTO,userId);
     }
 }

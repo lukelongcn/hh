@@ -215,11 +215,38 @@ public class BankCardService {
     }
 
 
-    public Result verifyBank(BankVerifyDTO bankVerifyDTO) {
-        String cardNo = bankVerifyDTO.getBankNo();
+    public Result verifyBank(BankCardDTO bankCardDTO, Long userId) {
+
+        String cardNo = bankCardDTO.getNo();
         if (!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo.substring(0, 6))) {
             return Result.fail("请填写正确的银行卡号");
         }
+
+        //判断银行卡号是否已被绑定
+        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(), 1);
+        if (user != null) {
+            if (user.getUserId().equals(userId)) {
+                Long typeId = bankCardDTO.getBankTypeId();
+                BankType bankType = bankTypeRepository.findOne(typeId);
+                if (bankType == null) return Result.fail("此银行类型不存在");
+                return Result.success("验证成功");
+            }
+            return Result.fail("该卡已被他人绑定");
+        }
+
+        UserBank userBank = new UserBank();
+        userBank.setUserId(userId);
+        userBank.setName(bankCardDTO.getName());
+        userBank.setNo(bankCardDTO.getNo());
+
+        if (CharacterFilter.containChinese(bankCardDTO.getNo())) {
+            return Result.fail("请输入纯数字的银行卡");
+        }
+
+        Long typeId = bankCardDTO.getBankTypeId();
+        BankType bankType = bankTypeRepository.findOne(typeId);
+        if (bankType == null) return Result.fail("此银行类型不存在");
+
         return Result.success("验证成功");
     }
 }
