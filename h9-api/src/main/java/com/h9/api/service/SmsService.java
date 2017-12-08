@@ -316,7 +316,6 @@ public class SmsService {
             if (errorCount >= 2) {
                 result.setCode(3);
                 result.setMsg("错误次数已达到最大次数,请稍后再试");
-
                 return result;
             }
 
@@ -325,6 +324,8 @@ public class SmsService {
             return result;
         }
 
+        String smsCodeCount = RedisKey.getSmsCodeCount(tel, type);
+        redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
         return null;
     }
 }

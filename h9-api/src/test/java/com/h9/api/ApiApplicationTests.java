@@ -264,10 +264,10 @@ public class ApiApplicationTests {
 
         String stringValue = redisBean.getStringValue("sms:code:count:4:18770812669");
         System.out.println(stringValue);
-//        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
-
-//        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
-
+        String tel = "15970051786";
+        String smsCodeKey = RedisKey.getSmsCodeKey(tel, 6);
+        String stringValue1 = redisBean.getStringValue(smsCodeKey);
+        System.out.println(stringValue1);
 
     }
 
