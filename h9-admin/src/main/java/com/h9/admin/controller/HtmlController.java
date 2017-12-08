@@ -10,6 +10,8 @@ import com.h9.common.db.entity.HtmlContent;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +40,15 @@ public class HtmlController {
     @Secured(accessCode = "html:get")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取单网页")
-    public Result<HtmlContent> getHtml(@PathVariable Long id){
+    public Result<HtmlContent> getHtml(@PathVariable() Long id){
         return htmlService.getHtml(id);
+    }
+
+    @Secured(accessCode = "html:get:code")
+    @GetMapping(value = "")
+    @ApiOperation("根据code获取单网页")
+    public Result<HtmlContent> getHtml(@ApiParam("标识") @Validated @NotBlank(message = "标识不能为空")@RequestParam() String code){
+        return htmlService.getHtmlByCode(code);
     }
 
     @Secured(accessCode = "html:delete")
