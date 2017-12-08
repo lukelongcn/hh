@@ -142,13 +142,16 @@ public class RedisBean {
 
     public String getStringValue(String key) {
         String value = valueOps.get(key);
-        if (value.length() < 200) {
-            logger.infov("redis: getHashValue({0}) = {1}", key, value);
-        }
+
 
         if (value == null) {
             logger.warnv("redis: getStringValue({0}) = {1}", key, value);
         }
+
+        if (value != null && value.length() < 200) {
+            logger.infov("redis: getHashValue({0}) = {1}", key, value);
+        }
+
         return value;
     }
 
