@@ -58,10 +58,10 @@ public class OrderItemVO {
                 .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
                 .collect(Collectors.joining(","));
         orderItemVO.setGoods(collect);
-        String didi = orders.getOrderItems().stream()
+        /*String didi = orders.getOrderItems().stream()
                 .map(OrderItems::getDidiCardNumber)
                 .collect(Collectors.joining(","));
-        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());
+        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());*/
         //统计订单商品数量
         long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderItemVO.setCount(sum);
