@@ -310,7 +310,7 @@ public class SmsService {
             int errorCount = 0;
 
             if (errorCountStr != null) {
-                errorCount = Integer.valueOf(errorCountStr);
+                errorCount = Integer  .valueOf(errorCountStr);
             }
 
             if (errorCount >= 2) {
@@ -323,9 +323,9 @@ public class SmsService {
             redisBean.setStringValue(errorCodeCountKey, String.valueOf(errorCount), 10, TimeUnit.MINUTES);
             return result;
         }
-
-        String smsCodeCount = RedisKey.getSmsCodeCount(tel, type);
-        redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
+        //验证成功，使验证码失效
+        String smsCodeKey = RedisKey.getSmsCodeKey(tel, type);
+        redisBean.setStringValue(smsCodeKey,"",1,TimeUnit.MILLISECONDS);
         return null;
     }
 }

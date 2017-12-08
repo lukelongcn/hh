@@ -133,8 +133,8 @@ public class ConsumeService {
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
         if (verifyResult != null) return verifyResult;
 
-//        String smsCodeCount = RedisKey.getSmsCodeCount(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
-//        redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
+        String smsCodeCount = RedisKey.getSmsCodeCount(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
+        redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
         order.setUser(user);

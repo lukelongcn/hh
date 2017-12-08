@@ -86,3 +86,4 @@ hs_err_pid*
 h9-api/log/
 h9-lottery/log/
 log/
+*.sql
