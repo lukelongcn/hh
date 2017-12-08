@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.vo.AgreementVO;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.HtmlContent;
@@ -67,8 +68,8 @@ public class CommonController {
         if(htmlContent.getTitle() == null){
             return Result.fail("404:页面丢失，标题不存在");
         }
-        String content = htmlContent.getContent();
-        return Result.success("获取成功",content);
+        AgreementVO agreementVO = new AgreementVO(htmlContent);
+        return Result.success("获取成功",agreementVO);
     }
 
 
