@@ -150,6 +150,8 @@ public class SmsService {
             redisBean.expire(countKey, DateUtil.getTimesNight());
             //存储短信记录
             redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
+            String errorCodeCountKey = RedisKey.getErrorCodeCountKey(userId, smsType);
+            redisBean.setStringValue(errorCodeCountKey, "", 1, TimeUnit.SECONDS);
             return Result.success("短信发送成功");
         }
     }
@@ -166,7 +168,8 @@ public class SmsService {
     //校验信息
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
-        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode() && smsType != SMSTypeEnum.BIND_BANKCARD.getCode()) {
+
+        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode()) {
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             BigDecimal balance = userAccount.getBalance();
@@ -309,7 +312,7 @@ public class SmsService {
             int errorCount = 0;
 
             if (errorCountStr != null) {
-                errorCount = Integer  .valueOf(errorCountStr);
+                errorCount = Integer.valueOf(errorCountStr);
             }
 
             if (errorCount >= 2) {

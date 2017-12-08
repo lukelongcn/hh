@@ -188,7 +188,7 @@ public class GoodService {
                 .id(goods.getId())
                 .img(goods.getImg())
                 .desc(goods.getDescription())
-                .price(MoneyUtils.formatMoney(goods.getPrice()))
+                .price(MoneyUtils.formatMoney(goods.getRealPrice()))
                 .name(goods.getName())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
                 .stock(goods.getStock())
