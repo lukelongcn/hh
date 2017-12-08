@@ -40,7 +40,7 @@ public class OrderDetailVO {
 
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
-        vo.setOrderType(order.getOrderType());
+        vo.setOrderType(order.getOrderType().equals("1") ? "3": order.getOrderType());
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
 
@@ -48,7 +48,7 @@ public class OrderDetailVO {
         if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode())){
             vo.setAccepterName("");
             vo.setAddress(order.getUserAddres());
-            vo.setLogisticsNumber(order.getLogisticsNumber());
+            vo.setLogisticsNumber(order.getExpressNum()+"");
         }
 
         List<OrderItems> orderItems = order.getOrderItems();
