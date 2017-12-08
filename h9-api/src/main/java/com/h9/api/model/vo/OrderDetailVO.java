@@ -46,7 +46,7 @@ public class OrderDetailVO {
 
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
         if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode())){
-            vo.setAccepterName("");
+            vo.setAccepterName(order.getUserName());
             vo.setAddress(order.getUserAddres());
             vo.setLogisticsNumber(order.getExpressNum()+"");
         }

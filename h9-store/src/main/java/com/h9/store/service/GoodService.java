@@ -228,7 +228,7 @@ public class GoodService {
         String code = goods.getGoodsType().getCode();
         Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
         order.setAddressId(addressId);
-        order.setUserAddres(address.getAddress());
+        order.setUserAddres(address.getProvince()+address.getCid()+address.getDistict()+address.getAddress());
         order.setOrderFrom(1);
         ordersRepository.saveAndFlush(order);
 
