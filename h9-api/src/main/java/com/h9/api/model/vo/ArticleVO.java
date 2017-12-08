@@ -32,9 +32,19 @@ public class ArticleVO {
 
     private Integer recommend = 1;//1 推荐 2 不推荐
 
+    private Integer enable;// 状态
+
 
     public ArticleVO(Article article) {
         BeanUtils.copyProperties(article,this);
+    }
+
+    public Integer getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Integer enable) {
+        this.enable = enable;
     }
 
     public Long getId() {

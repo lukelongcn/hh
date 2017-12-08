@@ -28,7 +28,7 @@ public interface ArticleRepository extends BaseRepository<Article>{
     @Query("select a from Article a where a.enable<>2 order by a.enable desc ,a.sort desc,a.id desc")
     Page<Article> findAll(Pageable pageable);
     
-    @Query("select a from Article a where a.enable<>2 and a.id=?1")
+    @Query("select a from Article a where a.id=?1")
     Article findOne(Long id);
 
     @Query("select o from Article o where o.enable = 1 and o.articleType = ?1 order by o.sort desc")
