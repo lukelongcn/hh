@@ -1,8 +1,5 @@
 package com.transfer;
 
-import com.h9.common.db.repo.BankTypeRepository;
-import com.h9.common.db.repo.GoodsReposiroty;
-import com.transfer.db.repo.CardInfoRepository;
 import com.transfer.service.*;
 import org.jboss.logging.Logger;
 import org.junit.Test;
@@ -11,13 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserApplicationTests {
+public class SqlTests {
 
-    private Logger logger = Logger.getLogger(UserApplicationTests.class);
+    private Logger logger = Logger.getLogger(SqlTests.class);
     @Resource
     private UserService userService;
     @Resource
@@ -27,15 +23,7 @@ public class UserApplicationTests {
     @Resource
     private BounsDetailService bounsDetailService;
     @Resource
-    private BounsService bounsService;
-    @Resource
-    private BlackListService   blackListService;
-    @Resource
-    private AreaPhoneService areaPhoneService;
-    @Resource
     private OratransSerivce oratransSerivce;
-    @Resource
-    private TastingService tastingService;
 
     @Test
     public void user() {
@@ -55,26 +43,12 @@ public class UserApplicationTests {
     }
 
 
-
-    @Test
-    public void transferBlackList(){
-        blackListService.trants();
-    }
-
-    @Test
-    public void transferAreaPhone(){
-        areaPhoneService.trants();
-    }
-
     @Test
     public void transferOratrans(){
         oratransSerivce.trants();
     }
 
-    @Test
-    public void transferTastingService(){
-        tastingService.trants();
-    }
+
 
     @Test
     public void transferBouns(){
@@ -82,10 +56,6 @@ public class UserApplicationTests {
     }
 
 
-    @Test
-    public void transferBounsFlow(){
-        bounsService.trants();
-    }
 
 
 

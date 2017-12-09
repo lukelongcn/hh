@@ -22,18 +22,30 @@ public abstract class BaseService<T> {
      Logger logger = Logger.getLogger(BaseService.class);
 
     public void trants(){
-        int page = 0;
+        trants(null,null,null);
+    }
+
+    public void trants(Integer startPage,Integer endPage,String path){
+        Integer page = startPage;
+        if(page == null){
+            page = 1;
+            startPage = 1;
+        }
         int limit = 1000;
-        int totalPage = 0;
-        PageResult<T> userInfoPageResult;
-        String path = getPath();
+        Integer totalPage = endPage;
+
+        if(StringUtils.isEmpty(path)) path = getPath();
+        logger.debugv("path:{0}",path);
         BufferedWriter userWtriter = null;
-        logger.debugv("path:");
         if(!StringUtils.isEmpty(path)) userWtriter = SqlUtils.getBuffer(path);
+
+        PageResult<T> userInfoPageResult;
         do {
-            page = page + 1;
             userInfoPageResult =get(page, limit);
-            totalPage = (int) userInfoPageResult.getTotalPage();
+            if(endPage == null){
+                totalPage = (int) userInfoPageResult.getTotalPage();
+                endPage = totalPage;
+            }
             List<T> userInfos = userInfoPageResult.getData();
             for (T userInfo : userInfos) {
                 try {
@@ -43,9 +55,10 @@ public abstract class BaseService<T> {
                 }
             }
             logger.info("page: "+page+" totalPage: "+totalPage);
-            float rate = (float) page * 100 / (float) totalPage;
+            float rate = (float) (page-startPage+1) * 100 / (float) (totalPage-startPage+1);
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
                 logger.debugv(getTitle()+ rate + "% " + page + "/" + totalPage);
+            page = page + 1;
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
         if(!StringUtils.isEmpty(path))   SqlUtils.close(userWtriter);
     }
