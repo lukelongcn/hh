@@ -26,33 +26,12 @@ public class TransferApplicationTests {
     @Resource
     private UserService userService;
     @Resource
-    private AddressService addressService;
-    @Resource
     private DiDiCardService diDiCardService;
-    @Resource
-    private CardInfoRepository cardInfoReposiroty;
     @Resource
     private CardInfoService cardInfoService;
     @Resource
-    private BankTypeRepository bankTypeRepository;
+    private GoodsInfoService goodsInfoService;
 
-
-    @Test
-    public void contextLoads() {
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-        userService.user();
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-    }
-
-    @Test
-    public void transferAddress() {
-        addressService.transfernAddress();
-    }
-
-    @Test
-    public void transferDidiCard() {
-        diDiCardService.transferDidiCard();
-    }
     @Test
     public void userCard() {
         userService.userCard();
@@ -67,8 +46,9 @@ public class TransferApplicationTests {
         }
     }
 
+
     @Test
-    public void tsansferCardInfo(){
+    public void transferCardInfo(){
         try {
             cardInfoService.readBankINfo();
         } catch (IOException e) {
@@ -76,31 +56,7 @@ public class TransferApplicationTests {
         }
     }
 
-    @Resource
-    private IntegralRecordService integralRecordService;
 
-
-    @Test
-    public void transferData(){
-        integralRecordService.trants();
-    }
-
-    @Resource
-    private BounsDetailService bounsDetailService;
-
-    @Test
-    public void transferBouns(){
-        bounsDetailService.trants();
-    }
-
-    @Resource
-    private BounsService bounsService;
-
-
-    @Test
-    public void transferBounsFlow(){
-        bounsService.trants();
-    }
 
     @Resource
     private OrderService orderService;
@@ -109,13 +65,15 @@ public class TransferApplicationTests {
         orderService.trants();
     }
 
-    @Resource
-    private GoodsReposiroty goodsReposiroty;
-    @Resource
-    private GoodsInfoService goodsInfoService;
+
     @Test
     public void transferGoodsInfo(){
        goodsInfoService.trants();
+    }
+
+    @Test
+    public void transferDidiCard() {
+        diDiCardService.transferDidiCard();
     }
 
 

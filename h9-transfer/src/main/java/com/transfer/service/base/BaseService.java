@@ -28,6 +28,7 @@ public abstract class BaseService<T> {
         PageResult<T> userInfoPageResult;
         String path = getPath();
         BufferedWriter userWtriter = null;
+        logger.debugv("path:");
         if(!StringUtils.isEmpty(path)) userWtriter = SqlUtils.getBuffer(path);
         do {
             page = page + 1;

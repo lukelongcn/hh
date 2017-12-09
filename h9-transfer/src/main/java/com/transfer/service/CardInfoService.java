@@ -232,27 +232,5 @@ public class CardInfoService {
     }
 
 
-    public <T> void readPage(CallBackService callBack) {
-
-        int size = 1000;
-        int page = 0;
-
-        Pageable pageable = new PageRequest(page, size);
-        Page<T> cardInfoList = (Page<T>) cardInfoRepository.findAll(pageable);
-        System.out.println("page: " + page + " size: " + size + " totalPage: " + cardInfoList.getTotalPages());
-
-        while (!CollectionUtils.isEmpty(cardInfoList.getContent())) {
-            cardInfoList = (Page<T>) cardInfoRepository.findAll(pageable);
-            System.out.println("page: " + page + " size: " + size + " totalPage: " + cardInfoList.getTotalPages());
-            callBack.doThing();
-            page++;
-            pageable = new PageRequest(page, size);
-        }
-        System.out.println("end-------------------");
-    }
-
-
-
-
 
 }
