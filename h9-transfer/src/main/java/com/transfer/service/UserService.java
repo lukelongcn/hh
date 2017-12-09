@@ -97,6 +97,10 @@ public class UserService {
     private String covertToUser(UserInfo userInfo) {
         if (StringUtils.isNotEmpty(userInfo.getOpenID())
                 || StringUtils.isNotEmpty(userInfo.getPhone())) {
+
+            if("13861148967".equals(userInfo.getPhone())||userInfo.getId() == 367214){
+                logger.debugv("13861148967:" + SqlUtils.concatSql(userInfo.getUsername()));
+            }
             StringBuffer sql = new StringBuffer();
             sql.append("insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time");
             sql.append(",login_count,nick_name,open_id,password,phone,uuid) value(");
