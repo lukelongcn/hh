@@ -29,12 +29,12 @@ public class OrderService {
     @Resource
     private UserService userService;
 
-    public Orders initOrder(String nickName, BigDecimal money, String tel,String type,String supplierName) {
+    public Orders initOrder(String nickName, BigDecimal money, String tel, String type, String supplierName) {
         Orders order = new Orders();
 
-        if(type.equals(String.valueOf(MATERIAL_GOODS.getCode()))){
+        if (type.equals(String.valueOf(MATERIAL_GOODS.getCode()))) {
             order.setStatus(Orders.statusEnum.DELIVER.getCode());
-        }else{
+        } else {
             order.setStatus(Orders.statusEnum.FINISH.getCode());
         }
         order.setUserName(nickName);
@@ -49,13 +49,14 @@ public class OrderService {
         return order;
     }
 
-    public Result orderList(Long userId,Integer page,Integer size) {
+    public Result orderList(Long userId, Integer page, Integer size) {
         PageResult<Orders> pageResult = ordersReposiroty.findByUser(userId, page, size);
         return Result.success(pageResult.result2Result(OrderListVO::convert));
     }
 
     public Result orderDetail(Long orderId) {
         Orders orders = ordersReposiroty.findOne(orderId);
+        if (orders == null) return Result.fail("订单不存在");
         OrderDetailVO vo = OrderDetailVO.convert(orders);
         return Result.success(vo);
     }

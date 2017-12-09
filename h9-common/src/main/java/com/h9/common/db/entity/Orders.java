@@ -99,8 +99,8 @@ public class Orders extends BaseEntity {
     @Column(name = "order_type", columnDefinition = "varchar(50) default '' COMMENT'订单类别'")
     private String orderType;
 
-    @Column(name = "loginstics_number")
-    private String logisticsNumber;
+//    @Column(name = "loginstics_number")
+//    private String logisticsNumber;
 
     @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
     private String expressName;
@@ -108,8 +108,7 @@ public class Orders extends BaseEntity {
     @Column(name = "order_from",columnDefinition = "int default 2 COMMENT '订单来源 1为酒元商场 2为其他'")
     private Integer orderFrom;
 
-
-    @Column(name = "express_num",columnDefinition = "int default 1 COMMENT ''")
+    @Column(name = "express_num",columnDefinition = "int  COMMENT '物流单号'")
     private Integer expressNum;
 
     @Column(name = "province",columnDefinition = "varchar(50) default '' COMMENT ''")
@@ -204,13 +203,13 @@ public class Orders extends BaseEntity {
         this.orderFrom = orderFrom;
     }
 
-    public String getLogisticsNumber() {
-        return logisticsNumber;
-    }
-
-    public void setLogisticsNumber(String logisticsNumber) {
-        this.logisticsNumber = logisticsNumber;
-    }
+//    public String getLogisticsNumber() {
+//        return logisticsNumber;
+//    }
+//
+//    public void setLogisticsNumber(String logisticsNumber) {
+//        this.logisticsNumber = logisticsNumber;
+//    }
 
     public enum orderTypeEnum {
 

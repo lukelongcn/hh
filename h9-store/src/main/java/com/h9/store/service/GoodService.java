@@ -188,7 +188,7 @@ public class GoodService {
                 .id(goods.getId())
                 .img(goods.getImg())
                 .desc(goods.getDescription())
-                .price(MoneyUtils.formatMoney(goods.getPrice()))
+                .price(MoneyUtils.formatMoney(goods.getRealPrice()))
                 .name(goods.getName())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
                 .stock(goods.getStock())
@@ -208,6 +208,7 @@ public class GoodService {
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
         if(goods == null) return Result.fail("商品不存在");
+        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
 
         User user = userRepository.findOne(userId);
         Long addressUserId = address.getUserId();
@@ -226,14 +227,13 @@ public class GoodService {
         }
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
+        Orders order = orderService.initOrder(goodsPrice, user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
         order.setAddressId(addressId);
-        order.setUserAddres(address.getAddress());
+        order.setUserAddres(address.getProvince()+address.getCid()+address.getDistict()+address.getAddress());
         order.setOrderFrom(1);
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
         Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
         if(!payResult.isSuccess()){
             throw new ServiceException(payResult);

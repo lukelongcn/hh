@@ -16,4 +16,6 @@ public interface HtmlContentRepository extends BaseRepository<HtmlContent> {
 
     @Query("select a from HtmlContent a where a.status<>2 and a.id=?1")
     HtmlContent findOne(Long id);
+
+    HtmlContent findByCode(String code);
 }

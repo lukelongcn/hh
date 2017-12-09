@@ -150,6 +150,8 @@ public class SmsService {
             redisBean.expire(countKey, DateUtil.getTimesNight());
             //存储短信记录
             redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
+            String errorCodeCountKey = RedisKey.getErrorCodeCountKey(userId, smsType);
+            redisBean.setStringValue(errorCodeCountKey, "", 1, TimeUnit.SECONDS);
             return Result.success("短信发送成功");
         }
     }
@@ -323,9 +325,9 @@ public class SmsService {
             redisBean.setStringValue(errorCodeCountKey, String.valueOf(errorCount), 10, TimeUnit.MINUTES);
             return result;
         }
-
-        String smsCodeCount = RedisKey.getSmsCodeCount(tel, type);
-        redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
+        //验证成功，使验证码失效
+        String smsCodeKey = RedisKey.getSmsCodeKey(tel, type);
+        redisBean.setStringValue(smsCodeKey,"",1,TimeUnit.MILLISECONDS);
         return null;
     }
 }
