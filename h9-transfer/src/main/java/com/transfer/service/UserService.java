@@ -46,7 +46,7 @@ public class UserService {
 
     public void user() {
 
-        int page = 0;
+        int page = 1;
         int limit = 1000;
         int totalPage = 0;
         PageResult<UserInfo> userInfoPageResult;
@@ -55,7 +55,6 @@ public class UserService {
         BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./sql/user_account.sql");
         BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./sql/user_extends.sql");
         do {
-            page = page + 1;
             userInfoPageResult = userInfoRepository.findAll(page, limit, sort);
             totalPage = (int) userInfoPageResult.getTotalPage();
             List<UserInfo> userInfos = userInfoPageResult.getData();
@@ -85,6 +84,7 @@ public class UserService {
             float rate = (float) page * 100 / (float) totalPage;
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
                 logger.debugv("用户迁移进度 " + rate + "% " + page + "/" + totalPage);
+            page = page + 1;
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
         SqlUtils.close(userWtriter);
         SqlUtils.close(userAccountWtriter);

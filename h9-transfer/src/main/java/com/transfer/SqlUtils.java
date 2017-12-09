@@ -83,6 +83,9 @@ public class SqlUtils {
         if(str.contains("'")){
             str = str.replace("'", "\\'");
         }
+        if(str.contains("\\")){
+            str = str.replace("\\", "\\\\");
+        }
         return str;
     }
 }
