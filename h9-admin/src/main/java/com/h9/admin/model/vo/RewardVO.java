@@ -1,5 +1,7 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.Product;
+import com.h9.common.db.entity.ProductType;
 import com.h9.common.db.entity.Reward;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
@@ -101,8 +103,12 @@ public class RewardVO {
     public static RewardVO toRewardVO(Reward reward){
         RewardVO rewardVO = new RewardVO();
         BeanUtils.copyProperties(reward,rewardVO);
-        if(reward.getProduct()!=null){
-            rewardVO.setProductName(reward.getProduct().getName());
+        Product product = reward.getProduct();
+        if(product !=null){
+            ProductType productType = product.getProductType();
+            if (productType != null) {
+                rewardVO.setProductName(productType.getName());
+            }
         }
         return  rewardVO;
     }
