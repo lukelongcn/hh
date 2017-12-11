@@ -32,7 +32,7 @@ public class FileController {
     private FileService fileService;
 
     /**
-     * description: 上传文件
+     * description: 上传图片(只能上传图片)
      */
 
     @PostMapping("/file/upload")
@@ -40,4 +40,12 @@ public class FileController {
         return fileService.fileUpload(file);
     }
 
+    /**
+     * description: 上传文件（对格式没有要求）
+     */
+
+    @PostMapping("/file/uploadFile")
+    public Result uploadImg(MultipartFile file) {
+        return fileService.fileUploadImg(file);
+    }
 }
