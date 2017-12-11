@@ -79,24 +79,33 @@ public class TransactionService {
 
     public Result addCardCouponsList(CardCouponsListAddDTO cardCouponsListAddDTO) {
         List<String> noList = Arrays.asList(cardCouponsListAddDTO.getNos().split("\n"));
+
         List<String> validNoList = new ArrayList<>();
-        noList.forEach(item -> {
-            if (StringUtils.isNotBlank(item)) {
-                validNoList.add(item.replace("\\s*",""));
+        for (int i = 0; i < noList.size(); i++) {
+            if (StringUtils.isNotBlank(noList.get(i))) {
+                String validNo = noList.get(i).replaceAll("\\s*","");
+                if (validNoList.contains(validNo)) {
+                    return Result.fail("重复输入：" + noList.get(i) );
+                }
+                validNoList.add(validNo);
             }
-        });
+        }
+
         if (validNoList.size() < 1) {
             return Result.fail("请输入有效的卡券号");
         }
-        for (int i = 0;i < validNoList.size();i++) {
-            if (this.cardCouponsRepository.findByNo(validNoList.get(i)) != null) {
-                return Result.fail("券号:"+validNoList.get(i)+",已存在");
-            }
-        }
+
         Goods goods = this.goodsReposiroty.findByLockId(cardCouponsListAddDTO.getGoodsId());
         if (goods == null) {
             return Result.fail("商品不存在");
         }
+
+        for (int i = 0; i < validNoList.size(); i++) {
+            if (this.cardCouponsRepository.findByNo(validNoList.get(i)) != null) {
+                return Result.fail("券号:"+validNoList.get(i)+",已存在");
+            }
+        }
+
         Date date = new Date();
         String dayString = DateUtil.formatDate(date,DateUtil.FormatType.NON_SEPARATOR_DAY);
         String lastBatchNo = this.cardCouponsRepository.findLastBatchNo(cardCouponsListAddDTO.getGoodsId(),dayString);

@@ -4,6 +4,7 @@ package com.h9.api;
 //import com.h9.api.provider.MobileRechargeService;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
@@ -308,6 +309,9 @@ public class ApiApplicationTests {
     private AddressRepository addressRepository;
     @Test
     public void test22(){
+        String errorCodeCountKey = RedisKey.getErrorCodeCountKey(14L, SMSTypeEnum.BIND_BANKCARD.getCode());
+        String value = redisBean.getStringValue(errorCodeCountKey);
+        System.out.println(value);
     }
 
 }

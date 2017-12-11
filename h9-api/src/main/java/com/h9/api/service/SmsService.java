@@ -169,16 +169,6 @@ public class SmsService {
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
 
-        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode()) {
-
-            UserAccount userAccount = userAccountRepository.findByUserId(userId);
-            BigDecimal balance = userAccount.getBalance();
-
-            if (balance.compareTo(new BigDecimal(0)) <= 0) {
-                return Result.fail("余额不足");
-            }
-        }
-
         if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
             //判断提现额度
             BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
@@ -189,7 +179,16 @@ public class SmsService {
             }
 
         }
+        
+        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode() && smsType != SMSTypeEnum.BIND_BANKCARD.getCode()) {
 
+            UserAccount userAccount = userAccountRepository.findByUserId(userId);
+            BigDecimal balance = userAccount.getBalance();
+
+            if (balance.compareTo(new BigDecimal(0)) <= 0) {
+                return Result.fail("余额不足");
+            }
+        }
 
 
         return null;

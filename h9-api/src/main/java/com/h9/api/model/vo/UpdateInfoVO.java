@@ -18,7 +18,7 @@ public class UpdateInfoVO {
      * description: 1:不提示升级,2:建议升级,3:强制升级
      */
     private Integer updateType;
-    private String downloadUrl;
+    private String downloadUrl = "";
 
     public UpdateInfoVO(){}
 

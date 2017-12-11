@@ -1,5 +1,6 @@
 package com.h9.api.model.vo;
 
+import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
@@ -40,7 +41,17 @@ public class OrderDetailVO {
 
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
-        vo.setOrderType(order.getOrderType().equals("1") ? "3": order.getOrderType());
+        if(order.getOrderType().equals("1")){
+            vo.setOrderType(3+"");
+        }else{
+            if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
+                vo.setOrderType("2");
+            }else{
+                vo.setOrderType("1");
+            }
+        }
+
+
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
 
