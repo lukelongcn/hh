@@ -174,8 +174,7 @@ public class SmsService {
             BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
 
             if(todayCanWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
-
-                return Result.fail("您今日可提现金额为零，请明天再来");
+                return Result.fail("您今日可提现金额已达到每日提现额度，请明日再来");
             }
 
         }
@@ -189,7 +188,6 @@ public class SmsService {
                 return Result.fail("余额不足");
             }
         }
-
 
         return null;
     }
