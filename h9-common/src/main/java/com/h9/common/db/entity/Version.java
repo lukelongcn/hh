@@ -30,7 +30,7 @@ public class Version extends BaseEntity {
     @Column(name = "version_number",  columnDefinition = "int default 0 COMMENT '版本号'")
     private Integer versionNumber;
 
-    @Column(name = "client_type",  columnDefinition = "tinyint default 1 COMMENT '客户端,1:ios,2:android'")
+    @Column(name = "client_type",  columnDefinition = "tinyint default 1 COMMENT '客户端,1:android,2:ios'")
     private Integer clientType;
 
     @Column(name = "upgrade_type",  columnDefinition = "tinyint default 0 COMMENT '升级类型,1:不提示升级,2:建议升级,3:强制升级'")
@@ -110,8 +110,8 @@ public class Version extends BaseEntity {
     }
 
     public enum ClientTypeEnum {
-        IOS(1, "IOS"),
-        ANDROID(2, "Android");
+        IOS(2, "IOS"),
+        ANDROID(1, "Android");
 
         private int code;
         private String name;
