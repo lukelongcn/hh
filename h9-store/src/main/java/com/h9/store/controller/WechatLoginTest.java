@@ -3,6 +3,7 @@ package com.h9.store.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
+import org.apache.commons.io.Charsets;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,12 +65,20 @@ public class WechatLoginTest {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<body>");
-        sb.append(userInfo);
+        sb.append("<h1>");
+        sb.append(new String(userInfo.toString().getBytes(Charsets.ISO_8859_1),Charsets.UTF_8));
+        sb.append("</h1>");
         sb.append("</body>");
         sb.append("</html>");
         return sb.toString();
     }
 
+    public static void main(String[] args) {
+        String s = "{\"openid\":\"omOSC1FmOkoCuQW75k14r8ZadQ8c\",\"nickname\":\"ä¹°å¥¶ç³�ç��å¤§å�¥å�¥î��\",\"sex\":1,\"language\":\"zh_CN\",\"city\":\"\",\"province\":\"\",\"country\":\"å®�é��å°�\",\"headimgurl\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vi_32\\/Q0j4TwGTfTLC1MgMcjlPc6BJcEA5zYCkFcJiaGCXY7w80dHyzKjOHycLiaeEN2NvRhHiasTFJQJnP3DNZJWicNnzXA\\/0\",\"privilege\":[]}";
+        byte[] bytes = s.getBytes(Charsets.ISO_8859_1);
+        String s2 = new String(bytes,Charsets.UTF_8);
+        System.out.println(s2);
+    }
     private static class acResponse {
         private String access_token;
         private String expires_in;
