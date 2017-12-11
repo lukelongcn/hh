@@ -58,6 +58,7 @@ public class WechatLoginTest {
 
         String getUserInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
         getUserInfoUrl = String.format(getUserInfoUrl, access_token, acResponse.getOpenid());
+        logger.info("getUserInfoUrl : "+getUserInfoUrl);
         String userInfo = restTemplate.getForObject(getUserInfoUrl, String.class);
 
         logger.info("userInfo : "+userInfo);
