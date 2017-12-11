@@ -57,7 +57,7 @@ public class OrderService {
             return Result.fail("订单号不存在");
         }
         //只有实物订单才能修改
-        if (one.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode())) {
+        if (one.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"")) {
             BeanUtils.copyProperties(expressDTO, one);
             if (one.getStatus() == Orders.statusEnum.WAIT_SEND.getCode()) {
                 if (StringUtils.isNotBlank(expressDTO.getLogisticsNumber())) {

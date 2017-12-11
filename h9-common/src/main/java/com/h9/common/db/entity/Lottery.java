@@ -27,9 +27,6 @@ public class Lottery extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-//    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '奖励领取用户id'")
-//    private Long userId;
-
     @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励领取用户id'")
     private User user;
@@ -43,7 +40,7 @@ public class Lottery extends BaseEntity {
     private BigDecimal money = new BigDecimal(0);
 
     @OneToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private UserRecord userRecord;
 
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '1 未分配奖励 2已分配奖励 3完成'")
@@ -66,15 +63,6 @@ public class Lottery extends BaseEntity {
     public void setId(Long id) {
         this.id = id;
     }
-
-//    public Long getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(Long userId) {
-//        this.userId = userId;
-//    }
-
 
     public User getUser() {
         return user;
