@@ -47,7 +47,7 @@ public class OrderDetailVO {
             if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
                 vo.setOrderType("2");
             }else{
-                vo.setOrderType("3");
+                vo.setOrderType("1");
             }
         }
 
