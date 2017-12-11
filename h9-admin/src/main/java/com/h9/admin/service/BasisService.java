@@ -141,6 +141,8 @@ public class BasisService {
         BigDecimal userVCoins = userAccountRepository.getUserVCoins();
         BigDecimal totalVCoins = vCoinsFlowRepository.getGrantVCoins();
         BigDecimal totalExchangeVB = this.vb2MoneyRepository.sumVB();
+        lotteryCount = lotteryCount == null ? BigDecimal.ZERO : lotteryCount;
+        withdrawalsCount = withdrawalsCount == null ? BigDecimal.ZERO : withdrawalsCount;
         userVCoins = userVCoins == null ? BigDecimal.valueOf(0):userVCoins;
         totalVCoins = totalVCoins == null ? BigDecimal.valueOf(0):totalVCoins;
         totalExchangeVB = totalExchangeVB == null ? BigDecimal.ZERO : totalExchangeVB;
