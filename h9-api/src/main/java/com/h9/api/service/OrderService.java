@@ -54,9 +54,13 @@ public class OrderService {
         return Result.success(pageResult.result2Result(OrderListVO::convert));
     }
 
-    public Result orderDetail(Long orderId) {
+    public Result orderDetail(Long orderId,Long userId) {
         Orders orders = ordersReposiroty.findOne(orderId);
+        if (!orders.getUser().getId().equals(orderId)) {
+            return Result.fail("无权查看");
+        }
         if (orders == null) return Result.fail("订单不存在");
+
         OrderDetailVO vo = OrderDetailVO.convert(orders);
         return Result.success(vo);
     }
