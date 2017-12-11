@@ -148,6 +148,7 @@ public class ConsumeService {
         String balanceFlowImg = configService.getValueFromMap("balanceFlowImg", "6");
         orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
+        orderItems.setGoods(goods);
 
         userAccountRepository.save(userAccount);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());

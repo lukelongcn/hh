@@ -56,7 +56,7 @@ public class OrderService {
 
     public Result orderDetail(Long orderId,Long userId) {
         Orders orders = ordersReposiroty.findOne(orderId);
-        if (!orders.getUser().getId().equals(orderId)) {
+        if (!orders.getUser().getId().equals(userId)) {
             return Result.fail("无权查看");
         }
         if (orders == null) return Result.fail("订单不存在");
