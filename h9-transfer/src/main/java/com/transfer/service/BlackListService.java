@@ -44,6 +44,7 @@ public class BlackListService extends BaseService<T_BlackList> {
     @Override
     public void getSql(T_BlackList t_blackList, BufferedWriter userWtriter) throws IOException {
         SystemBlackList systemBlackList = new SystemBlackList();
+        systemBlackList.setId(t_blackList.getId());
         systemBlackList.setStartTime(new Date());
         systemBlackList.setEndTime(DateUtil.getDate(new Date(),6, Calendar.YEAR));
         systemBlackList.setUserId(t_blackList.getUserId());
