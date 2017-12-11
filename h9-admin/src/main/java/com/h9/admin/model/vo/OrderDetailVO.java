@@ -64,7 +64,7 @@ public class OrderDetailVO {
     private String orderType ;
 
     @ApiModelProperty(value ="物流单号")
-    private String logisticsNumber;
+    private String expressNum;
 
     @ApiModelProperty(value ="滴滴券号")
     private String didiCardNumber;
@@ -269,12 +269,12 @@ public class OrderDetailVO {
         this.orderType = orderType;
     }
 
-    public String getLogisticsNumber() {
-        return logisticsNumber;
+    public String getExpressNum() {
+        return expressNum;
     }
 
-    public void setLogisticsNumber(String logisticsNumber) {
-        this.logisticsNumber = logisticsNumber;
+    public void setExpressNum(String expressNum) {
+        this.expressNum = expressNum;
     }
 
     public String getPayStatusDesc() {

@@ -118,18 +118,18 @@ public class LotteryTest {
         logger.debugv("完成");
     }
 
-    @Resource
-    private ProductTypeRepository productTypeRepository;
-
-    @Test
-    public void productType(){
-        List<Product> products = productRepository.findAll();
-        for (Product product : products) {
-            ProductType productType = productTypeRepository.findOrNew(product.getName());
-            product.setProductType(productType);
-            productRepository.saveAndFlush(product);
-        }
-    }
+//    @Resource
+//    private ProductTypeRepository productTypeRepository;
+//
+//    @Test
+//    public void productType(){
+//        List<Product> products = productRepository.findAll();
+//        for (Product product : products) {
+//            ProductType productType = productTypeRepository.findOrNew(product.getName());
+//            product.setProductType(productType);
+//            productRepository.saveAndFlush(product);
+//        }
+//    }
 
 
 }
