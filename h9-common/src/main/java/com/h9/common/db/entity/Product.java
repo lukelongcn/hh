@@ -30,9 +30,6 @@ public class Product extends BaseEntity {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '关联商品条码'")
     private String code;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '商品名称'")
-    private String name;
-
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '供应商名称（喷码）'")
     private String supplierName;
     
@@ -75,14 +72,6 @@ public class Product extends BaseEntity {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getSupplierName() {
