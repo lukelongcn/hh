@@ -96,6 +96,7 @@ public class LotteryTest {
 //    }
 
     @Test
+    @Transactional
     public void generateCode() {
         Activity one = activityRepository.findOne(8L);
         Product product = productRepository.findOne(1L);

@@ -42,13 +42,10 @@ public class SqlTests {
         integralRecordService.trants();
     }
 
-
     @Test
     public void transferOratrans(){
         oratransSerivce.trants();
     }
-
-
 
     @Test
     public void transferBouns(){

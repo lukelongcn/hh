@@ -36,6 +36,8 @@ public class UserApplicationTests {
     private OratransSerivce oratransSerivce;
     @Resource
     private TastingService tastingService;
+    @Resource
+    private UserMainService userMainService;
 
     @Test
     public void user() {
@@ -43,6 +45,44 @@ public class UserApplicationTests {
         userService.user();
         logger.debugv(" ----*************###############+++++++++++++++++++");
     }
+
+
+    @Test
+    public void transferUser() {
+        userMainService.trants(1,50,null);
+    }
+
+    @Test
+    public void transferUser1() {
+        userMainService.trants(51,100,null);
+    }
+
+
+    @Test
+    public void transferUser2() {
+        userMainService.trants(101,150,null);
+    }
+
+    @Test
+    public void transferUser3() {
+        userMainService.trants(151,200,null);
+    }
+
+    @Test
+    public void transferUser4() {
+        userMainService.trants(201,250,null);
+    }
+
+    @Test
+    public void transferUser5() {
+        userMainService.trants(251,300,null);
+    }
+
+    @Test
+    public void transferUser6() {
+        userMainService.trants(300,null,null);
+    }
+
 
     @Test
     public void transferAddress() {

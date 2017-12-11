@@ -85,14 +85,22 @@ public class SqlUtils {
 
     public static String fomart(String str){
         if(str.contains("'")){
-            str = str.replaceAll("'", "\\'");
+            logger.debugv("'="+str);
+            str = str.replaceAll("'", "\\\'");
+            logger.debugv("'="+str);
+        }
+        if(str.contains("\'")){
+            logger.debugv("'="+str);
+            str = str.replaceAll("\'", "\\\'");
+            logger.debugv("'="+str);
         }
         if(str.contains("\\")){
+
+            logger.debugv("\\="+str);
             str = str.replaceAll("\\\\","\\\\\\\\");
+            logger.debugv("\\="+str);
         }
-        if(str.contains("\\")){
-            str = str.replace("\\", "\\\\");
-        }
+
         return str;
     }
 }

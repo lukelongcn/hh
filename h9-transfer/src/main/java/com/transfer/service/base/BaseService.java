@@ -1,5 +1,6 @@
 package com.transfer.service.base;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.transfer.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,7 @@ public abstract class BaseService<T> {
                 try {
                    getSql(userInfo,userWtriter);
                 } catch (Exception e) {
+                    logger.debugv(JSONObject.toJSONString(userInfo));
                     e.printStackTrace();
                 }
             }
