@@ -2,6 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.DidiCardVerifyDTO;
+import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.provider.ChinaPayService;
 import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
@@ -583,7 +584,7 @@ public class ConsumeService {
         }
     }
 
-    public Result bankWithDrawVerify(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
+    public Result bankWithDrawVerify(Long userId, Long bankId, double longitude, double latitude, HttpServletRequest request) {
 
         UserBank userBank = userBankRepository.findOne(bankId);
 
@@ -608,12 +609,31 @@ public class ConsumeService {
         }
 
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
-        String transAmt = "101";
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
         }
 
         return Result.success();
 
+    }
+
+    public Result rechargeVerify(Long userId, MobileRechargeVerifyDTO mobileRechargeDTO) {
+        User user = userService.getCurrentUser(userId);
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+
+        BigDecimal balance = userAccount.getBalance();
+
+        String recargeTel = mobileRechargeDTO.getTel();
+
+        if (!MobileUtils.isMobileNO(recargeTel)) return Result.fail("请填写正确的手机号码");
+
+        if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
+
+        Goods goods = goodsReposiroty.findOne(mobileRechargeDTO.getId());
+        BigDecimal realPrice = goods.getRealPrice();
+        if (balance.compareTo(realPrice) < 0) {
+            return Result.fail("余额不足");
+        }
+        return Result.success("校验成功");
     }
 }
