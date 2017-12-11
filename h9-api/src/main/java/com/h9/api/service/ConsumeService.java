@@ -272,6 +272,9 @@ public class ConsumeService {
 
         if (goods == null) return Result.fail("商品不存在");
 
+        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
+        if (cardCoupons == null) return Result.fail("卡劵不存在");
+
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode() + "", "徽酒");
         orders.setOrderFrom(2);
@@ -288,11 +291,6 @@ public class ConsumeService {
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
 //        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
-
-        //返回数据
-        PageRequest pageRequest = new PageRequest(0, 1);
-        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
-        if (cardCoupons == null) return Result.fail("卡劵不存在");
         cardCoupons.setStatus(2);
         //余额操作
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
@@ -319,8 +317,6 @@ public class ConsumeService {
 
         String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.DIDI_CARD.getCode());
         redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
-
-
 
         return Result.success(voMap);
     }

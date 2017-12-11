@@ -247,7 +247,7 @@ public class GoodService {
         orderItemReposiroty.save(orderItems);
 
         Map<String, String> mapVo = new HashMap<>();
-        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
+        mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         return Result.success(mapVo);
     }
