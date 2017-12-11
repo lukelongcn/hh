@@ -35,7 +35,7 @@ public class ExpressDTO {
 
     @ApiModelProperty(value = "快递单号",required = true)
     @NotBlank(message = "快递单号不能为空")
-    private String logisticsNumber;
+    private String expressNum;
 
     public Long getId() {
         return id;
@@ -77,11 +77,11 @@ public class ExpressDTO {
         this.expressName = expressName;
     }
 
-    public String getLogisticsNumber() {
-        return logisticsNumber;
+    public String getExpressNum() {
+        return expressNum;
     }
 
-    public void setLogisticsNumber(String logisticsNumber) {
-        this.logisticsNumber = logisticsNumber;
+    public void setExpressNum(String expressNum) {
+        this.expressNum = expressNum;
     }
 }
