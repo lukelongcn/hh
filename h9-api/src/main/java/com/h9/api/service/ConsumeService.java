@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
+import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.provider.ChinaPayService;
 import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
@@ -322,6 +323,27 @@ public class ConsumeService {
         return Result.success(voMap);
     }
 
+
+    public Result verifyConvertCoupons(DidiCardVerifyDTO didiCardDTO, Long userId) {
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+        BigDecimal accountBalance = userAccount.getBalance();
+        Long id = didiCardDTO.getId();
+
+        Goods goods = goodsReposiroty.findOne(id);
+        BigDecimal price = goods.getPrice();
+
+        if (accountBalance.compareTo(price) < 0) {
+            return Result.fail("余额不足");
+        }
+
+        if (goods == null) return Result.fail("商品不存在");
+
+        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
+        if (cardCoupons == null) return Result.fail("卡劵不存在");
+
+        return Result.success("验证成功");
+    }
+
     public Result bankWithDraw(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
 
         User user = userRepository.findOne(userId);
@@ -559,5 +581,39 @@ public class ConsumeService {
         } else {
             return canWithdrawMoney;
         }
+    }
+
+    public Result bankWithDrawVerify(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
+
+        UserBank userBank = userBankRepository.findOne(bankId);
+
+        if (userBank == null) return Result.fail("请选择银行卡");
+
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+
+        BigDecimal balance = userAccount.getBalance();
+        if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
+
+        String withdrawMax = configService.getStringConfig("withdrawMax");
+        BigDecimal max = new BigDecimal(withdrawMax);
+
+        //当天提现的金额
+        Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
+        BigDecimal castTodayWithdrawMoney = null;
+
+        if (todayWithdrawMoney == null) {
+            castTodayWithdrawMoney = new BigDecimal(0);
+        } else {
+            castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        }
+
+        BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
+        String transAmt = "101";
+        if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
+            return Result.fail("您今日的提现金额超过每日额度");
+        }
+
+        return Result.success();
+
     }
 }
