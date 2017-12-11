@@ -82,13 +82,11 @@ public class SmsService {
             return Result.fail("此接口此失效");
         }
 
-//        User user = userRepository.findOne(userId);
-        //校验单独分离出，
-//        Result result = sendSMSValdite(userId, user.getPhone(), smsType);
-//
-//        if (result != null) {
-//            return result;
-//        }
+        User user = userRepository.findOne(userId);
+        Result result = sendSMSValdite(userId, user.getPhone(), smsType);
+        if (result != null) {
+            return result;
+        }
 
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, smsType);
