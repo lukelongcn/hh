@@ -36,6 +36,10 @@ public class Product extends BaseEntity {
 
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '供应商名称（喷码）'")
     private String supplierName;
+    
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_type_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品类别'")
+    private ProductType productType;
 
     @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar(128) default '' COMMENT ''")
     private String supplierDistrict;
@@ -136,5 +140,13 @@ public class Product extends BaseEntity {
 
     public void setFisrtAddress(String fisrtAddress) {
         this.fisrtAddress = fisrtAddress;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
     }
 }
