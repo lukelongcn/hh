@@ -21,8 +21,9 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public class SystemBlackList extends BaseEntity {
 
     @Id
-    @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
+//    TODO 注释去掉
+//    @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
+//    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '黑明单用户'")

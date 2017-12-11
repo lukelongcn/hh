@@ -20,6 +20,10 @@ public class SqlUtils {
     public static BufferedWriter getBuffer(String path){
         try {
             File file =new File(path);
+            File parentFile = file.getParentFile();
+            if (!parentFile.exists()) {
+                file.mkdirs();
+            }
             if (file.exists()) {
                 file.delete();
             }
@@ -81,8 +85,22 @@ public class SqlUtils {
 
     public static String fomart(String str){
         if(str.contains("'")){
-            str = str.replace("'", "\\'");
+            logger.debugv("'="+str);
+            str = str.replaceAll("'", "\\\'");
+            logger.debugv("'="+str);
         }
+        if(str.contains("\'")){
+            logger.debugv("'="+str);
+            str = str.replaceAll("\'", "\\\'");
+            logger.debugv("'="+str);
+        }
+        if(str.contains("\\")){
+
+            logger.debugv("\\="+str);
+            str = str.replaceAll("\\\\","\\\\\\\\");
+            logger.debugv("\\="+str);
+        }
+
         return str;
     }
 }

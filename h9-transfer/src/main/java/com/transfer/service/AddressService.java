@@ -64,7 +64,7 @@ public class AddressService {
     public String toMyAddressAndSave(Address address){
         StringBuffer sqlBuffer = new StringBuffer();
         sqlBuffer.append("insert into `address` (`id`,`create_time`, `update_time`, `address`, `city`,`default_address`, " +
-                " `distict`, `name`, `phone`, `province`, `provincial_city`, `user_id`) ");
+                " `distict`, `name`, `phone`, `province`, `user_id`) ");
         sqlBuffer.append("value(");
         sqlBuffer.append(address.getID()+",");
         sqlBuffer.append(SqlUtils.concatDate());
@@ -76,7 +76,6 @@ public class AddressService {
         sqlBuffer.append(SqlUtils.concatSql(address.getConsignee()));
         sqlBuffer.append(SqlUtils.concatSql(address.getConsigneePhone()));
         sqlBuffer.append(SqlUtils.concatSql(address.getProvince()));
-        sqlBuffer.append(SqlUtils.concatSql(address.getProvincialCity()));
         sqlBuffer.append(address.getUserid());
         sqlBuffer.append(");");
         return sqlBuffer.toString();

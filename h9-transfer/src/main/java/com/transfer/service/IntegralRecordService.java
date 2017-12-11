@@ -28,7 +28,7 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
 
     @Override
     public String getPath() {
-        return "./sql/record.sql";
+        return "./sql/.sql";
     }
 
     @Override
@@ -43,7 +43,7 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
         stringBuffer.append("insert into `vcoins_flow` (`id`,`create_time`, `update_time`," +
                 "  `money`,`remarks`, `user_id`, `v_coins_type_id`)");
         stringBuffer.append("value(");
-        stringBuffer.append(integralRecord.getRecordID()+ ",");
+        stringBuffer.append(integralRecord.getRecordId()+ ",");
         stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(integralRecord.getRecordtime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(integralRecord.getRecordtime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(integralRecord.getGoodsIntegral()+",");
