@@ -116,7 +116,10 @@ public class ProductService {
         productRepository.save(product4Update);
 
         AuthenticityVO authenticityVO = new AuthenticityVO();
-        authenticityVO.setProductName(product4Update.getName());
+        ProductType productType = product4Update.getProductType();
+        if (productType != null) {
+            authenticityVO.setProductName(productType.getName());
+        }
         authenticityVO.setSupplierName(product4Update.getSupplierName());
         authenticityVO.setSupplierDistrict(product4Update.getSupplierDistrict());
         authenticityVO.setLastQueryTime(DateUtil.formatDate(fisrtTime, DateUtil.FormatType.GBK_SECOND));

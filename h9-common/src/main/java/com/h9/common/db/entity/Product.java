@@ -22,7 +22,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Table(name = "product",uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 public class Product extends BaseEntity {
 
-
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -38,7 +37,7 @@ public class Product extends BaseEntity {
     private String supplierName;
     
     @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_type_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品类别'")
+    @JoinColumn(name = "product_type_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品类别'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ProductType productType;
 
     @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar(128) default '' COMMENT ''")
