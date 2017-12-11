@@ -60,7 +60,7 @@ public class OrderService {
         if (one.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"")) {
             BeanUtils.copyProperties(expressDTO, one);
             if (one.getStatus() == Orders.statusEnum.WAIT_SEND.getCode()) {
-                if (StringUtils.isNotBlank(expressDTO.getLogisticsNumber())) {
+                if (StringUtils.isNotBlank(expressDTO.getExpressNum())) {
                     one.setStatus(Orders.statusEnum.DELIVER.getCode());
                 }
             }
