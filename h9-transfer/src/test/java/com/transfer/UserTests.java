@@ -50,13 +50,23 @@ public class UserTests {
     }
 
     @Test
-    public void transferUser7() {
+    public void transferUser300() {
         userMainService.trants(300,340,null);
     }
 
     @Test
-    public void transferUser8() {
-        userMainService.trants(341,null,null);
+    public void transferUser320() {
+        userMainService.trants(320,340,null);
+    }
+
+    @Test
+    public void transferUser340() {
+        userMainService.trants(340,360,null);
+    }
+
+    @Test
+    public void transferUser360() {
+        userMainService.trants(360,null,null);
     }
 
 }
