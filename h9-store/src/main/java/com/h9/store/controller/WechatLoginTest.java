@@ -28,7 +28,8 @@ public class WechatLoginTest {
     public void wxLoginTest(HttpServletResponse response) throws IOException {
 
         String appId = "wx88536d7560a36bc1";
-        String redirectUrl = "http://api-test-h9.thy360.com/h9/store/wxlogin";
+        //https://weixin-test-h9.thy360.com
+        String redirectUrl = "https://weixin-test-h9.thy360.com/h9/store/wxlogin";
         String appsecret = "c7859a462234521b1c9fb6ad66585e36";
         String scope = "snsapi_userinfo";
 
