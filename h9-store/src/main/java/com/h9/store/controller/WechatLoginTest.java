@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by itservice on 2017/12/11.
  */
 
-@Controller
+@RestController
 public class WechatLoginTest {
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -28,8 +28,8 @@ public class WechatLoginTest {
         String scope = "snsapi_userinfo";
 
         String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s" +
-                "&redirect_uri=%s&response_type=%s&scope=%s";
-        url = String.format(url, appId, redirectUrl, appsecret, scope);
+                "&redirect_uri=%s&response_type=code&scope=%s";
+        url = String.format(url, appId, redirectUrl, scope);
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> params = new HashMap<>();
         String res = restTemplate.getForObject(url, String.class, params);
