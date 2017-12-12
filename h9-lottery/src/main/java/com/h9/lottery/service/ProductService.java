@@ -66,17 +66,16 @@ public class ProductService {
         if(StringUtils.isEmpty(imei)){
             return Result.fail("服务器繁忙，请稍后刷新使用");
         }
-        if (lotteryService.onBlackUser(userId, imei)) {
-            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
-        }
+//        if (lotteryService.onBlackUser(userId, imei)) {
+//            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+//        }
 
-
-        if (!lotteryService.onWhiteUser(userId)) {
-
-            if (lotteryService.onBlackUser(userId, imei)) {
-                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
-            }
-        }
+//        if (!lotteryService.onWhiteUser(userId)) {
+//
+//            if (lotteryService.onBlackUser(userId, imei)) {
+//                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+//            }
+//        }
 
 
         int date = lotteryConfig.getIntervalTime();
