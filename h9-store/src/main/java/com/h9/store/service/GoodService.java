@@ -171,7 +171,9 @@ public class GoodService {
         PageRequest pageRequest = goodsReposiroty.pageRequest(0, 5);
         Page<Goods> pageObj = goodsReposiroty.findLastUpdate(pageRequest);
         PageResult<Goods> pageResult = new PageResult(pageObj);
-        return Result.success(pageResult.result2Result(GoodsListVO::new));
+        PageResult<GoodsListVO> goodsListVOPageResult = pageResult.result2Result(GoodsListVO::new);
+        goodsListVOPageResult.setHasNext(false);
+        return Result.success(goodsListVOPageResult);
     }
 
 
