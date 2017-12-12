@@ -47,12 +47,6 @@ public class SqlTests {
         oratransSerivce.trants();
     }
 
-    @Test
-    public void transferBouns(){
-        bounsDetailService.trants();
-    }
-
-
 
 
 

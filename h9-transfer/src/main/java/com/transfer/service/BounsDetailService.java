@@ -33,8 +33,8 @@ public class BounsDetailService extends BaseService<BounsDetails> {
 
     @Override
     public PageResult get(int page, int limit) {
-//        Sort sort = new Sort(Sort.Direction.ASC, "BounsTime");
-        PageResult<BounsDetails> all = bounsDetailsRepository.findAll(page, limit);
+        Sort sort = new Sort(Sort.Direction.ASC, "createTime");
+        PageResult<BounsDetails> all = bounsDetailsRepository.findAll(page, limit,sort);
         return all;
     }
 
@@ -47,8 +47,8 @@ public class BounsDetailService extends BaseService<BounsDetails> {
         stringBuffer.append("insert into `balance_flow` (`create_time`, `update_time`," +
                 "  `money`,`remarks`, `user_id`, `flow_type`)");
         stringBuffer.append("value(");
-        stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(bounsDetails.getBounsTime(), DateUtil.FormatType.SECOND)));
-        stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(bounsDetails.getBounsTime(), DateUtil.FormatType.SECOND)));
+        stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(bounsDetails.getCreateTime(), DateUtil.FormatType.SECOND)));
+        stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(bounsDetails.getCreateTime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(bounsDetails.getUserBouns()+",");
         if(bounsDetails.getBounsType() == 0){
             stringBuffer.append(SqlUtils.concatSql("转入记录"));

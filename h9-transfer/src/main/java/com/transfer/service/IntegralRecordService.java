@@ -33,7 +33,7 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
 
     @Override
     public PageResult get(int page, int limit) {
-//        Sort sort = new Sort(Sort.Direction.ASC, "RecordID");
+        Sort sort = new Sort(Sort.Direction.ASC, "recordId");
         return integralRecordRepository.findAll(page,limit);
     }
 
@@ -49,11 +49,10 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
         stringBuffer.append(integralRecord.getGoodsIntegral()+",");
         stringBuffer.append(SqlUtils.concatSql(integralRecord.getGoodsName()));
         stringBuffer.append(integralRecord.getUserId()+",");
-        stringBuffer.append(11);
+        stringBuffer.append(2);
         stringBuffer.append(");");
         userWtriter.write(stringBuffer.toString());
         userWtriter.newLine();
-
     }
 
     @Override

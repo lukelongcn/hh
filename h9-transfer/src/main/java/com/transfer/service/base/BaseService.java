@@ -48,9 +48,13 @@ public abstract class BaseService<T> {
                 endPage = totalPage;
             }
             List<T> userInfos = userInfoPageResult.getData();
-            for (T userInfo : userInfos) {
+            int size = userInfos.size();
+            for (int i = 0; i < size; i++) {
+                T userInfo = userInfos.get(i);
                 try {
-                   getSql(userInfo,userWtriter);
+                    getSql(userInfo,userWtriter);
+                    long index = (page - 1) * limit + i + 1;
+                    getSql(userInfo,index, userWtriter);
                 } catch (Exception e) {
                     logger.debugv(JSONObject.toJSONString(userInfo));
                     e.printStackTrace();
@@ -70,6 +74,10 @@ public abstract class BaseService<T> {
     public abstract PageResult get(int page,int limit);
 
     public abstract void getSql(T t,BufferedWriter writer) throws IOException;
+
+    public void getSql(T t,long index,BufferedWriter writer) throws IOException{
+
+    }
 
 
     public abstract String getTitle();

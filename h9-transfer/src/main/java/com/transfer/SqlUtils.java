@@ -21,7 +21,7 @@ public class SqlUtils {
         try {
             File file =new File(path);
             File parentFile = file.getParentFile();
-            if (!parentFile.exists()) {
+            if (parentFile!=null&&!parentFile.exists()) {
                 file.mkdirs();
             }
             if (file.exists()) {

@@ -47,7 +47,7 @@ public class BounsDetails {
     private Long State;
 
     @Column(name="BounsTime")
-    private Date BounsTime;
+    private Date createTime;
 
     @Column(name="BounsType")
     private Long bounsType;
@@ -137,12 +137,13 @@ public class BounsDetails {
         State = state;
     }
 
-    public Date getBounsTime() {
-        return BounsTime;
+
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setBounsTime(Date bounsTime) {
-        BounsTime = bounsTime;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public Long getBounsType() {

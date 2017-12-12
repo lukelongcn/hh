@@ -221,6 +221,7 @@ public class UserService {
         if (!StringUtils.isBlank(user.getPhone())) return Result.fail("该手机号已被绑定");
 
         String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
+
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码已失效");
 
