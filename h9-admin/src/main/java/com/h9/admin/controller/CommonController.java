@@ -52,7 +52,8 @@ public class CommonController {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.println("<script type=\"text/javascript\">");
-        out.println("this.editor.tools.callFunction(" + CKEditorFuncNum + ",'" + result.getData() + "',''" + ")");
+        //out.println("this.editor.tools.callFunction(" + CKEditorFuncNum + ",'" + result.getData() + "',''" + ")");
+        out.println("alert(" + result.getData() + ")");
         out.println("</script>");
         out.flush();
         out.close();
