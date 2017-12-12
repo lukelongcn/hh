@@ -110,7 +110,14 @@ public class LotteryService {
         if (!onWhiteUser(userId)) {
 
             if (onBlackUser(userId, imei)) {
-                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                if(lotteryCount.compareTo(new BigDecimal(3)) > 0){
+                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                }
+            }else{
+                String dayMaxlotteryCount = configService.getStringConfig("dayMaxlotteryCount");
+                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount)) > 0){
+                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                }
             }
         }
 
