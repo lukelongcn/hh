@@ -45,6 +45,7 @@ public class FileService {
     public Result verifyFileTypeAndSize(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         int start = fileName.indexOf(".");
+        logger.info("文件名： "+fileName);
         String fileType = fileName.substring(start + 1, fileName.length());
         List<String> expectType = Arrays.asList("JPEG", "TIFF", "RAW", "BMP", "GIF", "PNG","JPG");
         boolean containsResult = expectType.contains(fileType.toLowerCase());
