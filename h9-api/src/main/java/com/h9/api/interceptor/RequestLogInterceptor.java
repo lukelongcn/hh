@@ -152,7 +152,6 @@ public class RequestLogInterceptor implements HandlerInterceptor {
      * description: 打印响应参数
      */
     private void printResInfo(HttpServletResponse response) throws UnsupportedEncodingException {
-        CustomServletResponseWrapper customServletResponseWrapper = (CustomServletResponseWrapper) response;
         logger.info("-------------------响应信息-------------------");
         logger.info("http code : " + response.getStatus());
 

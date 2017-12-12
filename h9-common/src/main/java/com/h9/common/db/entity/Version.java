@@ -26,9 +26,6 @@ public class Version extends BaseEntity {
 
     @Column(name = "version", nullable = true,columnDefinition = "varchar(16) default '' COMMENT '版本'")
     private String version;
-//
-    @Column(name = "version_number",  columnDefinition = "int default 0 COMMENT '版本号'")
-    private Integer versionNumber;
 
     @Column(name = "client_type",  columnDefinition = "tinyint default 1 COMMENT '客户端,1:android,2:ios'")
     private Integer clientType;
@@ -59,14 +56,6 @@ public class Version extends BaseEntity {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Integer getVersionNumber() {
-        return versionNumber;
-    }
-
-    public void setVersionNumber(Integer versionNumber) {
-        this.versionNumber = versionNumber;
     }
 
     public Integer getClientType() {

@@ -270,4 +270,5 @@ public class User extends BaseEntity {
             this.name = name;
         }
     }
+
 }

@@ -44,23 +44,25 @@ public class BounsDetailSqlTests {
     }
     @Test
     public void transferBounsDetail25(){
-        bounsDetailService.trants(2410,2500,"./sql/bounsDetail5_25.sql");
+        bounsDetailService.trants(2001,2500,"./sql/bounsDetail5_25.sql");
     }
+
+
     @Test
     public void transferBounsDetail30(){
-        bounsDetailService.trants(2910,3000,"./sql/bounsDetail5_30.sql");
+        bounsDetailService.trants(2500,3000,"./sql/bounsDetail5_30.sql");
     }
     @Test
     public void transferBounsDetail35(){
-        bounsDetailService.trants(3349,3500,"./sql/bounsDetail5_35.sql");
+        bounsDetailService.trants(3001,3500,"./sql/bounsDetail5_35.sql");
     }
     @Test
     public void transferBounsDetail40(){
-        bounsDetailService.trants(3775,4000,"./sql/bounsDetail5_40.sql");
+        bounsDetailService.trants(3501,4000,"./sql/bounsDetail5_40.sql");
     }
     @Test
     public void transferBounsDetail50(){
-        bounsDetailService.trants(4685,5000,"./sql/bounsDetail5_50.sql");
+        bounsDetailService.trants(4501,5000,"./sql/bounsDetail5_50.sql");
     }
     @Test
     public void transferBounsDetail55(){
