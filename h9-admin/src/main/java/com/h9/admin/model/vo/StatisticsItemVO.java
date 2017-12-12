@@ -12,7 +12,7 @@ public class StatisticsItemVO {
     private String name;
 
     @ApiModelProperty(value = "统计值")
-    private String value ;
+    private Object value ;
 
     @ApiModelProperty(value = "项目描述")
     private String desc;
@@ -20,7 +20,7 @@ public class StatisticsItemVO {
     public StatisticsItemVO() {
     }
 
-    public StatisticsItemVO(String name, String value, String desc) {
+    public StatisticsItemVO(String name, Object value, String desc) {
         this.name = name;
         this.value = value;
         this.desc = desc;
@@ -34,11 +34,11 @@ public class StatisticsItemVO {
         this.name = name;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
