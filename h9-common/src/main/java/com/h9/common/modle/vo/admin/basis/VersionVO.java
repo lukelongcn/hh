@@ -20,9 +20,6 @@ public class VersionVO extends BasisVO{
     @ApiModelProperty(value = "版本")
     private String version;
 
-    @ApiModelProperty(value = "版本号",required = true)
-    private Integer versionNumber;
-
     @ApiModelProperty(value = "客户端",required = true)
     private Integer clientType;
 
@@ -58,14 +55,6 @@ public class VersionVO extends BasisVO{
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Integer getVersionNumber() {
-        return versionNumber;
-    }
-
-    public void setVersionNumber(Integer versionNumber) {
-        this.versionNumber = versionNumber;
     }
 
     public Integer getClientType() {

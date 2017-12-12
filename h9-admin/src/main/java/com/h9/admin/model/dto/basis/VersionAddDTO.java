@@ -17,10 +17,6 @@ public class VersionAddDTO {
     @NotBlank(message = "版本不能为空")
     private String version;
 
-    @ApiModelProperty(value = "版本号",required = true)
-    @NotNull(message = "版本号不能为空")
-    private Integer versionNumber;
-
     @ApiModelProperty(value = "客户端,1:ios,2:android",required = true)
     @NotNull(message = "客户端不能为空")
     private Integer clientType;
@@ -45,14 +41,6 @@ public class VersionAddDTO {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Integer getVersionNumber() {
-        return versionNumber;
-    }
-
-    public void setVersionNumber(Integer versionNumber) {
-        this.versionNumber = versionNumber;
     }
 
     public Integer getClientType() {
