@@ -131,7 +131,7 @@ public class AddressService {
         addressRepository.save(address);
 
         Long id = addressRepository.findInsertId();
-        return Result.success("保存成功");
+        return Result.success("保存成功",id);
     }
 
 
