@@ -129,6 +129,8 @@ public class AddressService {
         // 使用状态设为开启
         address.setStatus(1);
         addressRepository.save(address);
+
+        Long id = addressRepository.findInsertId();
         return Result.success("保存成功");
     }
 
