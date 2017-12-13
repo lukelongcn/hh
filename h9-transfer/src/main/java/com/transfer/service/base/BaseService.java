@@ -5,6 +5,7 @@ import com.h9.common.base.PageResult;
 import com.transfer.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public abstract class BaseService<T> {
     
-     Logger logger = Logger.getLogger(BaseService.class);
+    protected Logger logger = Logger.getLogger(BaseService.class);
 
     public void trants(){
         trants(null,null,null);
@@ -40,15 +41,19 @@ public abstract class BaseService<T> {
         BufferedWriter userWtriter = null;
         if(!StringUtils.isEmpty(path)) userWtriter = SqlUtils.getBuffer(path);
 
-        PageResult<T> userInfoPageResult;
+        Page<T> userInfoPageResult;
         do {
+            long startTime = System.currentTimeMillis();
             userInfoPageResult =get(page, limit);
+            long endTime = System.currentTimeMillis();
+            logger.debugv("数据查询"+ (endTime-startTime));
             if(endPage == null){
-                totalPage = (int) userInfoPageResult.getTotalPage();
+                totalPage = (int) userInfoPageResult.getTotalPages();
                 endPage = totalPage;
             }
-            List<T> userInfos = userInfoPageResult.getData();
+            List<T> userInfos = userInfoPageResult.getContent();
             int size = userInfos.size();
+            startTime = System.currentTimeMillis();
             for (int i = 0; i < size; i++) {
                 T userInfo = userInfos.get(i);
                 try {
@@ -60,18 +65,20 @@ public abstract class BaseService<T> {
                     e.printStackTrace();
                 }
             }
+            endTime = System.currentTimeMillis();
+            logger.debugv("数据处理"+ (endTime-startTime));
             logger.info("page: "+page+" totalPage: "+totalPage);
             float rate = (float) (page-startPage+1) * 100 / (float) (totalPage-startPage+1);
-            if (page <= totalPage && userInfoPageResult.getCount() != 0)
+            if (page <= totalPage && userInfoPageResult.getSize() != 0)
                 logger.debugv(getTitle()+ rate + "% " + page + "/" + totalPage);
             page = page + 1;
-        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+        } while (page <= totalPage &&userInfoPageResult.getSize() != 0);
         if(!StringUtils.isEmpty(path))   SqlUtils.close(userWtriter);
     }
 
     public abstract String getPath();
 
-    public abstract PageResult get(int page,int limit);
+    public abstract Page get(int page,int limit);
 
     public abstract void getSql(T t,BufferedWriter writer) throws IOException;
 
