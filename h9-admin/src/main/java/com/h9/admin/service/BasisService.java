@@ -141,17 +141,21 @@ public class BasisService {
         BigDecimal userVCoins = userAccountRepository.getUserVCoins();
         BigDecimal totalVCoins = vCoinsFlowRepository.getGrantVCoins();
         BigDecimal totalExchangeVB = this.vb2MoneyRepository.sumVB();
+        BigDecimal totalExchangeMoney = this.vb2MoneyRepository.sumMoney();
         lotteryCount = lotteryCount == null ? BigDecimal.ZERO : lotteryCount;
         withdrawalsCount = withdrawalsCount == null ? BigDecimal.ZERO : withdrawalsCount;
         userVCoins = userVCoins == null ? BigDecimal.valueOf(0):userVCoins;
         totalVCoins = totalVCoins == null ? BigDecimal.valueOf(0):totalVCoins;
         totalExchangeVB = totalExchangeVB == null ? BigDecimal.ZERO : totalExchangeVB;
+        totalExchangeMoney = totalExchangeMoney == null ? BigDecimal.ZERO : totalExchangeMoney;
+        String vbExchange = totalExchangeVB.setScale(2,BigDecimal.ROUND_HALF_UP) + " → " +
+                totalExchangeMoney.setScale(2,BigDecimal.ROUND_HALF_UP);
         List<StatisticsItemVO> list = new ArrayList<>();
-        list.add(new StatisticsItemVO("奖金",lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP).toPlainString(),"总奖金（元）"));
-        list.add(new StatisticsItemVO("提现金额",withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP).toPlainString(),"总提现奖金（元）"));
-        list.add(new StatisticsItemVO("V币",totalVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"总V币"));
-        list.add(new StatisticsItemVO("剩余V币",userVCoins.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"剩余V币总量"));
-        list.add(new StatisticsItemVO("V币兑换酒元",totalExchangeVB.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),"V币兑换数量"));
+        list.add(new StatisticsItemVO("奖金", lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP),"总奖金（元）"));
+        list.add(new StatisticsItemVO("提现金额", withdrawalsCount.setScale(2,BigDecimal.ROUND_HALF_UP),"总提现奖金（元）"));
+        list.add(new StatisticsItemVO("V币", totalVCoins.setScale(2,BigDecimal.ROUND_HALF_UP),"总V币"));
+        list.add(new StatisticsItemVO("剩余V币", userVCoins.setScale(2,BigDecimal.ROUND_HALF_UP),"剩余V币总量"));
+        list.add(new StatisticsItemVO("V币兑换酒元", vbExchange,"V币兑换数量"));
         return Result.success(list);
     }
 

@@ -18,6 +18,9 @@ public interface VB2MoneyRepository extends BaseRepository<VB2Money>{
     @Query("select sum(o.vb) from VB2Money o")
     BigDecimal sumVB();
 
+    @Query("select sum(o.money) from VB2Money o")
+    BigDecimal sumMoney();
+
     @Query("select o from VB2Money o where ?1 is null or o.tel = ?1 order by o.id desc ")
     Page<VB2Money> findByTel(String tel, Pageable pageable);
 }
