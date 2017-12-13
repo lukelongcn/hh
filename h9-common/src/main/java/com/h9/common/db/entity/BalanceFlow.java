@@ -143,7 +143,7 @@ public class BalanceFlow extends BaseEntity {
     public enum BalanceFlowTypeEnum {
         WITHDRAW(1,"提现"),
         RETURN(2,"银联退回"),
-        XIAPPINHUI(3,"小品会"),
+        XIAOPINHUI(3,"小品会"),
         RECHARGE_PHONE_FARE(6,"充话费"),
         DIDI_EXCHANGE(5,"滴滴兑换"),
         ROUNDABOUT(8,"大转盘"),
