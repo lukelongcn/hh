@@ -148,7 +148,7 @@ public class BasisService {
         totalVCoins = totalVCoins == null ? BigDecimal.valueOf(0):totalVCoins;
         totalExchangeVB = totalExchangeVB == null ? BigDecimal.ZERO : totalExchangeVB;
         totalExchangeMoney = totalExchangeMoney == null ? BigDecimal.ZERO : totalExchangeMoney;
-        String vbExchange = totalExchangeVB.setScale(2,BigDecimal.ROUND_HALF_UP) + " -> " +
+        String vbExchange = totalExchangeVB.setScale(2,BigDecimal.ROUND_HALF_UP) + " → " +
                 totalExchangeMoney.setScale(2,BigDecimal.ROUND_HALF_UP);
         List<StatisticsItemVO> list = new ArrayList<>();
         list.add(new StatisticsItemVO("奖金", lotteryCount.setScale(2,BigDecimal.ROUND_HALF_UP),"总奖金（元）"));
