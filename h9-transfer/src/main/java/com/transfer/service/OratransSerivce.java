@@ -1,6 +1,7 @@
 package com.transfer.service;
 
 import com.h9.common.base.PageResult;
+import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.WithdrawalsRecord;
 import com.transfer.SqlUtils;
 import com.transfer.db.BasicRepository;
@@ -10,12 +11,15 @@ import com.transfer.db.repo.BounsDetailsRepository;
 import com.transfer.db.repo.OratransRepository;
 import com.transfer.service.base.BaseService;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,19 +44,33 @@ public class OratransSerivce extends BaseService<Oratrans> {
         return "./sql/orantrans.sql";
     }
 
+
     @Override
-    public PageResult get(int page, int limit) {
-        return oratransRepository.findAll(page,limit);
+    public Page<Oratrans> get(int page, int limit) {
+        return oratransRepository.findAll(new PageRequest(page, limit));
     }
+
+
+
+
 
     @Override
     public void getSql(Oratrans oratrans, BufferedWriter userWtriter) throws IOException {
+
+    }
+
+
+    @Resource
+    private RedisBean redisBean;
+    @Override
+    public void getSql(Oratrans oratrans,long index, BufferedWriter userWtriter) throws IOException {
         StringBuffer stringBuffer = new StringBuffer();
 
-        stringBuffer.append("insert into `withdrawals_record` (`create_time`, `update_time`," +
+        stringBuffer.append("insert into `withdrawals_record` (`id`,`create_time`, `update_time`," +
                 " `finish_time`, `money`,`order_no`, " +
         " `remarks`, `status`, `user_id`,`bank_name`, `bank_no`, `city`,`name`, `provice`)");
         stringBuffer.append("value(");
+        stringBuffer.append(index+",");
         stringBuffer.append(SqlUtils.concatDate(oratrans.getOratransTime()));
         stringBuffer.append(SqlUtils.concatDate(oratrans.getOratransTime()));
         stringBuffer.append(SqlUtils.concatDate(oratrans.getOratransTime()));
@@ -62,9 +80,16 @@ public class OratransSerivce extends BaseService<Oratrans> {
         stringBuffer.append(SqlUtils.concatSql("数据迁移"));
         stringBuffer.append(WithdrawalsRecord.statusEnum.FINISH.getCode()+",");
         Long userId = null;
-        BounsDetails bounsDetails = bounsDetailsRepository.findByOAndBounsOID(oratrans.getOratransOId());
-        if(bounsDetails!=null){
-            userId = bounsDetails.getUserid();
+        long l1 = System.currentTimeMillis();
+
+        String key  = "h9:transfer:data:"+oratrans.getOratransOId();
+
+//        BounsDetails bounsDetails = bounsDetailsRepository.findByOAndBounsOID(oratrans.getOratransOId());
+        String userIdStr = redisBean.getStringValueNoLog(key);
+        long l2 = System.currentTimeMillis();
+//        System.out.println("findByOAndBounsOID time : "+(l2 -l1) + ", oid : "+oratrans.getOratransOId());
+        if(userIdStr!=null){
+            userId = Long.valueOf(userIdStr);
         }
         stringBuffer.append(userId+",");
         stringBuffer.append(SqlUtils.concatSql(oratrans.getBakName()));
@@ -75,7 +100,6 @@ public class OratransSerivce extends BaseService<Oratrans> {
         stringBuffer.append(")");
         userWtriter.write(stringBuffer.toString());
         userWtriter.newLine();
-
     }
 
     @Override

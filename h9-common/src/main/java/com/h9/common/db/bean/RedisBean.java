@@ -155,6 +155,12 @@ public class RedisBean {
         return value;
     }
 
+    public String getStringValueNoLog(String key) {
+        String value = valueOps.get(key);
+
+        return value;
+    }
+
     public String getStringValueNoWarn(String key) {
         String value = valueOps.get(key);
         logger.infov("redis: getStringValueNoWarn({0}) = {1}", key, value);
