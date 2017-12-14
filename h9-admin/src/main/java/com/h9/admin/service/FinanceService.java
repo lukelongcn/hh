@@ -131,7 +131,7 @@ public class FinanceService {
 
     private String buildLotteryFlowQueryString(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
         StringBuilder sql = new StringBuilder(
-                "select o.* from(select lf.id,lf.money,lf.create_time as createTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow lf ,user u,user_account ua,reward r" +
+                "select o.* from (select lf.id,lf.money,lf.create_time as createTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow lf ,user u,user_account ua,reward r" +
                         " where lf.user_id=u.id and lf.reward_id=r.id and lf.user_id=ua.user_id {0}) as o " +
                         "left join lottery_flow_record lfr on o.id = lfr.lottery_flow_id where lfr.id is null");
         StringBuilder condition  = new StringBuilder("");
@@ -163,7 +163,7 @@ public class FinanceService {
                 continue;
             }
             LotteryFlow flow = this.lotteryFlowRepository.findByLockId(id);
-            Result  result = this.commonService.setBalance(flow.getUser().getId(),flow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+            Result  result = this.commonService.setBalance(flow.getUser().getId(),flow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                     flow.getId(), flow.getId().toString(),"小品会");
             flowRecord = new LotteryFlowRecord();
             if(result.getCode()==Result.FAILED_CODE){
@@ -172,10 +172,10 @@ public class FinanceService {
             }else{
                 flowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.SUCCESS.getId());
                 long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
-                Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                         flow.getId(),flow.getId().toString(),"小品会");
                /* if(r.getCode()==Result.FAILED_CODE){
-                    r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                    r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                             flow.getId(),flow.getId().toString(),"小品会");
                     if(r.getCode()==Result.FAILED_CODE){
                         this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
@@ -246,13 +246,13 @@ public class FinanceService {
             return Result.fail("改记录不为转账失败记录");
         }
         LotteryFlow lotteryFlow =lotteryFlowRecord.getLotteryFlow();
-        Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+        Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                 lotteryFlow.getId(), lotteryFlow.getId().toString(),"小品会");
         if(result.getCode()==Result.FAILED_CODE){
             return Result.fail("余额不足，转账失败");
         }
         long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
-        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                 lotteryFlow.getId(),lotteryFlow.getId().toString(),"小品会");
         if(r.getCode()==Result.FAILED_CODE){
             this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",lotteryFlow.getId());

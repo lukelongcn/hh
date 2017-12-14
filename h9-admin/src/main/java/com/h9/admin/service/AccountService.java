@@ -5,6 +5,7 @@ import com.h9.admin.model.vo.UserBankVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.BlackAccountDTO;
@@ -70,7 +71,7 @@ public class AccountService {
     }
 
     public Result<PageResult<BalanceFlowVO>> accountMoneyFlow(PageDTO pageDTO, Long userId) {
-        List<Config> balanceFlowType = configService.getMapListConfig("balanceFlowType");
+        List<Config> balanceFlowType = configService.getMapListConfig(ParamConstant.BALANCE_FLOW_TYPE);
         Page<BalanceFlow> byBalance = balanceFlowRepository.findByBalance(userId, pageDTO.toPageRequest());
         Page<BalanceFlowVO> map = byBalance.map(balanceFlow -> {
             BalanceFlowVO balanceFlowVO = BalanceFlowVO.toBalanceFlowVOByBalanceFlow(balanceFlow);
@@ -87,7 +88,7 @@ public class AccountService {
     }
 
     public Result<PageResult<BalanceFlowVO>> accountVCoinsFlow(PageDTO pageDTO, Long userId) {
-        List<Config> balanceFlowType = configService.getMapListConfig("balanceFlowType");
+        List<Config> balanceFlowType = configService.getMapListConfig(ParamConstant.VCOIN_EXCHANGE_TYPE);
         Page<VCoinsFlow> byBalance = vCoinsFlowRepository.findByBalance(userId, pageDTO.toPageRequest());
         Page<BalanceFlowVO> map = byBalance.map(balanceFlow -> {
             BalanceFlowVO balanceFlowVO = BalanceFlowVO.toBalanceFlowVOByVCoinsFlow(balanceFlow);

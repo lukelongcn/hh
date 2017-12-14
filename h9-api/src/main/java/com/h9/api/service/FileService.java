@@ -45,11 +45,12 @@ public class FileService {
     public Result verifyFileTypeAndSize(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         int start = fileName.indexOf(".");
+        logger.info("文件名： "+fileName);
         String fileType = fileName.substring(start + 1, fileName.length());
         List<String> expectType = Arrays.asList("JPEG", "TIFF", "RAW", "BMP", "GIF", "PNG","JPG");
         boolean containsResult = expectType.contains(fileType.toLowerCase());
         containsResult |= expectType.contains(fileType.toUpperCase());
-        if (!containsResult) return Result.fail("请传入正确的图片类型");
+        if (!containsResult) return Result.fail("请传入正确的图片类型,当前文件类型: "+fileType);
 
         long fileSize = file.getSize() / (1024 * 1024);
         if (fileSize > 5) {

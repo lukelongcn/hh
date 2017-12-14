@@ -4,6 +4,7 @@ import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
+import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.service.ConsumeService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
@@ -41,6 +42,17 @@ public class ConsumeController {
             logger.info(e.getMessage(), e);
             return Result.fail("充值失败");
         }
+    }
+
+    /**
+     * description: 手机充值校验
+     */
+    @Secured(bindPhone = true)
+    @PostMapping("/mobile/verify/recharge")
+    public Result mobileRechargeVerify(
+            @SessionAttribute("curUserId") Long userId,
+            @Valid @RequestBody MobileRechargeVerifyDTO mobileRechargeVerifyDTO) {
+            return consumeService.rechargeVerify(userId, mobileRechargeVerifyDTO);
     }
 
     /**
@@ -96,17 +108,16 @@ public class ConsumeController {
     }
 
     /**
-     * description: 提现
+     * description: 提现校验
      */
     @Secured(bindPhone = true)
-    @PostMapping("/withdraw/verify/{bankId}/{code}")
+    @PostMapping("/withdraw/verify/{bankId}")
     public Result bankWithdrawVerify(@SessionAttribute("curUserId") Long userId
             , @PathVariable Long bankId
-            , @PathVariable String code
             , @RequestParam(required = false, defaultValue = "0") double longitude
             , @RequestParam(required = false, defaultValue = "0") double latitude, HttpServletRequest request) {
 
-        return consumeService.bankWithDrawVerify(userId, bankId, code, longitude, latitude, request);
+        return consumeService.bankWithDrawVerify(userId, bankId, longitude, latitude, request);
     }
 
     /**

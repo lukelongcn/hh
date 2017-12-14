@@ -38,8 +38,8 @@ public class UserAccountVO {
     }
 
     public UserAccountVO(User user, UserAccount userAccount){
-        BeanUtils.copyProperties(user,this);
         BeanUtils.copyProperties(userAccount,this);
+        BeanUtils.copyProperties(user,this);
     }
 
     public UserAccountVO() {

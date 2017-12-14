@@ -12,8 +12,6 @@ import javax.persistence.Id;
  */
 public class TastingVo {
 
-
-
     private String md5Code;
 
     private String orderOID;
@@ -25,9 +23,6 @@ public class TastingVo {
     private String BZ;
 
     private String codeId;
-
-
-
 
     public TastingVo(String md5Code, String orderOID, String planName, String JPMC, String BZ, String codeId) {
         this.md5Code = md5Code;

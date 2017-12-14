@@ -97,7 +97,7 @@ public class BasisController {
 
     @Secured(accessCode = "workbench:statistics")
     @GetMapping(value="/statistics")
-    @ApiOperation("获取统计统计数据")
+    @ApiOperation("获取统计数据")
     public Result statisticsLottery(){
         return basisService.statistics();
     }
