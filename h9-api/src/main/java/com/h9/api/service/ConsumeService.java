@@ -163,7 +163,7 @@ public class ConsumeService {
             if (changeStockResult.getCode() == 1) {
                 return changeStockResult;
             }
-            commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
+            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
             orderItemReposiroty.saveAndFlush(orderItems);
         } catch (Exception e) {

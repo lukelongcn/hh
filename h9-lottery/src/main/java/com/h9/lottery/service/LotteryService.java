@@ -122,7 +122,6 @@ public class LotteryService {
             }
         }
 
-
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
         //记录扫码记录

@@ -65,6 +65,9 @@ public class HomeService {
         String articlelink = preLink.get("article");
 
         List<Article> articleList = articleRepository.findActiveArticle(new Date());
+        if (!CollectionUtils.isEmpty(articleList)&&articleList.size()>5) {
+           articleList = articleList.subList(0, 4);
+        }
 
         if (!CollectionUtils.isEmpty(articleList)) {
             articleList.forEach(article -> {
