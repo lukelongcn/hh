@@ -46,6 +46,10 @@ public interface AddressRepository extends BaseRepository<Address> {
     @Query("update Address a set a.defaultAddress = 0 where a.userId = ?1 and a.id <> ?2")
     void updateElseDefault(Long userId, Long aid);
 
+<<<<<<< .merge_file_a18076
     @Query(value = "select @@IDENTITY", nativeQuery = true)
+=======
+    @Query(value = "select @@IDENTITY",nativeQuery = true)
+>>>>>>> .merge_file_a07332
     Long findInsertId();
 }
