@@ -20,7 +20,6 @@
         <module>h9-admin</module>
         <module>h9-common</module>
         <module>h9-lottery</module>
-        <module>h9-transfer</module>
         <module>h9-store</module>
     </modules>
 
