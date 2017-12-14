@@ -22,27 +22,22 @@ import static javax.persistence.TemporalType.DATE;
 @Table(name = "userExtends")
 public class UserExtends extends BaseEntity {
 
-
     @Id
     @Column(name = "user_id", columnDefinition = "bigint(20)  COMMENT '用户'")
     private Long userId;
 
-    @Column(name = "sex",nullable = false,columnDefinition = "int default 1 COMMENT ' 1 为男 0为女'")
+    @Column(name = "sex",nullable = false,columnDefinition = "int  COMMENT ' 1 为男 0为女'")
     private Integer sex = 1;
     @Column(name = "birthday",columnDefinition = "datetime COMMENT '生日'")
     private Date birthday;
 
-
-    @Column(name = "marriage_status",columnDefinition = "varchar(200) default '单身' COMMENT '单身，恋受，已婚，其他(前端提供)'")
-    private String marriageStatus;
-
-    @Column(name = "education",columnDefinition = "varchar(200) default '本科' COMMENT '小学及以下 1，初中  2 ，高中    3，中专 4，本科 5" +
-            "，研究生 6，博士及以上 7'")
+    @Column(name = "marriage_status",columnDefinition = "varchar(200)  COMMENT ''")
+    private String marriageStatus = "1";
+    @Column(name = "education",columnDefinition = "varchar(200) COMMENT ''")
     private String education = "5";
 
     @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
-    private String job="";
-
+    private String job="1";
 
     @Column(name = "img_id")
     private Long imgId;

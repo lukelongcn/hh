@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.vo.LoginResultVO;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.Address;
@@ -12,6 +13,7 @@ import com.h9.common.db.repo.AddressRepository;
 import com.h9.common.db.repo.UserBankRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.modle.vo.admin.finance.*;
 import com.h9.common.utils.HttpUtil;
 import com.h9.common.utils.MD5Util;
@@ -34,6 +36,10 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class UserService {
     private Logger logger = Logger.getLogger(this.getClass());
+    public static final String PROFILE_SEX = "profileSex";
+    public static final String PROFILE_JOB = "profileJob";
+    public static final String PROFILE_EDUCATION = "profileEducation";
+    public static final String PROFILE_EMOTION = "profileEmotion";
 
     @Resource
     private UserRepository userRepository;
@@ -45,6 +51,8 @@ public class UserService {
     private AddressRepository addressRepository;
     @Autowired
     private RedisBean redisBean;
+    @Autowired
+    private ConfigService configService;
 
 
     public Result<LoginResultVO> login(String name, String password){
@@ -80,11 +88,28 @@ public class UserService {
         User user = this.userRepository.findOne(userId);
         userVO.setUserInfoVO(user==null?null:new UserInfoVO(user));
         UserExtends userExtends = this.userExtendsRepository.findByUserId(userId);
-        userVO.setUserExtendsInfoVO(userExtends==null?null:new UserExtendsInfoVO(userExtends));
+        UserExtendsInfoVO userExtendsInfoVO = this.getUserExtendsInfoVO(userExtends);
+        userVO.setUserExtendsInfoVO(userExtendsInfoVO);
         List<UserBank> userBankList = this.userBankRepository.findByUserId(userId);
         userVO.setUserBankInfoVOList(UserBankInfoVO.toUserBankVO(userBankList));
         List<Address> addressList = this.addressRepository.findByUserId(userId);
         userVO.setUserAddressInfoVOList(UserAddressInfoVO.toUserAddressInfoVO(addressList));
         return Result.success(userVO);
+    }
+
+    private UserExtendsInfoVO getUserExtendsInfoVO(UserExtends userExtends) {
+        if (userExtends == null) {
+            return null;
+        }
+        UserExtendsInfoVO userExtendsInfoVO = new UserExtendsInfoVO(userExtends);
+        List<Config> sex = this.configService.getMapListConfig(PROFILE_SEX);
+        List<Config> job = this.configService.getMapListConfig(PROFILE_JOB);
+        List<Config> education = this.configService.getMapListConfig(PROFILE_EDUCATION);
+        List<Config> emotion = this.configService.getMapListConfig(PROFILE_EMOTION);
+        userExtendsInfoVO.setSex(this.configService.getConfigVal(sex, userExtends.getSex().toString()));
+        userExtendsInfoVO.setJob(this.configService.getConfigVal(job, userExtendsInfoVO.getJob()));
+        userExtendsInfoVO.setEducation(this.configService.getConfigVal(education, userExtendsInfoVO.getEducation()));
+        userExtendsInfoVO.setMarriageStatus(this.configService.getConfigVal(emotion, userExtendsInfoVO.getMarriageStatus()));
+        return  userExtendsInfoVO;
     }
 }

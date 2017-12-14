@@ -4,6 +4,7 @@ package com.h9.api;
 //import com.h9.api.provider.MobileRechargeService;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
@@ -37,6 +38,39 @@ import java.util.stream.Collectors;
 @SpringBootTest
 public class ApiApplicationTests {
 
+
+    @Test
+    public void test2222(){
+        Address address = new Address();
+        //address.setUserId(userId);
+        address.setName("12312");
+        address.setPhone("13456458529");
+
+        //String provinceName = chinaRepository.findName(8);
+       // String cityName = chinaRepository.findName(addressDTO.getCid());
+        //String areaName = chinaRepository.findName(addressDTO.getAid());
+        address.setProvince("312312");
+        address.setCity("asdas");
+        address.setDistict("2312");
+        //设值地址id
+        //address.setPid();
+        //address.setCid(addressDTO.getCid());
+        //address.setAid(addressDTO.getAid());
+        //设值详细地址
+        address.setAddress("3131");
+        // 设置是否为默认地址
+       // if(addressDTO.getDefaultAddress() == 1){
+        //    addressRepository.updateDefault(userId);
+      //  }
+        address.setDefaultAddress(1);
+
+        // 使用状态设为开启
+        address.setStatus(1);
+        addressRepository.saveAndFlush(address);
+
+        Long id = addressRepository.findInsertId();
+        logger.debug(id);
+    }
 
     @Resource
     ChinaRepository chinaRepository;
@@ -264,10 +298,10 @@ public class ApiApplicationTests {
 
         String stringValue = redisBean.getStringValue("sms:code:count:4:18770812669");
         System.out.println(stringValue);
-//        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
-
-//        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
-
+        String tel = "15970051786";
+        String smsCodeKey = RedisKey.getSmsCodeKey(tel, 6);
+        String stringValue1 = redisBean.getStringValue(smsCodeKey);
+        System.out.println(stringValue1);
 
     }
 
@@ -308,6 +342,9 @@ public class ApiApplicationTests {
     private AddressRepository addressRepository;
     @Test
     public void test22(){
+        String errorCodeCountKey = RedisKey.getErrorCodeCountKey(14L, SMSTypeEnum.BIND_BANKCARD.getCode());
+        String value = redisBean.getStringValue(errorCodeCountKey);
+        System.out.println(value);
     }
 
 }

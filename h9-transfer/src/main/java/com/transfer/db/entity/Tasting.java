@@ -18,10 +18,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "tasting")
-public class Tasting extends BaseEntity {
-
-
-
+public class Tasting  {
 
 
     @Column(name = "OrderOID")
@@ -40,9 +37,9 @@ public class Tasting extends BaseEntity {
     @Column(name = "TastingOID")
     private String tastingOId;
 
-
+//    TODO 这个地方要调整
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "md5Code",nullable = false,referencedColumnName="codemd")
+    @JoinColumn(name = "",nullable = false,referencedColumnName="codemd")
     private Bouns bouns;
 
     public Bouns getBouns() {

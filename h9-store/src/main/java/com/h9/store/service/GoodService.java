@@ -4,6 +4,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,18 +119,21 @@ public class GoodService {
                 EVERYDAY_GOODS("everyday_goods", "日常家居"),
                 VB("vb", "V币");
      */
-    public Result goodsList(Integer type, int page, int size) {
+    public Result goodsList(String type, int page, int size) {
+        if(StringUtils.isEmpty(type)){
+            type = "o_all";
+        }
+        GoodsType byCode = goodsTypeReposiroty.findByCode(type);
+        if(byCode!=null){
+            return  goodsPageQuery(type, page, size);
+        }
         switch (type) {
-            case 1:
+            case "o_todayNew":
                 return todayNewGoods();
-            case 2:
-                return goodsPageQuery("everyday_goods", page, size);
-            case 3:
-                return goodsPageQuery("foods", page, size);
-            case 4:
+            case "o_all":
                 return goodsPageQuery(page, size);
             default:
-                return Result.fail("请填写正确的type");
+                return Result.fail("请升级到最新版本");
         }
     }
 
@@ -163,12 +168,12 @@ public class GoodService {
      *
      */
     public Result todayNewGoods() {
-
-
         PageRequest pageRequest = goodsReposiroty.pageRequest(0, 5);
         Page<Goods> pageObj = goodsReposiroty.findLastUpdate(pageRequest);
         PageResult<Goods> pageResult = new PageResult(pageObj);
-        return Result.success(pageResult.result2Result(GoodsListVO::new));
+        PageResult<GoodsListVO> goodsListVOPageResult = pageResult.result2Result(GoodsListVO::new);
+        goodsListVOPageResult.setHasNext(false);
+        return Result.success(goodsListVOPageResult);
     }
 
 
@@ -185,7 +190,7 @@ public class GoodService {
                 .id(goods.getId())
                 .img(goods.getImg())
                 .desc(goods.getDescription())
-                .price(MoneyUtils.formatMoney(goods.getPrice()))
+                .price(MoneyUtils.formatMoney(goods.getRealPrice()))
                 .name(goods.getName())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
                 .stock(goods.getStock())
@@ -196,7 +201,7 @@ public class GoodService {
     }
 
     @Transactional
-    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) {
+    public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) throws ServiceException {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
 
@@ -205,6 +210,7 @@ public class GoodService {
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
         if(goods == null) return Result.fail("商品不存在");
+        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
 
         User user = userRepository.findOne(userId);
         Long addressUserId = address.getUserId();
@@ -215,22 +221,27 @@ public class GoodService {
 
         if(result.getCode() == 1) return result;
 
+        //单独判断下余额是否足够
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+        if(balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0){
+            return Result.fail("余额不足");
+        }
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
+        Orders order = orderService.initOrder(goodsPrice, user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
         order.setAddressId(addressId);
-        order.setUserAddres(address.getAddress());
+        order.setUserAddres(address.getProvince()+address.getCid()+address.getDistict()+address.getAddress());
         order.setOrderFrom(1);
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        Result payResult = commonService.setBalance(userId, goods.getRealPrice().negate(), 12L, order.getId(), "", balanceFlowType);
-        if(payResult.getCode() == 1){
-            throw new RuntimeException(payResult.getMsg());
+        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
+        if(!payResult.isSuccess()){
+            throw new ServiceException(payResult);
         }
 
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-
 
         OrderItems orderItems = new OrderItems(goods,count,order);
         ordersRepository.save(order);
@@ -238,7 +249,7 @@ public class GoodService {
         orderItemReposiroty.save(orderItems);
 
         Map<String, String> mapVo = new HashMap<>();
-        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
+        mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         return Result.success(mapVo);
     }

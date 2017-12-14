@@ -3,6 +3,7 @@ package com.transfer.service;
 import com.h9.common.db.entity.BankType;
 import com.h9.common.db.repo.BankTypeRepository;
 import com.h9.common.db.repo.UserBankRepository;
+import com.transfer.SqlUtils;
 import com.transfer.db.entity.CardInfo;
 import com.transfer.db.entity.City;
 import com.transfer.db.entity.Province;
@@ -31,7 +32,7 @@ import java.util.List;
 @Service
 public class CardInfoService {
 
-    public String basePath = "d://sql/";
+    public String basePath = "./sql/";
     @Resource
     private CardInfoRepository cardInfoRepository;
 
@@ -55,14 +56,7 @@ public class CardInfoService {
         int size = 5000;
         int page = 0;
 
-        File dirFile = new File(basePath);
-        if (!dirFile.exists()) {
-            dirFile.mkdirs();
-        }
-
-        File bankTypeSqlFile = new File(basePath + "/bankType.sql");
-
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(bankTypeSqlFile));
+        BufferedWriter bufferedWriter = SqlUtils.getBuffer("./sql/card.sql");
 
         Pageable pageable = new PageRequest(page, size);
         Page<CardInfo> cardInfoList = cardInfoRepository.findAll(pageable);
@@ -91,20 +85,7 @@ public class CardInfoService {
                     writebankTypeTosql(el, bufferedWriter);
                 }
 
-//                List<BankType> bankTypeList = bankTypeRepository.findByBankNameContaining(bankName);
-
                 BankType bankType = null;
-
-//
-//                Province province = provinceReposiroty.findByPid(el.getProvince());
-//                City city = cityReposiroty.findByCid(el.getCity());
-//
-//                String provinceStr = province == null ? province.getName() : "";
-//                String cityStr = city == null ? city.getCname() : "";
-//
-//                writeUserBankToSql(el, userBankBW, provinceStr, cityStr,bankType.getId());
-
-
             }
 
             page++;
@@ -150,9 +131,7 @@ public class CardInfoService {
                 String findBankName = el.getBankName();
                 String bankName = findBankName.substring(0, 2);
 
-                queryStart = System.currentTimeMillis();
                 List<BankType> bankTypeList = bankTypeRepository.findByBankNameContaining(bankName);
-//                System.out.println("db query2 time : " + (System.currentTimeMillis() - queryStart));
 
                 BankType bankType = bankTypeList.get(0);
 
@@ -168,11 +147,7 @@ public class CardInfoService {
                 if (i % 1000 == 0) {
                     writeAble = true;
                 }
-//                System.out.println("前半：" + (System.currentTimeMillis() - start));
-                start = System.currentTimeMillis();
                 writeUserBankToSql(el, userBankBW, provinceStr, cityStr, bankType.getId(), writeAble);
-//                System.out.println("后半：" + (System.currentTimeMillis() - start));
-
 
             }
 
@@ -256,30 +231,6 @@ public class CardInfoService {
 
     }
 
-
-    public <T> void readPage(CallBackService callBack) {
-
-        int size = 1000;
-        int page = 0;
-
-        Pageable pageable = new PageRequest(page, size);
-//        String simpleName = content.getClass().getSimpleName();
-//        String first = simpleName.substring(0, 1);
-//        String convertfirst = first.toUpperCase();
-//        String reposirotyClass = simpleName.replace("first", convertfirst);
-
-        Page<T> cardInfoList = (Page<T>) cardInfoRepository.findAll(pageable);
-        System.out.println("page: " + page + " size: " + size + " totalPage: " + cardInfoList.getTotalPages());
-
-        while (!CollectionUtils.isEmpty(cardInfoList.getContent())) {
-            cardInfoList = (Page<T>) cardInfoRepository.findAll(pageable);
-            System.out.println("page: " + page + " size: " + size + " totalPage: " + cardInfoList.getTotalPages());
-            callBack.doThing();
-            page++;
-            pageable = new PageRequest(page, size);
-        }
-        System.out.println("end-------------------");
-    }
 
 
 }

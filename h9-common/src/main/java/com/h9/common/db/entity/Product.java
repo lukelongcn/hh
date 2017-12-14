@@ -22,7 +22,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Table(name = "product",uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 public class Product extends BaseEntity {
 
-
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -31,11 +30,12 @@ public class Product extends BaseEntity {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '关联商品条码'")
     private String code;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '商品名称'")
-    private String name;
-
     @Column(name = "supplier_name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '供应商名称（喷码）'")
     private String supplierName;
+    
+    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_type_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品类别'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private ProductType productType;
 
     @Column(name = "supplier_district", nullable = false, columnDefinition = "varchar(128) default '' COMMENT ''")
     private String supplierDistrict;
@@ -72,14 +72,6 @@ public class Product extends BaseEntity {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getSupplierName() {
@@ -136,5 +128,13 @@ public class Product extends BaseEntity {
 
     public void setFisrtAddress(String fisrtAddress) {
         this.fisrtAddress = fisrtAddress;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
     }
 }

@@ -2,7 +2,9 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.DidiCardDTO;
+import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
+import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.service.ConsumeService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
@@ -43,6 +45,17 @@ public class ConsumeController {
     }
 
     /**
+     * description: 手机充值校验
+     */
+    @Secured(bindPhone = true)
+    @PostMapping("/mobile/verify/recharge")
+    public Result mobileRechargeVerify(
+            @SessionAttribute("curUserId") Long userId,
+            @Valid @RequestBody MobileRechargeVerifyDTO mobileRechargeVerifyDTO) {
+            return consumeService.rechargeVerify(userId, mobileRechargeVerifyDTO);
+    }
+
+    /**
      * description: 获取可充值的面额
      */
     @Secured()
@@ -72,6 +85,15 @@ public class ConsumeController {
     }
 
     /**
+     * description: 兑换卡劵校验接口
+     */
+    @Secured(bindPhone = true)
+    @PutMapping("/coupons/convert/verify")
+    public Result verifyCoupons(@RequestBody @Valid DidiCardVerifyDTO didiCardDTO, @SessionAttribute("curUserId") Long userId){
+        return consumeService.verifyConvertCoupons(didiCardDTO, userId);
+    }
+
+    /**
      * description: 提现
      */
     @Secured(bindPhone = true)
@@ -79,10 +101,23 @@ public class ConsumeController {
     public Result bankWithdraw(@SessionAttribute("curUserId") Long userId
             , @PathVariable Long bankId
             , @PathVariable String code
-            , @RequestParam(required = false,defaultValue = "0") double longitude
-            , @RequestParam(required = false,defaultValue = "0") double latitude, HttpServletRequest request) {
+            , @RequestParam(required = false, defaultValue = "0") double longitude
+            , @RequestParam(required = false, defaultValue = "0") double latitude, HttpServletRequest request) {
 
-        return consumeService.bankWithDraw(userId, bankId, code,longitude,latitude,request);
+        return consumeService.bankWithDraw(userId, bankId, code, longitude, latitude, request);
+    }
+
+    /**
+     * description: 提现校验
+     */
+    @Secured(bindPhone = true)
+    @PostMapping("/withdraw/verify/{bankId}")
+    public Result bankWithdrawVerify(@SessionAttribute("curUserId") Long userId
+            , @PathVariable Long bankId
+            , @RequestParam(required = false, defaultValue = "0") double longitude
+            , @RequestParam(required = false, defaultValue = "0") double latitude, HttpServletRequest request) {
+
+        return consumeService.bankWithDrawVerify(userId, bankId, longitude, latitude, request);
     }
 
     /**

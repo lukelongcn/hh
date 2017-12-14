@@ -104,21 +104,45 @@ public class HomeService {
     @Resource
     VersionRepository versionRepository;
 
-    public Result version(Integer version, Integer client) {
 
-        //检查是否有新版本
-        Version lastVersion = versionRepository.findLastVersion(client, version);
-        if (lastVersion.getVersionNumber().equals(version)) return Result.success("已是最新版本");
+    /***
+     * 版本号  0
+     * @param version
+     * @param client
+     * @return
+     */
+    public Result version(String version, Integer client) {
 
-        List<Version> forceUpdateVersion = versionRepository.findForceUpdateVersion(client, version);
-        if (CollectionUtils.isEmpty(forceUpdateVersion)) {
-            //当前版本与最新版本之间没有强制升级版,返回最新版
-            return Result.success(new UpdateInfoVO(lastVersion));
-        } else {
-            //有强制升级版，返回最新版，将升级策略改成强升
-            UpdateInfoVO updateInfoVO = new UpdateInfoVO(lastVersion);
-            updateInfoVO.setUpdateType(3);
-            return Result.success(updateInfoVO);
+//        //检查是否有新版本
+//        Version lastVersion = versionRepository.findLastVersion(client, version);
+//        if (lastVersion.getVersionNumber().equals(version)) return Result.success("已是最新版本");
+//
+//        List<Version> forceUpdateVersion = versionRepository.findForceUpdateVersion(client, version);
+//        if (CollectionUtils.isEmpty(forceUpdateVersion)) {
+//            //当前版本与最新版本之间没有强制升级版,返回最新版
+//            return Result.success(new UpdateInfoVO(lastVersion));
+//        } else {
+//            //有强制升级版，返回最新版，将升级策略改成强升
+//            UpdateInfoVO updateInfoVO = new UpdateInfoVO(lastVersion);
+//            updateInfoVO.setUpdateType(3);
+//            return Result.success(updateInfoVO);
+//        }
+
+
+        if(StringUtils.isBlank(version)){
+            return Result.fail("请传入version");
         }
+
+        Version newVersion = versionRepository.findNewVersion(client);
+        if (newVersion == null) {
+            return Result.success("已是最新版本");
+        }
+
+        if (newVersion.getVersion().equals(version)) {
+            return Result.success("已是最新版本");
+        } else {
+            return Result.success(new UpdateInfoVO(newVersion));
+        }
+
     }
 }

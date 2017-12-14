@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.Activity;
 import com.h9.common.db.entity.Product;
+import com.h9.common.db.entity.ProductType;
 import com.h9.common.db.entity.Reward;
-import com.h9.common.db.repo.ActivityRepository;
-import com.h9.common.db.repo.ProductLogRepository;
-import com.h9.common.db.repo.ProductRepository;
-import com.h9.common.db.repo.RewardRepository;
+import com.h9.common.db.repo.*;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
@@ -96,6 +94,7 @@ public class LotteryTest {
 //    }
 
     @Test
+    @Transactional
     public void generateCode() {
         Activity one = activityRepository.findOne(8L);
         Product product = productRepository.findOne(1L);
@@ -118,6 +117,19 @@ public class LotteryTest {
         }
         logger.debugv("完成");
     }
+
+//    @Resource
+//    private ProductTypeRepository productTypeRepository;
+//
+//    @Test
+//    public void productType(){
+//        List<Product> products = productRepository.findAll();
+//        for (Product product : products) {
+//            ProductType productType = productTypeRepository.findOrNew(product.getName());
+//            product.setProductType(productType);
+//            productRepository.saveAndFlush(product);
+//        }
+//    }
 
 
 }

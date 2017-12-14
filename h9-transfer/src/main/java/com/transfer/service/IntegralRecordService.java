@@ -28,12 +28,12 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
 
     @Override
     public String getPath() {
-        return "./record.sql";
+        return "./sql/.sql";
     }
 
     @Override
     public PageResult get(int page, int limit) {
-//        Sort sort = new Sort(Sort.Direction.ASC, "RecordID");
+        Sort sort = new Sort(Sort.Direction.ASC, "recordId");
         return integralRecordRepository.findAll(page,limit);
     }
 
@@ -43,17 +43,16 @@ public class IntegralRecordService extends BaseService<IntegralRecord> {
         stringBuffer.append("insert into `vcoins_flow` (`id`,`create_time`, `update_time`," +
                 "  `money`,`remarks`, `user_id`, `v_coins_type_id`)");
         stringBuffer.append("value(");
-        stringBuffer.append(integralRecord.getRecordID()+ ",");
+        stringBuffer.append(integralRecord.getRecordId()+ ",");
         stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(integralRecord.getRecordtime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(SqlUtils.concatSql(DateUtil.formatDate(integralRecord.getRecordtime(), DateUtil.FormatType.SECOND)));
         stringBuffer.append(integralRecord.getGoodsIntegral()+",");
         stringBuffer.append(SqlUtils.concatSql(integralRecord.getGoodsName()));
         stringBuffer.append(integralRecord.getUserId()+",");
-        stringBuffer.append(11);
+        stringBuffer.append(2);
         stringBuffer.append(");");
         userWtriter.write(stringBuffer.toString());
         userWtriter.newLine();
-
     }
 
     @Override

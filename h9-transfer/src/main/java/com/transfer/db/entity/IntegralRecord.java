@@ -27,7 +27,7 @@ public class IntegralRecord {
 
     @Id
     @Column(name="RecordID")
-    private Long RecordID;
+    private Long recordId;
 
     @Column(name="UserId")
     private Long UserId;

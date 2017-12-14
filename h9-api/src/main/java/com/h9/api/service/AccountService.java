@@ -9,6 +9,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
@@ -154,7 +155,7 @@ public class AccountService {
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
-                .setVb(MoneyUtils.formatMoney(vbCount) + "")
+                .setVb(vbCount.toString())
                 .setJiuYuanIcon(icon);
 
         return Result.success(vo);
@@ -173,15 +174,14 @@ public class AccountService {
 
         String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
         BigDecimal money = vbCount.multiply(new BigDecimal(rateStr));
-        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
-        ordersReposiroty.saveAndFlush(order);
+//        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
+//        ordersReposiroty.saveAndFlush(order);
 
-        Result result = commonService.setBalance(userId, money, 11L, order.getId(), "", "");
-        if (result.getCode() == 1) {
-            throw new RuntimeException("转换酒元异常");
-        }
+        String remark = configService.getValueFromMap("balanceFlowType", "11");
+
+        commonService.setBalance(userId, money, 11L, null,"", remark);
         //vb流水
-        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), order.getId(),11L);
+        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), null,11L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
         userRecordRepository.saveAndFlush(userRecord);
 

@@ -27,7 +27,6 @@ public class ProductModel {
     public Product covert(){
         Product product = new Product();
         product.setCode(QueryCode);
-        product.setName(Name);
         product.setSupplierName(ZGLB);
         product.setSupplierDistrict(GHQY);
         return product;

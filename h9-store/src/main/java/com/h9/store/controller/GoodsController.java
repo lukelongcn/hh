@@ -1,6 +1,7 @@
 package com.h9.store.controller;
 
 import com.h9.common.base.Result;
+import com.h9.common.common.ServiceException;
 import com.h9.store.interceptor.Secured;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.service.GoodService;
@@ -24,12 +25,10 @@ public class GoodsController {
 
     /**
      * description: 商品列表
-     *
-     *　商品类型 1今日新品 2日常家居 3食品饮料 4 所有商品　
      */
     @Secured
     @GetMapping("/goodsList")
-    public Result goodsList(@RequestParam(defaultValue = "5") Integer type,
+    public Result goodsList(@RequestParam(defaultValue = "o_all") String type,
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit) {
         return goodService.goodsList(type,page,limit);
@@ -37,7 +36,6 @@ public class GoodsController {
 
     /**
      * description: 商品详情
-     *
      */
     @Secured
     @GetMapping("/goods/{id}")
@@ -51,13 +49,8 @@ public class GoodsController {
      */
     @Secured
     @PostMapping("/goods/convert")
-    public Result convertGoods(@Valid@RequestBody ConvertGoodsDTO convertGoodsDTO, @SessionAttribute("curUserId") Long userId){
-        try {
+    public Result convertGoods(@Valid@RequestBody ConvertGoodsDTO convertGoodsDTO, @SessionAttribute("curUserId") Long userId) throws ServiceException {
             return goodService.convertGoods(convertGoodsDTO,userId);
-        } catch (Exception e) {
-            logger.info(e.getMessage(),e);
-            return Result.fail("兑换失败，请稍后再试");
-        }
     }
 
 

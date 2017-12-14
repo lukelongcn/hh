@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  * Created by 李圆 on 2017/11/27
  */
 @Service
-@Transactional
 public class AddressService {
 
     Logger logger = Logger.getLogger(AddressService.class);
@@ -46,6 +45,7 @@ public class AddressService {
      * @param userId
      * @return
      */
+    @Transactional
     public Result allAddress(Long userId, int page, int limit) {
         PageResult<Address> pageResult = addressRepository.findAddressList(userId, page, limit);
         if (pageResult == null){
@@ -71,6 +71,7 @@ public class AddressService {
         return Result.success(fromDb);
     }
 
+    @Transactional
     public List<Areas> findFromDb(){
         //从数据库获取数据
         Long startTime = System.currentTimeMillis();
@@ -99,6 +100,7 @@ public class AddressService {
      * @param addressDTO
      * @return
      */
+    @Transactional
     public Result addAddress(Long userId,AddressDTO addressDTO){
 
         Address address = new Address();
@@ -126,8 +128,10 @@ public class AddressService {
 
         // 使用状态设为开启
         address.setStatus(1);
-        addressRepository.save(address);
-        return Result.success("地址添加成功");
+        addressRepository.saveAndFlush(address);
+
+        Long id = addressRepository.findInsertId();
+        return Result.success("保存成功",id);
     }
 
 
@@ -137,6 +141,7 @@ public class AddressService {
      * @param aid
      * @return
      */
+    @Transactional
     public Result deleteAddress(Long userId, Long aid) {
         Address address = addressRepository.findById(aid);
         if (address == null){ return Result.fail("地址不存在"); }
@@ -153,6 +158,7 @@ public class AddressService {
      * @param aid
      * @return
      */
+    @Transactional
     public Result updateAddress(Long userId, Long aid,AddressDTO addressDTO) {
 
         Address address = addressRepository.findById(aid);
@@ -173,19 +179,21 @@ public class AddressService {
         address.setAid(addressDTO.getAid());
         //设值详细地址
         address.setAddress(addressDTO.getAddress());
-        // 设置是否为默认地址
-        if(addressDTO.getDefaultAddress() == 1){
-            addressRepository.updateDefault(userId);
-        }
-        address.setDefaultAddress(addressDTO.getDefaultAddress());
+
         // 使用状态设为开启
         address.setStatus(1);
 
+        // 设置是否为默认地址
+        if(addressDTO.getDefaultAddress() == 1){
+            addressRepository.updateElseDefault(userId,aid);
+            address.setDefaultAddress(1);
+        } else {
+            address.setDefaultAddress(0);
+        }
         addressRepository.save(address);
 
-        return Result.success("地址修改成功");
+        return Result.success("保存成功");
     }
-
 
     /**
      * 设定默认地址
@@ -193,6 +201,7 @@ public class AddressService {
      * @param aid
      * @return
      */
+    @Transactional
     public Result defualtAddress(Long userId, Long aid) {
         addressRepository.updateDefault(userId);
         Address address = addressRepository.findById(aid);
@@ -201,10 +210,11 @@ public class AddressService {
         address.setDefaultAddress(1);
         address.setStatus(1);
         addressRepository.save(address);
-        return Result.success("设定默认地址成功");
+        return Result.success("设定成功");
     }
 
 
+    @Transactional
     public Result getDefaultAddress(Long userId) {
 
         Address address = addressRepository.findByUserIdAndDefaultAddressAndStatus(userId, 1,1);
@@ -220,4 +230,11 @@ public class AddressService {
     }
 
 
+    @Transactional
+    public Result getDetailAddress(Long userId, Long id) {
+        Address address = addressRepository.findById(id);
+        if (address == null){ return Result.fail("地址不存在"); }
+        if (!userId.equals(address.getUserId())){ return Result.fail("无权操作"); }
+        return Result.success(address);
+    }
 }

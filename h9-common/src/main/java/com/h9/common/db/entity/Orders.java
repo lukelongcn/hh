@@ -76,7 +76,7 @@ public class Orders extends BaseEntity {
      * description:
      * @see statusEnum
      */
-    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
+    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态,1:待发货,2:已发货,3:已完成'")
     private Integer status = 1;
 
     @ManyToOne
@@ -99,8 +99,8 @@ public class Orders extends BaseEntity {
     @Column(name = "order_type", columnDefinition = "varchar(50) default '' COMMENT'订单类别'")
     private String orderType;
 
-    @Column(name = "loginstics_number")
-    private String logisticsNumber;
+//    @Column(name = "loginstics_number")
+//    private String logisticsNumber;
 
     @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
     private String expressName;
@@ -108,12 +108,57 @@ public class Orders extends BaseEntity {
     @Column(name = "order_from",columnDefinition = "int default 2 COMMENT '订单来源 1为酒元商场 2为其他'")
     private Integer orderFrom;
 
+    @Column(name = "express_num",columnDefinition = "varchar(200) COMMENT '物流单号'")
+    private String expressNum  = "";
+
+    @Column(name = "province",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String province;
+
+    @Column(name = "district",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String district;
+
+    @Column(name = "city",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String city;
+
+
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+
+    public String getExpressNum() {
+        return expressNum;
+    }
+
+    public void setExpressNum(String expressNum) {
+        this.expressNum = expressNum;
+    }
 
     public enum PayMethodEnum {
 
         BALANCE_PAY(1, "余额支付"),
         VBPAY(2, "vb支付");
-
 
         private int code;
         private String desc;
@@ -160,13 +205,13 @@ public class Orders extends BaseEntity {
         this.orderFrom = orderFrom;
     }
 
-    public String getLogisticsNumber() {
-        return logisticsNumber;
-    }
-
-    public void setLogisticsNumber(String logisticsNumber) {
-        this.logisticsNumber = logisticsNumber;
-    }
+//    public String getLogisticsNumber() {
+//        return logisticsNumber;
+//    }
+//
+//    public void setLogisticsNumber(String logisticsNumber) {
+//        this.logisticsNumber = logisticsNumber;
+//    }
 
     public enum orderTypeEnum {
 

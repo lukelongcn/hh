@@ -45,6 +45,7 @@ public class AreaPhoneService extends BaseService<T_rmpr> {
         areaPhone.setType(t_rmpr.getType());
         areaPhone.setCreateTime(t_rmpr.getCreateTime());
         areaPhone.setUpdateTime(t_rmpr.getUpdateTime());
+        areaPhoneRepository.save(areaPhone);
     }
 
     @Override

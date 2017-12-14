@@ -53,13 +53,16 @@ public class BounsService extends BaseService<BounsDetails> {
     @Override
     public PageResult get(int page, int limit) {
         PageResult all = bounsDetailsRepository.findAll(page, limit);
-        all.setTotalPage(5);
         return all;
     }
 
     @Override
+    public void getSql(BounsDetails bounsDetails, BufferedWriter writer) throws IOException {
+    }
+
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void getSql(BounsDetails bounsDetails, BufferedWriter userWtriter) throws IOException {
+    public void getSql(BounsDetails bounsDetails,long index, BufferedWriter userWtriter) throws IOException {
         if(bounsDetails.getBounsOID()==null){
             return;
         }
@@ -71,6 +74,7 @@ public class BounsService extends BaseService<BounsDetails> {
         Reward reward = rewardRepository.findByCode(bouns.getCodeId());
         if(reward == null){
             reward = new Reward();
+            reward.setId(index);
             reward.setActivityId(1L);
             reward.setMoney(bounsDetails.getUserBouns());
             reward.setCode(bouns.getCodeId());
@@ -85,6 +89,7 @@ public class BounsService extends BaseService<BounsDetails> {
         reward = rewardRepository.saveAndFlush(reward);
 
         UserRecord userRecord = new UserRecord();
+        userRecord.setId(index);
         userRecord.setImei(bounsDetails.getImei());
         userRecord.setVersion(bounsDetails.getVersion());
         userRecord.setUserId(bounsDetails.getUserid());
@@ -92,6 +97,7 @@ public class BounsService extends BaseService<BounsDetails> {
 
 
         Lottery lottery = new Lottery();
+        lottery.setId(index);
         lottery.setUser(user);
         lottery.setMoney(bounsDetails.getUserBouns());
         lottery.setReward(reward);

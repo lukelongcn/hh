@@ -18,14 +18,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BounsDetailsRepository extends BasicRepository<BounsDetails> {
 
-    @Query("select bd from BounsDetails  bd order by bd.BounsTime ASC ")
-    public Page findBy(Pageable pageable);
+    @Query("select bd from BounsDetails  bd order by bd.createTime ASC ")
+     Page findByCreateTime(Pageable pageable);
 
     default PageResult findAll(int page,int limit){
-        return new PageResult(findBy(pageRequest(page, limit)));
+        return new PageResult(findByCreateTime(pageRequest(page, limit)));
     }
 
-    @Query("select b from BounsDetails  b where b.bounsType = ?1")
+    @Query("select b from BounsDetails  b where b.oratransOId = ?1 and b.bounsType = 1")
     BounsDetails findByOAndBounsOID(String id);
 
 }

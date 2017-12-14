@@ -34,9 +34,8 @@ public class OrderController {
      */
     @Secured
     @GetMapping("/orders/{orderId}")
-    public Result orderDetail(@PathVariable Long orderId){
-        return orderService.orderDetail(orderId);
+    public Result orderDetail(@PathVariable Long orderId,@SessionAttribute("curUserId")long userId){
+        return orderService.orderDetail(orderId,userId);
     }
-
 
 }

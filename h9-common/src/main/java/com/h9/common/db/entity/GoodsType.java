@@ -34,6 +34,9 @@ public class GoodsType extends BaseEntity {
     @Column(name = "allow_import",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 是否允许导入数据，1:否，2:是'")
     private Integer allowImport = 1;
 
+    @Column(name = "reality",nullable = false,columnDefinition = "tinyint default 0 COMMENT ' 是否是实物，0:否，1:是'")
+    private Integer reality;
+
     /**
      * description:
      * @see GoodsTypeEnum
@@ -138,6 +141,14 @@ public class GoodsType extends BaseEntity {
         this.parent = parent;
     }
 
+    public Integer getReality() {
+        return reality;
+    }
+
+    public void setReality(Integer reality) {
+        this.reality = reality;
+    }
+
     public enum StatusEnum {
         DISABLED(2,"禁用"),
         ENABLED(1,"正常");
@@ -153,6 +164,33 @@ public class GoodsType extends BaseEntity {
         public static String getNameById(int id){
             StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
             return statusEnum==null?null:statusEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+    }
+
+    public enum RealityEnum {
+        YES(1,"是"),
+        FALSE(0,"否");
+
+        RealityEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            RealityEnum realityEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return realityEnum==null?null:realityEnum.getName();
         }
 
         public int getId() {

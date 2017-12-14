@@ -1,9 +1,11 @@
 package com.transfer.service.base;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.transfer.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,45 +21,91 @@ import java.util.List;
  */
 public abstract class BaseService<T> {
     
-     Logger logger = Logger.getLogger(BaseService.class);
+    protected Logger logger = Logger.getLogger(BaseService.class);
 
     public void trants(){
-        int page = 0;
+        trants(null,null,null);
+    }
+
+    public void trants(Integer startPage,Integer endPage,String path){
+        Integer page = startPage;
+        if(page == null){
+            page = 1;
+            startPage = 1;
+        }
         int limit = 1000;
-        int totalPage = 0;
-        PageResult<T> userInfoPageResult;
-        String path = getPath();
+        Integer totalPage = endPage;
+
+        if(StringUtils.isEmpty(path)) path = getPath();
+        logger.debugv("path:{0}",path);
         BufferedWriter userWtriter = null;
         if(!StringUtils.isEmpty(path)) userWtriter = SqlUtils.getBuffer(path);
+
+        Page<T> userInfoPageResult;
         do {
-            page = page + 1;
+            long startTime = System.currentTimeMillis();
             userInfoPageResult =get(page, limit);
-            totalPage = (int) userInfoPageResult.getTotalPage();
-            List<T> userInfos = userInfoPageResult.getData();
-            for (T userInfo : userInfos) {
+            long endTime = System.currentTimeMillis();
+            logger.debugv("数据查询"+ (endTime-startTime));
+            if(endPage == null){
+                totalPage = (int) userInfoPageResult.getTotalPages();
+                endPage = totalPage;
+            }
+            List<T> userInfos = userInfoPageResult.getContent();
+            int size = userInfos.size();
+            startTime = System.currentTimeMillis();
+            for (int i = 0; i < size; i++) {
+                T userInfo = userInfos.get(i);
                 try {
-                   getSql(userInfo,userWtriter);
+                    getSql(userInfo,userWtriter);
+                    long index = (page - 1) * limit + i + 1;
+                    getSql(userInfo,index, userWtriter);
                 } catch (Exception e) {
+                    logger.debugv(JSONObject.toJSONString(userInfo));
                     e.printStackTrace();
                 }
             }
+            endTime = System.currentTimeMillis();
+            logger.debugv("数据处理"+ (endTime-startTime));
             logger.info("page: "+page+" totalPage: "+totalPage);
-            float rate = (float) page * 100 / (float) totalPage;
-            if (page <= totalPage && userInfoPageResult.getCount() != 0)
+            float rate = (float) (page-startPage+1) * 100 / (float) (totalPage-startPage+1);
+            if (page <= totalPage && userInfoPageResult.getSize() != 0)
                 logger.debugv(getTitle()+ rate + "% " + page + "/" + totalPage);
-        } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
+            page = page + 1;
+        } while (page <= totalPage &&userInfoPageResult.getSize() != 0);
         if(!StringUtils.isEmpty(path))   SqlUtils.close(userWtriter);
     }
 
     public abstract String getPath();
 
-    public abstract PageResult get(int page,int limit);
+    public abstract Page get(int page,int limit);
 
     public abstract void getSql(T t,BufferedWriter writer) throws IOException;
+
+    public void getSql(T t,long index,BufferedWriter writer) throws IOException{
+
+    }
 
 
     public abstract String getTitle();
 
+
+    public void insertFieldInMid(StringBuilder sql, Object field){
+        sql.append("'");
+        if(field != null){
+            sql.append(field);
+        }
+        sql.append("',");
+    }
+
+    public void insertFieldEnd(StringBuilder sql, Object field){
+        sql.append("'");
+        if(field != null){
+            sql.append(field);
+        }
+        sql.append("'");
+
+    }
 
 
 

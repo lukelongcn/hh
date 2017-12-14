@@ -68,6 +68,9 @@ public class LotteryService {
     private LotteryConfig lotteryConfig;
     @Resource
     private WhiteUserListRepository whiteUserListRepository;
+    @Resource
+    private ProductTypeRepository productTypeRepository;
+
 
     @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
@@ -107,7 +110,14 @@ public class LotteryService {
         if (!onWhiteUser(userId)) {
 
             if (onBlackUser(userId, imei)) {
-                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                if(lotteryCount.compareTo(new BigDecimal(3)) > 0){
+                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                }
+            }else{
+                String dayMaxlotteryCount = configService.getStringConfig("dayMaxlotteryCount");
+                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount)) > 0){
+                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                }
             }
         }
 
@@ -428,6 +438,9 @@ public class LotteryService {
         if (productInfo != null && productInfo.getState() != 2 && productInfo.getState() != 3) {
             try {
                 product = productInfo.covert();
+                ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
+                product.setProductType(productType);
+//                todo
                 product = productRepository.saveAndFlush(product);
             } catch (Exception e) {
                 logger.debug(e.getMessage(), e);

@@ -74,7 +74,7 @@ public class User extends BaseEntity {
     @Column(name = "h9_user_id", columnDefinition = "bigint(20) default null COMMENT '徽9原有用户id'")
     private Long h9UserId;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="user_role",joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
     private Set<Role> roles;
 
@@ -270,4 +270,5 @@ public class User extends BaseEntity {
             this.name = name;
         }
     }
+
 }

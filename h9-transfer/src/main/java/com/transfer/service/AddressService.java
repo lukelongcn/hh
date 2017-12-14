@@ -35,7 +35,7 @@ public class AddressService {
         int totalPage = 0;
         PageResult<Address> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "ID");
-        BufferedWriter userWtriter = SqlUtils.getBuffer("./address.sql");
+        BufferedWriter userWtriter = SqlUtils.getBuffer("./sql/address.sql");
         do {
             page = page + 1;
             userInfoPageResult = targetAddressReposiroty.findAll(page, limit, sort);
@@ -64,7 +64,7 @@ public class AddressService {
     public String toMyAddressAndSave(Address address){
         StringBuffer sqlBuffer = new StringBuffer();
         sqlBuffer.append("insert into `address` (`id`,`create_time`, `update_time`, `address`, `city`,`default_address`, " +
-                " `distict`, `name`, `phone`, `province`, `provincial_city`, `user_id`) ");
+                " `distict`, `name`, `phone`, `province`, `user_id`) ");
         sqlBuffer.append("value(");
         sqlBuffer.append(address.getID()+",");
         sqlBuffer.append(SqlUtils.concatDate());
@@ -76,7 +76,6 @@ public class AddressService {
         sqlBuffer.append(SqlUtils.concatSql(address.getConsignee()));
         sqlBuffer.append(SqlUtils.concatSql(address.getConsigneePhone()));
         sqlBuffer.append(SqlUtils.concatSql(address.getProvince()));
-        sqlBuffer.append(SqlUtils.concatSql(address.getProvincialCity()));
         sqlBuffer.append(address.getUserid());
         sqlBuffer.append(");");
         return sqlBuffer.toString();

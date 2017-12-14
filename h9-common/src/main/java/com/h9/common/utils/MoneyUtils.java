@@ -22,8 +22,8 @@ public class MoneyUtils {
     }
 
     public static void main(String[] args) {
-        BigDecimal de = new BigDecimal("30");
+        BigDecimal de = new BigDecimal("30.01");
 
-        System.out.println(formatMoney(de));
+        System.out.println(formatMoney(de, "0"));
     }
 }

@@ -32,10 +32,11 @@ public class HomeController {
 
     /**
      * description: 版本升级
+     *  101010
      */
     @GetMapping("/version")
     @ApiOperation(value = "版本升级 version:版本 type: IOS:2 安卓：1")
-    public Result version(@RequestHeader( value = "version") Integer version, @RequestHeader(value = "client")Integer client){
+    public Result version(@RequestHeader( value = "version") String version, @RequestHeader(value = "client")Integer client){
         return homeService.version(version,client);
     }
 

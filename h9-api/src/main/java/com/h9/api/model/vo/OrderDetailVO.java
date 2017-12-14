@@ -1,5 +1,6 @@
 package com.h9.api.model.vo;
 
+import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.DateUtil;
@@ -18,37 +19,48 @@ public class OrderDetailVO {
     private String orderStatus = "";
     private String orderType;
     private String accepterName = "";
-    private String tel= "";
-    private String address= "";
-    private String orderId= "";
-    private String payMethod= "";
-    private String payMoney= "";
-    private String createOrderDate= "";
+    private String tel = "";
+    private String address = "";
+    private String orderId = "";
+    private String payMethod = "";
+    private String payMoney = "";
+    private String createOrderDate = "";
     private List<GoodsInfo> goodsInfoList;
     private String couponsNumber = "";
     private String companyIcon = "";
-    private String logisticsNumber="";
+    private String logisticsNumber = "";
     /**
      * description: 充值面额
      */
     private String rechargeMoney = "";
 
 
-    public static OrderDetailVO convert(Orders order){
+    public static OrderDetailVO convert(Orders order) {
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
 
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
-        vo.setOrderType(order.getOrderType());
+        if (order.getOrderType().equals("1")) {
+            vo.setOrderType(3 + "");
+        } else {
+            if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
+                vo.setOrderType("2");
+            } else {
+                vo.setOrderType("1");
+            }
+        }
+
+
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
 
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
-        if(order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode())){
-            vo.setAccepterName("");
+        if (order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + "")) {
+            vo.setAccepterName(order.getUserName());
             vo.setAddress(order.getUserAddres());
-            vo.setLogisticsNumber(order.getLogisticsNumber());
+            String expressNum = order.getExpressNum();
+            vo.setLogisticsNumber(expressNum == null ? "":expressNum);
         }
 
         List<OrderItems> orderItems = order.getOrderItems();
@@ -111,7 +123,7 @@ public class OrderDetailVO {
         this.goodsInfoList = goodsInfoList;
     }
 
-    private static class GoodsInfo{
+    private static class GoodsInfo {
         private String imgUrl;
         private String GoodsName;
 

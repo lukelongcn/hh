@@ -1,7 +1,10 @@
 package com.transfer;
 
+import com.h9.common.db.entity.Goods;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.db.repo.GoodsReposiroty;
+import com.transfer.db.entity.Oratrans;
 import com.transfer.db.repo.CardInfoRepository;
 import com.transfer.db.repo.IntegralRecordRepository;
 import com.transfer.service.*;
@@ -22,43 +25,18 @@ public class TransferApplicationTests {
     private Logger logger = Logger.getLogger(TransferApplicationTests.class);
     @Resource
     private UserService userService;
-
-
-    @Test
-    public void contextLoads() {
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-
-        userService.user();
-
-        logger.debugv(" ----*************###############+++++++++++++++++++");
-    }
-
-    @Resource
-    private AddressService addressService;
-
-    @Test
-    public void transferAddress() {
-        addressService.transfernAddress();
-    }
     @Resource
     private DiDiCardService diDiCardService;
-
-    @Test
-    public void transferDidiCard() {
-        diDiCardService.transferDidiCard();
-    }
+    @Resource
+    private CardInfoService cardInfoService;
+    @Resource
+    private GoodsInfoService goodsInfoService;
 
     @Test
     public void userCard() {
         userService.userCard();
     }
 
-    @Resource
-    private CardInfoRepository cardInfoReposiroty;
-    @Resource
-    private CardInfoService cardInfoService;
-    @Resource
-    private BankTypeRepository bankTypeRepository;
     @Test
     public void transferBankType(){
         try {
@@ -66,11 +44,11 @@ public class TransferApplicationTests {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
+
     @Test
-    public void tsansferCardInfo(){
+    public void transferCardInfo(){
         try {
             cardInfoService.readBankINfo();
         } catch (IOException e) {
@@ -78,30 +56,25 @@ public class TransferApplicationTests {
         }
     }
 
+
+
     @Resource
-    private IntegralRecordService integralRecordService;
+    private OrderService orderService;
+    @Test
+    public void transferOrders(){
+        orderService.trants();
+    }
 
 
     @Test
-    public void transferData(){
-        integralRecordService.trants();
+    public void transferGoodsInfo(){
+       goodsInfoService.trants();
     }
-
-    @Resource
-    private BounsDetailService bounsDetailService;
 
     @Test
-    public void transferBouns(){
-        bounsDetailService.trants();
+    public void transferDidiCard() {
+        diDiCardService.transferDidiCard();
     }
 
-    @Resource
-    private BounsService bounsService;
-
-
-    @Test
-    public void transferBounsFlow(){
-        bounsService.trants();
-    }
 
 }

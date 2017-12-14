@@ -46,29 +46,19 @@ public class UserService {
 
     public void user() {
 
-        int page = 0;
+        int page = 1;
         int limit = 1000;
         int totalPage = 0;
         PageResult<UserInfo> userInfoPageResult;
         Sort sort = new Sort(Sort.Direction.ASC, "id");
-        BufferedWriter userWtriter = SqlUtils. getBuffer("./user.sql");
-        BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./user_account.sql");
-        BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./user_extends.sql");
-        String header = "insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time,login_count,nick_name,open_id,password,phone,uuid";
-        try {
-            userWtriter.write(header);
-            userWtriter.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        BufferedWriter userWtriter = SqlUtils. getBuffer("./sql/user.sql");
+        BufferedWriter userAccountWtriter = SqlUtils.getBuffer("./sql/user_account.sql");
+        BufferedWriter userExtendsWtriter = SqlUtils.getBuffer("./sql/user_extends.sql");
         do {
-            page = page + 1;
             userInfoPageResult = userInfoRepository.findAll(page, limit, sort);
             totalPage = (int) userInfoPageResult.getTotalPage();
             List<UserInfo> userInfos = userInfoPageResult.getData();
             for (UserInfo userInfo : userInfos) {
-//                covertUser(userInfo);
                 try {
                     String sql = covertToUser(userInfo);
                     if(sql!=null){
@@ -94,6 +84,7 @@ public class UserService {
             float rate = (float) page * 100 / (float) totalPage;
             if (page <= totalPage && userInfoPageResult.getCount() != 0)
                 logger.debugv("用户迁移进度 " + rate + "% " + page + "/" + totalPage);
+            page = page + 1;
         } while (page <= totalPage &&userInfoPageResult.getCount() != 0);
         SqlUtils.close(userWtriter);
         SqlUtils.close(userAccountWtriter);
@@ -106,9 +97,13 @@ public class UserService {
     private String covertToUser(UserInfo userInfo) {
         if (StringUtils.isNotEmpty(userInfo.getOpenID())
                 || StringUtils.isNotEmpty(userInfo.getPhone())) {
+
+            if("18326015637".equals(userInfo.getPhone())||userInfo.getId() == 367214){
+                logger.debugv("18326015637:" + SqlUtils.concatSql(userInfo.getUsername()));
+            }
             StringBuffer sql = new StringBuffer();
-//            sql.append("insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time");
-//            sql.append(",login_count,nick_name,open_id,password,phone,uuid) value(");
+            sql.append("insert into user(id,create_time,update_time,avatar,h9_user_id,last_login_time");
+            sql.append(",login_count,nick_name,open_id,password,phone,uuid) value(");
             sql.append(userInfo.getId()+",");
             sql.append(SqlUtils.concatDate());
             sql.append(SqlUtils.concatDate());
@@ -121,7 +116,7 @@ public class UserService {
             sql.append(SqlUtils.concatSql(userInfo.getPassword()));
             sql.append(SqlUtils.concatSql(userInfo.getPhone()));
             sql.append(SqlUtils.concatSql(userInfo.getUserGuid(),true));
-//            sql.append(");");
+            sql.append(");");
             return sql.toString();
         }
         return null;
@@ -132,8 +127,8 @@ public class UserService {
         if (StringUtils.isNotEmpty(userInfo.getOpenID())
                 || StringUtils.isNotEmpty(userInfo.getPhone())) {
             StringBuffer sql = new StringBuffer();
-//            sql.append("insert into user_account(user_id,create_time,update_time,balance,v_coins) ");
-//            sql.append("value(");
+            sql.append("insert into user_account(user_id,create_time,update_time,balance,v_coins) ");
+            sql.append("value(");
             sql.append(userInfo.getId());
             sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
             sql.append(",'"+DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND)+"'");
@@ -147,7 +142,7 @@ public class UserService {
                 integralCount = 0;
             }
             sql.append(","+integralCount);
-//            sql.append(");");
+            sql.append(");");
             return sql.toString();
         }
         return null;

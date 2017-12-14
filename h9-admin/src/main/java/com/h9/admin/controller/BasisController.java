@@ -95,11 +95,11 @@ public class BasisController {
         return this.basisService.updateBankTypeStatus(id);
     }
 
-    @Secured(accessCode = "workbench:statistics:lottery")
-    @GetMapping(value="/statistics/lottery")
-    @ApiOperation("获取统计的积分和奖励数据")
+    @Secured(accessCode = "workbench:statistics")
+    @GetMapping(value="/statistics")
+    @ApiOperation("获取统计数据")
     public Result statisticsLottery(){
-        return basisService.statisticsLottery();
+        return basisService.statistics();
     }
 
     @Secured(accessCode = "user:add")

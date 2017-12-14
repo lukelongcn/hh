@@ -34,10 +34,10 @@ public class Goods extends BaseEntity {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(30) default '' COMMENT '商品编码'")
     private String code;
 
-    @Column(name = "real_price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '虚拟商品价值'")
+    @Column(name = "real_price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '售价'")
     private BigDecimal realPrice = new BigDecimal(0);
 
-    @Column(name = "price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '商品价格'")
+    @Column(name = "price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '原价'")
     private BigDecimal price = new BigDecimal(0);
 
     @Column(name = "cash_back",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励金额'")

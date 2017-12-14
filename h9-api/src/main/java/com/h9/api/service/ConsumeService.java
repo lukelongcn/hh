@@ -1,6 +1,8 @@
 package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
+import com.h9.api.model.dto.DidiCardVerifyDTO;
+import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.provider.ChinaPayService;
 import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
@@ -9,6 +11,7 @@ import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -107,7 +110,7 @@ public class ConsumeService {
     @Resource
     private GoodService goodService;
 
-    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
+    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) throws ServiceException {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -147,6 +150,7 @@ public class ConsumeService {
         String balanceFlowImg = configService.getValueFromMap("balanceFlowImg", "6");
         orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
+        orderItems.setGoods(goods);
 
         userAccountRepository.save(userAccount);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());
@@ -171,16 +175,16 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            saveRechargeRecord(user,goods.getRealPrice());
+            saveRechargeRecord(user,goods.getRealPrice(),orderItems.getOrders().getId());
             return Result.success("充值成功", map);
         } else {
-            throw new RuntimeException("充值失败");
+            throw new ServiceException(result);
         }
     }
 
 
-    public void saveRechargeRecord(User user,BigDecimal money){
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone());
+    public void saveRechargeRecord(User user,BigDecimal money,Long orderId){
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(),orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 
@@ -231,11 +235,11 @@ public class ConsumeService {
 //        List<DiDiCardInfo> realPriceAndStock = goodsReposiroty.findRealPriceAndStock();
         List<Map<String, Object>> list = new ArrayList<>();
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
-        if (goodsType == null) return Result.fail();
+        if (goodsType == null) return Result.success(list);
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
 
-        goodsList.forEach(goods -> {
+        goodsList.stream().filter(el -> el.getStock() > 0).forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
 //            Object count = cardCouponsRepository.getCount(goods.getId());
@@ -271,6 +275,9 @@ public class ConsumeService {
 
         if (goods == null) return Result.fail("商品不存在");
 
+        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
+        if (cardCoupons == null) return Result.fail("卡劵不存在");
+
         //生成订单
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode() + "", "徽酒");
         orders.setOrderFrom(2);
@@ -286,11 +293,7 @@ public class ConsumeService {
         OrderItems items = new OrderItems(goods.getName(), "", goods.getRealPrice(), goods.getRealPrice(), 1, orders);
         goodsReposiroty.save(goods);
         userAccountRepository.save(userAccount);
-
-        //返回数据
-        PageRequest pageRequest = new PageRequest(0, 1);
-        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
-        if (cardCoupons == null) return Result.fail("卡劵不存在");
+//        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
         cardCoupons.setStatus(2);
         //余额操作
         commonService.setBalance(userId, goods.getRealPrice().negate(), 5L, orders.getId(), "", "滴滴卡充值");
@@ -315,7 +318,31 @@ public class ConsumeService {
 
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.DIDI_CARD.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
         return Result.success(voMap);
+    }
+
+
+    public Result verifyConvertCoupons(DidiCardVerifyDTO didiCardDTO, Long userId) {
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+        BigDecimal accountBalance = userAccount.getBalance();
+        Long id = didiCardDTO.getId();
+
+        Goods goods = goodsReposiroty.findOne(id);
+        BigDecimal price = goods.getPrice();
+
+        if (accountBalance.compareTo(price) < 0) {
+            return Result.fail("余额不足");
+        }
+
+        if (goods == null) return Result.fail("商品不存在");
+
+        CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
+        if (cardCoupons == null) return Result.fail("卡劵不存在");
+
+        return Result.success("验证成功");
     }
 
     public Result bankWithDraw(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
@@ -390,7 +417,8 @@ public class ConsumeService {
         withdrawalsRequest.setBankReturnData(result.getData().toString());
         withdrawalsRequest.setMerDate(merDate);
         redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
-
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
         //设置默认银行卡
         UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
         if (defaulBank != null) {
@@ -554,5 +582,58 @@ public class ConsumeService {
         } else {
             return canWithdrawMoney;
         }
+    }
+
+    public Result bankWithDrawVerify(Long userId, Long bankId, double longitude, double latitude, HttpServletRequest request) {
+
+        UserBank userBank = userBankRepository.findOne(bankId);
+
+        if (userBank == null) return Result.fail("请选择银行卡");
+
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+
+        BigDecimal balance = userAccount.getBalance();
+        if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
+
+        String withdrawMax = configService.getStringConfig("withdrawMax");
+        BigDecimal max = new BigDecimal(withdrawMax);
+
+        //当天提现的金额
+        Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
+        BigDecimal castTodayWithdrawMoney = null;
+
+        if (todayWithdrawMoney == null) {
+            castTodayWithdrawMoney = new BigDecimal(0);
+        } else {
+            castTodayWithdrawMoney = new BigDecimal(todayWithdrawMoney.toString());
+        }
+
+        BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
+        if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
+            return Result.fail("您今日的提现金额超过每日额度");
+        }
+
+        return Result.success();
+
+    }
+
+    public Result rechargeVerify(Long userId, MobileRechargeVerifyDTO mobileRechargeDTO) {
+        User user = userService.getCurrentUser(userId);
+        UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
+
+        BigDecimal balance = userAccount.getBalance();
+
+        String recargeTel = mobileRechargeDTO.getTel();
+
+        if (!MobileUtils.isMobileNO(recargeTel)) return Result.fail("请填写正确的手机号码");
+
+        if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
+
+        Goods goods = goodsReposiroty.findOne(mobileRechargeDTO.getId());
+        BigDecimal realPrice = goods.getRealPrice();
+        if (balance.compareTo(realPrice) < 0) {
+            return Result.fail("余额不足");
+        }
+        return Result.success("校验成功");
     }
 }
