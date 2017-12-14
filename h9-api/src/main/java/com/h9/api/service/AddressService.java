@@ -131,8 +131,6 @@ public class AddressService {
         address.setStatus(1);
         addressRepository.saveAndFlush(address);
 
-        Long id = addressRepository.findInsertId();
-        return Result.success("保存成功",id);
         addressRepository.save(address);
 
         Long id = addressRepository.findInsertId();
