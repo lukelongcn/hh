@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  *
  */
 @Component
-public class InitAddressListener implements ApplicationListener<ApplicationReadyEvent> {
+public class InitDataListener implements ApplicationListener<ApplicationReadyEvent> {
 
     @Resource
     AddressService addressService;
@@ -30,7 +30,18 @@ public class InitAddressListener implements ApplicationListener<ApplicationReady
         this.initAddressCache();
     }
 
+    /****
+     * 初始化地址区域信息
+     */
     private void initAddressCache() {
        addressService.findFromDb();
+    }
+
+    /*****
+     * 初始化用户信息
+     */
+    private void initTestUserService(){
+//   12345678909
+
     }
 }
