@@ -195,9 +195,8 @@ public class AddressService {
         }
         addressRepository.save(address);
 
-        Long id = addressRepository.findInsertId();
         HashMap map = new HashMap();
-        map.put("id",id);
+        map.put("id",aid);
         return Result.success("保存成功",map);
     }
 
