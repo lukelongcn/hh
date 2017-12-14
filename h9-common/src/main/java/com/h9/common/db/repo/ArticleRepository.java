@@ -21,7 +21,7 @@ public interface ArticleRepository extends BaseRepository<Article>{
      */
     @Query(value = "select o from Article o where o.enable = 1 and o.recommend = 1 " +
             " order by o.sort desc,o.createTime desc")
-    List<Article> findActiveArticle(Date date);
+    List<Article> findActiveArticle( );
 
     @Query("select count(a) from Article a where a.articleType.id=?1 and a.enable<>2")
     Long findCountByArticleType(Long articleType);
