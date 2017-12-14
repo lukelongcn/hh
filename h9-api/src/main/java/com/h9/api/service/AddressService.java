@@ -197,7 +197,10 @@ public class AddressService {
         }
         addressRepository.save(address);
 
-        return Result.success("保存成功");
+        Long id = addressRepository.findInsertId();
+        HashMap map = new HashMap();
+        map.put("id",id);
+        return Result.success("保存成功",map);
     }
 
     /**
