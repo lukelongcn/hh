@@ -64,7 +64,10 @@ public class HomeService {
         Map<String, String> preLink = configService.getMapConfig("preLink");
         String articlelink = preLink.get("article");
 
-        List<Article> articleList = articleRepository.findActiveArticle(new Date());
+        List<Article> articleList = articleRepository.findActiveArticle();
+        if (!CollectionUtils.isEmpty(articleList)&&articleList.size()>5) {
+           articleList = articleList.subList(0, 4);
+        }
 
         if (!CollectionUtils.isEmpty(articleList)) {
             articleList.forEach(article -> {

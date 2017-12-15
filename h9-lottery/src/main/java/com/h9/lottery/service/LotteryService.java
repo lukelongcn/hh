@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -110,17 +111,16 @@ public class LotteryService {
         if (!onWhiteUser(userId)) {
 
             if (onBlackUser(userId, imei)) {
-                if(lotteryCount.compareTo(new BigDecimal(3)) > 0){
+                if(lotteryCount.compareTo(new BigDecimal(2)) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
                 }
             }else{
                 String dayMaxlotteryCount = configService.getStringConfig("dayMaxlotteryCount");
-                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount)) > 0){
+                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount).subtract(new BigDecimal(1))) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
                 }
             }
         }
-
 
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
@@ -191,14 +191,45 @@ public class LotteryService {
      */
     public boolean onBlackUser(Long userId, String imei) {
 
-        SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
+        List<SystemBlackList> systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
 
-        return systemBlackList != null;
+        if (org.apache.commons.collections.CollectionUtils.isEmpty(systemBlackList)) {
+            return false;
+        }
+        List<SystemBlackList> systemBlackLists = systemBlackList.stream().filter(user -> {
+            Long startTime = user.getStartTime().getTime();
+            Long endTime = user.getEndTime().getTime();
+            Long currentDate = new Date().getTime();
+
+            if (startTime < currentDate && currentDate < endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(systemBlackLists);
     }
 
     public boolean onWhiteUser(Long userId) {
-        List<WhiteUserList> user = whiteUserListRepository.findByUserId(userId, new Date());
-        return org.apache.commons.collections.CollectionUtils.isNotEmpty(user);
+        List<WhiteUserList> userLists = whiteUserListRepository.findByUserId(userId, new Date());
+
+        if(org.apache.commons.collections.CollectionUtils.isEmpty(userLists)){
+            return false;
+        }
+        List<WhiteUserList> whiteUserLists = userLists.stream().filter(user -> {
+            Long startTime = user.getStartTime().getTime();
+            Long endTime = user.getEndTime().getTime();
+            Long currentDate = new Date().getTime();
+
+            if (startTime < currentDate && currentDate < endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(whiteUserLists);
     }
 
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {

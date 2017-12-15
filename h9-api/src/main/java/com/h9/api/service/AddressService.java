@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -131,7 +132,9 @@ public class AddressService {
         addressRepository.saveAndFlush(address);
 
         Long id = addressRepository.findInsertId();
-        return Result.success("保存成功",id);
+        HashMap map = new HashMap();
+        map.put("id",id);
+        return Result.success("保存成功",map);
     }
 
 
@@ -192,7 +195,9 @@ public class AddressService {
         }
         addressRepository.save(address);
 
-        return Result.success("保存成功");
+        HashMap map = new HashMap();
+        map.put("id",aid);
+        return Result.success("保存成功",map);
     }
 
     /**
