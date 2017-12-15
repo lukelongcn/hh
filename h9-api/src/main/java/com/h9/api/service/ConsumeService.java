@@ -381,8 +381,10 @@ public class ConsumeService {
 //        }
 //        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
         //一天提现的金额最大值只能是最在额度值
-
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
+        if(balance.compareTo(canWithdrawMoney) < 0){
+            canWithdrawMoney = balance;
+        }
         String transAmt = "101";
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
