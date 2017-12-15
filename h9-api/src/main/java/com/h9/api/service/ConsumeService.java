@@ -487,7 +487,7 @@ public class ConsumeService {
                 .map(record -> record.getId() + "")
                 .reduce("", (x, y) -> x + " ," + y);
 
-        logger.info("没有到账的订单" + reduce);
+        logger.info("没有到账的订单列表：" + reduce);
         //查询状态
         withdrawCashRecord.forEach(wr -> {
             WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());
