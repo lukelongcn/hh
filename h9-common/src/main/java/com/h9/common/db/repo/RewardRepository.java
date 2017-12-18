@@ -68,4 +68,8 @@ public interface RewardRepository extends BaseRepository<Reward> {
      */
     @Query("select o from Reward  o where (o.status = 1 or o.status = 2) and o.finishTime  <= ?1")
     List<Reward> findByEndTimeAndStatus(Date date);
+
+
+    @Query("select o.code from Reward  o where o.status = 1 ")
+    List<String> findByStatus();
 }
