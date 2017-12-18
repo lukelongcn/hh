@@ -163,7 +163,7 @@ public class ConsumeService {
             if (changeStockResult.getCode() == 1) {
                 return changeStockResult;
             }
-            commonService.setBalance(userId, order.getPayMoney().negate(), 4L, order.getId(), "", balanceFlowType);
+            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
             orderItemReposiroty.saveAndFlush(orderItems);
         } catch (Exception e) {
@@ -381,8 +381,10 @@ public class ConsumeService {
 //        }
 //        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
         //一天提现的金额最大值只能是最在额度值
-
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
+        if(balance.compareTo(canWithdrawMoney) < 0){
+            canWithdrawMoney = balance;
+        }
         String transAmt = "101";
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
@@ -487,7 +489,7 @@ public class ConsumeService {
                 .map(record -> record.getId() + "")
                 .reduce("", (x, y) -> x + " ," + y);
 
-        logger.info("没有到账的订单" + reduce);
+        logger.info("没有到账的订单列表：" + reduce);
         //查询状态
         withdrawCashRecord.forEach(wr -> {
             WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());

@@ -181,7 +181,7 @@ public class AccountService {
 
         commonService.setBalance(userId, money, 11L, null,"", remark);
         //vb流水
-        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), null,11L);
+        VCoinsFlow vCoinsFlow = generateVBflowObj(userId, new BigDecimal(0), vbCount.negate(), null,6L);
         UserRecord userRecord = commonService.newUserRecord(userId, 0D, 0D, request);
         userRecordRepository.saveAndFlush(userRecord);
 
