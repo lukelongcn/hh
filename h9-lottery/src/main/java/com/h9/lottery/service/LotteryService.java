@@ -129,7 +129,7 @@ public class LotteryService {
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findById(result.getData().getId());
+        Reward reward = rewardRepository.findByCode(lotteryVo.getCode());
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -138,7 +138,6 @@ public class LotteryService {
             return Result.fail("奖励已经失效");
         }
         User user = userRepository.findOne(userId);
-
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery != null) {
 //          放回是否开奖
