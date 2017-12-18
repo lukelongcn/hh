@@ -129,7 +129,7 @@ public class LotteryService {
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findOne(result.getData().getId());
+        Reward reward = rewardRepository.findById(result.getData().getId());
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -174,9 +174,7 @@ public class LotteryService {
             Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
             reward.setFinishTime(endDate);
             reward.setPartakeCount(partakeCount + 1);
-            rewardRepository.save(reward);
-
-
+            rewardRepository.saveAndFlush(reward);
 
             return Result.success(lotteryResultDto);
         }
