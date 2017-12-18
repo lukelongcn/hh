@@ -129,7 +129,7 @@ public class LotteryService {
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
+        Reward reward = rewardRepository.findOne(result.getData().getId());
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -442,7 +442,7 @@ public class LotteryService {
     private FactoryProvider factoryProvider;
 
     @Transactional
-    public Result exitsReward(String code) {
+    public Result<Reward> exitsReward(String code) {
         Reward reward = rewardRepository.findByCode(code);
         if (reward != null) {
             return Result.success(reward);
