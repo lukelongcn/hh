@@ -73,7 +73,7 @@ public class LotteryService {
     private ProductTypeRepository productTypeRepository;
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
@@ -130,7 +130,6 @@ public class LotteryService {
             return result;
         }
         Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
-
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -138,11 +137,7 @@ public class LotteryService {
         if (status == StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
-
         User user = userRepository.findOne(userId);
-
-        logger.info("userId : " + userId);
-        logger.info("user == null ? result: " + user == null);
 
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery != null) {
@@ -169,18 +164,19 @@ public class LotteryService {
                 lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
             }
-            //延长结束时间 finishTime
-            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
-            reward.setFinishTime(endDate);
-
-            reward.setPartakeCount(partakeCount + 1);
-
-            rewardRepository.save(reward);
             lottery.setReward(reward);
             logger.info("user 测试：" + user);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
+
+            //延长结束时间 finishTime
+            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
+            reward.setFinishTime(endDate);
+            reward.setPartakeCount(partakeCount + 1);
+            rewardRepository.save(reward);
+
+
 
             return Result.success(lotteryResultDto);
         }
@@ -232,6 +228,7 @@ public class LotteryService {
         return org.apache.commons.collections.CollectionUtils.isNotEmpty(whiteUserLists);
     }
 
+    @Transactional
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
@@ -245,6 +242,7 @@ public class LotteryService {
         lotteryLogRepository.save(lotteryLog);
     }
 
+    @Transactional
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
         code = ConstantConfig.path2Code(code);
