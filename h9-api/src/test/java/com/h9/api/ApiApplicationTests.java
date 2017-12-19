@@ -68,8 +68,7 @@ public class ApiApplicationTests {
         address.setStatus(1);
          address = addressRepository.saveAndFlush(address);
 
-        Long id = addressRepository.findInsertId();
-        logger.debug(id);
+        logger.debug(address.getId());
     }
 
     @Resource
