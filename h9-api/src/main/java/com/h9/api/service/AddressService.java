@@ -130,7 +130,11 @@ public class AddressService {
         // 使用状态设为开启
         address.setStatus(1);
         addressRepository.save(address);
-        return Result.success("保存成功");
+
+        Long id = addressRepository.findInsertId();
+        HashMap map = new HashMap();
+        map.put("id",id);
+        return Result.success("保存成功",map);
     }
 
 
@@ -191,7 +195,9 @@ public class AddressService {
         }
         addressRepository.save(address);
 
-        return Result.success("保存成功");
+        HashMap map = new HashMap();
+        map.put("id",aid);
+        return Result.success("保存成功",map);
     }
 
     /**
