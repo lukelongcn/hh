@@ -37,10 +37,9 @@ public class LotteryLog extends BaseEntity {
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 存在 2 不存在'")
     private Integer status = 1;
-    
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "reward_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '所属奖励'")
-    private Reward reward;
+
+    @JoinColumn(name = "reward_id",columnDefinition = "bigint(20) default 0 COMMENT '所属奖励'")
+    private Long rewardId;
 
 
     public Long getId() {
@@ -83,11 +82,11 @@ public class LotteryLog extends BaseEntity {
         this.status = status;
     }
 
-    public Reward getReward() {
-        return reward;
+    public Long getRewardId() {
+        return rewardId;
     }
 
-    public void setReward(Reward reward) {
-        this.reward = reward;
+    public void setRewardId(Long rewardId) {
+        this.rewardId = rewardId;
     }
 }

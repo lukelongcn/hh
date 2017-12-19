@@ -35,6 +35,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -133,11 +135,13 @@ public class LotteryService {
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
         //记录扫码记录
-        record(userId, result.getData(), lotteryVo, userRecord);
+        Reward data = result.getData();
+        Long rewardId = data != null ? data.getId() : null;
+        record(userId,rewardId , lotteryVo, userRecord);
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findByCode(lotteryVo.getCode());
+        Reward reward = rewardRepository.findById(rewardId);
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -200,7 +204,7 @@ public class LotteryService {
 
         List<SystemBlackList> systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
 
-        if (org.apache.commons.collections.CollectionUtils.isEmpty(systemBlackList)) {
+        if (CollectionUtils.isEmpty(systemBlackList)) {
             return false;
         }
         List<SystemBlackList> systemBlackLists = systemBlackList.stream().filter(user -> {
@@ -240,15 +244,15 @@ public class LotteryService {
     }
 
     @Transactional
-    private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
+    private void record(Long userId, Long rewardId, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
         lotteryLog.setUserRecord(userRecord);
         lotteryLog.setCode(lotteryVo.getCode());
-        if (reward == null) {
+        if (rewardId == null) {
             lotteryLog.setStatus(2);
         } else {
-            lotteryLog.setReward(reward);
+            lotteryLog.setRewardId(rewardId);
         }
         lotteryLogRepository.save(lotteryLog);
     }
