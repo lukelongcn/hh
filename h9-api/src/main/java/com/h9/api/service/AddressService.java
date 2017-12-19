@@ -129,11 +129,10 @@ public class AddressService {
 
         // 使用状态设为开启
         address.setStatus(1);
-        addressRepository.save(address);
+        address = addressRepository.save(address);
 
-        Long id = addressRepository.findInsertId();
         HashMap map = new HashMap();
-        map.put("id",id);
+        map.put("id",address.getId());
         return Result.success("保存成功",map);
     }
 
