@@ -33,9 +33,9 @@ public interface AddressRepository extends BaseRepository<Address> {
 
     List<Address> findByUserId(Long userId);
 
-    Address findByUserIdAndDefaultAddressAndStatus(Long userId, Integer defaultValue,Integer status);
+    Address findByUserIdAndDefaultAddressAndStatus(Long userId, Integer defaultValue, Integer status);
 
-    @Query(value = "select * from address  where user_id =?1 and status = 1 order by update_time desc limit 0,1",nativeQuery = true)
+    @Query(value = "select * from address  where user_id =?1 and status = 1 order by update_time desc limit 0,1", nativeQuery = true)
     Address findByLastUpdate(Long userId);
 
     @Modifying
@@ -48,4 +48,5 @@ public interface AddressRepository extends BaseRepository<Address> {
 
     @Query(value = "select @@IDENTITY", nativeQuery = true)
     Long findInsertId();
+
 }

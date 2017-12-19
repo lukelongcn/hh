@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -128,10 +129,8 @@ public class AddressService {
 
         // 使用状态设为开启
         address.setStatus(1);
-        addressRepository.saveAndFlush(address);
-
-        Long id = addressRepository.findInsertId();
-        return Result.success("保存成功",id);
+        addressRepository.save(address);
+        return Result.success("保存成功");
     }
 
 

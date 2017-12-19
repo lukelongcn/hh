@@ -66,7 +66,7 @@ public class ApiApplicationTests {
 
         // 使用状态设为开启
         address.setStatus(1);
-        addressRepository.saveAndFlush(address);
+         address = addressRepository.saveAndFlush(address);
 
         Long id = addressRepository.findInsertId();
         logger.debug(id);
