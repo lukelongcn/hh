@@ -19,7 +19,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "lottery",uniqueConstraints=@UniqueConstraint(columnNames = {"reward_id","user_id"}))
+@Table(name = "lottery")
 public class Lottery extends BaseEntity {
 
     @Id
@@ -114,7 +114,6 @@ public class Lottery extends BaseEntity {
 
     /***
      * @see LotteryFlow.UserEnum
-     * @param roomUser
      */
     public Integer getRoomUser() {
         return roomUser;

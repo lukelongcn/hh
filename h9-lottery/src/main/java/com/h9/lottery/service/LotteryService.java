@@ -4,6 +4,8 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
@@ -21,15 +23,19 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -70,6 +76,10 @@ public class LotteryService {
     private WhiteUserListRepository whiteUserListRepository;
     @Resource
     private ProductTypeRepository productTypeRepository;
+
+    @Resource
+    private RedisBean redisBean;
+
 
 
     @Transactional
@@ -138,11 +148,11 @@ public class LotteryService {
         if (status == StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
-
         User user = userRepository.findOne(userId);
-
-        logger.info("userId : " + userId);
-        logger.info("user == null ? result: " + user == null);
+        String stringValue = redisBean.getStringValue(RedisKey.getLotteryBefore(userId, reward.getId()));
+        if(StringUtils.isNotEmpty(stringValue)){
+            return Result.fail("操作过于频繁，请稍后再试");
+        }
 
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery != null) {
@@ -157,6 +167,7 @@ public class LotteryService {
 //                如果已经 结束
                 return Result.fail("红包活动已经结束");
             }
+            redisBean.setStringValue(RedisKey.getLotteryBefore(userId, reward.getId()),reward.getPartakeCount()+"",1000, TimeUnit.MICROSECONDS);
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
             lotteryResultDto.setLottery(false);
             lotteryResultDto.setRoomUser(false);
