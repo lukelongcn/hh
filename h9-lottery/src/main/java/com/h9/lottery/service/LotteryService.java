@@ -35,7 +35,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -82,7 +81,7 @@ public class LotteryService {
 
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
@@ -120,17 +119,16 @@ public class LotteryService {
         if (!onWhiteUser(userId)) {
 
             if (onBlackUser(userId, imei)) {
-                if(lotteryCount.compareTo(new BigDecimal(3)) > 0){
+                if(lotteryCount.compareTo(new BigDecimal(2)) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
                 }
             }else{
                 String dayMaxlotteryCount = configService.getStringConfig("dayMaxlotteryCount");
-                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount)) > 0){
+                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount).subtract(new BigDecimal(1))) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
                 }
             }
         }
-
 
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
@@ -139,8 +137,7 @@ public class LotteryService {
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
-
+        Reward reward = rewardRepository.findByCode(lotteryVo.getCode());
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -180,18 +177,17 @@ public class LotteryService {
                 lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
             }
-            //延长结束时间 finishTime
-            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
-            reward.setFinishTime(endDate);
-
-            reward.setPartakeCount(partakeCount + 1);
-
-            rewardRepository.save(reward);
             lottery.setReward(reward);
             logger.info("user 测试：" + user);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
+
+            //延长结束时间 finishTime
+            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
+            reward.setFinishTime(endDate);
+            reward.setPartakeCount(partakeCount + 1);
+            rewardRepository.saveAndFlush(reward);
 
             return Result.success(lotteryResultDto);
         }
@@ -202,16 +198,48 @@ public class LotteryService {
      */
     public boolean onBlackUser(Long userId, String imei) {
 
-        SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
+        List<SystemBlackList> systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
 
-        return systemBlackList != null;
+        if (org.apache.commons.collections.CollectionUtils.isEmpty(systemBlackList)) {
+            return false;
+        }
+        List<SystemBlackList> systemBlackLists = systemBlackList.stream().filter(user -> {
+            Long startTime = user.getStartTime().getTime();
+            Long endTime = user.getEndTime().getTime();
+            Long currentDate = new Date().getTime();
+
+            if (startTime < currentDate && currentDate < endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(systemBlackLists);
     }
 
     public boolean onWhiteUser(Long userId) {
-        List<WhiteUserList> user = whiteUserListRepository.findByUserId(userId, new Date());
-        return org.apache.commons.collections.CollectionUtils.isNotEmpty(user);
+        List<WhiteUserList> userLists = whiteUserListRepository.findByUserId(userId, new Date());
+
+        if(org.apache.commons.collections.CollectionUtils.isEmpty(userLists)){
+            return false;
+        }
+        List<WhiteUserList> whiteUserLists = userLists.stream().filter(user -> {
+            Long startTime = user.getStartTime().getTime();
+            Long endTime = user.getEndTime().getTime();
+            Long currentDate = new Date().getTime();
+
+            if (startTime < currentDate && currentDate < endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(whiteUserLists);
     }
 
+    @Transactional
     private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
@@ -225,6 +253,7 @@ public class LotteryService {
         lotteryLogRepository.save(lotteryLog);
     }
 
+    @Transactional
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
         code = ConstantConfig.path2Code(code);
@@ -424,7 +453,7 @@ public class LotteryService {
     private FactoryProvider factoryProvider;
 
     @Transactional
-    public Result exitsReward(String code) {
+    public Result<Reward> exitsReward(String code) {
         Reward reward = rewardRepository.findByCode(code);
         if (reward != null) {
             return Result.success(reward);

@@ -44,7 +44,9 @@ public class RedisBean {
 
     public void setObject(String key,Object object){
         String value = JSONObject.toJSONString(object);
-        logger.infov("redis: setStringValue({0},{1})", key,value );
+        if(value != null && value.length() < 500){
+            logger.infov("redis: setStringValue({0},{1})", key,value );
+        }
         valueOps.set(key, value);
     }
 
