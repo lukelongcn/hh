@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,4 +76,11 @@ public interface RewardRepository extends BaseRepository<Reward> {
 
     @Query("select o.code from Reward  o where o.status = 1 ")
     List<String> findByStatus();
+
+    @Query("select o.partakeCount from Reward  o where o.id = ?1 ")
+   int findByStatus(long rewardId);
+
+//    public int update(long rewardId, Date endDate);
+//
+//    public void update(long rewardId,Date endDate,Long userId);
 }
