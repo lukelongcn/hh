@@ -22,11 +22,11 @@ import java.util.Map;
  * on 2017/11/5
  */
 @Service
-@Transactional
 public class ArticleService {
     @Resource
     ArticleRepository articleReposiroty;
 
+    @Transactional
     @ApiOperation(value = "获取文章内容")
     public Result findOne(Long id){
         Article article =  articleReposiroty.findOne(id);
