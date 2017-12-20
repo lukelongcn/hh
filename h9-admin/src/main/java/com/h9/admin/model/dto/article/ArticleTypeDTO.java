@@ -35,7 +35,7 @@ public class ArticleTypeDTO {
     @NotNull(message = "状态不能为空")
     private Integer enable;
 
-
+    @Length(max = 64,message = "标识过长")
     @NotBlank(message = "标识不能为空")
     private String code;
 
