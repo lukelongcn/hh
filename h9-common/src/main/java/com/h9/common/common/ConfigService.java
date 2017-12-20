@@ -7,6 +7,7 @@ import com.h9.common.db.entity.GlobalProperty;
 import com.h9.common.db.repo.GlobalPropertyRepository;
 import com.h9.common.modle.vo.Config;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -29,6 +30,7 @@ public class ConfigService {
     @Resource
     private RedisBean redisBean;
 
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
@@ -42,6 +44,7 @@ public class ConfigService {
             return null;
         }
         Object valueRedis1 = getConfigFromCache(code);
+        logger.info("getConfigFromCache : "+valueRedis1);
         if (valueRedis1 != null) return valueRedis1;
         return getConfigFromDb(code);
     }
@@ -76,6 +79,7 @@ public class ConfigService {
 
 
     public Map getMapConfig(String code) {
+        logger.info("getMapConfig code: "+code);
         Object config = getConfig(code);
         if (config instanceof Map) {
             return (Map) config;
@@ -126,8 +130,10 @@ public class ConfigService {
             String type = globalProperty.getType() + "";
             redisBean.setStringValue(RedisKey.getConfigValue(code), val);
             redisBean.setStringValue(RedisKey.getConfigType(code), type);
+            logger.info("getConfigFromDb : "+getValue(type, val));
             return getValue(type, val);
         } else {
+            logger.info("getConfigFromDb : null");
             return null;
         }
     }

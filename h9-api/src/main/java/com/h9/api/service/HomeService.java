@@ -8,6 +8,7 @@ import com.h9.common.common.MailService;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -36,6 +37,7 @@ public class HomeService {
     @Resource
     private MailService mailService;
 
+    private Logger logger = Logger.getLogger(this.getClass());
     @SuppressWarnings("Duplicates")
     public Result homeDate() {
         Map<String, List<HomeVO>> voMap = new HashMap<>();
@@ -62,7 +64,8 @@ public class HomeService {
         }
 
         Map<String, String> preLink = configService.getMapConfig("preLink");
-        String articlelink = preLink.get("article");
+        logger.info("preLink : " + preLink);
+        String  articlelink = preLink.get("article");
 
         List<Article> articleList = articleRepository.findActiveArticle();
         if (!CollectionUtils.isEmpty(articleList)&&articleList.size()>5) {
