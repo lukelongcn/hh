@@ -78,9 +78,15 @@ public interface RewardRepository extends BaseRepository<Reward> {
     List<String> findByStatus();
 
     @Query("select o.partakeCount from Reward  o where o.id = ?1 ")
-   int findByStatus(long rewardId);
+   int findByPartakeCount(long rewardId);
 
-//    public int update(long rewardId, Date endDate);
-//
-//    public void update(long rewardId,Date endDate,Long userId);
+    @Transactional
+    @Modifying
+    @Query("update Reward r set r.finishTime = ?2,r.partakeCount=r.partakeCount+1 where r.id=?1")
+    public int updateReward(long rewardId, Date endDate);
+
+    @Transactional
+    @Modifying
+    @Query("update Reward r set r.finishTime = ?2,r.userId=?3,r.partakeCount=r.partakeCount+1 where r.id=?1")
+    public void updateReward(long rewardId,Date endDate,Long userId);
 }

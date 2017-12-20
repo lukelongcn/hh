@@ -55,7 +55,7 @@ public class Reward extends BaseEntity {
     private Date finishTime;
     
     @Column(name = "partake_count",nullable = false,columnDefinition = "int default 0 COMMENT '参加数量'")
-    private int partakeCount = 0;
+    private int partakeCount;
     
     @Column(name = "factory_status",nullable = false,columnDefinition = "tinyint default -1 COMMENT ' 工厂放回状态'")
     private Integer factoryStatus = -1;

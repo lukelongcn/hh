@@ -3,6 +3,7 @@ package com.h9.lottery.controller;
 import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.ServiceException;
 import com.h9.lottery.interceptor.Secured;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
@@ -42,7 +43,7 @@ public class LotteryContorller {
     @ApiOperation(value = "扫码抽奖")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
-                          @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request){
+                          @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request) throws ServiceException {
         return lotteryService.appCode(userId,lotteryVo,request);
     }
 

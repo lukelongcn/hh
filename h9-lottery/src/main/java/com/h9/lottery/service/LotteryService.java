@@ -4,6 +4,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.annotation.Resource;
+import javax.security.auth.callback.Callback;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
@@ -81,8 +83,8 @@ public class LotteryService {
     @Resource
     private RedisBean redisBean;
 
-    @Transactional
-    public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
+    @Transactional(rollbackFor=Exception.class)
+    public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) throws ServiceException {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
 
@@ -173,22 +175,24 @@ public class LotteryService {
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             //是第一个用户
             lottery = new Lottery();
-            int partakeCount = rewardRepository.findByStatus(rewardId);
+            int partakeCount = rewardRepository.findByPartakeCount(rewardId);
             if (partakeCount == 0) {
-                reward.setUserId(userId);
                 lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
             }
             lottery.setReward(reward);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
-            lotteryRepository.saveAndFlush(lottery);
+            lotteryRepository.save(lottery);
 
             //延长结束时间 finishTime
             Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
-            reward.setFinishTime(endDate);
-            reward.setPartakeCount(partakeCount + 1);
-            rewardRepository.saveAndFlush(reward);
+            if (partakeCount == 0) {
+                rewardRepository.updateReward(rewardId, endDate,userId);
+            }else{
+                rewardRepository.updateReward(rewardId, endDate);
+            }
+
             return Result.success(lotteryResultDto);
         }
     }
