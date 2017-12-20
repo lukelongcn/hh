@@ -31,12 +31,12 @@ public class Lottery extends BaseEntity {
 //    private Long userId;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励领取用户id'")
+    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励领取用户id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "reward_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '奖励id'")
+    @JoinColumn(name = "reward_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '奖励id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Reward reward;
 
     @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励领取金额'")
@@ -126,7 +126,7 @@ public class Lottery extends BaseEntity {
 
     /***
      * @see LotteryFlow.UserEnum
-     * @param roomUser
+     * @param
      */
     public Integer getRoomUser() {
         return roomUser;
