@@ -13,7 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Table(name = "withdrawals_request")
 @Entity
-public class WithdrawalsRequest {
+public class WithdrawalsRequest extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -42,8 +42,6 @@ public class WithdrawalsRequest {
     private String signFlag = "1";
     @Column(name = "term_type", columnDefinition = "varchar(255) default '' COMMENT '' ")
     private String termType = "7";
-    @Column(name = "createTime")
-    private Date createTime = new Date();
     /**
      * description:  s	成功
      * 2	处理中
@@ -81,14 +79,6 @@ public class WithdrawalsRequest {
 
     public Long getId() {
         return id;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public void setId(Long id) {

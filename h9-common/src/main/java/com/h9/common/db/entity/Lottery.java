@@ -19,7 +19,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "lottery",uniqueConstraints=@UniqueConstraint(columnNames = {"reward_id","user_id"}))
+@Table(name = "lottery")
 public class Lottery extends BaseEntity {
 
     @Id
@@ -27,13 +27,16 @@ public class Lottery extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励领取用户id'")
+//    @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '奖励领取用户id'")
+//    private Long userId;
+
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '奖励领取用户id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn(name = "reward_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '奖励id'")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "reward_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '奖励id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Reward reward;
 
     @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励领取金额'")
@@ -63,6 +66,15 @@ public class Lottery extends BaseEntity {
     public void setId(Long id) {
         this.id = id;
     }
+
+//    public Long getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(Long userId) {
+//        this.userId = userId;
+//    }
+
 
     public User getUser() {
         return user;
@@ -114,7 +126,7 @@ public class Lottery extends BaseEntity {
 
     /***
      * @see LotteryFlow.UserEnum
-     * @param roomUser
+     * @param
      */
     public Integer getRoomUser() {
         return roomUser;

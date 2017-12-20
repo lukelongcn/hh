@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -31,5 +32,5 @@ public interface SystemBlackListRepository extends BaseRepository<SystemBlackLis
     Page<BlackAccountVO> findAllImei(Date now,Pageable pageable);
 
     @Query(value = "select o from SystemBlackList o where ?3 > o.startTime and ?3 < o.endTime and o.status = 1 and (o.userId = ?1 or o.imei = ?2)")
-    SystemBlackList findByUserIdOrImei(Long userId, String imei, Date date);
+    List<SystemBlackList> findByUserIdOrImei(Long userId, String imei, Date date);
 }

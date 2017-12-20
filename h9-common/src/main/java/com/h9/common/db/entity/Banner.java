@@ -28,7 +28,7 @@ public class Banner extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "banner_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT 'banner类型'")
+    @JoinColumn(name = "banner_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT 'banner类型'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private BannerType bannerType;
 
     @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")

@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @Repository
 public interface VCoinsFlowRepository extends BaseRepository<VCoinsFlow> {
 
-    @Query("select vcf from VCoinsFlow  vcf where vcf.userId = ?1 order by id desc")
+    @Query("select vcf from VCoinsFlow  vcf where vcf.userId = ?1 order by vcf.createTime  desc")
     Page<VCoinsFlow> findByBalance(Long userId, Pageable pageRequest);
 
     @Query("select sum(v.money) from VCoinsFlow v where (v.vCoinsflowType=2 or v.vCoinsflowType=4) ")

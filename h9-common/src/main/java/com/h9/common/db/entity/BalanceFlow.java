@@ -140,7 +140,7 @@ public class BalanceFlow extends BaseEntity {
         this.orderNo = orderNo;
     }
 
-    public enum BalanceFlowTypeEnum {
+    public  enum BalanceFlowTypeEnum {
         WITHDRAW(1,"提现"),
         RETURN(2,"银联退回"),
         XIAOPINHUI(3,"小品会"),

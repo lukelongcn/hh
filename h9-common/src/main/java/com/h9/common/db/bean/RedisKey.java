@@ -80,6 +80,10 @@ public class RedisKey {
 
         return String.format(errorCodeCountKey,userId,type);
     }
+
+    public static String getLotteryBefore(Long userId,Long rewardId){
+        return String.format("lottery:%d:%d:before",userId,rewardId);
+    }
 }
 
 
