@@ -34,7 +34,7 @@ public class ArticleService {
             return Result.fail("文章不存在");
         }
         if(article.getEnable()!=1){
-            article.setContent("文章已删除");
+           return  Result.fail("文章已删除");
         }
         ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
         articleVO.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.DAY));
