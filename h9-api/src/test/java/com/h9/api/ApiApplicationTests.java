@@ -10,6 +10,7 @@ import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -280,7 +281,7 @@ public class ApiApplicationTests {
         CharSequence charSequence = phone.subSequence(4, 8);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
-        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
+        GlobalProperty defaultHead = globalPropertyRepository.findByCode(ParamConstant.DEFUALT_HEAD);
         user.setAvatar(defaultHead.getVal());
         return user;
     }

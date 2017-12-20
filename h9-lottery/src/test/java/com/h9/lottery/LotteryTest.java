@@ -82,7 +82,7 @@ public class LotteryTest {
 //
 //        generateCode();
 //
-////        List<String> lotteryRemark = configService.getStringListConfig("lotteryRemark");
+////        List<String> lotteryRemark = configService.getStringListConfig(ParamConstant.LOTTERY_REMARK);
 ////        logger.debugv(JSONObject.toJSONString(lotteryRemark));
 ////        Map profileJob = configService.getMapConfig("profileJob");
 ////        logger.debugv(JSONObject.toJSONString(profileJob));

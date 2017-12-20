@@ -1,6 +1,8 @@
 package com.h9.lottery.config;
 
 import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
+
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class LotteryConfig {
 
     // 获取红包抽奖错误最大扫码次数
     public int getMaxLotteryErrorTime() {
-        String time = configService.getStringConfig("lottery:error:max:time");
+        String time = configService.getStringConfig(ParamConstant.LOTTERY_ERROR_MAX_TIME);
         Integer maxTime = -3600;
         try {
             maxTime = Integer.valueOf(time);
@@ -69,7 +71,7 @@ public class LotteryConfig {
 
     // 获取刷新间隔
     public int getLotteryRefresh() {
-        String refreshStr = configService.getStringConfig("refresh");
+        String refreshStr = configService.getStringConfig(ParamConstant.REFRESH);
         Integer refresh = 0;
         try {
              refresh = Integer.valueOf(refreshStr);
@@ -86,7 +88,7 @@ public class LotteryConfig {
     // 获取延后时间
     public int getDelay() {
 
-        String delayStr = configService.getStringConfig("delay");
+        String delayStr = configService.getStringConfig(ParamConstant.DELAY);
         int delay = 0;
         try {
             delay = Integer.valueOf(delayStr);
@@ -103,7 +105,7 @@ public class LotteryConfig {
     public int getIntervalTime(){
         int intervalTime = -60;
         try {
-            String queryIntervalTime = configService.getStringConfig("queryIntervalTime");
+            String queryIntervalTime = configService.getStringConfig(ParamConstant.QUERY_INTERVAL_TIME);
             intervalTime = Integer.valueOf(queryIntervalTime);
         }catch (NumberFormatException e) {
             logger.info("获取查询错误规定间隔时间失败，默认值：" + intervalTime);
@@ -116,7 +118,7 @@ public class LotteryConfig {
 
         int errorTime = 3;
         try {
-            String errorTimes = configService.getStringConfig("errorTimes");
+            String errorTimes = configService.getStringConfig(ParamConstant.ERROR_TIMES);
             errorTime = Integer.valueOf(errorTimes);
         }catch (NumberFormatException e) {
             logger.info("获取间隔时间规定错误次数失败，默认值：" + errorTime);

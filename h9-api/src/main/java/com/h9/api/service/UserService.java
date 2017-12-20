@@ -14,6 +14,7 @@ import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -149,9 +150,9 @@ public class UserService {
         CharSequence charSequence = phone.subSequence(3, 7);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
-//        GlobalProperty defaultHead = globalPropertyRepository.findByCode("defaultHead");
+//        GlobalProperty defaultHead = globalPropertyRepository.findByCode(ParamConstant.DEFUALT_HEAD);
 
-        String defaultHead = configService.getStringConfig("defaultHead");
+        String defaultHead = configService.getStringConfig(ParamConstant.DEFUALT_HEAD);
         if (StringUtils.isBlank(defaultHead)) {
             logger.info("没有在参数配置中找到默认头像的配置");
             defaultHead = "";

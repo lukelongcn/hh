@@ -10,6 +10,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
@@ -75,10 +76,10 @@ public class AccountService {
         Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(userId, pageRequest);
         PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
 
-//        GlobalProperty val = globalPropertyRepository.findByCode("balanceFlowImg");
+//        GlobalProperty val = globalPropertyRepository.findByCode(ParamConstant.BALANCE_FLOW_IMG);
 //        Map iconMap = JSONObject.parseObject(val.getVal(), Map.class);
 
-        Map iconMap = configService.getMapConfig("balanceFlowImg");
+        Map iconMap = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
 
         return Result.success(flowPageResult.result2Result(bf -> new BalanceFlowVO(bf, iconMap)));
 
@@ -89,7 +90,7 @@ public class AccountService {
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
 
-        Map iconMap = configService.getMapConfig("balanceFlowImg");
+        Map iconMap = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
 
         return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc, iconMap)));
     }
@@ -105,7 +106,7 @@ public class AccountService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
         Object cardCount = orderItemReposiroty.findCardCount(userId);
-        String max = configService.getStringConfig("withdrawMax");
+        String max = configService.getStringConfig(ParamConstant.WITHDRAW_MAX);
         if (StringUtils.isBlank(max)) {
             max = "100";
             logger.error("没有找到提现最大值参数，默认为: " + max);
@@ -136,7 +137,7 @@ public class AccountService {
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
-        String endTime = configService.getStringConfig("h9:api:vb:endTime");
+        String endTime = configService.getStringConfig(ParamConstant.H9_API_VB_ENDTIME);
 
         BigDecimal vbCount = userAccount.getvCoins();
         SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -147,11 +148,11 @@ public class AccountService {
             logger.info(e.getMessage(), e);
         }
 
-        String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
+        String rateStr = configService.getStringConfig(ParamConstant.H9_API_VB2_JIUYUAN);
 
         BigDecimal JiuYuan = vbCount.multiply(new BigDecimal(rateStr));
 
-        String icon = configService.getStringConfig("JiuYuanIcon");
+        String icon = configService.getStringConfig(ParamConstant.JIUYUAN_ICON);
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
@@ -172,7 +173,7 @@ public class AccountService {
             return Result.fail("您的v币余额已不足");
         }
 
-        String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
+        String rateStr = configService.getStringConfig(ParamConstant.H9_API_VB2_JIUYUAN);
         BigDecimal money = vbCount.multiply(new BigDecimal(rateStr));
 //        Orders order = orderService.initOrder( money, user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode()+"", "徽酒",user);
 //        ordersReposiroty.saveAndFlush(order);
