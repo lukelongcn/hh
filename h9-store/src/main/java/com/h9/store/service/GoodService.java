@@ -140,7 +140,6 @@ public class GoodService {
     /**
      * description: 分页查询指定goodsType的商品列表
      *
-     *
      */
     public Result goodsPageQuery(String code , Integer page, Integer size) {
 
