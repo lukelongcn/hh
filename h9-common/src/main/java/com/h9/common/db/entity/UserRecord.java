@@ -33,10 +33,10 @@ public class UserRecord extends BaseEntity {
     
     
     @Column(name = "longitude", columnDefinition = "double default null COMMENT '经度'")
-    private double longitude;
+    private Double longitude;
 
     @Column(name = "latitude", columnDefinition = "double default null COMMENT '维度'")
-    private double latitude;
+    private Double latitude;
 
     @Column(name = "address", columnDefinition = "varchar(64) default '' COMMENT '地址'")
     private String address;
