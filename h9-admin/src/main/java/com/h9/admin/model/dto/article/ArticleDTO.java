@@ -62,7 +62,7 @@ public class ArticleDTO {
     private Date startTime;
 
     @ApiModelProperty(value = "文章图片",required = true)
-    @NotBlank(message = "文章图片不能为空")
+    //@NotBlank(message = "文章图片不能为空")
     private String imgUrl;
 
     public String getUserName() {
