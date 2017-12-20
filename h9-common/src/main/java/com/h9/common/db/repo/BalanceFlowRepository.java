@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BalanceFlowRepository extends BaseRepository<BalanceFlow> {
 
-    @Query("select bf from BalanceFlow  bf where bf.userId = ?1 order by id desc")
+    @Query("select bf from BalanceFlow  bf where bf.userId = ?1 order by bf.createTime desc")
     Page<BalanceFlow> findByBalance(Long userId, Pageable pageRequest);
 
 
