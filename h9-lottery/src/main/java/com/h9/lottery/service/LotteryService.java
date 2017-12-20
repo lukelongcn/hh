@@ -81,9 +81,7 @@ public class LotteryService {
     @Resource
     private RedisBean redisBean;
 
-
-
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
@@ -175,24 +173,22 @@ public class LotteryService {
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             //是第一个用户
             lottery = new Lottery();
-            int partakeCount = reward.getPartakeCount();
+            int partakeCount = rewardRepository.findByStatus(rewardId);
             if (partakeCount == 0) {
                 reward.setUserId(userId);
                 lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
             }
             lottery.setReward(reward);
-            logger.info("user 测试：" + user);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
-            lotteryRepository.save(lottery);
+            lotteryRepository.saveAndFlush(lottery);
 
             //延长结束时间 finishTime
             Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
             reward.setFinishTime(endDate);
             reward.setPartakeCount(partakeCount + 1);
             rewardRepository.saveAndFlush(reward);
-
             return Result.success(lotteryResultDto);
         }
     }
