@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "html_content")
+@Table(name = "html_content",uniqueConstraints = {@UniqueConstraint(columnNames = "code")})
 public class HtmlContent extends BaseEntity {
 
     @Id
@@ -37,7 +37,9 @@ public class HtmlContent extends BaseEntity {
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用 0 禁用 2删除 同一个code 只能有一个启用的'")
     private Integer status = 1;
-    
+
+    @Transient
+    private String url;
 
     public Long getId() {
         return id;
@@ -85,5 +87,13 @@ public class HtmlContent extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

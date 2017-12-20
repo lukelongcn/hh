@@ -4,6 +4,7 @@ import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -27,30 +28,70 @@ public class Address extends BaseEntity {
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
     private Long userId;
 
-    @Column(name = "name",columnDefinition = "varchar(20) default '' COMMENT '用户名'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(20) default '' COMMENT '用户名'")
     private String name;
 
-    @Column(name = "phone",columnDefinition = "varchar(11) default '' COMMENT '手机号'")
+    @Column(name = "phone", nullable = false, columnDefinition = "varchar(11) default '' COMMENT '手机号'")
     private String phone;
     
-    @Column(name = "address", columnDefinition = "varchar(200) default '' COMMENT '地址'")
+    @Column(name = "address", nullable = false, columnDefinition = "varchar(200) default '' COMMENT '地址'")
     private String address;
-    
-    @Column(name = "default_address",columnDefinition = "tinyint default 1 COMMENT '默认地址'")
+
+    @Column(name = "default_address",nullable = false,columnDefinition = "tinyint default 1 COMMENT '默认地址 1默认 0不默认'")
     private Integer defaultAddress = 1;
 
-    @Column(name = "province",  columnDefinition = "varchar(50) default '' COMMENT '省'")
+    @Column(name = "province", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '省'")
     private String province;
 
-    @Column(name = "city",  columnDefinition = "varchar(50) default '' COMMENT '城市'")
+    @Column(name = "city", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '城市'")
     private String city;
 
-    @Column(name = "distict",  columnDefinition = "varchar(50) default '' COMMENT '区'")
+    @Column(name = "distict", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '区'")
     private String distict;
 
-    @Column(name = "provincial_city", columnDefinition = "varchar(50) default '' COMMENT '城市编号'")
-    private String provincialCyty;
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
+    private Integer status;
 
+    @Column(name = "pid", columnDefinition = "bigint default 1 COMMENT '省id'")
+    private Long pid;
+
+    @Column(name = "cid", columnDefinition = "bigint default 1 COMMENT '市id'")
+    private Long cid;
+
+    @Column(name = "aid", columnDefinition = "bigint default 1 COMMENT '区id'")
+    private Long aid;
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getCid() {
+        return cid;
+    }
+
+    public void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    public Long getAid() {
+        return aid;
+    }
+
+    public void setAid(Long aid) {
+        this.aid = aid;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Long getId() {
         return id;
@@ -92,13 +133,6 @@ public class Address extends BaseEntity {
         this.address = address;
     }
 
-    public Integer getDefaultAddresss() {
-        return defaultAddress;
-    }
-
-    public void setDefaultAddresss(Integer defaultAddresss) {
-        this.defaultAddress = defaultAddresss;
-    }
 
     public String getProvince() {
         return province;
@@ -124,11 +158,61 @@ public class Address extends BaseEntity {
         this.distict = distict;
     }
 
-    public String getProvincialCyty() {
-        return provincialCyty;
+    public Integer getDefaultAddress() {
+        return defaultAddress;
     }
 
-    public void setProvincialCyty(String provincialCyty) {
-        this.provincialCyty = provincialCyty;
+    public void setDefaultAddress(Integer defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+    public enum StatusEnum {
+        DISABLED(0,"禁用"),
+        ENABLED(1,"启用");
+
+        StatusEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+           StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum DefaultAddressEnum {
+        NOT_DEFAULT(0,"否"),
+        DEFAULT(1,"是");
+
+        DefaultAddressEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            DefaultAddressEnum defaultAddressEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return defaultAddressEnum==null?null:defaultAddressEnum.getName();
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
     }
 }

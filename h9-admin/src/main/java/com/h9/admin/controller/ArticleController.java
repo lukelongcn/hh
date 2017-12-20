@@ -30,70 +30,70 @@ public class ArticleController {
     @Resource
     private ArticleService articleService;
     
-    @Secured
+    @Secured(accessCode = "article:category:list")
     @GetMapping(value = "/category/list")
     @ApiOperation("获取文章类别list")
     public Result<PageResult<ArticleType>> categoryList(PageDTO pageDTO){
         return articleService.categoryList(pageDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "article:category:get")
     @GetMapping(value = "/category/{id}")
     @ApiOperation("获取文章类别")
     public Result<ArticleType> getCategory(@PathVariable Long id){
         return articleService.getCategory(id);
     }
 
-    @Secured
+    @Secured(accessCode = "article:category:delete")
     @DeleteMapping(value = "/category/{id}")
     @ApiOperation("删除文章类别")
     public Result deleteCategory(@PathVariable Long id){
         return articleService.deleteCategory(id);
     }
-    
-    @Secured
+
+    @Secured(accessCode = "article:category:add")
     @PostMapping(value = "/category")
     @ApiOperation("新增文章类别")
     public Result<ArticleType> addCategory(@Validated @RequestBody ArticleTypeDTO articleTypeDTO){
         return articleService.addCategory(articleTypeDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "article:category:update")
     @PutMapping(value = "/category")
     @ApiOperation("编辑文章类别")
     public Result<ArticleType> editCategory(@Validated({Edit.class, Default.class}) @RequestBody ArticleTypeDTO articleTypeDTO){
         return articleService.editCategory(articleTypeDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "article:list")
     @GetMapping(value = "/list")
     @ApiOperation("获取文章列表")
     public Result<PageResult<Article>> articleList(PageDTO pageDTO){
         return articleService.articleList(pageDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "article:get")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取文章")
     public Result<Article> getArticle(@PathVariable Long id){
         return articleService.getArticle(id);
     }
-    
-    @Secured
+
+    @Secured(accessCode = "article:delete")
     @DeleteMapping(value = "/{id}")
     @ApiOperation("删除文章")
     public Result deleteArticle(@PathVariable Long id){
         return articleService.deleteArticle(id);
     }
 
-    @Secured
+    @Secured(accessCode = "article:add")
     @PostMapping(value = "/")
     @ApiOperation("新增文章")
     public Result<Article> addArticle(@Validated @RequestBody ArticleDTO articleDTO){
         return articleService.addArticle(articleDTO);
     }
 
-    @Secured
+    @Secured(accessCode = "article:update")
     @PutMapping(value = "/")
     @ApiOperation("修改文章")
     public Result<Article> editArticle(@Validated({Edit.class, Default.class}) @RequestBody ArticleDTO articleDTO){

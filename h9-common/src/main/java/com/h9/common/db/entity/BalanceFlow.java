@@ -32,21 +32,18 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '变更金额'")
     private BigDecimal money = new BigDecimal(0);
 
-//    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//    @JoinColumn(name = "balance_flow_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '流水类型'")
-//    private BalanceFlowType balanceFlowType;
-
 
     /**
-     * description: {"1":"提现","2":"银联退回","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
+     * description: {"1":"提现","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
      * @see FlowType
      */
-    @Column(name = "flow_type",columnDefinition = "varchar(200) default '' COMMENT '流水类型'")
+    @Column(name = "flow_type",columnDefinition = "bigint(20) default null COMMENT '流水类型'")
     private Long flowType;
 
     public static class FlowType{
         public static final long WITHDRAW = 1;
         public static final long REFUND = 2;
+        public static final long XIAPPINHUI = 3;
         public static final long DIDI_CONVERT = 5;
         public static final long MOBILE_RECHAGE = 6;
         public static final long DA_ZHUAN_PAN = 8;
@@ -67,7 +64,7 @@ public class BalanceFlow extends BaseEntity {
     @Column(name = "order_no", columnDefinition = "varchar(32) default '' COMMENT '订单号'")
     private String orderNo;
 
-    @Column(name ="withdrawals_id",columnDefinition = "varchar(200) default '' COMMENT '提现id' ")
+    @Column(name ="withdrawals_id",columnDefinition = "bigint(20) default null COMMENT '提现id' ")
     private Long withdrawals_id;
 
     public Long getWithdrawals_id() {
@@ -143,13 +140,14 @@ public class BalanceFlow extends BaseEntity {
         this.orderNo = orderNo;
     }
 
-    public enum BalanceFlowTypeEnum {
+    public  enum BalanceFlowTypeEnum {
         WITHDRAW(1,"提现"),
         RETURN(2,"银联退回"),
-        XIAPPINHUI(3,"小品会"),
-        RECHARGE_PHONE_FARE(4,"充话费"),
+        XIAOPINHUI(3,"小品会"),
+        RECHARGE_PHONE_FARE(6,"充话费"),
         DIDI_EXCHANGE(5,"滴滴兑换"),
-        ROUNDABOUT(6,"大转盘");
+        ROUNDABOUT(8,"大转盘"),
+        CASH_TRANSFER(9,"资金迁移");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;

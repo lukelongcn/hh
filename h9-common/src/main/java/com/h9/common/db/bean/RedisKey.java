@@ -35,7 +35,7 @@ public class RedisKey {
     }
 
 
-
+    public static String addressKey = "h9:address:areas";
 
     public static void main(String[] args) {
         String smsCodeKey = getSmsCodeKey("17673140753", 1);
@@ -79,6 +79,10 @@ public class RedisKey {
     public static String getErrorCodeCountKey(Long userId,int type) {
 
         return String.format(errorCodeCountKey,userId,type);
+    }
+
+    public static String getLotteryBefore(Long userId,Long rewardId){
+        return String.format("lottery:%d:%d:before",userId,rewardId);
     }
 }
 

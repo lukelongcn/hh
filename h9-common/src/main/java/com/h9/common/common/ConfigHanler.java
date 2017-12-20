@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ * Description:全局配置获取类
  * ConfigHanler:刘敏华 shadow.liu@hey900.com
  * Date: 2017/11/15
  * Time: 14:15
@@ -19,7 +19,7 @@ public class ConfigHanler {
 
     public int getSmsOneDayCount() {
         int defaultValue = 10;
-        String dayMaxotteryCount = configService.getStringConfig("dayMaxlotteryCount");
+        String dayMaxotteryCount = configService.getStringConfig("sms:OneDay:CountCount");
         try {
             if(StringUtils.isEmpty(dayMaxotteryCount)) defaultValue = Integer.parseInt(dayMaxotteryCount);
         } catch (NumberFormatException e) {

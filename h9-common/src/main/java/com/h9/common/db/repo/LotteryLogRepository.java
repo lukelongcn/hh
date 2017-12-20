@@ -20,10 +20,10 @@ import java.util.List;
 @Repository
 public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
 
-    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.reward is null ")
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.rewardId = null ")
     BigDecimal getLotteryErrorCount(Long userId,Date startDate);
 
-    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.reward is not null ")
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.rewardId <> null  ")
     BigDecimal getLotteryCount(Long userId,Date startDate);
 
 

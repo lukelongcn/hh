@@ -4,14 +4,8 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.Product;
-import com.h9.common.db.entity.ProductFlow;
-import com.h9.common.db.entity.ProductLog;
-import com.h9.common.db.entity.UserRecord;
-import com.h9.common.db.repo.ProductFlowRepository;
-import com.h9.common.db.repo.ProductLogRepository;
-import com.h9.common.db.repo.ProductRepository;
-import com.h9.common.db.repo.UserRecordRepository;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.NetworkUtil;
 import com.h9.lottery.config.LotteryConfig;
@@ -68,12 +62,21 @@ public class ProductService {
 
         //       黑名单 改成配置的
         String imei = request.getHeader("imei");
+
         if(StringUtils.isEmpty(imei)){
             return Result.fail("服务器繁忙，请稍后刷新使用");
         }
-        if (lotteryService.onBlackUser(userId, imei)) {
-            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
-        }
+//        if (lotteryService.onBlackUser(userId, imei)) {
+//            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+//        }
+
+//        if (!lotteryService.onWhiteUser(userId)) {
+//
+//            if (lotteryService.onBlackUser(userId, imei)) {
+//                return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+//            }
+//        }
+
 
         int date = lotteryConfig.getIntervalTime();
         Date startDate = DateUtil.getDate(new Date(), date, Calendar.SECOND);
@@ -112,7 +115,10 @@ public class ProductService {
         productRepository.save(product4Update);
 
         AuthenticityVO authenticityVO = new AuthenticityVO();
-        authenticityVO.setProductName(product4Update.getName());
+        ProductType productType = product4Update.getProductType();
+        if (productType != null) {
+            authenticityVO.setProductName(productType.getName());
+        }
         authenticityVO.setSupplierName(product4Update.getSupplierName());
         authenticityVO.setSupplierDistrict(product4Update.getSupplierDistrict());
         authenticityVO.setLastQueryTime(DateUtil.formatDate(fisrtTime, DateUtil.FormatType.GBK_SECOND));
@@ -149,12 +155,15 @@ public class ProductService {
             return Result.fail("服务器繁忙，请稍后再试");
         } else {
             product = productInfo.covert();
+            ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
+            product.setProductType(productType);
             productRepository.saveAndFlush(product);
             return null;
         }
 
     }
-
+    @Resource
+    private ProductTypeRepository productTypeRepository;
     @Resource
     private RedisBean redisBean;
 

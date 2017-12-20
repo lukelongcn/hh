@@ -84,7 +84,6 @@ public class SmsService {
 
         User user = userRepository.findOne(userId);
         Result result = sendSMSValdite(userId, user.getPhone(), smsType);
-
         if (result != null) {
             return result;
         }
@@ -150,6 +149,8 @@ public class SmsService {
             redisBean.expire(countKey, DateUtil.getTimesNight());
             //存储短信记录
             redisBean.setStringValue(codeKey, code, 10, TimeUnit.MINUTES);
+            String errorCodeCountKey = RedisKey.getErrorCodeCountKey(userId, smsType);
+            redisBean.setStringValue(errorCodeCountKey, "", 1, TimeUnit.SECONDS);
             return Result.success("短信发送成功");
         }
     }
@@ -167,7 +168,17 @@ public class SmsService {
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
 
-        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode()) {
+        if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
+            //判断提现额度
+            BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
+
+            if(todayCanWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
+                return Result.fail("您今日可提现金额已达到每日提现额度，请明日再来");
+            }
+
+        }
+        
+        if (smsType != SMSTypeEnum.BIND_MOBILE.getCode() && smsType != SMSTypeEnum.BIND_BANKCARD.getCode()) {
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             BigDecimal balance = userAccount.getBalance();
@@ -176,19 +187,6 @@ public class SmsService {
                 return Result.fail("余额不足");
             }
         }
-
-        if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
-            //判断提现额度
-            BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
-
-            if(todayCanWithdrawMoney.compareTo(new BigDecimal(0)) <= 0){
-
-                return Result.fail("您今日可提现金额为零，请明天再来");
-            }
-
-        }
-
-
 
         return null;
     }
@@ -316,7 +314,6 @@ public class SmsService {
             if (errorCount >= 2) {
                 result.setCode(3);
                 result.setMsg("错误次数已达到最大次数,请稍后再试");
-
                 return result;
             }
 
@@ -324,7 +321,9 @@ public class SmsService {
             redisBean.setStringValue(errorCodeCountKey, String.valueOf(errorCount), 10, TimeUnit.MINUTES);
             return result;
         }
-
+        //验证成功，使验证码失效
+        String smsCodeKey = RedisKey.getSmsCodeKey(tel, type);
+        redisBean.setStringValue(smsCodeKey,"",1,TimeUnit.MILLISECONDS);
         return null;
     }
 }

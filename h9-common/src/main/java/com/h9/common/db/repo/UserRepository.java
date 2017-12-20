@@ -3,8 +3,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.User;
-import com.h9.common.modle.vo.SystemUserVO;
-import com.h9.common.modle.vo.UserAccountVO;
+import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
@@ -12,7 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.LockModeType;
-import java.util.List;
 
 /**
  * @ClassName: UserRepository
@@ -33,7 +31,12 @@ public interface UserRepository extends BaseRepository<User> {
    //@Lock(LockModeType.PESSIMISTIC_WRITE)
     User findByPhoneAndPasswordAndIsAdmin(String phone, String password, Integer isAdmin);
 
-    @Query("select new com.h9.common.modle.vo.SystemUserVO(o) from User o  order by o.status asc ,o.id desc ")
+    @Query(value = "select o from User o where o.phone=?1 and o.isAdmin=?2")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    User findByPhoneAndIsAdmin(String phone, Integer isAdmin);
+
+
+    @Query("select new com.h9.common.modle.vo.admin.basis.SystemUserVO(o) from User o where o.isAdmin = 1 order by o.status asc ,o.id desc ")
     Page<SystemUserVO> findAllByPage(Pageable page);
 
 

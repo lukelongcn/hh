@@ -4,10 +4,10 @@ package com.h9.api;
 //import com.h9.api.provider.MobileRechargeService;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
-import com.h9.api.provider.MobileRechargeService;
+import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
-import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.bean.RedisBean;
@@ -15,35 +15,77 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 
-import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApiApplicationTests {
+
+
+    @Test
+    public void test2222(){
+        Address address = new Address();
+        //address.setUserId(userId);
+        address.setName("12312");
+        address.setPhone("13456458529");
+
+        //String provinceName = chinaRepository.findName(8);
+       // String cityName = chinaRepository.findName(addressDTO.getCid());
+        //String areaName = chinaRepository.findName(addressDTO.getAid());
+        address.setProvince("312312");
+        address.setCity("asdas");
+        address.setDistict("2312");
+        //设值地址id
+        //address.setPid();
+        //address.setCid(addressDTO.getCid());
+        //address.setAid(addressDTO.getAid());
+        //设值详细地址
+        address.setAddress("3131");
+        // 设置是否为默认地址
+       // if(addressDTO.getDefaultAddress() == 1){
+        //    addressRepository.updateDefault(userId);
+      //  }
+        address.setDefaultAddress(1);
+
+        // 使用状态设为开启
+        address.setStatus(1);
+         address = addressRepository.saveAndFlush(address);
+
+        logger.debug(address.getId());
+    }
+
+    @Resource
+    ChinaRepository chinaRepository;
+    @Test
+    public void findFromDb(){
+        //从数据库获取数据
+        Long startTime = System.currentTimeMillis();
+        List<China> allProvices = chinaRepository.findAllProvinces();
+
+        List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
+        Long end = System.currentTimeMillis();
+        logger.debugv("时间"+(end-startTime));
+//        存储到redis
+        redisBean.setObject(RedisKey.addressKey,areasList);
+
+    }
 
 
     ////@Test
@@ -102,8 +144,7 @@ public class ApiApplicationTests {
 
     }
 
-    @Resource
-    GoodsDIDINumberRepository goodsDIDINumberRepository;
+
 
     ////@Test
     public void didiCardInit() {
@@ -111,11 +152,11 @@ public class ApiApplicationTests {
         GoodsType goodsType = goodsTypeReposiroty.findOne(2L);
         for (int i = 0; i < 200; i++) {
 
-            GoodsDIDINumber goodsDIDINumber = new GoodsDIDINumber();
-            goodsDIDINumber.setDidiNumber(UUID.randomUUID().toString());
-            goodsDIDINumber.setGoodsId(1310L);
-            goodsDIDINumber.setStatus(1);
-            goodsDIDINumberRepository.save(goodsDIDINumber);
+            CardCoupons cardCoupons = new CardCoupons();
+            cardCoupons.setNo(UUID.randomUUID().toString());
+            cardCoupons.setGoodsId(1310L);
+            cardCoupons.setStatus(1);
+            cardCouponsRepository.save(cardCoupons);
         }
     }
 
@@ -256,13 +297,33 @@ public class ApiApplicationTests {
 
         String stringValue = redisBean.getStringValue("sms:code:count:4:18770812669");
         System.out.println(stringValue);
-//        redisBean.setStringValue("h9:sms:code:errorCount:userId:9:type:5", "0");
-
-//        String s = "509217e4-1839-4095-b404-1d34366fd0e4";
-
+        String tel = "15970051786";
+        String smsCodeKey = RedisKey.getSmsCodeKey(tel, 6);
+        String stringValue1 = redisBean.getStringValue(smsCodeKey);
+        System.out.println(stringValue1);
 
     }
 
+    @Resource
+    CardCouponsRepository cardCouponsRepository;
+    @Test
+    public void cardsGenerator(){
+
+        for(int i = 0;i<10000;i++) {
+            if (i / 1000 == 0) {
+                System.out.println(i);
+            }
+            CardCoupons cardCoupons = new CardCoupons();
+            cardCoupons.setBatchNo("20170904");
+            cardCoupons.setNo(UUID.randomUUID().toString().substring(0,10));
+            cardCoupons.setGoodsId(1L);
+            cardCoupons.setMoney(new BigDecimal(20));
+            cardCoupons.setStatus(1);
+
+            cardCouponsRepository.save(cardCoupons);
+//            cardCoupons.setBatchNo();
+        }
+    }
     @Resource
     private ConfigService configService;
     @Resource
@@ -275,6 +336,15 @@ public class ApiApplicationTests {
 
     @Resource
     private BannerRepository bannerRepository;
+
+    @Resource
+    private AddressRepository addressRepository;
+    @Test
+    public void test22(){
+        String errorCodeCountKey = RedisKey.getErrorCodeCountKey(14L, SMSTypeEnum.BIND_BANKCARD.getCode());
+        String value = redisBean.getStringValue(errorCodeCountKey);
+        System.out.println(value);
+    }
 
 }
 

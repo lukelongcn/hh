@@ -63,6 +63,16 @@ public class OrderItems extends BaseEntity {
         this.orders = orders;
     }
 
+    public OrderItems(Goods goods,Integer count, Orders orders) {
+        this.name = goods.getName();
+        this.image = goods.getImg();
+        this.price = goods.getRealPrice();
+        this.money = goods.getRealPrice();
+        this.count = count;
+        this.orders = orders;
+        this.goods = goods;
+    }
+
     public String getDidiCardNumber() {
         return didiCardNumber;
     }

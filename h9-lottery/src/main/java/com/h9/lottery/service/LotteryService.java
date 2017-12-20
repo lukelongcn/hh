@@ -4,6 +4,8 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.entity.Reward.StatusEnum;
 import com.h9.common.db.repo.*;
@@ -21,15 +23,20 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
@@ -66,8 +73,17 @@ public class LotteryService {
     private SystemBlackListRepository systemBlackListRepository;
     @Resource
     private LotteryConfig lotteryConfig;
+    @Resource
+    private WhiteUserListRepository whiteUserListRepository;
+    @Resource
+    private ProductTypeRepository productTypeRepository;
 
-    @Transactional
+    @Resource
+    private RedisBean redisBean;
+
+
+
+    @Transactional(rollbackFor = Exception.class)
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
@@ -102,19 +118,30 @@ public class LotteryService {
         }
 
         String imei = request.getHeader("imei");
-        if (onBlackUser(userId, imei)) {
-            return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+        if (!onWhiteUser(userId)) {
+
+            if (onBlackUser(userId, imei)) {
+                if(lotteryCount.compareTo(new BigDecimal(2)) > 0){
+                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                }
+            }else{
+                String dayMaxlotteryCount = configService.getStringConfig("dayMaxlotteryCount");
+                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount).subtract(new BigDecimal(1))) > 0){
+                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
+                }
+            }
         }
 
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
         //记录扫码记录
-        record(userId, result.getData(), lotteryVo, userRecord);
+        Reward data = result.getData();
+        Long rewardId = data != null ? data.getId() : null;
+        record(userId,rewardId , lotteryVo, userRecord);
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findByCode4Update(lotteryVo.getCode());
-
+        Reward reward = rewardRepository.findById(rewardId);
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -122,11 +149,11 @@ public class LotteryService {
         if (status == StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
-
         User user = userRepository.findOne(userId);
-
-        logger.info("userId : " + userId);
-        logger.info("user == null ? result: " + user == null);
+        String stringValue = redisBean.getStringValue(RedisKey.getLotteryBefore(userId, reward.getId()));
+        if(StringUtils.isNotEmpty(stringValue)){
+            return Result.fail("操作过于频繁，请稍后再试");
+        }
 
         Lottery lottery = lotteryRepository.findByUserIdAndReward(userId, reward.getId());
         if (lottery != null) {
@@ -141,6 +168,7 @@ public class LotteryService {
 //                如果已经 结束
                 return Result.fail("红包活动已经结束");
             }
+            redisBean.setStringValue(RedisKey.getLotteryBefore(userId, reward.getId()),reward.getPartakeCount()+"",1000, TimeUnit.MICROSECONDS);
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
             lotteryResultDto.setLottery(false);
             lotteryResultDto.setRoomUser(false);
@@ -153,18 +181,17 @@ public class LotteryService {
                 lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
             }
-            //延长结束时间 finishTime
-            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
-            reward.setFinishTime(endDate);
-
-            reward.setPartakeCount(partakeCount + 1);
-
-            rewardRepository.save(reward);
             lottery.setReward(reward);
-            logger.info("user 测试："+user);
+            logger.info("user 测试：" + user);
             lottery.setUser(user);
             lottery.setUserRecord(userRecord);
             lotteryRepository.save(lottery);
+
+            //延长结束时间 finishTime
+            Date endDate = DateUtil.getDate(new Date(), lotteryConfig.getDelay(), Calendar.SECOND);
+            reward.setFinishTime(endDate);
+            reward.setPartakeCount(partakeCount + 1);
+            rewardRepository.saveAndFlush(reward);
 
             return Result.success(lotteryResultDto);
         }
@@ -175,24 +202,62 @@ public class LotteryService {
      */
     public boolean onBlackUser(Long userId, String imei) {
 
-        SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
+        List<SystemBlackList> systemBlackList = systemBlackListRepository.findByUserIdOrImei(userId, imei, new Date());
 
-        return systemBlackList != null;
+        if (CollectionUtils.isEmpty(systemBlackList)) {
+            return false;
+        }
+        List<SystemBlackList> systemBlackLists = systemBlackList.stream().filter(user -> {
+            Long startTime = user.getStartTime().getTime();
+            Long endTime = user.getEndTime().getTime();
+            Long currentDate = new Date().getTime();
+
+            if (startTime < currentDate && currentDate < endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(systemBlackLists);
     }
 
-    private void record(Long userId, Reward reward, LotteryDto lotteryVo, UserRecord userRecord) {
+    public boolean onWhiteUser(Long userId) {
+        List<WhiteUserList> userLists = whiteUserListRepository.findByUserId(userId, new Date());
+
+        if(org.apache.commons.collections.CollectionUtils.isEmpty(userLists)){
+            return false;
+        }
+        List<WhiteUserList> whiteUserLists = userLists.stream().filter(user -> {
+            Long startTime = user.getStartTime().getTime();
+            Long endTime = user.getEndTime().getTime();
+            Long currentDate = new Date().getTime();
+
+            if (startTime < currentDate && currentDate < endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(whiteUserLists);
+    }
+
+    @Transactional
+    private void record(Long userId, Long rewardId, LotteryDto lotteryVo, UserRecord userRecord) {
         LotteryLog lotteryLog = new LotteryLog();
         lotteryLog.setUserId(userId);
         lotteryLog.setUserRecord(userRecord);
         lotteryLog.setCode(lotteryVo.getCode());
-        if (reward == null) {
+        if (rewardId == null) {
             lotteryLog.setStatus(2);
         } else {
-            lotteryLog.setReward(reward);
+            lotteryLog.setRewardId(rewardId);
         }
         lotteryLogRepository.save(lotteryLog);
     }
 
+    @Transactional
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
         code = ConstantConfig.path2Code(code);
@@ -234,7 +299,7 @@ public class LotteryService {
         boolean islottery = status == StatusEnum.END.getCode();
         lotteryResult.setLottery(islottery);
         lotteryResult.setRoomUser(userId.equals(reward.getUserId()));
-        //TODO
+        //
         LotteryFlow lotteryFlow = lotteryFlowRepository.findByReward(reward, userId);
         if (lotteryFlow != null) {
             lotteryResult.setMoney(MoneyUtils.formatMoney(lotteryFlow.getMoney()));
@@ -327,7 +392,7 @@ public class LotteryService {
             Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
             String balanceFlowType = configService.getValueFromMap("balanceFlowType", "10");
-            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "",balanceFlowType);
+            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "", balanceFlowType);
         }
         return Result.success();
     }
@@ -392,7 +457,7 @@ public class LotteryService {
     private FactoryProvider factoryProvider;
 
     @Transactional
-    public Result exitsReward(String code) {
+    public Result<Reward> exitsReward(String code) {
         Reward reward = rewardRepository.findByCode(code);
         if (reward != null) {
             return Result.success(reward);
@@ -417,6 +482,9 @@ public class LotteryService {
         if (productInfo != null && productInfo.getState() != 2 && productInfo.getState() != 3) {
             try {
                 product = productInfo.covert();
+                ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
+                product.setProductType(productType);
+//                todo
                 product = productRepository.saveAndFlush(product);
             } catch (Exception e) {
                 logger.debug(e.getMessage(), e);

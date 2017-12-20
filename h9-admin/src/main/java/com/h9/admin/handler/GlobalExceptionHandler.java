@@ -3,6 +3,7 @@ package com.h9.admin.handler;
 import com.h9.admin.validation.ParamException;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
+import com.h9.common.common.ServiceException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
@@ -39,6 +41,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object hanldeException(Exception e, HttpServletRequest httpServletRequest) {
+
+
+        if (e instanceof MethodArgumentTypeMismatchException) {
+            logger.info(e.getMessage(),e);
+            return new Result(1, "请传入正确的参数," + e.getMessage());
+        }
+
+        if (e instanceof ServiceException) {
+            ServiceException serviceException = (ServiceException) e;
+            return new Result(serviceException.getCode(), serviceException.getMessage());
+        }
 
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
@@ -70,8 +83,13 @@ public class GlobalExceptionHandler {
                 subject.append("徽酒后台服务器错误").append(currentEnvironment);
                 content.append("url: ").append(httpServletRequest.getRequestURL()).append(" ").append(httpServletRequest.getMethod())
                         .append("\n ").append(ExceptionUtils.getStackTrace(e));
-                mailService.sendtMail( subject.toString() , content.toString());
-                time = System.currentTimeMillis();
+
+                String url = httpServletRequest.getRequestURL().toString();
+                if (!url.startsWith("http://localhost")) {
+
+                    mailService.sendtMail( subject.toString() , content.toString());
+                    time = System.currentTimeMillis();
+                }
             }
             return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(),"服务器繁忙，请稍后再试");
         }

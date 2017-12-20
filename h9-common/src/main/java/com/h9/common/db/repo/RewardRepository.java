@@ -34,7 +34,10 @@ public interface RewardRepository extends BaseRepository<Reward> {
     @Query("select r from Reward r where r.code =?1")
     Reward findByCode(String code);
 
-    @Transactional
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select r from Reward r where r.id =?1")
+    Reward findById(Long id);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from Reward r where r.code =?1")
     Reward findByCode4Update(String code);
@@ -68,4 +71,8 @@ public interface RewardRepository extends BaseRepository<Reward> {
      */
     @Query("select o from Reward  o where (o.status = 1 or o.status = 2) and o.finishTime  <= ?1")
     List<Reward> findByEndTimeAndStatus(Date date);
+
+
+    @Query("select o.code from Reward  o where o.status = 1 ")
+    List<String> findByStatus();
 }

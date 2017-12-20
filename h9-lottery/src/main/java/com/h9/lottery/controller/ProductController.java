@@ -30,7 +30,7 @@ public class ProductController {
 
 //    @Secured(bindPhone = false)
     @GetMapping("/product/check")
-    @ApiOperation(value = "扫码抽奖")
+    @ApiOperation(value = "查询真伪")
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @RequestHeader(value = "token",required = false) String token,
                           @Valid @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request){

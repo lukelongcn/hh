@@ -21,7 +21,6 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
         //注册 日志打印拦截器
         registry.addInterceptor(requestLogInterceptor).addPathPatterns("/**");
         //注册 登录权限校验拦截器
-//        registry.addInterceptor(new LoginAuthInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(loginAuthInterceptor).addPathPatterns("/**");
 
 

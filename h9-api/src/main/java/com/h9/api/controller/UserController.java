@@ -51,9 +51,6 @@ public class UserController {
         return smsService.sendSMSCode(userId,phone, type);
     }
 
-
-
-
     /**
      * description: 发送注册的验证码
      */
@@ -62,7 +59,6 @@ public class UserController {
     public Result sendRedistSMS(@PathVariable("phone") String phone){
         return smsService.sendSMSCode(phone);
     }
-
 
     /**
      * description: 修改个人信息

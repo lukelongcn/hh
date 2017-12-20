@@ -63,7 +63,8 @@ public class Article extends BaseEntity {
     @Column(name = "publish_time", columnDefinition = "datetime COMMENT '发布时间'")
     private Date publishTime;
 
-
+    @Transient
+    private String jointUrl;//拼接跳转链接
 
     public String getImgUrl() {
         return imgUrl;
@@ -163,5 +164,13 @@ public class Article extends BaseEntity {
 
     public void setPublishTime(Date publishTime) {
         this.publishTime = publishTime;
+    }
+
+    public String getJointUrl() {
+        return jointUrl;
+    }
+
+    public void setJointUrl(String jointUrl) {
+        this.jointUrl = jointUrl;
     }
 }

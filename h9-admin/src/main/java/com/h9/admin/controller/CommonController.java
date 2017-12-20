@@ -32,14 +32,14 @@ import java.util.UUID;
  */
 @SuppressWarnings("Duplicates")
 @RestController
-@Api("公用")
+@Api(description = "公用")
 @RequestMapping(value = "/common")
 public class CommonController {
 
     @Autowired
     private FileService fileService;
 
-    @PostMapping("/file/upload")
+    @PostMapping("/images/upload")
     @ApiOperation(value = "图片上传")
     public Result uploadImage(MultipartFile file,String path) {
        return this.fileService.uploadImage(file,path);
@@ -52,9 +52,17 @@ public class CommonController {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.println("<script type=\"text/javascript\">");
-        out.println("this.editor.tools.callFunction(" + CKEditorFuncNum + ",'" + result.getData() + "',''" + ")");
+        //out.println("this.editor.tools.callFunction(" + CKEditorFuncNum + ",'" + result.getData() + "',''" + ")");
+        out.println("alert('" + result.getData() + "')");
         out.println("</script>");
         out.flush();
         out.close();
     }
+
+    @PostMapping("/file/upload")
+    @ApiOperation(value = "文件上传")
+    public Result uploadFile(MultipartFile file,String path) {
+        return this.fileService.uploadFile(file, path);
+    }
+
 }

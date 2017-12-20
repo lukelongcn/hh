@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import java.util.Date;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
 
@@ -21,27 +22,22 @@ import static javax.persistence.TemporalType.DATE;
 @Table(name = "userExtends")
 public class UserExtends extends BaseEntity {
 
-
     @Id
     @Column(name = "user_id", columnDefinition = "bigint(20)  COMMENT '用户'")
     private Long userId;
 
-    @Column(name = "sex",nullable = false,columnDefinition = "int default 1 COMMENT ' 1 为男 0为女'")
+    @Column(name = "sex",nullable = false,columnDefinition = "int  COMMENT ' 1 为男 0为女'")
     private Integer sex = 1;
     @Column(name = "birthday",columnDefinition = "datetime COMMENT '生日'")
     private Date birthday;
 
-
-    @Column(name = "marriage_status",columnDefinition = "varchar(200) default '单身' COMMENT '单身，恋受，已婚，其他(前端提供)'")
-    private String marriageStatus;
-
-    @Column(name = "education",columnDefinition = "varchar(200) default '本科' COMMENT '小学及以下 1，初中  2 ，高中    3，中专 4，本科 5" +
-            "，研究生 6，博士及以上 7'")
+    @Column(name = "marriage_status",columnDefinition = "varchar(200)  COMMENT ''")
+    private String marriageStatus = "1";
+    @Column(name = "education",columnDefinition = "varchar(200) COMMENT ''")
     private String education = "5";
 
     @Column(name = "job",columnDefinition = "varchar(100) COMMENT '职业' ")
-    private String job="";
-
+    private String job="1";
 
     @Column(name = "img_id")
     private Long imgId;
@@ -78,8 +74,6 @@ public class UserExtends extends BaseEntity {
         this.birthday = birthday;
     }
 
-
-
     public void setMarriageStatus(String marriageStatus) {
         this.marriageStatus = marriageStatus;
     }
@@ -104,5 +98,32 @@ public class UserExtends extends BaseEntity {
 
     {
         this.job = job;
+    }
+
+    public enum SexEnum {
+        FEMALE(0, "女"),
+        MALE(1, "男");
+
+        private int code;
+        private String name;
+
+        SexEnum(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static String getNameByCode(int code){
+            SexEnum sexEnum =  stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
+            return sexEnum==null?null:sexEnum.getName();
+        }
+
     }
 }

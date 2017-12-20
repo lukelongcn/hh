@@ -45,10 +45,10 @@ public class Orders extends BaseEntity {
     @Column(name = "addressId")
     private Long addressId;
 
-    @Column(name = "user_name",  columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
+    @Column(name = "user_name", columnDefinition = "varchar(36) default '' COMMENT '收货人姓名'")
     private String userName;
 
-    @Column(name = "user_phone",  columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
+    @Column(name = "user_phone", columnDefinition = "varchar(11) default '' COMMENT '收货人号码'")
     private String userPhone;
 
     @Column(name = "user_addres", columnDefinition = "varchar(128) default '' COMMENT '用户收货地址'")
@@ -56,6 +56,7 @@ public class Orders extends BaseEntity {
 
     /**
      * description: 支付方式
+     *
      * @see PayMethodEnum
      */
     @Column(name = "pay_methond", nullable = false, columnDefinition = "int default 0 COMMENT '支付方式'")
@@ -71,17 +72,88 @@ public class Orders extends BaseEntity {
     @Column(name = "pay_status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '支付状态 1待支付 2 已支付'")
     private Integer payStatus = 1;
 
-    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态 '")
+    /**
+     * description:
+     * @see statusEnum
+     */
+    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态,1:待发货,2:已发货,3:已完成'")
     private Integer status = 1;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) COMMENT ''")
     private User user;
 
+    @Column(name = "goods_type",columnDefinition = "varchar(50) COMMENT'商品类型'")
+    private String goodsType;
+
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
     private List<OrderItems> orderItems = new ArrayList<>();
+
+    /**
+     * description: 标识订单类别
+     *
+     * @see orderTypeEnum 订单类型
+     */
+    @Column(name = "order_type", columnDefinition = "varchar(50) default '' COMMENT'订单类别'")
+    private String orderType;
+
+//    @Column(name = "loginstics_number")
+//    private String logisticsNumber;
+
+    @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
+    private String expressName;
+
+    @Column(name = "order_from",columnDefinition = "int default 2 COMMENT '订单来源 1为酒元商场 2为其他'")
+    private Integer orderFrom;
+
+    @Column(name = "express_num",columnDefinition = "varchar(200) COMMENT '物流单号'")
+    private String expressNum  = "";
+
+    @Column(name = "province",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String province;
+
+    @Column(name = "district",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String district;
+
+    @Column(name = "city",columnDefinition = "varchar(50) default '' COMMENT ''")
+    private String city;
+
+
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+
+    public String getExpressNum() {
+        return expressNum;
+    }
+
+    public void setExpressNum(String expressNum) {
+        this.expressNum = expressNum;
+    }
 
     public enum PayMethodEnum {
 
@@ -105,10 +177,10 @@ public class Orders extends BaseEntity {
             return desc;
         }
 
-        public static PayMethodEnum findByCode(int code){
+        public static PayMethodEnum findByCode(int code) {
             PayMethodEnum[] values = values();
-            for(PayMethodEnum smsTypeEnum: values){
-                if(code == smsTypeEnum.getCode()){
+            for (PayMethodEnum smsTypeEnum : values) {
+                if (code == smsTypeEnum.getCode()) {
                     return smsTypeEnum;
                 }
             }
@@ -116,18 +188,6 @@ public class Orders extends BaseEntity {
         }
     }
 
-    /**
-     * description: 标识订单类别
-     *
-     * @see GoodsType.GoodsTypeEnum
-     */
-    @Column(name = "order_type", columnDefinition = "int default 1 COMMENT'订单类别'")
-    private Integer orderType;
-
-    @Column(name = "loginstics_number")
-    private String logisticsNumber;
-    @Column(name = "express_name", columnDefinition = "varchar(128) default '' COMMENT '快递名称'")
-    private String expressName;
 
     public String getExpressName() {
         return expressName;
@@ -137,50 +197,107 @@ public class Orders extends BaseEntity {
         this.expressName = expressName;
     }
 
-    public String getLogisticsNumber() {
-        return logisticsNumber;
+    public Integer getOrderFrom() {
+        return orderFrom;
     }
 
-    public void setLogisticsNumber(String logisticsNumber) {
-        this.logisticsNumber = logisticsNumber;
+    public void setOrderFrom(Integer orderFrom) {
+        this.orderFrom = orderFrom;
     }
 
-    //    public enum orderTypeEnum{
+//    public String getLogisticsNumber() {
+//        return logisticsNumber;
+//    }
 //
-//        MOBILE_RECHARGE(1, "话费充值"),
-//        DIDI_COUPON(2,"滴滴兑换"),
-//        OTHER(3, "其他");
-//
-//        private int code;
-//        private String desc;
-//
-//        orderTypeEnum(int code, String desc) {
-//            this.code = code;
-//            this.desc = desc;
-//        }
-//
-//        public int getCode() {
-//            return code;
-//        }
-//
-//        public void setCode(int code) {
-//            this.code = code;
-//        }
-//
-//        public String getDesc() {
-//            return desc;
-//        }
-//
-//        public void setDesc(String desc) {
-//            this.desc = desc;
-//        }
+//    public void setLogisticsNumber(String logisticsNumber) {
+//        this.logisticsNumber = logisticsNumber;
 //    }
 
-    public Integer getOrderType() {
+    public enum orderTypeEnum {
+
+        MATERIAL_GOODS(1, "实体商品"),
+        VIRTUAL_GOODS(2, "虚拟商品");
+
+        private int code;
+        private String desc;
+
+        orderTypeEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public enum statusEnum{
+
+        WAIT_SEND(1,"待发货"),
+        DELIVER(2,"已发货"),
+        FINISH(3, "已完成");
+
+        private int code;
+        private String desc;
+
+        statusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public static statusEnum findByCode(int code){
+            statusEnum[] values = values();
+            for(statusEnum enumEl : values){
+                if(enumEl.code == code){
+
+                    return enumEl;
+                }
+            }
+            return null;
+        }
+    }
+
+    public String getGoodsType() {
+        return goodsType;
+    }
+
+    public void setGoodsType(String goodsType) {
+        this.goodsType = goodsType;
+    }
+
+    public String getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(Integer orderType) {
+    public void setOrderType(String orderType) {
         this.orderType = orderType;
     }
 
@@ -310,5 +427,38 @@ public class Orders extends BaseEntity {
 
     public void setDeliveryId(Long deliveryId) {
         this.deliveryId = deliveryId;
+    }
+
+    public enum PayStatusEnum {
+
+        UNPAID(1, "待支付"),
+        PAID(2, "已支付");
+
+        private int code;
+        private String desc;
+
+        PayStatusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static PayStatusEnum findByCode(int code) {
+            PayStatusEnum[] values = values();
+            for (PayStatusEnum smsTypeEnum : values) {
+                if (code == smsTypeEnum.getCode()) {
+                    return smsTypeEnum;
+                }
+            }
+            return null;
+        }
     }
 }

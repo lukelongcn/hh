@@ -3,21 +3,16 @@ package com.h9.admin.service;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
 import com.h9.admin.model.vo.LotteryFlowRecordVO;
-import com.h9.common.modle.vo.WithdrawRecordVO;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.*;
+import com.h9.common.modle.dto.PageDTO;
+import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.Constants;
 import com.h9.common.db.basis.JpaRepository;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.LotteryFlow;
-import com.h9.common.db.entity.LotteryFlowRecord;
-import com.h9.common.db.entity.WithdrawalsRecord;
-import com.h9.common.db.repo.LotteryFlowRecordRepository;
-import com.h9.common.db.repo.LotteryFlowRepository;
-import com.h9.common.db.repo.UserRepository;
-import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.modle.dto.LotteryFLowRecordDTO;
 import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import com.h9.common.utils.DateUtil;
@@ -27,6 +22,7 @@ import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -62,6 +58,8 @@ public class FinanceService {
     private UserRepository userRepository;
     @Autowired
     private ConfigService configService;
+    @Autowired
+    private VB2MoneyRepository vb2MoneyRepository;
 
     public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
         /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
@@ -133,7 +131,7 @@ public class FinanceService {
 
     private String buildLotteryFlowQueryString(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
         StringBuilder sql = new StringBuilder(
-                "select o.* from(select lf.id,lf.money,lf.create_time as createTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow lf ,user u,user_account ua,reward r" +
+                "select o.* from (select lf.id,lf.money,lf.create_time as createTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow lf ,user u,user_account ua,reward r" +
                         " where lf.user_id=u.id and lf.reward_id=r.id and lf.user_id=ua.user_id {0}) as o " +
                         "left join lottery_flow_record lfr on o.id = lfr.lottery_flow_id where lfr.id is null");
         StringBuilder condition  = new StringBuilder("");
@@ -165,7 +163,7 @@ public class FinanceService {
                 continue;
             }
             LotteryFlow flow = this.lotteryFlowRepository.findByLockId(id);
-            Result  result = this.commonService.setBalance(flow.getUser().getId(),flow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+            Result  result = this.commonService.setBalance(flow.getUser().getId(),flow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                     flow.getId(), flow.getId().toString(),"小品会");
             flowRecord = new LotteryFlowRecord();
             if(result.getCode()==Result.FAILED_CODE){
@@ -174,10 +172,10 @@ public class FinanceService {
             }else{
                 flowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.SUCCESS.getId());
                 long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
-                Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                         flow.getId(),flow.getId().toString(),"小品会");
                /* if(r.getCode()==Result.FAILED_CODE){
-                    r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+                    r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                             flow.getId(),flow.getId().toString(),"小品会");
                     if(r.getCode()==Result.FAILED_CODE){
                         this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
@@ -248,13 +246,13 @@ public class FinanceService {
             return Result.fail("改记录不为转账失败记录");
         }
         LotteryFlow lotteryFlow =lotteryFlowRecord.getLotteryFlow();
-        Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+        Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                 lotteryFlow.getId(), lotteryFlow.getId().toString(),"小品会");
         if(result.getCode()==Result.FAILED_CODE){
             return Result.fail("余额不足，转账失败");
         }
         long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
-        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAPPINHUI.getId(),
+        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                 lotteryFlow.getId(),lotteryFlow.getId().toString(),"小品会");
         if(r.getCode()==Result.FAILED_CODE){
             this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",lotteryFlow.getId());
@@ -262,6 +260,14 @@ public class FinanceService {
         lotteryFlowRecord.setStatus(LotteryFlowRecord.LotteryFlowRecordStatusEnum.SUCCESS.getId());
         this.lotteryFlowRecordRepository.save(lotteryFlowRecord);
         return Result.success("成功");
+    }
+
+    public Result<PageResult<VB2Money>> listVB2Money(String phone, PageDTO pageDTO) {
+        if (StringUtils.isBlank(phone)) {
+            phone = null;
+        }
+        Page<VB2Money> vb2MoneyPage = this.vb2MoneyRepository.findByTel(phone,pageDTO.toPageRequest());
+        return Result.success(new PageResult<>(vb2MoneyPage));
     }
 
 }

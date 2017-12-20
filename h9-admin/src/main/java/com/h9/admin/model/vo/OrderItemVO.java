@@ -28,23 +28,11 @@ public class OrderItemVO {
     @ApiModelProperty(value ="用户收货地址")
     private String userAddres;
 
-    @ApiModelProperty(value ="支付方式")
-    private Integer payMethond;
-
-    @ApiModelProperty(value ="支付方式描述")
-    private String payMethodDesc;
-
-    @ApiModelProperty(value ="订单金额")
-    private BigDecimal money = new BigDecimal(0);
-
-    @ApiModelProperty(value ="需要支付的金额")
-    private BigDecimal payMoney = new BigDecimal(0);
-
-    @ApiModelProperty(value ="支付状态 1待支付 2 已支付")
-    private Integer payStatus = 1;
-
     @ApiModelProperty(value ="订单状态")
-    private Integer status = 1;
+    private Integer status;
+
+    @ApiModelProperty(value ="订单状态描述")
+    private String statusDesc;
 
     @ApiModelProperty(value ="用户id")
     private Long userId;
@@ -52,40 +40,33 @@ public class OrderItemVO {
     @ApiModelProperty(value ="商品")
     private String goods;
     
-    @ApiModelProperty(value ="订单类别 1手机卡 2滴滴卡 3实物")
-    private Integer orderType ;
-    
-    @ApiModelProperty(value ="物流单号")
-    private String logisticsNumber;
-
-    @ApiModelProperty(value ="滴滴券号")
-    private String didiCardNumber;
 
     @ApiModelProperty(value ="快递公司名")
     private String expressName;
+
     @ApiModelProperty(value = "商品数量")
-    private long count;
+    private Long count;
+
     @ApiModelProperty(value = "创建时间")
-    private Date createTime ;//创建时间
-    @ApiModelProperty(value = "更新时间")
-    private Date updateTime;//更新时间
+    private Date createTime ;
 
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
+        orderItemVO.setUserId(orders.getUser().getId());
         String collect = orders.getOrderItems().stream()
                 .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
                 .collect(Collectors.joining(","));
         orderItemVO.setGoods(collect);
-        String didi = orders.getOrderItems().stream()
+        /*String didi = orders.getOrderItems().stream()
                 .map(OrderItems::getDidiCardNumber)
                 .collect(Collectors.joining(","));
-        orderItemVO.setDidiCardNumber(didi);
-        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());
-        orderItemVO.setPayMethodDesc(byCode==null?"未知的支付方式":byCode.getDesc());
+        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());*/
         //统计订单商品数量
         long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderItemVO.setCount(sum);
+        Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
+        orderItemVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
         return orderItemVO;
     }
 
@@ -98,15 +79,7 @@ public class OrderItemVO {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public long getCount() {
+    public Long getCount() {
         return count;
     }
 
@@ -120,22 +93,6 @@ public class OrderItemVO {
 
     public void setExpressName(String expressName) {
         this.expressName = expressName;
-    }
-
-    public String getPayMethodDesc() {
-        return payMethodDesc;
-    }
-
-    public void setPayMethodDesc(String payMethodDesc) {
-        this.payMethodDesc = payMethodDesc;
-    }
-
-    public String getDidiCardNumber() {
-        return didiCardNumber;
-    }
-
-    public void setDidiCardNumber(String didiCardNumber) {
-        this.didiCardNumber = didiCardNumber;
     }
 
     public Long getId() {
@@ -178,44 +135,20 @@ public class OrderItemVO {
         this.userAddres = userAddres;
     }
 
-    public Integer getPayMethond() {
-        return payMethond;
-    }
-
-    public void setPayMethond(Integer payMethond) {
-        this.payMethond = payMethond;
-    }
-
-    public BigDecimal getMoney() {
-        return money;
-    }
-
-    public void setMoney(BigDecimal money) {
-        this.money = money;
-    }
-
-    public BigDecimal getPayMoney() {
-        return payMoney;
-    }
-
-    public void setPayMoney(BigDecimal payMoney) {
-        this.payMoney = payMoney;
-    }
-
-    public Integer getPayStatus() {
-        return payStatus;
-    }
-
-    public void setPayStatus(Integer payStatus) {
-        this.payStatus = payStatus;
-    }
-
     public Integer getStatus() {
         return status;
     }
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
     }
 
     public Long getUserId() {
@@ -234,21 +167,4 @@ public class OrderItemVO {
         this.goods = goods;
     }
 
-    public Integer getOrderType() {
-        return orderType;
-    }
-
-    public void setOrderType(Integer orderType) {
-        this.orderType = orderType;
-    }
-
-    public String getLogisticsNumber() {
-        return logisticsNumber;
-    }
-
-    public void setLogisticsNumber(String logisticsNumber) {
-        this.logisticsNumber = logisticsNumber;
-    }
-    
-    
 }

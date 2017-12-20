@@ -33,6 +33,9 @@ public class ConfigService {
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
 
+    @Resource
+    private MailService mailService;
+
 
     public Object getConfig(String code) {
         if (code == null) {
@@ -50,7 +53,13 @@ public class ConfigService {
     public String getStringConfig(String code) {
         Object config = getConfig(code);
         if (config instanceof String) {
-            return (String) config;
+
+            String configStr = (String) config;
+            if (StringUtils.isBlank(configStr)) {
+                mailService.sendtMail("参数未配置", "参数未配置 (key) "+code);
+            }
+
+            return configStr;
         } else {
             return null;
         }
@@ -86,6 +95,18 @@ public class ConfigService {
             configs.add(new Config(key, (String)mapConfig.get(key)));
         }
         return configs;
+    }
+
+    public String getConfigVal(List<Config> configList, String key) {
+        if (configList == null || configList.size() == 0) {
+            return null;
+        }
+        for (int i = 0; i < configList.size(); i++) {
+            if (configList.get(i).getKey().equals(key)) {
+                return configList.get(i).getVal();
+            }
+        }
+        return null;
     }
 
     public  String getValueFromMap(String code,String key){

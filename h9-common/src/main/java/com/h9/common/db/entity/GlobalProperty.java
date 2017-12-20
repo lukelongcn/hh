@@ -13,7 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  * @date: 2017/10/30 13:41
  */
 @Entity
-@Table(name = "global_property",uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(name = "global_property",uniqueConstraints = {@UniqueConstraint(columnNames = "code")})
 public class GlobalProperty extends BaseEntity  {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
@@ -29,7 +29,7 @@ public class GlobalProperty extends BaseEntity  {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(50) default '' COMMENT '键'")
     private String code;
 
-    @Column(name = "val", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '值'")
+    @Column(name = "val", nullable = false, columnDefinition = "text COMMENT '值'")
     private String val;
 
     @Column(name = "description", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '说明'")

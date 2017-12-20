@@ -1,13 +1,17 @@
 package com.h9.api.service;
 
+import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.BankCardDTO;
+import com.h9.api.model.dto.BankVerifyDTO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.BankBin;
 import com.h9.common.db.entity.BankType;
+import com.h9.common.db.entity.User;
 import com.h9.common.db.entity.UserBank;
 import com.h9.common.db.repo.BankBinRepository;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
+import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.BankCardUtils;
 import com.h9.common.utils.CharacterFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +44,10 @@ public class BankCardService {
 
     @Resource
     private BankBinRepository bankBinRepository;
+    @Resource
+    private SmsService smsService;
+    @Resource
+    private UserRepository userRepository;
 
     /**
      * 添加银行卡
@@ -51,18 +59,23 @@ public class BankCardService {
 
         String provice = bankCardDTO.getProvice();
         if (provice.contains("省")) {
-            provice =provice.replace("省", "");
+            provice = provice.replace("省", "");
         }
         String city = bankCardDTO.getCity();
         if (city.contains("市")) {
-            city= city.replace("市", "");
+            city = city.replace("市", "");
         }
+        User findUser = userRepository.findOne(userId);
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.BIND_BANKCARD.getCode(), findUser.getPhone(), bankCardDTO.getSmsCode());
+        if (verifyResult != null) return verifyResult;
+
         String cardNo = bankCardDTO.getNo();
-        if(!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo.substring(0,6))){
+        if (!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo.substring(0, 6))) {
             return Result.fail("请填写正确的银行卡号");
         }
+
         //判断银行卡号是否已被绑定
-        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(),1);
+        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(), 1);
         if (user != null) {
             if (user.getUserId().equals(userId)) {
                 Long typeId = bankCardDTO.getBankTypeId();
@@ -174,7 +187,7 @@ public class BankCardService {
                         StringBuilder sbNo = new StringBuilder();
                         sbNo.append(no.substring(0, 4));
                         sbNo.append("**** **** ****");
-                        sbNo.append(no.substring(no.length() - 4,no.length()));
+                        sbNo.append(no.substring(no.length() - 4, no.length()));
                         map.put("no", sbNo.toString());
                         map.put("id", bank.getId() + "");
                         map.put("color", bank.getBankType().getColor());
@@ -188,7 +201,7 @@ public class BankCardService {
     /**
      * description: 更据数据库中数据是否是正确的卡号
      */
-    public boolean cardNoVerify(String cardNo){
+    public boolean cardNoVerify(String cardNo) {
 
         if (StringUtils.isBlank(cardNo)) {
             return false;
@@ -196,8 +209,44 @@ public class BankCardService {
 
         BankBin byBankBinLike = bankBinRepository.findByBankBinLike(cardNo);
 
-        if(byBankBinLike == null) return false;
+        if (byBankBinLike == null) return false;
 
         return true;
+    }
+
+
+    public Result verifyBank(BankCardDTO bankCardDTO, Long userId) {
+
+        String cardNo = bankCardDTO.getNo();
+        if (!BankCardUtils.matchLuhn(cardNo) && !cardNoVerify(cardNo.substring(0, 6))) {
+            return Result.fail("请填写正确的银行卡号");
+        }
+
+        //判断银行卡号是否已被绑定
+        UserBank user = bankCardRepository.findByNoAndStatus(bankCardDTO.getNo(), 1);
+        if (user != null) {
+            if (user.getUserId().equals(userId)) {
+                Long typeId = bankCardDTO.getBankTypeId();
+                BankType bankType = bankTypeRepository.findOne(typeId);
+                if (bankType == null) return Result.fail("此银行类型不存在");
+                return Result.success("验证成功");
+            }
+            return Result.fail("该卡已被他人绑定");
+        }
+
+        UserBank userBank = new UserBank();
+        userBank.setUserId(userId);
+        userBank.setName(bankCardDTO.getName());
+        userBank.setNo(bankCardDTO.getNo());
+
+        if (CharacterFilter.containChinese(bankCardDTO.getNo())) {
+            return Result.fail("请输入纯数字的银行卡");
+        }
+
+        Long typeId = bankCardDTO.getBankTypeId();
+        BankType bankType = bankTypeRepository.findOne(typeId);
+        if (bankType == null) return Result.fail("此银行类型不存在");
+
+        return Result.success("验证成功");
     }
 }

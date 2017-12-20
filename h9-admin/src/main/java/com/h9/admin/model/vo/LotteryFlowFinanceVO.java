@@ -29,7 +29,10 @@ public class LotteryFlowFinanceVO {
     private String phone;
 
     @ApiModelProperty(value = "金额" )
-    private BigDecimal money = new BigDecimal(0);
+    private BigDecimal money;
+
+    @ApiModelProperty(value = "用户余额" )
+    private BigDecimal balance;
 
     @ApiModelProperty(value = "发奖时间" )
     private Date createTime;
@@ -80,6 +83,13 @@ public class LotteryFlowFinanceVO {
         this.money = money;
     }
 
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 
     public Date getCreateTime() {
         return createTime;

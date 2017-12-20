@@ -112,6 +112,9 @@ public class UserService {
         }
         LoginResultVO vo = getLoginResult(user);
         redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.REGISTER.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
         return Result.success(vo);
     }
 
@@ -215,9 +218,10 @@ public class UserService {
         User user = getCurrentUser(userId);
         if (user == null) return Result.fail("此用户不存在");
 
-        if (!StringUtils.isBlank(user.getPhone())) return Result.fail("您已绑定手机号码了");
+        if (!StringUtils.isBlank(user.getPhone())) return Result.fail("该手机号已被绑定");
 
         String key = RedisKey.getSmsCodeKey(phone, SMSTypeEnum.BIND_MOBILE.getCode());
+
         String redisCode = redisBean.getStringValue(key);
         if (redisCode == null) return Result.fail("验证码已失效");
 
@@ -276,6 +280,9 @@ public class UserService {
 
         //失效验证码
         redisBean.setStringValue(key, "", 1, TimeUnit.MINUTES);
+        String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.BIND_MOBILE.getCode());
+        redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
+
         return Result.success();
     }
 

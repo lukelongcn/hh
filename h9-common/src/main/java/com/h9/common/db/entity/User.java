@@ -8,7 +8,9 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -52,14 +54,14 @@ public class User extends BaseEntity {
     @Column(name = "login_count",nullable = false,columnDefinition = "int default 0 COMMENT '登录次数'")
     private Integer loginCount;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 启用 2禁用 3失效'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常 2禁用 3失效'")
     private Integer status = 1;
 
     //TODO 待定
     @Column(name = "type",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常用户'")
     private Integer type = 1;
 
-    @Column(name = "is_admin",nullable = false,columnDefinition = "tinyint default 0 COMMENT '0:非后台用户 1：后台用户'")
+    @Column(name = "is_admin",nullable = false,columnDefinition = "tinyint default 0 COMMENT '0:普通用户 1：管理员'")
     private Integer isAdmin = 0;
 
     @Column(name = "password", columnDefinition = "varchar(36) default '' COMMENT '加密后密码'")
@@ -71,6 +73,10 @@ public class User extends BaseEntity {
 
     @Column(name = "h9_user_id", columnDefinition = "bigint(20) default null COMMENT '徽9原有用户id'")
     private Long h9UserId;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="user_role",joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
+    private Set<Role> roles;
 
     public User() {
     }
@@ -188,9 +194,17 @@ public class User extends BaseEntity {
         this.h9UserId = h9UserId;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public enum IsAdminEnum{
-        NOTADMIN(0,"非后台用户"),
-        ADMIN(1,"后台用户");
+        NOTADMIN(0,"普通用户"),
+        ADMIN(1,"管理员");
 
         IsAdminEnum(int id,String name){
             this.id = id;
@@ -199,6 +213,11 @@ public class User extends BaseEntity {
 
         private int id;
         private String name;
+
+        public static String getNameById(int id){
+            IsAdminEnum isAdminEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return isAdminEnum==null?null:isAdminEnum.getName();
+        }
 
         public int getId() {
             return id;
@@ -218,7 +237,7 @@ public class User extends BaseEntity {
     }
 
     public enum StatusEnum {
-        ENABLED(1,"启用"),
+        ENABLED(1,"正常"),
         DISABLED(2,"禁用"),
         INVALID(3,"失效");
 
@@ -229,6 +248,11 @@ public class User extends BaseEntity {
 
         private int id;
         private String name;
+
+        public static String getNameById(int id){
+            StatusEnum statusEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return statusEnum==null?null:statusEnum.getName();
+        }
 
         public int getId() {
             return id;
@@ -246,4 +270,5 @@ public class User extends BaseEntity {
             this.name = name;
         }
     }
+
 }
