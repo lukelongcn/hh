@@ -42,9 +42,9 @@ public class OrderDetailVO {
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
 
-        if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
+        if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getGoodsType().getCode())) {
             vo.setOrderType("2");
-        }else if(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())){
+        }else if(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode().equals(order.getOrderItems().get(0).getGoods().getGoodsType().getCode())){
             vo.setOrderType("1");
         } else {
             vo.setOrderType("3");
