@@ -50,8 +50,7 @@ public class ArticleService {
 
     public Result<ArticleType> addCategory(ArticleTypeDTO articleTypeDTO) {
         ArticleType articleType = new ArticleType();
-        BeanUtils.copyProperties(articleTypeDTO,articleType);
-        articleType.setId(null);
+        BeanUtils.copyProperties(articleTypeDTO,articleType,"id");
         articleType.setCreateTime(new Date());
         articleTypeRepository.save(articleType);
         return Result.success(articleType);

@@ -5,6 +5,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -125,7 +126,7 @@ public class LotteryService {
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
                 }
             }else{
-                String dayMaxlotteryCount = configService.getStringConfig("dayMaxlotteryCount");
+                String dayMaxlotteryCount = configService.getStringConfig(ParamConstant.DAY_MAX_LOTTERY_COUNT);
                 if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount).subtract(new BigDecimal(1))) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
                 }
@@ -427,7 +428,7 @@ public class LotteryService {
         lotteries.addAll(lotteriesRandom);
         List<LotteryFlow> lotteryFlows = new ArrayList<>();
 
-        List<String> remarkList = configService.getStringListConfig("lotteryRemark");
+        List<String> remarkList = configService.getStringListConfig(ParamConstant.LOTTERY_REMARK);
         int count = remarkList.size();
         for (int i = 0; i < lotteries.size(); i++) {
             BigDecimal rewardMoney = moneyMap.get(i + 1);

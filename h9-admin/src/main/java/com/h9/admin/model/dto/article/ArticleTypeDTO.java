@@ -35,6 +35,10 @@ public class ArticleTypeDTO {
     @NotNull(message = "状态不能为空")
     private Integer enable;
 
+    @Length(max = 64,message = "标识过长")
+    @NotBlank(message = "标识不能为空")
+    private String code;
+
 
     public String getName() {
         return name;
@@ -68,4 +72,11 @@ public class ArticleTypeDTO {
         this.id = id;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

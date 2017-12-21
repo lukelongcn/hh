@@ -12,6 +12,7 @@ import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
@@ -143,11 +144,11 @@ public class ConsumeService {
         order.setOrderFrom(2);
         orderItems.setOrders(order);
 
-        String balanceFlowType = configService.getValueFromMap("balanceFlowType", "6");
+        String balanceFlowType = configService.getValueFromMap(ParamConstant.BALANCE_FLOW_TYPE, "6");
 
         orderItems.setMoney(goods.getRealPrice());
 
-        String balanceFlowImg = configService.getValueFromMap("balanceFlowImg", "6");
+        String balanceFlowImg = configService.getValueFromMap(ParamConstant.BALANCE_FLOW_IMG, "6");
         orderItems.setImage(balanceFlowImg);
         orderItems.setName(goods.getName());
         orderItems.setGoods(goods);
@@ -300,10 +301,10 @@ public class ConsumeService {
         items.setDidiCardNumber(cardCoupons.getNo());
         items.setGoods(goods);
 
-//        GlobalProperty globalProperty = globalPropertyRepository.findByCode("balanceFlowImg");
+//        GlobalProperty globalProperty = globalPropertyRepository.findByCode(ParamConstant.BALANCE_FLOW_IMG);
 //        Map<String,String> map = JSONObject.parseObject(globalProperty.getVal(), Map.class);
 
-        Map<String, String> map = configService.getMapConfig("balanceFlowImg");
+        Map<String, String> map = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
 
         String value = map.get("5");
         items.setImage(value);
@@ -363,7 +364,7 @@ public class ConsumeService {
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 
-        String withdrawMax = configService.getStringConfig("withdrawMax");
+        String withdrawMax = configService.getStringConfig(ParamConstant.WITHDRAW_MAX);
         BigDecimal max = new BigDecimal(withdrawMax);
 
         //当天提现的金额

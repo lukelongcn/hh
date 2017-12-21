@@ -1,9 +1,12 @@
 package com.h9.common.common;
 
+import com.h9.common.constant.ParamConstant;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.swing.text.ParagraphView;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +22,7 @@ public class ConfigHanler {
 
     public int getSmsOneDayCount() {
         int defaultValue = 10;
-        String dayMaxotteryCount = configService.getStringConfig("sms:OneDay:CountCount");
+        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.SMS_ONEDAY_COUNTCOUNT);
         try {
             if(StringUtils.isEmpty(dayMaxotteryCount)) defaultValue = Integer.parseInt(dayMaxotteryCount);
         } catch (NumberFormatException e) {
