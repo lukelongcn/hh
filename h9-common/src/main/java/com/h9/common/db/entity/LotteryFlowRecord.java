@@ -5,8 +5,10 @@ import com.h9.common.base.BaseEntity;
 import javax.persistence.*;
 import javax.validation.Constraint;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George
@@ -22,16 +24,34 @@ public class LotteryFlowRecord  extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '操作人'")
     private User user;
 
     @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "lottery_flow_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '活动参与记录id'")
     private LotteryFlow lotteryFlow;
 
-
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '转账状态，1：成功，2：失败'")
     private Integer status = 1;
+
+    @Column(name = "outer_id", columnDefinition = "bigint(20) default null COMMENT '转出方id'")
+    private Long outerId;
+
+    @Column(name = "phone", columnDefinition = "varchar(11) default '' COMMENT '手机号'")
+    private String phone;
+
+    @Column(name = "nick_name", columnDefinition = "varchar(64) default '' COMMENT '昵称'")
+    private String nickName;
+
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '奖励条码'")
+    private String code;
+
+    @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '奖励领取金额'")
+    private BigDecimal money;
+
+    @Column(name = "transfer_time",columnDefinition = "datetime COMMENT '转账时间'")
+    @Temporal(TIMESTAMP)
+    private Date transferTime;
 
     public Long getId() {
         return id;
@@ -63,6 +83,54 @@ public class LotteryFlowRecord  extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
+    public Date getTransferTime() {
+        return transferTime;
+    }
+
+    public void setTransferTime(Date transferTime) {
+        this.transferTime = transferTime;
+    }
+
+    public Long getOuterId() {
+        return outerId;
+    }
+
+    public void setOuterId(Long outerId) {
+        this.outerId = outerId;
     }
 
     public enum LotteryFlowRecordStatusEnum {
