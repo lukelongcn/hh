@@ -247,7 +247,14 @@ public class Orders extends BaseEntity {
 
         WAIT_SEND(1,"待发货"),
         DELIVER(2,"已发货"),
-        FINISH(3, "已完成");
+        FINISH(3, "已完成"),
+        UNCONFIRMED(4,"未确认"),
+        WAIT_ACCEPT(5, "等收货"),
+        FAIL(6,"交易失败"),
+        REFUNDING(7,"退货中"),
+        REJECT_REFUND(10,"拒绝退货"),
+        REFUND_FINISH(8,"退货完成"),
+        SUBMIT(9, "提交成功");
 
         private int code;
         private String desc;
