@@ -403,7 +403,7 @@ public class ConsumeService {
         String purpose = "提现";
         String signFlag = "1";
 
-        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, canWithdrawMoney, userBank, purpose);
+        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 

@@ -56,6 +56,9 @@ public class WithdrawalsRecord extends BaseEntity {
     @Column(name = "city", columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
     private String city;
 
+    @Column(name = "phone", columnDefinition = "varchar(64) default '' COMMENT '用户手机号'")
+    private String phone;
+
     /**
      * description:
      * @see statusEnum
@@ -117,11 +120,21 @@ public class WithdrawalsRecord extends BaseEntity {
 
 
 
-    public WithdrawalsRecord(Long userId, BigDecimal money , UserBank userBank , String remarks) {
-        this.userId = userId;
+    public WithdrawalsRecord(User user, BigDecimal money , UserBank userBank , String remarks) {
+        this.userId = user.getId();
         this.money = money;
         this.userBank = userBank;
         this.remarks = remarks;
+        BankType bankType = userBank.getBankType();
+        if(bankType!=null){
+            this.bankName = bankType.getBankName();
+        }
+        this.name = userBank.getName();
+        this.bankNo = userBank.getNo();
+        province = userBank.getProvince();
+        city = userBank.getCity();
+        phone = user.getPhone();
+
     }
 
     public WithdrawalsRecord(){}
@@ -148,14 +161,6 @@ public class WithdrawalsRecord extends BaseEntity {
     public void setMoney(BigDecimal money) {
         this.money = money;
     }
-
-//    public BigDecimal getSurplusBalance() {
-//        return surplusBalance;
-//    }
-
-//    public void setSurplusBalance(BigDecimal surplusBalance) {
-//        this.surplusBalance = surplusBalance;
-//    }
 
     public UserBank getUserBank() {
         return userBank;
@@ -252,5 +257,13 @@ public class WithdrawalsRecord extends BaseEntity {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
