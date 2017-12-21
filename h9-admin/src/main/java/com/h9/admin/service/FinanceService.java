@@ -2,7 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
-import com.h9.admin.model.vo.LotteryFlowRecordVO;
+import com.h9.common.modle.vo.admin.finance.LotteryFlowRecordVO;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
@@ -23,17 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author: George
@@ -199,7 +195,7 @@ public class FinanceService {
     }
 
     public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlowRecords(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
+       /* Sort sort = new Sort(Sort.Direction.DESC,"id");
         PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFLowRecordDTO.getPageNumber(), lotteryFLowRecordDTO.getPageSize(),sort);
         String sql = this.buildLotteryFlowRecordQueryString(lotteryFLowRecordDTO);
         List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFLowRecordDTO.getStartIndex(),lotteryFLowRecordDTO.getPageSize());
@@ -208,7 +204,15 @@ public class FinanceService {
         ConvertUtils.register(new DateConverter(null),java.util.Date.class);
         List<LotteryFlowRecordVO> lotteryFlowRecordVOS = LotteryFlowRecordVO.toLotteryFlowRecordVOs(maps);
         PageResult<LotteryFlowRecordVO> pageResult = new PageResult<>(lotteryFLowRecordDTO.getPageNumber(),lotteryFLowRecordDTO.getPageSize(),total,lotteryFlowRecordVOS);
-        return Result.success(pageResult);
+        return Result.success(pageResult);*/
+        String phone = StringUtils.isBlank(lotteryFLowRecordDTO.getPhone()) ? null : lotteryFLowRecordDTO.getPhone();
+        String code = StringUtils.isBlank(lotteryFLowRecordDTO.getCode()) ? null : lotteryFLowRecordDTO.getCode();
+        Date startTime = lotteryFLowRecordDTO.getStartTime();
+        Date endTime = lotteryFLowRecordDTO.getEndTime();
+        Integer status = lotteryFLowRecordDTO.getStatus();
+        Page<LotteryFlowRecordVO> lotteryFlowRecordPage = this.lotteryFlowRecordRepository.findByCondition(phone, code,
+                startTime, endTime, status,lotteryFLowRecordDTO.toPageRequest());
+        return Result.success(new PageResult<>(lotteryFlowRecordPage));
     }
 
 

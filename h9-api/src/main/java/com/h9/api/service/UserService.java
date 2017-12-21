@@ -263,9 +263,13 @@ public class UserService {
 
                 BeanUtils.copyProperties(phoneUserExtends, userExtends, "userId");
 
-                userExtendsRepository.save(userExtends);
+                userExtendsRepository.saveAndFlush(userExtends);
                 user.setPhone(phone);
-                userRepository.save(user);
+                userRepository.saveAndFlush(user);
+
+                //到手机用户上去
+
+                user = phoneUser;
             }
         } else {
             user.setPhone(phone);

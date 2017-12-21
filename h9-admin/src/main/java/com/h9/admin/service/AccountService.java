@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -71,16 +72,18 @@ public class AccountService {
     }
 
     public Result<PageResult<BalanceFlowVO>> accountMoneyFlow(PageDTO pageDTO, Long userId) {
-        List<Config> balanceFlowType = configService.getMapListConfig(ParamConstant.BALANCE_FLOW_TYPE);
+        Map balanceFlowType = this.configService.getMapConfig(ParamConstant.BALANCE_FLOW_TYPE);
         Page<BalanceFlow> byBalance = balanceFlowRepository.findByBalance(userId, pageDTO.toPageRequest());
         Page<BalanceFlowVO> map = byBalance.map(balanceFlow -> {
             BalanceFlowVO balanceFlowVO = BalanceFlowVO.toBalanceFlowVOByBalanceFlow(balanceFlow);
-            Long flowType = balanceFlow.getFlowType();
-            for (Config config : balanceFlowType) {
-                if (flowType.toString().equals(config.getKey())) {
-                    balanceFlowVO.setFlowTypeDesc(config.getVal());
+            String flowType = balanceFlow.getFlowType().toString();
+            String flowTypeDesc = null;
+            if (balanceFlowType != null) {
+                if (balanceFlowType.get(flowType) != null) {
+                    flowTypeDesc = balanceFlowType.get(flowType).toString();
                 }
             }
+            balanceFlowVO.setFlowTypeDesc(flowTypeDesc);
             return balanceFlowVO;
         });
         
@@ -88,16 +91,18 @@ public class AccountService {
     }
 
     public Result<PageResult<BalanceFlowVO>> accountVCoinsFlow(PageDTO pageDTO, Long userId) {
-        List<Config> balanceFlowType = configService.getMapListConfig(ParamConstant.VCOIN_EXCHANGE_TYPE);
+        Map balanceFlowType = this.configService.getMapConfig(ParamConstant.VCOIN_EXCHANGE_TYPE);
         Page<VCoinsFlow> byBalance = vCoinsFlowRepository.findByBalance(userId, pageDTO.toPageRequest());
         Page<BalanceFlowVO> map = byBalance.map(balanceFlow -> {
             BalanceFlowVO balanceFlowVO = BalanceFlowVO.toBalanceFlowVOByVCoinsFlow(balanceFlow);
-            Long flowType = balanceFlow.getvCoinsflowType();
-            for (Config config : balanceFlowType) {
-                if (flowType.toString().equals(config.getKey())) {
-                    balanceFlowVO.setFlowTypeDesc(config.getVal());
+            String flowType = balanceFlow.getvCoinsflowType().toString();
+            String flowTypeDesc = null;
+            if (balanceFlowType != null) {
+                if (balanceFlowType.get(flowType) != null) {
+                    flowTypeDesc = balanceFlowType.get(flowType).toString();
                 }
             }
+            balanceFlowVO.setFlowTypeDesc(flowTypeDesc);
             return balanceFlowVO;
         });
         return Result.success(new PageResult<>(map));
