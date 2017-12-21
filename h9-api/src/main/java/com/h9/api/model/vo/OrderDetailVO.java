@@ -41,16 +41,14 @@ public class OrderDetailVO {
 
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
-        if (order.getOrderType().equals("1")) {
-            vo.setOrderType(3 + "");
-        } else {
-            if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
-                vo.setOrderType("2");
-            } else {
-                vo.setOrderType("1");
-            }
-        }
 
+        if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
+            vo.setOrderType("2");
+        }else if(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())){
+            vo.setOrderType("1");
+        } else {
+            vo.setOrderType("3");
+        }
 
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
@@ -60,7 +58,7 @@ public class OrderDetailVO {
             vo.setAccepterName(order.getUserName());
             vo.setAddress(order.getUserAddres());
             String expressNum = order.getExpressNum();
-            vo.setLogisticsNumber(expressNum == null ? "":expressNum);
+            vo.setLogisticsNumber(expressNum == null ? "" : expressNum);
         }
 
         List<OrderItems> orderItems = order.getOrderItems();
