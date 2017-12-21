@@ -53,7 +53,7 @@ public class Article extends BaseEntity {
     private Integer recommend = 1;
 
 
-    @Column(name = "img_url", nullable = false,columnDefinition = "varchar(200) COMMENT '文章显示图片'")
+    @Column(name = "img_url", columnDefinition = "varchar(200) COMMENT '文章显示图片'")
     private String imgUrl;
     public Long getId() {
         return id;
