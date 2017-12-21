@@ -14,7 +14,7 @@ import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
-import com.h9.lottery.config.ConstantConfig;
+import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
@@ -261,7 +261,7 @@ public class LotteryService {
     @Transactional
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
-        code = ConstantConfig.path2Code(code);
+        code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -306,7 +306,7 @@ public class LotteryService {
             lotteryResult.setMoney(MoneyUtils.formatMoney(lotteryFlow.getMoney()));
         }
 
-        lotteryResult.setQrCode(ConstantConfig.Lottery_QR_PATH + code);
+        lotteryResult.setQrCode(LotteryConstantConfig.Lottery_QR_PATH + code);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
         if (islottery) {
             LotteryFlow top1LotteryFlow = lotteryFlowRepository.findTop1ByRewardOrderByMoneyDesc(reward);
@@ -349,7 +349,7 @@ public class LotteryService {
 
     @Transactional
     public Result lottery(Long curUserId, String code) {
-        code = ConstantConfig.path2Code(code);
+        code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -508,7 +508,7 @@ public class LotteryService {
 
 
     public String forward(String code) {
-        return concatUrl(ConstantConfig.Lottery_QR_FORWARD_PATH, code);
+        return concatUrl(LotteryConstantConfig.Lottery_QR_FORWARD_PATH, code);
     }
 
 

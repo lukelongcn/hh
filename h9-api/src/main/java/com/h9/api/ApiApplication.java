@@ -1,6 +1,7 @@
 package com.h9.api;
 
 import com.h9.common.StartBanner;
+import com.h9.common.common.ConstantConfig;
 import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
@@ -59,6 +60,7 @@ public class ApiApplication {
 
         Environment environment = context.getBean(Environment.class);
         String enviroment = environment.getProperty("h9.current.envir");
+        ConstantConfig.init(context,environment);
         logger.info("当前环境：" + enviroment);
 
     }

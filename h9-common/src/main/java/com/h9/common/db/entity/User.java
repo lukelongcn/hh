@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.common.ConstantConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.unique.DB2UniqueDelegate;
 
 import javax.naming.Name;
@@ -106,7 +108,10 @@ public class User extends BaseEntity {
     }
 
     public String getAvatar() {
-        return avatar;
+        if(StringUtils.isNotEmpty(avatar)){
+            return avatar;
+        }
+        return ConstantConfig.DEFAULT_HEAD;
     }
 
     public void setAvatar(String avatar) {
