@@ -59,7 +59,6 @@ public class User extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常 2禁用 3失效'")
     private Integer status = 1;
 
-    //TODO 待定
     @Column(name = "type",nullable = false,columnDefinition = "tinyint default 1 COMMENT ' 1 正常用户'")
     private Integer type = 1;
 

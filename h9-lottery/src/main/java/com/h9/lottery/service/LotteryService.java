@@ -485,7 +485,6 @@ public class LotteryService {
                 product = productInfo.covert();
                 ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
                 product.setProductType(productType);
-//                todo
                 product = productRepository.saveAndFlush(product);
             } catch (Exception e) {
                 logger.debug(e.getMessage(), e);
@@ -509,7 +508,6 @@ public class LotteryService {
 
 
     public String forward(String code) {
-        //todo
         return concatUrl(LotteryConstantConfig.Lottery_QR_FORWARD_PATH, code);
     }
 

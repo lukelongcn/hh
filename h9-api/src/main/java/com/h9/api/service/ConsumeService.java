@@ -386,13 +386,16 @@ public class ConsumeService {
         if(balance.compareTo(canWithdrawMoney) < 0){
             canWithdrawMoney = balance;
         }
-        String transAmt = "101";
+        String transAmt = "";
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
         } else {
-            //TODO 设置提现金额,转化成分
 //            transAmt = canWithdrawMoney;
-            transAmt = "101";
+            if ("product".equals(currentEnvironment)) {
+                transAmt = canWithdrawMoney.multiply(new BigDecimal(100)).toString();
+            }else{
+                transAmt = "101";
+            }
         }
 
         String cardNo = userBank.getNo();
@@ -411,7 +414,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate);
+        Result result = chinaPayService.signPay(payParam, merDate,currentEnvironment);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
