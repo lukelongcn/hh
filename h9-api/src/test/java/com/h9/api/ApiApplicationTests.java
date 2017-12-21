@@ -281,8 +281,6 @@ public class ApiApplicationTests {
         CharSequence charSequence = phone.subSequence(4, 8);
         user.setNickName(phone.replace(charSequence, "****"));
         user.setLastLoginTime(new Date());
-        GlobalProperty defaultHead = globalPropertyRepository.findByCode(ParamConstant.DEFUALT_HEAD);
-        user.setAvatar(defaultHead.getVal());
         return user;
     }
 
