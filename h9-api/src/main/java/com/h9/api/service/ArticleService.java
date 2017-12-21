@@ -22,11 +22,11 @@ import java.util.Map;
  * on 2017/11/5
  */
 @Service
-@Transactional
 public class ArticleService {
     @Resource
     ArticleRepository articleReposiroty;
 
+    @Transactional
     @ApiOperation(value = "获取文章内容")
     public Result findOne(Long id){
         Article article =  articleReposiroty.findOne(id);
@@ -34,7 +34,7 @@ public class ArticleService {
             return Result.fail("文章不存在");
         }
         if(article.getEnable()!=1){
-            article.setContent("文章已删除");
+           return  Result.fail("文章已删除");
         }
         ArticleVO articleVO = new ArticleVO(articleReposiroty.findOne(id));
         articleVO.setCreateTime(DateUtil.formatDate(article.getCreateTime(), DateUtil.FormatType.DAY));

@@ -6,6 +6,7 @@ import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.RechargeRecord;
@@ -73,6 +74,6 @@ public class OrderService {
     }
 
     public Result<List<String>> getSupportExpress() {
-        return Result.success(configService.getStringListConfig("supportExpress"));
+        return Result.success(configService.getStringListConfig(ParamConstant.SUPPORT_EXPRESS));
     }
 }
