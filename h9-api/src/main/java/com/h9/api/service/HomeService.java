@@ -92,7 +92,7 @@ public class HomeService {
         }
 
 
-        List<Announcement> announcementList = announcementReposiroty.findActived(new Date());
+        List<Announcement> announcementList = announcementReposiroty.findActived();
 
         String announcemented = preLink.get("announcement");
         List<HomeVO> collect = announcementList.stream()

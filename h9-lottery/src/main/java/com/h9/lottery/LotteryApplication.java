@@ -1,8 +1,9 @@
 package com.h9.lottery;
 
 import com.h9.common.StartBanner;
+import com.h9.common.common.ConstantConfig;
 import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
-import com.h9.lottery.config.ConstantConfig;
+import com.h9.lottery.config.LotteryConstantConfig;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,7 +41,8 @@ public class LotteryApplication  {
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(LotteryApplication.class, args);
         Environment environment = applicationContext.getBean(Environment.class);
-        ConstantConfig.init(environment);
+        LotteryConstantConfig.init(environment);
+        ConstantConfig.init(applicationContext,environment);
         logger.debugv(StartBanner.BANNER);
     }
 

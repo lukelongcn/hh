@@ -1,6 +1,7 @@
 package com.h9.api;
 
 import com.h9.common.StartBanner;
+import com.h9.common.common.ConstantConfig;
 import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
@@ -40,21 +41,27 @@ public class ApiApplication {
 
     static Logger logger = getLogger(ApiApplication.class);
     public static String chinaPayKeyPath = null;
+    public static String productEvirPayKeyPath = null;
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(ApiApplication.class, args);
         logger.debugv(StartBanner.BANNER);
 
         chinaPayKeyPath = System.getProperty("user.dir");
-
+        productEvirPayKeyPath = chinaPayKeyPath + "/certs/china-unionpay/MerPrK_808080211303539_20160518170403.key";
+        //测试证书
         chinaPayKeyPath += "/certs/china-unionpay/MerPrK_808080211881410_20171102154758.key";
-        logger.info("私钥位置: "+chinaPayKeyPath);
+
+        logger.info("私钥位置: " + chinaPayKeyPath);
         boolean exists = new File(chinaPayKeyPath).exists();
-        logger.info("存在: "+exists);
+        boolean productPayKeyExist = new File(productEvirPayKeyPath).exists();
+        logger.info("for test 存在: " + exists);
+        logger.info("for product 存在: " + productPayKeyExist);
 
         Environment environment = context.getBean(Environment.class);
         String enviroment = environment.getProperty("h9.current.envir");
-        logger.info("当前环境："+enviroment);
+        ConstantConfig.init(context,environment);
+        logger.info("当前环境：" + enviroment);
 
     }
 
