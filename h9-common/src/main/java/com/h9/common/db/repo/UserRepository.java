@@ -21,6 +21,7 @@ import javax.persistence.LockModeType;
 @Repository
 public interface UserRepository extends BaseRepository<User> {
 
+    @Query("select u from User u where u.phone = ?1 and u.status<>3")
     User findByPhone(String phone);
 
     @Query("select u from User u where u.openId = ?1 and u.status<>3")
