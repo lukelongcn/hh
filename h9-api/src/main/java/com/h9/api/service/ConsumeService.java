@@ -240,7 +240,7 @@ public class ConsumeService {
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
 
-        goodsList.stream().filter(el -> el.getStock() > 0).forEach(goods -> {
+        goodsList.stream().forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
 //            Object count = cardCouponsRepository.getCount(goods.getId());

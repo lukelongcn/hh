@@ -26,7 +26,7 @@ public class OrderItems extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(16) default '' COMMENT '商品名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '商品名称'")
     private String name;
 
     @Column(name = "image", columnDefinition = "varchar(256) default '' COMMENT '商品图片'")

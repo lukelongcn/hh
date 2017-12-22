@@ -38,7 +38,7 @@ public class WithdrawalsRecord extends BaseEntity {
 //    private BigDecimal surplusBalance = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'")
+    @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private UserBank userBank;
 
     @Column(name = "name", columnDefinition = "varchar(32) default '' COMMENT '持卡人名'")
@@ -81,7 +81,7 @@ public class WithdrawalsRecord extends BaseEntity {
     private Date finishTime;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_record_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    @JoinColumn(name = "user_record_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private UserRecord userRecord;
 
 
@@ -131,9 +131,9 @@ public class WithdrawalsRecord extends BaseEntity {
         }
         this.name = userBank.getName();
         this.bankNo = userBank.getNo();
-        province = userBank.getProvince();
-        city = userBank.getCity();
-        phone = user.getPhone();
+        this.province = userBank.getProvince();
+        this.city = userBank.getCity();
+        this.phone = user.getPhone();
 
     }
 
