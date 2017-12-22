@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 
@@ -55,6 +57,7 @@ public class Goods extends BaseEntity {
 //    @Column(name = "goods_type",nullable = false,columnDefinition = "int default 1 COMMENT '类别（1，为手机充值 2，为 滴滴卡兑换）'")
     @ManyToOne()
     @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '商品类型'")
+    @NotFound(action= NotFoundAction.IGNORE)
     private GoodsType goodsType;
 
     @Column(name = "img",nullable = false,columnDefinition = "varchar(256) default '' COMMENT '图片url' ")
