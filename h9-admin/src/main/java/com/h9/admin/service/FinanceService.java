@@ -184,6 +184,12 @@ public class FinanceService {
                 }
             }
             flowRecord.setLotteryFlow(flow);
+            flowRecord.setCode(flow.getReward().getCode());
+            flowRecord.setMoney(flow.getMoney());
+            flowRecord.setNickName(flow.getUser().getNickName());
+            flowRecord.setOuterId(flow.getUser().getId());
+            flowRecord.setPhone(flow.getUser().getPhone());
+            flowRecord.setTransferTime(flow.getCreateTime());
             long userId = Long.valueOf((String) HttpUtil.getHttpSession().getAttribute("curUserId"));
             flowRecord.setUser(this.userRepository.findOne(userId));
             this.lotteryFlowRecordRepository.save(flowRecord);
@@ -195,16 +201,6 @@ public class FinanceService {
     }
 
     public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlowRecords(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
-       /* Sort sort = new Sort(Sort.Direction.DESC,"id");
-        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFLowRecordDTO.getPageNumber(), lotteryFLowRecordDTO.getPageSize(),sort);
-        String sql = this.buildLotteryFlowRecordQueryString(lotteryFLowRecordDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFLowRecordDTO.getStartIndex(),lotteryFLowRecordDTO.getPageSize());
-        long total = this.jpaRepository.nativeCount(sql);
-        //解决Apache的BeanUtils对日期的支持不是很好的问题
-        ConvertUtils.register(new DateConverter(null),java.util.Date.class);
-        List<LotteryFlowRecordVO> lotteryFlowRecordVOS = LotteryFlowRecordVO.toLotteryFlowRecordVOs(maps);
-        PageResult<LotteryFlowRecordVO> pageResult = new PageResult<>(lotteryFLowRecordDTO.getPageNumber(),lotteryFLowRecordDTO.getPageSize(),total,lotteryFlowRecordVOS);
-        return Result.success(pageResult);*/
         String phone = StringUtils.isBlank(lotteryFLowRecordDTO.getPhone()) ? null : lotteryFLowRecordDTO.getPhone();
         String code = StringUtils.isBlank(lotteryFLowRecordDTO.getCode()) ? null : lotteryFLowRecordDTO.getCode();
         Date startTime = lotteryFLowRecordDTO.getStartTime();
@@ -215,39 +211,11 @@ public class FinanceService {
         return Result.success(new PageResult<>(lotteryFlowRecordPage));
     }
 
-
-
-    private String buildLotteryFlowRecordQueryString(LotteryFLowRecordDTO lotteryFLowRecordDTO){
-        StringBuilder sql = new StringBuilder(
-                "select o.*, us.nick_name as operator from (select lfr.id,lfr.create_time as createTime,lfr.user_id,lfr.status,lf.money,lf.create_time as transferTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow_record lfr, lottery_flow lf ,user u,user_account ua,reward r" +
-                        " where lfr.lottery_flow_id=lf.id and lf.user_id=u.id and lf.reward_id=r.id and lf.user_id=ua.user_id {0}) as o,user us where o.user_id=us.id");
-        StringBuilder condition  = new StringBuilder("");
-        if(lotteryFLowRecordDTO.getStatus()!=null&&lotteryFLowRecordDTO.getStatus()!=0){
-            condition.append(" and lfr.status=").append(lotteryFLowRecordDTO.getStatus());
-        }
-        if(lotteryFLowRecordDTO.getStartTime()!=null){
-            condition.append(" and lfr.create_time>='").append(DateUtil.formatDate(lotteryFLowRecordDTO.getStartTime(),DateUtil.FormatType.SECOND)).append("'");
-        }
-        if(lotteryFLowRecordDTO.getEndTime()!=null){
-            condition.append(" and lfr.create_time<'")
-                    .append(DateUtil.formatDate(DateUtil.addDays(lotteryFLowRecordDTO.getEndTime(),1),DateUtil.FormatType.SECOND))
-                    .append("'");
-        }
-        if(!StringUtils.isEmpty(lotteryFLowRecordDTO.getCode())){
-            condition.append(" and r.code='").append(lotteryFLowRecordDTO.getCode()).append("'");
-        }
-        if(!StringUtils.isEmpty(lotteryFLowRecordDTO.getPhone())){
-            condition.append(" and u.phone='").append(lotteryFLowRecordDTO.getPhone()).append("'");
-        }
-        sql.append(" order by o.id desc");
-        return MessageFormat.format(sql.toString(),condition);
-    }
-
     public Result transferFromLotteryFlowRecord(long id){
 
         LotteryFlowRecord lotteryFlowRecord = this.lotteryFlowRecordRepository.findByLockId(id);
         if(lotteryFlowRecord.getStatus()!=LotteryFlowRecord.LotteryFlowRecordStatusEnum.FAIL.getId()){
-            return Result.fail("改记录不为转账失败记录");
+            return Result.fail("该记录不为转账失败记录");
         }
         LotteryFlow lotteryFlow =lotteryFlowRecord.getLotteryFlow();
         Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
@@ -256,7 +224,7 @@ public class FinanceService {
             return Result.fail("余额不足，转账失败");
         }
         long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
-        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
+        Result r = this.commonService.setBalance(uId,lotteryFlowRecord.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                 lotteryFlow.getId(),lotteryFlow.getId().toString(),"小品会");
         if(r.getCode()==Result.FAILED_CODE){
             this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",lotteryFlow.getId());
