@@ -49,7 +49,7 @@ public class Goods extends BaseEntity {
     @Column(name = "description", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '描述'")
     private String description;
 
-    @Column(name = "stock",nullable = false,columnDefinition = "tinyint default 0 COMMENT '库存'")
+    @Column(name = "stock",nullable = false,columnDefinition = "int default 0 COMMENT '库存'")
     private Integer stock = 0;
 
 //    @Column(name = "goods_type",nullable = false,columnDefinition = "int default 1 COMMENT '类别（1，为手机充值 2，为 滴滴卡兑换）'")
