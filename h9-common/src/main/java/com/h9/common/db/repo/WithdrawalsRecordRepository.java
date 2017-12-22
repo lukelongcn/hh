@@ -39,7 +39,7 @@ public interface WithdrawalsRecordRepository extends BaseRepository<WithdrawalsR
             " from WithdrawalsRecord  w,User u where w.userId=u.id" +
             " and (?1 is null or u.phone = ?1)" +
             " and (?2 is null or w.bankNo = ?2)" +
-            " and (?3 is null or w.status = 0 or w.status = ?3)" +
+            " and (?3 is null or?3 = 0 or w.status = ?3)" +
             " order by w.id desc ")
     Page<WithdrawRecordVO> findByCondition(String phone, String bankNo, Integer status, Pageable pageable);
 
