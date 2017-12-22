@@ -20,7 +20,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "withdrawals_record")
+@Table(name = "withdrawals_record",indexes = {@Index(columnList = "user_id")} )
 public class WithdrawalsRecord extends BaseEntity {
 
     @Id
