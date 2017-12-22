@@ -24,7 +24,7 @@ public class LotteryFlowRecord  extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '操作人'")
+    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '操作人'",foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @ManyToOne( fetch = FetchType.EAGER)
