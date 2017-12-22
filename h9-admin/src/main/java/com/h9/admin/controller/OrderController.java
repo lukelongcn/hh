@@ -2,6 +2,7 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.order.ExpressDTO;
+import com.h9.admin.model.dto.order.OrderStatusDTO;
 import com.h9.admin.model.vo.OrderDetailVO;
 import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.admin.service.OrderService;
@@ -48,6 +49,13 @@ public class OrderController {
     @ApiOperation("填写/修改订单物流信息")
     public Result<OrderItemVO> editExpress(@Validated @RequestBody ExpressDTO expressDTO){
         return orderService.editExpress(expressDTO);
+    }
+
+    @Secured(accessCode = "order:status:update")
+    @PostMapping(value = "/{id}/status")
+    @ApiOperation("确定|取消订单")
+    public Result<OrderItemVO> updateOrderStatus(@PathVariable long id,@Validated @RequestBody OrderStatusDTO orderStatusDTO){
+        return orderService.updateOrderStatus(id, orderStatusDTO.getStatus());
     }
 
     @Secured(accessCode = "express:company")

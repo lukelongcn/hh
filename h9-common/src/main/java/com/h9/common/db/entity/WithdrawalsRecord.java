@@ -131,9 +131,9 @@ public class WithdrawalsRecord extends BaseEntity {
         }
         this.name = userBank.getName();
         this.bankNo = userBank.getNo();
-        province = userBank.getProvince();
-        city = userBank.getCity();
-        phone = user.getPhone();
+        this.province = userBank.getProvince();
+        this.city = userBank.getCity();
+        this.phone = user.getPhone();
 
     }
 
