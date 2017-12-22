@@ -207,9 +207,4 @@ public class WithdrawRecordVO {
         BeanUtils.copyProperties(withdrawalsRecord,this);
     }
 
-    public WithdrawRecordVO(WithdrawalsRecord withdrawalsRecord, String phone) {
-        BeanUtils.copyProperties(withdrawalsRecord,this);
-        this.phone = phone;
-    }
-
 }
