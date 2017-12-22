@@ -23,7 +23,7 @@ public class OrderDTO extends PageDTO{
     @ApiModelProperty(value = "下单结束时间")
     private Date endTime;
 
-    @ApiModelProperty(value = "订单状态,1:待发货,2:已发货,3:已完成")
+    @ApiModelProperty(value = "订单状态,0:未确认,1:等待发货,2:等待收货,3:已取消 ,4:交易成功,5:交易失败,6:退货受理中,7:退货中,8:不予退货,9:退货完成")
     @NotNull(message = "状态不能为空")
     private Integer status;
 
