@@ -57,40 +57,12 @@ public class FinanceService {
     @Autowired
     private VB2MoneyRepository vb2MoneyRepository;
 
-    public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
-        /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
-        String sql = "select o.* from withdrawals_record o";
-        Page<List<Map>> records = this.withdrawalsRecordRepository.findByCondtion(sql,pageRequest);*/
-        String sql = this.buildWithdrawRecordQueryString(withdrawRecordQueryDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,withdrawRecordQueryDTO.getStartIndex(),withdrawRecordQueryDTO.getPageSize());
-        long total = this.jpaRepository.nativeCount(sql);
-        //解决Apache的BeanUtils对日期的支持不是很好的问题
-        ConvertUtils.register(new DateConverter(null),java.util.Date.class);
-        List<WithdrawRecordVO> withdrawRecordVOS = WithdrawRecordVO.toWithdrawRecordVOs(maps);
-        PageResult<WithdrawRecordVO> pageResult = new PageResult<>(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize(),total,withdrawRecordVOS);
-        return  Result.success(pageResult);
-    }
-
-    private String buildWithdrawRecordQueryString(WithdrawRecordQueryDTO withdrawRecordQueryDTO){
-        StringBuilder sql = new StringBuilder(
-                "select w.id,w.order_id as orderId,w.user_id as userId,w.money,w.create_time as createTime,w.finish_time as finishTime,w.status,u.phone" +
-                        ",ub.name,ub.no as bankCardNo,ub.provice,ub.city,ut.bank_name as bankName" +
-                        " from withdrawals_record w,user u,user_bank ub,bank_type ut,user_record ur where w.user_id=u.id and w.user_bank_id = ub.id and ub.bank_type_id = ut.id and w.user_record_id=ur.id "
-        );
-        if(!StringUtils.isEmpty(withdrawRecordQueryDTO.getPhone())){
-            sql.append(" and u.phone=").append(withdrawRecordQueryDTO.getPhone());
-        }
-        if(!StringUtils.isEmpty(withdrawRecordQueryDTO.getBankCardNo())){
-            sql.append(" and ub.no=").append(withdrawRecordQueryDTO.getBankCardNo());
-        }
-        if(withdrawRecordQueryDTO.getStatus()!=null&&withdrawRecordQueryDTO.getStatus()!=0){
-            sql.append(" and w.status=").append(withdrawRecordQueryDTO.getStatus());
-        }
-        if(withdrawRecordQueryDTO.getUserId()!=null){
-            sql.append(" and w.user_id=").append(withdrawRecordQueryDTO.getUserId());
-        }
-        sql.append(" order by w.id desc");
-        return sql.toString();
+    public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) {
+        String phone = StringUtils.isBlank(withdrawRecordQueryDTO.getPhone()) ? null : withdrawRecordQueryDTO.getPhone();
+        String bankCardNo = StringUtils.isBlank(withdrawRecordQueryDTO.getBankCardNo()) ? null : withdrawRecordQueryDTO.getBankCardNo();
+        Page<WithdrawRecordVO> withdrawRecordVOPage = this.withdrawalsRecordRepository.findByCondition(
+                phone,bankCardNo,withdrawRecordQueryDTO.getStatus(),withdrawRecordQueryDTO.toPageRequest());
+        return Result.success(new PageResult<>(withdrawRecordVOPage));
     }
 
     public Result<WithdrawalsRecord> updateWithdrawRecordStatus(long id){
