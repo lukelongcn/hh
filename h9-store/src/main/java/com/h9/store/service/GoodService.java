@@ -220,7 +220,7 @@ public class GoodService {
 
         if(result.getCode() == 1) return result;
 
-        //单独判断下余额是否足够
+        //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
         if(balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0){
