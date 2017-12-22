@@ -28,7 +28,7 @@ public class LotteryFlowRecord  extends BaseEntity {
     private User user;
 
     @ManyToOne( fetch = FetchType.EAGER)
-    @JoinColumn(name = "lottery_flow_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '活动参与记录id'")
+    @JoinColumn(name = "lottery_flow_id", referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '活动参与记录id'",foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private LotteryFlow lotteryFlow;
 
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '转账状态，1：成功，2：失败'")
