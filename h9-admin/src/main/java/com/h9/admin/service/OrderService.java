@@ -5,8 +5,10 @@ import com.h9.admin.model.vo.OrderDetailVO;
 import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.GoodsType;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.db.entity.RechargeRecord;
@@ -36,6 +38,8 @@ public class OrderService {
     private ConfigService configService;
     @Resource
     private RechargeRecordRepository rechargeRecordRepository;
+    @Resource
+    private CommonService commonService;
     
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
@@ -97,6 +101,10 @@ public class OrderService {
             return Result.fail("不支持修改订单为当前状态");
         }
         this.ordersRepository.save(orders);
+        if (status == Orders.statusEnum.CANCEL.getCode()) {
+           this.commonService.setBalance(orders.getUser().getId(),orders.getMoney(), BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
+                   orders.getId(),orders.getNo(),"订单取消退回");
+        }
         return Result.success();
     }
 }
