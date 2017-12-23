@@ -40,7 +40,7 @@ public class WithdrawalsRecord extends BaseEntity {
 //    private BigDecimal surplusBalance = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "user_bank_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotFound(action= NotFoundAction.IGNORE)
     private UserBank userBank;
 

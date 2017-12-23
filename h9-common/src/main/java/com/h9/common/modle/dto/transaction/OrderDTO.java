@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class OrderDTO extends PageDTO{
     @ApiModelProperty(value = "订单编号")
-    private String no;
+    private Long no;
 
     @ApiModelProperty(value = "手机号")
     private String phone;
@@ -27,11 +27,11 @@ public class OrderDTO extends PageDTO{
     @NotNull(message = "状态不能为空")
     private Integer status;
 
-    public String getNo() {
+    public Long getNo() {
         return no;
     }
 
-    public void setNo(String no) {
+    public void setNo(Long no) {
         this.no = no;
     }
 
