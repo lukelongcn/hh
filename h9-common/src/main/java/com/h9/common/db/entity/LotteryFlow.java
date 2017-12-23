@@ -50,6 +50,9 @@ public class LotteryFlow extends BaseEntity {
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '1 未分配奖励 2已分配奖励 3完成'")
     private Integer status = 1;
 
+    @Column(name = "transfer_status", columnDefinition = "tinyint default 0 COMMENT '是否已转账，0:未转账，1:已转账'")
+    private Integer transferStatus;
+
     /***
      * @see LotteryFlow.UserEnum
      * @param roomUser
@@ -150,11 +153,48 @@ public class LotteryFlow extends BaseEntity {
         this.desc = desc;
     }
 
+    public Integer getTransferStatus() {
+        return transferStatus;
+    }
+
+    public void setTransferStatus(Integer transferStatus) {
+        this.transferStatus = transferStatus;
+    }
+
     public enum UserEnum{
         ROOMUSER(2,"房主"),
         ORTHER(1,"普通用户");
 
         UserEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public enum TransferStatusEnum{
+        NON_TRANSFERRED(0,"未转账"),
+        TRANSFERRED(1,"已转账");
+
+        TransferStatusEnum(int id,String name){
             this.id = id;
             this.name = name;
         }

@@ -91,7 +91,6 @@ public class FinanceService {
 
     public Result transferFromLotteryFlows(Set<Long> ids){
         List<String> errMsgList = new ArrayList<>();
-        LotteryFlowRecord lotteryFlowRecord = new LotteryFlowRecord();
         for(Long id:ids){
             LotteryFlowRecord flowRecord = this.lotteryFlowRecordRepository.findByLotteryFlow_Id(id);
             if(flowRecord!=null){
@@ -110,19 +109,13 @@ public class FinanceService {
                 long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
                 Result r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                         flow.getId(),flow.getId().toString(),"小品会");
-               /* if(r.getCode()==Result.FAILED_CODE){
-                    r = this.commonService.setBalance(uId,flow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
-                            flow.getId(),flow.getId().toString(),"小品会");
-                    if(r.getCode()==Result.FAILED_CODE){
-                        this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
-                        errMsgList.add("收款方修改账户余额出错，lotteryFlow.id为"+flow.getId());
-                    }
-                }*/
                 if(r.getCode()==Result.FAILED_CODE){
                     this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",flow.getId());
                     errMsgList.add("收款方修改账户余额出错，lotteryFlow.id为"+flow.getId());
                 }
             }
+            flow.setTransferStatus(LotteryFlow.TransferStatusEnum.TRANSFERRED.getId());
+            this.lotteryFlowRepository.save(flow);
             flowRecord.setLotteryFlow(flow);
             flowRecord.setCode(flow.getReward().getCode());
             flowRecord.setMoney(flow.getMoney());
@@ -144,7 +137,10 @@ public class FinanceService {
         String phone = StringUtils.isBlank(lotteryFLowRecordDTO.getPhone()) ? null : lotteryFLowRecordDTO.getPhone();
         String code = StringUtils.isBlank(lotteryFLowRecordDTO.getCode()) ? null : lotteryFLowRecordDTO.getCode();
         Date startTime = lotteryFLowRecordDTO.getStartTime();
-        Date endTime = lotteryFLowRecordDTO.getEndTime();
+        Date endTime = null;
+        if (lotteryFLowRecordDTO.getEndTime() != null) {
+            endTime = DateUtil.addDays(lotteryFLowRecordDTO.getEndTime(),1);
+        }
         Integer status = lotteryFLowRecordDTO.getStatus();
         Page<LotteryFlowRecordVO> lotteryFlowRecordPage = this.lotteryFlowRecordRepository.findByCondition(phone, code,
                 startTime, endTime, status,lotteryFLowRecordDTO.toPageRequest());
