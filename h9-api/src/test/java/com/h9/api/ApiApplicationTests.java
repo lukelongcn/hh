@@ -8,6 +8,7 @@ import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
+import com.h9.common.base.PageResult;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
@@ -22,6 +23,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
@@ -41,14 +44,14 @@ public class ApiApplicationTests {
 
 
     @Test
-    public void test2222(){
+    public void test2222() {
         Address address = new Address();
         //address.setUserId(userId);
         address.setName("12312");
         address.setPhone("13456458529");
 
         //String provinceName = chinaRepository.findName(8);
-       // String cityName = chinaRepository.findName(addressDTO.getCid());
+        // String cityName = chinaRepository.findName(addressDTO.getCid());
         //String areaName = chinaRepository.findName(addressDTO.getAid());
         address.setProvince("312312");
         address.setCity("asdas");
@@ -60,31 +63,32 @@ public class ApiApplicationTests {
         //设值详细地址
         address.setAddress("3131");
         // 设置是否为默认地址
-       // if(addressDTO.getDefaultAddress() == 1){
+        // if(addressDTO.getDefaultAddress() == 1){
         //    addressRepository.updateDefault(userId);
-      //  }
+        //  }
         address.setDefaultAddress(1);
 
         // 使用状态设为开启
         address.setStatus(1);
-         address = addressRepository.saveAndFlush(address);
+        address = addressRepository.saveAndFlush(address);
 
         logger.debug(address.getId());
     }
 
     @Resource
     ChinaRepository chinaRepository;
+
     @Test
-    public void findFromDb(){
+    public void findFromDb() {
         //从数据库获取数据
         Long startTime = System.currentTimeMillis();
         List<China> allProvices = chinaRepository.findAllProvinces();
 
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
         Long end = System.currentTimeMillis();
-        logger.debugv("时间"+(end-startTime));
+        logger.debugv("时间" + (end - startTime));
 //        存储到redis
-        redisBean.setObject(RedisKey.addressKey,areasList);
+        redisBean.setObject(RedisKey.addressKey, areasList);
 
     }
 
@@ -144,7 +148,6 @@ public class ApiApplicationTests {
 
 
     }
-
 
 
     ////@Test
@@ -227,7 +230,7 @@ public class ApiApplicationTests {
 
     }
 
-     Logger logger = Logger.getLogger(ApiApplicationTests.class);
+    Logger logger = Logger.getLogger(ApiApplicationTests.class);
 
 
     @Resource
@@ -241,7 +244,7 @@ public class ApiApplicationTests {
 
 
     //@Test
-    public void saveUser(){
+    public void saveUser() {
         User user = initUserInfo("13066886409");
         int loginCount = user.getLoginCount();
         user.setLoginCount(++loginCount);
@@ -289,8 +292,9 @@ public class ApiApplicationTests {
     UserBankRepository userBankRepository;
     @Resource
     private WithdrawalsRecordRepository withdrawalsRecordReposiroty;
+
     @Test
-    public void TestAccount(){
+    public void TestAccount() {
 
         redisBean.setStringValue("sms:code:count:4:18770812669", "0");
 
@@ -305,16 +309,17 @@ public class ApiApplicationTests {
 
     @Resource
     CardCouponsRepository cardCouponsRepository;
-    @Test
-    public void cardsGenerator(){
 
-        for(int i = 0;i<10000;i++) {
+    @Test
+    public void cardsGenerator() {
+
+        for (int i = 0; i < 10000; i++) {
             if (i / 1000 == 0) {
                 System.out.println(i);
             }
             CardCoupons cardCoupons = new CardCoupons();
             cardCoupons.setBatchNo("20170904");
-            cardCoupons.setNo(UUID.randomUUID().toString().substring(0,10));
+            cardCoupons.setNo(UUID.randomUUID().toString().substring(0, 10));
             cardCoupons.setGoodsId(1L);
             cardCoupons.setMoney(new BigDecimal(20));
             cardCoupons.setStatus(1);
@@ -323,6 +328,7 @@ public class ApiApplicationTests {
 //            cardCoupons.setBatchNo();
         }
     }
+
     @Resource
     private ConfigService configService;
     @Resource
@@ -338,13 +344,30 @@ public class ApiApplicationTests {
 
     @Resource
     private AddressRepository addressRepository;
+
     @Test
-    public void test22(){
+    public void test22() {
         String errorCodeCountKey = RedisKey.getErrorCodeCountKey(14L, SMSTypeEnum.BIND_BANKCARD.getCode());
         String value = redisBean.getStringValue(errorCodeCountKey);
         System.out.println(value);
     }
 
+    @Resource
+    private BalanceFlowRepository balanceFlowRepository;
+    @Test
+    public void testPerformance() {
+
+        long start = System.currentTimeMillis();
+        int page = 0;
+        int limit = 10;
+        PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
+        Page<BalanceFlow> balanceFlows = balanceFlowRepository.findByBalance(13315L, pageRequest);
+        PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
+        Map iconMap = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
+
+        long end = System.currentTimeMillis();
+        logger.info("time :　" + (end - start));
+    }
 }
 
 
