@@ -29,6 +29,7 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber = "";
+
     /**
      * description: 充值面额
      */
@@ -38,6 +39,7 @@ public class OrderDetailVO {
     public static OrderDetailVO convert(Orders order) {
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
+
 
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
@@ -52,7 +54,6 @@ public class OrderDetailVO {
 
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
-
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
         if (order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + "")) {
             vo.setAccepterName(order.getUserName());
@@ -60,6 +61,7 @@ public class OrderDetailVO {
             String expressNum = order.getExpressNum();
             vo.setLogisticsNumber(expressNum == null ? "" : expressNum);
         }
+
 
         List<OrderItems> orderItems = order.getOrderItems();
         if (!CollectionUtils.isEmpty(orderItems)) {
@@ -74,12 +76,15 @@ public class OrderDetailVO {
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setGoodsName(item.getName());
             goodsInfo.setImgUrl(item.getImage());
+            goodsInfo.setCount(item.getCount()+"");
             return goodsInfo;
         }).collect(Collectors.toList());
 
         vo.setGoodsInfoList(goodsInfos);
         return vo;
     }
+
+
 
     public String getRechargeMoney() {
         return rechargeMoney;
@@ -124,6 +129,15 @@ public class OrderDetailVO {
     private static class GoodsInfo {
         private String imgUrl;
         private String GoodsName;
+        private String count = "1";
+
+        public String getCount() {
+            return count;
+        }
+
+        public void setCount(String count) {
+            this.count = count;
+        }
 
         public String getImgUrl() {
             return imgUrl;

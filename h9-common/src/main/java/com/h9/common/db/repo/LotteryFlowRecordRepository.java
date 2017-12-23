@@ -1,6 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.LotteryFlowRecord;
 import com.h9.common.modle.vo.admin.finance.LotteryFlowRecordVO;
 import org.springframework.data.domain.Page;
@@ -32,5 +33,6 @@ public interface LotteryFlowRecordRepository  extends BaseRepository<LotteryFlow
            " and (?5 = 0 or o.status = ?5)" +
            " order by o.id desc")
    Page<LotteryFlowRecordVO> findByCondition(String phone, String code, Date startTime, Date endTime, Integer status, Pageable pageable);
+
 
 }
