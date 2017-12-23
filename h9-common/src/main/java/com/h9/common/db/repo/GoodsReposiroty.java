@@ -22,7 +22,7 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     List<Goods> findByGoodsType(GoodsType goodsType);
 
-    @Query(value = "select o from Goods o where o.goodsType = ?1 ")
+    @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     List<Goods> findByGoodsTypeAndStatus(GoodsType goodsType);
 
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
