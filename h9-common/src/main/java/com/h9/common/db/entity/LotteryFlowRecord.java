@@ -16,7 +16,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * name="活动参与记录的转账记录"
  */
 @Entity()
-@Table(name = "lottery_flow_record",uniqueConstraints = {@UniqueConstraint(columnNames={"lottery_flow_id"})})
+@Table(name = "lottery_flow_record")
 public class LotteryFlowRecord  extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
