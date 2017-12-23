@@ -27,7 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Time: 14:26
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.h9.common","com.h9.lottery"})
+@ComponentScan(basePackages = {"com.h9.common.common","com.h9.lottery","com.h9.common.db.bean"})
 @EnableSwagger2
 @EnableJpaRepositories(basePackages="com.h9.common.db.repo")
 @EntityScan(basePackages = "com.h9.common.db.entity")

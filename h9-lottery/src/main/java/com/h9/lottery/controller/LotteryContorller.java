@@ -15,12 +15,15 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.jboss.logging.MDC;
+import org.redisson.Redisson;
+import org.redisson.core.RLock;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,6 +40,9 @@ public class LotteryContorller {
 
     @Resource
     private LotteryService lotteryService;
+    @Resource
+    private Redisson redisson;
+
 
     @Secured(bindPhone = false)
     @GetMapping("/qr")
@@ -44,7 +50,13 @@ public class LotteryContorller {
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
                           @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request) throws ServiceException {
-        return lotteryService.appCode(userId,lotteryVo,request);
+        RLock lock = redisson.getLock("lock:" + lotteryVo.getCode());
+        logger.debugv("lock start" + userId);
+        lock.lock(1000, TimeUnit.MILLISECONDS);
+        Result result = lotteryService.appCode(userId, lotteryVo, request);
+        lock.unlock();
+        logger.debugv("lock end"+ userId);
+        return result;
     }
 
 
