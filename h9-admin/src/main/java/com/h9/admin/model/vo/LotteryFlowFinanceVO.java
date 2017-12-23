@@ -4,12 +4,8 @@ import com.h9.common.db.entity.LotteryFlow;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author: George
@@ -31,18 +27,9 @@ public class LotteryFlowFinanceVO {
     @ApiModelProperty(value = "金额" )
     private BigDecimal money;
 
-    @ApiModelProperty(value = "用户余额" )
-    private BigDecimal balance;
-
     @ApiModelProperty(value = "发奖时间" )
     private Date createTime;
 
-   /* @ApiModelProperty(value = "转账状态" )
-    private Integer transferStatus;
-
-    @ApiModelProperty(value = "转账时间" )
-    private Date transferTime;
-*/
     public Long getId() {
         return id;
     }
@@ -83,14 +70,6 @@ public class LotteryFlowFinanceVO {
         this.money = money;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -99,42 +78,11 @@ public class LotteryFlowFinanceVO {
         this.createTime = createTime;
     }
 
-  /*  public Integer getTransferStatus() {
-        return transferStatus;
+    public LotteryFlowFinanceVO(LotteryFlow lotteryFlow){
+        BeanUtils.copyProperties(lotteryFlow, this);
+        this.setCode(lotteryFlow.getReward().getCode());
+        this.setPhone(lotteryFlow.getUser().getPhone());
+        this.setNickName(lotteryFlow.getUser().getNickName());
     }
 
-    public void setTransferStatus(Integer transferStatus) {
-        this.transferStatus = transferStatus;
-    }
-
-    public Date getTransferTime() {
-        return transferTime;
-    }
-
-    public void setTransferTime(Date transferTime) {
-        this.transferTime = transferTime;
-    }*/
-
-    public static LotteryFlowFinanceVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
-        LotteryFlowFinanceVO lotteryFlowFinanceVO = new LotteryFlowFinanceVO();
-        BeanUtils.copyProperties(lotteryFlow, lotteryFlowFinanceVO);
-        lotteryFlowFinanceVO.setCode(lotteryFlow.getReward().getCode());
-        lotteryFlowFinanceVO.setPhone(lotteryFlow.getUser().getPhone());
-        lotteryFlowFinanceVO.setNickName(lotteryFlow.getUser().getNickName());
-        return lotteryFlowFinanceVO;
-    }
-
-    public static List<LotteryFlowFinanceVO> toLotteryFlowFinanceVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {
-        if(maps==null){
-            return null;
-        }else{
-            List<LotteryFlowFinanceVO> lotteryFlowFinanceVOS = new ArrayList<>();
-            for(Map map:maps){
-                LotteryFlowFinanceVO lotteryFlowFinanceVO = new LotteryFlowFinanceVO();
-                org.apache.commons.beanutils.BeanUtils.populate(lotteryFlowFinanceVO,map);
-                lotteryFlowFinanceVOS.add(lotteryFlowFinanceVO);
-            }
-            return lotteryFlowFinanceVOS;
-        }
-    }
 }
