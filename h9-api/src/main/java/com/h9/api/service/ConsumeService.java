@@ -283,6 +283,7 @@ public class ConsumeService {
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode() + "", "徽酒");
         orders.setOrderFrom(2);
         orders.setUser(user);
+        orders.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
         orders.setGoodsType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         //修改库存
         Result changeResult = goodService.changeStock(goods);

@@ -1,5 +1,6 @@
 package com.h9.api.controller;
 
+import com.h9.api.service.GlobalService;
 import com.h9.api.service.HomeService;
 import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
