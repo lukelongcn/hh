@@ -81,8 +81,7 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
             public Predicate toPredicate(Root<LotteryFlow> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
                 if(!StringUtils.isEmpty(lotteryFlowFinanceDTO.getPhone())){
-                    Join<LotteryFlow,User> join = root.join("user", JoinType.INNER);
-                    predicates.add(cb.equal(join.get("phone").as(String.class), lotteryFlowFinanceDTO.getPhone()));
+                    predicates.add(cb.equal(root.get("user").get("phone").as(String.class), lotteryFlowFinanceDTO.getPhone()));
                 }
                 if(lotteryFlowFinanceDTO.getCode()!=null){
                     predicates.add(cb.equal(root.get("reward").get("code").as(String.class), lotteryFlowFinanceDTO.getCode()));
