@@ -11,9 +11,9 @@ import org.springframework.core.env.Environment;
  * Date: 2017/11/18
  * Time: 10:40
  */
-public class ConstantConfig {
+public class LotteryConstantConfig {
 
-    static Logger logger = Logger.getLogger(ConstantConfig.class);
+    static Logger logger = Logger.getLogger(LotteryConstantConfig.class);
     public static String Lottery_QR_PATH = "";
     public static String Lottery_QR_FORWARD_PATH = "";
 

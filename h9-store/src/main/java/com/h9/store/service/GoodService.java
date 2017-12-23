@@ -220,7 +220,7 @@ public class GoodService {
 
         if(result.getCode() == 1) return result;
 
-        //单独判断下余额是否足够
+        //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
         if(balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0){
@@ -228,10 +228,11 @@ public class GoodService {
         }
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goodsPrice, user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
+        Orders order = orderService.initOrder(goodsPrice, user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code,address.getName());
         order.setAddressId(addressId);
-        order.setUserAddres(address.getProvince()+address.getCid()+address.getDistict()+address.getAddress());
+        order.setUserAddres(address.getProvince()+address.getCity()+address.getDistict()+address.getAddress());
         order.setOrderFrom(1);
+        order.setStatus(Orders.statusEnum.UNCONFIRMED.getCode());
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");

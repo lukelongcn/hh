@@ -245,9 +245,16 @@ public class Orders extends BaseEntity {
 
     public enum statusEnum{
 
-        WAIT_SEND(1,"待发货"),
-        DELIVER(2,"已发货"),
-        FINISH(3, "已完成");
+        UNCONFIRMED(0,"未确认"),
+        WAIT_SEND(1,"等待发货"),
+        DELIVER(2,"等待收货"),
+        CANCEL(3,"已取消"),
+        FINISH(4, "交易成功"),
+        FAIL(5,"交易失败"),
+        REFUND_DEALING(6, "退货受理中"),
+        REFUNDING(7,"退货中"),
+        REJECT_REFUND(8,"不予退货"),
+        REFUND_FINISH(9,"退货完成");
 
         private int code;
         private String desc;

@@ -14,7 +14,7 @@ import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
-import com.h9.lottery.config.ConstantConfig;
+import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
@@ -28,13 +28,15 @@ import com.h9.lottery.utils.RandomDataUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.redisson.Redisson;
+import org.redisson.core.RLock;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
 
 import javax.annotation.Resource;
-import javax.security.auth.callback.Callback;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
@@ -80,7 +82,6 @@ public class LotteryService {
     private WhiteUserListRepository whiteUserListRepository;
     @Resource
     private ProductTypeRepository productTypeRepository;
-
     @Resource
     private RedisBean redisBean;
 
@@ -120,7 +121,6 @@ public class LotteryService {
 
         String imei = request.getHeader("imei");
         if (!onWhiteUser(userId)) {
-
             if (onBlackUser(userId, imei)) {
                 if(lotteryCount.compareTo(new BigDecimal(2)) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
@@ -142,7 +142,7 @@ public class LotteryService {
         if (!result.isSuccess()) {
             return result;
         }
-        Reward reward = rewardRepository.findById(rewardId);
+        Reward reward = data;
         if (reward == null) {
             return Result.fail("很遗憾您没有中奖");
         }
@@ -176,7 +176,8 @@ public class LotteryService {
             lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
             //是第一个用户
             lottery = new Lottery();
-            int partakeCount = rewardRepository.findByPartakeCount(rewardId);
+            int partakeCount = lotteryRepository.findCountByReward(rewardId);
+            lottery.setRoomUser(LotteryFlow.UserEnum.ORTHER.getId());
             if (partakeCount == 0) {
                 lottery.setRoomUser(LotteryFlow.UserEnum.ROOMUSER.getId());
                 lotteryResultDto.setRoomUser(true);
@@ -193,7 +194,6 @@ public class LotteryService {
             }else{
                 rewardRepository.updateReward(rewardId, endDate);
             }
-
             return Result.success(lotteryResultDto);
         }
     }
@@ -261,7 +261,7 @@ public class LotteryService {
     @Transactional
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
-        code = ConstantConfig.path2Code(code);
+        code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -306,7 +306,7 @@ public class LotteryService {
             lotteryResult.setMoney(MoneyUtils.formatMoney(lotteryFlow.getMoney()));
         }
 
-        lotteryResult.setQrCode(ConstantConfig.Lottery_QR_PATH + code);
+        lotteryResult.setQrCode(LotteryConstantConfig.Lottery_QR_PATH + code);
         List<LotteryUser> lotteryUsers = new ArrayList<>();
         if (islottery) {
             LotteryFlow top1LotteryFlow = lotteryFlowRepository.findTop1ByRewardOrderByMoneyDesc(reward);
@@ -349,7 +349,7 @@ public class LotteryService {
 
     @Transactional
     public Result lottery(Long curUserId, String code) {
-        code = ConstantConfig.path2Code(code);
+        code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -457,60 +457,64 @@ public class LotteryService {
     @Resource
     private FactoryProvider factoryProvider;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Result<Reward> exitsReward(String code) {
-        Reward reward = rewardRepository.findByCode(code);
-        if (reward != null) {
-            return Result.success(reward);
-        }
-        long start = System.currentTimeMillis();
-        LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
-        long end = System.currentTimeMillis();
-        logger.debugv("" + ((end - start) / 1000l));
-        if (lotteryModel == null) {
-            return Result.fail("服务繁忙，请稍后再试");
-        }
-        int state = lotteryModel.getState();
-        if (state == 2) {
-            return Result.fail("兑奖码已兑奖完毕");
-        } else if (state == 3) {
-            return Result.fail("兑奖码不正确，请确认");
-        } else if (state == 4) {
-            return Result.fail("服务繁忙，请稍后再试");
-        }
-        ProductModel productInfo = factoryProvider.getProductInfo(code);
-        Product product = null;
-        if (productInfo != null && productInfo.getState() != 2 && productInfo.getState() != 3) {
-            try {
-                product = productInfo.covert();
-                ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
-                product.setProductType(productType);
-//                todo
-                product = productRepository.saveAndFlush(product);
-            } catch (Exception e) {
-                logger.debug(e.getMessage(), e);
+        Reward reward = null;
+        try {
+            reward = rewardRepository.findByCode(code);
+            if (reward != null) {
+                return Result.success(reward);
             }
+            long start = System.currentTimeMillis();
+            LotteryModel lotteryModel = factoryProvider.findByLotteryModel(code);
+            long end = System.currentTimeMillis();
+            logger.debugv("" + ((end - start) / 1000l));
+            if (lotteryModel == null) {
+                return Result.fail("服务繁忙，请稍后再试");
+            }
+            int state = lotteryModel.getState();
+            if (state == 2) {
+                return Result.fail("兑奖码已兑奖完毕");
+            } else if (state == 3) {
+                return Result.fail("兑奖码不正确，请确认");
+            } else if (state == 4) {
+                return Result.fail("服务繁忙，请稍后再试");
+            }
+            ProductModel productInfo = factoryProvider.getProductInfo(code);
+            Product product = null;
+            if (productInfo != null && productInfo.getState() != 2 && productInfo.getState() != 3) {
+                try {
+                    product = productInfo.covert();
+                    ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
+                    product.setProductType(productType);
+                    product = productRepository.saveAndFlush(product);
+                } catch (Exception e) {
+                    logger.debug(e.getMessage(), e);
+                }
+            }
+            reward = new Reward();
+            // 关联上商品信息
+            reward.setProduct(product);
+            BigDecimal intergal = lotteryModel.getIntergal();
+            BigDecimal money = lotteryModel.getBouns();
+            if (intergal.compareTo(new BigDecimal(0)) >= 0) {
+                money = intergal.divide(new BigDecimal(10));
+            }
+            reward.setMoney(money);
+            reward.setCode(code);
+            reward.setActivityId(1L);
+            reward.setMd5Code(MD5Util.getMD5(code));
+            reward = rewardRepository.saveAndFlush(reward);
+        } catch (Exception e) {
+            logger.debugv("数据获取失败");
         }
-        reward = new Reward();
-        // 关联上商品信息
-        reward.setProduct(product);
-        BigDecimal intergal = lotteryModel.getIntergal();
-        BigDecimal money = lotteryModel.getBouns();
-        if (intergal.compareTo(new BigDecimal(0)) >= 0) {
-            money = intergal.divide(new BigDecimal(10));
-        }
-        reward.setMoney(money);
-        reward.setCode(code);
-        reward.setActivityId(1L);
-        reward.setMd5Code(MD5Util.getMD5(code));
-        rewardRepository.saveAndFlush(reward);
         return Result.success(reward);
     }
 
 
     public String forward(String code) {
         //todo
-        return concatUrl(ConstantConfig.Lottery_QR_FORWARD_PATH, code);
+        return concatUrl(LotteryConstantConfig.Lottery_QR_FORWARD_PATH, code);
     }
 
 

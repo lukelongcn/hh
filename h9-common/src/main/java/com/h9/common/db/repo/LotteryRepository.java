@@ -41,5 +41,8 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
        return findByRewardLastTime(reward, pageRequest(1, 1)).get(0);
    }
 
+    @Query("select count(l.id) from Lottery as l where l.reward.id = ?1 ")
+    int findCountByReward(long rewardId);
+
 
 }

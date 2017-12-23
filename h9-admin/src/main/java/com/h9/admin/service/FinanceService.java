@@ -2,7 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
-import com.h9.admin.model.vo.LotteryFlowRecordVO;
+import com.h9.common.modle.vo.admin.finance.LotteryFlowRecordVO;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
@@ -23,17 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author: George
@@ -61,40 +57,12 @@ public class FinanceService {
     @Autowired
     private VB2MoneyRepository vb2MoneyRepository;
 
-    public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) throws InvocationTargetException, IllegalAccessException {
-        /*PageRequest pageRequest = new PageRequest(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize());
-        String sql = "select o.* from withdrawals_record o";
-        Page<List<Map>> records = this.withdrawalsRecordRepository.findByCondtion(sql,pageRequest);*/
-        String sql = this.buildWithdrawRecordQueryString(withdrawRecordQueryDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,withdrawRecordQueryDTO.getStartIndex(),withdrawRecordQueryDTO.getPageSize());
-        long total = this.jpaRepository.nativeCount(sql);
-        //解决Apache的BeanUtils对日期的支持不是很好的问题
-        ConvertUtils.register(new DateConverter(null),java.util.Date.class);
-        List<WithdrawRecordVO> withdrawRecordVOS = WithdrawRecordVO.toWithdrawRecordVOs(maps);
-        PageResult<WithdrawRecordVO> pageResult = new PageResult<>(withdrawRecordQueryDTO.getPageNumber(),withdrawRecordQueryDTO.getPageSize(),total,withdrawRecordVOS);
-        return  Result.success(pageResult);
-    }
-
-    private String buildWithdrawRecordQueryString(WithdrawRecordQueryDTO withdrawRecordQueryDTO){
-        StringBuilder sql = new StringBuilder(
-                "select w.id,w.order_id as orderId,w.user_id as userId,w.money,w.create_time as createTime,w.finish_time as finishTime,w.status,u.phone" +
-                        ",ub.name,ub.no as bankCardNo,ub.provice,ub.city,ut.bank_name as bankName" +
-                        " from withdrawals_record w,user u,user_bank ub,bank_type ut,user_record ur where w.user_id=u.id and w.user_bank_id = ub.id and ub.bank_type_id = ut.id and w.user_record_id=ur.id "
-        );
-        if(!StringUtils.isEmpty(withdrawRecordQueryDTO.getPhone())){
-            sql.append(" and u.phone=").append(withdrawRecordQueryDTO.getPhone());
-        }
-        if(!StringUtils.isEmpty(withdrawRecordQueryDTO.getBankCardNo())){
-            sql.append(" and ub.no=").append(withdrawRecordQueryDTO.getBankCardNo());
-        }
-        if(withdrawRecordQueryDTO.getStatus()!=null&&withdrawRecordQueryDTO.getStatus()!=0){
-            sql.append(" and w.status=").append(withdrawRecordQueryDTO.getStatus());
-        }
-        if(withdrawRecordQueryDTO.getUserId()!=null){
-            sql.append(" and w.user_id=").append(withdrawRecordQueryDTO.getUserId());
-        }
-        sql.append(" order by w.id desc");
-        return sql.toString();
+    public Result<PageResult<WithdrawRecordVO>> getWithdrawRecords(WithdrawRecordQueryDTO withdrawRecordQueryDTO) {
+        String phone = StringUtils.isBlank(withdrawRecordQueryDTO.getPhone()) ? null : withdrawRecordQueryDTO.getPhone();
+        String bankCardNo = StringUtils.isBlank(withdrawRecordQueryDTO.getBankCardNo()) ? null : withdrawRecordQueryDTO.getBankCardNo();
+        Page<WithdrawRecordVO> withdrawRecordVOPage = this.withdrawalsRecordRepository.findByCondition(
+                phone,bankCardNo,withdrawRecordQueryDTO.getStatus(),withdrawRecordQueryDTO.toPageRequest());
+        return Result.success(new PageResult<>(withdrawRecordVOPage));
     }
 
     public Result<WithdrawalsRecord> updateWithdrawRecordStatus(long id){
@@ -110,47 +78,15 @@ public class FinanceService {
             return Result.fail("改变用户余额失败");
         }
         withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.CANCEL.getCode());
-//        this.withdrawalsRecordRepository.save(withdrawalsRecord);
         return Result.success(this.withdrawalsRecordRepository.save(withdrawalsRecord));
     }
 
     public Result<PageResult<LotteryFlowFinanceVO>> getLotteryFlows(LotteryFlowFinanceDTO lotteryFlowFinanceDTO) throws InvocationTargetException, IllegalAccessException {
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
-        //PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFlowFinanceDTO.getPageNumber(), lotteryFlowFinanceDTO.getPageSize(),sort);
-        String sql = this.buildLotteryFlowQueryString(lotteryFlowFinanceDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFlowFinanceDTO.getStartIndex(),lotteryFlowFinanceDTO.getPageSize());
-        long total = this.jpaRepository.nativeCount(sql);
-        //解决Apache的BeanUtils对日期的支持不是很好的问题
-        ConvertUtils.register(new DateConverter(null),java.util.Date.class);
-        List<LotteryFlowFinanceVO> lotteryFlowFinanceVOS = LotteryFlowFinanceVO.toLotteryFlowFinanceVOs(maps);
-        PageResult<LotteryFlowFinanceVO> pageResult = new PageResult<>(lotteryFlowFinanceDTO.getPageNumber(),lotteryFlowFinanceDTO.getPageSize(),total,lotteryFlowFinanceVOS);
-        return Result.success(pageResult);
-    }
-
-
-
-    private String buildLotteryFlowQueryString(LotteryFlowFinanceDTO lotteryFlowFinanceDTO){
-        StringBuilder sql = new StringBuilder(
-                "select o.* from (select lf.id,lf.money,lf.create_time as createTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow lf ,user u,user_account ua,reward r" +
-                        " where lf.user_id=u.id and lf.reward_id=r.id and lf.user_id=ua.user_id {0}) as o " +
-                        "left join lottery_flow_record lfr on o.id = lfr.lottery_flow_id where lfr.id is null");
-        StringBuilder condition  = new StringBuilder("");
-        if(!StringUtils.isEmpty(lotteryFlowFinanceDTO.getCode())){
-            condition.append(" and r.code='").append(lotteryFlowFinanceDTO.getCode()).append("'");
-        }
-        if(!StringUtils.isEmpty(lotteryFlowFinanceDTO.getPhone())){
-            condition.append(" and u.phone='").append(lotteryFlowFinanceDTO.getPhone()).append("'");
-        }
-        if(lotteryFlowFinanceDTO.getStartTime()!=null){
-            condition.append(" and lf.create_time>='").append(DateUtil.formatDate(lotteryFlowFinanceDTO.getStartTime(),DateUtil.FormatType.SECOND)).append("'");
-        }
-        if(lotteryFlowFinanceDTO.getEndTime()!=null){
-            condition.append(" and lf.create_time<'")
-                    .append(DateUtil.formatDate(DateUtil.addDays(lotteryFlowFinanceDTO.getEndTime(),1),DateUtil.FormatType.SECOND))
-                    .append("'");
-        }
-        sql.append(" order by o.id desc");
-        return MessageFormat.format(sql.toString(),condition);
+        Sort sort  = new Sort(Sort.Direction.DESC,"id");
+        Page<LotteryFlow> lotteryFlowPage = this.lotteryFlowRepository.findAll(this.lotteryFlowRepository
+                .buildFinanceSpecification(lotteryFlowFinanceDTO),lotteryFlowFinanceDTO.toPageRequest(sort));
+        PageResult<LotteryFlow> lotteryFlowPageResult = new PageResult<>(lotteryFlowPage);
+        return Result.success(lotteryFlowPageResult.result2Result(LotteryFlowFinanceVO::new));
     }
 
     public Result transferFromLotteryFlows(Set<Long> ids){
@@ -188,6 +124,12 @@ public class FinanceService {
                 }
             }
             flowRecord.setLotteryFlow(flow);
+            flowRecord.setCode(flow.getReward().getCode());
+            flowRecord.setMoney(flow.getMoney());
+            flowRecord.setNickName(flow.getUser().getNickName());
+            flowRecord.setOuterId(flow.getUser().getId());
+            flowRecord.setPhone(flow.getUser().getPhone());
+            flowRecord.setTransferTime(flow.getCreateTime());
             long userId = Long.valueOf((String) HttpUtil.getHttpSession().getAttribute("curUserId"));
             flowRecord.setUser(this.userRepository.findOne(userId));
             this.lotteryFlowRecordRepository.save(flowRecord);
@@ -199,51 +141,21 @@ public class FinanceService {
     }
 
     public Result<PageResult<LotteryFlowRecordVO>> getLotteryFlowRecords(LotteryFLowRecordDTO lotteryFLowRecordDTO) throws InvocationTargetException, IllegalAccessException {
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
-        PageRequest pageRequest = this.lotteryFlowRepository.pageRequest(lotteryFLowRecordDTO.getPageNumber(), lotteryFLowRecordDTO.getPageSize(),sort);
-        String sql = this.buildLotteryFlowRecordQueryString(lotteryFLowRecordDTO);
-        List<Map> maps = this.jpaRepository.createNativeQuery(sql,lotteryFLowRecordDTO.getStartIndex(),lotteryFLowRecordDTO.getPageSize());
-        long total = this.jpaRepository.nativeCount(sql);
-        //解决Apache的BeanUtils对日期的支持不是很好的问题
-        ConvertUtils.register(new DateConverter(null),java.util.Date.class);
-        List<LotteryFlowRecordVO> lotteryFlowRecordVOS = LotteryFlowRecordVO.toLotteryFlowRecordVOs(maps);
-        PageResult<LotteryFlowRecordVO> pageResult = new PageResult<>(lotteryFLowRecordDTO.getPageNumber(),lotteryFLowRecordDTO.getPageSize(),total,lotteryFlowRecordVOS);
-        return Result.success(pageResult);
-    }
-
-
-
-    private String buildLotteryFlowRecordQueryString(LotteryFLowRecordDTO lotteryFLowRecordDTO){
-        StringBuilder sql = new StringBuilder(
-                "select o.*, us.nick_name as operator from (select lfr.id,lfr.create_time as createTime,lfr.user_id,lfr.status,lf.money,lf.create_time as transferTime,u.nick_name as nickName,u.phone,ua.balance,r.code from lottery_flow_record lfr, lottery_flow lf ,user u,user_account ua,reward r" +
-                        " where lfr.lottery_flow_id=lf.id and lf.user_id=u.id and lf.reward_id=r.id and lf.user_id=ua.user_id {0}) as o,user us where o.user_id=us.id");
-        StringBuilder condition  = new StringBuilder("");
-        if(lotteryFLowRecordDTO.getStatus()!=null&&lotteryFLowRecordDTO.getStatus()!=0){
-            condition.append(" and lfr.status=").append(lotteryFLowRecordDTO.getStatus());
-        }
-        if(lotteryFLowRecordDTO.getStartTime()!=null){
-            condition.append(" and lfr.create_time>='").append(DateUtil.formatDate(lotteryFLowRecordDTO.getStartTime(),DateUtil.FormatType.SECOND)).append("'");
-        }
-        if(lotteryFLowRecordDTO.getEndTime()!=null){
-            condition.append(" and lfr.create_time<'")
-                    .append(DateUtil.formatDate(DateUtil.addDays(lotteryFLowRecordDTO.getEndTime(),1),DateUtil.FormatType.SECOND))
-                    .append("'");
-        }
-        if(!StringUtils.isEmpty(lotteryFLowRecordDTO.getCode())){
-            condition.append(" and r.code='").append(lotteryFLowRecordDTO.getCode()).append("'");
-        }
-        if(!StringUtils.isEmpty(lotteryFLowRecordDTO.getPhone())){
-            condition.append(" and u.phone='").append(lotteryFLowRecordDTO.getPhone()).append("'");
-        }
-        sql.append(" order by o.id desc");
-        return MessageFormat.format(sql.toString(),condition);
+        String phone = StringUtils.isBlank(lotteryFLowRecordDTO.getPhone()) ? null : lotteryFLowRecordDTO.getPhone();
+        String code = StringUtils.isBlank(lotteryFLowRecordDTO.getCode()) ? null : lotteryFLowRecordDTO.getCode();
+        Date startTime = lotteryFLowRecordDTO.getStartTime();
+        Date endTime = lotteryFLowRecordDTO.getEndTime();
+        Integer status = lotteryFLowRecordDTO.getStatus();
+        Page<LotteryFlowRecordVO> lotteryFlowRecordPage = this.lotteryFlowRecordRepository.findByCondition(phone, code,
+                startTime, endTime, status,lotteryFLowRecordDTO.toPageRequest());
+        return Result.success(new PageResult<>(lotteryFlowRecordPage));
     }
 
     public Result transferFromLotteryFlowRecord(long id){
 
         LotteryFlowRecord lotteryFlowRecord = this.lotteryFlowRecordRepository.findByLockId(id);
         if(lotteryFlowRecord.getStatus()!=LotteryFlowRecord.LotteryFlowRecordStatusEnum.FAIL.getId()){
-            return Result.fail("改记录不为转账失败记录");
+            return Result.fail("该记录不为转账失败记录");
         }
         LotteryFlow lotteryFlow =lotteryFlowRecord.getLotteryFlow();
         Result  result = this.commonService.setBalance(lotteryFlow.getUser().getId(),lotteryFlow.getMoney().abs().negate(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
@@ -252,7 +164,7 @@ public class FinanceService {
             return Result.fail("余额不足，转账失败");
         }
         long uId = Long.valueOf(this.configService.getStringConfig(Constants.XIAOPINHUI));
-        Result r = this.commonService.setBalance(uId,lotteryFlow.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
+        Result r = this.commonService.setBalance(uId,lotteryFlowRecord.getMoney().abs(),BalanceFlow.BalanceFlowTypeEnum.XIAOPINHUI.getId(),
                 lotteryFlow.getId(),lotteryFlow.getId().toString(),"小品会");
         if(r.getCode()==Result.FAILED_CODE){
             this.logger.errorf("给小品会转账时出错，lotterFlow.id为{0}",lotteryFlow.getId());

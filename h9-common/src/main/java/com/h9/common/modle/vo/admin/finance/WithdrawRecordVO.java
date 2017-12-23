@@ -205,10 +205,7 @@ public class WithdrawRecordVO {
 
     public WithdrawRecordVO(WithdrawalsRecord withdrawalsRecord) {
         BeanUtils.copyProperties(withdrawalsRecord,this);
-        this.setBankName(withdrawalsRecord.getUserBank().getName());
-        this.setBankCardNo(withdrawalsRecord.getUserBank().getNo());
-        this.setProvice(withdrawalsRecord.getUserBank().getProvince());
-        this.setCity(withdrawalsRecord.getUserBank().getProvince());
+        this.bankCardNo = withdrawalsRecord.getBankNo();
     }
 
 }

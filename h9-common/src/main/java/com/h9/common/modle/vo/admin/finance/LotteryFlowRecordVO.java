@@ -1,6 +1,6 @@
-package com.h9.admin.model.vo;
+package com.h9.common.modle.vo.admin.finance;
 
-import com.h9.common.db.entity.LotteryFlow;
+import com.h9.common.db.entity.LotteryFlowRecord;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
@@ -41,7 +41,7 @@ public class LotteryFlowRecordVO {
     private Date transferTime;
 
     @ApiModelProperty(value = "转账状态，1：成功，2：失败" )
-    private Long status;
+    private Integer status;
 
     @ApiModelProperty(value = "操作人" )
     private String operator;
@@ -111,11 +111,11 @@ public class LotteryFlowRecordVO {
         this.transferTime = transferTime;
     }
 
-    public Long getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -127,13 +127,13 @@ public class LotteryFlowRecordVO {
         this.operator = operator;
     }
 
-    public static LotteryFlowRecordVO toLotteryFlowFinanceVO(LotteryFlow lotteryFlow){
-        LotteryFlowRecordVO lotteryFlowFinanceVO = new LotteryFlowRecordVO();
-        BeanUtils.copyProperties(lotteryFlow, lotteryFlowFinanceVO);
-        lotteryFlowFinanceVO.setCode(lotteryFlow.getReward().getCode());
-        lotteryFlowFinanceVO.setPhone(lotteryFlow.getUser().getPhone());
-        lotteryFlowFinanceVO.setNickName(lotteryFlow.getUser().getNickName());
-        return lotteryFlowFinanceVO;
+    public LotteryFlowRecordVO() {
+    }
+
+    public LotteryFlowRecordVO(LotteryFlowRecord lotteryFlowRecord,BigDecimal balance) {
+        BeanUtils.copyProperties(lotteryFlowRecord, this);
+        this.operator = lotteryFlowRecord.getUser().getNickName();
+        this.balance = balance;
     }
 
     public static List<LotteryFlowRecordVO> toLotteryFlowRecordVOs(List<Map> maps) throws InvocationTargetException, IllegalAccessException {

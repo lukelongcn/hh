@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 
@@ -26,7 +28,7 @@ public class OrderItems extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(16) default '' COMMENT '商品名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '商品名称'")
     private String name;
 
     @Column(name = "image", columnDefinition = "varchar(256) default '' COMMENT '商品图片'")
@@ -47,6 +49,7 @@ public class OrderItems extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "goods_id",referencedColumnName = "id")
+    @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;
 
     @Column(name="didi_card_number")

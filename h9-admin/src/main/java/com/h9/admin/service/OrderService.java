@@ -14,6 +14,7 @@ import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.RechargeRecordRepository;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.OrderDTO;
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -75,5 +76,27 @@ public class OrderService {
 
     public Result<List<String>> getSupportExpress() {
         return Result.success(configService.getStringListConfig(ParamConstant.SUPPORT_EXPRESS));
+    }
+
+    public Result updateOrderStatus(Long id,Integer status) {
+        Orders orders = this.ordersRepository.findOne(id);
+        if (orders == null) {
+            return Result.fail("订单不存在");
+        }
+        if (status == Orders.statusEnum.WAIT_SEND.getCode()) {
+            if (orders.getStatus() != Orders.statusEnum.UNCONFIRMED.getCode()) {
+                return Result.fail("不是未确认的订单不能发货");
+            }
+            orders.setStatus(status);
+        }else if (status == Orders.statusEnum.CANCEL.getCode()) {
+            if (orders.getStatus() != Orders.statusEnum.UNCONFIRMED.getCode()) {
+                return Result.fail("不是未确认的订单不能取消");
+            }
+            orders.setStatus(status);
+        }else {
+            return Result.fail("不支持修改订单为当前状态");
+        }
+        this.ordersRepository.save(orders);
+        return Result.success();
     }
 }

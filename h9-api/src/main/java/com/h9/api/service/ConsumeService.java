@@ -238,9 +238,9 @@ public class ConsumeService {
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         if (goodsType == null) return Result.success(list);
 
-        List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
+        List<Goods> goodsList = goodsReposiroty.findByGoodsTypeAndStatus(goodsType);
 
-        goodsList.stream().filter(el -> el.getStock() > 0).forEach(goods -> {
+        goodsList.stream().forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
 //            Object count = cardCouponsRepository.getCount(goods.getId());
@@ -386,13 +386,16 @@ public class ConsumeService {
         if(balance.compareTo(canWithdrawMoney) < 0){
             canWithdrawMoney = balance;
         }
-        String transAmt = "101";
+        String transAmt = "";
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
         } else {
-            //TODO 设置提现金额,转化成分
 //            transAmt = canWithdrawMoney;
-            transAmt = "101";
+            if ("product".equals(currentEnvironment)) {
+                transAmt = canWithdrawMoney.multiply(new BigDecimal(100)).toString();
+            }else{
+                transAmt = "101";
+            }
         }
 
         String cardNo = userBank.getNo();
@@ -403,7 +406,7 @@ public class ConsumeService {
         String purpose = "提现";
         String signFlag = "1";
 
-        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, canWithdrawMoney, userBank, purpose);
+        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
@@ -411,7 +414,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate);
+        Result result = chinaPayService.signPay(payParam, merDate,currentEnvironment);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();

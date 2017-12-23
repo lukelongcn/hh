@@ -52,14 +52,19 @@ public class ChinaPayService {
     /**
      * description: 银行代付
      */
-    public Result signPay(PayParam payParam,String merDate) {
+    public Result signPay(PayParam payParam,String merDate,String envir) {
 
         String s = merId + merDate + payParam.getMerSeqId() + payParam.getCardNo() + payParam.getUsrName() + payParam.getOpenBank()
                 + payParam.getProv() + payParam.getCity() + payParam.getTransAmt() + payParam.getPurpose() + payParam.getVersion();
 
         PrivateKey key = new PrivateKey();
-//        String path = "D:\\MerPrK_808080211881410_20171102154758.key";
-        String path = ApiApplication.chinaPayKeyPath;
+        String path = "";
+        if ("product".equals(envir)) {
+            path = ApiApplication.productEvirPayKeyPath;
+        }else{
+            path = ApiApplication.chinaPayKeyPath;
+        }
+        logger.info("signPay path ："+path);
         boolean buildOK = key.buildKey(merId, 0, path);
         if (!buildOK) {
             logger.info("构建私钥对象失败");
@@ -71,9 +76,6 @@ public class ChinaPayService {
         char[] encode = Base64.encode(s.getBytes());
         String sign = secureLink.Sign(new String(encode));
 
-        System.out.println("------");
-        System.out.println(sign);
-        System.out.println("------");
 
         RestTemplate restTemplate = new RestTemplate();
 

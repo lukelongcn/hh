@@ -69,7 +69,7 @@ public class HomeService {
 
         List<Article> articleList = articleRepository.findActiveArticle();
         if (!CollectionUtils.isEmpty(articleList)&&articleList.size()>5) {
-           articleList = articleList.subList(0, 4);
+           articleList = articleList.subList(0, 5);
         }
 
         if (!CollectionUtils.isEmpty(articleList)) {
@@ -92,7 +92,7 @@ public class HomeService {
         }
 
 
-        List<Announcement> announcementList = announcementReposiroty.findActived(new Date());
+        List<Announcement> announcementList = announcementReposiroty.findActived();
 
         String announcemented = preLink.get("announcement");
         List<HomeVO> collect = announcementList.stream()

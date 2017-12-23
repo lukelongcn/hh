@@ -1,5 +1,6 @@
 package com.h9;
 
+import com.h9.common.common.ConstantConfig;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -17,8 +18,10 @@ public class H9StoreApplication {
         Logger logger = Logger.getLogger(H9StoreApplication.class);
         ConfigurableApplicationContext context = SpringApplication.run(H9StoreApplication.class, args);
         Environment environment = context.getBean(Environment.class);
+        ConstantConfig.init(context,environment);
         String enviroment = environment.getProperty("h9.current.envir");
         logger.info("当前环境： " + enviroment);
+
     }
 
     @Bean

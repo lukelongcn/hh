@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.dialect.unique.DB2UniqueDelegate;
 
 import javax.persistence.*;
@@ -20,7 +22,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "withdrawals_record")
+@Table(name = "withdrawals_record",indexes = {@Index(columnList = "user_id")} )
 public class WithdrawalsRecord extends BaseEntity {
 
     @Id
@@ -38,7 +40,8 @@ public class WithdrawalsRecord extends BaseEntity {
 //    private BigDecimal surplusBalance = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'")
+    @JoinColumn(name = "user_bank_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private UserBank userBank;
 
     @Column(name = "name", columnDefinition = "varchar(32) default '' COMMENT '持卡人名'")
@@ -55,6 +58,9 @@ public class WithdrawalsRecord extends BaseEntity {
 
     @Column(name = "city", columnDefinition = "varchar(64) default '' COMMENT '开户城市'")
     private String city;
+
+    @Column(name = "phone", columnDefinition = "varchar(64) default '' COMMENT '用户手机号'")
+    private String phone;
 
     /**
      * description:
@@ -78,7 +84,8 @@ public class WithdrawalsRecord extends BaseEntity {
     private Date finishTime;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_record_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    @JoinColumn(name = "user_record_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private UserRecord userRecord;
 
 
@@ -117,11 +124,21 @@ public class WithdrawalsRecord extends BaseEntity {
 
 
 
-    public WithdrawalsRecord(Long userId, BigDecimal money , UserBank userBank , String remarks) {
-        this.userId = userId;
+    public WithdrawalsRecord(User user, BigDecimal money , UserBank userBank , String remarks) {
+        this.userId = user.getId();
         this.money = money;
         this.userBank = userBank;
         this.remarks = remarks;
+        BankType bankType = userBank.getBankType();
+        if(bankType!=null){
+            this.bankName = bankType.getBankName();
+        }
+        this.name = userBank.getName();
+        this.bankNo = userBank.getNo();
+        this.province = userBank.getProvince();
+        this.city = userBank.getCity();
+        this.phone = user.getPhone();
+
     }
 
     public WithdrawalsRecord(){}
@@ -148,14 +165,6 @@ public class WithdrawalsRecord extends BaseEntity {
     public void setMoney(BigDecimal money) {
         this.money = money;
     }
-
-//    public BigDecimal getSurplusBalance() {
-//        return surplusBalance;
-//    }
-
-//    public void setSurplusBalance(BigDecimal surplusBalance) {
-//        this.surplusBalance = surplusBalance;
-//    }
 
     public UserBank getUserBank() {
         return userBank;
@@ -252,5 +261,13 @@ public class WithdrawalsRecord extends BaseEntity {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
