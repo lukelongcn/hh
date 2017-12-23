@@ -69,6 +69,22 @@ public class OrderService {
         return order;
     }
 
+    public Orders initOrder( BigDecimal money, String tel,String type,String supplierName,User user,String goodsTypeCode,String userName) {
+        Orders order = new Orders();
+        order.setUserName(userName);
+        order.setPayMoney(money);
+        order.setNo("");
+        order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
+        order.setUserPhone(tel);
+        order.setSupplierName(supplierName);
+        order.setPayStatus(1);
+        order.setStatus(1);
+        order.setOrderType(type);
+        order.setUser(user);
+        order.setGoodsType(goodsTypeCode);
+        return order;
+    }
+
     public Result<List<Goods>> findHotConvertOrders(int page, int size){
         List<Goods> goodsList = goodsReposiroty.findLastConvertGoods();
         return Result.success(goodsList);

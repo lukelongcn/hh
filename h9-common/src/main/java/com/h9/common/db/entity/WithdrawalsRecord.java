@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.dialect.unique.DB2UniqueDelegate;
 
 import javax.persistence.*;
@@ -38,7 +40,8 @@ public class WithdrawalsRecord extends BaseEntity {
 //    private BigDecimal surplusBalance = new BigDecimal(0);
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_bank_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "user_bank_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户银行卡'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private UserBank userBank;
 
     @Column(name = "name", columnDefinition = "varchar(32) default '' COMMENT '持卡人名'")
@@ -82,6 +85,7 @@ public class WithdrawalsRecord extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_record_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private UserRecord userRecord;
 
 

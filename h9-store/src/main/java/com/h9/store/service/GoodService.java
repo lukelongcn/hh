@@ -228,10 +228,11 @@ public class GoodService {
         }
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goodsPrice, user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code);
+        Orders order = orderService.initOrder(goodsPrice, user.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code,address.getName());
         order.setAddressId(addressId);
         order.setUserAddres(address.getProvince()+address.getCity()+address.getDistict()+address.getAddress());
         order.setOrderFrom(1);
+        order.setStatus(Orders.statusEnum.UNCONFIRMED.getCode());
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");

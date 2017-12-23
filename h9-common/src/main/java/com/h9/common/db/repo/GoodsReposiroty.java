@@ -23,6 +23,9 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
     List<Goods> findByGoodsType(GoodsType goodsType);
 
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
+    List<Goods> findByGoodsTypeAndStatus(GoodsType goodsType);
+
+    @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     Page<Goods> findByGoodsType(GoodsType goodsType,Pageable pageable);
 
     @Query(value = "select o from Goods o where o.code = ?1 and o.status = 1")

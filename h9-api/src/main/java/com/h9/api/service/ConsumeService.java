@@ -238,7 +238,7 @@ public class ConsumeService {
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         if (goodsType == null) return Result.success(list);
 
-        List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
+        List<Goods> goodsList = goodsReposiroty.findByGoodsTypeAndStatus(goodsType);
 
         goodsList.stream().forEach(goods -> {
             Map<String, Object> map = new HashMap<>();

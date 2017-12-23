@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 
@@ -47,6 +49,7 @@ public class OrderItems extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "goods_id",referencedColumnName = "id")
+    @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;
 
     @Column(name="didi_card_number")

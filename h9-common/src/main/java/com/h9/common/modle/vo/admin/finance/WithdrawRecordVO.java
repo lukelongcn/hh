@@ -205,11 +205,7 @@ public class WithdrawRecordVO {
 
     public WithdrawRecordVO(WithdrawalsRecord withdrawalsRecord) {
         BeanUtils.copyProperties(withdrawalsRecord,this);
-    }
-
-    public WithdrawRecordVO(WithdrawalsRecord withdrawalsRecord, String phone) {
-        BeanUtils.copyProperties(withdrawalsRecord,this);
-        this.phone = phone;
+        this.bankCardNo = withdrawalsRecord.getBankNo();
     }
 
 }
