@@ -48,7 +48,7 @@ public class OrderItems extends BaseEntity {
     private Orders orders;
 
     @ManyToOne
-    @JoinColumn(name = "goods_id",referencedColumnName = "id")
+    @JoinColumn(name = "goods_id",referencedColumnName = "id",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;
 
