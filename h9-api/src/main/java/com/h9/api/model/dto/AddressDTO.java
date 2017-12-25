@@ -20,7 +20,7 @@ public class AddressDTO {
 
     //收货人姓名
     @NotBlank(message = "请填写真实姓名")
-    @Size(max = 20,message = "姓名过长")
+    @Size(min = 2,max = 20,message = "姓名过长")
     private String name;
 
     // 收货人手机号码
