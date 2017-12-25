@@ -44,7 +44,7 @@ public class OrderItems extends BaseEntity {
     private Integer count = 1;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单id'")
+    @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单id'",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Orders orders;
 
     @ManyToOne
