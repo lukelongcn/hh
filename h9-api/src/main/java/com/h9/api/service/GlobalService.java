@@ -6,6 +6,8 @@ import com.h9.common.db.repo.GlobalPropertyRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
@@ -20,18 +22,21 @@ public class GlobalService {
     GlobalPropertyRepository globalPropertyRepository;
 
     @Transactional
-    public String version(Integer client) {
+    public Result version(Integer client) {
+        HashMap map = new HashMap();
         // 安卓
         if (client == 1) {
             GlobalProperty globalProperty = globalPropertyRepository.findByCode("androidDownload");
             System.out.println(globalProperty.getVal());
-            return globalProperty.getVal();
+            map.put("redirect",globalProperty.getVal());
+            return Result.success(map);
         }
         // IOS
         if (client == 2) {
             GlobalProperty globalProperty1 = globalPropertyRepository.findByCode("iosDownload");
-            return globalProperty1.getVal();
+            map.put("redirect",globalProperty1.getVal());
+            return Result.success(map);
         }
-        return "";
+        return Result.fail("请求失败，接口调用出错");
     }
 }

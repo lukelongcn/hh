@@ -27,7 +27,7 @@ public class PropertyController {
 
     @GetMapping("/redirect")
     @ApiOperation(value = "客户端版本 client: IOS:2 安卓：1")
-    public void version(@NotNull(message = "请传入所属客户端版本")@RequestParam(value = "client")Integer client, HttpServletResponse response) throws IOException {
-        response.sendRedirect(globalService.version(client));
+    public Result version(@NotNull(message = "请传入所属客户端版本")@RequestParam(value = "client")Integer client, HttpServletResponse response) throws IOException {
+        return globalService.version(client);
     }
 }

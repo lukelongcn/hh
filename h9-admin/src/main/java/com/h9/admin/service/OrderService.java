@@ -8,10 +8,8 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.GoodsType;
-import com.h9.common.db.entity.Orders;
-import com.h9.common.db.entity.RechargeRecord;
+import com.h9.common.db.entity.*;
+import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.RechargeRecordRepository;
 import com.h9.common.modle.dto.PageDTO;
@@ -24,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +40,8 @@ public class OrderService {
     private RechargeRecordRepository rechargeRecordRepository;
     @Resource
     private CommonService commonService;
+    @Resource
+    private GoodsReposiroty goodsReposiroty;
     
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         Sort sort = new Sort(Sort.Direction.DESC,"id");
@@ -82,6 +84,7 @@ public class OrderService {
         return Result.success(configService.getStringListConfig(ParamConstant.SUPPORT_EXPRESS));
     }
 
+    @Transactional
     public Result updateOrderStatus(Long id,Integer status) {
         Orders orders = this.ordersRepository.findOne(id);
         if (orders == null) {
@@ -102,8 +105,15 @@ public class OrderService {
         }
         this.ordersRepository.save(orders);
         if (status == Orders.statusEnum.CANCEL.getCode()) {
-           this.commonService.setBalance(orders.getUser().getId(),orders.getMoney(), BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
+           this.commonService.setBalance(orders.getUser().getId(),orders.getPayMoney().abs(), BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
                    orders.getId(),orders.getNo(),"订单取消退回");
+           List<Goods> goodsList = new ArrayList<>();
+           for (OrderItems orderItems : orders.getOrderItems()) {
+               Goods goods = this.goodsReposiroty.findByLockId(orderItems.getGoods().getId());
+               goods.setStock(goods.getStock() + orderItems.getCount());
+               goodsList.add(goods);
+           }
+            this.goodsReposiroty.save(goodsList);
         }
         return Result.success();
     }
