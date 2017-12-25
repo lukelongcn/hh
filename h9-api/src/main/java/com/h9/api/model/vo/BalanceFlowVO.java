@@ -29,24 +29,19 @@ public class BalanceFlowVO {
     private String imgUrl;
     private String createTime;
 
-    public BalanceFlowVO(BalanceFlow balanceFlow, Map<String, String> iconMap) {
+    public BalanceFlowVO(BalanceFlow balanceFlow, Map<String, String> iconMap,Map<String,String> nameMap) {
         BeanUtils.copyProperties(balanceFlow, this);
         Date createTime = balanceFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = balanceFlow.getRemarks();
         money = MoneyUtils.formatMoney(balanceFlow.getMoney());
         this.createTime = DateUtil.formatDate(balanceFlow.getCreateTime(), DateUtil.FormatType.SECOND);
-        Set<String> keySet = iconMap.keySet();
+        imgUrl = iconMap.get(balanceFlow.getFlowType()+"");
+        remarks = nameMap.get(balanceFlow.getFlowType() + "");
 
-        for (String key : keySet) {
-            if (key.equals(balanceFlow.getFlowType() + "")) {
-                imgUrl = iconMap.get(key);
-                break;
-            }
-        }
     }
 
-    public BalanceFlowVO(VCoinsFlow vCoinsFlow, Map<String, String> iconMap) {
+    public BalanceFlowVO(VCoinsFlow vCoinsFlow, Map<String, String> iconMap,Map<String,String> nameMap) {
         BeanUtils.copyProperties(vCoinsFlow, this);
         Date createTime = vCoinsFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
@@ -54,6 +49,7 @@ public class BalanceFlowVO {
         imgUrl = iconMap.get(vCoinsFlow.getvCoinsflowType() + "");
         this.money = vCoinsFlow.getMoney().toString();
         this.createTime = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
+        remarks = nameMap.get(vCoinsFlow.getvCoinsflowType() + "");
     }
 
     public String getCreateTime() {

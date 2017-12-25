@@ -30,6 +30,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.h9.common.constant.ParamConstant.BALANCE_FLOW_TYPE;
+import static com.h9.common.constant.ParamConstant.VCOIN_EXCHANGE_TYPE;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:账号
@@ -77,8 +80,8 @@ public class AccountService {
         PageResult<BalanceFlow> flowPageResult = new PageResult<>(balanceFlows);
 
         Map iconMap = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
-
-        return Result.success(flowPageResult.result2Result(bf -> new BalanceFlowVO(bf, iconMap)));
+        Map typeMap = configService.getMapConfig(BALANCE_FLOW_TYPE);
+        return Result.success(flowPageResult.result2Result(bf -> new BalanceFlowVO(bf, iconMap,typeMap)));
 
     }
 
@@ -86,10 +89,9 @@ public class AccountService {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
-
         Map iconMap = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
-
-        return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc, iconMap)));
+        Map typeMap = configService.getMapConfig(VCOIN_EXCHANGE_TYPE);
+        return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc, iconMap,typeMap)));
     }
 
     public BigDecimal getAccountBalance(Long userId) {
@@ -114,9 +116,9 @@ public class AccountService {
 
     public Result couponeList(Long userId, int page, int limit) {
 
-        PageRequest pageRequest = orderItemReposiroty.pageRequest(page, limit);
+        PageRequest pageRequest = ordersReposiroty.pageRequest(page, limit);
         Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), pageRequest);
-
+        logger.info("ordersList : "+orders);
         return Result.success(new PageResult<>(orders).result2Result(ord -> {
 
             List<OrderItems> list = ord.getOrderItems();

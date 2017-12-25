@@ -46,6 +46,8 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
     LotteryFlow findTop1ByRewardOrderByMoneyDesc(Reward reward);
 
 
+
+
     @Query("select l from LotteryFlow l where l.user.id = ?1 order by l.createTime desc ")
     Page<LotteryFlow> findByReward(Long userId, Pageable pageable);
 
@@ -92,12 +94,25 @@ public interface LotteryFlowRepository extends BaseRepository<LotteryFlow> {
                 if(lotteryFlowFinanceDTO.getEndTime()!=null){
                     predicates.add(cb.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(lotteryFlowFinanceDTO.getEndTime(),1)));
                 }
+                predicates.add(cb.equal(root.get("transferStatus").as(Integer.class),LotteryFlow.TransferStatusEnum.NON_TRANSFERRED.getId()));
                 Predicate[] pre = new Predicate[predicates.size()];
                 return query.where(predicates.toArray(pre)).getRestriction();
             }
         };
 
     }
+
+   /* @Query(value = "select ob.* from (select o.* from lottery_flow o, user u,reward r "+
+            " where o.user_id = u.id and o.reward_id = r.id" +
+            " and (?1 is null or u.phone = ?1)" +
+            " and (?2 is null or r.code = ?2)" +
+            " and (?3 is null or o.create_time >= ?3)" +
+            " and (?4 is null or o.create_time < ?4)) as ob" +
+            " left join lottery_flow_record l" +
+            " on ob.id = l.lottery_flow_id" +
+            " where l.id is null" +
+            " order by ob.id desc \n#pageable\n", nativeQuery = true)
+    Page<Object> findByFinance(String phone, String code, Date startTime, Date endTime, Pageable pageable);*/
 
    default PageResult<LotteryFlow> findByReward(Long userId, int page , int limit){
        PageRequest pageRequest = pageRequest(page, limit);

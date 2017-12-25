@@ -147,7 +147,10 @@ public class BalanceFlow extends BaseEntity {
         RECHARGE_PHONE_FARE(6,"充话费"),
         DIDI_EXCHANGE(5,"滴滴兑换"),
         ROUNDABOUT(8,"大转盘"),
-        CASH_TRANSFER(9,"资金迁移");
+        TEMP_RED_BAG(9,"抢红包(历临时账户)"),
+        RED_BAG(10,"抢红包"),
+        VB_TO_MONEY(11,"vb兑换酒元"),
+        REFUND(13,"退款");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;
