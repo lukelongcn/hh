@@ -89,7 +89,7 @@ public class AccountService {
         PageRequest pageRequest = balanceFlowRepository.pageRequest(page, limit);
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
-        Map iconMap = configService.getMapConfig(ParamConstant.BALANCE_FLOW_IMG);
+        Map iconMap = configService.getMapConfig(ParamConstant.VB_FLOW_IMG);
         Map typeMap = configService.getMapConfig(VCOIN_EXCHANGE_TYPE);
         return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc, iconMap,typeMap)));
     }

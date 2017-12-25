@@ -24,6 +24,8 @@ public class ParamConstant {
     // 流水图片
     public static final String BALANCE_FLOW_IMG = "balanceFlowImg";
 
+    public static final String VB_FLOW_IMG = "vbFlowImg";
+
     // 抢红包标语
     public static final String LOTTERY_REMARK = "lotteryRemark";
 
