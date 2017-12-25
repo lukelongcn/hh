@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -29,6 +31,7 @@ public class LotteryFlowRecord  extends BaseEntity {
 
     @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "lottery_flow_id", referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '活动参与记录id'",foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private LotteryFlow lotteryFlow;
 
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '转账状态，1：成功，2：失败'")
