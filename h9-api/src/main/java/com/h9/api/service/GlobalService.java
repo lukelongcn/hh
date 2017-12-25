@@ -20,18 +20,18 @@ public class GlobalService {
     GlobalPropertyRepository globalPropertyRepository;
 
     @Transactional
-    public String version(Integer client) {
+    public Result version(Integer client) {
         // 安卓
         if (client == 1) {
             GlobalProperty globalProperty = globalPropertyRepository.findByCode("androidDownload");
             System.out.println(globalProperty.getVal());
-            return globalProperty.getVal();
+            return Result.success(globalProperty.getVal());
         }
         // IOS
         if (client == 2) {
             GlobalProperty globalProperty1 = globalPropertyRepository.findByCode("iosDownload");
-            return globalProperty1.getVal();
+            return Result.success(globalProperty1.getVal());
         }
-        return "";
+        return Result.fail("请求失败，接口调用出错");
     }
 }
