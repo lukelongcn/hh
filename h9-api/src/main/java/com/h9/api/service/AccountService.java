@@ -116,8 +116,9 @@ public class AccountService {
 
     public Result couponeList(Long userId, int page, int limit) {
 
-        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), new PageRequest(page,limit));
-        logger.info("ordersList : "+orders.getContent().size());
+        PageRequest pageRequest = ordersReposiroty.pageRequest(page, limit);
+        Page<Orders> orders = ordersReposiroty.findDiDiCardByUser(userId, GoodsType.GoodsTypeEnum.DIDI_CARD.getCode(), pageRequest);
+        logger.info("ordersList : "+orders);
         return Result.success(new PageResult<>(orders).result2Result(ord -> {
 
             List<OrderItems> list = ord.getOrderItems();
