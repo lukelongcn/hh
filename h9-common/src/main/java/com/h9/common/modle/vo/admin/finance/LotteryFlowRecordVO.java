@@ -132,7 +132,7 @@ public class LotteryFlowRecordVO {
 
     public LotteryFlowRecordVO(LotteryFlowRecord lotteryFlowRecord,BigDecimal balance) {
         BeanUtils.copyProperties(lotteryFlowRecord, this);
-        this.operator = lotteryFlowRecord.getUser().getNickName();
+        this.operator = lotteryFlowRecord.getUser() == null ? null :lotteryFlowRecord.getUser().getNickName();
         this.balance = balance;
     }
 

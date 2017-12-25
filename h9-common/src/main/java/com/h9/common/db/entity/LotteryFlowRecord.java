@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -16,7 +18,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * name="活动参与记录的转账记录"
  */
 @Entity()
-@Table(name = "lottery_flow_record",uniqueConstraints = {@UniqueConstraint(columnNames={"lottery_flow_id"})})
+@Table(name = "lottery_flow_record")
 public class LotteryFlowRecord  extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
@@ -24,11 +26,13 @@ public class LotteryFlowRecord  extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '操作人'",foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "user_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '操作人'",foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private User user;
 
     @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "lottery_flow_id", referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '活动参与记录id'",foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private LotteryFlow lotteryFlow;
 
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '转账状态，1：成功，2：失败'")
