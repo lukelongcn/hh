@@ -39,13 +39,11 @@ public class BalanceFlowVO {
         money = MoneyUtils.formatMoney(balanceFlow.getMoney());
         this.createTime = DateUtil.formatDate(balanceFlow.getCreateTime(), DateUtil.FormatType.SECOND);
         imgUrl = iconMap.get(balanceFlow.getFlowType() + "");
-        remarks = nameMap.get(balanceFlow.getFlowType() + "");
-
+//        remarks = nameMap.get(balanceFlow.getFlowType() + "");
     }
 
     public BalanceFlowVO(VCoinsFlow vCoinsFlow, Map<String, String> iconMap, Map<String, String> nameMap) {
-        Logger logger = Logger.getLogger(this.getClass());
-        logger.info("for log : " + JSONObject.toJSONString(vCoinsFlow));
+
         BeanUtils.copyProperties(vCoinsFlow, this);
         Date createTime = vCoinsFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
