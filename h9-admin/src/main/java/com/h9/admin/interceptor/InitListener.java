@@ -48,7 +48,7 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
        this.initBannerType();
        this.initArticleType();
        this.initCache();
-       this.initPermission();
+       //this.initPermission();
     }
 
     private void initBannerType(){
