@@ -1,10 +1,12 @@
 package com.h9.api.model.vo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 
 
@@ -29,19 +31,19 @@ public class BalanceFlowVO {
     private String imgUrl;
     private String createTime;
 
-    public BalanceFlowVO(BalanceFlow balanceFlow, Map<String, String> iconMap,Map<String,String> nameMap) {
+    public BalanceFlowVO(BalanceFlow balanceFlow, Map<String, String> iconMap, Map<String, String> nameMap) {
         BeanUtils.copyProperties(balanceFlow, this);
         Date createTime = balanceFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
-        remarks = balanceFlow.getRemarks();
+//        remarks = balanceFlow.getRemarks();
         money = MoneyUtils.formatMoney(balanceFlow.getMoney());
         this.createTime = DateUtil.formatDate(balanceFlow.getCreateTime(), DateUtil.FormatType.SECOND);
-        imgUrl = iconMap.get(balanceFlow.getFlowType()+"");
+        imgUrl = iconMap.get(balanceFlow.getFlowType() + "");
         remarks = nameMap.get(balanceFlow.getFlowType() + "");
-
     }
 
-    public BalanceFlowVO(VCoinsFlow vCoinsFlow, Map<String, String> iconMap,Map<String,String> nameMap) {
+    public BalanceFlowVO(VCoinsFlow vCoinsFlow, Map<String, String> iconMap, Map<String, String> nameMap) {
+
         BeanUtils.copyProperties(vCoinsFlow, this);
         Date createTime = vCoinsFlow.getCreateTime();
         month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
