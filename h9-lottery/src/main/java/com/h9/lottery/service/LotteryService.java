@@ -123,9 +123,7 @@ public class LotteryService {
         String imei = request.getHeader("imei");
         if (!onWhiteUser(userId)) {
             if (onBlackUser(userId, imei)) {
-                if(lotteryCount.compareTo(new BigDecimal(2)) > 0){
                     return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
-                }
             }else{
                 String dayMaxlotteryCount = configService.getStringConfig(ParamConstant.DAY_MAX_LOTTERY_COUNT);
                 if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount).subtract(new BigDecimal(1))) > 0){
