@@ -16,7 +16,7 @@ public class JobController {
     @Resource
     private BlackListJob blackListJob;
 
-    @GetMapping("/admin/job/blackList")
+    @GetMapping("/job/blackList")
     public Result blackListJob() {
         blackListJob.scan();
         return Result.success("开始执行定时任务");
