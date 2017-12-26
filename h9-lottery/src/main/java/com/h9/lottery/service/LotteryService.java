@@ -517,7 +517,6 @@ public class LotteryService {
 
 
     public String forward(String code) {
-        //todo
         return concatUrl(LotteryConstantConfig.Lottery_QR_FORWARD_PATH, code);
     }
 
