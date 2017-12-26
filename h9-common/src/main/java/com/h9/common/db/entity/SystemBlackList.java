@@ -38,6 +38,7 @@ public class SystemBlackList extends BaseEntity {
 
     @Column(name = "status",nullable = false,columnDefinition = "int default 1 COMMENT '黑名单状态 1 正常 2 禁用，失效黑名单'")
     private Integer status = 1;
+
     
     @Column(name = "cause", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '加入黑名单原因'")
     private String cause;

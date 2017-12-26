@@ -1,5 +1,6 @@
 package com.h9.admin.job;
 
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.SystemBlackList;
 import com.h9.common.db.repo.LotteryRepository;
@@ -27,6 +28,8 @@ import java.util.stream.Collectors;
 public class BlackListJob {
 
     @Resource
+    private ConfigService configService;
+    @Resource
     private SystemBlackListRepository systemBlackListRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -51,11 +54,13 @@ public class BlackListJob {
 
             Long userId = userIdList.get(i);
             Date startDate = new Date();
-            Date endDate = DateUtil.getDate(startDate, 1, Calendar.DAY_OF_MONTH);
+            Integer blackListDisabledTime = Integer.valueOf(configService.getStringConfig("blackListDisabledTime"));
+            Date endDate = DateUtil.getDate(startDate, blackListDisabledTime, Calendar.HOUR_OF_DAY);
             SystemBlackList blackList = new SystemBlackList(userId, startDate, endDate, 1, "黑名单", null, null, null);
 
             SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdAndStatus(userId, new Date());
             if (systemBlackList == null) {
+                logger.info("黑名单userId : "+userId);
                 systemBlackListRepository.save(blackList);
             }
         }
