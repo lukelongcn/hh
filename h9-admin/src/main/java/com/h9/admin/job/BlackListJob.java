@@ -55,7 +55,7 @@ public class BlackListJob {
             Long userId = userIdList.get(i);
             Date startDate = new Date();
             Integer blackListDisabledTime = Integer.valueOf(configService.getStringConfig("blackListDisabledTime"));
-            Date endDate = DateUtil.getDate(startDate, blackListDisabledTime, Calendar.HOUR_OF_DAY);
+            Date endDate = DateUtil.getDate(startDate, blackListDisabledTime, Calendar.MILLISECOND);
             SystemBlackList blackList = new SystemBlackList(userId, startDate, endDate, 1, "黑名单", null, null, null);
 
             SystemBlackList systemBlackList = systemBlackListRepository.findByUserIdAndStatus(userId, new Date());
