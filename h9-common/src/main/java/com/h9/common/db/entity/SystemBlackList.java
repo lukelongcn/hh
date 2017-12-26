@@ -51,6 +51,21 @@ public class SystemBlackList extends BaseEntity {
     @Column(name = "imei", columnDefinition = "varchar(50) default null COMMENT '设备号,与用户id不能同时存在'")
     private String imei;
 
+
+    public SystemBlackList(Long userId, Date startTime, Date endTime, Integer status, String cause, Long rewardId, Long orderId, String imei) {
+        this.userId = userId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status;
+        this.cause = cause;
+        this.rewardId = rewardId;
+        this.orderId = orderId;
+        this.imei = imei;
+    }
+
+    public SystemBlackList( ) {
+    }
+
     public String getCause() {
         return cause;
     }
