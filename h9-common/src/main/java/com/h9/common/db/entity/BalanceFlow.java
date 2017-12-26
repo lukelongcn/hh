@@ -34,7 +34,7 @@ public class BalanceFlow extends BaseEntity {
 
 
     /**
-     * description: {"1":"提现","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"资金迁移"}
+     * description: {"11":"vb积分兑换酒元","1":"提现","12":"酒元余额兑换","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"抢红包（临时账号）","10":"抢红包"}
      * @see FlowType
      */
     @Column(name = "flow_type",columnDefinition = "bigint(20) default null COMMENT '流水类型'")
@@ -48,6 +48,9 @@ public class BalanceFlow extends BaseEntity {
         public static final long MOBILE_RECHAGE = 6;
         public static final long DA_ZHUAN_PAN = 8;
         public static final long ACCOUNT_TRANSFER = 9;
+        /**
+         * description: 抢红包
+         */
         public static final long LOTTERY = 10;
     }
 

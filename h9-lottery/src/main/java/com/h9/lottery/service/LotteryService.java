@@ -43,6 +43,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.h9.common.db.entity.BalanceFlow.FlowType.LOTTERY;
 import static com.h9.common.db.entity.Reward.StatusEnum.END;
 
 /**
@@ -393,7 +394,7 @@ public class LotteryService {
             Long lotteryUserId = lotteryFlow.getUser().getId();
             BigDecimal money = lotteryFlow.getMoney();
             String balanceFlowType = configService.getValueFromMap("balanceFlowType", "10");
-            commonService.setBalance(lotteryUserId, money, 1L, lotteryFlow.getId(), lotteryFlow.getId() + "", balanceFlowType);
+            commonService.setBalance(lotteryUserId, money, LOTTERY, lotteryFlow.getId(), lotteryFlow.getId() + "", balanceFlowType);
         }
         return Result.success();
     }
@@ -500,7 +501,7 @@ public class LotteryService {
             reward.setProduct(product);
             BigDecimal intergal = lotteryModel.getIntergal();
             BigDecimal money = lotteryModel.getBouns();
-            if (intergal.compareTo(new BigDecimal(0)) >= 0) {
+            if (intergal.compareTo(new BigDecimal(0)) > 0) {
                 money = intergal.divide(new BigDecimal(10));
             }
             reward.setMoney(money);
@@ -516,7 +517,6 @@ public class LotteryService {
 
 
     public String forward(String code) {
-        //todo
         return concatUrl(LotteryConstantConfig.Lottery_QR_FORWARD_PATH, code);
     }
 
