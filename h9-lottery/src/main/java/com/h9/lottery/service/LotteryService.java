@@ -484,10 +484,13 @@ public class LotteryService {
             Product product = null;
             if (productInfo != null && productInfo.getState() != 2 && productInfo.getState() != 3) {
                 try {
-                    product = productInfo.covert();
-                    ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
-                    product.setProductType(productType);
-                    product = productRepository.saveAndFlush(product);
+                    product = productRepository.findByCode(code);
+                    if(product == null){
+                        product = productInfo.covert();
+                        ProductType productType = productTypeRepository.findOrNew(productInfo.getName());
+                        product.setProductType(productType);
+                        product = productRepository.saveAndFlush(product);
+                    }
                 } catch (Exception e) {
                     logger.debug(e.getMessage(), e);
                 }

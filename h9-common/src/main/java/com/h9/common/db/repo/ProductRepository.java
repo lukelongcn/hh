@@ -25,4 +25,7 @@ public interface ProductRepository extends BaseRepository<Product> {
     @Query("select p from Product p where p.code = ?1")
     Product findByCode4Update(String code);
 
+
+
+
 }

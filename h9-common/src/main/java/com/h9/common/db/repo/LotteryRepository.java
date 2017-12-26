@@ -31,18 +31,18 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
     BigDecimal findByRewardCount(Reward reward);
 
 
-
     @Query("select l.createTime from Lottery as l where l.reward = ?1 order by l.createTime desc")
     List<Date> findByRewardLastTime(Reward reward, Pageable pageable);
 
 
-
-   default Date findByRewardLastTime(Reward reward){
-       return findByRewardLastTime(reward, pageRequest(1, 1)).get(0);
-   }
+    default Date findByRewardLastTime(Reward reward) {
+        return findByRewardLastTime(reward, pageRequest(1, 1)).get(0);
+    }
 
     @Query("select count(l.id) from Lottery as l where l.reward.id = ?1 ")
     int findCountByReward(long rewardId);
 
 
+    @Query(nativeQuery = true, value = "select a1.* from (select user.id user_id,count(*) lottery_count ,sum(lottery.money) lottery_money  from user,lottery where lottery.user_id  = user.id  group by user.id ) a1 where a1.lottery_money > 260;")
+    List<?> findBlackUser();
 }
