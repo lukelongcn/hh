@@ -36,7 +36,7 @@ public class BlackListJob {
     @Resource
     private LotteryRepository lotteryRepository;
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0 1 * * *")
     public void scan() {
         logger.info("BlackListJob go.................");
 
