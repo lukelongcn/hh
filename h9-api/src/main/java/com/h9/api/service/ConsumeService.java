@@ -269,7 +269,7 @@ public class ConsumeService {
         Long id = didiCardDTO.getId();
 
         Goods goods = goodsReposiroty.findOne(id);
-        BigDecimal price = goods.getPrice();
+        BigDecimal price = goods.getRealPrice();
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
         }
@@ -333,7 +333,7 @@ public class ConsumeService {
         Long id = didiCardDTO.getId();
 
         Goods goods = goodsReposiroty.findOne(id);
-        BigDecimal price = goods.getPrice();
+        BigDecimal price = goods.getRealPrice();
 
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
