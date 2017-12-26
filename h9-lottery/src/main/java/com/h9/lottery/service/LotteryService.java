@@ -500,7 +500,7 @@ public class LotteryService {
             reward.setProduct(product);
             BigDecimal intergal = lotteryModel.getIntergal();
             BigDecimal money = lotteryModel.getBouns();
-            if (intergal.compareTo(new BigDecimal(0)) >= 0) {
+            if (intergal.compareTo(new BigDecimal(0)) > 0) {
                 money = intergal.divide(new BigDecimal(10));
             }
             reward.setMoney(money);
