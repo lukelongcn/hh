@@ -35,7 +35,7 @@ public class lotteryTask {
     @Resource
     private LotteryConfig lotteryConfig;
 
-//    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 5000)
     public void run() {
 
         List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
