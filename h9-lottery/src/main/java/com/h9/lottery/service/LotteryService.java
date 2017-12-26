@@ -501,7 +501,7 @@ public class LotteryService {
             reward.setProduct(product);
             BigDecimal intergal = lotteryModel.getIntergal();
             BigDecimal money = lotteryModel.getBouns();
-            if (intergal.compareTo(new BigDecimal(0)) >= 0) {
+            if (intergal.compareTo(new BigDecimal(0)) > 0) {
                 money = intergal.divide(new BigDecimal(10));
             }
             reward.setMoney(money);
@@ -517,7 +517,6 @@ public class LotteryService {
 
 
     public String forward(String code) {
-        //todo
         return concatUrl(LotteryConstantConfig.Lottery_QR_FORWARD_PATH, code);
     }
 

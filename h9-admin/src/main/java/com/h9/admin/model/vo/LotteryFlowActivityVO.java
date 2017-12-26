@@ -1,5 +1,6 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.Lottery;
 import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.UserRecord;
 import io.swagger.annotations.ApiModelProperty;
@@ -167,20 +168,10 @@ public class LotteryFlowActivityVO {
         this.imei = imei;
     }
 
-    public static LotteryFlowActivityVO toLotteryFlowActivityVO(LotteryFlow lotteryFlow){
-        LotteryFlowActivityVO lotteryFlowActivityVO = new LotteryFlowActivityVO();
-        BeanUtils.copyProperties(lotteryFlow.getReward(), lotteryFlowActivityVO);
-        BeanUtils.copyProperties(lotteryFlow.getUser(), lotteryFlowActivityVO);
-        BeanUtils.copyProperties(lotteryFlow.getUserRecord(), lotteryFlowActivityVO);
-        BeanUtils.copyProperties(lotteryFlow, lotteryFlowActivityVO);
-//        lotteryFlowActivityVO.setCode(lotteryFlow.getReward().getCode());
-//        lotteryFlowActivityVO.setPhone(lotteryFlow.getUser().getPhone());
-//        lotteryFlowActivityVO.setIp(lotteryFlow.getUserRecord().getIp());
-//        lotteryFlowActivityVO.setLatitude(lotteryFlow.getUserRecord().getLatitude());
-//        lotteryFlowActivityVO.setLongitude(lotteryFlow.getUserRecord().getLongitude());
-//        lotteryFlowActivityVO.setUserId(lotteryFlow.getUser().getId());
-//        lotteryFlowActivityVO.setPhoneType(lotteryFlow.getUserRecord().getPhoneType());
-//        lotteryFlowActivityVO.setVersion(lotteryFlow.getUserRecord().getVersion());
-        return lotteryFlowActivityVO;
+    public LotteryFlowActivityVO(Lottery lottery){
+        BeanUtils.copyProperties(lottery.getReward(), this);
+        BeanUtils.copyProperties(lottery.getUser(), this);
+        BeanUtils.copyProperties(lottery.getUserRecord(), this);
+        BeanUtils.copyProperties(lottery, this);
     }
 }

@@ -43,10 +43,10 @@ public class BalanceFlowVO {
     }
 
     public BalanceFlowVO(VCoinsFlow vCoinsFlow, Map<String, String> iconMap, Map<String, String> nameMap) {
-
         BeanUtils.copyProperties(vCoinsFlow, this);
         Date createTime = vCoinsFlow.getCreateTime();
-        month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
+        if(createTime!=null)
+           month = DateUtil.formatDate(createTime, DateUtil.FormatType.GBK_MONTH);
         remarks = vCoinsFlow.getRemarks();
         imgUrl = iconMap.get(vCoinsFlow.getvCoinsflowType() + "");
         this.money = vCoinsFlow.getMoney().toString();

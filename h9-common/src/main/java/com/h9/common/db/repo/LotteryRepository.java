@@ -3,12 +3,20 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.Lottery;
+import com.h9.common.db.entity.LotteryFlow;
 import com.h9.common.db.entity.Reward;
+import com.h9.common.db.entity.User;
+import com.h9.common.modle.dto.LotteryFlowActivityDTO;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,4 +120,28 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
             "\tAND a1.user_id = a2.userId")
     List<Object> findBlackUser();
 
+    default Specification<Lottery> buildActivitySpecification(LotteryFlowActivityDTO lotteryFlowActivityDTO){
+        return  new Specification<Lottery>() {
+            @Override
+            public Predicate toPredicate(Root<Lottery> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                if(!StringUtils.isEmpty(lotteryFlowActivityDTO.getPhone())){
+                    predicates.add(cb.equal(root.get("user").get("phone").as(String.class), lotteryFlowActivityDTO.getPhone()));
+                }
+                if(!StringUtils.isEmpty(lotteryFlowActivityDTO.getCode())){
+                    predicates.add(cb.equal(root.get("reward").get("code").as(String.class), lotteryFlowActivityDTO.getCode()));
+                }
+                if(lotteryFlowActivityDTO.getStatus()!=null&& lotteryFlowActivityDTO.getStatus()!=0){
+                    if(lotteryFlowActivityDTO.getStatus()==2){
+                        predicates.add(cb.lessThanOrEqualTo(root.get("money").as(BigDecimal.class), BigDecimal.ZERO));
+                    }else{
+                        predicates.add(cb.greaterThan(root.get("money").as(BigDecimal.class), BigDecimal.ZERO));
+                    }
+                }
+                Predicate[] pre = new Predicate[predicates.size()];
+                return query.where(predicates.toArray(pre)).getRestriction();
+            }
+        };
+
+    }
 }
