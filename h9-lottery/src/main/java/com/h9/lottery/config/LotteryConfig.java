@@ -20,7 +20,7 @@ public class LotteryConfig {
 
     // 获取黑名用户最大扫码数量
     public int getBlackMaxLotteryCount() {
-        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.LOTTERY_DAY_MAX__COUNT);
+        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.LOTTERY_BLACK_DAY_MAX_COUNT);
         Integer max = 3;
         try {
             max = Integer.valueOf(dayMaxotteryCount);
@@ -31,9 +31,9 @@ public class LotteryConfig {
     }
 
 
-    // 获取黑名用户最大扫码数量
+    // 获取用户最大扫码数量
     public int getMaxLotteryCount() {
-        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.LOTTERY_DAY_MAX__COUNT);
+        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.LOTTERY_DAY_MAX_COUNT);
         Integer max = 10;
         try {
             max = Integer.valueOf(dayMaxotteryCount);

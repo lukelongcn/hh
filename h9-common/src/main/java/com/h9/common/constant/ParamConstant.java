@@ -35,7 +35,9 @@ public class ParamConstant {
     // 支持配送的快递公司
     public static final String SUPPORT_EXPRESS = "supportExpress";
     // 黑名单最大扫码次数
-    public static final String LOTTERY_DAY_MAX__COUNT = "lottery:black:max:count";
+    public static final String LOTTERY_BLACK_DAY_MAX_COUNT = "lottery:black:max:count";
+    // 正常用户最大扫码次数
+    public static final String LOTTERY_DAY_MAX_COUNT = "lottery:black:max:count";
 
     // 刷新间隔
     public static final String REFRESH = "refresh";
