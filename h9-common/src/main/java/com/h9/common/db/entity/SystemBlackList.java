@@ -38,6 +38,7 @@ public class SystemBlackList extends BaseEntity {
 
     @Column(name = "status",nullable = false,columnDefinition = "int default 1 COMMENT '黑名单状态 1 正常 2 禁用，失效黑名单'")
     private Integer status = 1;
+
     
     @Column(name = "cause", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '加入黑名单原因'")
     private String cause;
@@ -50,6 +51,21 @@ public class SystemBlackList extends BaseEntity {
     
     @Column(name = "imei", columnDefinition = "varchar(50) default null COMMENT '设备号,与用户id不能同时存在'")
     private String imei;
+
+
+    public SystemBlackList(Long userId, Date startTime, Date endTime, Integer status, String cause, Long rewardId, Long orderId, String imei) {
+        this.userId = userId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status;
+        this.cause = cause;
+        this.rewardId = rewardId;
+        this.orderId = orderId;
+        this.imei = imei;
+    }
+
+    public SystemBlackList( ) {
+    }
 
     public String getCause() {
         return cause;

@@ -368,6 +368,9 @@ public class ApiApplicationTests {
         long end = System.currentTimeMillis();
         logger.info("time :　" + (end - start));
     }
+
+    @Resource
+    private LotteryRepository lotteryRepository;
 }
 
 

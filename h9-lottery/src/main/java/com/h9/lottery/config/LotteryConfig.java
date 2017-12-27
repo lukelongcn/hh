@@ -18,52 +18,27 @@ public class LotteryConfig {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    // 获取最大扫码次数
-    public int getDayMaxLotteryTime() {
-        String dayMaxotteryCount = configService.getStringConfig("lottery:max:time");
-        Integer time = -3600;
-        try {
-            time = Integer.valueOf(dayMaxotteryCount);
-        } catch (NumberFormatException e) {
-            logger.info("获取最大扫码次数失败！默认值：max: "+time);
-        }
-        return time;
-    }
-
-    // 获取最大扫码次数
-    public int getDayMaxLotteryCount() {
-
-        String dayMaxotteryCount = configService.getStringConfig("lottery:max:count");
-        Integer max = 20;
-        try {
-            max = Integer.valueOf(dayMaxotteryCount);
-        } catch (NumberFormatException e) {
-            logger.info("获取最大扫码次数失败！默认值：max: "+max);
-        }
-        return max;
-    }
-
-    // 获取红包抽奖错误最大扫码次数
-    public int getMaxLotteryErrorTime() {
-        String time = configService.getStringConfig(ParamConstant.LOTTERY_ERROR_MAX_TIME);
-        Integer maxTime = -3600;
-        try {
-            maxTime = Integer.valueOf(time);
-        } catch (NumberFormatException e) {
-            logger.info("获取最大扫码次数失败！默认值：max: "+maxTime);
-        }
-        return maxTime;
-    }
-
-
-    // 获取红包抽奖错误最大扫码次数
-    public int getMaxLotteryErrorCount() {
-        String dayMaxotteryCount = configService.getStringConfig("lottery:error:max:count");
+    // 获取黑名用户最大扫码数量
+    public int getBlackMaxLotteryCount() {
+        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.LOTTERY_BLACK_DAY_MAX_COUNT);
         Integer max = 3;
         try {
             max = Integer.valueOf(dayMaxotteryCount);
         } catch (NumberFormatException e) {
-            logger.info("获取最大扫码次数失败！默认值：max: "+max);
+            logger.info("获取黑名当用户最大扫码次数失败！默认值：max: "+max);
+        }
+        return max;
+    }
+
+
+    // 获取用户最大扫码数量
+    public int getMaxLotteryCount() {
+        String dayMaxotteryCount = configService.getStringConfig(ParamConstant.LOTTERY_DAY_MAX_COUNT);
+        Integer max = 10;
+        try {
+            max = Integer.valueOf(dayMaxotteryCount);
+        } catch (NumberFormatException e) {
+            logger.info("获取用户最大扫码次数失败！默认值：max: "+max);
         }
         return max;
     }

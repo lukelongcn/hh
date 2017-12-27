@@ -33,4 +33,7 @@ public interface SystemBlackListRepository extends BaseRepository<SystemBlackLis
 
     @Query(value = "select o from SystemBlackList o where ?3 > o.startTime and ?3 < o.endTime and o.status = 1 and (o.userId = ?1 or o.imei = ?2)")
     List<SystemBlackList> findByUserIdOrImei(Long userId, String imei, Date date);
+
+    @Query(value = "select o from SystemBlackList o where o.userId = ?1 and o.status is null")
+    List<SystemBlackList> findByUserIdAndStatus(Long userId);
 }

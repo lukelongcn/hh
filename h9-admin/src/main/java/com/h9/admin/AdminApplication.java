@@ -27,8 +27,6 @@ import javax.servlet.MultipartConfigElement;
 @EnableScheduling
 public class AdminApplication {
 
-
-
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(AdminApplication.class, args);
         Logger logger = Logger.getLogger(AdminApplication.class);
@@ -47,7 +45,6 @@ public class AdminApplication {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
         return restTemplate;
-
 
     }
 

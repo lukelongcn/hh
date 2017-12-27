@@ -90,50 +90,8 @@ public class LotteryService {
     public Result appCode(Long userId, LotteryDto lotteryVo, HttpServletRequest request) throws ServiceException {
 //        记录用户信息
         UserRecord userRecord = commonService.newUserRecord(userId, lotteryVo.getLatitude(), lotteryVo.getLongitude(), request);
-
-        //检查用户参与活动次数,是否超标
-        Date startDate = DateUtil.getDate(new Date(), lotteryConfig.getDayMaxLotteryTime(), Calendar.SECOND);
-        //正确的扫码数量限制
-        BigDecimal lotteryCount = lotteryLogRepository.getLotteryCount(userId, startDate);
-
-        //        当前的条码是否是新码
-        BigDecimal userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode(), startDate);
-        if (lotteryCount == null) {
-            lotteryCount = new BigDecimal(0);
-        }
-        logger.debugv("lotteryCount {0} userLotteryCount {1}", lotteryCount, userLotteryCount);
-        if (lotteryCount.compareTo(new BigDecimal(lotteryConfig.getDayMaxLotteryCount())) > 0
-                && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
-            return Result.fail("您的扫码数量已经超过限制了");
-        }
-
-        Date startErrorDate = DateUtil.getDate(new Date(), lotteryConfig.getMaxLotteryErrorTime(), Calendar.SECOND);
-        userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode(), startErrorDate);
-        //正确的扫码数量限制
-        BigDecimal lotteryErrorCount = lotteryLogRepository.getLotteryErrorCount(userId, startErrorDate);
-        if (lotteryErrorCount == null) {
-            lotteryErrorCount = new BigDecimal(0);
-        }
-        logger.debugv("lotteryErrorCount {0} userLotteryCount {1}", lotteryErrorCount, userLotteryCount);
-        if (lotteryErrorCount.compareTo(new BigDecimal(lotteryConfig.getMaxLotteryErrorCount())) > 0
-                && userLotteryCount.compareTo(new BigDecimal(0)) <= 0) {
-            return Result.fail("您的扫码错误数量已经超过限制");
-        }
-
-        String imei = request.getHeader("imei");
-        if (!onWhiteUser(userId)) {
-            if (onBlackUser(userId, imei)) {
-                if(lotteryCount.compareTo(new BigDecimal(2)) > 0){
-                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
-                }
-            }else{
-                String dayMaxlotteryCount = configService.getStringConfig(ParamConstant.DAY_MAX_LOTTERY_COUNT);
-                if(lotteryCount.compareTo(new BigDecimal(dayMaxlotteryCount).subtract(new BigDecimal(1))) > 0){
-                    return Result.fail("异常操作，限制访问！如有疑问，请联系客服。");
-                }
-            }
-        }
-
+        //判断限定数量
+        if (limitLotteryCount(userId, lotteryVo, request)) return Result.fail("已超过当日最大活动次数");
         //  检查第三方库有没有数据
         Result<Reward> result = exitsReward(lotteryVo.getCode());
         //记录扫码记录
@@ -145,7 +103,7 @@ public class LotteryService {
         }
         Reward reward = data;
         if (reward == null) {
-            return Result.fail("很遗憾您没有中奖");
+            return Result.fail("您扫的条码不存在");
         }
         Integer status = reward.getStatus();
         if (status == StatusEnum.FAILD.getCode()) {
@@ -197,6 +155,43 @@ public class LotteryService {
             }
             return Result.success(lotteryResultDto);
         }
+    }
+
+    private boolean limitLotteryCount(Long userId, LotteryDto lotteryVo, HttpServletRequest request) {
+        Date startDate = DateUtil.getTimesMorning();
+        Date endDate = DateUtil.getTimesNight();
+        // 当天的扫码数量限制
+        BigDecimal lotteryCount = lotteryLogRepository.getTodayCount(userId,startDate,endDate);
+        if (lotteryCount == null) {
+            lotteryCount = new BigDecimal(0);
+        }
+        //  当前的条码扫描数量
+        BigDecimal userLotteryCount = lotteryLogRepository.getCodeLotteryCount(userId, lotteryVo.getCode());
+        if (userLotteryCount == null) {
+            userLotteryCount = new BigDecimal(0);
+        }
+        logger.debugv("lotteryCount {0} userLotteryCount {1}", lotteryCount, userLotteryCount);
+        String imei = request.getHeader("imei");
+        // 如果扫旧码，就不用管了
+        if(userLotteryCount.compareTo(new BigDecimal(0)) <= 0){
+            boolean onWhiteUser = onWhiteUser(userId);
+            boolean onBlackUser = onBlackUser(userId, imei);
+            Integer daxMaxCount = null;
+            if(onWhiteUser) {
+                //不限制次数
+                daxMaxCount = null;
+            }else if (onBlackUser) {
+                daxMaxCount = lotteryConfig.getBlackMaxLotteryCount();
+            }else{
+                daxMaxCount = lotteryConfig.getMaxLotteryCount();
+            }
+            if(daxMaxCount !=null ){
+                if(lotteryCount.intValue() >= daxMaxCount ){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
