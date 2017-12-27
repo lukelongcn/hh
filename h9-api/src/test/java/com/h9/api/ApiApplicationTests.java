@@ -6,7 +6,6 @@ package com.h9.api;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
-import com.h9.api.job.BlackListJob;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.PageResult;
@@ -372,16 +371,6 @@ public class ApiApplicationTests {
 
     @Resource
     private LotteryRepository lotteryRepository;
-    @Resource
-    private BlackListJob blackListJob;
-
-    @Test
-    public void test2(){
-
-
-        blackListJob.scan();
-
-    }
 }
 
 
