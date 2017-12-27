@@ -10,6 +10,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
@@ -29,8 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.h9.common.constant.ParamConstant.BALANCE_FLOW_TYPE;
-import static com.h9.common.constant.ParamConstant.VCOIN_EXCHANGE_TYPE;
+import static com.h9.common.constant.ParamConstant.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -92,7 +92,7 @@ public class AccountService {
         Page<VCoinsFlow> balanceFlows = vCoinsFlowRepository.findByBalance(userId, pageRequest);
         PageResult<VCoinsFlow> flowPageResult = new PageResult<>(balanceFlows);
 
-        Map iconMap = configService.getMapConfig("vbFlowImg");
+        Map iconMap = configService.getMapConfig(ParamConstant.VB_FLOW_IMG);
         Map typeMap = configService.getMapConfig(VCOIN_EXCHANGE_TYPE);
         return Result.success(flowPageResult.result2Result(bc -> new BalanceFlowVO(bc, iconMap,typeMap)));
     }
@@ -139,7 +139,7 @@ public class AccountService {
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
-        String endTime = configService.getStringConfig("h9:api:vb:endTime");
+        String endTime = configService.getStringConfig(H9_API_VB_ENDTIME);
 
         BigDecimal vbCount = userAccount.getvCoins();
         SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -150,11 +150,11 @@ public class AccountService {
             logger.info(e.getMessage(), e);
         }
 
-        String rateStr = configService.getStringConfig("h9:api:vb2JiuYuan");
+        String rateStr = configService.getStringConfig(H9_API_VB2_JIUYUAN);
 
         BigDecimal JiuYuan = vbCount.multiply(new BigDecimal(rateStr));
 
-        String icon = configService.getStringConfig("JiuYuanIcon");
+        String icon = configService.getStringConfig(JIUYUAN_ICON);
         VbconvertVO vo = new VbconvertVO()
                 .setEndTimeTip(DateUtil.formatDate(endDate, DateUtil.FormatType.MINUTE))
                 .setJiuYuan(MoneyUtils.formatMoney(JiuYuan))
