@@ -34,12 +34,8 @@ public class ParamConstant {
 
     // 支持配送的快递公司
     public static final String SUPPORT_EXPRESS = "supportExpress";
-
-    // 最大扫码次数
-    public static final String LOTTERY_MAX_TIME = "lottery:max:time";
-
-    // 最大扫码次数
-    public static final String DAY_MAX_LOTTERY_COUNT = "dayMaxlotteryCount";
+    // 黑名单最大扫码次数
+    public static final String LOTTERY_DAY_MAX__COUNT = "lottery:black:max:count";
 
     // 刷新间隔
     public static final String REFRESH = "refresh";
@@ -71,8 +67,6 @@ public class ParamConstant {
     // 短信一天发送次数
     public static final String SMS_ONEDAY_COUNTCOUNT = "sms:OneDay:CountCount";
 
-    // 红包抽奖错误最大扫码次数
-    public static final String LOTTERY_ERROR_MAX_TIME = "lottery:error:max:time";
 
 
 

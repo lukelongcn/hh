@@ -20,9 +20,6 @@ import java.util.List;
 @Repository
 public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
 
-    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.rewardId = null ")
-    BigDecimal getLotteryErrorCount(Long userId,Date startDate);
-
     @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.rewardId <> null  ")
     BigDecimal getLotteryCount(Long userId,Date startDate);
 
@@ -41,5 +38,16 @@ public interface LotteryLogRepository extends BaseRepository<LotteryLog> {
             "and ll.createTime between ?1 and ?2 " +
             "and (?3 is null or u.phone like ?3 or ll.userId like ?3  )")
     List<UserRecordVO> getUserList(Date startTime, Date endTime, String key);
+
+
+    /****
+     * 获取今天扫码数量
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Query("select count(distinct ll.code) from LotteryLog  ll  where ll.userId = ?1 and ll.createTime > ?2 and ll.createTime <= ?3 ")
+    BigDecimal getTodayCount(Long userId,Date startDate,Date endDate);
 
 }
