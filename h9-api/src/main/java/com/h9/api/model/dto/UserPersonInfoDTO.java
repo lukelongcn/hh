@@ -16,7 +16,7 @@ import java.util.Date;
  */
 public class UserPersonInfoDTO {
     private String avatar;
-    @NotBlank(message = "请填写nickName")
+    @NotBlank(message = "请填写昵称")
     private String nickName;
     private String sex;
     private Date birthday;
