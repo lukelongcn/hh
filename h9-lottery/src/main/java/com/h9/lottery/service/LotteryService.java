@@ -166,7 +166,7 @@ public class LotteryService {
             lotteryCount = new BigDecimal(0);
         }
         //  当前的条码扫描数量
-        BigDecimal userLotteryCount = lotteryLogRepository.getLotteryCount(userId, lotteryVo.getCode(), startDate);
+        BigDecimal userLotteryCount = lotteryLogRepository.getCodeLotteryCount(userId, lotteryVo.getCode());
         if (userLotteryCount == null) {
             userLotteryCount = new BigDecimal(0);
         }
