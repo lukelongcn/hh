@@ -1,6 +1,7 @@
 package com.h9.common.db.entity.lottery;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.db.entity.user.UserRecord;
 
 
 import javax.persistence.*;

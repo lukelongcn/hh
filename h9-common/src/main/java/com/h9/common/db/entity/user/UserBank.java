@@ -1,6 +1,7 @@
 package com.h9.common.db.entity.user;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.db.entity.account.BankType;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -84,6 +85,10 @@ public class UserBank extends BaseEntity {
 
     public BankType getBankType() {
         return bankType;
+    }
+
+    public void setBankType() {
+        setBankType();
     }
 
     public void setBankType(BankType bankType) {
