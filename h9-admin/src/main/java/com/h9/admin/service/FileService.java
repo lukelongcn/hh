@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class FileService {
     @Value("${qiniu.AccessKey}")
     private String accessKey;
     @Value("${qiniu.SecretKey}")
-    String secretKey = "3wKtwQGZfA7xFIsAt3I1LDaOR_kF6UVvRojLdi9k";
+    String secretKey;
     @Value("${qiniu.servlet.bucket}")
     private String bucket;
     @Value("${qiniu.img.path}")
@@ -65,8 +64,8 @@ public class FileService {
     }
 
     private Result upload(MultipartFile file,String key) {
-        //构造一个带指定Zone对象的配置类
-        Configuration cfg = new Configuration(Zone.zone2());
+        //构造一个带指定Zone对象的配置类,华南zone1,华东zone0
+        Configuration cfg = new Configuration(Zone.zone0());
         //...其他参数参考类注释
         UploadManager uploadManager = new UploadManager(cfg);
         //...生成上传凭证，然后准备上传
