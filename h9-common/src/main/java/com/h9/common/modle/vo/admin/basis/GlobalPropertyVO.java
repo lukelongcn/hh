@@ -3,7 +3,7 @@ package com.h9.common.modle.vo.admin.basis;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.config.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;

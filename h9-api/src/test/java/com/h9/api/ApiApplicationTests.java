@@ -14,7 +14,15 @@ import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.CardCoupons;
+import com.h9.common.db.entity.order.Address;
+import com.h9.common.db.entity.order.China;
+import com.h9.common.db.entity.order.GoodsType;
+import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.*;
 
 import org.jboss.logging.Logger;
@@ -27,7 +35,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;

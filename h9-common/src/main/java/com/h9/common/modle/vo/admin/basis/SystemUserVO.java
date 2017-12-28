@@ -1,6 +1,6 @@
 package com.h9.common.modle.vo.admin.basis;
 
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.user.User;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

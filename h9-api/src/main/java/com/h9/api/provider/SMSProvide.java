@@ -3,11 +3,8 @@ package com.h9.api.provider;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.entity.SMSLog;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.utils.MD5Util;
-import com.mysql.jdbc.TimeUtil;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
@@ -17,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.Resource;
 import java.net.URI;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by itservice on 2017/10/27.

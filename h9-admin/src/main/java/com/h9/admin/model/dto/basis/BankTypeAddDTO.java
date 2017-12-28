@@ -1,12 +1,10 @@
 package com.h9.admin.model.dto.basis;
 
-import com.h9.common.db.entity.BankType;
+import com.h9.common.db.entity.account.BankType;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 

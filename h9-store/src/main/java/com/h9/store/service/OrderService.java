@@ -2,15 +2,13 @@ package com.h9.store.service;
 
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.OrderItemReposiroty;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserRepository;
-import com.h9.store.modle.vo.OrderListVO;
 import com.h9.store.modle.vo.OrderListVO2;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
@@ -21,7 +19,6 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by itservice on 2017/10/31.

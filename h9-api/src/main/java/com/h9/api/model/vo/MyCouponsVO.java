@@ -1,10 +1,8 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.OrderItems;
+import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Created by itservice on 2017/11/2.

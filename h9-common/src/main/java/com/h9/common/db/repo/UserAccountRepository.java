@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.modle.vo.admin.finance.UserAccountVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

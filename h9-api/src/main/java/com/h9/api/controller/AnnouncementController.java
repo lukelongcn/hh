@@ -3,7 +3,6 @@ package com.h9.api.controller;
 import com.h9.api.model.vo.AnnouncementVO;
 import com.h9.api.service.AnnouncementServise;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Announcement;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;

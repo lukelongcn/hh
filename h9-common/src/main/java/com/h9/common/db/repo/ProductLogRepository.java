@@ -2,11 +2,10 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.ProductLog;
+import com.h9.common.db.entity.lottery.ProductLog;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**

@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;

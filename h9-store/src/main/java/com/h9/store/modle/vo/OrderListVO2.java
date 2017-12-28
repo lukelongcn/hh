@@ -1,8 +1,7 @@
 package com.h9.store.modle.vo;
 
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
-import org.apache.commons.lang3.StringUtils;
+import com.h9.common.db.entity.order.OrderItems;
+import com.h9.common.db.entity.order.Orders;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;

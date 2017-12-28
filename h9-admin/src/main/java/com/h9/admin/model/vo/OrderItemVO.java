@@ -1,11 +1,10 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.order.OrderItems;
+import com.h9.common.db.entity.order.Orders;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.stream.Collectors;
 

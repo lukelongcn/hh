@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.user.User;
 import org.springframework.beans.BeanUtils;
 
 /**

@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.CardCoupons;
+import com.h9.common.db.entity.account.CardCoupons;
 import com.h9.common.modle.dto.transaction.CardCouponsDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;

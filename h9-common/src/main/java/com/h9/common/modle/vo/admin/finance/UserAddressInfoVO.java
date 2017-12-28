@@ -1,10 +1,9 @@
 package com.h9.common.modle.vo.admin.finance;
 
-import com.h9.common.db.entity.Address;
+import com.h9.common.db.entity.order.Address;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
 import java.util.List;
 import java.util.stream.Collectors;
 

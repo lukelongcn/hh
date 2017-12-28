@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Sketches;
+import com.h9.common.db.entity.account.Sketches;
 import org.springframework.stereotype.Repository;
 
 /**

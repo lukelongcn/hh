@@ -1,28 +1,24 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.admin.model.dto.community.BannerTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeEditDTO;
 import com.h9.admin.model.dto.transaction.CardCouponsListAddDTO;
 import com.h9.admin.service.TransactionService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BannerType;
-import com.h9.common.db.entity.GoodsType;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.CardCouponsDTO;
 import com.h9.common.modle.vo.admin.transaction.CardCouponsVO;
 import com.h9.common.modle.vo.admin.transaction.GoodsTypeVO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**

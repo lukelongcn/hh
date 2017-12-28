@@ -1,6 +1,6 @@
 package com.h9.common.db.bean;
 
-import org.apache.commons.lang3.StringUtils;
+import com.h9.common.db.entity.config.GlobalProperty;
 
 import java.text.MessageFormat;
 
@@ -48,7 +48,7 @@ public class RedisKey {
 
     /***
      * 获取通用全局配置
-     * @see com.h9.common.db.entity.GlobalProperty
+     * @see GlobalProperty
      * @param code
      * @return
      */

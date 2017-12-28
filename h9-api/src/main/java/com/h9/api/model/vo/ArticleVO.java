@@ -1,15 +1,8 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Article;
-import com.h9.common.db.entity.ArticleType;
-import com.h9.common.db.entity.User;
-import com.h9.common.utils.DateUtil;
+import com.h9.common.db.entity.config.Article;
+import com.h9.common.db.entity.config.ArticleType;
 import org.springframework.beans.BeanUtils;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by 李圆

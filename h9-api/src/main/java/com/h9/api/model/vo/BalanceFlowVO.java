@@ -1,19 +1,14 @@
 package com.h9.api.model.vo;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.util.BeanUtil;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.VCoinsFlow;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
-import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.

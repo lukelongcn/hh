@@ -1,6 +1,6 @@
 package com.h9.admin.model.dto.basis;
 
-import com.h9.common.db.entity.WhiteUserList;
+import com.h9.common.db.entity.config.WhiteUserList;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;

@@ -1,11 +1,9 @@
 package com.h9.common.modle.vo.admin.transaction;
 
-import com.h9.common.db.entity.GoodsType;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.modle.vo.admin.BasisVO;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
-
-import javax.persistence.Column;
 
 /**
  * @author: George

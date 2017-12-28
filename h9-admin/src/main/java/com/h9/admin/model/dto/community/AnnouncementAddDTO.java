@@ -1,19 +1,12 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.Announcement;
+import com.h9.common.db.entity.config.Announcement;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George

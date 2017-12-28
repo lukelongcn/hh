@@ -5,7 +5,7 @@ import com.h9.admin.model.vo.*;
 import com.h9.admin.service.AccountService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.SystemBlackList;
+import com.h9.common.db.entity.config.SystemBlackList;
 import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;

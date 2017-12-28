@@ -1,6 +1,5 @@
 package com.h9.lottery.config;
 
-import com.h9.common.db.entity.Lottery;
 import org.jboss.logging.Logger;
 import org.springframework.core.env.Environment;
 

@@ -1,8 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.LotteryFlow;
-import com.h9.common.db.entity.LotteryFlowRecord;
+import com.h9.common.db.entity.lottery.LotteryFlowRecord;
 import com.h9.common.modle.vo.admin.finance.LotteryFlowRecordVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Announcement;
+import com.h9.common.db.entity.config.Announcement;
 import org.springframework.beans.BeanUtils;
 
 /**
