@@ -67,7 +67,7 @@ public class FileService {
         if (verityResult.getCode() == 1) return verityResult;
 
         //构造一个带指定Zone对象的配置类
-        Configuration cfg = new Configuration(Zone.zone2());
+        Configuration cfg = new Configuration(Zone.zone0());
         //...其他参数参考类注释
         UploadManager uploadManager = new UploadManager(cfg);
         //...生成上传凭证，然后准备上传
@@ -83,14 +83,10 @@ public class FileService {
 
         } catch (QiniuException ex) {
             Response r = ex.response;
-            System.err.println(r.toString());
-            try {
-                System.err.println(r.bodyString());
-            } catch (QiniuException ex2) {
-                //ignore
-            }
+            logger.info("response : "+r.getInfo());
+            logger.info(ex.getMessage(),ex);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info(e.getMessage(),e);
         }
 
         return Result.fail("上传失败");

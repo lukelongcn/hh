@@ -113,7 +113,7 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
             "WHERE \n" +
             "\ta1.lottery_money > 260 \n" +
             "\tAND a2.lottery_day_count >= 5 \n" +
-            "\tAND a1.lottery_count >= 8 \n" +
+            "\tAND a1.lottery_count/a2.lottery_day_count  >= 8 \n" +
             "\tAND a1.user_id = a2.userId")
     List<Object> findBlackUser();
 
