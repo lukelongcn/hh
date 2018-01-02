@@ -1,19 +1,11 @@
 package com.h9.api.interceptor;
 
-import com.h9.api.model.dto.Areas;
 import com.h9.api.service.AddressService;
 import com.h9.api.service.UserService;
-import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.GlobalProperty;
 
-import com.h9.common.db.repo.UserRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 import javax.annotation.Resource;
 

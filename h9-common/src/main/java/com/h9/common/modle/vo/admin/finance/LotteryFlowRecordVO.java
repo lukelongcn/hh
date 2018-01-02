@@ -1,6 +1,6 @@
 package com.h9.common.modle.vo.admin.finance;
 
-import com.h9.common.db.entity.LotteryFlowRecord;
+import com.h9.common.db.entity.lottery.LotteryFlowRecord;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

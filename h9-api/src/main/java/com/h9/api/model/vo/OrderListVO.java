@@ -1,7 +1,7 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.order.OrderItems;
+import com.h9.common.db.entity.order.Orders;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -4,19 +4,37 @@ package com.h9.api;
 //import com.h9.api.provider.MobileRechargeService;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.SMSProvide;
+import com.h9.api.service.FileService;
 import com.h9.common.base.PageResult;
+import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.CardCoupons;
+import com.h9.common.db.entity.order.Address;
+import com.h9.common.db.entity.order.China;
+import com.h9.common.db.entity.order.GoodsType;
+import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.*;
 
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.http.Response;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.util.Auth;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,10 +45,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -74,9 +95,48 @@ public class ApiApplicationTests {
 
         logger.debug(address.getId());
     }
+    private String accessKey= "9HVEtM7CFBFDTivYyrIci1Y9XV5K-hIWa2vIxRLO";
+    String secretKey = "HvcdEp5BIZFJkMwwarStRiRHOCfm9KjoxngXFljT";
+    private String bucket = "huanlezhijia";
+    @Value("${qiniu.img.path}")
+    private String imgPath;
 
     @Resource
     ChinaRepository chinaRepository;
+
+    @Resource
+    private FileService fileService;
+
+    @Test
+    public void testUPloadFile() {
+        File file = new File("C:\\Users\\itservice\\Pictures\\9abcc0b5ca303bbd57bd12393951c72b.jpg");
+        //构造一个带指定Zone对象的配置类
+        Configuration cfg = new Configuration(Zone.zone0());
+        //...其他参数参考类注释
+        UploadManager uploadManager = new UploadManager(cfg);
+        //...生成上传凭证，然后准备上传
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        String key = null;
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket);
+        try {
+            Response response = uploadManager.put(new FileInputStream(file), key, upToken, null, null);
+            //解析上传成功的结果
+            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            System.out.println("上传成功"+imgPath + putRet.key);
+
+        } catch (QiniuException ex) {
+            Response r = ex.response;
+            System.err.println(r.toString());
+            try {
+                System.err.println(r.bodyString());
+            } catch (QiniuException ex2) {
+                //ignore
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void findFromDb() {
@@ -354,6 +414,7 @@ public class ApiApplicationTests {
 
     @Resource
     private BalanceFlowRepository balanceFlowRepository;
+
     @Test
     public void testPerformance() {
         HotelRoomType roomType = new HotelRoomType();

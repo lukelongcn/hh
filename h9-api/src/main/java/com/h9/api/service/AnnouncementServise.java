@@ -2,7 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.model.vo.AnnouncementVO;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Announcement;
+import com.h9.common.db.entity.config.Announcement;
 import com.h9.common.db.repo.AnnouncementRepository;
 import com.h9.common.utils.DateUtil;
 import io.swagger.annotations.ApiOperation;

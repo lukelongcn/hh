@@ -1,7 +1,7 @@
 package com.h9.api.service;
 
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.repo.GlobalPropertyRepository;
 
 import org.springframework.stereotype.Service;

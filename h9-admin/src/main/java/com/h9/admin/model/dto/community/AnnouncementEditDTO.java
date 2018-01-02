@@ -1,6 +1,6 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.Announcement;
+import com.h9.common.db.entity.config.Announcement;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

@@ -1,17 +1,17 @@
 package com.h9.common.common;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
-import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.UserRecord;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.NetworkUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -20,8 +20,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -147,5 +145,88 @@ public class CommonService {
         return userRecordRepository.saveAndFlush(userRecord);
     }
 
+    public AddressResult getAddressDetail(double lat, double lon) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String forObject = restTemplate.getForObject(getAdressUrl(lat, lon), String.class);
+            logger.debugv(forObject);
+            JSONObject jsonObject = JSONObject.parseObject(forObject);
+
+            if (jsonObject.getInteger("status") == 0) {
+                JSONObject result = jsonObject.getJSONObject("result");
+                AddressResult addressResult = new AddressResult();
+                JSONObject addressComponent = result.getJSONObject("addressComponent");
+                AddressResult addressResultFromNet = JSONObject.parseObject(addressComponent.toJSONString(), AddressResult.class);
+                BeanUtils.copyProperties(addressResultFromNet,addressResult);
+                addressResult.setDetailAddress(result.getString("formatted_address"));
+                return addressResult;
+            } else {
+                return null;
+            }
+
+        } catch (Exception ex) {
+            logger.debugv(ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+
+    public static class AddressResult{
+        private String province;
+        private String city;
+        private String district;
+        private String street;
+        @JSONField(name = "street_number")
+        private String streetNumber;
+        private String detailAddress;
+
+        public String getProvince() {
+            return province;
+        }
+
+        public void setProvince(String province) {
+            this.province = province;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        public String getDistrict() {
+            return district;
+        }
+
+        public void setDistrict(String district) {
+            this.district = district;
+        }
+
+        public String getStreet() {
+            return street;
+        }
+
+        public void setStreet(String street) {
+            this.street = street;
+        }
+
+        public String getStreetNumber() {
+            return streetNumber;
+        }
+
+        public void setStreetNumber(String streetNumber) {
+            this.streetNumber = streetNumber;
+        }
+
+        public String getDetailAddress() {
+            return detailAddress;
+        }
+
+        public void setDetailAddress(String detailAddress) {
+            this.detailAddress = detailAddress;
+        }
+    }
 
 }

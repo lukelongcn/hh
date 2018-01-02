@@ -1,7 +1,7 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserExtends;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.utils.DateUtil;
 
 /**

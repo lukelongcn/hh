@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.VB2Money;
+import com.h9.common.db.entity.account.VB2Money;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

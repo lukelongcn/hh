@@ -4,8 +4,7 @@ import com.h9.api.model.vo.OrderDetailVO;
 import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Orders;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.OrdersRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +12,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
-import static com.h9.common.db.entity.Orders.orderTypeEnum.MATERIAL_GOODS;
-import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
+import static com.h9.common.db.entity.order.Orders.orderTypeEnum.MATERIAL_GOODS;
 
 /**
  * Created by itservice on 2017/10/31.

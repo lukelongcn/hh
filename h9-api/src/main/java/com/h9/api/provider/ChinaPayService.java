@@ -5,7 +5,7 @@ import chinapay.PrivateKey;
 import chinapay.SecureLink;
 import com.h9.api.ApiApplication;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.WithdrawalsRequest;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRequest;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -15,8 +15,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**  responseCode:
  0000      	接收成功	提交成功

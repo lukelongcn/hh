@@ -1,11 +1,10 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.GoodsType;
+import com.h9.common.db.entity.order.GoodsType;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
 /**

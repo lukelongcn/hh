@@ -15,7 +15,18 @@ import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.BankType;
+import com.h9.common.db.entity.account.CardCoupons;
+import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.order.*;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserBank;
+import com.h9.common.db.entity.user.UserRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsFails;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRequest;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
@@ -25,7 +36,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,7 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
+import static com.h9.common.db.entity.order.Orders.orderTypeEnum.VIRTUAL_GOODS;
 
 /**
  * Created by itservice on 2017/10/31.

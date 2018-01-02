@@ -8,8 +8,12 @@ import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
-import com.h9.common.db.entity.Reward.StatusEnum;
+import com.h9.common.db.entity.config.SystemBlackList;
+import com.h9.common.db.entity.config.WhiteUserList;
+import com.h9.common.db.entity.lottery.Reward.StatusEnum;
+import com.h9.common.db.entity.lottery.*;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
@@ -28,8 +32,6 @@ import com.h9.lottery.utils.RandomDataUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-import org.redisson.Redisson;
-import org.redisson.core.RLock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +45,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.h9.common.db.entity.BalanceFlow.FlowType.LOTTERY;
-import static com.h9.common.db.entity.Reward.StatusEnum.END;
+import static com.h9.common.db.entity.account.BalanceFlow.FlowType.LOTTERY;
+import static com.h9.common.db.entity.lottery.Reward.StatusEnum.END;
 
 /**
  * Created with IntelliJ IDEA.

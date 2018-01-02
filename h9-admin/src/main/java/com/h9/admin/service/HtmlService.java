@@ -5,7 +5,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.HtmlContent;
+import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.repo.HtmlContentRepository;
 import com.h9.common.modle.dto.PageDTO;
 import org.springframework.beans.BeanUtils;

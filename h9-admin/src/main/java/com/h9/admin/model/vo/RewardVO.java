@@ -1,8 +1,8 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.Product;
-import com.h9.common.db.entity.ProductType;
-import com.h9.common.db.entity.Reward;
+import com.h9.common.db.entity.lottery.Product;
+import com.h9.common.db.entity.lottery.ProductType;
+import com.h9.common.db.entity.lottery.Reward;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

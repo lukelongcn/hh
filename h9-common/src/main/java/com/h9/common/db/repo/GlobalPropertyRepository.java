@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.modle.vo.admin.basis.GlobalPropertyVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;

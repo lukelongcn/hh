@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.ProductType;
+import com.h9.common.db.entity.lottery.ProductType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

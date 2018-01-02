@@ -2,9 +2,6 @@ package com.h9.api.provider;
 
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.OfPayRecord;
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.MD5Util;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;

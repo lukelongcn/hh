@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

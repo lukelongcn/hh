@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Announcement;
+import com.h9.common.db.entity.config.Announcement;
 
 /**
  * Created by 李圆

@@ -3,7 +3,7 @@ package com.h9.admin.model.dto.basis;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.validation.ParamException;
-import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.config.GlobalProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
