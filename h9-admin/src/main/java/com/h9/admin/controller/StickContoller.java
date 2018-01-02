@@ -1,6 +1,7 @@
 package com.h9.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
@@ -27,13 +28,14 @@ public class StickContoller {
     @Resource
     private StickService stickService;
 
-
+    @Secured(accessCode = "stick:add")
     @PostMapping("/type")
     public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
         logger.debugv(JSONObject.toJSONString(stickTypeDTO));
         return stickService.addStickType(stickTypeDTO);
     }
 
+    @Secured(accessCode = "stick:list")
     @GetMapping("/types")
     public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int page,
                            @RequestParam(required = false,name = "page",defaultValue = "20") int limit){
