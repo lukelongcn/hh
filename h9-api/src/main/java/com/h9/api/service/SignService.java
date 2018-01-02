@@ -3,20 +3,26 @@ package com.h9.api.service;
 import com.h9.api.model.vo.SignVO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserSign;
+import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.db.repo.UserSignRepository;
 import com.h9.common.utils.DateUtil;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 
+import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.jws.soap.SOAPBinding;
+import javax.transaction.Transactional;
 
 /**
  * Created by 李圆 on 2018/1/2
@@ -28,7 +34,11 @@ public class SignService {
     private UserRepository userRepository;
     @Resource
     private UserSignRepository userSignRepository;
+    @Resource
+    private UserAccountRepository userAccountRepository;
 
+    @Transactional
+    @Description("每日签到详情")
     public Result sign(long userId) {
         User user = userRepository.findOne(userId);
         UserSign userSign = userSignRepository.findLastSign(userId);
@@ -64,12 +74,19 @@ public class SignService {
         userSign1.setCashBack(cashBack(user));
         userSign1 = userSignRepository.saveAndFlush(userSign1);
 
+        // 签到奖励金额加入到用户酒元余额中
+        UserAccount userAccount= userAccountRepository.findByUserId(userId);
+        userAccount.setBalance(userAccount.getBalance().add(userSign1.getCashBack()));
+        userAccountRepository.save(userAccount);
+
         SignVO signVO = new SignVO(user,userSign1);
         return Result.success("签到成功",signVO);
 
     }
 
-    // 签到奖励规则
+    /**
+      * 签到奖励规则
+      */
     public BigDecimal cashBack(User user){
         if (user.getSignDays() < 10){
             Double x = (Math.random()*2);
@@ -87,5 +104,22 @@ public class SignService {
             return bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
         }
         return new BigDecimal(0);
+    }
+
+    /**
+     * 最新签到列表
+     * @return
+     */
+    @Transactional
+    @Description("最新签到列表显示十个")
+    public Result newSign() {
+        List<UserSign> listNewSign = userSignRepository.findListNewSign();
+        List listSignVO = new ArrayList();
+        listNewSign.forEach(userSign -> {
+          User user =  userRepository.findOne(userSign.getUserId());
+          SignVO signVO = new SignVO(user,userSign);
+          listSignVO.add(signVO);
+        });
+        return Result.success(listSignVO);
     }
 }

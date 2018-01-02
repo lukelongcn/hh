@@ -13,12 +13,24 @@ public class SignVO {
 
     private Integer signCount = 0;
 
+    private String nickName;
+
     private Integer signDays = 0;
 
     public SignVO(User user,UserSign userSign){
         this.cashBack = userSign.getCashBack();
         this.signCount = user.getSignCount();
         this.signDays = user.getSignDays();
+        this.nickName = user.getNickName();
+    }
+
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public BigDecimal getCashBack() {

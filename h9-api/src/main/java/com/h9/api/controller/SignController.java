@@ -23,6 +23,12 @@ public class SignController {
 
     @GetMapping("/money")
     public Result sign(@NotNull(message = "请登录后签到")@SessionAttribute("curUserId")long userId){
-       return signService.sign(2);
+       return signService.sign(userId);
+    }
+
+
+    @GetMapping("/newSign")
+    public Result newSign(){
+        return signService.newSign();
     }
 }
