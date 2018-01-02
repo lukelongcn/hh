@@ -1,9 +1,12 @@
 package com.h9.admin.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import net.bytebuddy.implementation.bind.annotation.Default;
+import org.jboss.logging.Logger;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +23,14 @@ import javax.annotation.Resource;
 @RequestMapping("/stick")
 public class StickContoller {
 
+    Logger logger = Logger.getLogger(StickContoller.class);
     @Resource
     private StickService stickService;
 
 
     @PostMapping("/type")
-    public Result addType(@Validated StickTypeDTO stickTypeDTO){
+    public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
+        logger.debugv(JSONObject.toJSONString(stickTypeDTO));
         return stickService.addStickType(stickTypeDTO);
     }
 

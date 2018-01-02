@@ -39,7 +39,7 @@ public class Stick extends BaseEntity {
     private String content = "";
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '用户'")
+    @JoinColumn(name = "user_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '发帖用户'")
     private User user;
 
     @Column(name = "read_count",nullable = false,columnDefinition = "int default 0 COMMENT '阅读数量'")

@@ -51,7 +51,7 @@ public class StickComment extends BaseEntity {
     private User notify_user;
     
     @Column(name = "like_count",nullable = false,columnDefinition = "int default 0 COMMENT '点赞数'")
-    private Integer likeCount;
+    private Integer likeCount = 0;
 
     public Long getId() {
         return id;

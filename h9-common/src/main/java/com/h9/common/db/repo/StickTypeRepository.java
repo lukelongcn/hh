@@ -14,5 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StickTypeRepository extends BaseRepository<StickType> {
 
+    StickType findByName(String name);
 
 }

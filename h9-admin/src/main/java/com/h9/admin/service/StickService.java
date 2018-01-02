@@ -26,6 +26,11 @@ public class StickService {
     private StickTypeRepository stickTypeRepository;
 
     public Result addStickType(StickTypeDTO stickTypeDTO){
+        String name = stickTypeDTO.getName();
+        StickType type = stickTypeRepository.findByName(name);
+        if(type!=null){
+            return Result.fail(name+"已经存在");
+        }
         StickType stickType = new StickType();
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
