@@ -1,5 +1,6 @@
 package com.h9.api.controller;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.service.SignService;
 import com.h9.common.base.Result;
 
@@ -21,14 +22,25 @@ public class SignController {
     @Resource
     private SignService signService;
 
-    @GetMapping("/money")
-    public Result sign(@NotNull(message = "请登录后签到")@SessionAttribute("curUserId")long userId){
-       return signService.sign(userId);
+    /**
+     * 每日签到
+     * @param userId
+     * @return
+     */
+    @Secured
+    @GetMapping("/daySign")
+    public Result sign(@SessionAttribute("curUserId")long userId){
+       return signService.sign(2);
     }
 
-
-    @GetMapping("/newSign")
-    public Result newSign(){
-        return signService.newSign();
+    /**
+     * 获取签到页面详情
+     * @param userId
+     * @return
+     */
+    //@Secured
+    @GetMapping("/signMessage")
+    public Result signMessage(@SessionAttribute("curUserId")long userId){
+        return signService.newSign(2);
     }
 }

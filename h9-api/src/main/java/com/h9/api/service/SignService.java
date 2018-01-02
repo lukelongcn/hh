@@ -1,7 +1,10 @@
 package com.h9.api.service;
 
 import com.h9.api.model.vo.SignVO;
+import com.h9.api.model.vo.UserSignMessageVO;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserSign;
@@ -11,6 +14,7 @@ import com.h9.common.db.repo.UserSignRepository;
 import com.h9.common.utils.DateUtil;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 
+import org.jboss.logging.Logger;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +39,12 @@ public class SignService {
     @Resource
     private UserSignRepository userSignRepository;
     @Resource
-    private UserAccountRepository userAccountRepository;
+    CommonService commonService;
+
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Transactional
-    @Description("每日签到详情")
+    @Description("每日签到")
     public Result sign(long userId) {
         User user = userRepository.findOne(userId);
         UserSign userSign = userSignRepository.findLastSign(userId);
@@ -75,9 +81,11 @@ public class SignService {
         userSign1 = userSignRepository.saveAndFlush(userSign1);
 
         // 签到奖励金额加入到用户酒元余额中
-        UserAccount userAccount= userAccountRepository.findByUserId(userId);
-        userAccount.setBalance(userAccount.getBalance().add(userSign1.getCashBack()));
-        userAccountRepository.save(userAccount);
+        Result result = commonService.setBalance(userId,userSign1.getCashBack(), BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSign1.getId(),"","");
+        if(result.getCode()==Result.FAILED_CODE){
+            this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
+            return Result.fail("签到奖励用户金额失败");
+        }
 
         SignVO signVO = new SignVO(user,userSign1);
         return Result.success("签到成功",signVO);
@@ -107,19 +115,40 @@ public class SignService {
     }
 
     /**
-     * 最新签到列表
+     * 获取签到信息
      * @return
+     * @param userId
      */
     @Transactional
     @Description("最新签到列表显示十个")
-    public Result newSign() {
+    public Result newSign(long userId) {
+        // 获取奖励金  连续签到天数  总共签到天数
+        User user = userRepository.findOne(userId);
+        if (user == null){
+            return Result.fail("用户不存在，请重新登录或注册");
+        }
+        UserSign userSign = userSignRepository.findLastSign(userId);
+        UserSignMessageVO userSignMessageVO = new UserSignMessageVO();
+        if (userSign == null){
+            userSignMessageVO.setCashBack( new BigDecimal(0));
+            userSignMessageVO.setSignCount(0);
+            userSignMessageVO.setSignDays(0);
+        }else{
+            userSignMessageVO.setCashBack(userSign.getCashBack());
+            userSignMessageVO.setSignCount(user.getSignCount());
+            userSignMessageVO.setSignDays(user.getSignDays());
+        }
+
+        // 获取最新签到列表
         List<UserSign> listNewSign = userSignRepository.findListNewSign();
         List listSignVO = new ArrayList();
-        listNewSign.forEach(userSign -> {
-          User user =  userRepository.findOne(userSign.getUserId());
-          SignVO signVO = new SignVO(user,userSign);
+        listNewSign.forEach(userSign2 -> {
+          User user1 =  userRepository.findOne(userSign2.getUserId());
+          SignVO signVO = new SignVO(user,userSign2);
           listSignVO.add(signVO);
         });
-        return Result.success(listSignVO);
+        userSignMessageVO.setList(listSignVO);
+
+        return Result.success(userSignMessageVO);
     }
 }
