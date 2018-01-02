@@ -356,6 +356,7 @@ public class ApiApplicationTests {
     private BalanceFlowRepository balanceFlowRepository;
     @Test
     public void testPerformance() {
+        HotelRoomType roomType = new HotelRoomType();
 
         long start = System.currentTimeMillis();
         int page = 0;
