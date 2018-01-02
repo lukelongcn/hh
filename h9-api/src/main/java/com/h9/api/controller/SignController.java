@@ -22,7 +22,7 @@ public class SignController {
     private SignService signService;
 
     @GetMapping("/money")
-    public Result sign(){//@NotNull(message = "请登录后签到")@SessionAttribute("curUserId")long userId){
+    public Result sign(@NotNull(message = "请登录后签到")@SessionAttribute("curUserId")long userId){
        return signService.sign(2);
     }
 }
