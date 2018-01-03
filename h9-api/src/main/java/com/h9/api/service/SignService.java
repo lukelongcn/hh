@@ -146,14 +146,14 @@ public class SignService {
         //获取用户上次签到时间
         Date checkDate = userSign.getCreateTime();
         Date today = DateUtil.getTimesMorning();
-        // 如果用户是第一次进入页面且没有签到
+        // 如果用户是第一次进入页面且今日没有签到
         if (userSign == null){
             UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,
                     listSignVO,0);
             return Result.success(userSignMessageVO);
         }
-        // 如果用户不是第一次进入页面且没有签到
-        else if (checkDate.after(today)){
+        // 如果用户不是第一次进入页面且今日没有签到
+        else if (checkDate.before(today)){
             UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
                     listSignVO,0);
             return Result.success(userSignMessageVO);
