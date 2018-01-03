@@ -6,6 +6,9 @@ import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -22,11 +25,16 @@ import javax.annotation.Resource;
 @Component
 public class FactoryProvider {
 
-     Logger logger = Logger.getLogger(FactoryProvider.class);
+    Logger logger = Logger.getLogger(FactoryProvider.class);
+
+    @Value("${h9.current.envir}")
+    private String env;
+
     @Resource
     private RestTemplate restTemplate;
 
     public LotteryModel findByLotteryModel(String code) {
+
         try {
             LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, LotteryModel.class);
             logger.debugv(code+":find "  +JSONObject.toJSONString(lotteryModel));
@@ -39,7 +47,10 @@ public class FactoryProvider {
 
 
     public LotteryModel updateLotteryStatus(String code) {
-
+        // 非线上环境不改变工厂状态
+        if(env.equals("product")){
+            return null;
+        }
         try {
             LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
             logger.debugv(code+":update "+JSONObject.toJSONString(lotteryModel));

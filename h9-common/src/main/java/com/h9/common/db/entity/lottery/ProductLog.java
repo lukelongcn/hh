@@ -35,7 +35,7 @@ public class ProductLog extends BaseEntity {
     private String code;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''")
+    @JoinColumn(name = "user_record_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private UserRecord userRecord;
 
     @Column(name = "imei",  columnDefinition = "varchar(64) default '' COMMENT '机器唯一码'")
