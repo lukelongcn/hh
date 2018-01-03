@@ -17,6 +17,7 @@ import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.entity.HotelRoomType;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.CardCoupons;
 import com.h9.common.db.entity.order.Address;
