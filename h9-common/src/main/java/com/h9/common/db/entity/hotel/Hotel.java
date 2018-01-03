@@ -1,4 +1,4 @@
-package com.h9.common.db.entity;
+package com.h9.common.db.entity.hotel;
 
 
 import com.alibaba.fastjson.JSONObject;
