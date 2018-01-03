@@ -55,7 +55,7 @@ public class SignService {
         // 第一次签到
         if (userSign == null){
             user.setSignDays(1);
-            user.setSignCount(user.getSignCount()+1);
+            user.setSignCount(1);
             user = userRepository.saveAndFlush(user);
          } else{
             //获取当前时间
@@ -65,7 +65,7 @@ public class SignService {
             Date today = DateUtil.getTimesMorning();
             // 判断用户上次签到时间是否是在今天凌晨之后
             if(checkDate.after(today)){
-                return Result.success("您今天已经签过到了");
+                return Result.fail("您今天已经签过到了");
             }
             // 如果上次签到是今天凌晨之前，说明没有连续签到
             if(checkdateCalendar.before(DateUtil.getYesterdaymorning())){
