@@ -5,6 +5,7 @@ import com.h9.common.base.BaseEntity;
 import javax.persistence.*;
 
 import java.math.BigDecimal;
+import java.security.Signature;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -153,7 +154,8 @@ public class BalanceFlow extends BaseEntity {
         TEMP_RED_BAG(9,"抢红包(历临时账户)"),
         RED_BAG(10,"抢红包"),
         VB_TO_MONEY(11,"vb兑换酒元"),
-        REFUND(13,"退款");
+        REFUND(13,"退款"),
+        SIGN(14,"签到");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;

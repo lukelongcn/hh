@@ -30,7 +30,6 @@ public class RequestReplaceFilter extends OncePerRequestFilter {
         }else{
             logger.info("not CustomServletResponseWrapper");
         }
-
         filterChain.doFilter(request, response);
     }
 }
