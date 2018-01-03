@@ -30,8 +30,8 @@ public class SignController {
      */
     @Secured
     @GetMapping("/daySign")
-    public Result sign(){//@SessionAttribute("curUserId")long userId){
-       return signService.sign(2);
+    public Result sign(@SessionAttribute("curUserId")long userId){
+       return signService.sign(userId);
     }
 
     /**
@@ -39,20 +39,19 @@ public class SignController {
      * 。。@param userId
      * @return
      */
-    //@Secured
+    @Secured
     @GetMapping("/signMessage")
-    public Result signMessage(){//@SessionAttribute("curUserId")long userId){
-        return signService.newSign(2);
+    public Result signMessage(@SessionAttribute("curUserId")long userId){
+        return signService.newSign(userId);
     }
 
 
-    //@Secured
+    @Secured
     @GetMapping("/selfSign")
-    public Result selfSign(///@SessionAttribute("curUserId")long userId,
+    public Result selfSign(@SessionAttribute("curUserId")long userId,
                            @RequestParam(defaultValue = "1") Integer page,
                            @RequestParam(defaultValue = "10") Integer limit){
-        //return signService.selfSign(userId,page,limit);
-        return signService.selfSign(2,page,limit);
+        return signService.selfSign(userId,page,limit);
     }
 
 }
