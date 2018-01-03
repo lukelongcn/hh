@@ -55,7 +55,7 @@ public class SignService {
         // 第一次签到
         if (userSign == null){
             user.setSignDays(1);
-            user.setSignCount(user.getSignCount()+1);
+            user.setSignCount(1);
             user = userRepository.saveAndFlush(user);
          } else{
             //获取当前时间
@@ -65,7 +65,7 @@ public class SignService {
             Date today = DateUtil.getTimesMorning();
             // 判断用户上次签到时间是否是在今天凌晨之后
             if(checkDate.after(today)){
-                return Result.success("您今天已经签过到了");
+                return Result.fail("您今天已经签过到了");
             }
             // 如果上次签到是今天凌晨之前，说明没有连续签到
             if(checkdateCalendar.before(DateUtil.getYesterdaymorning())){
@@ -90,9 +90,7 @@ public class SignService {
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
             return Result.fail("签到失败");
         }
-
-        SignVO signVO = new SignVO(user,userSign1);
-        return Result.success("签到成功",signVO);
+        return Result.success("签到成功");
 
     }
 
@@ -143,12 +141,25 @@ public class SignService {
         }
         UserAccount userAccount = userAccountRepository.findOne(userId);
         UserSign userSign = userSignRepository.findLastSign(userId);
-        // 如果用户是第一次进入页面且没有签到
+
+        // 如果用户是第一次进入页面且今日没有签到
         if (userSign == null){
-            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,listSignVO);
+            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,
+                    listSignVO,0);
             return Result.success(userSignMessageVO);
         }
-        UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,listSignVO);
+        //获取用户上次签到时间
+        Date checkDate = userSign.getCreateTime();
+        Date today = DateUtil.getTimesMorning();
+        // 如果用户不是第一次进入页面且今日没有签到
+       if (checkDate.before(today)){
+            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                    listSignVO,0);
+            return Result.success(userSignMessageVO);
+        }
+        // 如果用户不是第一次进入页面且已签到
+        UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                listSignVO,1);
         return Result.success(userSignMessageVO);
     }
 
