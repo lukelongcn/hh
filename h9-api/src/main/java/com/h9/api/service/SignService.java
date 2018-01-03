@@ -160,6 +160,8 @@ public class SignService {
      * @param limit
      * @return
      */
+    @Transactional
+    @Description("个人签到记录")
     public Result selfSign(long userId, Integer page, Integer limit) {
         PageResult<UserSign> pageResult = userSignRepository.findUserSignList(userId, page, limit);
         if (pageResult == null){
