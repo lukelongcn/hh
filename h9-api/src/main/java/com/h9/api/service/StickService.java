@@ -1,6 +1,8 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.StickDto;
+import com.h9.api.model.vo.HomeVO;
 import com.h9.api.model.vo.StickSampleVO;
 import com.h9.api.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
@@ -8,7 +10,9 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickType;
+import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
@@ -24,7 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,6 +52,9 @@ public class StickService {
     private CommonService commonService;
     @Resource
     private StickRepository stickRepository;
+    @Resource
+    private BannerRepository bannerRepository;
+
 
 
 
@@ -113,6 +122,17 @@ public class StickService {
         }
     }
 
+    @Transactional
+    public Result home(){
+        Map<String, List<HomeVO>> listMap = new HashMap<>();
+        try(Stream<Banner> activiBanner = bannerRepository.findActiviBanner(3, new Date())){
+            Function<Banner, String> function = b -> b.getBannerType().getCode();
+            listMap = activiBanner.collect(Collectors.groupingBy(function, Collectors.mapping(HomeVO::new, Collectors.toList())));
+        }catch (Exception e){
+            logger.debug(e.getMessage(),e);
+        }
+        return Result.success(listMap);
+    }
 
 
 }
