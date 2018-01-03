@@ -90,9 +90,7 @@ public class SignService {
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
             return Result.fail("签到失败");
         }
-
-        SignVO signVO = new SignVO(user,userSign1);
-        return Result.success("签到成功",signVO);
+        return Result.success("签到成功");
 
     }
 
