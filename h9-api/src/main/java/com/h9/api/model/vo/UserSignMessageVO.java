@@ -28,22 +28,35 @@ public class UserSignMessageVO {
     // 最新签到列表
     private List list;
 
-    public UserSignMessageVO(BigDecimal balance ,User user ,List list){
+    // 是否签到
+    private Integer isSign;
+
+    public UserSignMessageVO(BigDecimal balance ,User user ,List list,Integer isSign){
         this.cashBack = new BigDecimal(0);
         this.signCount = 0;
         this.signDays = 0;
         this.avatar = user.getAvatar();
         this.balance = balance;
         this.list = list;
+        this.isSign = isSign;
     }
 
-    public UserSignMessageVO(BigDecimal balance ,User user ,UserSign userSign,List list){
+    public UserSignMessageVO(BigDecimal balance ,User user ,UserSign userSign,List list,Integer isSign){
         this.cashBack = userSign.getCashBack();
         this.signCount = user.getSignCount();
         this.signDays = user.getSignDays();
         this.avatar = user.getAvatar();
         this.balance = balance;
         this.list = list;
+        this.isSign = isSign;
+    }
+
+    public Integer getIsSign() {
+        return isSign;
+    }
+
+    public void setIsSign(Integer isSign) {
+        this.isSign = isSign;
     }
 
     public BigDecimal getBalance() {

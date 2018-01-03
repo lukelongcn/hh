@@ -143,12 +143,24 @@ public class SignService {
         }
         UserAccount userAccount = userAccountRepository.findOne(userId);
         UserSign userSign = userSignRepository.findLastSign(userId);
+        //获取用户上次签到时间
+        Date checkDate = userSign.getCreateTime();
+        Date today = DateUtil.getTimesMorning();
         // 如果用户是第一次进入页面且没有签到
         if (userSign == null){
-            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,listSignVO);
+            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,
+                    listSignVO,0);
             return Result.success(userSignMessageVO);
         }
-        UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,listSignVO);
+        // 如果用户不是第一次进入页面且没有签到
+        else if (checkDate.after(today)){
+            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                    listSignVO,0);
+            return Result.success(userSignMessageVO);
+        }
+        // 如果用户不是第一次进入页面且已签到
+        UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                listSignVO,1);
         return Result.success(userSignMessageVO);
     }
 
