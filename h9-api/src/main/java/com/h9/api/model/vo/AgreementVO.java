@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.HtmlContent;
+import com.h9.common.db.entity.config.HtmlContent;
 
 import org.springframework.beans.BeanUtils;
 

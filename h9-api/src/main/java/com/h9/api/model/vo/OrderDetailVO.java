@@ -1,8 +1,8 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.GoodsType;
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.order.GoodsType;
+import com.h9.common.db.entity.order.OrderItems;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +29,7 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber = "";
+
     /**
      * description: 充值面额
      */
@@ -39,29 +40,28 @@ public class OrderDetailVO {
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
 
+
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(order.getStatus());
         vo.setOrderStatus(statusEnum.getDesc());
-        if (order.getOrderType().equals("1")) {
-            vo.setOrderType(3 + "");
-        } else {
-            if (GoodsType.GoodsTypeEnum.DIDI_CARD.getCode().equals(order.getOrderItems().get(0).getGoods().getCode())) {
-                vo.setOrderType("2");
-            } else {
-                vo.setOrderType("1");
-            }
-        }
 
+        if (order.getOrderItems().get(0).getGoods().getGoodsType().getReality() == 1) {
+            vo.setOrderType("3");
+        }else if(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode().equals(order.getOrderItems().get(0).getGoods().getGoodsType().getCode())){
+            vo.setOrderType("1");
+        } else {
+            vo.setOrderType("2");
+        }
 
         vo.setCompanyIcon("https://cdn-h9-img.thy360.com/FtXvdZ8JOfbF6YmzFWHHMpgmTo6r");
         vo.setTel(order.getUserPhone());
-
         vo.setRechargeMoney(MoneyUtils.formatMoney(order.getPayMoney()));
         if (order.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + "")) {
             vo.setAccepterName(order.getUserName());
             vo.setAddress(order.getUserAddres());
             String expressNum = order.getExpressNum();
-            vo.setLogisticsNumber(expressNum == null ? "":expressNum);
+            vo.setLogisticsNumber(expressNum == null ? "" : expressNum);
         }
+
 
         List<OrderItems> orderItems = order.getOrderItems();
         if (!CollectionUtils.isEmpty(orderItems)) {
@@ -76,12 +76,15 @@ public class OrderDetailVO {
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setGoodsName(item.getName());
             goodsInfo.setImgUrl(item.getImage());
+            goodsInfo.setCount(item.getCount()+"");
             return goodsInfo;
         }).collect(Collectors.toList());
 
         vo.setGoodsInfoList(goodsInfos);
         return vo;
     }
+
+
 
     public String getRechargeMoney() {
         return rechargeMoney;
@@ -126,6 +129,15 @@ public class OrderDetailVO {
     private static class GoodsInfo {
         private String imgUrl;
         private String GoodsName;
+        private String count = "1";
+
+        public String getCount() {
+            return count;
+        }
+
+        public void setCount(String count) {
+            this.count = count;
+        }
 
         public String getImgUrl() {
             return imgUrl;

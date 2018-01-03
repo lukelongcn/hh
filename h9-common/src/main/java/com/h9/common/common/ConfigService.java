@@ -3,7 +3,7 @@ package com.h9.common.common;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.repo.GlobalPropertyRepository;
 import com.h9.common.modle.vo.Config;
 import org.apache.commons.lang3.StringUtils;

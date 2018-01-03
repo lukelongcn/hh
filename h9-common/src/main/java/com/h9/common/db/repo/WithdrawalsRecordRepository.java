@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.WithdrawalsRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +34,14 @@ public interface WithdrawalsRecordRepository extends BaseRepository<WithdrawalsR
 
     @Query("select new com.h9.common.modle.vo.admin.finance.WithdrawRecordVO(w) from WithdrawalsRecord  w,User u where w.userId=u.id and u.id=?1 order by w.id")
     Page<WithdrawRecordVO> findByUserId(long userId, Pageable pageable);
+
+    @Query("select new com.h9.common.modle.vo.admin.finance.WithdrawRecordVO(w)" +
+            " from WithdrawalsRecord  w" +
+            " where  (?1 is null or w.phone = ?1)" +
+            " and (?2 is null or w.bankNo = ?2)" +
+            " and (?3 is null or ?3 = 0 or w.status = ?3)" +
+            " order by w.id desc ")
+    Page<WithdrawRecordVO> findByCondition(String phone, String bankNo, Integer status, Pageable pageable);
 
 
     /**

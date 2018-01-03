@@ -1,7 +1,6 @@
 package com.h9.common.modle.vo.admin.finance;
 
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.UserBank;
+import com.h9.common.db.entity.user.UserBank;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

@@ -1,11 +1,9 @@
 package com.h9.common.modle.vo.admin.basis;
 
-import com.h9.common.db.entity.Version;
+import com.h9.common.db.entity.config.Version;
 import com.h9.common.modle.vo.admin.BasisVO;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
-
-import javax.persistence.Column;
 
 
 /**

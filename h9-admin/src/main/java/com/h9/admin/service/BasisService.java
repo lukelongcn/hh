@@ -1,10 +1,17 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
+import com.h9.common.db.entity.account.BankType;
+import com.h9.common.db.entity.config.GlobalProperty;
+import com.h9.common.db.entity.config.Image;
+import com.h9.common.db.entity.config.Version;
+import com.h9.common.db.entity.config.WhiteUserList;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import com.h9.common.modle.vo.admin.basis.*;
 import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.*;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.repo.*;
@@ -62,7 +69,7 @@ public class BasisService {
 
     public Result<GlobalPropertyVO> addGlobalProperty(GlobalProperty globalProperty){
         if(this.globalPropertyRepository.findByCode(globalProperty.getCode())!=null){
-            //TODO 添加至 redis 缓存中
+
             return Result.fail("标识已存在");
         }
         return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));

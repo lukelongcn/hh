@@ -5,7 +5,7 @@ import com.h9.api.model.vo.UpdateInfoVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.config.*;
 import com.h9.common.db.repo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -69,7 +69,7 @@ public class HomeService {
 
         List<Article> articleList = articleRepository.findActiveArticle();
         if (!CollectionUtils.isEmpty(articleList)&&articleList.size()>5) {
-           articleList = articleList.subList(0, 4);
+           articleList = articleList.subList(0, 5);
         }
 
         if (!CollectionUtils.isEmpty(articleList)) {
@@ -92,7 +92,7 @@ public class HomeService {
         }
 
 
-        List<Announcement> announcementList = announcementReposiroty.findActived(new Date());
+        List<Announcement> announcementList = announcementReposiroty.findActived();
 
         String announcemented = preLink.get("announcement");
         List<HomeVO> collect = announcementList.stream()

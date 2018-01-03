@@ -1,8 +1,9 @@
 package com.h9.lottery;
 
 import com.h9.common.StartBanner;
+import com.h9.common.common.ConstantConfig;
 import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
-import com.h9.lottery.config.ConstantConfig;
+import com.h9.lottery.config.LotteryConstantConfig;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Time: 14:26
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.h9.common","com.h9.lottery"})
+@ComponentScan(basePackages = {"com.h9.common.common","com.h9.lottery","com.h9.common.db.bean"})
 @EnableSwagger2
 @EnableJpaRepositories(basePackages="com.h9.common.db.repo")
 @EntityScan(basePackages = "com.h9.common.db.entity")
@@ -40,7 +41,8 @@ public class LotteryApplication  {
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(LotteryApplication.class, args);
         Environment environment = applicationContext.getBean(Environment.class);
-        ConstantConfig.init(environment);
+        LotteryConstantConfig.init(environment);
+        ConstantConfig.init(applicationContext,environment);
         logger.debugv(StartBanner.BANNER);
     }
 

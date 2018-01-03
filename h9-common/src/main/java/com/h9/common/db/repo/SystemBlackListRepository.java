@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.admin.model.vo.BlackAccountVO;
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.SystemBlackList;
+import com.h9.common.db.entity.config.SystemBlackList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +33,7 @@ public interface SystemBlackListRepository extends BaseRepository<SystemBlackLis
 
     @Query(value = "select o from SystemBlackList o where ?3 > o.startTime and ?3 < o.endTime and o.status = 1 and (o.userId = ?1 or o.imei = ?2)")
     List<SystemBlackList> findByUserIdOrImei(Long userId, String imei, Date date);
+
+    @Query(value = "select o from SystemBlackList o where o.userId = ?1 and o.status is null")
+    List<SystemBlackList> findByUserIdAndStatus(Long userId);
 }

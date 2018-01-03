@@ -1,18 +1,16 @@
 package com.h9.admin.interceptor;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.ArticleType;
-import com.h9.common.db.entity.BannerType;
-import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.db.entity.Permission;
+import com.h9.common.db.entity.config.ArticleType;
+import com.h9.common.db.entity.config.BannerType;
+import com.h9.common.db.entity.config.GlobalProperty;
+import com.h9.common.db.entity.user.Permission;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.db.repo.BannerTypeRepository;
 
 import com.h9.common.db.repo.GlobalPropertyRepository;
 import com.h9.common.db.repo.PermissionRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -48,7 +46,7 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
        this.initBannerType();
        this.initArticleType();
        this.initCache();
-       this.initPermission();
+       //this.initPermission();
     }
 
     private void initBannerType(){

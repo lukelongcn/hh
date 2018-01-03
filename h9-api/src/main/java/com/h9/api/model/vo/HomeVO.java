@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.config.*;
 import com.h9.common.utils.DateUtil;
 
 
@@ -19,7 +19,7 @@ public class HomeVO {
     private String userName;
     private String typeName;
 
-    public HomeVO( Article article,String articlePreUrl) {
+    public HomeVO(Article article, String articlePreUrl) {
         ArticleType articleType = article.getArticleType();
         setImgUrl(article.getImgUrl());
         setContent("");
@@ -44,7 +44,7 @@ public class HomeVO {
         setCreateTime(DateUtil.formatDate(bannerType.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         setType("banner");
     }
-    public HomeVO(Announcement announcement,String url) {
+    public HomeVO(Announcement announcement, String url) {
         setImgUrl(announcement.getImgUrl());
         setContent("");
         String title = announcement.getTitle();

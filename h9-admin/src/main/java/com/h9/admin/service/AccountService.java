@@ -6,13 +6,14 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.VCoinsFlow;
+import com.h9.common.db.entity.config.SystemBlackList;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.BlackAccountDTO;
 import com.h9.common.modle.dto.BlackIMEIDTO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.admin.finance.*;
-import com.h9.common.modle.vo.Config;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +24,7 @@ import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -71,16 +73,18 @@ public class AccountService {
     }
 
     public Result<PageResult<BalanceFlowVO>> accountMoneyFlow(PageDTO pageDTO, Long userId) {
-        List<Config> balanceFlowType = configService.getMapListConfig(ParamConstant.BALANCE_FLOW_TYPE);
+        Map balanceFlowType = this.configService.getMapConfig(ParamConstant.BALANCE_FLOW_TYPE);
         Page<BalanceFlow> byBalance = balanceFlowRepository.findByBalance(userId, pageDTO.toPageRequest());
         Page<BalanceFlowVO> map = byBalance.map(balanceFlow -> {
             BalanceFlowVO balanceFlowVO = BalanceFlowVO.toBalanceFlowVOByBalanceFlow(balanceFlow);
-            Long flowType = balanceFlow.getFlowType();
-            for (Config config : balanceFlowType) {
-                if (flowType.toString().equals(config.getKey())) {
-                    balanceFlowVO.setFlowTypeDesc(config.getVal());
+            String flowType = balanceFlow.getFlowType().toString();
+            String flowTypeDesc = null;
+            if (balanceFlowType != null) {
+                if (balanceFlowType.get(flowType) != null) {
+                    flowTypeDesc = balanceFlowType.get(flowType).toString();
                 }
             }
+            balanceFlowVO.setFlowTypeDesc(flowTypeDesc);
             return balanceFlowVO;
         });
         
@@ -88,16 +92,18 @@ public class AccountService {
     }
 
     public Result<PageResult<BalanceFlowVO>> accountVCoinsFlow(PageDTO pageDTO, Long userId) {
-        List<Config> balanceFlowType = configService.getMapListConfig(ParamConstant.VCOIN_EXCHANGE_TYPE);
+        Map balanceFlowType = this.configService.getMapConfig(ParamConstant.VCOIN_EXCHANGE_TYPE);
         Page<VCoinsFlow> byBalance = vCoinsFlowRepository.findByBalance(userId, pageDTO.toPageRequest());
         Page<BalanceFlowVO> map = byBalance.map(balanceFlow -> {
             BalanceFlowVO balanceFlowVO = BalanceFlowVO.toBalanceFlowVOByVCoinsFlow(balanceFlow);
-            Long flowType = balanceFlow.getvCoinsflowType();
-            for (Config config : balanceFlowType) {
-                if (flowType.toString().equals(config.getKey())) {
-                    balanceFlowVO.setFlowTypeDesc(config.getVal());
+            String flowType = balanceFlow.getvCoinsflowType().toString();
+            String flowTypeDesc = null;
+            if (balanceFlowType != null) {
+                if (balanceFlowType.get(flowType) != null) {
+                    flowTypeDesc = balanceFlowType.get(flowType).toString();
                 }
             }
+            balanceFlowVO.setFlowTypeDesc(flowTypeDesc);
             return balanceFlowVO;
         });
         return Result.success(new PageResult<>(map));

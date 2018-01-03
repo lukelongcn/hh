@@ -1,18 +1,18 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
-import com.h9.common.db.entity.VB2Money;
+import com.h9.common.db.entity.account.VB2Money;
 import com.h9.common.modle.dto.LotteryFLowRecordDTO;
 import com.h9.admin.model.dto.finance.TransferLotteryFLowDTO;
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
-import com.h9.admin.model.vo.LotteryFlowRecordVO;
+import com.h9.common.modle.vo.admin.finance.LotteryFlowRecordVO;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
 import com.h9.admin.service.FinanceService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.WithdrawalsRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

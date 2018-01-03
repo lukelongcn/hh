@@ -1,7 +1,7 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.order.Address;
+import com.h9.common.db.entity.user.User;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

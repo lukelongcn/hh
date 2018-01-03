@@ -15,7 +15,18 @@ import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.BankType;
+import com.h9.common.db.entity.account.CardCoupons;
+import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.order.*;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserBank;
+import com.h9.common.db.entity.user.UserRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsFails;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRequest;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
@@ -25,7 +36,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,7 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
+import static com.h9.common.db.entity.order.Orders.orderTypeEnum.VIRTUAL_GOODS;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -216,7 +226,7 @@ public class ConsumeService {
         goodsList.forEach(goods -> {
             Map<String, String> map = new HashMap<>();
             map.put("id", goods.getId() + "");
-            map.put("price", MoneyUtils.formatMoney(goods.getPrice(), "0"));
+            map.put("price", MoneyUtils.formatMoney(goods.getPrice(), "0.00"));
             map.put("realPrice", goods.getRealPrice().toString());
             list.add(map);
         });
@@ -238,9 +248,9 @@ public class ConsumeService {
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         if (goodsType == null) return Result.success(list);
 
-        List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
+        List<Goods> goodsList = goodsReposiroty.findByGoodsTypeAndStatus(goodsType);
 
-        goodsList.stream().filter(el -> el.getStock() > 0).forEach(goods -> {
+        goodsList.stream().forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
 //            Object count = cardCouponsRepository.getCount(goods.getId());
@@ -269,7 +279,7 @@ public class ConsumeService {
         Long id = didiCardDTO.getId();
 
         Goods goods = goodsReposiroty.findOne(id);
-        BigDecimal price = goods.getPrice();
+        BigDecimal price = goods.getRealPrice();
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
         }
@@ -283,6 +293,7 @@ public class ConsumeService {
         Orders orders = orderService.initOrder(user.getNickName(), goods.getRealPrice(), user.getPhone(), Orders.orderTypeEnum.VIRTUAL_GOODS.getCode() + "", "徽酒");
         orders.setOrderFrom(2);
         orders.setUser(user);
+        orders.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
         orders.setGoodsType(GoodsType.GoodsTypeEnum.DIDI_CARD.getCode());
         //修改库存
         Result changeResult = goodService.changeStock(goods);
@@ -332,7 +343,7 @@ public class ConsumeService {
         Long id = didiCardDTO.getId();
 
         Goods goods = goodsReposiroty.findOne(id);
-        BigDecimal price = goods.getPrice();
+        BigDecimal price = goods.getRealPrice();
 
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
@@ -386,13 +397,16 @@ public class ConsumeService {
         if(balance.compareTo(canWithdrawMoney) < 0){
             canWithdrawMoney = balance;
         }
-        String transAmt = "101";
+        String transAmt = "";
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
         } else {
-            //TODO 设置提现金额,转化成分
 //            transAmt = canWithdrawMoney;
-            transAmt = "101";
+            if ("product".equals(currentEnvironment)) {
+                transAmt = canWithdrawMoney.multiply(new BigDecimal(100)).toString();
+            }else{
+                transAmt = "101";
+            }
         }
 
         String cardNo = userBank.getNo();
@@ -403,7 +417,7 @@ public class ConsumeService {
         String purpose = "提现";
         String signFlag = "1";
 
-        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(userId, canWithdrawMoney, userBank, purpose);
+        WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
@@ -411,7 +425,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate);
+        Result result = chinaPayService.signPay(payParam, merDate,currentEnvironment);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();

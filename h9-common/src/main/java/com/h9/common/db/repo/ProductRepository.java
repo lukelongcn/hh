@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Product;
+import com.h9.common.db.entity.lottery.Product;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,5 +24,8 @@ public interface ProductRepository extends BaseRepository<Product> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select p from Product p where p.code = ?1")
     Product findByCode4Update(String code);
+
+
+
 
 }

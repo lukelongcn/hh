@@ -1,11 +1,9 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.GoodsType;
-import com.h9.common.modle.DiDiCardInfo;
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.GoodsType;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -21,6 +19,9 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
 
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     List<Goods> findByGoodsType(GoodsType goodsType);
+
+    @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
+    List<Goods> findByGoodsTypeAndStatus(GoodsType goodsType);
 
     @Query(value = "select o from Goods o where o.goodsType = ?1 and o.status = 1")
     Page<Goods> findByGoodsType(GoodsType goodsType,Pageable pageable);

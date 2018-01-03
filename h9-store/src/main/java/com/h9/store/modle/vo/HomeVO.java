@@ -1,6 +1,6 @@
 package com.h9.store.modle.vo;
 
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.config.*;
 import com.h9.common.utils.DateUtil;
 
 

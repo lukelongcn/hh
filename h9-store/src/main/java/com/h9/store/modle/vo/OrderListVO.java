@@ -1,7 +1,7 @@
 package com.h9.store.modle.vo;
 
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.Orders;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

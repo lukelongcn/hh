@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.MoneyUtils;
 import lombok.Data;
 

@@ -1,14 +1,10 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.order.Goods;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.jpa.criteria.expression.function.AggregationFunction;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
-import sun.nio.cs.ext.MacArabic;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;

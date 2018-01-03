@@ -1,6 +1,6 @@
 package com.h9.common.modle.vo.admin.finance;
 
-import com.h9.common.db.entity.WithdrawalsRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
@@ -205,10 +205,8 @@ public class WithdrawRecordVO {
 
     public WithdrawRecordVO(WithdrawalsRecord withdrawalsRecord) {
         BeanUtils.copyProperties(withdrawalsRecord,this);
-        this.setBankName(withdrawalsRecord.getUserBank().getName());
-        this.setBankCardNo(withdrawalsRecord.getUserBank().getNo());
-        this.setProvice(withdrawalsRecord.getUserBank().getProvince());
-        this.setCity(withdrawalsRecord.getUserBank().getProvince());
+        this.bankCardNo = withdrawalsRecord.getBankNo();
+        this.provice = withdrawalsRecord.getProvince();
     }
 
 }

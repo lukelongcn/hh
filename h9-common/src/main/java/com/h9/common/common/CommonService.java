@@ -2,12 +2,9 @@ package com.h9.common.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
-import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.GlobalProperty;
-import com.h9.common.db.entity.UserAccount;
-import com.h9.common.db.entity.UserRecord;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.NetworkUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -20,8 +17,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,7 +42,7 @@ public class CommonService {
     public Result setBalance(Long userId, BigDecimal money, Long typeId, Long orderId, String orderNo, String remarks) {
         this.logger.infov("userId:{0}",userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
-       this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
+        this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
         if (newbalance.compareTo(new BigDecimal(0)) < 0) {

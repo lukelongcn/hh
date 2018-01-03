@@ -1,6 +1,7 @@
 package com.h9.admin;
 
 import com.h9.common.StartBanner;
+import com.h9.common.common.ConstantConfig;
 import com.h9.common.utils.MyMappingJackson2HttpMessageConverter;
 import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
@@ -26,17 +27,17 @@ import javax.servlet.MultipartConfigElement;
 @EnableScheduling
 public class AdminApplication {
 
-
-
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(AdminApplication.class, args);
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(AdminApplication.class, args);
         Logger logger = Logger.getLogger(AdminApplication.class);
         logger.debugv(StartBanner.BANNER);
 
 
-        Environment environment = run.getBean(Environment.class);
+        Environment environment = applicationContext.getBean(Environment.class);
         String enviroment = environment.getProperty("h9.current.envir");
         logger.info("当前环境："+enviroment);
+
+        ConstantConfig.init(applicationContext,environment);
     }
 
     @Bean
@@ -44,7 +45,6 @@ public class AdminApplication {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(0, new MyMappingJackson2HttpMessageConverter());
         return restTemplate;
-
 
     }
 

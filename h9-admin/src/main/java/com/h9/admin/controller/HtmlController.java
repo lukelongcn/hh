@@ -6,7 +6,7 @@ import com.h9.admin.service.HtmlService;
 import com.h9.admin.validation.Edit;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.HtmlContent;
+import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.modle.dto.PageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

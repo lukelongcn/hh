@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.modle.vo.admin.basis.SystemUserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +21,7 @@ import javax.persistence.LockModeType;
 @Repository
 public interface UserRepository extends BaseRepository<User> {
 
+    @Query("select u from User u where u.phone = ?1 and u.status<>3")
     User findByPhone(String phone);
 
     @Query("select u from User u where u.openId = ?1 and u.status<>3")
@@ -39,6 +40,8 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select new com.h9.common.modle.vo.admin.basis.SystemUserVO(o) from User o where o.isAdmin = 1 order by o.status asc ,o.id desc ")
     Page<SystemUserVO> findAllByPage(Pageable page);
 
+    @Override
+    User findOne(Long id);
 
     //////////////////////////////////数据迁移方法//////////////////////
     User findByH9UserId(Long userId);

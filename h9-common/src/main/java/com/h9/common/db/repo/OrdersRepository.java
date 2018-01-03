@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
-import com.h9.common.db.entity.Orders;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -50,8 +49,8 @@ public interface OrdersRepository extends BaseRepository<Orders> {
             @Override
             public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
-                if (StringUtils.isNotBlank(orderDTO.getNo())) {
-                    predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class),orderDTO.getNo()));
+                if (orderDTO.getNo() != null) {
+                    predicateList.add(criteriaBuilder.equal(root.get("id").as(String.class),orderDTO.getNo()));
                 }
                 if (StringUtils.isNotBlank(orderDTO.getPhone())) {
                     predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class),orderDTO.getPhone()));
@@ -62,7 +61,9 @@ public interface OrdersRepository extends BaseRepository<Orders> {
                 if (orderDTO.getEndTime() != null) {
                     predicateList.add(criteriaBuilder.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(orderDTO.getEndTime(),1)));
                 }
-                predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class),orderDTO.getStatus()));
+                if (orderDTO.getStatus() != null && orderDTO.getStatus() != -1){
+                    predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class),orderDTO.getStatus()));
+                }
                 Predicate[] pre = new Predicate[predicateList.size()];
                 return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
             }

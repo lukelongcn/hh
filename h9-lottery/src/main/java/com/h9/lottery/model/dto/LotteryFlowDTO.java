@@ -1,12 +1,9 @@
 package com.h9.lottery.model.dto;
 
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.LotteryFlow;
-import com.h9.common.db.entity.VCoinsFlow;
+import com.h9.common.db.entity.lottery.LotteryFlow;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**

@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.BankBin;
+import com.h9.common.db.entity.account.BankBin;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,5 +17,7 @@ public interface BankBinRepository extends BaseRepository<BankBin> {
     BankBin findByBankBin(String bankBin);
 
     BankBin findByBankBinLike(String bankBin);
+
+
 
 }

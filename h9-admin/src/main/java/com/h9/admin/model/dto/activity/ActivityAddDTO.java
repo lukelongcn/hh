@@ -1,10 +1,9 @@
 package com.h9.admin.model.dto.activity;
 
-import com.h9.common.db.entity.Activity;
+import com.h9.common.db.entity.lottery.Activity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;

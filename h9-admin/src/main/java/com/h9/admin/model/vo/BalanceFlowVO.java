@@ -1,7 +1,7 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.BalanceFlow;
-import com.h9.common.db.entity.VCoinsFlow;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.VCoinsFlow;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

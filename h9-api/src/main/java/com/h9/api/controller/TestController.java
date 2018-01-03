@@ -2,8 +2,8 @@ package com.h9.api.controller;
 
 
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import io.swagger.annotations.Api;
