@@ -2,6 +2,7 @@ package com.h9.lottery.provider.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.db.entity.lottery.Product;
+import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
