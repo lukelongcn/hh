@@ -2,8 +2,12 @@ package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserSign;
+import com.h9.common.utils.DateUtil;
+
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by 李圆 on 2018/1/2
@@ -17,13 +21,27 @@ public class SignVO {
 
     private Integer signDays = 0;
 
+    protected String createTime ;
+
+
     public SignVO(User user,UserSign userSign){
+        BeanUtils.copyProperties(user,this);
         this.cashBack = userSign.getCashBack();
-        this.signCount = user.getSignCount();
-        this.signDays = user.getSignDays();
-        this.nickName = user.getNickName();
     }
 
+    public SignVO(UserSign userSign) {
+        this.cashBack = userSign.getCashBack();
+        this.createTime = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.SECOND);
+    }
+
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = DateUtil.formatDate(createTime, DateUtil.FormatType.SECOND);
+    }
 
     public String getNickName() {
         return nickName;
@@ -55,5 +73,10 @@ public class SignVO {
 
     public void setSignDays(Integer signDays) {
         this.signDays = signDays;
+    }
+
+
+    public static SignVO convert(UserSign userSign) {
+        return new SignVO(userSign);
     }
 }

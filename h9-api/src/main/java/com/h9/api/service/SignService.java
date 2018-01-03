@@ -1,7 +1,9 @@
 package com.h9.api.service;
 
+import com.h9.api.model.vo.SelfSignVO;
 import com.h9.api.model.vo.SignVO;
 import com.h9.api.model.vo.UserSignMessageVO;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.account.BalanceFlow;
@@ -40,6 +42,8 @@ public class SignService {
     private UserSignRepository userSignRepository;
     @Resource
     CommonService commonService;
+    @Resource
+    UserAccountRepository userAccountRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -84,7 +88,7 @@ public class SignService {
         Result result = commonService.setBalance(userId,userSign1.getCashBack(), BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSign1.getId(),"","");
         if(result.getCode()==Result.FAILED_CODE){
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
-            return Result.fail("签到奖励用户金额失败");
+            return Result.fail("签到失败");
         }
 
         SignVO signVO = new SignVO(user,userSign1);
@@ -115,40 +119,53 @@ public class SignService {
     }
 
     /**
-     * 获取签到信息
+     * 获取签到页面信息
      * @return
      * @param userId
      */
     @Transactional
     @Description("最新签到列表显示十个")
     public Result newSign(long userId) {
-        // 获取奖励金  连续签到天数  总共签到天数
-        User user = userRepository.findOne(userId);
-        if (user == null){
-            return Result.fail("用户不存在，请重新登录或注册");
-        }
-        UserSign userSign = userSignRepository.findLastSign(userId);
-        UserSignMessageVO userSignMessageVO = new UserSignMessageVO();
-        if (userSign == null){
-            userSignMessageVO.setCashBack( new BigDecimal(0));
-            userSignMessageVO.setSignCount(0);
-            userSignMessageVO.setSignDays(0);
-        }else{
-            userSignMessageVO.setCashBack(userSign.getCashBack());
-            userSignMessageVO.setSignCount(user.getSignCount());
-            userSignMessageVO.setSignDays(user.getSignDays());
-        }
 
         // 获取最新签到列表
         List<UserSign> listNewSign = userSignRepository.findListNewSign();
         List listSignVO = new ArrayList();
         listNewSign.forEach(userSign2 -> {
-          User user1 =  userRepository.findOne(userSign2.getUserId());
-          SignVO signVO = new SignVO(user,userSign2);
-          listSignVO.add(signVO);
+            User user1 =  userRepository.findOne(userSign2.getUserId());
+            SignVO signVO = new SignVO(user1,userSign2);
+            listSignVO.add(signVO);
         });
-        userSignMessageVO.setList(listSignVO);
 
+        // 获取头像  用户余额 奖励金  连续签到天数  总共签到天数
+        User user = userRepository.findOne(userId);
+        if (user == null){
+            return Result.fail("用户不存在，请重新登录或注册");
+        }
+        UserAccount userAccount = userAccountRepository.findOne(userId);
+        UserSign userSign = userSignRepository.findLastSign(userId);
+        // 如果用户是第一次进入页面且没有签到
+        if (userSign == null){
+            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,listSignVO);
+            return Result.success(userSignMessageVO);
+        }
+        UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,listSignVO);
         return Result.success(userSignMessageVO);
+    }
+
+
+    /**
+     * 个人签到记录
+     * @param userId
+     * @param page
+     * @param limit
+     * @return
+     */
+    public Result selfSign(long userId, Integer page, Integer limit) {
+        PageResult<UserSign> pageResult = userSignRepository.findUserSignList(userId, page, limit);
+        if (pageResult == null){
+            return Result.success("暂无签到记录");
+        }
+        logger.debug(pageResult);
+        return Result.success(pageResult.result2Result(SelfSignVO::new));
     }
 }
