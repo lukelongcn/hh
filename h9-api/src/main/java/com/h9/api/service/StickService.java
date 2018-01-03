@@ -3,6 +3,7 @@ package com.h9.api.service;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.StickSampleVO;
 import com.h9.api.model.vo.StickTypeVO;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.community.Stick;
@@ -11,13 +12,18 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
+import com.h9.common.utils.DateUtil;
+import lombok.extern.jbosslog.JBossLog;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +35,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class StickService {
+
+    Logger logger = Logger.getLogger(StickService.class);
 
     @Resource
     private StickTypeRepository stickTypeRepository;
@@ -80,6 +88,30 @@ public class StickService {
     }
 
 
+    public Result listStick(String type,int page,Integer limit){
+
+        if(type.equals("config_home")){
+            Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
+            PageResult<Stick> pageResult = new PageResult(home);
+            return Result.success(pageResult.result2Result(StickSampleVO::new));
+        }else if(type.equals("config_hot")){
+            Page<Stick> home = stickRepository.find4Hot(stickRepository.pageRequest(page,limit!=null?limit:20));
+            PageResult<Stick> pageResult = new PageResult(home);
+            return Result.success(pageResult.result2Result(StickSampleVO::new));
+        }else{
+            boolean numeric = StringUtils.isNumeric(type);
+            if(numeric){
+               long id = Long.parseLong(type);
+               Page<Stick> home = stickRepository.findType(id,stickRepository.pageRequest(page,limit!=null?limit:20));
+                PageResult<Stick> pageResult = new PageResult(home);
+                return Result.success(pageResult.result2Result(StickSampleVO::new));
+            }else{
+                Page<Stick> home = stickRepository.findType(type,stickRepository.pageRequest(page,limit!=null?limit:20));
+                PageResult<Stick> pageResult = new PageResult(home);
+                return Result.success(pageResult.result2Result(StickSampleVO::new));
+            }
+        }
+    }
 
 
 

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +36,17 @@ public class StickContoller {
                            @RequestBody @Validated StickDto stickDto){
         return stickService.addStick(userId,stickDto);
     }
-    
+
+
+    @Secured
+    @GetMapping("/{type}/list")
+    public Result listStick(@PathVariable("type") String type,
+                            @RequestParam(required = false,defaultValue = "1") Integer page,
+                            @RequestParam(required = false) Integer limit){
+        return stickService.listStick(type,page, limit);
+    }
+
+
 
 
 }

@@ -1,7 +1,9 @@
 package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.community.Stick;
+import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.user.User;
+import lombok.Data;
 
 import javax.persistence.Column;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
  * Date: 2018/1/2
  * Time: 16:21
  */
+@Data
 public class StickSampleVO {
     private long id;
     private String userName;
@@ -22,6 +25,7 @@ public class StickSampleVO {
     private Integer readCount = 0;
     private Integer likeCount = 0;
     private Integer answerCount = 0;
+    private String typeName;
 
     public StickSampleVO() {
     }
@@ -37,69 +41,11 @@ public class StickSampleVO {
         readCount = stick.getReadCount();
         likeCount = stick.getLikeCount();
         answerCount = stick.getAnswerCount();
+        StickType stickType = stick.getStickType();
+        if (stickType != null) {
+            typeName = stickType.getName();
+        }
     }
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserAvatar() {
-        return userAvatar;
-    }
-
-    public void setUserAvatar(String userAvatar) {
-        this.userAvatar = userAvatar;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<String> getImages() {
-        return images;
-    }
-
-    public void setImages(List<String> images) {
-        this.images = images;
-    }
-
-    public Integer getReadCount() {
-        return readCount;
-    }
-
-    public void setReadCount(Integer readCount) {
-        this.readCount = readCount;
-    }
-
-    public Integer getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(Integer likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public Integer getAnswerCount() {
-        return answerCount;
-    }
-
-    public void setAnswerCount(Integer answerCount) {
-        this.answerCount = answerCount;
-    }
 }
