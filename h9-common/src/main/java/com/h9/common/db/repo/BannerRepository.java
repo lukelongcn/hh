@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by itservice on 2017/10/30.
@@ -22,6 +23,15 @@ public interface BannerRepository extends BaseRepository<Banner> {
             "and banner_type.enable = 1 and banner_type.location =?2 order by banner.sort desc,banner.id desc"
             ,nativeQuery = true)
     List<Banner> findActiviBanner( Date date,Integer location);
+
+    /**
+     * description: 查询当前生效的banner
+     */
+    @Query(value = "select * from banner,banner_type where banner.banner_type_id = banner_type.id " +
+            "and banner.start_time < ?2 and banner.end_time >?2 and banner.enable = 1 " +
+            "and banner_type.enable = 1 and banner_type.location =?1 order by banner.sort desc,banner.id desc"
+            ,nativeQuery = true)
+    Stream<Banner> findActiviBanner(Integer location,Date date);
 
     Banner findByTitle(String title);
 

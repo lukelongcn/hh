@@ -38,13 +38,21 @@ public class StickContoller {
     }
 
 
-    @Secured
+
     @GetMapping("/{type}/list")
     public Result listStick(@PathVariable("type") String type,
                             @RequestParam(required = false,defaultValue = "1") Integer page,
                             @RequestParam(required = false) Integer limit){
         return stickService.listStick(type,page, limit);
     }
+
+
+    @GetMapping("/home")
+    public Result home(){
+        return stickService.home();
+    }
+
+
 
 
 

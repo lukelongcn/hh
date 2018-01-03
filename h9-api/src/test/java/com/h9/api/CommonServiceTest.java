@@ -1,6 +1,8 @@
 package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.service.StickService;
+import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.order.Address;
 import org.jboss.logging.Logger;
@@ -32,6 +34,17 @@ public class CommonServiceTest {
     public void test2222() {
         CommonService.AddressResult addressDetail = commonService.getAddressDetail(22.5428600000, 114.0595600000);
         logger.debugv(JSONObject.toJSONString(addressDetail));
+
+    }
+
+
+    @Resource
+    private StickService stickService;
+    
+    
+    @Test
+    public void testHome() {
+        Result home = stickService.home();
 
     }
 }

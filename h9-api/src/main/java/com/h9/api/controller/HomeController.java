@@ -27,7 +27,6 @@ public class HomeController {
     @PrintReqResLog(printResponseResult = true, printRequestParams = true)
     @GetMapping("/home")
     public Result homeData(){
-
         return homeService.homeDate();
     }
 
