@@ -1,6 +1,7 @@
 package com.h9.common.db.entity.lottery;
 
 import com.h9.common.base.BaseEntity;
+import lombok.Data;
 import com.h9.common.db.entity.lottery.Product;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Date: 2017/10/28
  * Time: 10:21
  */
+@Data
 @Entity
 @Table(name = "reward",uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class Reward extends BaseEntity {
@@ -67,38 +69,9 @@ public class Reward extends BaseEntity {
     @JoinColumn(name = "product_id",referencedColumnName="id",columnDefinition = "bigint(20) default null COMMENT ''",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Product product;
 
+    @Column(name = "plan_id", columnDefinition = "varchar(84) default '' COMMENT '计划id'")
+    private String planId;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(Long activityId) {
-        this.activityId = activityId;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public BigDecimal getMoney() {
-        return money;
-    }
-
-    public void setMoney(BigDecimal money) {
-        this.money = money;
-    }
 
 
     /***
@@ -115,64 +88,6 @@ public class Reward extends BaseEntity {
      */
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Date getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
-    }
-
-    public String getMd5Code() {
-        return md5Code;
-    }
-
-    public void setMd5Code(String md5Code) {
-        this.md5Code = md5Code;
-    }
-
-    public  int getPartakeCount() {
-        return partakeCount;
-    }
-
-    public void setPartakeCount(int partakeCount) {
-        this.partakeCount = partakeCount;
-    }
-
-
-    public Integer getFactoryStatus() {
-        return factoryStatus;
-    }
-
-    public void setFactoryStatus(Integer factoryStatus) {
-        this.factoryStatus = factoryStatus;
-    }
-
-    public Integer getStartType() {
-        return startType;
-    }
-
-    public void setStartType(Integer startType) {
-        this.startType = startType;
-    }
-
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public static enum StatusEnum{
@@ -205,9 +120,5 @@ public class Reward extends BaseEntity {
         public void setDesc(String desc) {
             this.desc = desc;
         }
-
-
-
-
     }
 }

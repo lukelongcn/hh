@@ -505,6 +505,7 @@ public class LotteryService {
             reward.setCode(code);
             reward.setActivityId(1L);
             reward.setMd5Code(MD5Util.getMD5(code));
+            reward.setPlanId(lotteryModel.getPlanId());
             reward = rewardRepository.saveAndFlush(reward);
         } catch (Exception e) {
             logger.debugv("数据获取失败");

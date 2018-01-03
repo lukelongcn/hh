@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "product_type",uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(name = "product_type")
 public class ProductType extends BaseEntity {
 
 
