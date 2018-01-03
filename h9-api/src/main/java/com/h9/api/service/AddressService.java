@@ -83,7 +83,6 @@ public class AddressService {
         }
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
         Long end = System.currentTimeMillis();
-        logger.debugv("时间"+(end-startTime));
 //        存储到redis
         redisBean.setObject(RedisKey.addressKey,areasList);
         return areasList;

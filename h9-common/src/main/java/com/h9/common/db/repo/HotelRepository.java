@@ -1,8 +1,7 @@
 package com.h9.common.db.repo;
 
-import com.h9.common.base.BaseEntity;
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Hotel;
+import com.h9.common.db.entity.hotel.Hotel;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;

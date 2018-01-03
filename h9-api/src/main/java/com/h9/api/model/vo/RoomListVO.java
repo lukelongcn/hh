@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.HotelRoomType;
+import com.h9.common.db.entity.hotel.HotelRoomType;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
