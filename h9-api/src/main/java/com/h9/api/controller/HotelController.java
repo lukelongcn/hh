@@ -46,6 +46,8 @@ public class HotelController {
 
     /**
      * description: 订单列表
+     * 1 全部 ，2为有效单 3为待支付 4为退款单
+     *
      */
     @Secured
     @GetMapping("/hotel/order")
