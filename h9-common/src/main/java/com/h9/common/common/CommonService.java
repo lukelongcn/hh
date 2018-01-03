@@ -45,7 +45,7 @@ public class CommonService {
     public Result setBalance(Long userId, BigDecimal money, Long typeId, Long orderId, String orderNo, String remarks) {
         this.logger.infov("userId:{0}",userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
-       this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
+        this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
         if (newbalance.compareTo(new BigDecimal(0)) < 0) {
