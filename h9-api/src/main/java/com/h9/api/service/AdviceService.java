@@ -52,12 +52,7 @@ public class AdviceService {
         userAdvice.setAnonymous(adviceDTO.getAnonymous());
         userAdvice.setConnect(adviceDTO.getConnect());
         userAdvice.setUserId(userId);
-
-        List list = new ArrayList();
-        list.add(adviceDTO.getAdviceImg1());
-        list.add(adviceDTO.getAdviceImg2());
-        list.add(adviceDTO.getAdviceImg3());
-        userAdvice.setAdviceImg(list);
+        userAdvice.setAdviceImg(adviceDTO.getAdviceImgList());
 
         adviceRespository.save(userAdvice);
         return Result.success("意见反馈成功");
