@@ -21,6 +21,9 @@ public class HotelRoomType extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "room_name",columnDefinition ="varchar(255) comment '房间名'" )
+    private String roomName;
+
     @Column(name = "type_name",columnDefinition = "varchar(255) comment '类型名'")
     private String typeName;
 
@@ -44,12 +47,15 @@ public class HotelRoomType extends BaseEntity{
      * @see Status
      */
     @Column(name = "status",columnDefinition = "int COMMENT '状态 1正常 0禁用'")
-    private Integer status;
+    private Integer status = 1;
+
+    @Column(name ="image",columnDefinition = "varchar(255) comment '图片'")
+    private String image;
 
     @Getter
     public static enum Status{
-        NORMAL(1, "待支付"),
-        BAN(0,"预订成功");
+        NORMAL(1, "1正常"),
+        BAN(0,"禁用");
         public int code;
         public String desc;
 

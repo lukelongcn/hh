@@ -76,7 +76,6 @@ public class User extends BaseEntity {
     @JoinTable(name="user_role",joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
     private Set<Role> roles;
 
-
     @Column(name = "sign_count", nullable = false, columnDefinition = "tinyint default 0 COMMENT '总共签到天数'")
     private Integer signCount = 0;
 

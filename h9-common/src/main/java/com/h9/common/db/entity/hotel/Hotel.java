@@ -2,9 +2,7 @@ package com.h9.common.db.entity.hotel;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.h9.common.base.BaseEntity;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -53,10 +51,48 @@ public class Hotel extends BaseEntity{
     @Column(name = "hotel_name",columnDefinition = "varchar(255) comment '酒店名'")
     private String hotelName;
 
+    @Column(name = "hotel_phone",columnDefinition = "varchar(200) comment '订房电话'")
+    private String hotelPhone;
 
+    @Column(name = "start_reserve_time",columnDefinition = "varchar(200) comment '开始预约时间'")
+    private String  startReserveTime;
+
+    @Column(name = "end_reserve_time",columnDefinition = "varchar(200) comment '结束预约时间'")
+    private String endReserveTime;
+
+    /**
+     * description:
+     * @see  Status
+     */
+    @Column(name = "status",columnDefinition = "int default 1 comment '状态 1正常，0禁用'")
+    private Integer status;
     public void setImages(List<String> images) {
         if (images != null && images.size() > 0) {
             this.images = JSONObject.toJSONString(images);
         }
     }
+
+    @Getter
+    public static enum Status{
+        NORMAL(1, "1正常"),
+        BAN(0,"禁用");
+        public int code;
+        public String desc;
+
+        Status(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public static Status findByCode(int code) {
+            Status[] values = values();
+            for (Status elEnum : values) {
+                if (code == elEnum.getCode()) {
+                    return elEnum;
+                }
+            }
+            return null;
+        }
+    }
+
 }
