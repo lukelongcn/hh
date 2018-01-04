@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * description: 酒店
@@ -52,8 +53,9 @@ public class Hotel extends BaseEntity{
     @Column(name = "hotel_name",columnDefinition = "varchar(255) comment '酒店名'")
     private String hotelName;
 
-    public void setImages(String[] images) {
-        if (images != null && images.length > 0) {
+
+    public void setImages(List<String> images) {
+        if (images != null && images.size() > 0) {
             this.images = JSONObject.toJSONString(images);
         }
     }

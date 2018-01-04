@@ -1,6 +1,5 @@
 package com.h9.api.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
 import com.h9.api.model.vo.HotelDetailVO;
@@ -10,11 +9,9 @@ import com.h9.api.model.vo.HotelOrderPayVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
-import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.HotelRepository;
@@ -27,7 +24,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.rmi.CORBA.Util;
@@ -77,13 +73,14 @@ public class HotelService {
         return Result.success(new HotelDetailVO(hotel, null));
     }
 
-    public Result hotelList(String city, String queryKey) {
+    public Result hotelList(String city, String queryKey,int page,int limit) {
 
         if (StringUtils.isNotBlank(queryKey)) {
-            List<Hotel> hotelList = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%");
-            if (CollectionUtils.isNotEmpty(hotelList)) {
-                List<HotelListVO> voList = hotelList.stream().map(el -> new HotelListVO(el)).collect(Collectors.toList());
-                return Result.success(voList);
+            PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
+            Page<Hotel> hotelPage = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%",pageRequest);
+            if (CollectionUtils.isNotEmpty(hotelPage.getContent())) {
+                PageResult<HotelListVO> pageResult = new PageResult<>(hotelPage).result2Result(el -> new HotelListVO(el));
+                return Result.success(pageResult);
             } else {
                 return Result.fail("没有找到此类酒店");
             }
