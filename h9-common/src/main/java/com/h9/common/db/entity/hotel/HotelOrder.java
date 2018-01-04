@@ -2,6 +2,7 @@ package com.h9.common.db.entity.hotel;
 
 import com.h9.common.base.BaseEntity;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -66,6 +67,11 @@ public class HotelOrder extends BaseEntity{
     @Column(name = "total_money",columnDefinition = "decimal(10,2) comment '订单总金额'")
     private BigDecimal totalMoney;
 
+    @Column(name = "include",columnDefinition = "varchar(200) comment '含早、不含早'")
+    private String include;
+
+    @Column(name = "user_id",columnDefinition = "bigint comment '用户Id'")
+    private Long user_id;
     //待支付，【待确认，预订成功】，已退款，已取消
     @Getter
     public static enum PayMethodEnum{

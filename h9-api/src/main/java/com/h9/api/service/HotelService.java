@@ -1,6 +1,5 @@
 package com.h9.api.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
 import com.h9.api.model.vo.HotelDetailVO;
@@ -10,11 +9,9 @@ import com.h9.api.model.vo.HotelOrderPayVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
-import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.HotelRepository;
@@ -23,11 +20,11 @@ import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.rmi.CORBA.Util;
@@ -46,6 +43,7 @@ import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.WAIT_ENSU
 @Service
 public class HotelService {
 
+    private Logger logger = Logger.getLogger(this.getClass());
     @Resource
     private HotelRepository hotelRepository;
 
@@ -77,13 +75,14 @@ public class HotelService {
         return Result.success(new HotelDetailVO(hotel, null));
     }
 
-    public Result hotelList(String city, String queryKey) {
+    public Result hotelList(String city, String queryKey,int page,int limit) {
 
         if (StringUtils.isNotBlank(queryKey)) {
-            List<Hotel> hotelList = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%");
-            if (CollectionUtils.isNotEmpty(hotelList)) {
-                List<HotelListVO> voList = hotelList.stream().map(el -> new HotelListVO(el)).collect(Collectors.toList());
-                return Result.success(voList);
+            PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
+            Page<Hotel> hotelPage = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%",pageRequest);
+            if (CollectionUtils.isNotEmpty(hotelPage.getContent())) {
+                PageResult<HotelListVO> pageResult = new PageResult<>(hotelPage).result2Result(el -> new HotelListVO(el));
+                return Result.success(pageResult);
             } else {
                 return Result.fail("没有找到此类酒店");
             }
@@ -98,13 +97,12 @@ public class HotelService {
             return Result.fail("此类房间不存在");
         }
 
-        HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType);
+        HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType,userId);
 
         BigDecimal totalMoney = calcOrderTotalMoney(hotelOrder, hotelRoomType);
         hotelOrder = hotelOrderRepository.saveAndFlush(hotelOrder);
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-
 
         return Result.success(new HotelOrderPayVO()
                 .setBalance(MoneyUtils.formatMoney(userAccount.getBalance()))
@@ -127,7 +125,7 @@ public class HotelService {
     /**
      * description: 初始化订单
      */
-    public HotelOrder initHotelOrder(AddHotelOrderDTO addHotelOrderDTO, HotelRoomType hotelRoomType) {
+    public HotelOrder initHotelOrder(AddHotelOrderDTO addHotelOrderDTO, HotelRoomType hotelRoomType, Long userId) {
 
         return new HotelOrder()
                 .setOrderStatus(HotelOrder.OrderStatusEnum.NOT_PAID.getCode())
@@ -140,7 +138,9 @@ public class HotelService {
                 .setRoomTypeName(hotelRoomType.getTypeName())
                 .setRoomCount(addHotelOrderDTO.getRoomCount())
                 .setHotel(hotelRoomType.getHotel())
-                .setHotelRoomType(hotelRoomType);
+                .setHotelRoomType(hotelRoomType)
+                .setInclude(hotelRoomType.getInclude())
+                .setUser_id(userId);
     }
 
     /**
@@ -230,5 +230,26 @@ public class HotelService {
 
                 return null;
         }
+    }
+
+    public Result orderDetail(Long orderId, Long userId) {
+
+        HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
+        if(hotelOrder == null) return Result.fail("订单不存在");
+
+        if(!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
+
+        return null;
+    }
+
+    public Result hotelCity() {
+
+        long start = System.currentTimeMillis();
+//        List<Hotel> hotelList = hotelRepository.findAllHotelCity();
+        List<String> hotelList = hotelRepository.findAllHotelCity();
+        long end = System.currentTimeMillis();
+        logger.info("consumer time : "+(end - start)/1000F);
+//        List<String> cityList = hotelList.stream().map(el -> el.getCity()).collect(Collectors.toList());
+        return Result.success(hotelList);
     }
 }
