@@ -2,10 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
-import com.h9.api.model.vo.HotelDetailVO;
-import com.h9.api.model.vo.HotelListVO;
-import com.h9.api.model.vo.HotelOrderListVO;
-import com.h9.api.model.vo.HotelOrderPayVO;
+import com.h9.api.model.vo.*;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -239,7 +236,8 @@ public class HotelService {
 
         if(!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
 
-        return null;
+        HotelOrderDetailVO vo = new HotelOrderDetailVO(hotelOrder);
+        return Result.success(vo);
     }
 
     public Result hotelCity() {
