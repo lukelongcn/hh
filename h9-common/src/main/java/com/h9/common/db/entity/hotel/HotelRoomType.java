@@ -1,8 +1,8 @@
 package com.h9.common.db.entity.hotel;
 
 import com.h9.common.base.BaseEntity;
-import com.h9.common.db.entity.hotel.Hotel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -34,10 +34,39 @@ public class HotelRoomType extends BaseEntity{
     @JoinColumn(name = "hotel_id", referencedColumnName = "id", columnDefinition = "bigint(40)  COMMENT '酒店Id'",foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Hotel hotel;
 
-    @Column(name = "include", columnDefinition = "varchar(255) COMMENT '包含,如间 单早|大床'")
+    @Column(name = "include", columnDefinition = "varchar(255) COMMENT '包含,如间 单早'")
     private String include;
 
-    @Column(name = "status",columnDefinition = "int COMMENT '状态'")
+    @Column(name ="bed_size",columnDefinition = "varchar(255) comment '床类型'")
+    private String bedSize;
+    /**
+     * description: 状态
+     * @see Status
+     */
+    @Column(name = "status",columnDefinition = "int COMMENT '状态 1正常 0禁用'")
     private Integer status;
+
+    @Getter
+    public static enum Status{
+        NORMAL(1, "待支付"),
+        BAN(0,"预订成功");
+        public int code;
+        public String desc;
+
+        Status(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public static Status findByCode(int code) {
+            Status[] values = values();
+            for (Status elEnum : values) {
+                if (code == elEnum.getCode()) {
+                    return elEnum;
+                }
+            }
+            return null;
+        }
+    }
 
 }

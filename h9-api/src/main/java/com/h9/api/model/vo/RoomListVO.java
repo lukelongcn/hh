@@ -22,6 +22,8 @@ public class RoomListVO {
 
     private String include;
 
+    private String bedSize;
+
     private Integer status;
 
     private String canCancel;

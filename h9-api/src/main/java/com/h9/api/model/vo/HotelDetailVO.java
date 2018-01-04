@@ -34,8 +34,12 @@ public class HotelDetailVO {
 
         BeanUtils.copyProperties(hotel, this);
 
-        List<RoomListVO> roomList = roomType.stream().map(el -> new RoomListVO(el)).collect(Collectors.toList());
-        this.setRoomList(roomList);
+        if(roomType != null){
+
+            List<RoomListVO> roomList = roomType.stream().map(el -> new RoomListVO(el)).collect(Collectors.toList());
+            this.setRoomList(roomList);
+
+        }
 
         String imagesJson = hotel.getImages();
         if (StringUtils.isNotBlank(imagesJson)) {

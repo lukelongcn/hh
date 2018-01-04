@@ -61,7 +61,7 @@ public class HotelController {
      * description: 酒店预定信息
      */
     @Secured
-    @GetMapping("/hotel/options")
+    @GetMapping("/hotel/reserve")
     public Result hotelOptions(){
         return hotelService.hotelOptions();
     }
