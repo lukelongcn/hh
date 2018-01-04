@@ -23,7 +23,7 @@ public class AdviceDTO {
 
     private Integer anonymous;
 
-    private String adviceType;
+    private Integer adviceType;
 
     public List<String> getAdviceImgList() {
         return adviceImgList;
@@ -57,11 +57,11 @@ public class AdviceDTO {
         this.anonymous = anonymous;
     }
 
-    public String getAdviceType() {
+    public Integer getAdviceType() {
         return adviceType;
     }
 
-    public void setAdviceType(String adviceType) {
+    public void setAdviceType(Integer adviceType) {
         this.adviceType = adviceType;
     }
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by 李圆 on 2018/1/3
@@ -41,9 +42,10 @@ public class AdviceService {
      * 提交意见反馈
      * @param userId
      * @param adviceDTO
+     * @param request
      * @return
      */
-    public Result sendAdvice(long userId, AdviceDTO adviceDTO) {
+    public Result sendAdvice(long userId, AdviceDTO adviceDTO, HttpServletRequest request) {
         if (adviceDTO == null){
             return Result.fail("对象不存在");
         }
@@ -53,8 +55,29 @@ public class AdviceService {
         userAdvice.setConnect(adviceDTO.getConnect());
         userAdvice.setUserId(userId);
         userAdvice.setAdviceImg(adviceDTO.getAdviceImgList());
+        userAdvice.setIp(getIpAddr(request));
+        userAdvice.setAdviceType(adviceDTO.getAdviceType());
 
         adviceRespository.save(userAdvice);
         return Result.success("意见反馈成功");
+    }
+
+    /**
+     * 获取ip地址
+     * @param request
+     * @return
+     */
+    public  String getIpAddr(HttpServletRequest request)  {
+        String ip  =  request.getHeader( " x-forwarded-for " );
+        if (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip))  {
+            ip  =  request.getHeader( " Proxy-Client-IP " );
+        }
+        if (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip))  {
+            ip  =  request.getHeader( " WL-Proxy-Client-IP " );
+        }
+        if (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip))  {
+            ip  =  request.getRemoteAddr();
+        }
+        return  ip;
     }
 }
