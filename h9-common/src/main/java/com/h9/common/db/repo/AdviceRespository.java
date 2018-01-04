@@ -9,5 +9,4 @@ import com.h9.common.db.entity.user.UserAdvice;
 
 public interface AdviceRespository extends BaseRepository<UserAdvice> {
 
-
 }

@@ -26,6 +26,9 @@ public class AdviceService {
     @Resource
     ConfigService configService;
 
+    /**
+     * 获取意见类别
+     */
     public Result getAdviceType(){
         String adviceType = configService.getStringConfig(ParamConstant.ADVICE_TYPE);
         if (adviceType == null && adviceType == ""){
@@ -33,6 +36,13 @@ public class AdviceService {
         }
         return Result.success(adviceType);
     }
+
+    /**
+     * 提交意见反馈
+     * @param userId
+     * @param adviceDTO
+     * @return
+     */
     public Result sendAdvice(long userId, AdviceDTO adviceDTO) {
         if (adviceDTO == null){
             return Result.fail("对象不存在");
@@ -42,12 +52,7 @@ public class AdviceService {
         userAdvice.setAnonymous(adviceDTO.getAnonymous());
         userAdvice.setConnect(adviceDTO.getConnect());
         userAdvice.setUserId(userId);
-
-        List list = new ArrayList();
-        list.add(adviceDTO.getAdviceImg1());
-        list.add(adviceDTO.getAdviceImg2());
-        list.add(adviceDTO.getAdviceImg3());
-        userAdvice.setAdviceImg(list);
+        userAdvice.setAdviceImg(adviceDTO.getAdviceImgList());
 
         adviceRespository.save(userAdvice);
         return Result.success("意见反馈成功");

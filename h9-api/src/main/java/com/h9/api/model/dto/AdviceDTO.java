@@ -2,6 +2,8 @@ package com.h9.api.model.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.util.List;
+
 import javax.validation.constraints.Size;
 
 /**
@@ -13,12 +15,8 @@ public class AdviceDTO {
     @Size(min = 2,max = 200,message = "联系方式长度2-30个字符")
     private String advice;
 
-    private String adviceImg1;
-
-    private String adviceImg2;
-
-    private String adviceImg3;
-
+    @Size(max = 3,message = "图片上传最多三张")
+    private List<String> adviceImgList;
 
     @Size(min = 2,max = 30,message = "联系方式长度2-30个字符")
     private String connect;
@@ -27,36 +25,20 @@ public class AdviceDTO {
 
     private String adviceType;
 
+    public List<String> getAdviceImgList() {
+        return adviceImgList;
+    }
+
+    public void setAdviceImgList(List<String> adviceImgList) {
+        this.adviceImgList = adviceImgList;
+    }
+
     public String getAdvice() {
         return advice;
     }
 
     public void setAdvice(String advice) {
         this.advice = advice;
-    }
-
-    public String getAdviceImg1() {
-        return adviceImg1;
-    }
-
-    public void setAdviceImg1(String adviceImg1) {
-        this.adviceImg1 = adviceImg1;
-    }
-
-    public String getAdviceImg2() {
-        return adviceImg2;
-    }
-
-    public void setAdviceImg2(String adviceImg2) {
-        this.adviceImg2 = adviceImg2;
-    }
-
-    public String getAdviceImg3() {
-        return adviceImg3;
-    }
-
-    public void setAdviceImg3(String adviceImg3) {
-        this.adviceImg3 = adviceImg3;
     }
 
     public String getConnect() {

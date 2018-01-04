@@ -8,11 +8,14 @@ import com.h9.common.base.Result;
 import org.springframework.context.annotation.Description;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * Created by 李圆 on 2018/1/3
@@ -41,7 +44,7 @@ public class AdviceController {
     @Secured
     @PostMapping("/sendAdvice")
     @Description("提交意见反馈信息")
-    public Result sendAdvice(@SessionAttribute("curUserId")long userId, AdviceDTO adviceDTO){
+    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid @RequestBody AdviceDTO adviceDTO){
          return  adviceService.sendAdvice(userId,adviceDTO);
     }
 }
