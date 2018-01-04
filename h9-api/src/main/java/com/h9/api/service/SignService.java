@@ -90,6 +90,11 @@ public class SignService {
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
             return Result.fail("签到失败");
         }
+        // 签到奖励金额累加到用户奖励金额累计中
+        UserAccount userAccount = userAccountRepository.findOne(userId);
+        userAccount.setCashBackCount(userAccount.getCashBackCount().add(userSign1.getCashBack()));
+        userAccountRepository.save(userAccount);
+
         return Result.success("签到成功");
 
     }

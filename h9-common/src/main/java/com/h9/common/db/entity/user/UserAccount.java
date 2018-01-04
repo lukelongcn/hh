@@ -34,6 +34,17 @@ public class UserAccount extends BaseEntity {
     @Column(name = "v_coins",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT 'v币个数'")
     private BigDecimal vCoins = new BigDecimal(0);
 
+    @Column(name = "cash_back_count",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '签到累计奖励金额'")
+    private BigDecimal cashBackCount = new BigDecimal(0);
+
+    public BigDecimal getCashBackCount() {
+        return cashBackCount;
+    }
+
+    public void setCashBackCount(BigDecimal cashBackCount) {
+        this.cashBackCount = cashBackCount;
+    }
+
     public Long getUserId() {
         return userId;
     }

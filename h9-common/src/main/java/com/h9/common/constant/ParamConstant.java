@@ -69,7 +69,8 @@ public class ParamConstant {
     // 短信一天发送次数
     public static final String SMS_ONEDAY_COUNTCOUNT = "sms:OneDay:CountCount";
 
-
+    // 意见反馈类别
+    public static final String ADVICE_TYPE = "adviceType";
 
 
 }
