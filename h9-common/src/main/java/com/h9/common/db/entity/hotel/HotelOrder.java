@@ -43,10 +43,10 @@ public class HotelOrder extends BaseEntity{
     private HotelRoomType hotelRoomType;
 
     @Column(name = "pay_money4_jiu_yuan",columnDefinition = "decimal(10,2) comment '酒元支付'")
-    private BigDecimal PayMoney4JiuYuan;
+    private BigDecimal PayMoney4JiuYuan = new BigDecimal(0);
 
     @Column(name = "pay_money4_wechat",columnDefinition = "decimal(10,2) comment '微信支付'")
-    private BigDecimal PayMoney4Wechat;
+    private BigDecimal PayMoney4Wechat = new BigDecimal(0);
 
     @Column(name = "roomer",columnDefinition = "varchar(255) comment '入住人'")
     private String roomer;

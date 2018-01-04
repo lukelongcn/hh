@@ -31,7 +31,7 @@ public class HotelController {
      * description: 酒店列表
      */
     @GetMapping("/hotels")
-    public Result hotelList(@RequestParam String city,@RequestParam(required = false) String queryKey,
+    public Result hotelList(@RequestParam(required = false) String city,@RequestParam String queryKey,
                             @RequestParam(required = false,defaultValue = "1") Integer page,
                             @RequestParam(required = false,defaultValue = "10") Integer limit){
         return hotelService.hotelList(city,queryKey,page,limit);
