@@ -1,8 +1,8 @@
 package com.h9.api.model.vo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.h9.common.db.entity.Hotel;
-import com.h9.common.db.entity.HotelRoomType;
+import com.h9.common.db.entity.hotel.Hotel;
+import com.h9.common.db.entity.hotel.HotelRoomType;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -10,9 +10,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by itservice on 2018/1/2.
@@ -36,8 +34,12 @@ public class HotelDetailVO {
 
         BeanUtils.copyProperties(hotel, this);
 
-        List<RoomListVO> roomList = roomType.stream().map(el -> new RoomListVO(el)).collect(Collectors.toList());
-        this.setRoomList(roomList);
+        if(roomType != null){
+
+            List<RoomListVO> roomList = roomType.stream().map(el -> new RoomListVO(el)).collect(Collectors.toList());
+            this.setRoomList(roomList);
+
+        }
 
         String imagesJson = hotel.getImages();
         if (StringUtils.isNotBlank(imagesJson)) {

@@ -1,7 +1,7 @@
 package com.h9.api.model.vo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.h9.common.db.entity.Hotel;
+import com.h9.common.db.entity.hotel.Hotel;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
