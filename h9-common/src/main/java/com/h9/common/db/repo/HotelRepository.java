@@ -15,4 +15,8 @@ public interface HotelRepository  extends BaseRepository<Hotel>{
 
     @Query("select o from Hotel  o where o.city = ?1 and( o.detailAddress like ?2 or o.hotelName = ?2)")
     Page<Hotel> findByCityAndHotelName(String city, String hotelName, Pageable pageable);
+
+    @Query("select o.city from Hotel o group by o.city")
+    List<String> findAllHotelCity();
+
 }

@@ -79,6 +79,22 @@ public class HotelController {
         return hotelService.payOrder(hotelPayDTO);
     }
 
+    /**
+     * description: 订单详情
+     */
+    @Secured
+    @GetMapping("/hotel/order/detail")
+    public Result orderDetail(@RequestParam Long orderId, @SessionAttribute("curUserId") Long userId){
+        return hotelService.orderDetail(orderId,userId);
+    }
 
+
+    /**
+     * description: 包含酒店的城市列表
+     */
+    @GetMapping("/hotel/city")
+    public Result hotelCity(){
+        return hotelService.hotelCity();
+    }
 
 }
