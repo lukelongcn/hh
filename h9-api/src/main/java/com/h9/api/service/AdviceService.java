@@ -26,6 +26,9 @@ public class AdviceService {
     @Resource
     ConfigService configService;
 
+    /**
+     * 获取意见类别
+     */
     public Result getAdviceType(){
         String adviceType = configService.getStringConfig(ParamConstant.ADVICE_TYPE);
         if (adviceType == null && adviceType == ""){
@@ -33,6 +36,13 @@ public class AdviceService {
         }
         return Result.success(adviceType);
     }
+
+    /**
+     * 提交意见反馈
+     * @param userId
+     * @param adviceDTO
+     * @return
+     */
     public Result sendAdvice(long userId, AdviceDTO adviceDTO) {
         if (adviceDTO == null){
             return Result.fail("对象不存在");

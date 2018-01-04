@@ -2,6 +2,7 @@ package com.h9.common.db.entity.user;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.h9.common.base.BaseEntity;
 import com.h9.common.db.entity.order.China;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "user_advice")
-public class UserAdvice {
+public class UserAdvice extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -46,8 +47,8 @@ public class UserAdvice {
     @Column(name = "anonymous",columnDefinition = "tinyint default 0 COMMENT '状态， 1：匿名，0：不匿名'")
     private Integer anonymous;
 
-    @Column(name = "advice_type",columnDefinition = "varchar(32) default '' COMMENT '意见反馈类别'")
-    private String adviceType;
+    @Column(name = "advice_type",columnDefinition = "tinyint default 0 COMMENT '意见反馈类别'")
+    private Integer adviceType;
 
     public List<String> getAdviceImg() {
         try {
@@ -64,18 +65,17 @@ public class UserAdvice {
        }catch (Exception e){
            e.printStackTrace();
        }
-       this.adviceImg = JSONArray.toJSONString("");
     }
 
     public Integer getAnonymous() {
         return anonymous;
     }
 
-    public String getAdviceType() {
+    public Integer getAdviceType() {
         return adviceType;
     }
 
-    public void setAdviceType(String adviceType) {
+    public void setAdviceType(Integer adviceType) {
         this.adviceType = adviceType;
     }
 
