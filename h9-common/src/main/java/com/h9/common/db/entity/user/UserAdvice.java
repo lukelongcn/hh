@@ -50,6 +50,17 @@ public class UserAdvice extends BaseEntity {
     @Column(name = "advice_type",columnDefinition = "tinyint default 0 COMMENT '意见反馈类别'")
     private Integer adviceType;
 
+    @Column(name = "ip",columnDefinition = "varchar(200) default '' COMMENT 'ip'")
+    private String ip;
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     public List<String> getAdviceImg() {
         try {
             return JSONArray.parseArray(adviceImg, String.class);

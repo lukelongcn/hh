@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -44,7 +45,7 @@ public class AdviceController {
     @Secured
     @PostMapping("/sendAdvice")
     @Description("提交意见反馈信息")
-    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid @RequestBody AdviceDTO adviceDTO){
-         return  adviceService.sendAdvice(userId,adviceDTO);
+    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid @RequestBody AdviceDTO adviceDTO,HttpServletRequest request){
+         return  adviceService.sendAdvice(userId,adviceDTO,request);
     }
 }
