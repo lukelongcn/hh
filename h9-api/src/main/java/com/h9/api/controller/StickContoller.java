@@ -54,6 +54,11 @@ public class StickContoller {
 
 
 
+    @GetMapping("/{type}/detail")
+    public Result home(@PathVariable("type") String type){
+        return stickService.typeDetail(type);
+    }
+
 
 
 
