@@ -55,10 +55,20 @@ public class StickContoller {
 
 
     @GetMapping("/{type}/detail")
-    public Result home(@PathVariable("type") String type){
-        return stickService.typeDetail(type);
+    public Result home(@PathVariable("type") long typeId) {
+        return stickService.typeDetail(typeId);
     }
 
+
+    /**
+     * 获取帖子详情
+     * @param id 帖子id
+     * @return Result
+     */
+    @GetMapping("/detail/{id}")
+    public Result detail(@PathVariable("id")long id){
+        return stickService.detail(id);
+    }
 
 
 

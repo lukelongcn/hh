@@ -7,6 +7,9 @@ import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.user.UserAdvice;
 import com.h9.common.db.repo.AdviceRespository;
 
+import com.h9.common.modle.vo.Config;
+import com.h9.common.utils.NetworkUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,11 +34,11 @@ public class AdviceService {
      * 获取意见类别
      */
     public Result getAdviceType(){
-        String adviceType = configService.getStringConfig(ParamConstant.ADVICE_TYPE);
-        if (adviceType == null && adviceType == ""){
-            return Result.fail("获取意见反馈类别失败，请检查全局配置");
+        List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.ADVICE_TYPE);
+        if(CollectionUtils.isEmpty(mapListConfig)){
+            mapListConfig = new ArrayList<>();
         }
-        return Result.success(adviceType);
+        return Result.success(mapListConfig);
     }
 
     /**
@@ -55,29 +58,12 @@ public class AdviceService {
         userAdvice.setConnect(adviceDTO.getConnect());
         userAdvice.setUserId(userId);
         userAdvice.setAdviceImg(adviceDTO.getAdviceImgList());
-        userAdvice.setIp(getIpAddr(request));
+        userAdvice.setIp(NetworkUtil.getIpAddress(request));
         userAdvice.setAdviceType(adviceDTO.getAdviceType());
 
         adviceRespository.save(userAdvice);
         return Result.success("意见反馈成功");
     }
 
-    /**
-     * 获取ip地址
-     * @param request
-     * @return
-     */
-    public  String getIpAddr(HttpServletRequest request)  {
-        String ip  =  request.getHeader( " x-forwarded-for " );
-        if (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip))  {
-            ip  =  request.getHeader( " Proxy-Client-IP " );
-        }
-        if (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip))  {
-            ip  =  request.getHeader( " WL-Proxy-Client-IP " );
-        }
-        if (ip  ==   null   ||  ip.length()  ==   0   ||   " unknown " .equalsIgnoreCase(ip))  {
-            ip  =  request.getRemoteAddr();
-        }
-        return  ip;
-    }
+
 }

@@ -40,7 +40,7 @@ public class StickComment extends BaseEntity {
     @JoinColumn(name = "parent_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '父级'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private StickComment stickComment;
 
-    @Column(name = "level",nullable = false,columnDefinition = "int default 1 COMMENT '评论级别'")
+    @Column(name = "level",nullable = false,columnDefinition = "int default 1 COMMENT '评论级别 0:帖子回复 1:评论回复'")
     private Integer level = 1;
 
     @Column(name = "floor",nullable = false,columnDefinition = "int default 1 COMMENT '楼层信息'")

@@ -7,8 +7,6 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -34,15 +32,15 @@ public class UserAccount extends BaseEntity {
     @Column(name = "v_coins",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT 'v币个数'")
     private BigDecimal vCoins = new BigDecimal(0);
 
-    @Column(name = "cash_back_count",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '签到累计奖励金额'")
-    private BigDecimal cashBackCount = new BigDecimal(0);
+    @Column(name = "cash_back_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '签到累计奖励金额'")
+    private BigDecimal cashBackMoney = new BigDecimal(0);
 
-    public BigDecimal getCashBackCount() {
-        return cashBackCount;
+    public BigDecimal getCashBackMoney() {
+        return cashBackMoney;
     }
 
-    public void setCashBackCount(BigDecimal cashBackCount) {
-        this.cashBackCount = cashBackCount;
+    public void setCashBackMoney(BigDecimal cashBackMoney) {
+        this.cashBackMoney = cashBackMoney;
     }
 
     public Long getUserId() {

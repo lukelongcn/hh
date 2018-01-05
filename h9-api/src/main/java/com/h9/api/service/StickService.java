@@ -3,6 +3,7 @@ package com.h9.api.service;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
 import com.h9.api.model.vo.StickTypeDetailVo;
 import com.h9.api.model.vo.StickTypeVO;
@@ -10,10 +11,12 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.community.Stick;
+import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.BannerRepository;
+import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
@@ -55,7 +58,8 @@ public class StickService {
     private StickRepository stickRepository;
     @Resource
     private BannerRepository bannerRepository;
-
+    @Resource
+    private StickCommentRepository stickCommentRepository;
 
 
 
@@ -127,8 +131,8 @@ public class StickService {
         return Result.success(listMap);
     }
 
-    public Result typeDetail(String type){
-        StickType stickType = stickTypeRepository.findByName(type);
+    public Result typeDetail(long typeId){
+        StickType stickType = stickTypeRepository.findOne(typeId);
         if(stickType==null){
             return Result.fail("分类不存再");
         }
@@ -136,4 +140,22 @@ public class StickService {
     }
 
 
+
+    /**
+     * 获取帖子详情
+     */
+    public Result detail(long id) {
+        Stick stick = stickRepository.findOne(id);
+        if (stick == null) {
+            return Result.fail("帖子不存在");
+        }
+        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 3);
+        if (bannerList == null) {
+            bannerList = new ArrayList<>();
+        }
+        //StickComment stickComment = stickCommentRepository.find
+        StickDetailVO stickDetailVO = new StickDetailVO(stick);
+        stickDetailVO.setListBanner(bannerList);
+        return Result.success(stickDetailVO);
+    }
 }

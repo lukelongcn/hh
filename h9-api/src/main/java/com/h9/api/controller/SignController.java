@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created by 李圆 on 2017/12/29
@@ -42,7 +41,7 @@ public class SignController {
     @Secured
     @GetMapping("/signMessage")
     public Result signMessage(@SessionAttribute("curUserId")long userId){
-        return signService.newSign(userId);
+        return signService.getSign(userId);
     }
 
 
