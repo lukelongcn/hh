@@ -11,10 +11,12 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.community.Stick;
+import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.BannerRepository;
+import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
@@ -56,7 +58,8 @@ public class StickService {
     private StickRepository stickRepository;
     @Resource
     private BannerRepository bannerRepository;
-
+    @Resource
+    private StickCommentRepository stickCommentRepository;
 
 
 
@@ -142,6 +145,7 @@ public class StickService {
      */
     public Result detail(long id) {
         Stick stick = stickRepository.findOne(id);
+        //StickComment stickComment = stickCommentRepository.find
         return Result.success(new StickDetailVO(stick));
     }
 }
