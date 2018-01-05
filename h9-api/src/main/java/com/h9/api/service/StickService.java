@@ -140,12 +140,22 @@ public class StickService {
     }
 
 
+
     /**
      * 获取帖子详情
      */
     public Result detail(long id) {
         Stick stick = stickRepository.findOne(id);
+        if (stick == null) {
+            return Result.fail("帖子不存在");
+        }
+        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 3);
+        if (bannerList == null) {
+            bannerList = new ArrayList<>();
+        }
         //StickComment stickComment = stickCommentRepository.find
-        return Result.success(new StickDetailVO(stick));
+        StickDetailVO stickDetailVO = new StickDetailVO(stick);
+        stickDetailVO.setListBanner(bannerList);
+        return Result.success(stickDetailVO);
     }
 }

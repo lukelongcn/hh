@@ -2,6 +2,7 @@ package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickType;
+import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
 
@@ -28,6 +29,7 @@ public class StickDetailVO {
     private String typeName;
     private String content;
     private String createTime;
+    private List<Banner> listBanner;
 
 
     public StickDetailVO(Stick stick) {
@@ -48,5 +50,6 @@ public class StickDetailVO {
             typeName = stickType.getName();
         }
         content = stick.getContent();
+
     }
 }
