@@ -34,7 +34,7 @@ public class StrickReward {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "stick_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '对应贴子'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "stick_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '对应贴子'")
     private Stick stick;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
