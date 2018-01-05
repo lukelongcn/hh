@@ -26,6 +26,7 @@ public class StickDetailVO {
     private Integer answerCount = 0;
     private Integer rewardCount = 0;
     private String typeName;
+    private String content;
     private String createTime;
 
 
@@ -46,5 +47,6 @@ public class StickDetailVO {
         if (stickType != null) {
             typeName = stickType.getName();
         }
+        content = stick.getContent();
     }
 }
