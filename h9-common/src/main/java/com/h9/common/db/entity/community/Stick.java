@@ -45,7 +45,7 @@ public class Stick extends BaseEntity {
     @Column(name = "read_count",nullable = false,columnDefinition = "int default 0 COMMENT '阅读数量'")
     private Integer readCount = 0;
 
-    @Column(name = "like_count",nullable = false,columnDefinition = "int default 0 COMMENT '点赞数量'")
+    @Column(name = "like_count",nullable = false,columnDefinition = "int default 0 COMMENT '帖子点赞数量'")
     private Integer likeCount = 0;
 
     @Column(name = "answer_count",nullable = false,columnDefinition = "int default 0 COMMENT '回答数量'")
