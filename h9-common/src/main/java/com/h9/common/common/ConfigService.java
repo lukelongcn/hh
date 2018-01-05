@@ -38,11 +38,16 @@ public class ConfigService {
     @Resource
     private MailService mailService;
 
-
+    /****
+     * 获取code 对应的配置 ，
+     * @param code
+     * @return  @See List<Config> Map<String,String> String
+     */
     public Object getConfig(String code) {
         if (code == null) {
             return null;
         }
+        //从缓存里面读取
         Object valueRedis1 = getConfigFromCache(code);
         logger.info("getConfigFromCache : "+valueRedis1);
         if (valueRedis1 != null) return valueRedis1;

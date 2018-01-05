@@ -115,4 +115,11 @@ public class PageResult<T> extends BasePageResult<List<T>> {
         return rtn;
     }
 
+
+    public <R> PageResult<R> map(Function<T, R> function) {
+        PageResult<R> rtn = new PageResult<R>(this);
+        List<R> collect = getData().stream().map(function).collect(Collectors.toList());
+        rtn.setData(collect);
+        return rtn;
+    }
 }

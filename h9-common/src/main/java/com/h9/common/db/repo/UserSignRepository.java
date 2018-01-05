@@ -17,7 +17,6 @@ import java.util.List;
  */
 @Repository
 public interface UserSignRepository extends BaseRepository<UserSign> {
-    UserSign findOne(long userId);
 
     @Query(value = "select s.* from user_sign s where s.user_id = ?1  order by s.create_time DESC limit 1 ",nativeQuery = true)
     UserSign findLastSign(long userId);
@@ -26,7 +25,7 @@ public interface UserSignRepository extends BaseRepository<UserSign> {
     List<UserSign> findListNewSign();
 
 
-    @Query("select s from UserSign s where s.userId = ?1 order by s.createTime DESC")
+    @Query("select s from UserSign s where s.user.id = ?1 order by s.createTime DESC")
     Page<UserSign> findUserSignList(long userId, Pageable pageRequest);
 
     default PageResult<UserSign> findUserSignList(long userId, Integer page, Integer limit){

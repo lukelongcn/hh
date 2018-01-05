@@ -5,6 +5,7 @@ import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
 import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
+import com.h9.api.model.vo.StickTypeDetailVo;
 import com.h9.api.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -109,17 +110,9 @@ public class StickService {
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }else{
-            boolean numeric = StringUtils.isNumeric(type);
-            if(numeric){
-               long id = Long.parseLong(type);
-               Page<Stick> home = stickRepository.findType(id,stickRepository.pageRequest(page,limit!=null?limit:20));
-                PageResult<Stick> pageResult = new PageResult(home);
-                return Result.success(pageResult.result2Result(StickSampleVO::new));
-            }else{
-                Page<Stick> home = stickRepository.findType(type,stickRepository.pageRequest(page,limit!=null?limit:20));
-                PageResult<Stick> pageResult = new PageResult(home);
-                return Result.success(pageResult.result2Result(StickSampleVO::new));
-            }
+            Page<Stick> home = stickRepository.findType(type,stickRepository.pageRequest(page,limit!=null?limit:20));
+            PageResult<Stick> pageResult = new PageResult(home);
+            return Result.success(pageResult.result2Result(StickSampleVO::new));
         }
     }
 
@@ -133,6 +126,14 @@ public class StickService {
             logger.debug(e.getMessage(),e);
         }
         return Result.success(listMap);
+    }
+
+    public Result typeDetail(String type){
+        StickType stickType = stickTypeRepository.findByName(type);
+        if(stickType==null){
+            return Result.fail("分类不存再");
+        }
+        return Result.success(new StickTypeDetailVo(stickType));
     }
 
 

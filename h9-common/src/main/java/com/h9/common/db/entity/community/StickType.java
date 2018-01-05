@@ -1,6 +1,7 @@
 package com.h9.common.db.entity.community;
 
 import com.h9.common.base.BaseEntity;
+import lombok.Data;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Time: 11:14
  */
 
+@Data
 @Entity
 @Table(name = "stick_type")
 public class StickType extends BaseEntity {
@@ -32,47 +34,18 @@ public class StickType extends BaseEntity {
     @Column(name = "image", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '图片'")
     private String image;
 
-    @Column(name = "back_image", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '背景图片'")
-    private String backImage;
+    @Column(name = "stick_count",nullable = false,columnDefinition = "int default 0 COMMENT ''")
+    private Integer stickCount;
+
+    @Column(name = "read_count",nullable = false,columnDefinition = "int default 0 COMMENT '阅读数量'")
+    private Integer readCount;
+
+    @Column(name = "answer_count",nullable = false,columnDefinition = "int default 0 COMMENT '回答数量'")
+    private Integer answerCount;
 
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getBackImage() {
-        return backImage;
-    }
-
-    public void setBackImage(String backImage) {
-        this.backImage = backImage;
-    }
 }

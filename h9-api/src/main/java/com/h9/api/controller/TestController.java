@@ -46,7 +46,7 @@ public class TestController {
 
     @GetMapping("/test/addvb")
     public Result addvb(@RequestParam String tel,@RequestParam String money){
-        if (!envir.equals("test")) {
+        if (!envir.equals("product")) {
             return Result.fail("不支持");
         }
         try {

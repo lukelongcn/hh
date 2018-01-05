@@ -37,14 +37,11 @@ public class HotelService {
     private HotelRoomTypeRepository hotelRoomTypeRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
+
     public Result hotelList(int page,int limit) {
-        PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
 
-        Page<Hotel> hotelPage = hotelRepository.findAll(pageRequest);
+        return Result.success(hotelRepository.findAll(page, limit).result2Result(HotelListVO::new));
 
-        PageResult<HotelListVO> result = new PageResult<Hotel>(hotelPage).result2Result(HotelListVO::new);
-
-        return Result.success(result);
     }
 
     public Result editHotel(EditHotelDTO editHotelDTO) {
@@ -93,11 +90,8 @@ public class HotelService {
         Hotel hotel = hotelRepository.findOne(hotelId);
         if(hotel == null) return Result.fail("此酒店不存在的。");
 
-        PageRequest pageRequest = hotelRoomTypeRepository.pageRequest(page, limit);
-        Page<HotelRoomType> pageObj = hotelRoomTypeRepository.findByHotel(hotel, pageRequest);
+        return Result.success(hotelRoomTypeRepository.findAll(page, limit).map(HotelRoomListVO::new));
 
-        PageResult<HotelRoomListVO> result = new PageResult<HotelRoomType>(pageObj).result2Result(HotelRoomListVO::new);
-        return Result.success(result);
     }
 
     public Result editRoom(EditRoomDTO editRoomDTO) {
