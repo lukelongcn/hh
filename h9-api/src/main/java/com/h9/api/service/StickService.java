@@ -131,8 +131,8 @@ public class StickService {
         return Result.success(listMap);
     }
 
-    public Result typeDetail(String type){
-        StickType stickType = stickTypeRepository.findByName(type);
+    public Result typeDetail(long typeId){
+        StickType stickType = stickTypeRepository.findOne(typeId);
         if(stickType==null){
             return Result.fail("分类不存再");
         }
