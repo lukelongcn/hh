@@ -3,8 +3,10 @@ package com.h9.api.service;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
+import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickTypeDetailVo;
 import com.h9.api.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
@@ -14,6 +16,7 @@ import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
+import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.StickCommentRepository;
@@ -22,9 +25,12 @@ import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import lombok.extern.jbosslog.JBossLog;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -121,14 +129,7 @@ public class StickService {
 
     @Transactional
     public Result home(){
-        Map<String, List<HomeVO>> listMap = new HashMap<>();
-        try(Stream<Banner> activiBanner = bannerRepository.findActiviBanner(3, new Date())){
-            Function<Banner, String> function = b -> b.getBannerType().getCode();
-            listMap = activiBanner.collect(Collectors.groupingBy(function, Collectors.mapping(HomeVO::new, Collectors.toList())));
-        }catch (Exception e){
-            logger.debug(e.getMessage(),e);
-        }
-        return Result.success(listMap);
+        return Result.success(getBanner(3));
     }
 
     public Result typeDetail(long typeId){
@@ -144,18 +145,54 @@ public class StickService {
     /**
      * 获取帖子详情
      */
+    @Transactional
     public Result detail(long id) {
         Stick stick = stickRepository.findOne(id);
         if (stick == null) {
             return Result.fail("帖子不存在");
         }
-        List<Banner> bannerList = bannerRepository.findActiviBanner(new Date(), 3);
-        if (bannerList == null) {
-            bannerList = new ArrayList<>();
-        }
         //StickComment stickComment = stickCommentRepository.find
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
-        stickDetailVO.setListBanner(bannerList);
+        stickDetailVO.setListMap(getBanner(4));
         return Result.success(stickDetailVO);
     }
+
+
+    /**
+     * 拿到广告
+     * @param location 3 社区首页广告  4 帖子详情广告
+     * @return map
+     */
+    public Map<String, List<HomeVO>> getBanner(Integer location){
+        Map<String, List<HomeVO>> listMap = new HashMap<>();
+        try(Stream<Banner> activiBanner = bannerRepository.findActiviBanner(location, new Date())){
+            Function<Banner, String> function = b -> b.getBannerType().getCode();
+            listMap = activiBanner.collect(Collectors.groupingBy(function, Collectors.mapping(HomeVO::new, Collectors.toList())));
+        }catch (Exception e){
+            logger.debug(e.getMessage(),e);
+        }
+        return listMap;
+    }
+
+    /**
+     * 搜索帖子
+     * @param str  匹配字符串
+     * @param page
+     *@param limit @return Result
+     */
+    public Result search(String str, Integer page, Integer limit) {
+        if (str == null){
+            return  Result.fail("请输入搜索内容");
+        }
+        PageRequest pageRequest = stickRepository.pageRequest(page, limit);
+        Page<Stick> stickPage = stickRepository.findStickList("%"+str+"%",pageRequest);
+        if (CollectionUtils.isNotEmpty(stickPage.getContent())) {
+            PageResult<StickSearchVO> pageResult = new PageResult<>(stickPage).result2Result(StickSearchVO::new);
+            return Result.success(pageResult);
+        } else {
+            return Result.fail("没有找到此类帖子");
+        }
+    }
+
+
 }

@@ -54,6 +54,8 @@ public class Stick extends BaseEntity {
     @Column(name = "reward_count",nullable = false,columnDefinition = "int default 0 COMMENT '打赏数量'")
     private Integer rewardCount = 0;
 
+    @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子状态 1使用 2禁用 3删除'")
+    private Integer state = 1;
 
     /***************************      地址信息              *************************/
     @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")

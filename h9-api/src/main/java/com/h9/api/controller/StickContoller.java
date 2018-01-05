@@ -70,6 +70,17 @@ public class StickContoller {
         return stickService.detail(id);
     }
 
+    /**
+     * 搜索帖子
+     * @param str 匹配字符串
+     * @return Result
+     */
+    @GetMapping("/search")
+    public Result search(@RequestParam(value = "str")String str,
+                         @RequestParam(defaultValue = "1") Integer page,
+                         @RequestParam(defaultValue = "10") Integer limit){
+        return stickService.search(str,page,limit);
+    }
 
 
 }
