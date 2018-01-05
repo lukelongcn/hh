@@ -51,6 +51,10 @@ public class Stick extends BaseEntity {
     @Column(name = "answer_count",nullable = false,columnDefinition = "int default 0 COMMENT '回答数量'")
     private Integer answerCount = 0;
 
+    @Column(name = "reward_count",nullable = false,columnDefinition = "int default 0 COMMENT '打赏数量'")
+    private Integer rewardCount = 0;
+
+
     /***************************      地址信息              *************************/
     @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
     private double longitude;
@@ -70,6 +74,14 @@ public class Stick extends BaseEntity {
     @Column(name="district",columnDefinition = "varchar(50) COMMENT '区'")
     private String district;
 
+
+    public Integer getRewardCount() {
+        return rewardCount;
+    }
+
+    public void setRewardCount(Integer rewardCount) {
+        this.rewardCount = rewardCount;
+    }
 
     public Long getId() {
         return id;

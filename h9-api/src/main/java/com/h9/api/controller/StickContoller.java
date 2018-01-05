@@ -53,7 +53,15 @@ public class StickContoller {
     }
 
 
-
+    /**
+     * 获取帖子详情
+     * @param id 帖子id
+     * @return Result
+     */
+    @GetMapping("/detail/{id}")
+    public Result detail(@PathVariable("id")long id){
+        return stickService.detail(id);
+    }
 
 
 
