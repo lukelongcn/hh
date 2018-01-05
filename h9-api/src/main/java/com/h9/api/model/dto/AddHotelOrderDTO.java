@@ -29,7 +29,7 @@ public class AddHotelOrderDTO {
     private Integer roomCount;
 
     @NotNull(message = "请填写入住人")
-    @Length(max = 200, min = 1)
+    @Length(max = 200, min = 1,message = "入住人填写过长")
     private String stayRoomer;
 
     @NotNull(message = "请填写手机号码")
@@ -37,11 +37,11 @@ public class AddHotelOrderDTO {
     private String phone;
 
     @NotNull(message = "请填写请房间的保留时间")
-    @Length(max = 200, min = 1)
+    @Length(max = 200, min = 1,message = "保留时间填写过长")
     private String keepTime;
 
     @NotNull(message = "请填写住宿偏好")
-    @Length(max = 200, min = 1)
+    @Length(max = 200, min = 1,message = "住宿偏好填写过长")
     private String roomStyle;
 
     private String remark;
