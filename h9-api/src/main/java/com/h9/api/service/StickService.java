@@ -163,7 +163,7 @@ public class StickService {
      * @param location 3 社区首页广告  4 帖子详情广告
      * @return map
      */
-    public Map<String, List<HomeVO>> getBanner(Integer location){
+     private Map<String, List<HomeVO>> getBanner(Integer location){
         Map<String, List<HomeVO>> listMap = new HashMap<>();
         try(Stream<Banner> activiBanner = bannerRepository.findActiviBanner(location, new Date())){
             Function<Banner, String> function = b -> b.getBannerType().getCode();
@@ -177,7 +177,7 @@ public class StickService {
     /**
      * 搜索帖子
      * @param str  匹配字符串
-     * @param page
+     * @param page 页码
      *@param limit @return Result
      */
     public Result search(String str, Integer page, Integer limit) {
