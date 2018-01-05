@@ -3,6 +3,7 @@ package com.h9.api.service;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
 import com.h9.api.model.vo.StickTypeDetailVo;
 import com.h9.api.model.vo.StickTypeVO;
@@ -136,4 +137,11 @@ public class StickService {
     }
 
 
+    /**
+     * 获取帖子详情
+     */
+    public Result detail(long id) {
+        Stick stick = stickRepository.findOne(id);
+        return Result.success(new StickDetailVO(stick));
+    }
 }
