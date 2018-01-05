@@ -16,6 +16,8 @@ import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.entity.hotel.Hotel;
+import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.CardCoupons;
@@ -28,6 +30,7 @@ import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.*;
 
+import com.h9.common.utils.DateUtil;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -35,6 +38,8 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,11 +48,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -94,7 +105,8 @@ public class ApiApplicationTests {
 
         logger.debug(address.getId());
     }
-    private String accessKey= "9HVEtM7CFBFDTivYyrIci1Y9XV5K-hIWa2vIxRLO";
+
+    private String accessKey = "9HVEtM7CFBFDTivYyrIci1Y9XV5K-hIWa2vIxRLO";
     String secretKey = "HvcdEp5BIZFJkMwwarStRiRHOCfm9KjoxngXFljT";
     private String bucket = "huanlezhijia";
     @Value("${qiniu.img.path}")
@@ -122,7 +134,7 @@ public class ApiApplicationTests {
             Response response = uploadManager.put(new FileInputStream(file), key, upToken, null, null);
             //解析上传成功的结果
             DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
-            System.out.println("上传成功"+imgPath + putRet.key);
+            System.out.println("上传成功" + imgPath + putRet.key);
 
         } catch (QiniuException ex) {
             Response r = ex.response;
@@ -432,6 +444,33 @@ public class ApiApplicationTests {
 
     @Resource
     private LotteryRepository lotteryRepository;
+
+    @Resource
+    private HotelRepository hotelRepository;
+    @Resource
+    private HotelOrderRepository hotelOrderRepository;
+    @Test
+    public void TestSpefiction(){
+
+        Long hotelOrderId = 1L;
+        String phone = "17673140753";
+        Date startDate = DateUtil.getDate(new Date(), -10, Calendar.DAY_OF_YEAR);
+        Date endDate = new Date();
+
+        Specification<HotelOrder> specification = new Specification<HotelOrder>() {
+            public Predicate toPredicate(Root<HotelOrder> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+                Predicate pr1 = builder.equal(root.get("id"), hotelOrderId);
+                Predicate pr2 = builder.equal(root.get("phone"), phone);
+                Predicate pr3 = builder.between(root.get("createTime"), startDate, endDate);
+                return builder.and(pr1,pr2,pr3);
+            }
+        };
+
+        List<HotelOrder> all = hotelOrderRepository.findAll(specification);
+        logger.info(all);
+    }
+
 }
 
 
