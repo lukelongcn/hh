@@ -6,6 +6,7 @@ import com.h9.api.model.vo.UserSignMessageVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -14,21 +15,19 @@ import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.db.repo.UserSignRepository;
 import com.h9.common.utils.DateUtil;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-
 import org.jboss.logging.Logger;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
-import javax.jws.soap.SOAPBinding;
-import javax.transaction.Transactional;
+import java.util.stream.Collectors;
 
 /**
  * Created by 李圆 on 2018/1/2
@@ -41,11 +40,12 @@ public class SignService {
     @Resource
     private UserSignRepository userSignRepository;
     @Resource
-    CommonService commonService;
+    private CommonService commonService;
     @Resource
-    UserAccountRepository userAccountRepository;
+    private UserAccountRepository userAccountRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
+
 
     @Transactional
     @Description("每日签到")
@@ -67,7 +67,7 @@ public class SignService {
             if(checkDate.after(today)){
                 return Result.fail("您今天已经签过到了");
             }
-            // 如果上次签到是今天凌晨之前，说明没有连续签到
+            // 如果上次签到是昨天凌晨之前，说明没有连续签到
             if(checkdateCalendar.before(DateUtil.getYesterdaymorning())){
                 //将签到天数
                 // 归为1
@@ -79,30 +79,31 @@ public class SignService {
             user = userRepository.saveAndFlush(user);
         }
 
-        UserSign userSign1 = new UserSign();
-        userSign1.setUserId(userId);
-        userSign1.setCashBack(cashBack(user));
-        userSign1 = userSignRepository.saveAndFlush(userSign1);
+        UserSign userSignNew = new UserSign();
+        userSignNew.setUser(user);
+        userSignNew.setCashBack(cashBack(user));
+        userSignNew = userSignRepository.saveAndFlush(userSignNew);
 
         // 签到奖励金额加入到用户酒元余额中
-        Result result = commonService.setBalance(userId,userSign1.getCashBack(), BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSign1.getId(),"","");
+        Result result = commonService.setBalance(userId,userSignNew.getCashBack(), BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSignNew.getId(),"","");
         if(result.getCode()==Result.FAILED_CODE){
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
-            return Result.fail("签到失败");
+            throw new ServiceException("签到失败");
         }
         // 签到奖励金额累加到用户奖励金额累计中
         UserAccount userAccount = userAccountRepository.findOne(userId);
-        userAccount.setCashBackCount(userAccount.getCashBackCount().add(userSign1.getCashBack()));
+        userAccount.setCashBackMoney(userAccount.getCashBackMoney().add(userSignNew.getCashBack()));
         userAccountRepository.save(userAccount);
 
         return Result.success("签到成功");
 
     }
 
+
     /**
       * 签到奖励规则
       */
-    public BigDecimal cashBack(User user){
+    private BigDecimal cashBack(User user){
         if (user.getSignDays() < 10){
             Double x = (Math.random()*2);
             BigDecimal bigDecimal = new BigDecimal(x);
@@ -123,21 +124,19 @@ public class SignService {
 
     /**
      * 获取签到页面信息
-     * @return
-     * @param userId
+     * @return Result
+     * @param userId 用户id
      */
     @Transactional
     @Description("最新签到列表显示十个")
-    public Result newSign(long userId) {
+    public Result getSign(long userId) {
 
         // 获取最新签到列表
         List<UserSign> listNewSign = userSignRepository.findListNewSign();
-        List listSignVO = new ArrayList();
-        listNewSign.forEach(userSign2 -> {
-            User user1 =  userRepository.findOne(userSign2.getUserId());
-            SignVO signVO = new SignVO(user1,userSign2);
-            listSignVO.add(signVO);
-        });
+        List<SignVO> listSignVO = new ArrayList();
+        if(!CollectionUtils.isEmpty(listNewSign)){
+            listSignVO = listNewSign.stream().map(SignVO::new).collect(Collectors.toList());
+        }
 
         // 获取头像  用户余额 奖励金  连续签到天数  总共签到天数
         User user = userRepository.findOne(userId);
@@ -157,23 +156,24 @@ public class SignService {
         Date checkDate = userSign.getCreateTime();
         Date today = DateUtil.getTimesMorning();
         // 如果用户不是第一次进入页面且今日没有签到
+        UserSignMessageVO userSignMessageVO;
        if (checkDate.before(today)){
-            UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+             userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
                     listSignVO,0);
-            return Result.success(userSignMessageVO);
-        }
-        // 如果用户不是第一次进入页面且已签到
-        UserSignMessageVO userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
-                listSignVO,1);
+        }else{
+           // 如果用户不是第一次进入页面且已签到
+           userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                   listSignVO,1);
+       }
         return Result.success(userSignMessageVO);
     }
 
 
     /**
      * 个人签到记录
-     * @param userId
-     * @param page
-     * @param limit
+     * @param userId 用户id
+     * @param page 分页页数
+     * @param limit 限制页数
      * @return
      */
     @Transactional
@@ -183,7 +183,6 @@ public class SignService {
         if (pageResult == null){
             return Result.success("暂无签到记录");
         }
-        logger.debug(pageResult);
         return Result.success(pageResult.result2Result(SelfSignVO::new));
     }
 }
