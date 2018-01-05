@@ -83,9 +83,10 @@ public class HotelService {
             } else {
                 return Result.fail("没有找到此类酒店");
             }
+        }else{
+            return Result.success(hotelRepository.findAll(page,limit).map(HotelListVO::new));
         }
 
-        return Result.fail("请选择地点/酒店");
     }
 
     public Result addOrder(AddHotelOrderDTO addHotelOrderDTO, Long userId) {

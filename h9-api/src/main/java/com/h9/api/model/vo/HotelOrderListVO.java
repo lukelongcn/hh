@@ -31,6 +31,8 @@ public class HotelOrderListVO {
 
     private String roomTypeName;
 
+    private Long id;
+
     public HotelOrderListVO() {
     }
 
@@ -52,7 +54,8 @@ public class HotelOrderListVO {
                 .setStayNightCount(dayChange)
                 .setRoomCount(hotelOrder.getRoomCount())
                 .setRoomTypeName(roomType.getTypeName())
-                .setOrderMoney(MoneyUtils.formatMoney(hotelOrder.getTotalMoney(),"0"));
+                .setOrderMoney(MoneyUtils.formatMoney(hotelOrder.getTotalMoney(),"0"))
+                .setId(hotelOrder.getId());
     }
 
 }

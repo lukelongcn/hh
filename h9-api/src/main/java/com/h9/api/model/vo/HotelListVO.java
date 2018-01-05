@@ -30,6 +30,8 @@ public class HotelListVO {
 
     private BigDecimal mixConsumer = new BigDecimal(0);
 
+    private Long id;
+
     public HotelListVO( ) {
     }
 
