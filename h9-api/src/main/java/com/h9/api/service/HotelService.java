@@ -101,12 +101,7 @@ public class HotelService {
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
-        return Result.success(new HotelOrderPayVO()
-                .setBalance(MoneyUtils.formatMoney(userAccount.getBalance()))
-                .setOrderMoney(MoneyUtils.formatMoney(totalMoney))
-                .setTips("请在23:59之前完成支付，过期将自动取消订单")
-                .setHotelOrderId(hotelOrder.getId())
-        );
+        return Result.success(new HotelOrderPayVO(hotelOrder,userAccount,totalMoney));
     }
 
     /**
@@ -115,7 +110,7 @@ public class HotelService {
     private BigDecimal calcOrderTotalMoney(HotelOrder hotelOrder, HotelRoomType hotelRoomType) {
         Integer roomCount = hotelOrder.getRoomCount();
         BigDecimal realPrice = hotelRoomType.getRealPrice();
-        BigDecimal totalMoney = realPrice.multiply(new BigDecimal(roomCount)).multiply(new BigDecimal(hotelRoomType.getHotel().getDiscount()));
+        BigDecimal totalMoney = realPrice.multiply(new BigDecimal(roomCount));
         return totalMoney;
     }
 
@@ -202,8 +197,11 @@ public class HotelService {
         if (type == 1) {
             hotelOrderPage = hotelOrderRepository.findAll(pageRequest);
         } else {
-            Collection<Integer> status = type2HotelOrderStatus(type);
-            hotelOrderPage = hotelOrderRepository.findByOrderStatusIn(status, pageRequest);
+            Collection<Integer> statusList = type2HotelOrderStatus(type);
+            if (CollectionUtils.isEmpty(statusList)) {
+                return Result.fail("请返回正确的type类型");
+            }
+            hotelOrderPage = hotelOrderRepository.findByOrderStatusIn(statusList, pageRequest);
         }
 
         PageResult<Object> pageResult = new PageResult<>(hotelOrderPage).result2Result(el -> new HotelOrderListVO(el));
@@ -236,8 +234,7 @@ public class HotelService {
 
         if(!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
 
-        HotelOrderDetailVO vo = new HotelOrderDetailVO(hotelOrder);
-        return Result.success(vo);
+        return Result.success(new HotelOrderDetailVO(hotelOrder));
     }
 
     public Result hotelCity() {
@@ -249,5 +246,23 @@ public class HotelService {
         logger.info("consumer time : "+(end - start)/1000F);
 //        List<String> cityList = hotelList.stream().map(el -> el.getCity()).collect(Collectors.toList());
         return Result.success(hotelList);
+    }
+
+    public Result<HotelOrder> authOrder(Long hotelOrderId,Long userId){
+        HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
+        if(hotelOrder == null) return Result.fail("订单不存在");
+
+        if(!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
+
+        return Result.success(hotelOrder);
+    }
+    public Result payInfo(Long hotelOrderId, Long userId) {
+        Result<HotelOrder> authResult = authOrder(hotelOrderId, userId);
+        if(authResult.getCode() == 1) return authResult;
+
+        UserAccount userAccount = userAccountRepository.findOne(userId);
+
+        BigDecimal totalMoeny = calcOrderTotalMoney(authResult.getData(), authResult.getData().getHotelRoomType());
+        return Result.success(new HotelOrderPayVO(authResult.getData(), userAccount, totalMoeny));
     }
 }

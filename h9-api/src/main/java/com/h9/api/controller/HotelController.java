@@ -47,6 +47,16 @@ public class HotelController {
     }
 
     /**
+     * description: 获取支付信息
+     *
+     */
+    @Secured
+    @GetMapping("/hotel/order/pay")
+    public Result payInfo(@RequestParam Long hotelOrderId, @SessionAttribute("curUserId") Long userId){
+        return hotelService.payInfo(hotelOrderId,userId);
+    }
+
+    /**
      * description: 订单列表
      * 1 全部 ，2为有效单 3为待支付 4为退款单
      *
