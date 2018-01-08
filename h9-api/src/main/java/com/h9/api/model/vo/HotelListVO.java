@@ -29,7 +29,7 @@ public class HotelListVO {
 
     private Float discount;
 
-    private BigDecimal mixConsumer = new BigDecimal(0);
+    private BigDecimal minConsumer = new BigDecimal(0);
 
     private Long id;
 
