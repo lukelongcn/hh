@@ -14,5 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StickLikeRepository extends BaseRepository<StickLike> {
 
+    StickLike findByStickId();
 
+    StickLike findByUserId(long userId);
 }

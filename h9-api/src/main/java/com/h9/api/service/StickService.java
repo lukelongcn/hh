@@ -14,12 +14,16 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
+import com.h9.common.db.entity.community.StickCommentLike;
+import com.h9.common.db.entity.community.StickLike;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.BannerRepository;
+import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
+import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
@@ -35,8 +39,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -68,7 +75,10 @@ public class StickService {
     private BannerRepository bannerRepository;
     @Resource
     private StickCommentRepository stickCommentRepository;
-
+    @Resource
+    private StickLikeRepository stickLikeRepository;
+    @Resource
+    private StickCommentLikeRepository stickCommentLikeRepository;
 
 
     public Result getStickType(){
@@ -135,7 +145,7 @@ public class StickService {
     public Result typeDetail(long typeId){
         StickType stickType = stickTypeRepository.findOne(typeId);
         if(stickType==null){
-            return Result.fail("分类不存再");
+            return Result.fail("分类不存在");
         }
         return Result.success(new StickTypeDetailVo(stickType));
     }
@@ -194,5 +204,61 @@ public class StickService {
         }
     }
 
+
+    public Result like(long id, long userId, Integer type) {
+        /* 点赞贴子*/
+        if (type == 1){
+            Stick stick = stickRepository.findOne(id);
+            if (stick == null){
+                return Result.fail("点赞失败,贴子不存在");
+            }
+            // 判断该用户是否为该贴点过赞
+            StickLike stickLike = stickLikeRepository.findByUserId(userId);
+            if (stickLike == null){
+                StickLike stickLikeNew = new StickLike();
+                stickLikeNew.setStatus(1);
+                stickLikeNew.setStickId(id);
+                stickLikeNew.setUserId(userId);
+                stickLikeRepository.save(stickLikeNew);
+            }else if (stickLike.getStatus()!= 1){
+                stickLike.setStatus(1);
+                stickLikeRepository.save(stickLike);
+            }else{
+                return Result.fail("您已经点过赞啦");
+            }
+            // 贴子点赞数加一
+            stick.setLikeCount(stick.getLikeCount()+1);
+            stickRepository.save(stick);
+            return Result.success("点赞成功");
+        }
+
+        /* 点赞评论*/
+        else if (type == 2){
+            StickComment stickComment = stickCommentRepository.findOne(id);
+            if (stickComment == null){
+                return Result.fail("点赞失败,该评论不存在或已被删除");
+            }
+            // 判断该用户是否为该贴点过赞
+            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserId(userId);
+            if (stickCommentLike == null){
+                StickCommentLike stickCommentLikeNew = new StickCommentLike();
+                stickCommentLikeNew.setUserId(userId);
+                stickCommentLikeNew.setStickCommentId(id);
+                stickCommentLikeNew.setStatus(1);
+                stickCommentLikeRepository.save(stickCommentLikeNew);
+            }else if (stickCommentLike.getStatus()!= 1){
+                stickCommentLike.setStatus(1);
+                stickCommentLikeRepository.save(stickCommentLike);
+            }else{
+                return Result.fail("您已经点过赞啦");
+            }
+            // 评论点赞数加一
+            stickComment.setLikeCount(stickComment.getLikeCount()+1);
+            stickCommentRepository.save(stickComment);
+            return Result.success("点赞成功");
+        }
+        /* 点赞类型不存在*/
+        return Result.fail("点赞失败");
+    }
 
 }

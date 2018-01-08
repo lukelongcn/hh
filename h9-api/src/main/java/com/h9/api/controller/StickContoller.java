@@ -8,6 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import java.util.Optional;
 
 /**
@@ -82,5 +84,19 @@ public class StickContoller {
         return stickService.search(str,page,limit);
     }
 
+    /**
+     * 点赞帖子或评论
+     * @param userId 用户id
+     * @param id 贴子id或评论id
+     * @param type 1：帖子 2：评论
+     * @return
+     */
+    @GetMapping("/like")
+    public Result like(@SessionAttribute("curUserId") long userId,
+                       @NotNull(message = "id不能为空")@RequestParam(value = "id") long id,
+                       @NotNull(message = "点赞类型不能为空")@RequestParam(value = "type") Integer type){
+        return stickService.like(userId,id,type);
+
+    }
 
 }

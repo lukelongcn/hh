@@ -4,6 +4,8 @@ import com.h9.common.base.BaseEntity;
 
 import javax.persistence.*;
 
+import lombok.Data;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -13,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Date: 2017/12/29
  * Time: 16:21
  */
-
+@Data
 @Entity
 @Table(name = "stick_like")
 public class StickLike extends BaseEntity {
@@ -33,35 +35,4 @@ public class StickLike extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 0 COMMENT '点赞状态'")
     private Integer status = 0;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getStickId() {
-        return stickId;
-    }
-
-    public void setStickId(Long stickId) {
-        this.stickId = stickId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }
