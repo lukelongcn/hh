@@ -30,8 +30,8 @@ public class StickLike extends BaseEntity {
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '点赞用户'")
     private Long user_id;
 
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '点赞状态'")
-    private Integer status = 1;
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 0 COMMENT '点赞状态'")
+    private Integer status = 0;
 
     public Long getId() {
         return id;
