@@ -8,8 +8,10 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
@@ -76,6 +78,9 @@ public class Stick extends BaseEntity {
     @Column(name="district",columnDefinition = "varchar(50) COMMENT '区'")
     private String district;
 
+    @Temporal(TIMESTAMP)
+    @Column(name = "answer_time", columnDefinition = "datetime COMMENT '最后回复时间'")
+    private Date answerTime;
 
     public Integer getRewardCount() {
         return rewardCount;
