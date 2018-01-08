@@ -190,19 +190,19 @@ public class HotelService {
         return Result.success("支付成功");
     }
 
-    public Result orderList(Integer type, Integer page, Integer limit) {
+    public Result orderList(Long userId,Integer type, Integer page, Integer limit) {
 
         PageRequest pageRequest = hotelOrderRepository.pageRequest(page, limit);
         Page<HotelOrder> hotelOrderPage = null;
 
         if (type == 1) {
-            hotelOrderPage = hotelOrderRepository.findAll(pageRequest);
+            hotelOrderPage = hotelOrderRepository.findAllByUserId(userId,pageRequest);
         } else {
             Collection<Integer> statusList = type2HotelOrderStatus(type);
             if (CollectionUtils.isEmpty(statusList)) {
                 return Result.fail("请返回正确的type类型");
             }
-            hotelOrderPage = hotelOrderRepository.findByOrderStatusIn(statusList, pageRequest);
+            hotelOrderPage = hotelOrderRepository.findAllBy(userId,statusList, pageRequest);
         }
 
         PageResult<Object> pageResult = new PageResult<>(hotelOrderPage).result2Result(el -> new HotelOrderListVO(el));

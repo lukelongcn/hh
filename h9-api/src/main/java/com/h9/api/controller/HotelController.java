@@ -64,9 +64,10 @@ public class HotelController {
     @Secured
     @GetMapping("/hotel/order")
     public Result orderList(@RequestParam Integer type,
+                            @SessionAttribute("curUserId") Long userId,
                             @RequestParam(required = false,defaultValue = "1") Integer page,
                             @RequestParam(required = false,defaultValue = "10") Integer limit){
-        return hotelService.orderList(type,page,limit);
+        return hotelService.orderList(userId,type,page,limit);
     }
 
     /**
