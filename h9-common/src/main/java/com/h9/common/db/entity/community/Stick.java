@@ -201,4 +201,20 @@ public class Stick extends BaseEntity {
     public void setAnswerCount(Integer answerCount) {
         this.answerCount = answerCount;
     }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Date getAnswerTime() {
+        return answerTime;
+    }
+
+    public void setAnswerTime(Date answerTime) {
+        this.answerTime = answerTime;
+    }
 }
