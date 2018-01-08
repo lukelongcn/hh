@@ -257,6 +257,7 @@ public class StickService {
             stickCommentRepository.save(stickComment);
             return Result.success("点赞成功");
         }
+
         /* 点赞类型不存在*/
         return Result.fail("点赞失败");
     }

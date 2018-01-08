@@ -3,6 +3,8 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.community.StickLike;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StickLikeRepository extends BaseRepository<StickLike> {
 
-    StickLike findByStickId();
-
+    @Query("select s from StickLike s where s.userId = ?1")
     StickLike findByUserId(long userId);
 }
