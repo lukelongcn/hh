@@ -19,12 +19,13 @@ public class StickCommentDTO {
 
     private Long answerUser;
 
-    @NotNull(message = "贴子id不能为空")
+    //@NotNull(message = "贴子id不能为空")
     private Long stickId;
 
     @NotBlank(message = "请输入回复内容")
     private String content;
 
+    // 父级id
     private Long stickCommentId;
 
     @NotNull(message = "回复级别不能为空，0:帖子回复 1:评论回复")

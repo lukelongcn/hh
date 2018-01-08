@@ -103,10 +103,17 @@ public class StickContoller {
         return stickService.like(userId,id,type);
     }
 
+    /**
+     * 添加回复
+     * @param userId 用户id
+     * @param stickCommentDTO 请求对象
+     * @return Result
+     */
+
     @PostMapping("/addComment")
-    public Result addComment(@SessionAttribute("curUserId")long userId,
+    public Result addComment(//@SessionAttribute("curUserId")long userId,
                              @Valid @RequestBody StickCommentDTO stickCommentDTO){
-        return stickService.addComment(userId,stickCommentDTO);
+        return stickService.addComment(2,stickCommentDTO);
     }
 
 }

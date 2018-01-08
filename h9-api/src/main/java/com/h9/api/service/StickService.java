@@ -272,21 +272,40 @@ public class StickService {
     }
 
 
+    /**
+     * 添加贴子或评论回复
+     * @param userId 用户id
+     * @param stickCommentDTO 请求对象
+     * @return Result
+     */
     public Result addComment(long userId, StickCommentDTO stickCommentDTO) {
-        Integer level = stickCommentDTO.getLevel();
+        Stick stick = stickRepository.findOne(stickCommentDTO.getStickId());
+        if (stick == null){
+            return Result.fail("贴子不存在或已被删除");
+        }
         StickComment stickComment = new StickComment();
+        // 回复的用户
         User user = userRepository.findOne(userId);
         stickComment.setAnswerUser(user);
+        // 回复内容
         stickComment.setContent(stickCommentDTO.getContent());
-
-        // 回复贴子
-        if (level == 0){
-
+        // 回复级别
+        stickComment.setLevel(stickCommentDTO.getLevel());
+        // 回复楼层
+        stickComment.setFloor(stickCommentDTO.getFloor());
+        // @的用户
+        User aitUser = userRepository.findOne(stickCommentDTO.getNotifyUserId());
+        if (aitUser != null){
+            stickComment.setNotifyUserId(aitUser);
         }
-        // 回复评论
-        else if (level == 1){
-
+        // 父级id
+        StickComment stickCommentPid = stickCommentRepository.findOne(stickCommentDTO.getStickCommentId());
+        if(stickCommentPid!=null){
+            stickComment.setStickComment(stickCommentPid);
         }
-        return Result.fail("回复失败");
+        // 贴子id
+        stickComment.setStick(stick);
+        stickCommentRepository.save(stickComment);
+        return Result.success("回复成功");
     }
 }
