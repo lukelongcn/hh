@@ -25,10 +25,10 @@ public class StickLike extends BaseEntity {
     private Long id;
 
     @Column(name = "stick_id", columnDefinition = "bigint(20) default null COMMENT '帖子id'")
-    private Long stick_id;
+    private Long stickId;
 
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '点赞用户'")
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 0 COMMENT '点赞状态'")
     private Integer status = 0;
@@ -41,20 +41,20 @@ public class StickLike extends BaseEntity {
         this.id = id;
     }
 
-    public Long getStick_id() {
-        return stick_id;
+    public Long getStickId() {
+        return stickId;
     }
 
-    public void setStick_id(Long stick_id) {
-        this.stick_id = stick_id;
+    public void setStickId(Long stickId) {
+        this.stickId = stickId;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Integer getStatus() {
