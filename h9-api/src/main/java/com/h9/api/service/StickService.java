@@ -205,7 +205,14 @@ public class StickService {
     }
 
 
-    public Result like(long id, long userId, Integer type) {
+    /**
+     * 点赞贴子或评论
+     * @param userId 用户id
+     * @param id 贴子或评论id
+     * @param type 点赞类型
+     * @return Result
+      */
+    public Result like( long userId,long id, Integer type) {
         /* 点赞贴子*/
         if (type == 1){
             Stick stick = stickRepository.findOne(id);
@@ -261,5 +268,6 @@ public class StickService {
         /* 点赞类型不存在*/
         return Result.fail("点赞失败");
     }
+
 
 }
