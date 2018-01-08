@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.util.Optional;
@@ -99,6 +101,12 @@ public class StickContoller {
                        @NotNull(message = "id不能为空")@RequestParam(value = "id") long id,
                        @NotNull(message = "点赞类型不能为空")@RequestParam(value = "type") Integer type){
         return stickService.like(userId,id,type);
+    }
+
+    @PostMapping("/addComment")
+    public Result addComment(@SessionAttribute("curUserId")long userId,
+                             @Valid @RequestBody StickCommentDTO stickCommentDTO){
+        return stickService.addComment(userId,stickCommentDTO);
     }
 
 }

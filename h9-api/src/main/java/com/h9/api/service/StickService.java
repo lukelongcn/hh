@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
 import com.h9.api.model.vo.StickSearchVO;
@@ -36,6 +37,7 @@ import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -270,4 +272,21 @@ public class StickService {
     }
 
 
+    public Result addComment(long userId, StickCommentDTO stickCommentDTO) {
+        Integer level = stickCommentDTO.getLevel();
+        StickComment stickComment = new StickComment();
+        User user = userRepository.findOne(userId);
+        stickComment.setAnswerUser(user);
+        stickComment.setContent(stickCommentDTO.getContent());
+
+        // 回复贴子
+        if (level == 0){
+
+        }
+        // 回复评论
+        else if (level == 1){
+
+        }
+        return Result.fail("回复失败");
+    }
 }
