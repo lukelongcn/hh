@@ -48,8 +48,8 @@ public class Hotel extends BaseEntity{
     @Column(name= "discount",columnDefinition = "float comment '折扣'")
     private Float discount;
 
-    @Column(name = "mix_consumer",columnDefinition = "decimal(10,2) comment '最低消费'")
-    private BigDecimal mixConsumer;
+    @Column(name = "min_consumer",columnDefinition = "decimal(10,2) comment '最低消费'")
+    private BigDecimal minConsumer;
 
     @Column(name = "city",columnDefinition = "varchar(255) comment '城市'")
     private String city;
