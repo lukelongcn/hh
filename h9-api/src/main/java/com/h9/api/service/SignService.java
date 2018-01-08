@@ -68,12 +68,14 @@ public class SignService {
                 return Result.fail("您今天已经签过到了");
             }
             // 如果上次签到是昨天凌晨之前，说明没有连续签到
-            if(checkdateCalendar.after(DateUtil.getYesterdaymorning())&&checkdateCalendar.before(today)){
-                user.setSignDays(user.getSignDays()+1);
-            }else{
+            if(checkDate.before(DateUtil.getYesterdaymorning())){
                 //将签到天数
                 // 归为1
                 user.setSignDays(1);
+                System.out.println(today);
+                System.out.println(DateUtil.getYesterdaymorning());
+            }else{
+                user.setSignDays(user.getSignDays()+1);
             }
             user.setSignCount(user.getSignCount()+1);
             user = userRepository.saveAndFlush(user);
