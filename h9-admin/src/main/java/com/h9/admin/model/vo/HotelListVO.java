@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -47,14 +48,9 @@ public class HotelListVO {
     public HotelListVO(Hotel hotel){
 
         BeanUtils.copyProperties(hotel, this);
-        String imgJson = hotel.getImages();
-
-        if (StringUtils.isNotBlank(imgJson)) {
-
-            List<String> imgList = JSONObject.parseArray(imgJson, String.class);
-            String img = imgList.get(0);
-            this.setImages(img);
-
+        List<String> imagesFromDb = hotel.getImages();
+        if(!CollectionUtils.isEmpty(imagesFromDb)){
+            this.images = imagesFromDb.get(0);
         }
 
     }
