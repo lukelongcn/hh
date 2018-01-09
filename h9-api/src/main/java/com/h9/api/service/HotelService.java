@@ -61,10 +61,7 @@ public class HotelService {
 
         if (hotel == null) return Result.fail("酒店不存在");
 
-        HotelRoomType type = new HotelRoomType().setStatus(1);
-        Example<HotelRoomType> of = Example.of(type);
-
-        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(of);
+        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
             return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList));
