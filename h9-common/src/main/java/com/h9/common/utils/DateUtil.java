@@ -485,6 +485,35 @@ public class DateUtil {
         return result.toString();
     }
 
+
+    public static String getSpaceTime(Date begin, Date end) {
+        long between = 0;
+        try {
+            between = (end.getTime() - begin.getTime());// 得到两者的毫秒数
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        long day = between / (24 * 60 * 60 * 1000);
+        long hour = (between / (60 * 60 * 1000) - day * 24);
+        long min = ((between / (60 * 1000)) - day * 24 * 60 - hour * 60);
+
+        StringBuffer result = new StringBuffer();
+        if (day != 0) {
+            result.append(day);
+            result.append("天");
+        }
+        if (hour != 0) {
+            result.append(hour);
+            result.append("小时");
+        }
+        if (min != 0) {
+            result.append(min);
+            result.append("分");
+        }
+
+        return result.toString();
+    }
+
     @SuppressWarnings("Duplicates")
     public static Date getDayOfMax(Date date){
         Calendar calendar = Calendar.getInstance();

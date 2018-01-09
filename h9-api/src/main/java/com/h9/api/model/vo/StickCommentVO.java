@@ -5,8 +5,11 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.UserExtendsRepository;
+import com.h9.common.utils.DateUtil;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -39,8 +42,6 @@ public class StickCommentVO {
     private Long aitUserId;
 
 
-
-
     public StickCommentVO(Integer sex, StickComment stickComment) {
         this.id = stickComment.getId();
         User user = stickComment.getAnswerUser();
@@ -56,6 +57,7 @@ public class StickCommentVO {
             this.aitNickName = userAit.getNickName();
             this.aitUserId = userAit.getId();
         }
+        this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date())+"前";
 
     }
 
