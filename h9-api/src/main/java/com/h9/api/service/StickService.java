@@ -228,7 +228,7 @@ public class StickService {
                 return Result.fail("点赞失败,贴子不存在");
             }
             // 判断该用户是否为该贴点过赞
-            StickLike stickLike = stickLikeRepository.findByUserId(userId);
+            StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
             if (stickLike == null){
                 StickLike stickLikeNew = new StickLike();
                 stickLikeNew.setStatus(1);
@@ -253,8 +253,8 @@ public class StickService {
             if (stickComment == null){
                 return Result.fail("点赞失败,该评论不存在或已被删除");
             }
-            // 判断该用户是否为该贴点过赞
-            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserId(userId);
+            // 判断该用户是否为该评论点过赞
+            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserIdAndStickCommentId(userId,id);
             if (stickCommentLike == null){
                 StickCommentLike stickCommentLikeNew = new StickCommentLike();
                 stickCommentLikeNew.setUserId(userId);

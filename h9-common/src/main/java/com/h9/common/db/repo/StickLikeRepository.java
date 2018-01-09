@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StickLikeRepository extends BaseRepository<StickLike> {
 
-    @Query("select s from StickLike s where s.userId = ?1")
-    StickLike findByUserId(long userId);
+
+    @Query("select s from StickLike s where s.userId = ?1 and s.stickId = ?2")
+    StickLike findByUserIdAndStickId(long userId, long id);
 }
