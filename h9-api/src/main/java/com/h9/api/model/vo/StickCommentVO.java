@@ -5,8 +5,12 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.UserExtendsRepository;
+import com.h9.common.utils.DateUtil;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -38,8 +42,11 @@ public class StickCommentVO {
     // @的用户id
     private Long aitUserId;
 
+    // 回复的回复列表
+    private List<StickCommentSimpleVO> list;
 
-
+    // 回复内容
+    private String content;
 
     public StickCommentVO(Integer sex, StickComment stickComment) {
         this.id = stickComment.getId();
@@ -48,8 +55,8 @@ public class StickCommentVO {
             this.commentUserId = user.getId();
             this.avatar = user.getAvatar();
             this.nickName = user.getNickName();
-
         }
+        this.sex = sex;
         this.level = stickComment.getLevel();
         User userAit = stickComment.getNotifyUserId();
         if (userAit != null){
@@ -57,6 +64,8 @@ public class StickCommentVO {
             this.aitUserId = userAit.getId();
         }
 
+        this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
+        this.content = stickComment.getContent();
     }
 
     public StickCommentVO() {

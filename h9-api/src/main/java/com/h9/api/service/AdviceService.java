@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * Created by 李圆 on 2018/1/3
@@ -48,7 +49,7 @@ public class AdviceService {
      * @param request
      * @return
      */
-    public Result sendAdvice(long userId, AdviceDTO adviceDTO, HttpServletRequest request) {
+    public Result sendAdvice(long userId, @Valid AdviceDTO adviceDTO, HttpServletRequest request) {
         if (adviceDTO == null){
             return Result.fail("对象不存在");
         }
