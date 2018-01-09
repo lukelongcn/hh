@@ -31,21 +31,13 @@ public class HotelDetailVO {
 
 
     public HotelDetailVO(Hotel hotel,List<HotelRoomType> roomType) {
-
         BeanUtils.copyProperties(hotel, this);
-
         if(roomType != null){
-
             List<RoomListVO> roomList = roomType.stream().map(el -> new RoomListVO(el)).collect(Collectors.toList());
             this.setRoomList(roomList);
-
         }
+        images = hotel.getImages();
 
-        String imagesJson = hotel.getImages();
-        if (StringUtils.isNotBlank(imagesJson)) {
-            List<String> img = JSONObject.parseArray(imagesJson, String.class);
-            this.setImages(img);
-        }
 
     }
 }

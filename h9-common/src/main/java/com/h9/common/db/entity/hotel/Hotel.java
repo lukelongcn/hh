@@ -1,14 +1,17 @@
 package com.h9.common.db.entity.hotel;
 
 
+
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jboss.logging.Logger;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +23,9 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 public class Hotel extends BaseEntity{
+    @Transient
+    Logger logger = Logger.getLogger(Hotel.class);
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,8 +48,8 @@ public class Hotel extends BaseEntity{
     @Column(name= "discount",columnDefinition = "float comment '折扣'")
     private Float discount;
 
-    @Column(name = "mix_consumer",columnDefinition = "decimal(10,2) comment '最低消费'")
-    private BigDecimal mixConsumer;
+    @Column(name = "min_consumer",columnDefinition = "decimal(10,2) comment '最低消费'")
+    private BigDecimal minConsumer;
 
     @Column(name = "city",columnDefinition = "varchar(255) comment '城市'")
     private String city;
@@ -66,11 +72,23 @@ public class Hotel extends BaseEntity{
      */
     @Column(name = "status",columnDefinition = "int default 1 comment '状态 1正常，0禁用'")
     private Integer status;
+
     public void setImages(List<String> images) {
-        if (images != null && images.size() > 0) {
-            this.images = JSONObject.toJSONString(images);
+        if (images == null || images.isEmpty()) {
+            images = new ArrayList<>();
         }
+        this.images = JSONObject.toJSONString(images);
     }
+
+    public List<String> getImages(){
+        try {
+            return JSONObject.parseArray(images, String.class);
+        }catch (Exception e){
+            logger.debugv("图片解析出错，请检查数据"+getId());
+        }
+        return new ArrayList<>();
+    }
+
 
     @Getter
     public static enum Status{

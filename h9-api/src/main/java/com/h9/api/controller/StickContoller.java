@@ -1,13 +1,19 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
+
+import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import java.util.Optional;
 
 /**
@@ -70,6 +76,44 @@ public class StickContoller {
         return stickService.detail(id);
     }
 
+    /**
+     * 搜索帖子
+     * @param str 匹配字符串
+     * @return Result
+     */
+    @GetMapping("/search")
+    public Result search(@RequestParam(value = "str")String str,
+                         @RequestParam(defaultValue = "1") Integer page,
+                         @RequestParam(defaultValue = "10") Integer limit){
+        return stickService.search(str,page,limit);
+    }
 
+    /**
+     * 点赞帖子或评论
+     * @param userId 用户id
+     * @param id 贴子id或评论id
+     * @param type 1：帖子 2：评论
+     * @return Result
+     */
+    @Secured
+    @PostMapping("/like")
+    public Result like(@SessionAttribute("curUserId")long userId,
+                       @NotNull(message = "id不能为空")@RequestParam(value = "id") long id,
+                       @NotNull(message = "点赞类型不能为空")@RequestParam(value = "type") Integer type){
+        return stickService.like(userId,id,type);
+    }
+
+    /**
+     * 添加回复
+     * @param userId 用户id
+     * @param stickCommentDTO 请求对象
+     * @return Result
+     */
+
+    @PostMapping("/addComment")
+    public Result addComment(//@SessionAttribute("curUserId")long userId,
+                             @Valid @RequestBody StickCommentDTO stickCommentDTO){
+        return stickService.addComment(2,stickCommentDTO);
+    }
 
 }

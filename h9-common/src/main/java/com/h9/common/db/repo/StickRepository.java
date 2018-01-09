@@ -2,14 +2,17 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
+import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.community.Stick;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import sun.util.calendar.BaseCalendar;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName: StickRepository
@@ -33,5 +36,10 @@ public interface StickRepository extends BaseRepository<Stick> {
 
     @Query("select s from Stick s where  s.stickType.name=?1 order by s.updateTime desc")
     Page<Stick> findType(String name, Pageable pageable);
+
+
+    @Query("select s from Stick s where s.title like ?1 order by s.createTime DESC")
+    Page<Stick> findStickList(String str, Pageable pageRequest);
+
 
 }

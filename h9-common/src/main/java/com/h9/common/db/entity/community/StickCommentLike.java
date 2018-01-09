@@ -29,6 +29,8 @@ public class StickCommentLike extends BaseEntity {
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户id'")
     private Long userId;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 0 COMMENT '评论点赞状态'")
+    private Integer status = 0;
 
     public Long getId() {
         return id;
@@ -52,5 +54,13 @@ public class StickCommentLike extends BaseEntity {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

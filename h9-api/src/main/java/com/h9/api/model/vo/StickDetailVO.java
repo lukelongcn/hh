@@ -9,6 +9,7 @@ import com.h9.common.utils.DateUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -29,7 +30,7 @@ public class StickDetailVO {
     private String typeName;
     private String content;
     private String createTime;
-    private List<Banner> listBanner;
+    private Map<String, List<HomeVO>> listMap;
 
 
     public StickDetailVO(Stick stick) {

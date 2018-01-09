@@ -15,4 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface StickCommentLikeRepository extends BaseRepository<StickCommentLike> {
 
 
+    StickCommentLike findByUserId(long userId);
 }

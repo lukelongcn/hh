@@ -48,7 +48,7 @@ public class StickComment extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "notify_user_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '@的用户'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private User notify_user;
+    private User notifyUserId;
     
     @Column(name = "like_count",nullable = false,columnDefinition = "int default 0 COMMENT '点赞数'")
     private Integer likeCount = 0;
@@ -109,13 +109,14 @@ public class StickComment extends BaseEntity {
         this.floor = floor;
     }
 
-    public User getNotify_user() {
-        return notify_user;
+    public User getNotifyUserId() {
+        return notifyUserId;
     }
 
-    public void setNotify_user(User notify_user) {
-        this.notify_user = notify_user;
+    public void setNotifyUserId(User notifyUserId) {
+        this.notifyUserId = notifyUserId;
     }
+
 
     public Integer getLikeCount() {
         return likeCount;

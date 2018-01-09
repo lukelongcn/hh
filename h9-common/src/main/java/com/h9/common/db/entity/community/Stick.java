@@ -8,8 +8,10 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created with IntelliJ IDEA.
@@ -54,6 +56,8 @@ public class Stick extends BaseEntity {
     @Column(name = "reward_count",nullable = false,columnDefinition = "int default 0 COMMENT '打赏数量'")
     private Integer rewardCount = 0;
 
+    @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子状态 1使用 2禁用 3删除'")
+    private Integer state = 1;
 
     /***************************      地址信息              *************************/
     @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
@@ -74,6 +78,9 @@ public class Stick extends BaseEntity {
     @Column(name="district",columnDefinition = "varchar(50) COMMENT '区'")
     private String district;
 
+    @Temporal(TIMESTAMP)
+    @Column(name = "answer_time", columnDefinition = "datetime COMMENT '最后回复时间'")
+    private Date answerTime;
 
     public Integer getRewardCount() {
         return rewardCount;
@@ -193,5 +200,21 @@ public class Stick extends BaseEntity {
 
     public void setAnswerCount(Integer answerCount) {
         this.answerCount = answerCount;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Date getAnswerTime() {
+        return answerTime;
+    }
+
+    public void setAnswerTime(Date answerTime) {
+        this.answerTime = answerTime;
     }
 }

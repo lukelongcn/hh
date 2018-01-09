@@ -35,6 +35,8 @@ public class SignVO {
         if (user != null) {
             nickName = user.getNickName();
         }
+        signDays = user.getSignDays();
+        signCount = user.getSignCount();
     }
 
 
