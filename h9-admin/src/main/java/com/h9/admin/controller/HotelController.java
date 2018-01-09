@@ -10,7 +10,6 @@ import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.admin.service.HotelService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
