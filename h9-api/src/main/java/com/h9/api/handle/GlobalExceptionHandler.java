@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
         if (e instanceof MissingServletRequestParameterException) {
             logger.info(e.getMessage(), e);
-            logger.info("参数错误");
+            logger.info("丢失参数错误");
             return new Result(HttpStatus.BAD_REQUEST.value(), "参数错误", ExceptionUtils.getMessage(e));
         }
 
@@ -90,9 +90,9 @@ public class GlobalExceptionHandler {
 
         if (e instanceof HttpMessageNotReadableException) {
             logger.info(e.getMessage(), e);
-            return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
+//            return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
+            return new Result(1, "请输入正确格的的数据类型," + ((HttpMessageNotReadableException) e).getRootCause().getMessage());
         }
-
 
 
         // 以上错误都不匹配

@@ -4,6 +4,7 @@ package com.h9.common.db.entity.hotel;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.BaseEntity;
+import com.h9.common.utils.DateUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,6 +13,7 @@ import org.jboss.logging.Logger;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -113,4 +115,14 @@ public class Hotel extends BaseEntity{
         }
     }
 
+
+    public Date getStartReserveTime() {
+        Date startDate = DateUtil.formatDate(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY) +" "+ startReserveTime, DateUtil.FormatType.MINUTE);
+        return startDate;
+    }
+
+    public Date getEndReserveTime() {
+        Date endDate = DateUtil.formatDate(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY) +" "+ endReserveTime, DateUtil.FormatType.MINUTE);
+        return endDate;
+    }
 }

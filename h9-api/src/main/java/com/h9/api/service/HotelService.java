@@ -14,10 +14,13 @@ import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.HotelRepository;
 import com.h9.common.db.repo.HotelRoomTypeRepository;
 import com.h9.common.db.repo.UserAccountRepository;
+import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +59,9 @@ public class HotelService {
     @Resource
     private UserAccountRepository userAccountRepository;
 
+    @Value("${path.app.wechat_host}")
+    private String wechatHostUrl;
+
     public Result detail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
 
@@ -64,9 +70,9 @@ public class HotelService {
         List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
-            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList));
+            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList,wechatHostUrl));
         }
-        return Result.success(new HotelDetailVO(hotel, null));
+        return Result.success(new HotelDetailVO(hotel, null,wechatHostUrl));
     }
 
     public Result hotelList(String city, String queryKey,int page,int limit) {
@@ -90,6 +96,15 @@ public class HotelService {
         HotelRoomType hotelRoomType = hotelRoomTypeRepository.findOne(addHotelOrderDTO.getRoomTypeId());
         if (hotelRoomType == null) {
             return Result.fail("此类房间不存在");
+        }
+
+        Date comeRoomTime = new Date();
+        Hotel hotel = hotelRoomType.getHotel();
+        Date startReserveTime = hotel.getStartReserveTime();
+        Date endReserveTime = hotel.getEndReserveTime();
+
+        if (comeRoomTime.getTime() < startReserveTime.getTime() || comeRoomTime.getTime() > endReserveTime.getTime()) {
+            return Result.fail("非可用时段不可预订");
         }
 
         HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType,userId);
@@ -266,5 +281,11 @@ public class HotelService {
 
         BigDecimal totalMoeny = calcOrderTotalMoney(authResult.getData(), authResult.getData().getHotelRoomType());
         return Result.success(new HotelOrderPayVO(authResult.getData(), userAccount, totalMoeny));
+    }
+
+    public String orderDetail(Long hotelId) {
+        Hotel hotel = hotelRepository.findOne(hotelId);
+        if(hotel == null) return "酒店不存在";
+        return hotel.getHotelInfo();
     }
 }
