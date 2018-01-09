@@ -321,6 +321,9 @@ public class StickService {
     }
 
 
+    /**
+     * 拿到评论
+     */
     public Result getComment(long stickId, Integer page, Integer limit) {
         PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
         if (pageResult == null){
@@ -330,16 +333,23 @@ public class StickService {
     }
 
 
-
     public StickCommentVO stickComent2Vo(StickComment stickComment){
         User user = stickComment.getAnswerUser();
         if (user.getId() == null){
             return new StickCommentVO();
         }
         UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
+        Integer  sex = userExtends.getSex();
 
-            Integer  sex = userExtends.getSex();
-            return new StickCommentVO(sex, stickComment);
+        // 拿到回复的回复列表
+        long stickCommentParentId = stickComment.getStickComment().getId();
+        if (stickComment.getStickComment() != null){
+            List<StickComment> stickCommentParent= stickCommentRepository.findByBackId(stickCommentParentId);
+            stickCommentParent.forEach(stickCommentP ->{
+               // User userNew = u
+            } );
+        }
 
+        return new StickCommentVO(sex, stickComment);
     }
 }

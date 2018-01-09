@@ -6,6 +6,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,6 +37,7 @@ public class DateUtil {
         DAY("yyyy-MM-dd"),
         MONTH("yyyy-MM"),
         YEAR("yyyy");
+
 
 
         private String format;
@@ -498,20 +504,31 @@ public class DateUtil {
         long min = ((between / (60 * 1000)) - day * 24 * 60 - hour * 60);
 
         StringBuffer result = new StringBuffer();
-        if (day != 0) {
-            result.append(day);
-            result.append("天");
-        }
-        if (hour != 0) {
-            result.append(hour);
-            result.append("小时");
-        }
-        if (min != 0) {
+
+        if (hour == 0 && min <= 60  ) {
             result.append(min);
-            result.append("分");
+            result.append("分钟前");
+            return result.toString();
+        }
+        if (hour >= 0 && day == 0) {
+            result.append(hour);
+            result.append("小时前");
+            return result.toString();
+        }
+        if (day > 0 && day <= 365) {
+            LocalDate localDate = DateUtil.trans(begin);
+            return localDate.format(DateTimeFormatter.ofPattern("MM-dd"));
         }
 
-        return result.toString();
+        return DateUtil.formatDate(begin,FormatType.MINUTE);
+    }
+
+    public static LocalDate trans(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        // atZone()方法返回在指定时区从此Instant生成的ZonedDateTime。
+        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+        return localDate;
     }
 
     @SuppressWarnings("Duplicates")

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
 
 /**
@@ -31,4 +32,6 @@ public interface StickCommentRepository extends BaseRepository<StickComment> {
     }
 
 
+    @Query("select s from StickComment s where s.id = ?1 order by s.createTime ASC")
+    List<StickComment> findByBackId(long stickCommentParentId);
 }
