@@ -51,11 +51,10 @@ public class AddHotelOrderDTO {
 
     public void setComeRoomTime(String comeRoomTime) throws MissingServletRequestParameterException {
 
-
         Logger logger = Logger.getLogger(this.getClass());
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Date date = format.parse("2017-09-04");
+            Date date = format.parse(comeRoomTime);
             this.comeRoomTime = date;
         } catch (ParseException e) {
             logger.info(e.getMessage(), e);
@@ -72,7 +71,7 @@ public class AddHotelOrderDTO {
         Logger logger = Logger.getLogger(this.getClass());
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Date date = format.parse("2017-09-04");
+            Date date = format.parse(outRoomTime);
             this.outRoomTime = date;
         } catch (ParseException e) {
             logger.info(e.getMessage(), e);

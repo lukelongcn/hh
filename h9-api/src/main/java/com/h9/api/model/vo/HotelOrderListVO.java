@@ -1,7 +1,6 @@
 package com.h9.api.model.vo;
 
 
-import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.utils.DateUtil;
@@ -33,6 +32,8 @@ public class HotelOrderListVO {
 
     private Long id;
 
+    private boolean showPayBtn = false;
+
     public HotelOrderListVO() {
     }
 
@@ -42,7 +43,11 @@ public class HotelOrderListVO {
         HotelOrder.OrderStatusEnum findEnumStatus = HotelOrder.OrderStatusEnum.findByCode(orderStatus);
         if (findEnumStatus != null) {
             this.setStatus(findEnumStatus.getDesc());
+            if (findEnumStatus.getCode() == HotelOrder.OrderStatusEnum.NOT_PAID.getCode()) {
+                this.setShowPayBtn(true);
+            }
         }
+
 
         Date comeRoomTime = hotelOrder.getComeRoomTime();
         Date outRoomTime = hotelOrder.getOutRoomTime();

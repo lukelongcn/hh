@@ -5,10 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by itservice on 2018/1/4.
@@ -63,4 +67,31 @@ public class EditHotelDTO {
 
     private Long id;
 
+    @ApiModelProperty("酒店介绍")
+    private String hotelInfo = "";
+
+    public void setStartReserveTime(String startReserveTime) throws MissingServletRequestParameterException {
+        Pattern pattern = Pattern.compile("[0-9]{2}:[0-9]{2}");
+        Matcher matcher = pattern.matcher(startReserveTime);
+        if(!matcher.matches()){
+
+            throw new MissingServletRequestParameterException("startReserveTime", "时间格式 08:00");
+        }
+        this.startReserveTime = startReserveTime;
+    }
+
+    public void setEndReserveTime(String endReserveTime) throws MissingServletRequestParameterException {
+        Pattern pattern = Pattern.compile("[0-9]{2}:[0-9]{2}");
+        Matcher matcher = pattern.matcher(startReserveTime);
+        if(!matcher.matches()){
+            throw new MissingServletRequestParameterException("startReserveTime", "时间格式 08:00");
+        }
+        this.endReserveTime = endReserveTime;
+    }
+
+    public static void main(String[] args) {
+        Pattern pattern = Pattern.compile("[0-9]{2}:[0-9]{2}");
+        Matcher matcher = pattern.matcher("08:00");
+            System.out.println(matcher.matches());
+    }
 }

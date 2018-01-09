@@ -108,4 +108,13 @@ public class HotelController {
         return hotelService.hotelCity();
     }
 
+
+    /**
+     * description: 酒店介绍
+     */
+    @GetMapping("/hotel/info")
+    public String hotelInfo(@RequestParam Long hotelId){
+        return hotelService.orderDetail(hotelId);
+    }
+
 }

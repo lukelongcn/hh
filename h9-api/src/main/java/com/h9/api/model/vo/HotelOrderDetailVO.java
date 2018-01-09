@@ -49,8 +49,8 @@ public class HotelOrderDetailVO {
     public HotelOrderDetailVO(HotelOrder hotelOrder){
         BeanUtils.copyProperties(hotelOrder, this);
         this.setCreateTime(DateUtil.formatDate(hotelOrder.getCreateTime(), DateUtil.FormatType.MINUTE))
-                .setComeRoomTime(DateUtil.formatDate(hotelOrder.getComeRoomTime(), DateUtil.FormatType.MINUTE))
-                .setOutRoomTime(DateUtil.formatDate(hotelOrder.getOutRoomTime(), DateUtil.FormatType.MINUTE))
+                .setComeRoomTime(DateUtil.formatDate(hotelOrder.getComeRoomTime(), DateUtil.FormatType.DAY))
+                .setOutRoomTime(DateUtil.formatDate(hotelOrder.getOutRoomTime(), DateUtil.FormatType.DAY))
                 .setTotalMoney(MoneyUtils.formatMoney(hotelOrder.getTotalMoney()))
                 .setPayMoney4JiuYuan(MoneyUtils.formatMoney(hotelOrder.getPayMoney4JiuYuan()))
                 .setPayMoney4Wechat(MoneyUtils.formatMoney(hotelOrder.getPayMoney4Wechat()));

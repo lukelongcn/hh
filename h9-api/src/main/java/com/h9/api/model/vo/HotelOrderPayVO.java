@@ -23,6 +23,10 @@ public class HotelOrderPayVO {
 
     private Long hotelOrderId;
 
+    private String paidMoney;
+
+    private String unpaidMoney;
+
     public HotelOrderPayVO(){}
 
     public HotelOrderPayVO(HotelOrder hotelOrder, UserAccount userAccount, BigDecimal totalMoney){
@@ -30,5 +34,18 @@ public class HotelOrderPayVO {
                 .setOrderMoney(MoneyUtils.formatMoney(totalMoney))
                 .setTips("请在23:59之前完成支付，过期将自动取消订单")
                 .setHotelOrderId(hotelOrder.getId());
+        BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+        BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
+
+        if(payMoney4JiuYuan != null){
+            this.setPaidMoney(MoneyUtils.formatMoney(payMoney4JiuYuan));
+        }
+
+        if(payMoney4Wechat != null){
+            this.setPaidMoney(MoneyUtils.formatMoney(payMoney4Wechat));
+        }
+
+        BigDecimal unpayMoney = totalMoney.subtract(new BigDecimal(getPaidMoney()));
+        this.setUnpaidMoney(MoneyUtils.formatMoney(unpayMoney));
     }
 }
