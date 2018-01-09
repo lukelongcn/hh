@@ -116,6 +116,13 @@ public class StickContoller {
         return stickService.addComment(userId,stickCommentDTO);
     }
 
+    /**
+     * 贴子评论列表
+     * @param stickId 贴子id
+     * @param page 页码
+     * @param limit 个数
+     * @return Result
+     */
     @GetMapping("/getComment")
     public Result getComment(@RequestParam("stickId")long stickId,
                              @RequestParam(defaultValue = "1") Integer page,

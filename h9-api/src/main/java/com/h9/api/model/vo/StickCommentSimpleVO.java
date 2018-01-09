@@ -26,11 +26,13 @@ public class StickCommentSimpleVO {
     // 被回复人id
     private Long backCommentUserId;
 
-    public StickCommentSimpleVO(User user,User backUser ,String content){
-        this.commentUserId = user.getId();
-        this.nickName = user.getNickName();
-        this.content = content;
-        this.backCommentUserId = backUser.getId();
-        this.backNickName = backUser.getNickName();
+    public StickCommentSimpleVO(StickComment stickComment){
+        User answerUser = stickComment.getAnswerUser();
+        this.commentUserId = answerUser.getId();
+        this.nickName = answerUser.getNickName();
+        this.content = stickComment.getContent();
+        User notifyUserId = stickComment.getNotifyUserId();
+        this.backCommentUserId = notifyUserId.getId();
+        this.backNickName = notifyUserId.getNickName();
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickCommentSimpleVO;
 import com.h9.api.model.vo.StickCommentVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
@@ -309,14 +310,20 @@ public class StickService {
         // 父级id
         Long stickCommentId = stickCommentDTO.getStickCommentId();
         if (stickCommentId != null){
-            StickComment stickCommentPid = stickCommentRepository.findOne(stickCommentId);
+            StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
             if(stickCommentPid!=null){
                 stickComment.setStickComment(stickCommentPid);
+            }else {
+                return Result.fail("该楼层不存在或已被删除");
             }
         }
         // 贴子id
         stickComment.setStick(stick);
         stickCommentRepository.save(stickComment);
+        // 增加阅读数和回复数
+        stick.setAnswerCount(stick.getAnswerCount()+1);
+        stick.setReadCount(stick.getReadCount()+1);
+        stickRepository.save(stick);
         return Result.success("回复成功");
     }
 
@@ -342,14 +349,12 @@ public class StickService {
         Integer  sex = userExtends.getSex();
 
         // 拿到回复的回复列表
-        long stickCommentParentId = stickComment.getStickComment().getId();
-        if (stickComment.getStickComment() != null){
-            List<StickComment> stickCommentParent= stickCommentRepository.findByBackId(stickCommentParentId);
-            stickCommentParent.forEach(stickCommentP ->{
-               // User userNew = u
-            } );
+        List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
+            long stickCommentParentId = stickComment.getId();
+            List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+            if (CollectionUtils.isNotEmpty(stickCommentChild)){
+                stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
-
-        return new StickCommentVO(sex, stickComment);
+        return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
     }
 }

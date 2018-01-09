@@ -27,6 +27,7 @@ public class StickCommentVO {
     private String nickName;
     private Integer sex = 1;
 
+
     // 评论间隔时间
     private String spaceTime;
 
@@ -48,7 +49,7 @@ public class StickCommentVO {
     // 回复内容
     private String content;
 
-    public StickCommentVO(Integer sex, StickComment stickComment) {
+    public StickCommentVO(Integer sex, StickComment stickComment,List<StickCommentSimpleVO> list) {
         this.id = stickComment.getId();
         User user = stickComment.getAnswerUser();
         if (user != null){
@@ -66,6 +67,7 @@ public class StickCommentVO {
 
         this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
         this.content = stickComment.getContent();
+        this.list = list;
     }
 
     public StickCommentVO() {
