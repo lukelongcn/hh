@@ -1,10 +1,21 @@
 package com.h9.api.model.vo;
 
+import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserExtends;
+import com.h9.common.db.repo.UserExtendsRepository;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+
+import lombok.Data;
 
 /**
  * Created by 李圆 on 2018/1/8
  */
+@Data
 public class StickCommentVO {
     private Long id;
     private Long commentUserId;
@@ -28,5 +39,28 @@ public class StickCommentVO {
     private Long aitUserId;
 
 
+
+
+    public StickCommentVO(Integer sex, StickComment stickComment) {
+        this.id = stickComment.getId();
+        User user = stickComment.getAnswerUser();
+        if (user != null){
+            this.commentUserId = user.getId();
+            this.avatar = user.getAvatar();
+            this.nickName = user.getNickName();
+
+        }
+        this.level = stickComment.getLevel();
+        User userAit = stickComment.getNotifyUserId();
+        if (userAit != null){
+            this.aitNickName = userAit.getNickName();
+            this.aitUserId = userAit.getId();
+        }
+
+    }
+
+    public StickCommentVO() {
+
+    }
 }
 

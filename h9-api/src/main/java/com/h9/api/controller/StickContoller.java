@@ -116,4 +116,10 @@ public class StickContoller {
         return stickService.addComment(userId,stickCommentDTO);
     }
 
+    @GetMapping("/getComment")
+    public Result getComment(@RequestParam("stickId")long stickId,
+                             @RequestParam(defaultValue = "1") Integer page,
+                             @RequestParam(defaultValue = "10") Integer limit){
+        return stickService.getComment(stickId,page,limit);
+    }
 }
