@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
         if (e instanceof MissingServletRequestParameterException) {
             logger.info(e.getMessage(), e);
-            logger.info("参数错误");
+            logger.info("丢失参数错误");
             return new Result(HttpStatus.BAD_REQUEST.value(), "参数错误", ExceptionUtils.getMessage(e));
         }
 

@@ -10,7 +10,9 @@ import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.admin.service.HotelService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -83,14 +85,15 @@ public class HotelController {
     @Secured
     @PutMapping(value = "/hotel/status")
     @ApiOperation("修改酒店状态")
-    public Result modifyHotelStatus(@RequestParam Long hotelId,@RequestParam Integer status) {
+    public Result modifyHotelStatus(@RequestParam Long hotelId,@ApiParam("1 为正常 0为禁用")@RequestParam Integer status) {
         return hotelService.modifyHotelStatus(hotelId,status);
     }
 
     @Secured
     @PutMapping(value = "/hotel/room/status")
     @ApiOperation("修改酒店房间状态")
-    public Result modifyHoteRoomlStatus(@RequestParam Long hotelId,
+    public Result modifyHotelRoomStatus(@RequestParam Long hotelId,
+                                        @ApiParam("0 为禁用 1为正常")
                                         @RequestParam Integer status,
                                         @RequestParam Long roomId) {
         return hotelService.modifyHotelRoomStatus(hotelId,status,roomId);
@@ -99,7 +102,7 @@ public class HotelController {
     @Secured
     @PutMapping(value = "/hotel/order/status")
     @ApiOperation("更改订单状态,1 确认 2退款")
-    public Result changeOrderStatus(@RequestBody Long hotelOrderId,@RequestBody Integer status) {
+    public Result changeOrderStatus(@RequestBody Long hotelOrderId,@ApiParam("1 确认 2退款") @RequestBody Integer status) {
         return hotelService.changeOrderStatus(hotelOrderId,status);
     }
 

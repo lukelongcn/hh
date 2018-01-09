@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +59,9 @@ public class HotelService {
     @Resource
     private UserAccountRepository userAccountRepository;
 
+    @Value("${path.app.wechat_host}")
+    private String wechatHostUrl;
+
     public Result detail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
 
@@ -66,9 +70,9 @@ public class HotelService {
         List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
-            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList));
+            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList,wechatHostUrl));
         }
-        return Result.success(new HotelDetailVO(hotel, null));
+        return Result.success(new HotelDetailVO(hotel, null,wechatHostUrl));
     }
 
     public Result hotelList(String city, String queryKey,int page,int limit) {

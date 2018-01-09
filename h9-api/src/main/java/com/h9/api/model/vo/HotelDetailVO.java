@@ -1,11 +1,9 @@
 package com.h9.api.model.vo;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -30,14 +28,16 @@ public class HotelDetailVO {
     }
 
 
-    public HotelDetailVO(Hotel hotel,List<HotelRoomType> roomType) {
+    public HotelDetailVO(Hotel hotel,List<HotelRoomType> roomType,String wechatHostUrl) {
         BeanUtils.copyProperties(hotel, this);
         if(roomType != null){
             List<RoomListVO> roomList = roomType.stream().map(el -> new RoomListVO(el)).collect(Collectors.toList());
             this.setRoomList(roomList);
         }
         images = hotel.getImages();
-
-
+        String url = wechatHostUrl+"/?#/account/articleDetail?id=";
+        url += hotel.getId();
+        url += "&type=hotel";
+        this.setHotelInfo(url);
     }
 }
