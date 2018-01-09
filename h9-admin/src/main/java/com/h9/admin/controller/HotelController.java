@@ -10,7 +10,6 @@ import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.admin.service.HotelService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
@@ -32,10 +31,10 @@ public class HotelController {
     @Secured
     @GetMapping(value = "/hotels")
     @ApiOperation("酒店列表")
-    public Result<HotelListVO> hotelList(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                         @RequestParam(required = false, defaultValue = "20") Integer limit) {
+    public Result<HotelListVO> hotelList(@RequestParam(required = false, defaultValue = "1") Integer pageNumber,
+                                         @RequestParam(required = false, defaultValue = "20") Integer pageSize) {
 
-        return hotelService.hotelList(page, limit);
+        return hotelService.hotelList(pageNumber, pageSize);
     }
 
 
@@ -60,9 +59,9 @@ public class HotelController {
     @GetMapping(value = "/hotel/rooms")
     @ApiOperation("酒店房间列表")
     public Result<HotelRoomListVO> hotelRoomsList(@RequestParam Long hotelId,
-                                                  @RequestParam(required = false, defaultValue = "1") Integer page,
-                                                  @RequestParam(required = false, defaultValue = "20") Integer limit) {
-        return hotelService.roomList(hotelId,page,limit);
+                                                  @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
+                                                  @RequestParam(required = false, defaultValue = "20") Integer pageSize) {
+        return hotelService.roomList(hotelId,pageNumber,pageSize);
     }
 
     @Secured
@@ -111,10 +110,9 @@ public class HotelController {
     @PostMapping(value = "/hotel/orders")
     @ApiOperation("酒店订单列表")
     public Result<HotelOrderListVO> ordersList(@RequestBody(required = false) HotelOrderSearchDTO hotelOrderSearchDTO,
-                                               @RequestParam(required = false, defaultValue = "1") Integer page,
-                                               @RequestParam(required = false, defaultValue = "20") Integer limit) {
-        return hotelService.ordersList(hotelOrderSearchDTO,page,limit);
+                                               @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
+                                               @RequestParam(required = false, defaultValue = "20") Integer pageSize) {
+        return hotelService.ordersList(hotelOrderSearchDTO,pageNumber,pageSize);
     }
-
 
 }

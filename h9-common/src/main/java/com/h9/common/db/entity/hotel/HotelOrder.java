@@ -74,7 +74,7 @@ public class HotelOrder extends BaseEntity{
     private Long user_id;
     //待支付，【待确认，预订成功】，已退款，已取消
     @Getter
-    public static enum PayMethodEnum{
+    public  enum PayMethodEnum{
         PAY_ON_BALANCE (1, "余额支付"),
         PAY_ON_WECHAT(2,"微信支付");
 
