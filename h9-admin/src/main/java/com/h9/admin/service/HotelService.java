@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
@@ -16,6 +17,7 @@ import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.HotelRepository;
 import com.h9.common.db.repo.HotelRoomTypeRepository;
 import com.h9.common.db.repo.HtmlContentRepository;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
@@ -131,6 +133,10 @@ public class HotelService {
         if (room == null) room = new HotelRoomType();
 
         BeanUtils.copyProperties(editRoomDTO, room);
+        List<String> image = editRoomDTO.getImage();
+        if (CollectionUtils.isNotEmpty(image)) {
+            room.setImage(JSONObject.toJSONString(image));
+        }
 
         room.setHotel(hotel);
         hotelRoomTypeRepository.save(room);
