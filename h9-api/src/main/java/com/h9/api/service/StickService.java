@@ -1,9 +1,11 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickCommentVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
@@ -21,12 +23,14 @@ import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
+import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import lombok.extern.jbosslog.JBossLog;
@@ -81,7 +85,8 @@ public class StickService {
     private StickLikeRepository stickLikeRepository;
     @Resource
     private StickCommentLikeRepository stickCommentLikeRepository;
-
+    @Resource
+    private UserExtendsRepository userExtendsRepository;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -213,7 +218,7 @@ public class StickService {
      * @param id 贴子或评论id
      * @param type 点赞类型
      * @return Result
-      */
+     */
     public Result like( long userId,long id, Integer type) {
         /* 点赞贴子*/
         if (type == 1){
@@ -271,7 +276,6 @@ public class StickService {
         return Result.fail("点赞失败");
     }
 
-
     /**
      * 添加贴子或评论回复
      * @param userId 用户id
@@ -279,6 +283,7 @@ public class StickService {
      * @return Result
      */
     public Result addComment(long userId, StickCommentDTO stickCommentDTO) {
+        // 贴子id
         Stick stick = stickRepository.findOne(stickCommentDTO.getStickId());
         if (stick == null){
             return Result.fail("贴子不存在或已被删除");
@@ -294,18 +299,47 @@ public class StickService {
         // 回复楼层
         stickComment.setFloor(stickCommentDTO.getFloor());
         // @的用户
-        User aitUser = userRepository.findOne(stickCommentDTO.getNotifyUserId());
-        if (aitUser != null){
-            stickComment.setNotifyUserId(aitUser);
+        Long notifyUserId = stickCommentDTO.getNotifyUserId();
+        if (notifyUserId != null){
+            User aitUser = userRepository.findOne(notifyUserId);
+            if (aitUser != null){
+                stickComment.setNotifyUserId(aitUser);
+            }
         }
         // 父级id
-        StickComment stickCommentPid = stickCommentRepository.findOne(stickCommentDTO.getStickCommentId());
-        if(stickCommentPid!=null){
-            stickComment.setStickComment(stickCommentPid);
+        Long stickCommentId = stickCommentDTO.getStickCommentId();
+        if (stickCommentId != null){
+            StickComment stickCommentPid = stickCommentRepository.findOne(stickCommentId);
+            if(stickCommentPid!=null){
+                stickComment.setStickComment(stickCommentPid);
+            }
         }
         // 贴子id
         stickComment.setStick(stick);
         stickCommentRepository.save(stickComment);
         return Result.success("回复成功");
+    }
+
+
+    public Result getComment(long stickId, Integer page, Integer limit) {
+        PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
+        if (pageResult == null){
+            return Result.success("暂无评论");
+        }
+        return Result.success(pageResult.result2Result(this::stickComent2Vo));
+    }
+
+
+
+    public StickCommentVO stickComent2Vo(StickComment stickComment){
+        User user = stickComment.getAnswerUser();
+        if (user.getId() == null){
+            return new StickCommentVO();
+        }
+        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
+
+            Integer  sex = userExtends.getSex();
+            return new StickCommentVO(sex, stickComment);
+
     }
 }
