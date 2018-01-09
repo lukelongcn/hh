@@ -109,11 +109,11 @@ public class StickContoller {
      * @param stickCommentDTO 请求对象
      * @return Result
      */
-
+    @Secured
     @PostMapping("/addComment")
-    public Result addComment(//@SessionAttribute("curUserId")long userId,
+    public Result addComment(@SessionAttribute("curUserId")long userId,
                              @Valid @RequestBody StickCommentDTO stickCommentDTO){
-        return stickService.addComment(2,stickCommentDTO);
+        return stickService.addComment(userId,stickCommentDTO);
     }
 
 }
