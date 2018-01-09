@@ -61,10 +61,7 @@ public class HotelService {
 
         if (hotel == null) return Result.fail("酒店不存在");
 
-        HotelRoomType type = new HotelRoomType().setStatus(1);
-        Example<HotelRoomType> of = Example.of(type);
-
-        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(of);
+        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
             return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList));
@@ -97,12 +94,11 @@ public class HotelService {
 
         HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType,userId);
 
-        BigDecimal totalMoney = calcOrderTotalMoney(hotelOrder, hotelRoomType);
         hotelOrder = hotelOrderRepository.saveAndFlush(hotelOrder);
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
-        return Result.success(new HotelOrderPayVO(hotelOrder,userAccount,totalMoney));
+        return Result.success(new HotelOrderPayVO(hotelOrder,userAccount,hotelOrder.getTotalMoney()));
     }
 
     /**
@@ -120,6 +116,10 @@ public class HotelService {
      */
     public HotelOrder initHotelOrder(AddHotelOrderDTO addHotelOrderDTO, HotelRoomType hotelRoomType, Long userId) {
 
+        Integer roomCount = addHotelOrderDTO.getRoomCount();
+        BigDecimal realPrice = hotelRoomType.getRealPrice();
+        BigDecimal totalMoney = realPrice.multiply(new BigDecimal(roomCount));
+
         return new HotelOrder()
                 .setOrderStatus(HotelOrder.OrderStatusEnum.NOT_PAID.getCode())
                 .setComeRoomTime(addHotelOrderDTO.getComeRoomTime())
@@ -133,6 +133,7 @@ public class HotelService {
                 .setHotel(hotelRoomType.getHotel())
                 .setHotelRoomType(hotelRoomType)
                 .setInclude(hotelRoomType.getInclude())
+                .setTotalMoney(totalMoney)
                 .setUser_id(userId);
     }
 

@@ -57,8 +57,8 @@ public class HotelOrder extends BaseEntity{
     @Column(name = "room_count",columnDefinition = "int comment '房间数'")
     private Integer roomCount;
 
-    @Column(name = "pay_method",columnDefinition = "int comment '支付方式'")
-    private Integer payMethod;
+    @Column(name = "pay_method",columnDefinition = "int default 1 comment '支付方式'")
+    private Integer payMethod = PayMethodEnum.PAY_ON_BALANCE.getCode();
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", referencedColumnName = "id", columnDefinition = "bigint(40)  COMMENT '酒店Id'",foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
@@ -75,9 +75,8 @@ public class HotelOrder extends BaseEntity{
     //待支付，【待确认，预订成功】，已退款，已取消
     @Getter
     public static enum PayMethodEnum{
-        BALANCE_PAY(1, "待支付"),
-        WECHAT_PAY(2,"待确认"),
-        MIXED_PAY(3,"预订成功");
+        PAY_ON_BALANCE (1, "余额支付"),
+        PAY_ON_WECHAT(2,"微信支付");
 
         public int code;
         public String desc;
