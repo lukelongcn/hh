@@ -57,7 +57,7 @@ public class HotelOrder extends BaseEntity{
     @Column(name = "room_count",columnDefinition = "int comment '房间数'")
     private Integer roomCount;
 
-    @Column(name = "pay_method",columnDefinition = "int comment '支付方式'")
+    @Column(name = "pay_method",columnDefinition = "int default 1 comment '支付方式'")
     private Integer payMethod = PayMethodEnum.PAY_ON_BALANCE.getCode();
 
     @ManyToOne
