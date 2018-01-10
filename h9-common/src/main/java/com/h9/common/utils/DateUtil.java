@@ -495,7 +495,8 @@ public class DateUtil {
     public static String getSpaceTime(Date begin, Date end) {
         long between = 0;
         try {
-            between = (end.getTime() - begin.getTime());// 得到两者的毫秒数
+            // 得到两者的毫秒数
+            between = (end.getTime() - begin.getTime());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -505,22 +506,22 @@ public class DateUtil {
 
         StringBuffer result = new StringBuffer();
 
-        if (hour == 0 && min <= 60  ) {
+        if (min <= 60  && hour == 0 && day == 0 ) {
             result.append(min);
             result.append("分钟前");
             return result.toString();
         }
-        if (hour >= 0 && day == 0) {
+        if ( day == 0 && hour > 0 ) {
             result.append(hour);
             result.append("小时前");
             return result.toString();
         }
-        if (day > 0 && day <= 365) {
-            LocalDate localDate = DateUtil.trans(begin);
-            return localDate.format(DateTimeFormatter.ofPattern("MM-dd"));
+        if (begin.before(getCurrentYearStartTime())) {
+            return DateUtil.formatDate(begin,FormatType.MINUTE);
         }
+        LocalDate localDate = DateUtil.trans(begin);
+        return localDate.format(DateTimeFormatter.ofPattern("MM-dd"));
 
-        return DateUtil.formatDate(begin,FormatType.MINUTE);
     }
 
     public static LocalDate trans(Date date){

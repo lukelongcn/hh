@@ -142,4 +142,6 @@ public class StickContoller {
     public Result getReward(@PathVariable("stickId")long stickId){
         return stickService.getReward(stickId);
     }
+
+
 }
