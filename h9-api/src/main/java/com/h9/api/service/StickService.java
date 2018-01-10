@@ -7,6 +7,7 @@ import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
 import com.h9.api.model.vo.StickCommentSimpleVO;
 import com.h9.api.model.vo.StickCommentVO;
+import com.h9.api.model.vo.StickRewardVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
@@ -16,6 +17,8 @@ import com.h9.api.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
@@ -33,6 +36,7 @@ import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import lombok.extern.jbosslog.JBossLog;
 
@@ -88,6 +92,8 @@ public class StickService {
     private StickCommentLikeRepository stickCommentLikeRepository;
     @Resource
     private UserExtendsRepository userExtendsRepository;
+    @Resource
+    private ConfigService configService;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -157,8 +163,6 @@ public class StickService {
         }
         return Result.success(new StickTypeDetailVo(stickType));
     }
-
-
 
     /**
      * 获取帖子详情
@@ -356,5 +360,15 @@ public class StickService {
                 stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
         return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
+    }
+
+    public Result getReward(long stickId) {
+        List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.REWARD_MONEY);
+        if(CollectionUtils.isEmpty(mapListConfig)){
+            mapListConfig = new ArrayList<>();
+        }
+        Stick stick = stickRepository.findOne(stickId);
+        StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
+        return Result.success(stickRewardVO);
     }
 }
