@@ -143,10 +143,22 @@ public class StickContoller {
         return stickService.getReward(stickId);
     }
 
-    /*@GetMapping("/rewardJiuyuan/{stickId}/{money}")
-    public Result rewardJiuyuan(@PathVariable("stickId")long stickId,@PathVariable("money")Integer money){
-        return stickService.rewardJiuyuan(stickId,money);
-    }*/
+    /**
+     * 点击赞赏金额
+     * @param money 赞赏金额
+     * @return Result
+     */
+    @Secured
+    @GetMapping("/rewardJiuyuan/{stickId}/{money}")
+    public Result rewardJiuyuan(@SessionAttribute("curUserId")long userId,
+                                @PathVariable("stickId")long stickId,
+                                @PathVariable("money")Integer money){
+        return stickService.rewardJiuyuan(userId,stickId,money);
+    }
+
+    /**
+     * 金额
+     */
 
 
 }

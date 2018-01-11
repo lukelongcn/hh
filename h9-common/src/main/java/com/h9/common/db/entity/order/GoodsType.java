@@ -55,7 +55,8 @@ public class GoodsType extends BaseEntity {
 //        MATERIAL("material","实物"),
         FOODS("foods", "食物，饮料"),
         EVERYDAY_GOODS("everyday_goods", "日常家居"),
-        VB("vb", "V币");
+        VB("vb", "V币"),
+        STICK_REWARD("stick_reward", "赞赏");
 
         private String code;
         private String desc;
@@ -63,7 +64,6 @@ public class GoodsType extends BaseEntity {
             this.code = code;
             this.desc = desc;
         }
-
 
         public String getCode() {
             return code;

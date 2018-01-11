@@ -7,6 +7,7 @@ import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
 import com.h9.api.model.vo.StickCommentSimpleVO;
 import com.h9.api.model.vo.StickCommentVO;
+import com.h9.api.model.vo.StickRewardMoneyVO;
 import com.h9.api.model.vo.StickRewardVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
@@ -26,14 +27,18 @@ import com.h9.common.db.entity.community.StickLike;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.hotel.Hotel;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.BannerRepository;
+import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
+import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.Config;
@@ -96,6 +101,10 @@ public class StickService {
     private UserExtendsRepository userExtendsRepository;
     @Resource
     private ConfigService configService;
+    @Resource
+    private UserAccountRepository userAccountRepository;
+    @Resource
+    private GoodsTypeReposiroty goodsTypeReposiroty;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -344,8 +353,6 @@ public class StickService {
         }
         return Result.success(pageResult.result2Result(this::stickComent2Vo));
     }
-
-
     public StickCommentVO stickComent2Vo(StickComment stickComment){
         User user = stickComment.getAnswerUser();
         if (user.getId() == null){
@@ -380,8 +387,21 @@ public class StickService {
     /**
      * 赞赏酒元
      */
-    /*public Result rewardJiuyuan(long stickId, Integer money) {
+    public Result rewardJiuyuan(long userId, long stickId, Integer money) {
+        // 酒元icon
         String icon = configService.getStringConfig(JIUYUAN_ICON);
+        // 商品类型
+        GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.STICK_REWARD.getCode());
+        // 前台显示对象
+        StickRewardMoneyVO rewardMoneyVO = new StickRewardMoneyVO();
+        rewardMoneyVO.setIcon(icon);
+        rewardMoneyVO.setRewardMoney(money);
+        Stick stick = stickRepository.findOne(stickId);
+        rewardMoneyVO.setType(goodsType.getName()+"["+stick.getTitle()+"]");
+        User user = userRepository.findOne(userId);
+        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+        rewardMoneyVO.setBalance(userAccount.getBalance());
 
-    }*/
+        return Result.success(rewardMoneyVO);
+    }
 }
