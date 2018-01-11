@@ -367,7 +367,7 @@ public class ConsumeService {
 
         Result verifyWithdrawCount = verifyWithdrawCount(user);
         if(verifyWithdrawCount.getCode() == 1){
-            return verifyResult;
+            return verifyWithdrawCount;
         }
 
         String withdrawMax = configService.getStringConfig(ParamConstant.WITHDRAW_MAX);
