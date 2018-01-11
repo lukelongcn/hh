@@ -159,6 +159,12 @@ public class StickContoller {
     /**
      * 金额
      */
+    @GetMapping("reward/{stickId}/{money}")
+    public Result reward(@SessionAttribute("curUserId")long userId,
+                                @PathVariable("stickId")long stickId,
+                                @PathVariable("money")Integer money){
+        return stickService.reward(userId,stickId,money);
+    }
 
 
 }

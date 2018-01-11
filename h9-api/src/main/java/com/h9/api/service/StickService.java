@@ -404,4 +404,8 @@ public class StickService {
 
         return Result.success(rewardMoneyVO);
     }
+
+    public Result reward(long userId, long stickId, Integer money) {
+        return null;
+    }
 }
