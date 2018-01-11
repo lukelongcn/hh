@@ -51,7 +51,6 @@ public class OrderItems extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goods_id",referencedColumnName = "id",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    @Fetch(FetchMode.SUBSELECT)
     @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;
 
