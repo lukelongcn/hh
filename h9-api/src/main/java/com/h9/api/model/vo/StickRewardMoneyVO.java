@@ -16,7 +16,7 @@ public class StickRewardMoneyVO {
 
    private String type;
 
-   private Integer rewardMoney;
+   private BigDecimal rewardMoney;
 
    private BigDecimal balance = new BigDecimal(0);
 

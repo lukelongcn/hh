@@ -45,6 +45,9 @@ public class SignController {
     }
 
 
+    /**
+     * 个人签到列表
+     */
     @Secured
     @GetMapping("/selfSign")
     public Result selfSign(@SessionAttribute("curUserId")long userId,

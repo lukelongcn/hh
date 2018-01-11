@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 /**
@@ -152,17 +153,17 @@ public class StickContoller {
     @GetMapping("/rewardJiuyuan/{stickId}/{money}")
     public Result rewardJiuyuan(@SessionAttribute("curUserId")long userId,
                                 @PathVariable("stickId")long stickId,
-                                @PathVariable("money")Integer money){
+                                @PathVariable("money")BigDecimal money){
         return stickService.rewardJiuyuan(userId,stickId,money);
     }
 
     /**
-     * 金额
+     * 打赏金额
      */
     @GetMapping("reward/{stickId}/{money}")
     public Result reward(@SessionAttribute("curUserId")long userId,
-                                @PathVariable("stickId")long stickId,
-                                @PathVariable("money")Integer money){
+                         @PathVariable("stickId")long stickId,
+                         @PathVariable("money")BigDecimal money){
         return stickService.reward(userId,stickId,money);
     }
 

@@ -19,7 +19,9 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
@@ -60,6 +62,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -387,7 +390,7 @@ public class StickService {
     /**
      * 赞赏酒元
      */
-    public Result rewardJiuyuan(long userId, long stickId, Integer money) {
+    public Result rewardJiuyuan(long userId, long stickId, BigDecimal money) {
         // 酒元icon
         String icon = configService.getStringConfig(JIUYUAN_ICON);
         // 商品类型
@@ -405,7 +408,21 @@ public class StickService {
         return Result.success(rewardMoneyVO);
     }
 
-    public Result reward(long userId, long stickId, Integer money) {
-        return null;
+    public Result reward(long userId, long stickId, BigDecimal money) {
+        if (money.signum() != 1 ){
+            return Result.fail("金额不能为负数");
+        }
+        // 减
+        Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
+        // 加
+        Stick stick = stickRepository.findOne(stickId);
+        Result resultRe = commonService.setBalance(stick.getUser().getId(),money, BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
+        // 失败
+        if(resultRe.getCode()==Result.FAILED_CODE && resultDe.getCode()==Result.FAILED_CODE){
+            this.logger.errorf("用户金额打赏失败,msg:{0}",resultRe.getMsg());
+            throw new ServiceException("打赏失败");
+        }
+        // 成功
+        return Result.success("打赏成功");
     }
 }
