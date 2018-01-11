@@ -39,10 +39,14 @@ public class HotelRoomListVO {
     @ApiModelProperty("房间状态")
     private String status;
 
+    @ApiModelProperty("酒店名称")
+    private  String hotelName;
+
     public HotelRoomListVO( ) {
     }
     public HotelRoomListVO(HotelRoomType roomType) {
         BeanUtils.copyProperties(roomType,this);
+        this.setHotelName(roomType.getHotel().getHotelName());
 
         HotelRoomType.Status findStatus = HotelRoomType.Status.findByCode(roomType.getStatus());
         if(findStatus != null){
