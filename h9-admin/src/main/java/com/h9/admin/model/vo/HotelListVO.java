@@ -25,7 +25,7 @@ public class HotelListVO {
     private Long id;
 
     @ApiModelProperty("图片")
-    private String images;
+    private List<String> images;
 
     @ApiModelProperty("酒店名")
     private String hotelName;
@@ -43,15 +43,20 @@ public class HotelListVO {
     private String hotelPhone;
 
 
+    public void setImages(String images) {
+        List<String> ims = JSONObject.parseArray(images, String.class);
+        this.images = ims;
+    }
+
     public HotelListVO(){}
 
     public HotelListVO(Hotel hotel){
 
         BeanUtils.copyProperties(hotel, this);
-        List<String> imagesFromDb = hotel.getImages();
-        if(!CollectionUtils.isEmpty(imagesFromDb)){
-            this.images = imagesFromDb.get(0);
-        }
+//        List<String> imagesFromDb = hotel.getImages();
+//        if(!CollectionUtils.isEmpty(imagesFromDb)){
+//            this.images = imagesFromDb.get(0);
+//        }
 
     }
 
