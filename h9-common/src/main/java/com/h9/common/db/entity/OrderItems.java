@@ -1,6 +1,8 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -49,6 +51,7 @@ public class OrderItems extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goods_id",referencedColumnName = "id",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @Fetch(FetchMode.SUBSELECT)
     @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;
 
