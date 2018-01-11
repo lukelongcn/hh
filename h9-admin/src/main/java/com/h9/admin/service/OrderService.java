@@ -61,7 +61,7 @@ public class OrderService {
         Page<Orders> all = ordersRepository.findAll(ordersSpecification
                 , pageRequest);
         long 查询真正使用时间 = System.currentTimeMillis();
-        logger.debugv("查询参数构建时间"+(查询真正使用时间 - 查询参数构建时间));
+        logger.debugv("查询时间"+(查询真正使用时间 - 查询参数构建时间));
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
