@@ -62,6 +62,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.h9.common.constant.ParamConstant.JIUYUAN_ICON;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
@@ -362,6 +364,9 @@ public class StickService {
         return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
     }
 
+    /**
+     * 赞赏列表
+     */
     public Result getReward(long stickId) {
         List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.REWARD_MONEY);
         if(CollectionUtils.isEmpty(mapListConfig)){
@@ -371,4 +376,12 @@ public class StickService {
         StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
         return Result.success(stickRewardVO);
     }
+
+    /**
+     * 赞赏酒元
+     */
+    /*public Result rewardJiuyuan(long stickId, Integer money) {
+        String icon = configService.getStringConfig(JIUYUAN_ICON);
+
+    }*/
 }
