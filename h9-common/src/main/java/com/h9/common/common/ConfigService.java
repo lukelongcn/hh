@@ -82,6 +82,14 @@ public class ConfigService {
         }
     }
 
+    public List<Double> getDoubleListConfig(String code) {
+        Object config = getConfig(code);
+        if (config instanceof List) {
+            return (List<Double>) config;
+        } else {
+            return null;
+        }
+    }
 
     public Map getMapConfig(String code) {
         logger.info("getMapConfig code: "+code);
