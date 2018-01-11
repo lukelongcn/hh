@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class HotelDetailVO {
     private Long id;
     private List<String> images = new ArrayList<>();
+    private String hotelName;
     private Float grade;
     private String detailAddress;
     private String tips;
