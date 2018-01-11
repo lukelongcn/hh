@@ -501,7 +501,7 @@ public class ConsumeService {
             return Result.fail();
         }
         logger.info("userId : " + user.getId() + " 已提现次数: " + countInt);
-        if(countInt > 3){
+        if(countInt > 2){
             return Result.fail("一天内提现次数不能超过3次，请明天再试");
         }
 
