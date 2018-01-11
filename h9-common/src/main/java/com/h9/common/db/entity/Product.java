@@ -1,6 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import lombok.Data;
 
 import javax.persistence.*;
 
@@ -18,6 +19,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Time: 17:43
  */
 
+@Data
 @Entity
 @Table(name = "product",uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 public class Product extends BaseEntity {
@@ -57,84 +59,8 @@ public class Product extends BaseEntity {
     @Column(name = "fisrt_address",  columnDefinition = "varchar(256) default '' COMMENT '第一次查询位置'")
     private String fisrtAddress;
 
+    @Column(name = "plan_id", columnDefinition = "varchar(84) default '' COMMENT '生产计划id'")
+    private String planId;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getSupplierName() {
-        return supplierName;
-    }
-
-    public void setSupplierName(String supplierName) {
-        this.supplierName = supplierName;
-    }
-
-    public String getSupplierDistrict() {
-        return supplierDistrict;
-    }
-
-    public void setSupplierDistrict(String supplierDistrict) {
-        this.supplierDistrict = supplierDistrict;
-    }
-
-    public BigDecimal getCount() {
-        return count;
-    }
-
-    public void setCount(BigDecimal count) {
-        this.count = count;
-    }
-
-    public Date getFisrtTime() {
-        return fisrtTime;
-    }
-
-    public void setFisrtTime(Date fisrtTime) {
-        this.fisrtTime = fisrtTime;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Date getLastTime() {
-        return lastTime;
-    }
-
-    public void setLastTime(Date lastTime) {
-        this.lastTime = lastTime;
-    }
-
-    public String getFisrtAddress() {
-        return fisrtAddress;
-    }
-
-    public void setFisrtAddress(String fisrtAddress) {
-        this.fisrtAddress = fisrtAddress;
-    }
-
-    public ProductType getProductType() {
-        return productType;
-    }
-
-    public void setProductType(ProductType productType) {
-        this.productType = productType;
-    }
 }
