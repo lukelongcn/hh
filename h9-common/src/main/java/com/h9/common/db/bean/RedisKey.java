@@ -1,7 +1,5 @@
 package com.h9.common.db.bean;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.MessageFormat;
 
 /**
@@ -34,8 +32,14 @@ public class RedisKey {
         return String.format("h9:wechat:userId:%s",token);
     }
 
-
     public static String addressKey = "h9:address:areas";
+
+    public static String withdrawSuccessCount = "h9:withdraw:userId_%s:count";
+
+    public static String getWithdrawSuccessCountKey(Long userId) {
+        String format = String.format(withdrawSuccessCount, userId);
+        return format;
+    }
 
     public static void main(String[] args) {
         String smsCodeKey = getSmsCodeKey("17673140753", 1);

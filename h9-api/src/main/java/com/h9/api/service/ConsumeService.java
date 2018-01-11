@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -176,7 +175,7 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            saveRechargeRecord(user,goods.getRealPrice(),orderItems.getOrders().getId());
+            saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
             return Result.success("充值成功", map);
         } else {
             throw new ServiceException(result);
@@ -184,8 +183,8 @@ public class ConsumeService {
     }
 
 
-    public void saveRechargeRecord(User user,BigDecimal money,Long orderId){
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(),orderId);
+    public void saveRechargeRecord(User user, BigDecimal money, Long orderId) {
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 
@@ -365,6 +364,12 @@ public class ConsumeService {
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
 
+
+        Result verifyWithdrawCount = verifyWithdrawCount(user);
+        if(verifyWithdrawCount.getCode() == 1){
+            return verifyResult;
+        }
+
         String withdrawMax = configService.getStringConfig(ParamConstant.WITHDRAW_MAX);
         BigDecimal max = new BigDecimal(withdrawMax);
 
@@ -384,7 +389,7 @@ public class ConsumeService {
 //        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
         //一天提现的金额最大值只能是最在额度值
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
-        if(balance.compareTo(canWithdrawMoney) < 0){
+        if (balance.compareTo(canWithdrawMoney) < 0) {
             canWithdrawMoney = balance;
         }
         String transAmt = "";
@@ -394,7 +399,7 @@ public class ConsumeService {
 //            transAmt = canWithdrawMoney;
             if ("product".equals(currentEnvironment)) {
                 transAmt = canWithdrawMoney.multiply(new BigDecimal(100)).toString();
-            }else{
+            } else {
                 transAmt = "101";
             }
         }
@@ -415,7 +420,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate,currentEnvironment);
+        Result result = chinaPayService.signPay(payParam, merDate, currentEnvironment);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
@@ -459,6 +464,7 @@ public class ConsumeService {
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             bankCardRepository.save(userBank);
+            addWithdrawCount(user);
             return Result.success(map);
 
         } else {
@@ -473,6 +479,52 @@ public class ConsumeService {
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             bankCardRepository.save(userBank);
             return Result.fail("请确认银行卡信息是否正确");
+        }
+    }
+
+    /**
+     * description: 验提现次数，一天3次 晚上 12 点清空
+     */
+    public Result verifyWithdrawCount(User user){
+        String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
+
+        String count = redisBean.getStringValue(withdrawSuccessCountKey);
+
+        if (StringUtils.isBlank(count)) {
+            return Result.success();
+        }
+        int countInt = Integer.valueOf(count);
+        logger.info("userId : " + user.getId() + " 提现次数: " + countInt);
+
+        if(countInt > 3){
+            return Result.fail("一天内提现次数不能超过3次，请明天再试");
+        }
+
+        return Result.success();
+    }
+
+    /**
+     * description: 增加提现次数,晚上 12 点清空。
+     */
+    public void addWithdrawCount(User user) {
+        String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
+        String withdrawSuccessCount = redisBean.getStringValue(withdrawSuccessCountKey);
+        logger.info("userId :"+user.getId()+"当前提现次数："+withdrawSuccessCount);
+        //计算到晚上零点的毫秒值
+        Date timesNight = DateUtil.getTimesNight();
+        int delay = (int) (timesNight.getTime() - new Date().getTime());
+        if (StringUtils.isBlank(withdrawSuccessCount)) {
+            redisBean.setStringValue(withdrawSuccessCountKey, "1", delay, TimeUnit.MILLISECONDS);
+        } else {
+            try {
+                int count = Integer.valueOf(withdrawSuccessCount);
+                count++;
+                redisBean.setStringValue(withdrawSuccessCountKey, count + "", delay, TimeUnit.MILLISECONDS);
+            } catch (NumberFormatException e) {
+                logger.info(e.getMessage(), e);
+                withdrawSuccessCount = "1";
+                redisBean.setStringValue(withdrawSuccessCountKey, withdrawSuccessCount + "", delay, TimeUnit.MILLISECONDS);
+            }
         }
     }
 
