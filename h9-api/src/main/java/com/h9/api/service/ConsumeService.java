@@ -493,9 +493,14 @@ public class ConsumeService {
         if (StringUtils.isBlank(count)) {
             return Result.success();
         }
-        int countInt = Integer.valueOf(count);
-        logger.info("userId : " + user.getId() + " 提现次数: " + countInt);
-
+        int countInt = 0;
+        try {
+            countInt = Integer.valueOf(count);
+        } catch (NumberFormatException e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail();
+        }
+        logger.info("userId : " + user.getId() + " 已提现次数: " + countInt);
         if(countInt > 3){
             return Result.fail("一天内提现次数不能超过3次，请明天再试");
         }
@@ -509,17 +514,19 @@ public class ConsumeService {
     public void addWithdrawCount(User user) {
         String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
         String withdrawSuccessCount = redisBean.getStringValue(withdrawSuccessCountKey);
-        logger.info("userId :"+user.getId()+"当前提现次数："+withdrawSuccessCount);
         //计算到晚上零点的毫秒值
         Date timesNight = DateUtil.getTimesNight();
         int delay = (int) (timesNight.getTime() - new Date().getTime());
         if (StringUtils.isBlank(withdrawSuccessCount)) {
+            logger.info("userId :"+user.getId()+"今天第一次提现");
             redisBean.setStringValue(withdrawSuccessCountKey, "1", delay, TimeUnit.MILLISECONDS);
         } else {
             try {
                 int count = Integer.valueOf(withdrawSuccessCount);
                 count++;
                 redisBean.setStringValue(withdrawSuccessCountKey, count + "", delay, TimeUnit.MILLISECONDS);
+                logger.info("userId :"+user.getId()+"今天提现次数："+count);
+
             } catch (NumberFormatException e) {
                 logger.info(e.getMessage(), e);
                 withdrawSuccessCount = "1";
