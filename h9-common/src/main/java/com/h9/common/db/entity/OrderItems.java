@@ -47,7 +47,7 @@ public class OrderItems extends BaseEntity {
     @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单id'",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Orders orders;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goods_id",referencedColumnName = "id",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;
