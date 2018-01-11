@@ -43,10 +43,6 @@ public class HotelListVO {
     private String hotelPhone;
 
 
-    public void setImages(String images) {
-        List<String> ims = JSONObject.parseArray(images, String.class);
-        this.images = ims;
-    }
 
     public HotelListVO(){}
 
