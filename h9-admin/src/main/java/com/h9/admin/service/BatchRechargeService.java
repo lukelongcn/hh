@@ -133,7 +133,6 @@ public class BatchRechargeService {
     }
 
     public Result batchList(Integer pageNumber, Integer size) {
-        PageResult<RechargeBatchRecord> all = rechargeBatchRecordRepository.findAll(pageNumber, size);
 
         return null;
     }
