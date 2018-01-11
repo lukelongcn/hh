@@ -16,9 +16,12 @@ import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,6 +35,9 @@ import java.util.List;
  */
 @Service
 public class OrderService {
+
+    Logger logger = Logger.getLogger(OrderService.class);
+    
     @Resource
     private OrdersRepository ordersRepository;
     @Resource
@@ -44,9 +50,18 @@ public class OrderService {
     private GoodsReposiroty goodsReposiroty;
     
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
+        long startTime = System.currentTimeMillis();
         Sort sort = new Sort(Sort.Direction.DESC,"id");
-        Page<Orders> all = ordersRepository.findAll(this.ordersRepository.buildSpecification(orderDTO)
-                ,orderDTO.toPageRequest(sort));
+        long sortEndTime = System.currentTimeMillis();
+        logger.debugv("排序时间"+(sortEndTime -startTime));
+        Specification<Orders> ordersSpecification = this.ordersRepository.buildSpecification(orderDTO);
+        long 查询参数构建时间 = System.currentTimeMillis();
+        logger.debugv("查询参数构建时间"+(查询参数构建时间 -sortEndTime));
+        PageRequest pageRequest = orderDTO.toPageRequest(sort);
+        Page<Orders> all = ordersRepository.findAll(ordersSpecification
+                , pageRequest);
+        long 查询真正使用时间 = System.currentTimeMillis();
+        logger.debugv("查询参数构建时间"+(查询真正使用时间 - 查询参数构建时间));
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
