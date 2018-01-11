@@ -68,7 +68,7 @@ public class AccountService {
             return userAccountVO;
             
         });*/
-        Page<UserAccountVO> map = this.userAccountRepository.findUserAccountVO(pageDTO.toPageRequest());
+        Page<UserAccountVO> map = userAccountRepository.findUserAccountVO(pageDTO.toPageRequest());
         return Result.success(new PageResult<>(map));
     }
 

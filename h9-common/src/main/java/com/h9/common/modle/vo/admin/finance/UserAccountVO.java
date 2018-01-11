@@ -30,19 +30,19 @@ public class UserAccountVO {
     @ApiModelProperty(value ="注册时间")
     private Date createTime;
 
-    public static UserAccountVO toUserAccountVO( UserAccount userAccount){
+    /*public static UserAccountVO toUserAccountVO( UserAccount userAccount){
         UserAccountVO userAccountVO = new UserAccountVO();
         //BeanUtils.copyProperties(user,userAccountVO);
         BeanUtils.copyProperties(userAccount,userAccountVO);
         return userAccountVO;
+    }*/
+
+    public UserAccountVO() {
     }
 
     public UserAccountVO(User user, UserAccount userAccount){
         BeanUtils.copyProperties(userAccount,this);
         BeanUtils.copyProperties(user,this);
-    }
-
-    public UserAccountVO() {
     }
 
     public Long getUserId() {

@@ -143,5 +143,10 @@ public class StickContoller {
         return stickService.getReward(stickId);
     }
 
+    /*@GetMapping("/rewardJiuyuan/{stickId}/{money}")
+    public Result rewardJiuyuan(@PathVariable("stickId")long stickId,@PathVariable("money")Integer money){
+        return stickService.rewardJiuyuan(stickId,money);
+    }*/
+
 
 }
