@@ -160,6 +160,7 @@ public class StickContoller {
     /**
      * 打赏金额
      */
+    @Secured
     @PostMapping("reward/{stickId}/{money}")
     public Result reward(@SessionAttribute("curUserId")long userId,
                          @PathVariable("stickId")long stickId,
