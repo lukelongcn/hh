@@ -10,7 +10,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +42,6 @@ public class EditHotelDTO {
     @Length(max = 200,min = 2)
     private String city;
 
-
     @ApiModelProperty("酒店地址")
     @NotNull(message = "请填写酒店地址")
     @Length(max = 200,min = 2)
@@ -50,7 +51,7 @@ public class EditHotelDTO {
     private Float grade;
 
     @ApiModelProperty("图片")
-    private String images;
+    private List<String> images = new ArrayList<>();
 
     @ApiModelProperty("房间数")
     @NotNull(message = "请输入的房间数")
