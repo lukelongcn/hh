@@ -1,6 +1,7 @@
 package com.h9.common.db.bean;
 
 import java.text.MessageFormat;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,7 +35,17 @@ public class RedisKey {
 
     public static String addressKey = "h9:address:areas";
 
+    /**
+     * description: 提现次数
+     */
     public static String withdrawSuccessCount = "h9:withdraw:userId_%s:count";
+
+    public static String batchRechargeCacheId = "h9:batchRecharge:id_";
+
+
+    public static String getBatchRechargeCacheId() {
+        return batchRechargeCacheId+ UUID.randomUUID().toString();
+    }
 
     public static String getWithdrawSuccessCountKey(Long userId) {
         String format = String.format(withdrawSuccessCount, userId);

@@ -11,6 +11,7 @@ import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,36 @@ public class FileService {
         path = this.buildFilePath("file",path);
         return this.upload(file, path);
     }
+
+    private Logger logger = Logger.getLogger(this.getClass());
+    public Result fileUpload(MultipartFile file) {
+
+        if (file == null) return Result.fail("请选择图片");
+
+        //构造一个带指定Zone对象的配置类
+        Configuration cfg = new Configuration(Zone.zone0());
+        //...其他参数参考类注释
+        UploadManager uploadManager = new UploadManager(cfg);
+        //...生成上传凭证，然后准备上传
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        String key = null;
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket);
+        try {
+            Response response = uploadManager.put(file.getInputStream(), key, upToken, null, null);
+            //解析上传成功的结果
+            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            return Result.success("上传成功", imgPath + putRet.key);
+
+        } catch (QiniuException ex) {
+            Response r = ex.response;
+        } catch (IOException e) {
+            logger.info(e.getMessage(),e);
+        }
+
+        return Result.fail("上传失败");
+    }
+
 
     private String buildFilePath(String type,String path) {
         StringBuilder key = new StringBuilder(type).append("/").append(envir);
