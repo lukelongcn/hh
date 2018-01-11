@@ -23,7 +23,7 @@ public class HotelListVO {
 
     private String hotelName = "";
 
-    private Float grade;
+    private BigDecimal grade ;
 
     private String detailAddress;
 

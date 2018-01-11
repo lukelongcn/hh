@@ -34,9 +34,9 @@ public class Hotel extends BaseEntity{
 
     @Column(name = "images",columnDefinition = "varchar(255) COMMENT '酒店图片'")
     private String images;
-
-    @Column(name = "grade",columnDefinition = "float comment '酒店评分'")
-    private Float grade;
+    
+    @Column(name = "big_decimal",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '酒店评分'")
+    private BigDecimal grade = new BigDecimal(0);
 
     @Column(name = "detail_address",columnDefinition = "varchar(255) comment '酒店地址'")
     private String detailAddress;

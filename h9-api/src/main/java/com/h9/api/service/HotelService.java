@@ -187,16 +187,26 @@ public class HotelService {
     public Result payOrder(HotelPayDTO hotelPayDTO) {
 
         Integer payMethod = hotelPayDTO.getPayMethod();
-        HotelOrder.PayMethodEnum payMethodEnum = HotelOrder.PayMethodEnum.findByCode(payMethod);
+        if(payMethod == null){
+            return Result.fail("请选择支付方式");
+        }
 
-        if (payMethodEnum == null) return Result.fail("不支持的支付方式");
+        HotelOrder.PayMethodEnum payMethodEnum = HotelOrder.PayMethodEnum.findByCode(payMethod);
+        if (payMethodEnum == null) return Result.fail("请选择支付方式");
 
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelPayDTO.getHotelOrderId());
         if (hotelOrder == null) return Result.fail("订单不存在");
 
-
         if (hotelOrder.getOrderStatus() != HotelOrder.OrderStatusEnum.NOT_PAID.getCode()) {
             return Result.fail("不能进行此操作");
+        }
+
+        if(payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY){
+
+        }else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY){
+
+        }else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY){
+
         }
 
         hotelOrder.setPayMethod(payMethod);
