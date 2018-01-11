@@ -1,8 +1,13 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickCommentSimpleVO;
+import com.h9.api.model.vo.StickCommentVO;
+import com.h9.api.model.vo.StickRewardVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
@@ -12,6 +17,8 @@ import com.h9.api.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
@@ -20,13 +27,16 @@ import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserExtends;
 import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
+import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import lombok.extern.jbosslog.JBossLog;
 
@@ -36,6 +46,7 @@ import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,7 +90,10 @@ public class StickService {
     private StickLikeRepository stickLikeRepository;
     @Resource
     private StickCommentLikeRepository stickCommentLikeRepository;
-
+    @Resource
+    private UserExtendsRepository userExtendsRepository;
+    @Resource
+    private ConfigService configService;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -150,8 +164,6 @@ public class StickService {
         return Result.success(new StickTypeDetailVo(stickType));
     }
 
-
-
     /**
      * 获取帖子详情
      */
@@ -205,7 +217,14 @@ public class StickService {
     }
 
 
-    public Result like(long id, long userId, Integer type) {
+    /**
+     * 点赞贴子或评论
+     * @param userId 用户id
+     * @param id 贴子或评论id
+     * @param type 点赞类型
+     * @return Result
+     */
+    public Result like( long userId,long id, Integer type) {
         /* 点赞贴子*/
         if (type == 1){
             Stick stick = stickRepository.findOne(id);
@@ -213,7 +232,7 @@ public class StickService {
                 return Result.fail("点赞失败,贴子不存在");
             }
             // 判断该用户是否为该贴点过赞
-            StickLike stickLike = stickLikeRepository.findByUserId(userId);
+            StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
             if (stickLike == null){
                 StickLike stickLikeNew = new StickLike();
                 stickLikeNew.setStatus(1);
@@ -238,8 +257,8 @@ public class StickService {
             if (stickComment == null){
                 return Result.fail("点赞失败,该评论不存在或已被删除");
             }
-            // 判断该用户是否为该贴点过赞
-            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserId(userId);
+            // 判断该用户是否为该评论点过赞
+            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserIdAndStickCommentId(userId,id);
             if (stickCommentLike == null){
                 StickCommentLike stickCommentLikeNew = new StickCommentLike();
                 stickCommentLikeNew.setUserId(userId);
@@ -262,4 +281,94 @@ public class StickService {
         return Result.fail("点赞失败");
     }
 
+    /**
+     * 添加贴子或评论回复
+     * @param userId 用户id
+     * @param stickCommentDTO 请求对象
+     * @return Result
+     */
+    public Result addComment(long userId, StickCommentDTO stickCommentDTO) {
+        // 贴子id
+        Stick stick = stickRepository.findOne(stickCommentDTO.getStickId());
+        if (stick == null){
+            return Result.fail("贴子不存在或已被删除");
+        }
+        StickComment stickComment = new StickComment();
+        // 回复的用户
+        User user = userRepository.findOne(userId);
+        stickComment.setAnswerUser(user);
+        // 回复内容
+        stickComment.setContent(stickCommentDTO.getContent());
+        // 回复级别
+        stickComment.setLevel(stickCommentDTO.getLevel());
+        // 回复楼层
+        stickComment.setFloor(stickCommentDTO.getFloor());
+        // @的用户
+        Long notifyUserId = stickCommentDTO.getNotifyUserId();
+        if (notifyUserId != null){
+            User aitUser = userRepository.findOne(notifyUserId);
+            if (aitUser != null){
+                stickComment.setNotifyUserId(aitUser);
+            }
+        }
+        // 父级id
+        Long stickCommentId = stickCommentDTO.getStickCommentId();
+        if (stickCommentId != null){
+            StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
+            if(stickCommentPid!=null){
+                stickComment.setStickComment(stickCommentPid);
+            }else {
+                return Result.fail("该楼层不存在或已被删除");
+            }
+        }
+        // 贴子id
+        stickComment.setStick(stick);
+        stickCommentRepository.save(stickComment);
+        // 增加阅读数和回复数
+        stick.setAnswerCount(stick.getAnswerCount()+1);
+        stick.setReadCount(stick.getReadCount()+1);
+        stickRepository.save(stick);
+        return Result.success("回复成功");
+    }
+
+
+    /**
+     * 拿到评论
+     */
+    public Result getComment(long stickId, Integer page, Integer limit) {
+        PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
+        if (pageResult == null){
+            return Result.success("暂无评论");
+        }
+        return Result.success(pageResult.result2Result(this::stickComent2Vo));
+    }
+
+
+    public StickCommentVO stickComent2Vo(StickComment stickComment){
+        User user = stickComment.getAnswerUser();
+        if (user.getId() == null){
+            return new StickCommentVO();
+        }
+        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
+        Integer  sex = userExtends.getSex();
+
+        // 拿到回复的回复列表
+        List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
+            long stickCommentParentId = stickComment.getId();
+            List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+            if (CollectionUtils.isNotEmpty(stickCommentChild)){
+                stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
+        }
+        return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
+    }
+
+    public Result getReward(long stickId) {
+        List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.REWARD_MONEY);
+        if(CollectionUtils.isEmpty(mapListConfig)){
+            mapListConfig = new ArrayList<>();
+        }
+        Stick stick = stickRepository.findOne(stickId);
+        StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
+        return Result.success(stickRewardVO);
+    }
 }

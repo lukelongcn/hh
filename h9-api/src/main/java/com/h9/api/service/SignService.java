@@ -68,10 +68,12 @@ public class SignService {
                 return Result.fail("您今天已经签过到了");
             }
             // 如果上次签到是昨天凌晨之前，说明没有连续签到
-            if(checkdateCalendar.before(DateUtil.getYesterdaymorning())){
+            if(checkDate.before(DateUtil.getYesterdaymorning())){
                 //将签到天数
                 // 归为1
                 user.setSignDays(1);
+                System.out.println(today);
+                System.out.println(DateUtil.getYesterdaymorning());
             }else{
                 user.setSignDays(user.getSignDays()+1);
             }
@@ -155,11 +157,18 @@ public class SignService {
         //获取用户上次签到时间
         Date checkDate = userSign.getCreateTime();
         Date today = DateUtil.getTimesMorning();
-        // 如果用户不是第一次进入页面且今日没有签到
+        // 如果用户今日没有签到  并且断签或不是第一次进入页面
         UserSignMessageVO userSignMessageVO;
        if (checkDate.before(today)){
-             userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
-                    listSignVO,0);
+             if (checkDate.before(DateUtil.getYesterdaymorning())){
+                 user.setSignDays(0);
+                 user = userRepository.saveAndFlush(user);
+                 userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                         listSignVO,0);
+             }else{
+                 userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,
+                         listSignVO,0);
+             }
         }else{
            // 如果用户不是第一次进入页面且已签到
            userSignMessageVO = new UserSignMessageVO(userAccount.getBalance(),user,userSign,

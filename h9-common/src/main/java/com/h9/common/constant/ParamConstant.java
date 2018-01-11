@@ -72,5 +72,7 @@ public class ParamConstant {
     // 意见反馈类别
     public static final String ADVICE_TYPE = "adviceType";
 
+    // 打赏金额
+    public static final String REWARD_MONEY = "reward_money";
 
 }

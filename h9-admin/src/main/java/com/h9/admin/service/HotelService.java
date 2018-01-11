@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
@@ -8,17 +9,21 @@ import com.h9.admin.model.vo.HotelOrderListVO;
 import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.HotelRepository;
 import com.h9.common.db.repo.HotelRoomTypeRepository;
+import com.h9.common.db.repo.HtmlContentRepository;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
@@ -63,14 +68,24 @@ public class HotelService {
         }
         BeanUtils.copyProperties(editHotelDTO, hotel);
 
+        String hotelInfo = editHotelDTO.getHotelInfo();
+
+        hotelInfo = appendHtml(hotelInfo);
+        hotel.setHotelInfo(hotelInfo);
         String startReserveTime = editHotelDTO.getStartReserveTime();
         String endReserveTime = editHotelDTO.getEndReserveTime();
 
         Result result = validTime(startReserveTime, endReserveTime);
         if (result.getCode() == 1) return result;
 
-        hotelRepository.save(hotel);
+        hotelRepository.saveAndFlush(hotel);
+
         return Result.success();
+    }
+
+    private String appendHtml(String html) {
+        String htmlModel = "<html><body>" + html + "</body></html>";
+        return htmlModel;
     }
 
     private Result validTime(String... time) {
@@ -118,6 +133,10 @@ public class HotelService {
         if (room == null) room = new HotelRoomType();
 
         BeanUtils.copyProperties(editRoomDTO, room);
+        List<String> image = editRoomDTO.getImage();
+        if (CollectionUtils.isNotEmpty(image)) {
+            room.setImage(JSONObject.toJSONString(image));
+        }
 
         room.setHotel(hotel);
         hotelRoomTypeRepository.save(room);
@@ -218,7 +237,7 @@ public class HotelService {
     }
 
     private Result refundOrder(HotelOrder hotelOrder) {
-        if(hotelOrder == null) return Result.fail("退款失败，订单不存在");
+        if (hotelOrder == null) return Result.fail("退款失败，订单不存在");
         //TODO 调用微信退款
         hotelOrder.setOrderStatus(REFUND_MONEY.getCode());
         hotelOrderRepository.save(hotelOrder);
@@ -227,7 +246,7 @@ public class HotelService {
 
     public Result affirmOrder(HotelOrder hotelOrder) {
 
-        if(hotelOrder == null) return Result.fail("确认失败，订单不存在");
+        if (hotelOrder == null) return Result.fail("确认失败，订单不存在");
         hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.SUCCESS.getCode());
         hotelOrderRepository.save(hotelOrder);
         return Result.success();

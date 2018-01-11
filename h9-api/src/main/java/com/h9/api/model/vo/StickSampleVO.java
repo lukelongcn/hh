@@ -3,9 +3,13 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.utils.DateUtil;
+
 import lombok.Data;
 
 import javax.persistence.Column;
+
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +30,7 @@ public class StickSampleVO {
     private Integer likeCount = 0;
     private Integer answerCount = 0;
     private String typeName;
+    private String spaceTime;
 
     public StickSampleVO() {
     }
@@ -45,6 +50,7 @@ public class StickSampleVO {
         if (stickType != null) {
             typeName = stickType.getName();
         }
+        spaceTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
     }
 
 

@@ -24,7 +24,7 @@ public class SignController {
 
     /**
      * 每日签到
-     * 。@param userId
+     * @param userId
      * @return
      */
     @Secured

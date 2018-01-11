@@ -47,6 +47,4 @@ public interface UserRepository extends BaseRepository<User> {
     User findByH9UserId(Long userId);
 
 
-
-
 }

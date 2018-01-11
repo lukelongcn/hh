@@ -1,13 +1,18 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.util.Optional;
@@ -25,6 +30,7 @@ public class StickContoller {
 
     @Resource
     private StickService stickService;
+
 
     @GetMapping("/type/sample")
     public Result getTypes(){
@@ -89,14 +95,53 @@ public class StickContoller {
      * @param userId 用户id
      * @param id 贴子id或评论id
      * @param type 1：帖子 2：评论
-     * @return
+     * @return Result
      */
-    @GetMapping("/like")
-    public Result like(@SessionAttribute("curUserId") long userId,
+    @Secured
+    @PostMapping("/like")
+    public Result like(@SessionAttribute("curUserId")long userId,
                        @NotNull(message = "id不能为空")@RequestParam(value = "id") long id,
                        @NotNull(message = "点赞类型不能为空")@RequestParam(value = "type") Integer type){
         return stickService.like(userId,id,type);
-
     }
+
+    /**
+     * 添加回复
+     * @param userId 用户id
+     * @param stickCommentDTO 请求对象
+     * @return Result
+     */
+    @Secured
+    @PostMapping("/addComment")
+    public Result addComment(@SessionAttribute("curUserId")long userId,
+                             @Valid @RequestBody StickCommentDTO stickCommentDTO){
+        return stickService.addComment(userId,stickCommentDTO);
+    }
+
+    /**
+     * 贴子评论列表
+     * @param stickId 贴子id
+     * @param page 页码
+     * @param limit 个数
+     * @return Result
+     */
+    @GetMapping("/getComment")
+    public Result getComment(@RequestParam("stickId")long stickId,
+                             @RequestParam(defaultValue = "1") Integer page,
+                             @RequestParam(defaultValue = "10") Integer limit){
+        return stickService.getComment(stickId,page,limit);
+    }
+
+
+    /**
+     * 打赏列表信息
+     * @param stickId 贴子id
+     * @return Result
+     */
+    @GetMapping("/getReward/{stickId}")
+    public Result getReward(@PathVariable("stickId")long stickId){
+        return stickService.getReward(stickId);
+    }
+
 
 }

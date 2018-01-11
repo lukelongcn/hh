@@ -3,6 +3,8 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.community.StickCommentLike;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,5 +17,6 @@ import org.springframework.stereotype.Repository;
 public interface StickCommentLikeRepository extends BaseRepository<StickCommentLike> {
 
 
-    StickCommentLike findByUserId(long userId);
+    @Query("select s from StickCommentLike  s where s.userId = ?1 and s.stickCommentId = ?2")
+    StickCommentLike findByUserIdAndStickCommentId(long id, long userId);
 }

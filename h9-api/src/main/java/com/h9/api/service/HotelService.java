@@ -14,10 +14,13 @@ import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.HotelRepository;
 import com.h9.common.db.repo.HotelRoomTypeRepository;
 import com.h9.common.db.repo.UserAccountRepository;
+import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,20 +59,20 @@ public class HotelService {
     @Resource
     private UserAccountRepository userAccountRepository;
 
+    @Value("${path.app.wechat_host}")
+    private String wechatHostUrl;
+
     public Result detail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
 
         if (hotel == null) return Result.fail("酒店不存在");
 
-        HotelRoomType type = new HotelRoomType().setStatus(1);
-        Example<HotelRoomType> of = Example.of(type);
-
-        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(of);
+        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
-            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList));
+            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList,wechatHostUrl));
         }
-        return Result.success(new HotelDetailVO(hotel, null));
+        return Result.success(new HotelDetailVO(hotel, null,wechatHostUrl));
     }
 
     public Result hotelList(String city, String queryKey,int page,int limit) {
@@ -95,14 +98,22 @@ public class HotelService {
             return Result.fail("此类房间不存在");
         }
 
+        Date comeRoomTime = new Date();
+        Hotel hotel = hotelRoomType.getHotel();
+        Date startReserveTime = hotel.getStartReserveTime();
+        Date endReserveTime = hotel.getEndReserveTime();
+
+        if (comeRoomTime.getTime() < startReserveTime.getTime() || comeRoomTime.getTime() > endReserveTime.getTime()) {
+            return Result.fail("非可用时段不可预订");
+        }
+
         HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType,userId);
 
-        BigDecimal totalMoney = calcOrderTotalMoney(hotelOrder, hotelRoomType);
         hotelOrder = hotelOrderRepository.saveAndFlush(hotelOrder);
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
-        return Result.success(new HotelOrderPayVO(hotelOrder,userAccount,totalMoney));
+        return Result.success(new HotelOrderPayVO(hotelOrder,userAccount,hotelOrder.getTotalMoney()));
     }
 
     /**
@@ -120,6 +131,10 @@ public class HotelService {
      */
     public HotelOrder initHotelOrder(AddHotelOrderDTO addHotelOrderDTO, HotelRoomType hotelRoomType, Long userId) {
 
+        Integer roomCount = addHotelOrderDTO.getRoomCount();
+        BigDecimal realPrice = hotelRoomType.getRealPrice();
+        BigDecimal totalMoney = realPrice.multiply(new BigDecimal(roomCount));
+
         return new HotelOrder()
                 .setOrderStatus(HotelOrder.OrderStatusEnum.NOT_PAID.getCode())
                 .setComeRoomTime(addHotelOrderDTO.getComeRoomTime())
@@ -133,6 +148,7 @@ public class HotelService {
                 .setHotel(hotelRoomType.getHotel())
                 .setHotelRoomType(hotelRoomType)
                 .setInclude(hotelRoomType.getInclude())
+                .setTotalMoney(totalMoney)
                 .setUser_id(userId);
     }
 
@@ -275,5 +291,11 @@ public class HotelService {
 
         BigDecimal totalMoeny = calcOrderTotalMoney(authResult.getData(), authResult.getData().getHotelRoomType());
         return Result.success(new HotelOrderPayVO(authResult.getData(), userAccount, totalMoeny));
+    }
+
+    public String orderDetail(Long hotelId) {
+        Hotel hotel = hotelRepository.findOne(hotelId);
+        if(hotel == null) return "酒店不存在";
+        return hotel.getHotelInfo();
     }
 }
