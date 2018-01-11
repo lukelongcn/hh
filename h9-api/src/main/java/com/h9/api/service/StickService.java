@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.StickCommentSimpleVO;
 import com.h9.api.model.vo.StickCommentVO;
+import com.h9.api.model.vo.StickRewardVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
 import com.h9.api.model.vo.StickSampleVO;
@@ -15,6 +17,8 @@ import com.h9.api.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
@@ -32,6 +36,7 @@ import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 import lombok.extern.jbosslog.JBossLog;
 
@@ -87,6 +92,8 @@ public class StickService {
     private StickCommentLikeRepository stickCommentLikeRepository;
     @Resource
     private UserExtendsRepository userExtendsRepository;
+    @Resource
+    private ConfigService configService;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -157,8 +164,6 @@ public class StickService {
         return Result.success(new StickTypeDetailVo(stickType));
     }
 
-
-
     /**
      * 获取帖子详情
      */
@@ -227,7 +232,7 @@ public class StickService {
                 return Result.fail("点赞失败,贴子不存在");
             }
             // 判断该用户是否为该贴点过赞
-            StickLike stickLike = stickLikeRepository.findByUserId(userId);
+            StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
             if (stickLike == null){
                 StickLike stickLikeNew = new StickLike();
                 stickLikeNew.setStatus(1);
@@ -252,8 +257,8 @@ public class StickService {
             if (stickComment == null){
                 return Result.fail("点赞失败,该评论不存在或已被删除");
             }
-            // 判断该用户是否为该贴点过赞
-            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserId(userId);
+            // 判断该用户是否为该评论点过赞
+            StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserIdAndStickCommentId(userId,id);
             if (stickCommentLike == null){
                 StickCommentLike stickCommentLikeNew = new StickCommentLike();
                 stickCommentLikeNew.setUserId(userId);
@@ -309,14 +314,20 @@ public class StickService {
         // 父级id
         Long stickCommentId = stickCommentDTO.getStickCommentId();
         if (stickCommentId != null){
-            StickComment stickCommentPid = stickCommentRepository.findOne(stickCommentId);
+            StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
             if(stickCommentPid!=null){
                 stickComment.setStickComment(stickCommentPid);
+            }else {
+                return Result.fail("该楼层不存在或已被删除");
             }
         }
         // 贴子id
         stickComment.setStick(stick);
         stickCommentRepository.save(stickComment);
+        // 增加阅读数和回复数
+        stick.setAnswerCount(stick.getAnswerCount()+1);
+        stick.setReadCount(stick.getReadCount()+1);
+        stickRepository.save(stick);
         return Result.success("回复成功");
     }
 
@@ -342,14 +353,22 @@ public class StickService {
         Integer  sex = userExtends.getSex();
 
         // 拿到回复的回复列表
-        long stickCommentParentId = stickComment.getStickComment().getId();
-        if (stickComment.getStickComment() != null){
-            List<StickComment> stickCommentParent= stickCommentRepository.findByBackId(stickCommentParentId);
-            stickCommentParent.forEach(stickCommentP ->{
-               // User userNew = u
-            } );
+        List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
+            long stickCommentParentId = stickComment.getId();
+            List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+            if (CollectionUtils.isNotEmpty(stickCommentChild)){
+                stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
+        return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
+    }
 
-        return new StickCommentVO(sex, stickComment);
+    public Result getReward(long stickId) {
+        List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.REWARD_MONEY);
+        if(CollectionUtils.isEmpty(mapListConfig)){
+            mapListConfig = new ArrayList<>();
+        }
+        Stick stick = stickRepository.findOne(stickId);
+        StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
+        return Result.success(stickRewardVO);
     }
 }

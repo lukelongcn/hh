@@ -72,5 +72,16 @@ public class ParamConstant {
     // 意见反馈类别
     public static final String ADVICE_TYPE = "adviceType";
 
+    // 打赏金额
+    public static final String REWARD_MONEY = "reward_money";
+
+    // 签到奖励概率
+    public static final String SIGN_REWARD_CHANCE = "sign_reward_chance";
+
+    // 签到奖励金额范围1
+    public static final String SIGN_REWARD1= "sign_reward1";
+
+    // 签到奖励金额范围2
+    public static final String SIGN_REWARD2= "sign_reward2";
 
 }

@@ -6,6 +6,7 @@ import com.h9.api.model.dto.StickDto;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class StickContoller {
 
     @Resource
     private StickService stickService;
+
 
     @GetMapping("/type/sample")
     public Result getTypes(){
@@ -116,10 +118,30 @@ public class StickContoller {
         return stickService.addComment(userId,stickCommentDTO);
     }
 
+    /**
+     * 贴子评论列表
+     * @param stickId 贴子id
+     * @param page 页码
+     * @param limit 个数
+     * @return Result
+     */
     @GetMapping("/getComment")
     public Result getComment(@RequestParam("stickId")long stickId,
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
         return stickService.getComment(stickId,page,limit);
     }
+
+
+    /**
+     * 打赏列表信息
+     * @param stickId 贴子id
+     * @return Result
+     */
+    @GetMapping("/getReward/{stickId}")
+    public Result getReward(@PathVariable("stickId")long stickId){
+        return stickService.getReward(stickId);
+    }
+
+
 }

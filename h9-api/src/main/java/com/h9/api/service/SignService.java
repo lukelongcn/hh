@@ -6,7 +6,9 @@ import com.h9.api.model.vo.UserSignMessageVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -16,6 +18,7 @@ import com.h9.common.db.repo.UserRepository;
 import com.h9.common.db.repo.UserSignRepository;
 import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +45,8 @@ public class SignService {
     private UserSignRepository userSignRepository;
     @Resource
     private CommonService commonService;
+    @Resource
+    private ConfigService configService;
     @Resource
     private UserAccountRepository userAccountRepository;
 
@@ -83,7 +89,7 @@ public class SignService {
 
         UserSign userSignNew = new UserSign();
         userSignNew.setUser(user);
-        userSignNew.setCashBack(cashBack(user));
+        userSignNew.setCashBack(cashBack());
         userSignNew = userSignRepository.saveAndFlush(userSignNew);
 
         // 签到奖励金额加入到用户酒元余额中
@@ -105,24 +111,48 @@ public class SignService {
     /**
       * 签到奖励规则
       */
-    private BigDecimal cashBack(User user){
-        if (user.getSignDays() < 10){
-            Double x = (Math.random()*2);
-            BigDecimal bigDecimal = new BigDecimal(x);
-            return bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
+    private BigDecimal cashBack(){
+        // 得到0-1区间随机数
+        double randomNumber;
+        randomNumber = Math.random();
+        // 得到概率list
+        List<String> listChance = configService.getStringListConfig(ParamConstant.SIGN_REWARD_CHANCE);
+        // 得到范围1
+        List<String> list1 = configService.getStringListConfig(ParamConstant.SIGN_REWARD1);
+        // 得到范围2
+        List<String> list2 = configService.getStringListConfig(ParamConstant.SIGN_REWARD1);
+
+        double chance1 = Double.parseDouble(listChance.get(0));
+        double chance2 = Double.parseDouble(listChance.get(1));
+        double chance3 = Double.parseDouble(listChance.get(2));
+        double chance4 = Double.parseDouble(listChance.get(3));
+        if (randomNumber >= 0 && randomNumber <= chance1){
+            return getSignReward(list1.get(0),list2.get(0));
         }
-        if (user.getSignDays() < 30 && user.getSignDays() >= 10){
-            Double x = (Math.random()*4);
-            BigDecimal bigDecimal = new BigDecimal(x);
-            return bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
+        else if (randomNumber >= chance1  && randomNumber <= chance1 + chance2){
+            return getSignReward(list1.get(1),list2.get(1));
         }
-        if (user.getSignDays() >= 30){
-            Double x=(Math.random()*8);
-            BigDecimal bigDecimal = new BigDecimal(x);
-            return bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
+        else if (randomNumber >= chance1 + chance2  && randomNumber <= chance1 + chance2 + chance3){
+            return getSignReward(list1.get(2),list2.get(2));
         }
-        return new BigDecimal(0);
+        else if (randomNumber >= chance1 + chance2 + chance3
+                && randomNumber <= chance1 + chance2 + chance3+ chance4) {
+            return getSignReward(list1.get(3),list2.get(3));
+        }
+        BigDecimal bigDecimal = new BigDecimal(0.1);
+        return bigDecimal.setScale(1,BigDecimal.ROUND_HALF_UP);
     }
+
+    public BigDecimal getSignReward(String list11, String list21){
+        //Double x = d1 +(Math.random()*d2);
+        double d1 = Double.parseDouble(list11);
+        double d2 = Double.parseDouble(list21);
+        Random random = new Random();
+        Double x1 = random.nextDouble()* (d2-d1)+d1;
+        BigDecimal bigDecimal = new BigDecimal(x1);
+        return bigDecimal.setScale(1,BigDecimal.ROUND_HALF_UP);
+    }
+
 
     /**
      * 获取签到页面信息

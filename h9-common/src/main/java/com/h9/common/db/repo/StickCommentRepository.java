@@ -22,8 +22,10 @@ import java.util.List;
 @Repository
 public interface StickCommentRepository extends BaseRepository<StickComment> {
 
+    @Query("select s from StickComment s where s.id = ?1")
+    StickComment findById(long id);
 
-    @Query("select s from StickComment s where s.stick.id = ?1 order by s.createTime DESC")
+    @Query("select s from StickComment s where s.stick.id = ?1 and s.level = 1 order by s.createTime DESC")
     Page<StickComment> findStickCommentList(long stickId, Pageable pageRequest);
 
     default PageResult<StickComment> findStickCommentList(long stickId, Integer page, Integer limit){
