@@ -348,6 +348,11 @@ public class ConsumeService {
 
     public Result bankWithDraw(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
 
+
+        if(true){
+            return Result.fail("提现功能正在维护中");
+        }
+
         User user = userRepository.findOne(userId);
         //验证短信
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
