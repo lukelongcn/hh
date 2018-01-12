@@ -47,8 +47,8 @@ public class PayProvider {
     }
 
 
-    public String goPay(long orderId){
-        return payHost + "/h9/pay/toPay?payOrderId="+orderId;
+    public String goPay(long payOrderId,long businessOrderId){
+        return payHost + "/h9/pay/toPay?payOrderId="+payOrderId+"&businessAppId="+payConfig.getBusinessAppId()+"&businessOrderId="+businessOrderId;
     }
 
 

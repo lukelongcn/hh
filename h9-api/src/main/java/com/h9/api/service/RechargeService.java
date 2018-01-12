@@ -1,9 +1,12 @@
 package com.h9.api.service;
 
 import com.h9.api.model.dto.OrderDTO;
+import com.h9.api.model.dto.PayNotifyVO;
 import com.h9.api.model.vo.OrderVo;
 import com.h9.api.model.vo.PayVO;
 import com.h9.api.provider.PayProvider;
+import com.h9.api.service.handler.AbPayHandler;
+import com.h9.api.service.handler.RechargePayHandler;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
@@ -17,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -76,12 +81,36 @@ public class RechargeService {
         }
 
         OrderVo orderVo = result.getData();
-        String pay = payProvider.goPay(orderVo.getPayOrderId());
+        String pay = payProvider.goPay(orderVo.getPayOrderId(),payInfo.getId());
         PayVO payVO = new PayVO();
         payVO.setPayOrderId(orderVo.getPayOrderId());
         payVO.setPayUrl(pay);
         return Result.success();
     }
+
+
+    public Map<String,String> callback(PayNotifyVO payNotifyVO){
+        Map<String, String> map = new HashMap<>();
+        long orderId = Long.parseLong(payNotifyVO.getOrder_id());
+        PayInfo payInfo = payInfoRepository.findOne(orderId);
+        AbPayHandler abPayHandler = null;
+        switch (payInfo.getOrderType()){
+            case 1:{
+                abPayHandler = new RechargePayHandler();
+            }default:{
+                abPayHandler = new RechargePayHandler();
+            }
+        }
+        boolean callback = abPayHandler.callback(payNotifyVO, payInfo);
+        if(callback ){
+
+        }else{
+
+        }
+
+        return map;
+    }
+
 
 
 }
