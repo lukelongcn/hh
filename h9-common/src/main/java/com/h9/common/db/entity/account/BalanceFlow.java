@@ -156,7 +156,7 @@ public class BalanceFlow extends BaseEntity {
         VB_TO_MONEY(11,"vb兑换酒元"),
         REFUND(13,"退款"),
         SIGN(16,"签到"),
-        STICK_REWARD(15,"打赏");
+        STICK_REWARD(17,"打赏");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;
