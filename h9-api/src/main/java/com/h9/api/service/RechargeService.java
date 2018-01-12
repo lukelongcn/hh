@@ -2,6 +2,7 @@ package com.h9.api.service;
 
 import com.h9.api.model.dto.OrderDTO;
 import com.h9.api.model.dto.PayNotifyVO;
+import com.h9.api.model.dto.RechargeOrderVO;
 import com.h9.api.model.vo.OrderVo;
 import com.h9.api.model.vo.PayVO;
 import com.h9.api.provider.PayProvider;
@@ -87,6 +88,16 @@ public class RechargeService {
         payVO.setPayUrl(pay);
         payVO.setOrderId(rechargeOrder.getId());
         return Result.success();
+    }
+
+
+    public Result getOrder(Long orderId){
+        RechargeOrder rechargeOrder = rechargeOrderRepository.findOne(orderId);
+        if (rechargeOrder == null) {
+            return Result.fail("充值订单不存在");
+        }
+        return Result.success(new RechargeOrderVO(rechargeOrder));
+
     }
 
 
