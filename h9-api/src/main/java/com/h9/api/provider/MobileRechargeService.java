@@ -1,11 +1,13 @@
 package com.h9.api.provider;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.OfPayRecord;
 import com.h9.common.db.entity.OrderItems;
 import com.h9.common.db.entity.Orders;
 import com.h9.common.utils.MD5Util;
+import com.h9.common.utils.MoneyUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,7 +22,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * description: 手机充值
@@ -42,7 +46,7 @@ public class MobileRechargeService {
 //    包体=userid+userpws+cardid+cardnum+sporder_id+sporder_time+ game_userid
     //2: KeyStr(秘钥) 必须由客户提供欧飞商务进行绑定
 
-    public Result recharge(MobileRechargeDTO mobileRechargeDTO,Long id) {
+    public Result rechargeTest(MobileRechargeDTO mobileRechargeDTO, Long id, BigDecimal realPrice) {
         String userpwsmd5 = MD5Util.getMD5(userpws);
         String cardid = "140101";
         String cardnum = "50";
@@ -90,6 +94,56 @@ public class MobileRechargeService {
         return Result.success("充值失败");
     }
 
+
+    public Result recharge(MobileRechargeDTO mobileRechargeDTO, Long orderid, BigDecimal realPrice) {
+        logger.info("短信充值 " + JSONObject.toJSONString(mobileRechargeDTO));
+        String userpwsmd5 = MD5Util.getMD5(userpws);
+        String cardid = "140101";
+        String cardnum = MoneyUtils.formatMoney(realPrice, "0.00");
+        //商户订单号
+        String sporderId = orderid+"";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String sporder_time = formatter.format(new Date());
+        String game_userid = mobileRechargeDTO.getTel();
+//        String mg5_str = "B662CA03452882C761BC75585BA2483F";
+        String version = "6.0";
+        MultiValueMap<String, String> map = new LinkedMultiValueMap();
+        map.add("userid", userId);
+        map.add("userpws", userpwsmd5);
+        map.add("cardid", cardid);
+        map.add("cardnum", cardnum);
+        map.add("sporder_id", sporderId);
+        map.add("sporder_time", sporder_time);
+        map.add("game_userid", game_userid);
+        map.add("version", version);
+        String s = userId + userpwsmd5 + cardid + cardnum + sporderId + sporder_time + game_userid;
+        s += keyStr;
+        String md5 = MD5Util.getMD5(s);
+        map.add("md5_str", md5.toUpperCase());
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        String body = restTemplate.postForEntity(url, request, String.class).getBody();
+        logger.info("充值结果："+body);
+        try {
+
+            JAXBContext jc = JAXBContext.newInstance(Orderinfo.class);
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            Orderinfo rechargeResult = (Orderinfo) unmarshaller.unmarshal(new StringReader(body));
+
+            if (rechargeResult.retcode.equals("1")) {
+                logger.info("充值成功");
+                return Result.success("充值成功",rechargeResult);
+            } else {
+                logger.info("充值失败");
+                return Result.success("充值失败",rechargeResult);
+            }
+        } catch (JAXBException e) {
+            logger.info(e.getMessage(), e);
+        }
+
+        return Result.success("充值失败");
+    }
 
 
     @XmlRootElement
