@@ -8,11 +8,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jboss.logging.Logger;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +27,10 @@ import java.util.Map;
  */
 public class POIUtils {
 
-    public static void main(String[] args) {
-//        String path = "C:\\Users\\itservice\\Desktop\\test.xlsx";
-//        List<Map<String, String>> list = readExcel(path);
-//        System.out.println(list);
+    public static void main(String[] args) throws FileNotFoundException {
+        String path = "C:\\Users\\itservice\\Desktop\\test.xlsx";
+        List<RechargeBatchObject> rechargeBatchObjects = readExcel(new FileInputStream(path));
+        System.out.println(rechargeBatchObjects);
     }
 
     private static Workbook getReadWorkBookType(String filePath) {
@@ -67,12 +71,16 @@ public class POIUtils {
     @Accessors(chain = true)
     public static class RechargeBatchObject{
         private String phone;
-        private String money;
+        private BigDecimal money;
         private String remark;
         private String index;
     }
+
+    private static Logger logger = Logger.getLogger(POIUtils.class);
+
     public static List<RechargeBatchObject> readExcel(InputStream inputStream) {
         Workbook workbook = null;
+
         List<RechargeBatchObject> list = new ArrayList<>();
         try {
             workbook = getReadWorkBookType(inputStream);
@@ -85,14 +93,23 @@ public class POIUtils {
 
                 Row row = sheet.getRow(rowNum);
                 Cell cell = row.getCell(0);
-                String phone = cell.toString();
+                String phone = ((XSSFCell) cell).getRawValue();
                 rechargeBatchObject.setPhone(phone);
                 Cell cell2 = row.getCell(1);
-                String money = cell2.toString();
-                rechargeBatchObject.setMoney(money);
+                String money = ((XSSFCell) cell2).getRawValue();
+                BigDecimal bigDecimal = new BigDecimal(0);
+                try {
+                     bigDecimal = new BigDecimal(money);
+                } catch (Exception e) {
+                    logger.info(e.getMessage(),e);
+                    return null;
+                }
+                rechargeBatchObject.setMoney(bigDecimal);
                 Cell cell3 = row.getCell(2);
-                String remark = cell3.toString();
-                rechargeBatchObject.setRemark(remark);
+                if(cell3 != null){
+                    String remark = ((XSSFCell) cell3).getRawValue();;
+                    rechargeBatchObject.setRemark(remark);
+                }
                 rechargeBatchObject.setIndex(rowNum + "");
                 list.add(rechargeBatchObject);
             }

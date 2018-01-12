@@ -31,5 +31,7 @@ public class RechargeBatch extends BaseEntity{
     @Column(name = "file_path")
     private String filePath;
 
+    @Column(name = "opt_user")
+    private Long optUserId;
 
 }
