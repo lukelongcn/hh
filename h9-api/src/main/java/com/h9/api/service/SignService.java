@@ -18,7 +18,6 @@ import com.h9.common.db.repo.UserRepository;
 import com.h9.common.db.repo.UserSignRepository;
 import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
-import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
