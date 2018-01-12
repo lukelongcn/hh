@@ -20,6 +20,8 @@ public class StickReportVO {
 
     private Long stickId;
 
+    private String title;
+
     private String content;
 
     private String createTime;
@@ -27,5 +29,7 @@ public class StickReportVO {
     public StickReportVO(StickReport stickReport) {
         BeanUtils.copyProperties(stickReport,this);
         this.createTime = DateUtil.formatDate(stickReport.getCreateTime(), DateUtil.FormatType.SECOND);
+        this.title = stickReport.getStick().getTitle();
+        this.stickId = stickReport.getId();
     }
 }

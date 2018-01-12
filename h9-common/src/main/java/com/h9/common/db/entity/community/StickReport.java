@@ -2,10 +2,16 @@ package com.h9.common.db.entity.community;
 
 import com.h9.common.base.BaseEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -28,8 +34,9 @@ public class StickReport  extends BaseEntity {
     @Column(name = "user_id", columnDefinition = "bigint(20) default null COMMENT '用户'")
     private Long userId;
 
-    @Column(name = "stick_id", columnDefinition = "bigint(20) default null COMMENT '帖子id'")
-    private Long stickId;
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "stick_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '帖子'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Stick stick;
 
     @Column(name = "content", nullable = false, columnDefinition = "varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci default '' COMMENT '内容'")
     private String content;

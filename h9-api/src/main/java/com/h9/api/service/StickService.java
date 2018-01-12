@@ -487,9 +487,10 @@ public class StickService {
     }
 
     public Result report(long userId, long stickId, String content) {
+        Stick stick = stickRepository.findById(stickId);
         StickReport stickReport = new StickReport();
         stickReport.setContent(content);
-        stickReport.setStickId(stickId);
+        stickReport.setStick(stick);
         stickReport.setUserId(userId);
         stickReportRepository.save(stickReport);
         return Result.success("举报成功");
