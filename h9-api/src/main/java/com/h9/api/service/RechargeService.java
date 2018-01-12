@@ -87,7 +87,7 @@ public class RechargeService {
         payVO.setPayOrderId(orderVo.getPayOrderId());
         payVO.setPayUrl(pay);
         payVO.setOrderId(rechargeOrder.getId());
-        return Result.success();
+        return Result.success(payVO);
     }
 
 
