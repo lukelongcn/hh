@@ -69,7 +69,13 @@ public class PayProvider {
             orderDTO.setBusinessAppId(payConfig.getBusinessAppId());
             HttpEntity<OrderDTO> stringHttpEntity = getStringHttpEntity(orderDTO);
             ResponseEntity<Result> exchange = restTemplate.exchange(initOrderURL(), HttpMethod.POST, stringHttpEntity, Result.class);
-            return exchange.getBody();
+            Result result = exchange.getBody();
+            if(!result.isSuccess()){
+                return result;
+            }
+            Object data = result.getData();
+            OrderVo orderVo = JSONObject.parseObject(JSONObject.toJSONString(data), OrderVo.class);
+            return new Result<OrderVo>(result.getCode(),result.getMsg(),orderVo);
         } catch (RestClientException e) {
             logger.debug(e.getMessage(),e);
             e.printStackTrace();
