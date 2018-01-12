@@ -191,6 +191,9 @@ public class ConsumeService {
         String key = RedisKey.getTodayRechargeMoney(userId);
         String todayRechargeMoney = redisBean.getStringValue(key);
 
+        if (StringUtils.isBlank(todayRechargeMoney)) {
+            todayRechargeMoney = "0";
+        }
         BigDecimal rechargedMoeny = new BigDecimal(todayRechargeMoney);
 
         rechargedMoeny = rechargedMoeny.add(money);
