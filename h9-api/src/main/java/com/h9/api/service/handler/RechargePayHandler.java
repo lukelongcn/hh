@@ -48,6 +48,6 @@ public class RechargePayHandler extends AbPayHandler {
         rechargeOrder.setStatus(2);
         rechargeOrderRepository.saveAndFlush(rechargeOrder);
         Result result = commonService.setBalance(rechargeOrder.getUser_id(), rechargeOrder.getMoney(), BalanceFlow.BalanceFlowTypeEnum.Recharge.getId(), rechargeOrder.getId(), null, "余额充值");
-        return false;
+        return true;
     }
 }
