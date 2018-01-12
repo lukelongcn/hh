@@ -86,7 +86,7 @@ public class Orders extends BaseEntity {
     @Column(name = "goods_type",columnDefinition = "varchar(50) COMMENT'商品类型'")
     private String goodsType;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy(" id desc")
     @Fetch(FetchMode.SUBSELECT)
     private List<OrderItems> orderItems = new ArrayList<>();

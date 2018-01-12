@@ -66,7 +66,11 @@ public interface OrdersRepository extends BaseRepository<Orders> {
                     predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class),orderDTO.getStatus()));
                 }
                 Predicate[] pre = new Predicate[predicateList.size()];
-                return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
+                if(pre!=null&&pre.length>=0){
+                     return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
+                }else{
+                    return criteriaQuery.getRestriction();
+                }
             }
         };
     }

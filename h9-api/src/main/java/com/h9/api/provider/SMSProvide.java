@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 public class SMSProvide {
 
     public static final String smsUrl = "http://106.ihuyi.com/webservice/sms.php?method=Submit";
-    public static final String appId = "cf_tianlitai";
-    public static final String appKey = "1a4772f6b6eee0a3600921a56d13e139";
+    public static final String appId = "cf_hjjt";
+    public static final String appKey = "6f2fa48e6729faf9f00655a45e378936";
 
     private Logger logger = Logger.getLogger(this.getClass());
     @Resource
