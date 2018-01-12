@@ -1,8 +1,10 @@
 package com.h9.api.interceptor;
 
 import com.h9.api.model.dto.Areas;
+import com.h9.api.model.dto.PayConfig;
 import com.h9.api.service.AddressService;
 import com.h9.api.service.UserService;
+import com.h9.api.service.handler.PayHandler;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.Address;
@@ -28,10 +30,14 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     AddressService addressService;
 
     @Resource
-    private UserService userService;
+    private PayHandler payHandler;
+
+
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent)
+    {
         this.initAddressCache();
+        payHandler.initPay();
     }
 
     /****
@@ -48,4 +54,5 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
 //   12345678909
 
     }
+
 }
