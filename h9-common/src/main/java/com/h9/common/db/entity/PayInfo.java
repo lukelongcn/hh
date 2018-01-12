@@ -39,6 +39,9 @@ public class PayInfo extends BaseEntity {
     @Column(name = "pay_order_id", columnDefinition = "bigint(20) default null COMMENT '支付订单号'")
     private Long payOrderId;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 待支付， 2 已回调成功 3 回调出错'")
+    private Integer status = 1;
+
 
     public enum OrderTypeEnum{
         Recharge(0,"充值");

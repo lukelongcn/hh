@@ -26,7 +26,6 @@ public class PayController {
 
     @PostMapping("/callback")
     public Map<String, String> callback(@RequestBody PayNotifyVO payNotifyVO){
-
         return rechargeService.callback(payNotifyVO);
     }
 
