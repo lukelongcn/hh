@@ -3,6 +3,7 @@ package com.h9.admin.model.vo;
 import com.h9.common.db.entity.RechargeBatch;
 import com.h9.common.db.entity.RechargeBatchRecord;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.time.DateUtils;
@@ -52,6 +53,7 @@ public class RechargeBatchListVO {
             this.setStatusDesc(statusEnum.getDesc());
             this.setStatus(statusEnum.getCode());
         }
+        this.setMoney(MoneyUtils.formatMoney(rechargeBatchRecord.getMoney()));
     }
 
 }
