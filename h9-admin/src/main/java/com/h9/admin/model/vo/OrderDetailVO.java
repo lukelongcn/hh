@@ -104,7 +104,7 @@ public class OrderDetailVO {
         orderDetailVO.setCount(sum);
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
         orderDetailVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
-        orderDetailVO.setTel(rechargeRecord == null ? null : rechargeRecord.getTel());
+        orderDetailVO.setTel(orders == null ? null : orders.getUserPhone());
         return orderDetailVO;
     }
 

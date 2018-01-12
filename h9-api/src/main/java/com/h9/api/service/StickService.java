@@ -147,7 +147,6 @@ public class StickService {
         return Result.success(new StickSampleVO(stickFromDb));
     }
 
-
     public Result listStick(String type,int page,Integer limit){
 
         if(type.equals("config_home")){
