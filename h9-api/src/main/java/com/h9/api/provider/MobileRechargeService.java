@@ -34,6 +34,7 @@ public class MobileRechargeService {
 
     private Logger logger = Logger.getLogger(this.getClass());
     private static final String url = "http://apitest.ofpay.com/onlineorder.do";
+    private static final String onlineUrl = "http://apitest.ofpay.com/onlineorder.do";
     @Value("${ofpay.userid}")
     private String userId;
     @Value("${ofpay.userpwd}")
@@ -123,7 +124,7 @@ public class MobileRechargeService {
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        String body = restTemplate.postForEntity(url, request, String.class).getBody();
+        String body = restTemplate.postForEntity(onlineUrl, request, String.class).getBody();
         logger.info("充值结果："+body);
         try {
 
