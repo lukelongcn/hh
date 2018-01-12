@@ -161,12 +161,36 @@ public class StickContoller {
      * 打赏金额
      */
     @Secured
-    @PostMapping("reward/{stickId}/{money}")
+    @PostMapping("/reward/{stickId}/{money}")
     public Result reward(@SessionAttribute("curUserId")long userId,
                          @PathVariable("stickId")long stickId,
                          @PathVariable("money")BigDecimal money){
         return stickService.reward(userId,stickId,money);
     }
 
+    /**
+     * 删除帖子
+     * @param userId token
+     * @param stickId 帖子id
+     * @return Result
+     */
+    @Secured
+    @PostMapping("/delete/{stickId}")
+    public Result delete(@SessionAttribute("curUserId")long userId,
+                         @PathVariable("stickId")long stickId){
+        return stickService.delete(userId,stickId);
+    }
 
+    /**
+     * 删除帖子评论
+     * @param userId token
+     * @param stickCommentId 帖子评论id
+     * @return Result
+     */
+    @Secured
+    @PostMapping("/commentDelete/{stickCommentId}")
+    public Result commentDelete(@SessionAttribute("curUserId")long userId,
+                                @PathVariable("stickCommentId")long stickCommentId){
+        return stickService.commentDelete(userId,stickCommentId);
+    }
 }

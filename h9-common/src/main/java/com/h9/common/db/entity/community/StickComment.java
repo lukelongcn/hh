@@ -53,6 +53,9 @@ public class StickComment extends BaseEntity {
     @Column(name = "like_count",nullable = false,columnDefinition = "int default 0 COMMENT '点赞数'")
     private Integer likeCount = 0;
 
+    @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子评论状态 1使用 2禁用 3删除'")
+    private Integer state = 1;
+
     public Long getId() {
         return id;
     }
@@ -124,5 +127,13 @@ public class StickComment extends BaseEntity {
 
     public void setLikeCount(Integer likeCount) {
         this.likeCount = likeCount;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
     }
 }

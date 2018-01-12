@@ -183,7 +183,7 @@ public class StickService {
      */
     @Transactional
     public Result detail(long id) {
-        Stick stick = stickRepository.findOne(id);
+        Stick stick = stickRepository.findById(id);
         if (stick == null) {
             return Result.fail("帖子不存在");
         }
@@ -241,7 +241,7 @@ public class StickService {
     public Result like( long userId,long id, Integer type) {
         /* 点赞贴子*/
         if (type == 1){
-            Stick stick = stickRepository.findOne(id);
+            Stick stick = stickRepository.findById(id);
             if (stick == null){
                 return Result.fail("点赞失败,贴子不存在");
             }
@@ -267,7 +267,7 @@ public class StickService {
 
         /* 点赞评论*/
         else if (type == 2){
-            StickComment stickComment = stickCommentRepository.findOne(id);
+            StickComment stickComment = stickCommentRepository.findById(id);
             if (stickComment == null){
                 return Result.fail("点赞失败,该评论不存在或已被删除");
             }
@@ -303,7 +303,7 @@ public class StickService {
      */
     public Result addComment(long userId, StickCommentDTO stickCommentDTO) {
         // 贴子id
-        Stick stick = stickRepository.findOne(stickCommentDTO.getStickId());
+        Stick stick = stickRepository.findById(stickCommentDTO.getStickId());
         if (stick == null){
             return Result.fail("贴子不存在或已被删除");
         }
@@ -363,7 +363,6 @@ public class StickService {
         }
         UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
         Integer  sex = userExtends.getSex();
-
         // 拿到回复的回复列表
         List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
             long stickCommentParentId = stickComment.getId();
@@ -382,7 +381,7 @@ public class StickService {
         if(CollectionUtils.isEmpty(mapListConfig)){
             mapListConfig = new ArrayList<>();
         }
-        Stick stick = stickRepository.findOne(stickId);
+        Stick stick = stickRepository.findById(stickId);
         StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
         return Result.success(stickRewardVO);
     }
@@ -399,7 +398,7 @@ public class StickService {
         StickRewardMoneyVO rewardMoneyVO = new StickRewardMoneyVO();
         rewardMoneyVO.setIcon(icon);
         rewardMoneyVO.setRewardMoney(money);
-        Stick stick = stickRepository.findOne(stickId);
+        Stick stick = stickRepository.findById(stickId);
         rewardMoneyVO.setType(goodsType.getName()+"["+stick.getTitle()+"]");
         User user = userRepository.findOne(userId);
         UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
@@ -415,7 +414,7 @@ public class StickService {
         // 减
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 加
-        Stick stick = stickRepository.findOne(stickId);
+        Stick stick = stickRepository.findById(stickId);
         Result resultRe = commonService.setBalance(stick.getUser().getId(),money, BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 失败
         if(resultRe.getCode()==Result.FAILED_CODE && resultDe.getCode()==Result.FAILED_CODE){
@@ -424,5 +423,37 @@ public class StickService {
         }
         // 成功
         return Result.success("打赏成功");
+    }
+
+    /**
+     * 删除帖子
+     */
+    public Result delete(long userId, long stickId) {
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("帖子已被删除或禁用");
+        }
+        if (stick.getUser().getId() != userId){
+            return Result.fail("无权操作");
+        }
+        stick.setState(3);
+        stickRepository.save(stick);
+        return Result.success("删除成功");
+    }
+
+    /**
+     * 帖子评论删除
+     */
+    public Result commentDelete(long userId, long stickCommentId) {
+        StickComment stickComment = stickCommentRepository.findById(stickCommentId);
+        if (stickComment == null ){
+            return Result.fail("该评论已被删除或禁用");
+        }
+        if (stickComment.getAnswerUser().getId() != userId){
+            return Result.fail("无权操作");
+        }
+        stickComment.setState(3);
+        stickCommentRepository.save(stickComment);
+        return Result.success("删除评论成功");
     }
 }
