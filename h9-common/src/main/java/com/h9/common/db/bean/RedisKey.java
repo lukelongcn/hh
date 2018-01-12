@@ -42,6 +42,11 @@ public class RedisKey {
 
     public static String batchRechargeCacheId = "h9:batchRecharge:id_";
 
+    public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
+
+    public static String getTodayRechargeMoney(Long userId) {
+        return todayRechargeMoney+userId;
+    }
 
     public static String getBatchRechargeCacheId() {
         return batchRechargeCacheId+ UUID.randomUUID().toString();
