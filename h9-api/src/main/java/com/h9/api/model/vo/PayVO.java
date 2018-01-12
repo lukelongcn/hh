@@ -13,6 +13,7 @@ import lombok.Data;
 public class PayVO {
     private Long payOrderId;
     private String payUrl;
+    private Long orderId;
 
 
 
