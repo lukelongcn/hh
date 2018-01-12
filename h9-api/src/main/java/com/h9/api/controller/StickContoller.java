@@ -215,10 +215,11 @@ public class StickContoller {
         return stickService.getReportType();
     }
 
-    @PostMapping("report/{stickId}/{content}")
+    @Secured
+    @PostMapping("report/{stickId}")
     public Result getReport(@SessionAttribute("curUserId")long userId,
                             @PathVariable("stickId")long stickId,
-                            @PathVariable("content")String content){
+                            @RequestParam("content")String content){
         return stickService.report(userId,stickId,content);
     }
 }

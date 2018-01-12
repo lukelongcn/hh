@@ -479,7 +479,7 @@ public class StickService {
      * 拿到举报类型
      */
     public Result getReportType() {
-        List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.STICK_REPORT);
+        List<String> mapListConfig = configService.getStringListConfig(ParamConstant.STICK_REPORT);
         if(CollectionUtils.isEmpty(mapListConfig)){
             mapListConfig = new ArrayList<>();
         }
