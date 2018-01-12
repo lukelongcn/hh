@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -21,6 +22,7 @@ import java.util.Map;
 @RequestMapping("/pay")
 public class PayController {
 
+    @Resource
     private RechargeService rechargeService;
 
 
