@@ -10,10 +10,7 @@ import com.h9.common.db.repo.AdviceRespository;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.NetworkUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +41,6 @@ public class AdviceService {
         return Result.success(mapListConfig);
     }
 
-    @Test
-    public void test(){
-        List<String> list = configService.getStringListConfig(ParamConstant.SIGN_REWARD1);
-        list.get(0);
-        System.out.println(list.get(0));
-    }
     /**
      * 提交意见反馈
      * @param userId

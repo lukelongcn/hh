@@ -193,4 +193,19 @@ public class StickContoller {
                                 @PathVariable("stickCommentId")long stickCommentId){
         return stickService.commentDelete(userId,stickCommentId);
     }
+
+
+    /**
+     *
+     * @param userId token
+     * @param stickId 帖子id
+     * @param stickDto 请求对象
+     * @return Result
+     */
+    @PostMapping("/update/{stickId}")
+    public Result update(@SessionAttribute("curUserId")long userId,
+                         @PathVariable("stickId")long stickId,
+                         @RequestBody @Validated StickDto stickDto){
+        return stickService.updateStick(userId,stickId,stickDto);
+    }
 }

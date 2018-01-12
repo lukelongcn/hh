@@ -120,12 +120,16 @@ public class StickService {
 
     @Transactional
     public Result addStick(Long userId, StickDto stickDto){
-        User user = userRepository.findOne(userId);
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
         if(stickType == null){
             return Result.fail("请选择分类");
         }
         Stick stick = new Stick();
+        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType)));
+    }
+
+    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType){
+        User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         stick.setStickType(stickType);
@@ -143,8 +147,7 @@ public class StickService {
                 stick.setDistrict(addressDetail.getDistrict());
             }
         }
-        Stick stickFromDb = stickRepository.save(stick);
-        return Result.success(new StickSampleVO(stickFromDb));
+        return stickRepository.saveAndFlush(stick);
     }
 
     public Result listStick(String type,int page,Integer limit){
@@ -455,4 +458,18 @@ public class StickService {
         stickCommentRepository.save(stickComment);
         return Result.success("删除评论成功");
     }
+
+    @Transactional
+    public Result updateStick(long userId, long stickId, StickDto stickDto) {
+        Stick stick = stickRepository.findById(stickId);
+        if (stick.getUser().getId() != userId){
+            return Result.fail("无权操作");
+        }
+        StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
+        if(stickType == null){
+            return Result.fail("请选择分类");
+        }
+        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType)));
+    }
+
 }
