@@ -30,6 +30,6 @@ public class StickReportVO {
         BeanUtils.copyProperties(stickReport,this);
         this.createTime = DateUtil.formatDate(stickReport.getCreateTime(), DateUtil.FormatType.SECOND);
         this.title = stickReport.getStick().getTitle();
-        this.stickId = stickReport.getId();
+        this.stickId = stickReport.getStick().getId();
     }
 }
