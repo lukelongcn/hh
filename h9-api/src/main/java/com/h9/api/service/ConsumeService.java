@@ -209,7 +209,7 @@ public class ConsumeService {
             String everydayRechargeTotalMoney = configService.getStringConfig("everydayRechargeTotalMoney");
 
             if (StringUtils.isBlank(everydayRechargeTotalMoney)) {
-                everydayRechargeTotalMoney = "0";
+                everydayRechargeTotalMoney = "300";
             }
             String todayRechargeMoney = redisBean.getStringValue(RedisKey.getTodayRechargeMoney(userId));
 

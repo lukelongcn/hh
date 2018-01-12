@@ -137,7 +137,7 @@ public class MobileRechargeService {
                 return Result.success("充值成功",rechargeResult);
             } else {
                 logger.info("充值失败");
-                return Result.success("充值失败",rechargeResult);
+                return Result.fail("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
             logger.info(e.getMessage(), e);
