@@ -10,6 +10,7 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.Address;
 import com.h9.common.db.entity.GlobalProperty;
 
+import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.UserRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -30,6 +31,10 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     AddressService addressService;
 
     @Resource
+    private UserRepository userRepository;
+    @Resource
+    private UserService userService;
+    @Resource
     private PayHandler payHandler;
 
 
@@ -39,6 +44,7 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
         this.initAddressCache();
         payHandler.initPay();
     }
+
 
     /****
      * 初始化地址区域信息
