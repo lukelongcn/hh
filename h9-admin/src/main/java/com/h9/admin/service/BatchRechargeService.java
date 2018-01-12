@@ -11,10 +11,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.RechargeBatch;
-import com.h9.common.db.entity.RechargeBatchRecord;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -37,6 +34,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.BATCH_RECHARGE;
 
 /**
  * Created by itservice on 2018/1/11.
@@ -61,6 +60,7 @@ public class BatchRechargeService {
 
     @Resource
     private ConfigService configService;
+
     public Result batchRechargeFile(MultipartFile file) {
 
         if (file == null) {
@@ -78,8 +78,8 @@ public class BatchRechargeService {
 
             redisBean.setStringValue(cacheId, JSONObject.toJSONString(rechargeBatchObjects), 1, TimeUnit.DAYS);
 //            Result result = fileService.fileUpload(file);
-            String date = DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND2)+new Random(new Date().getTime()).nextInt();
-            String key = date+"/"+file.getOriginalFilename();
+            String date = DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND2) + new Random(new Date().getTime()).nextInt();
+            String key = date + "/" + file.getOriginalFilename();
             Result result = fileService.upload(file, key);
             if (result.getCode() == 1) {
                 return Result.fail("上传失败");
@@ -189,20 +189,21 @@ public class BatchRechargeService {
         }
         ids.forEach(id -> {
             RechargeBatchRecord rechargeBatchRecord = rechargeBatchRecordRepository.findOne(id);
-            if(rechargeBatchRecord != null
-                    && rechargeBatchRecord.getStatus() == RechargeBatchRecord.RechargeStatusEnum.NOT_RECHARGE.getCode()){
+            if (rechargeBatchRecord != null
+                    && rechargeBatchRecord.getStatus() == RechargeBatchRecord.RechargeStatusEnum.NOT_RECHARGE.getCode()) {
                 User user = userRepository.findByPhone(rechargeBatchRecord.getPhone());
-                if(user != null){
-                    UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
-                    if(userAccount != null){
-                        BigDecimal balance = userAccount.getBalance();
-                        balance = balance.add(rechargeBatchRecord.getMoney());
-                        userAccount.setBalance(balance);
-                        rechargeBatchRecord.setStatus(RechargeBatchRecord.RechargeStatusEnum.RECHARGE.getCode());
-                        rechargeBatchRecord.setOptUserId(userId);
-                        userAccountRepository.save(userAccount);
-                        rechargeBatchRecordRepository.save(rechargeBatchRecord);
-                    }
+                if (user != null) {
+//                    UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+//                    if(userAccount != null){
+//                        BigDecimal balance = userAccount.getBalance();
+//                        balance = balance.add(rechargeBatchRecord.getMoney());
+//                        userAccount.setBalance(balance);
+                    commonService.setBalance(userId, rechargeBatchRecord.getMoney(), BATCH_RECHARGE.getId(), null, "", BATCH_RECHARGE.getName());
+                    rechargeBatchRecord.setStatus(RechargeBatchRecord.RechargeStatusEnum.RECHARGE.getCode());
+                    rechargeBatchRecord.setOptUserId(userId);
+//                    userAccountRepository.save(userAccount);
+                    rechargeBatchRecordRepository.save(rechargeBatchRecord);
+//                    }
                 }
             }
         });
