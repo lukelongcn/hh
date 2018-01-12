@@ -58,8 +58,9 @@ public class PayProvider {
     public void initConfig( ){
         logger.debugv("payConfig init:"+JSONObject.toJSONString(payConfig));
         logger.debugv(initUrl());
-        Result result = restTemplate.postForObject(initUrl(), payConfig, Result.class);
-        logger.debugv(JSONObject.toJSONString(result));
+        HttpEntity<Object> stringHttpEntity = getStringHttpEntity(payConfig);
+        ResponseEntity<Result> exchange = restTemplate.exchange(initUrl(), HttpMethod.POST, stringHttpEntity, Result.class);
+        logger.debugv(JSONObject.toJSONString(exchange.getBody()));
     }
 
 
@@ -67,7 +68,7 @@ public class PayProvider {
         try {
             logger.debugv(initOrderURL());
             orderDTO.setBusinessAppId(payConfig.getBusinessAppId());
-            HttpEntity<OrderDTO> stringHttpEntity = getStringHttpEntity(orderDTO);
+            HttpEntity<Object> stringHttpEntity = getStringHttpEntity(orderDTO);
             ResponseEntity<Result> exchange = restTemplate.exchange(initOrderURL(), HttpMethod.POST, stringHttpEntity, Result.class);
             Result result = exchange.getBody();
             logger.debugv(JSONObject.toJSONString(exchange.getBody()));
@@ -85,11 +86,11 @@ public class PayProvider {
     }
 
 
-    private static HttpEntity<OrderDTO> getStringHttpEntity(OrderDTO param) {
+    private static HttpEntity<Object> getStringHttpEntity(Object param) {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
-        return new HttpEntity<OrderDTO>(param, headers);
+        return new HttpEntity<Object>(param, headers);
     }
 
 
