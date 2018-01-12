@@ -167,6 +167,11 @@ public class SmsService {
     //校验信息
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
+        if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
+
+            return Result.fail("提现功能正在维护中");
+        }
+
 
         if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
             //判断提现额度
