@@ -5,17 +5,14 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import com.sun.org.glassfish.gmbal.Description;
 
-import net.bytebuddy.implementation.bind.annotation.Default;
 import org.jboss.logging.Logger;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-import io.swagger.annotations.ApiOperation;
 
 /**
  * Created with IntelliJ IDEA.
