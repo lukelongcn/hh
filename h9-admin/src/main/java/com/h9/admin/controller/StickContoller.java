@@ -6,12 +6,16 @@ import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
+import com.sun.org.glassfish.gmbal.Description;
+
 import net.bytebuddy.implementation.bind.annotation.Default;
 import org.jboss.logging.Logger;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,7 +46,15 @@ public class StickContoller {
         return stickService.getStick(page,limit);
     }
 
-
+    /**
+     * 拿到反馈列表
+     */
+    @Description("拿到反馈列表")
+    @GetMapping("/getReport")
+    public Result getReport(@RequestParam(defaultValue = "1") Integer page,
+                            @RequestParam(defaultValue = "10") Integer limit){
+        return stickService.getReport(page,limit);
+    }
 
 
 

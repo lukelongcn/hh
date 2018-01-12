@@ -26,6 +26,7 @@ import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
 import com.h9.common.db.entity.community.StickLike;
+import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.hotel.Hotel;
@@ -38,6 +39,7 @@ import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickLikeRepository;
+import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserAccountRepository;
@@ -108,7 +110,8 @@ public class StickService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
-
+    @Resource
+    private StickReportRepository stickReportRepository;
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
@@ -472,4 +475,23 @@ public class StickService {
         return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType)));
     }
 
+    /**
+     * 拿到举报类型
+     */
+    public Result getReportType() {
+        List<Config> mapListConfig = configService.getMapListConfig(ParamConstant.STICK_REPORT);
+        if(CollectionUtils.isEmpty(mapListConfig)){
+            mapListConfig = new ArrayList<>();
+        }
+        return Result.success(mapListConfig);
+    }
+
+    public Result report(long userId, long stickId, String content) {
+        StickReport stickReport = new StickReport();
+        stickReport.setContent(content);
+        stickReport.setStickId(stickId);
+        stickReport.setUserId(userId);
+        stickReportRepository.save(stickReport);
+        return Result.success("举报成功");
+    }
 }

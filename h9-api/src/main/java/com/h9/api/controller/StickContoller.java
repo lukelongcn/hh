@@ -6,6 +6,7 @@ import com.h9.api.model.dto.StickDto;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
 
+import org.apache.commons.collections.ResettableListIterator;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -207,5 +208,17 @@ public class StickContoller {
                          @PathVariable("stickId")long stickId,
                          @RequestBody @Validated StickDto stickDto){
         return stickService.updateStick(userId,stickId,stickDto);
+    }
+
+    @GetMapping("/getReportType")
+    public Result getReportType(){
+        return stickService.getReportType();
+    }
+
+    @PostMapping("report/{stickId}/{content}")
+    public Result getReport(@SessionAttribute("curUserId")long userId,
+                            @PathVariable("stickId")long stickId,
+                            @PathVariable("content")String content){
+        return stickService.report(userId,stickId,content);
     }
 }

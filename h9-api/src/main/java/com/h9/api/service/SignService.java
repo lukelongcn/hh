@@ -119,7 +119,7 @@ public class SignService {
         // 得到范围1
         List<String> list1 = configService.getStringListConfig(ParamConstant.SIGN_REWARD1);
         // 得到范围2
-        List<String> list2 = configService.getStringListConfig(ParamConstant.SIGN_REWARD1);
+        List<String> list2 = configService.getStringListConfig(ParamConstant.SIGN_REWARD2);
 
         double chance1 = Double.parseDouble(listChance.get(0));
         double chance2 = Double.parseDouble(listChance.get(1));

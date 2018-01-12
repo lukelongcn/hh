@@ -32,7 +32,7 @@ public class AdviceController {
     public Result userAdvice(@RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
         Map<String,String> mapConfig = configService.getMapConfig(ParamConstant.ADVICE_TYPE);
-        System.out.println(mapConfig);
+
         return userAdviceService.getUserAdvice(page,limit,mapConfig);
     }
 
