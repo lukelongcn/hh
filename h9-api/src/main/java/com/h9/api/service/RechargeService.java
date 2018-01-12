@@ -110,7 +110,14 @@ public class RechargeService {
         long orderId = Long.parseLong(payNotifyVO.getOrder_id());
         PayInfo payInfo = payInfoRepository.findOne(orderId);
         AbPayHandler payHandler = payHandlerFactory.getPayHandler(payInfo.getOrderType());
-        boolean callback = payHandler.callback(payNotifyVO, payInfo);
+        boolean callback = false;
+
+        try {
+            callback = payHandler.callback(payNotifyVO, payInfo);
+        } catch (Exception e) {
+            callback = false;
+        }
+
         Map<String, String> map = new HashMap<>();
         if (callback) {
             map.put("statusCode", "0");
