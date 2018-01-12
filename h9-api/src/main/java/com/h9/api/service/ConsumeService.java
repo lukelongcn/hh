@@ -205,6 +205,9 @@ public class ConsumeService {
 
             String todayRechargeMoney = redisBean.getStringValue(RedisKey.getTodayRechargeMoney(userId));
 
+            if(StringUtils.isBlank(todayRechargeMoney)){
+                todayRechargeMoney = "0";
+            }
             BigDecimal rechargedMoney = realPrice.add((new BigDecimal(todayRechargeMoney)));
             if (rechargedMoney.compareTo(new BigDecimal(everydayRechargeTotalMoney)) > 0) {
                 return Result.fail("每日充值金额不能超过" + MoneyUtils.formatMoney(new BigDecimal(everydayRechargeTotalMoney)));
