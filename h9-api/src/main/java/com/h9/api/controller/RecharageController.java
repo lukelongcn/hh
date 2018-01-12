@@ -33,7 +33,7 @@ public class RecharageController {
 
     @Secured
     @GetMapping("/order/{id}")
-    public Result recharge(@PathVariable Long orderId){
+    public Result recharge(@PathVariable(name="id") Long orderId){
         return rechargeService.getOrder(orderId);
     }
 
