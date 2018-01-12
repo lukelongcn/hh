@@ -41,8 +41,8 @@ public class TestLotteryCodeService {
     public Result createCode() {
         String osName = environment.getProperty("h9.current.envir");
         System.out.println(osName);
-        if (!osName .equals("test")){
-           return Result.fail("当前不为测试环境");
+        if (osName .equals("product")){
+           return Result.fail("线上环境不允许使用");
         }
         for(int i=0;i<=50;i++) {
             try {
