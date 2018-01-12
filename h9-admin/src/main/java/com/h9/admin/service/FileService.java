@@ -43,13 +43,13 @@ public class FileService {
 
     public Result uploadImage(MultipartFile file, String path) {
         if (file == null) return Result.fail("请选择图片");
-        path = this.buildFilePath("images",path);
+        path = this.buildFilePath(path,getExtendName(file.getOriginalFilename()));
         return this.upload(file, path);
     }
 
     public Result uploadFile(MultipartFile file, String path) {
         if (file == null) return Result.fail("请选择文件");
-        path = this.buildFilePath("file",path);
+        path = this.buildFilePath(path,getExtendName(file.getOriginalFilename()));
         return this.upload(file, path);
     }
 
@@ -83,16 +83,17 @@ public class FileService {
     }
 
 
-    private String buildFilePath(String type,String path) {
-        StringBuilder key = new StringBuilder(type).append("/").append(envir);
+    private String buildFilePath(String path, String fileType) {
+        StringBuilder key = new StringBuilder(envir);
+        String name = UUID.randomUUID() + "." + fileType;
         if(StringUtils.isNotBlank(path)){
             if ("/".equals(path)) {
-                key.append(path).append(UUID.randomUUID());
+                key.append(path).append(name);
             }else {
-                key.append(path).append("/").append(UUID.randomUUID());
+                key.append(path).append("/").append(name);
             }
         }else{
-            key.append("/other/").append(UUID.randomUUID());
+            key.append("/other/").append(name);
         }
         return key.toString();
     }
@@ -127,6 +128,16 @@ public class FileService {
         }
 
         return Result.fail("上传失败");
+    }
+
+    public String getExtendName(String originalFilename) {
+        if ((originalFilename != null) && (originalFilename.length() > 0)) {
+            int dot = originalFilename.lastIndexOf('.');
+            if ((dot >-1) && (dot < (originalFilename.length() - 1))) {
+                return originalFilename.substring(dot + 1);
+            }
+        }
+        return originalFilename;
     }
 
   /*  public String uploadCKEditorImage(MultipartFile file, int CKEditorFuncNum) {
