@@ -70,6 +70,7 @@ public class PayProvider {
             HttpEntity<OrderDTO> stringHttpEntity = getStringHttpEntity(orderDTO);
             ResponseEntity<Result> exchange = restTemplate.exchange(initOrderURL(), HttpMethod.POST, stringHttpEntity, Result.class);
             Result result = exchange.getBody();
+            logger.debugv(JSONObject.toJSONString(exchange.getBody()));
             if(!result.isSuccess()){
                 return result;
             }
