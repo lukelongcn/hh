@@ -129,16 +129,18 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
 
-        //校验 code
-        String tel = user.getPhone();
-
-        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
-        if (verifyResult != null) return verifyResult;
         //验证每日充值金额不能大于 300（配置）
         Result verifyTodayMoneyResult = verifyTodayMoney(realPrice, userId);
         if (verifyTodayMoneyResult.getCode() == 1) {
             return verifyTodayMoneyResult;
         }
+
+        //校验 code
+        String tel = user.getPhone();
+
+        Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
+        if (verifyResult != null) return verifyResult;
+
 
         String smsCodeCount = RedisKey.getSmsCodeCount(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
