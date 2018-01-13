@@ -5,7 +5,7 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
-import com.sun.org.glassfish.gmbal.Description;
+//import com.sun.org.glassfish.gmbal.Description;
 
 import org.jboss.logging.Logger;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +47,7 @@ public class StickContoller {
     /**
      * 拿到反馈列表
      */
-    @Description("拿到反馈列表")
+//    @Description("拿到反馈列表")
     @GetMapping("/getReport")
     public Result getReport(@RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit){
