@@ -37,7 +37,7 @@ public class StickContoller {
         return stickService.addStickType(stickTypeDTO);
     }
 
-    @Secured(accessCode = "stick:list")
+    @Secured(accessCode =  "stick:list")
     @GetMapping("/types")
     public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int page,
                            @RequestParam(required = false,name = "page",defaultValue = "20") int limit){
