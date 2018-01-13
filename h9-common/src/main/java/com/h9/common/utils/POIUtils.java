@@ -107,7 +107,7 @@ public class POIUtils {
                 rechargeBatchObject.setMoney(bigDecimal);
                 Cell cell3 = row.getCell(2);
                 if(cell3 != null){
-                    String remark = ((XSSFCell) cell3).getRawValue();;
+                    String remark = cell3.getStringCellValue();
                     rechargeBatchObject.setRemark(remark);
                 }
                 rechargeBatchObject.setIndex(rowNum + "");
