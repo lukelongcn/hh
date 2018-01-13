@@ -36,8 +36,8 @@ public class RechargeBatchList {
     public RechargeBatchList(RechargeBatch rechargeBatch,String rechargeCount,String rechargeMoney) {
         BeanUtils.copyProperties(rechargeBatch, this);
 
-        this.setRechargeMoneyRate(rechargeCount);
-        this.setRechargeCountRate(rechargeMoney);
+        this.setRechargeMoneyRate(rechargeMoney);
+        this.setRechargeCountRate(rechargeCount);
         this.setCreateTime(DateUtil.formatDate(rechargeBatch.getCreateTime(), DateUtil.FormatType.SECOND));
     }
 }
