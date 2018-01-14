@@ -35,6 +35,8 @@ public class MobileRechargeService {
     private Logger logger = Logger.getLogger(this.getClass());
     private static final String url = "http://apitest.ofpay.com/onlineorder.do";
     private static final String onlineUrl = "http://apitest.ofpay.com/onlineorder.do";
+//    ofpay.userid=A1403689
+//    ofpay.userpwd=w5AURF
     @Value("${ofpay.userid}")
     private String userId;
     @Value("${ofpay.userpwd}")
@@ -47,6 +49,9 @@ public class MobileRechargeService {
 //    包体=userid+userpws+cardid+cardnum+sporder_id+sporder_time+ game_userid
     //2: KeyStr(秘钥) 必须由客户提供欧飞商务进行绑定
 
+    /**
+     * description: 测试环境调用
+     */
     public Result rechargeTest(MobileRechargeDTO mobileRechargeDTO, Long id, BigDecimal realPrice) {
         String userpwsmd5 = MD5Util.getMD5(userpws);
         String cardid = "140101";
@@ -96,9 +101,18 @@ public class MobileRechargeService {
     }
 
 
+    public static void main(String[] args) {
+
+        String s = "A085664c625b7861a92c7971cd2029c2fd3c4a14010150test0012345672016081714021415996271050OFCARD";
+        String md5 = MD5Util.getMD5(s);
+        System.out.println(md5);
+    }
+    /**
+     * description: 正式环境调用
+     */
     public Result recharge(MobileRechargeDTO mobileRechargeDTO, Long orderid, BigDecimal realPrice) {
         logger.info("短信充值 " + JSONObject.toJSONString(mobileRechargeDTO));
-        String userpwsmd5 = MD5Util.getMD5(userpws);
+        String userpwsmd5 = MD5Util.getMD5(userpws).toLowerCase();
         String cardid = "140101";
         String cardnum = MoneyUtils.formatMoney(realPrice, "0.00");
         //商户订单号
@@ -117,6 +131,7 @@ public class MobileRechargeService {
         map.add("sporder_time", sporder_time);
         map.add("game_userid", game_userid);
         map.add("version", version);
+
         String s = userId + userpwsmd5 + cardid + cardnum + sporderId + sporder_time + game_userid;
         s += keyStr;
         String md5 = MD5Util.getMD5(s);
