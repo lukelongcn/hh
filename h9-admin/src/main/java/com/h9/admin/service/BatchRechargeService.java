@@ -198,7 +198,7 @@ public class BatchRechargeService {
 //                        BigDecimal balance = userAccount.getBalance();
 //                        balance = balance.add(rechargeBatchRecord.getMoney());
 //                        userAccount.setBalance(balance);
-                    commonService.setBalance(userId, rechargeBatchRecord.getMoney(), BATCH_RECHARGE.getId(), null, "", BATCH_RECHARGE.getName());
+                    commonService.setBalance(user.getId(), rechargeBatchRecord.getMoney(), BATCH_RECHARGE.getId(), null, "", BATCH_RECHARGE.getName());
                     rechargeBatchRecord.setStatus(RechargeBatchRecord.RechargeStatusEnum.RECHARGE.getCode());
                     rechargeBatchRecord.setOptUserId(userId);
 //                    userAccountRepository.save(userAccount);

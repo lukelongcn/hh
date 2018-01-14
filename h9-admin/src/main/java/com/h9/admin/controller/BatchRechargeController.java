@@ -48,7 +48,7 @@ public class BatchRechargeController {
     @GetMapping(value = "/batches")
     @ApiOperation("批次列表")
     public Result batchList(@RequestParam(required = false,defaultValue = "1") Integer pageNumber,
-                            @RequestParam(required = false,defaultValue = "20") Integer size) {
+                            @RequestParam(required = false,defaultValue = "200") Integer size) {
 
         return batchRechargeService.batchList(pageNumber,size);
     }
