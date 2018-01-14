@@ -136,6 +136,7 @@ public class MobileRechargeService {
         s += keyStr;
         String md5 = MD5Util.getMD5(s);
         map.add("md5_str", md5.toUpperCase());
+        logger.info("话费充值： params : "+JSONObject.toJSONString(map));
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
