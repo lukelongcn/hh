@@ -3,10 +3,7 @@ package com.h9.common.utils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,10 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.poi.ss.usermodel.CellType.NUMERIC;
 
 /**
  * Created by itservice on 2018/1/11.
@@ -107,7 +107,7 @@ public class POIUtils {
                 rechargeBatchObject.setMoney(bigDecimal);
                 Cell cell3 = row.getCell(2);
                 if(cell3 != null){
-                    String remark = ((XSSFCell) cell3).getRawValue();;
+                    String remark = getCellValue(cell3);
                     rechargeBatchObject.setRemark(remark);
                 }
                 rechargeBatchObject.setIndex(rowNum + "");
@@ -118,4 +118,40 @@ public class POIUtils {
             IOUtils.closeQuietly(workbook);
         }
     }
+
+    public static String getCellValue(Cell cell) {
+        String cellValue = "";
+        // 以下是判断数据的类型
+        switch (cell.getCellType()) {
+            case Cell.CELL_TYPE_NUMERIC: // 数字
+                if (org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    cellValue = sdf.format(org.apache.poi.ss.usermodel.DateUtil.getJavaDate(cell.getNumericCellValue())).toString();
+                } else {
+                    DataFormatter dataFormatter = new DataFormatter();
+                    cellValue = dataFormatter.formatCellValue(cell);
+                }
+                break;
+            case Cell.CELL_TYPE_STRING: // 字符串
+                cellValue = cell.getStringCellValue();
+                break;
+            case Cell.CELL_TYPE_BOOLEAN: // Boolean
+                cellValue = cell.getBooleanCellValue() + "";
+                break;
+            case Cell.CELL_TYPE_FORMULA: // 公式
+                cellValue = cell.getCellFormula() + "";
+                break;
+            case Cell.CELL_TYPE_BLANK: // 空值
+                cellValue = "";
+                break;
+            case Cell.CELL_TYPE_ERROR: // 故障
+                cellValue = "非法字符";
+                break;
+            default:
+                cellValue = "未知类型";
+                break;
+        }
+        return cellValue;
+    }
+
 }
