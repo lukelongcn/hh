@@ -34,7 +34,7 @@ public class MobileRechargeService {
 
     private Logger logger = Logger.getLogger(this.getClass());
     private static final String url = "http://apitest.ofpay.com/onlineorder.do";
-    private static final String onlineUrl = "http://apitest.ofpay.com/onlineorder.do";
+    private static final String onlineUrl = "http://api2.ofpay.com/onlineorder.do";
 //    ofpay.userid=A1403689
 //    ofpay.userpwd=w5AURF
 
