@@ -54,7 +54,7 @@ public class RechargeService {
         if (money == null) {
             return Result.fail("请填入要充值的金额");
         }
-        if (money.compareTo(new BigDecimal(0)) <= 0) {
+        if (money.compareTo(new BigDecimal(0)) <= 0.001) {
             return Result.fail("请填入正确的充值金额");
         }
 
