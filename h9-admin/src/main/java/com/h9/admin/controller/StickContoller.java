@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+import io.swagger.annotations.ApiOperation;
 
 
 /**
@@ -47,13 +48,25 @@ public class StickContoller {
     /**
      * 拿到反馈列表
      */
-//    @Description("拿到反馈列表")
+    @ApiOperation("拿到反馈列表")
     @GetMapping("/getReport")
     public Result getReport(@RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit){
         return stickService.getReport(page,limit);
     }
 
+    /**
+     * 拿到打赏记录
+     * @param page 页码
+     * @param limit 个数
+     * @return Result
+     * */
+    @ApiOperation("拿到打赏记录")
+    @GetMapping("/getReward")
+    public Result getReward(@RequestParam(defaultValue = "1") Integer page,
+                            @RequestParam(defaultValue = "10") Integer limit){
+       return stickService.getReward(page,limit);
+    }
 
 
 

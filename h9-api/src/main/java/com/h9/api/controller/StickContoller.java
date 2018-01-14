@@ -8,11 +8,13 @@ import com.h9.common.base.Result;
 
 import org.apache.commons.collections.ResettableListIterator;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -165,8 +167,9 @@ public class StickContoller {
     @PostMapping("/reward/{stickId}/{money}")
     public Result reward(@SessionAttribute("curUserId")long userId,
                          @PathVariable("stickId")long stickId,
-                         @PathVariable("money")BigDecimal money){
-        return stickService.reward(userId,stickId,money);
+                         @PathVariable("money")BigDecimal money,
+                         HttpServletRequest request){
+        return stickService.reward(userId,stickId,money,request);
     }
 
     /**

@@ -27,6 +27,7 @@ import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
 import com.h9.common.db.entity.community.StickLike;
 import com.h9.common.db.entity.community.StickReport;
+import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.hotel.Hotel;
@@ -41,12 +42,15 @@ import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
+import com.h9.common.db.repo.StickRewardResitory;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.NetworkUtil;
+
 import lombok.extern.jbosslog.JBossLog;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -56,12 +60,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
@@ -112,6 +118,8 @@ public class StickService {
     private GoodsTypeReposiroty goodsTypeReposiroty;
     @Resource
     private StickReportRepository stickReportRepository;
+    @Resource
+    private StickRewardResitory stickRewardResitory;
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
@@ -412,7 +420,10 @@ public class StickService {
         return Result.success(rewardMoneyVO);
     }
 
-    public Result reward(long userId, long stickId, BigDecimal money) {
+    /**
+     * 打赏
+     */
+    public Result reward(long userId, long stickId, BigDecimal money, HttpServletRequest request) {
         if (money.signum() != 1 ){
             return Result.fail("金额不能为负数");
         }
@@ -426,6 +437,12 @@ public class StickService {
             this.logger.errorf("用户金额打赏失败,msg:{0}",resultRe.getMsg());
             throw new ServiceException("打赏失败");
         }
+        StickReward stickReward = new StickReward();
+        stickReward.setReward(money);
+        stickReward.setStick(stick);
+        stickReward.setUser(userRepository.findOne(userId));
+        stickReward.setIp(NetworkUtil.getIpAddress(request));
+        stickRewardResitory.save(stickReward);
         // 成功
         return Result.success("打赏成功");
     }

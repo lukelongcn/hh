@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -63,7 +62,6 @@ public class SignService {
             user.setSignCount(1);
             user = userRepository.saveAndFlush(user);
          } else{
-
             //获取用户上次签到时间
             Date checkDate = userSign.getCreateTime();
             Date today = DateUtil.getTimesMorning();
@@ -141,7 +139,7 @@ public class SignService {
         return bigDecimal.setScale(1,BigDecimal.ROUND_HALF_UP);
     }
 
-    public BigDecimal getSignReward(String list11, String list21){
+    private BigDecimal getSignReward(String list11, String list21){
         //Double x = d1 +(Math.random()*d2);
         double d1 = Double.parseDouble(list11);
         double d2 = Double.parseDouble(list21);
@@ -163,7 +161,7 @@ public class SignService {
 
         // 获取最新签到列表
         List<UserSign> listNewSign = userSignRepository.findListNewSign();
-        List<SignVO> listSignVO = new ArrayList();
+        List<SignVO> listSignVO = new ArrayList<>();
         if(!CollectionUtils.isEmpty(listNewSign)){
             listSignVO = listNewSign.stream().map(SignVO::new).collect(Collectors.toList());
         }

@@ -2,16 +2,16 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.vo.StickReportVO;
-import com.h9.admin.model.vo.UserAdviceVO;
+import com.h9.admin.model.vo.StickRewardVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickType;
-import com.h9.common.db.entity.user.UserAdvice;
+import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.repo.StickReportRepository;
+import com.h9.common.db.repo.StickRewardResitory;
 import com.h9.common.db.repo.StickTypeRepository;
-import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +31,8 @@ public class StickService {
     private StickTypeRepository stickTypeRepository;
     @Resource
     private StickReportRepository stickReportRepository;
+    @Resource
+    private StickRewardResitory stickRewardResitory;
 
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
@@ -56,5 +58,16 @@ public class StickService {
             return Result.success("暂无举报");
         }
         return Result.success(pageResult.result2Result(StickReportVO::new));
+    }
+
+    /**
+     * 拿到打赏记录
+     */
+    public Result getReward(Integer page, Integer limit) {
+        PageResult<StickReward> pageResult = stickRewardResitory.findRewardList(page, limit);
+        if (pageResult == null){
+            return Result.success("暂无打赏记录");
+        }
+        return Result.success(pageResult.result2Result(StickRewardVO::new));
     }
 }

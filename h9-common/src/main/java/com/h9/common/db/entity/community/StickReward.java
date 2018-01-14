@@ -1,5 +1,6 @@
 package com.h9.common.db.entity.community;
 
+import com.h9.common.base.BaseEntity;
 import com.h9.common.db.entity.user.User;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @Entity
 @Table(name = "stick_reward")
-public class StrickReward {
+public class StickReward extends BaseEntity {
     @Id
     @SequenceGenerator(name = "h9-parentSeq", sequenceName = "h9-parent_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-parentSeq")
@@ -44,4 +45,6 @@ public class StrickReward {
     @Column(name = "reward",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '个人打赏金额'")
     private BigDecimal reward = new BigDecimal(0);
 
+    @Column(name = "ip",columnDefinition = "varchar(200) default '' COMMENT 'ip'")
+    private String ip;
 }
