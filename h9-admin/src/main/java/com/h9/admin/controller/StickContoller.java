@@ -73,7 +73,7 @@ public class StickContoller {
     /**
      * 添加马甲贴子
      */
-    @PostMapping("addStick")
+    @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
     }
