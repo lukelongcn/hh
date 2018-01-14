@@ -37,10 +37,11 @@ public class MobileRechargeService {
     private static final String onlineUrl = "http://apitest.ofpay.com/onlineorder.do";
 //    ofpay.userid=A1403689
 //    ofpay.userpwd=w5AURF
-    @Value("${ofpay.userid}")
-    private String userId;
-    @Value("${ofpay.userpwd}")
-    private String userpws;
+
+//    @Value("${ofpay.userid}")
+    private String userId = "A1403689";
+//    @Value("${ofpay.userpwd}")
+    private String userpws = "w5AURF";
     private String keyStr = "H9@hf016";
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -103,9 +104,10 @@ public class MobileRechargeService {
 
     public static void main(String[] args) {
 
-        String s = "A085664c625b7861a92c7971cd2029c2fd3c4a14010150test0012345672016081714021415996271050OFCARD";
-        String md5 = MD5Util.getMD5(s);
-        System.out.println(md5);
+//        String s = "A085664c625b7861a92c7971cd2029c2fd3c4a14010150test0012345672016081714021415996271050OFCARD";
+//        String md5 = MD5Util.getMD5(s);
+//        System.out.println(md5);
+
     }
     /**
      * description: 正式环境调用
@@ -143,7 +145,6 @@ public class MobileRechargeService {
         String body = restTemplate.postForEntity(onlineUrl, request, String.class).getBody();
         logger.info("充值结果："+body);
         try {
-
             JAXBContext jc = JAXBContext.newInstance(Orderinfo.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Orderinfo rechargeResult = (Orderinfo) unmarshaller.unmarshal(new StringReader(body));
