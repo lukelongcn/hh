@@ -28,7 +28,7 @@ public class SMSProvide {
 
     public static final String smsUrl = "http://106.ihuyi.com/webservice/sms.php?method=Submit";
     public static final String appId = "cf_hjjt";
-    public static final String appKey = "6f2fa48e6729faf9f00655a45e378936";
+    public static final String appKey = "8e0489c157a016e4eb22a73ccc9095d2";
 
     private Logger logger = Logger.getLogger(this.getClass());
     @Resource
