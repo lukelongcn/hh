@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,5 +35,13 @@ public interface UserSignRepository extends BaseRepository<UserSign> {
     }
 
 
+    @Query("select distinct u.user.id from UserSign u order by u.createTime")
+    Page<Long> findSignList(Pageable pageRequest);
+    default PageResult<Long> findSignList(Integer page, Integer limit){
+        Page<Long> userSingleSigns = findSignList(pageRequest(page,limit));
+        return new PageResult(userSingleSigns);
+    }
 
+    @Query(value = "select create_Time from user_sign  where user_id = ?1 ORDER BY create_time limit 1",nativeQuery = true)
+    Date findBySingleId(Long id);
 }

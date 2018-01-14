@@ -96,7 +96,7 @@ public class StickService {
         stick.setStickType(stickType);
         stick.setUser(user);
         Stick s= stickRepository.saveAndFlush(stick);
-        return Result.success("添加成功",s);
+        return Result.success("添加成功");
     }
 
 }
