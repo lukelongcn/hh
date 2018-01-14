@@ -22,7 +22,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 
 @Entity
-@Table(name = "lottery_flow",uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","reward_id"}))
+@Table(name = "lottery_flow")
 public class LotteryFlow extends BaseEntity {
 
 
