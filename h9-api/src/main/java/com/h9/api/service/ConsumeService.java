@@ -161,7 +161,7 @@ public class ConsumeService {
 
         userAccountRepository.save(userAccount);
         orderItemReposiroty.saveAndFlush(orderItems);
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId(),realPrice);
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(),realPrice);
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
