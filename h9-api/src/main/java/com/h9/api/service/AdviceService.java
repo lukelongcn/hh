@@ -25,9 +25,9 @@ import javax.validation.Valid;
 @Service
 public class AdviceService {
     @Resource
-    AdviceRespository adviceRespository;
+    private AdviceRespository adviceRespository;
     @Resource
-    ConfigService configService;
+    private ConfigService configService;
 
     /**
      * 获取意见类别
@@ -43,10 +43,10 @@ public class AdviceService {
 
     /**
      * 提交意见反馈
-     * @param userId
-     * @param adviceDTO
-     * @param request
-     * @return
+     * @param userId 用户id
+     * @param adviceDTO 请求对象
+     * @param request http
+     * @return Result
      */
     public Result sendAdvice(long userId, @Valid AdviceDTO adviceDTO, HttpServletRequest request) {
         if (adviceDTO == null){

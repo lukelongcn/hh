@@ -63,8 +63,7 @@ public class SignService {
             user.setSignCount(1);
             user = userRepository.saveAndFlush(user);
          } else{
-            //获取当前时间
-            Calendar checkdateCalendar = Calendar.getInstance();
+
             //获取用户上次签到时间
             Date checkDate = userSign.getCreateTime();
             Date today = DateUtil.getTimesMorning();
@@ -212,7 +211,7 @@ public class SignService {
      * @param userId 用户id
      * @param page 分页页数
      * @param limit 限制页数
-     * @return
+     * @return Result
      */
     @Transactional
     @Description("个人签到记录")
