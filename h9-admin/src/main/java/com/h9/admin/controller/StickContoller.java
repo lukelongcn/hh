@@ -2,6 +2,7 @@ package com.h9.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -68,6 +70,11 @@ public class StickContoller {
        return stickService.getReward(page,limit);
     }
 
-
-
+    /**
+     * 添加马甲贴子
+     */
+    @PostMapping("addStick")
+    public Result addStick(@Valid@RequestBody StickDTO stickDTO){
+        return stickService.addStick(stickDTO);
+    }
 }

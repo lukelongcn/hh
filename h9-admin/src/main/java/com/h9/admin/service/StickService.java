@@ -1,16 +1,22 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
+import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.community.StickReward;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.StickReportRepository;
+import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickRewardResitory;
 import com.h9.common.db.repo.StickTypeRepository;
+import com.h9.common.db.repo.UserRepository;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -33,6 +39,10 @@ public class StickService {
     private StickReportRepository stickReportRepository;
     @Resource
     private StickRewardResitory stickRewardResitory;
+    @Resource
+    private UserRepository userRepository;
+    @Resource
+    private StickRepository stickRepository;
 
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
@@ -70,4 +80,23 @@ public class StickService {
         }
         return Result.success(pageResult.result2Result(StickRewardVO::new));
     }
+
+    /**
+     * 添加马甲贴子
+     */
+    public Result addStick(StickDTO stickDto) {
+        StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
+        if(stickType == null){
+            return Result.fail("请选择分类");
+        }
+        Stick stick = new Stick();
+        User user = userRepository.findOne(stickDto.getUserId());
+        stick.setTitle(stickDto.getTitle());
+        stick.setContent(stickDto.getContent());
+        stick.setStickType(stickType);
+        stick.setUser(user);
+        Stick s= stickRepository.saveAndFlush(stick);
+        return Result.success("添加成功",s);
+    }
+
 }
