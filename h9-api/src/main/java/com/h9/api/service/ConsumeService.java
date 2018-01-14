@@ -160,7 +160,8 @@ public class ConsumeService {
         orderItems.setGoods(goods);
 
         userAccountRepository.save(userAccount);
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId(),realPrice);
+        orderItemReposiroty.saveAndFlush(orderItems);
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(),realPrice);
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
@@ -172,7 +173,7 @@ public class ConsumeService {
             }
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
-            orderItemReposiroty.saveAndFlush(orderItems);
+
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
         }
@@ -208,6 +209,9 @@ public class ConsumeService {
         try {
             String everydayRechargeTotalMoney = configService.getStringConfig("everydayRechargeTotalMoney");
 
+            if (StringUtils.isBlank(everydayRechargeTotalMoney)) {
+                everydayRechargeTotalMoney = "300";
+            }
             String todayRechargeMoney = redisBean.getStringValue(RedisKey.getTodayRechargeMoney(userId));
 
             if(StringUtils.isBlank(todayRechargeMoney)){

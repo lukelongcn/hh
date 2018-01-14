@@ -34,12 +34,15 @@ public class MobileRechargeService {
 
     private Logger logger = Logger.getLogger(this.getClass());
     private static final String url = "http://apitest.ofpay.com/onlineorder.do";
-    private static final String onlineUrl = "http://apitest.ofpay.com/onlineorder.do";
-    @Value("${ofpay.userid}")
-    private String userId;
-    @Value("${ofpay.userpwd}")
-    private String userpws;
-    private String keyStr = "OFCARD";
+    private static final String onlineUrl = "http://api2.ofpay.com/onlineorder.do";
+//    ofpay.userid=A1403689
+//    ofpay.userpwd=w5AURF
+
+//    @Value("${ofpay.userid}")
+    private String userId = "A1403689";
+//    @Value("${ofpay.userpwd}")
+    private String userpws = "w5AURF";
+    private String keyStr = "H9@hf016";
     private RestTemplate restTemplate = new RestTemplate();
 
     //md5_str检验码的计算方法:
@@ -47,6 +50,9 @@ public class MobileRechargeService {
 //    包体=userid+userpws+cardid+cardnum+sporder_id+sporder_time+ game_userid
     //2: KeyStr(秘钥) 必须由客户提供欧飞商务进行绑定
 
+    /**
+     * description: 测试环境调用
+     */
     public Result rechargeTest(MobileRechargeDTO mobileRechargeDTO, Long id, BigDecimal realPrice) {
         String userpwsmd5 = MD5Util.getMD5(userpws);
         String cardid = "140101";
@@ -96,9 +102,19 @@ public class MobileRechargeService {
     }
 
 
+    public static void main(String[] args) {
+
+//        String s = "A085664c625b7861a92c7971cd2029c2fd3c4a14010150test0012345672016081714021415996271050OFCARD";
+//        String md5 = MD5Util.getMD5(s);
+//        System.out.println(md5);
+
+    }
+    /**
+     * description: 正式环境调用
+     */
     public Result recharge(MobileRechargeDTO mobileRechargeDTO, Long orderid, BigDecimal realPrice) {
         logger.info("短信充值 " + JSONObject.toJSONString(mobileRechargeDTO));
-        String userpwsmd5 = MD5Util.getMD5(userpws);
+        String userpwsmd5 = MD5Util.getMD5(userpws).toLowerCase();
         String cardid = "140101";
         String cardnum = MoneyUtils.formatMoney(realPrice, "0.00");
         //商户订单号
@@ -117,17 +133,18 @@ public class MobileRechargeService {
         map.add("sporder_time", sporder_time);
         map.add("game_userid", game_userid);
         map.add("version", version);
+
         String s = userId + userpwsmd5 + cardid + cardnum + sporderId + sporder_time + game_userid;
         s += keyStr;
         String md5 = MD5Util.getMD5(s);
         map.add("md5_str", md5.toUpperCase());
+        logger.info("话费充值： params : "+JSONObject.toJSONString(map));
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         String body = restTemplate.postForEntity(onlineUrl, request, String.class).getBody();
         logger.info("充值结果："+body);
         try {
-
             JAXBContext jc = JAXBContext.newInstance(Orderinfo.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Orderinfo rechargeResult = (Orderinfo) unmarshaller.unmarshal(new StringReader(body));
@@ -137,7 +154,7 @@ public class MobileRechargeService {
                 return Result.success("充值成功",rechargeResult);
             } else {
                 logger.info("充值失败");
-                return Result.success("充值失败",rechargeResult);
+                return Result.fail("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
             logger.info(e.getMessage(), e);
