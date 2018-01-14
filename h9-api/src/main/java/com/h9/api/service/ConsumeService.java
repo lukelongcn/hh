@@ -160,6 +160,7 @@ public class ConsumeService {
         orderItems.setGoods(goods);
 
         userAccountRepository.save(userAccount);
+        orderItemReposiroty.saveAndFlush(orderItems);
         Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId(),realPrice);
         //保存充值记录（包括失败成功）
         try {
@@ -172,7 +173,7 @@ public class ConsumeService {
             }
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
-            orderItemReposiroty.saveAndFlush(orderItems);
+
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
         }
