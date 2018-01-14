@@ -118,8 +118,9 @@ public class StickContoller {
     @Secured
     @PostMapping("/addComment")
     public Result addComment(@SessionAttribute("curUserId")long userId,
-                             @Valid @RequestBody StickCommentDTO stickCommentDTO){
-        return stickService.addComment(userId,stickCommentDTO);
+                             @Valid @RequestBody StickCommentDTO stickCommentDTO,
+                             HttpServletRequest request){
+        return stickService.addComment(userId,stickCommentDTO,request);
     }
 
     /**

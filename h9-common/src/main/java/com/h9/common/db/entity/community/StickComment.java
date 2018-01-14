@@ -56,6 +56,13 @@ public class StickComment extends BaseEntity {
     @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子评论状态 1使用 2禁用 3删除'")
     private Integer state = 1;
 
+    @Column(name = "ip",columnDefinition = "varchar(200) default '' COMMENT 'ip'")
+    private String ip;
+
+    @Column(name = "operation_state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子操作状态状态 1通过 2不通过'")
+    private Integer operationState = 1;
+
+
     public Long getId() {
         return id;
     }
@@ -135,5 +142,21 @@ public class StickComment extends BaseEntity {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Integer getOperationState() {
+        return operationState;
+    }
+
+    public void setOperationState(Integer operationState) {
+        this.operationState = operationState;
     }
 }

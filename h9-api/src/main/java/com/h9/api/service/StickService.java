@@ -312,9 +312,10 @@ public class StickService {
      * 添加贴子或评论回复
      * @param userId 用户id
      * @param stickCommentDTO 请求对象
+     * @param request
      * @return Result
      */
-    public Result addComment(long userId, StickCommentDTO stickCommentDTO) {
+    public Result addComment(long userId, StickCommentDTO stickCommentDTO, HttpServletRequest request) {
         // 贴子id
         Stick stick = stickRepository.findById(stickCommentDTO.getStickId());
         if (stick == null){
@@ -350,6 +351,8 @@ public class StickService {
         }
         // 贴子id
         stickComment.setStick(stick);
+        //ip
+        stickComment.setIp(NetworkUtil.getIpAddress(request));
         stickCommentRepository.save(stickComment);
         // 增加阅读数和回复数
         stick.setAnswerCount(stick.getAnswerCount()+1);
