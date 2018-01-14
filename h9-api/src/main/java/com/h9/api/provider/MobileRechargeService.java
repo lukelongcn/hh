@@ -39,7 +39,7 @@ public class MobileRechargeService {
     private String userId;
     @Value("${ofpay.userpwd}")
     private String userpws;
-    private String keyStr = "w5AURF";
+    private String keyStr = "H9@hf016";
     private RestTemplate restTemplate = new RestTemplate();
 
     //md5_str检验码的计算方法:
