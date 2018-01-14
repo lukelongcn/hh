@@ -56,7 +56,7 @@ public class Goods extends BaseEntity {
 
 //    @Column(name = "goods_type",nullable = false,columnDefinition = "int default 1 COMMENT '类别（1，为手机充值 2，为 滴滴卡兑换）'")
     @ManyToOne()
-    @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '商品类型'")
+    @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '商品类型'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotFound(action= NotFoundAction.IGNORE)
     private GoodsType goodsType;
 
