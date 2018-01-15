@@ -160,7 +160,7 @@ public class MobileRechargeService {
             logger.info(e.getMessage(), e);
         }
 
-        return Result.success("充值失败");
+        return Result.fail("充值失败");
     }
 
 
