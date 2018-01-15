@@ -116,7 +116,8 @@ public class MobileRechargeService {
         logger.info("短信充值 " + JSONObject.toJSONString(mobileRechargeDTO));
         String userpwsmd5 = MD5Util.getMD5(userpws).toLowerCase();
         String cardid = "140101";
-        String cardnum = MoneyUtils.formatMoney(realPrice, "0.00");
+        String cardnum = realPrice.toString();
+
         //商户订单号
         String sporderId = orderid+"";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
