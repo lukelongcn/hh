@@ -30,7 +30,7 @@ public class Goods extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '充值显示名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '充值显示名称'")
     private String name;
 
     @Column(name = "code", nullable = false, columnDefinition = "varchar(30) default '' COMMENT '商品编码'")
