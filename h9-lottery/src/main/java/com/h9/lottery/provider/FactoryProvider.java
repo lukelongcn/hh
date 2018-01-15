@@ -48,7 +48,7 @@ public class FactoryProvider {
 
     public LotteryModel updateLotteryStatus(String code) {
         // 非线上环境不改变工厂状态
-        if(env.equals("product")){
+        if(!env.equals("product")){
             return null;
         }
         try {
