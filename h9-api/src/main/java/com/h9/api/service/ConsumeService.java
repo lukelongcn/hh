@@ -26,10 +26,10 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -171,7 +171,6 @@ public class ConsumeService {
             if (changeStockResult.getCode() == 1) {
                 return changeStockResult;
             }
-            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
 
         } catch (Exception e) {
@@ -184,6 +183,8 @@ public class ConsumeService {
             map.put("money", MoneyUtils.formatMoney(realPrice));
             saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
+            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
+
             return Result.success("充值成功", map);
         } else {
             throw new ServiceException(result);
