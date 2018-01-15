@@ -116,7 +116,14 @@ public class MobileRechargeService {
         logger.info("短信充值 " + JSONObject.toJSONString(mobileRechargeDTO));
         String userpwsmd5 = MD5Util.getMD5(userpws).toLowerCase();
         String cardid = "140101";
-        String cardnum = MoneyUtils.formatMoney(realPrice, "0.00");
+        String cardnum = "";
+
+        if (realPrice.compareTo(new BigDecimal(1)) < 0) {
+            cardnum = MoneyUtils.formatMoney(realPrice, "0.00");
+        }else {
+            cardnum = MoneyUtils.formatMoney(realPrice, "0");
+        }
+
         //商户订单号
         String sporderId = orderid+"";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -160,7 +167,7 @@ public class MobileRechargeService {
             logger.info(e.getMessage(), e);
         }
 
-        return Result.success("充值失败");
+        return Result.fail("充值失败");
     }
 
 
