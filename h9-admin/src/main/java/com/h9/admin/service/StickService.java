@@ -2,24 +2,33 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
+import com.h9.admin.model.vo.StickCommentSimpleVO;
+import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.community.Stick;
+import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickRewardResitory;
 import com.h9.common.db.repo.StickTypeRepository;
 import com.h9.common.db.repo.UserRepository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -43,6 +52,8 @@ public class StickService {
     private UserRepository userRepository;
     @Resource
     private StickRepository stickRepository;
+    @Resource
+    private StickCommentRepository stickCommentRepository;
 
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
@@ -99,4 +110,26 @@ public class StickService {
         return Result.success("添加成功");
     }
 
+    /**
+     *  评论列表
+     * @return R
+     */
+    public Result getComment(Integer page, Integer limit) {
+            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(page, limit);
+            if (pageResult == null){
+                return Result.success("暂无评论");
+            }
+            return Result.success(pageResult.result2Result(this::stickComent2Vo));
+    }
+
+    private StickCommentVO stickComent2Vo(StickComment stickComment) {
+        // 拿到回复的回复列表
+        List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
+        long stickCommentParentId = stickComment.getId();
+        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+        if (CollectionUtils.isNotEmpty(stickCommentChild)){
+            stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
+        }
+        return new StickCommentVO(stickComment,stickCommentSimpleVOS);
+    }
 }

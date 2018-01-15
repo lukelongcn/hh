@@ -77,4 +77,14 @@ public class StickContoller {
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
     }
+
+    /**
+     * 评论列表
+     */
+    @GetMapping("/getComment")
+    public Result getComment(@RequestParam(defaultValue = "1") Integer page,
+                             @RequestParam(defaultValue = "10") Integer limit){
+        return stickService.getComment(page,limit);
+    }
+
 }
