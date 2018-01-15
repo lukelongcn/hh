@@ -232,7 +232,7 @@ public class GoodService {
         order.setAddressId(addressId);
         order.setUserAddres(address.getProvince()+address.getCity()+address.getDistict()+address.getAddress());
         order.setOrderFrom(1);
-        order.setStatus(Orders.statusEnum.UNCONFIRMED.getCode());
+        order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         ordersRepository.saveAndFlush(order);
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
