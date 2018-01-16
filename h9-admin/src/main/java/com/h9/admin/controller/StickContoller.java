@@ -42,9 +42,9 @@ public class StickContoller {
 
     @Secured(accessCode =  "stick:list")
     @GetMapping("/types")
-    public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int page,
-                           @RequestParam(required = false,name = "page",defaultValue = "20") int limit){
-        return stickService.getStick(page,limit);
+    public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int pageNumber,
+                           @RequestParam(required = false,name = "page",defaultValue = "20") int pageSize){
+        return stickService.getStick(pageNumber,pageSize);
     }
 
     /**
@@ -52,22 +52,22 @@ public class StickContoller {
      */
     @ApiOperation("拿到反馈列表")
     @GetMapping("/getReport")
-    public Result getReport(@RequestParam(defaultValue = "1") Integer page,
-                            @RequestParam(defaultValue = "10") Integer limit){
-        return stickService.getReport(page,limit);
+    public Result getReport(@RequestParam(defaultValue = "1") Integer pageNumber,
+                            @RequestParam(defaultValue = "10") Integer pageSize){
+        return stickService.getReport(pageNumber,pageSize);
     }
 
     /**
      * 拿到打赏记录
-     * @param page 页码
-     * @param limit 个数
+     * @param pageNumber 页码
+     * @param pageSize 个数
      * @return Result
      * */
     @ApiOperation("拿到打赏记录")
     @GetMapping("/getReward")
-    public Result getReward(@RequestParam(defaultValue = "1") Integer page,
-                            @RequestParam(defaultValue = "10") Integer limit){
-       return stickService.getReward(page,limit);
+    public Result getReward(@RequestParam(defaultValue = "1") Integer pageNumber,
+                            @RequestParam(defaultValue = "10") Integer pageSize){
+       return stickService.getReward(pageNumber,pageSize);
     }
 
     /**
@@ -82,9 +82,9 @@ public class StickContoller {
      * 评论列表
      */
     @GetMapping("/getComment")
-    public Result getComment(@RequestParam(defaultValue = "1") Integer page,
-                             @RequestParam(defaultValue = "10") Integer limit){
-        return stickService.getComment(page,limit);
+    public Result getComment(@RequestParam(defaultValue = "1") Integer pageNumber,
+                             @RequestParam(defaultValue = "10") Integer pageSize){
+        return stickService.getComment(pageNumber,pageSize);
     }
 
 }
