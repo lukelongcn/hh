@@ -53,10 +53,10 @@ public class EditHotelDTO {
     @ApiModelProperty("图片")
     private List<String> images = new ArrayList<>();
 
-    @ApiModelProperty("房间数")
-    @NotNull(message = "请输入的房间数")
-    @Min(value = -1,message = "房间数必须大于或等于0")
-    private Integer roomCount;
+//    @ApiModelProperty("房间数")
+//    @NotNull(message = "请输入的房间数")
+//    @Min(value = -1,message = "房间数必须大于或等于0")
+//    private Integer roomCount;
 
     @ApiModelProperty("开始预定的时间")
     @NotNull(message = "请填写开始预定的时间")
