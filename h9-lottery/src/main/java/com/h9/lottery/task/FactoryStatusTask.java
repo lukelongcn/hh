@@ -3,6 +3,7 @@ package com.h9.lottery.task;
 import com.h9.common.db.entity.Reward;
 import com.h9.common.db.repo.RewardRepository;
 import com.h9.lottery.provider.FactoryProvider;
+import com.h9.lottery.provider.model.LotteryModel;
 import org.jboss.logging.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,9 @@ public class FactoryStatusTask {
         for (int i = 0; i < factoryStatus.size(); i++) {
             try {
                 Reward reward = factoryStatus.get(i);
-                factoryProvider.updateLotteryStatus(reward.getCode());
+                LotteryModel lotteryModel = factoryProvider.updateLotteryStatus(reward.getCode());
+                reward.setFactoryStatus(lotteryModel.getState());
+                rewardRepository.save(reward);
             } catch (Exception e) {
                 logger.debugv(e.getMessage(),e);
             }
