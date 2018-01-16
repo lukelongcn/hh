@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
+import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
 //import com.sun.org.glassfish.gmbal.Description;
@@ -79,6 +80,13 @@ public class StickContoller {
         return stickService.addStick(stickDTO);
     }
 
+    /**
+     * 编辑贴子
+     */
+    @PostMapping("/updateStick")
+    public Result updateStick(@RequestParam(value = "stickId")long stickId,@Valid@RequestBody UpdateStickDTO updateStickDTO){
+        return stickService.updateStick(stickId,updateStickDTO);
+    }
     /**
      * 评论列表
      */

@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
+import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.model.vo.StickCommentSimpleVO;
 import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickReportVO;
@@ -25,12 +26,15 @@ import com.h9.common.db.repo.UserRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+
+import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
@@ -131,5 +135,25 @@ public class StickService {
             stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
         return new StickCommentVO(stickComment,stickCommentSimpleVOS);
+    }
+
+    /**
+     * 编辑
+     */
+    @Transactional
+    public Result updateStick(long stickId, UpdateStickDTO updateStickDTO) {
+        StickType stickType = stickTypeRepository.findOne(updateStickDTO.getTypeId());
+        if(stickType == null){
+            return Result.fail("请选择分类");
+        }
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在或已被删除");
+        }
+        stick.setTitle(updateStickDTO.getTitle());
+        stick.setContent(updateStickDTO.getContent());
+        stick.setStickType(stickType);
+        Stick s= stickRepository.saveAndFlush(stick);
+        return Result.success("编辑成功");
     }
 }
