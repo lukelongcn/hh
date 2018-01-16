@@ -48,7 +48,7 @@ public class Goods extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 上架 2 下架'")
     private Integer status = 1;
 
-    @Column(name = "description", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '描述'")
+    @Column(name = "description", nullable = false, columnDefinition = "text default '' COMMENT '描述'")
     private String description;
 
     @Column(name = "stock",nullable = false,columnDefinition = "int default 0 COMMENT '库存'")
