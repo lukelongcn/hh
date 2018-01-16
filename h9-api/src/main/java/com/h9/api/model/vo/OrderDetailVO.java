@@ -31,7 +31,7 @@ public class OrderDetailVO {
     private String logisticsNumber = "";
 
     /**
-     * description: 充值面额
+     * description:  充值面额
      */
     private String rechargeMoney = "";
 
