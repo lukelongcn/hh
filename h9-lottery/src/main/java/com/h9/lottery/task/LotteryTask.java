@@ -24,7 +24,7 @@ import java.util.List;
  * Time: 16:28
  */
 @Component
-public class lotteryTask {
+public class LotteryTask {
     private Logger logger = Logger.getLogger(this.getClass());
     @Resource
     private LotteryService lotteryService;
