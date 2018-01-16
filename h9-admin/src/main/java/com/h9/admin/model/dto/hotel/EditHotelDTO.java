@@ -83,7 +83,7 @@ public class EditHotelDTO {
 
     public void setEndReserveTime(String endReserveTime) throws MissingServletRequestParameterException {
         Pattern pattern = Pattern.compile("[0-9]{2}:[0-9]{2}");
-        Matcher matcher = pattern.matcher(startReserveTime);
+        Matcher matcher = pattern.matcher(endReserveTime);
         if(!matcher.matches()){
             throw new MissingServletRequestParameterException("startReserveTime", "时间格式 08:00");
         }
