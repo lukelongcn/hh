@@ -32,7 +32,7 @@ public class FactoryStatusTask {
     private FactoryProvider factoryProvider;
 
 
-    @Scheduled(cron = "0 0 0/1 * * ? *")
+    @Scheduled(cron = "0 0 0/1 * * *")
     public void run() {
         List<Reward> factoryStatus = rewardRepository.findFactoryStatus();
         for (int i = 0; i < factoryStatus.size(); i++) {
