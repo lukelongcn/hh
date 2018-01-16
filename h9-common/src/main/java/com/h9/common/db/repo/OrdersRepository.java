@@ -51,7 +51,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
             public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (orderDTO.getNo() != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("id").as(String.class),orderDTO.getNo()));
+                    predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class),orderDTO.getNo()));
                 }
                 if (StringUtils.isNotBlank(orderDTO.getPhone())) {
                     predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class),orderDTO.getPhone()));
