@@ -66,8 +66,9 @@ public class StickContoller {
     @ApiOperation("拿到打赏记录")
     @GetMapping("/getReward")
     public Result getReward(@RequestParam(defaultValue = "1") Integer pageNumber,
-                            @RequestParam(defaultValue = "10") Integer pageSize){
-       return stickService.getReward(pageNumber,pageSize);
+                            @RequestParam(defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "stickId")long stickId){
+       return stickService.getReward(pageNumber,pageSize,stickId);
     }
 
     /**
@@ -83,8 +84,9 @@ public class StickContoller {
      */
     @GetMapping("/getComment")
     public Result getComment(@RequestParam(defaultValue = "1") Integer pageNumber,
-                             @RequestParam(defaultValue = "10") Integer pageSize){
-        return stickService.getComment(pageNumber,pageSize);
+                             @RequestParam(defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "stickId")long stickId){
+        return stickService.getComment(pageNumber,pageSize,stickId);
     }
 
 }

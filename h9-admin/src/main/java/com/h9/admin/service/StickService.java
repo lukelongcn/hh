@@ -84,8 +84,8 @@ public class StickService {
     /**
      * 拿到打赏记录
      */
-    public Result getReward(Integer page, Integer limit) {
-        PageResult<StickReward> pageResult = stickRewardResitory.findRewardList(page, limit);
+    public Result getReward(Integer page, Integer limit, long stickId) {
+        PageResult<StickReward> pageResult = stickRewardResitory.findRewardList(stickId,page, limit);
         if (pageResult == null){
             return Result.success("暂无打赏记录");
         }
@@ -114,8 +114,8 @@ public class StickService {
      *  评论列表
      * @return R
      */
-    public Result getComment(Integer page, Integer limit) {
-            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(page, limit);
+    public Result getComment(Integer page, Integer limit, long stickId) {
+            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(stickId,page, limit);
             if (pageResult == null){
                 return Result.success("暂无评论");
             }
