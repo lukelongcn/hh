@@ -53,10 +53,10 @@ public class EditHotelDTO {
     @ApiModelProperty("图片")
     private List<String> images = new ArrayList<>();
 
-    @ApiModelProperty("房间数")
-    @NotNull(message = "请输入的房间数")
-    @Min(value = -1,message = "房间数必须大于或等于0")
-    private Integer roomCount;
+//    @ApiModelProperty("房间数")
+//    @NotNull(message = "请输入的房间数")
+//    @Min(value = -1,message = "房间数必须大于或等于0")
+//    private Integer roomCount;
 
     @ApiModelProperty("开始预定的时间")
     @NotNull(message = "请填写开始预定的时间")
@@ -83,7 +83,7 @@ public class EditHotelDTO {
 
     public void setEndReserveTime(String endReserveTime) throws MissingServletRequestParameterException {
         Pattern pattern = Pattern.compile("[0-9]{2}:[0-9]{2}");
-        Matcher matcher = pattern.matcher(startReserveTime);
+        Matcher matcher = pattern.matcher(endReserveTime);
         if(!matcher.matches()){
             throw new MissingServletRequestParameterException("startReserveTime", "时间格式 08:00");
         }
