@@ -2,6 +2,8 @@ package com.h9.lottery.provider;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.h9.common.db.entity.ExceptionLog;
+import com.h9.common.db.repo.ExceptionLogRepository;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import org.apache.commons.lang3.StringUtils;
@@ -29,13 +31,17 @@ public class FactoryProvider {
 
     @Value("${h9.current.envir}")
     private String env;
+    
+    @Resource
+    private ExceptionLogRepository exceptionLogRepository;
+    
 
     @Resource
     private RestTemplate restTemplate;
 
     public LotteryModel findByLotteryModel(String code) {
-
         try {
+            logger.debugv("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code);
             LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/GetCodeBouns.aspx?Code=" + code, LotteryModel.class);
             logger.debugv(code+":find "  +JSONObject.toJSONString(lotteryModel));
             return lotteryModel;
@@ -48,10 +54,12 @@ public class FactoryProvider {
 
     public LotteryModel updateLotteryStatus(String code) {
         // 非线上环境不改变工厂状态
-        if(env.equals("product")){
+        logger.debugv("code:"+code+";env:"+env);
+        if(!env.equals("product")){
             return null;
         }
         try {
+            logger.debugv("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code);
             LotteryModel lotteryModel = restTemplate.getForObject("http://61.191.56.33:63753/UpdateCodeState.aspx?Code=" + code, LotteryModel.class);
             logger.debugv(code+":update "+JSONObject.toJSONString(lotteryModel));
             return lotteryModel;
@@ -64,6 +72,7 @@ public class FactoryProvider {
 
     public ProductModel getProductInfo(String code) {
         try {
+            logger.debugv("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code);
             ProductModel productModel = restTemplate.getForObject("http://61.191.56.33:63753/QueryIsTrue.aspx?Code=" + code, ProductModel.class);
             logger.debugv(code+":product "+JSONObject.toJSONString(productModel));
             return productModel;
