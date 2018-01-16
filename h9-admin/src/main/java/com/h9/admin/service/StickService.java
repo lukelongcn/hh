@@ -156,4 +156,18 @@ public class StickService {
         Stick s= stickRepository.saveAndFlush(stick);
         return Result.success("编辑成功");
     }
+
+
+    /**
+     * 删除帖子
+     */
+    public Result delete(long stickId) {
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("帖子已被删除或禁用");
+        }
+        stick.setState(3);
+        stickRepository.save(stick);
+        return Result.success("删除成功");
+    }
 }

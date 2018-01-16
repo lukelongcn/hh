@@ -75,6 +75,7 @@ public class StickContoller {
     /**
      * 添加马甲贴子
      */
+    @Secured(accessCode = "stick:addStick")
     @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
@@ -83,6 +84,7 @@ public class StickContoller {
     /**
      * 编辑贴子
      */
+    @Secured(accessCode = "stick:updateStick")
     @PostMapping("/updateStick")
     public Result updateStick(@RequestParam(value = "stickId")long stickId,@Valid@RequestBody UpdateStickDTO updateStickDTO){
         return stickService.updateStick(stickId,updateStickDTO);
@@ -95,6 +97,13 @@ public class StickContoller {
                              @RequestParam(defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "stickId")long stickId){
         return stickService.getComment(pageNumber,pageSize,stickId);
+    }
+    /**
+     * 删除
+     */
+    @PostMapping("/delete")
+    public Result delete( @RequestParam(value = "stickId")long stickId){
+        return stickService.delete(stickId);
     }
 
 }
