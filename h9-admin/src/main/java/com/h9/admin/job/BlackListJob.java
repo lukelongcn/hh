@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,10 @@ public class BlackListJob {
     public void scan() {
         logger.info("BlackListJob go.................");
 
+        boolean lock = getLock();
+        if (!lock) {
+            return;
+        }
         long start = System.currentTimeMillis();
         List<Object> blackUser = lotteryRepository.findBlackUser();
         long end = System.currentTimeMillis();
@@ -66,6 +71,33 @@ public class BlackListJob {
         }
     }
 
+
+    @Resource
+    private RedisBean redisBean;
+
+    /**
+     * description: 获取redis 定时任务锁
+     */
+    public boolean getLock(){
+
+        String formatDate = DateUtil.formatDate(new Date(), DateUtil.FormatType.NON_SEPARATOR_DAY);
+
+        String lockKey = "h9:lock:"+formatDate;
+
+        String value = redisBean.getStringValue(lockKey);
+
+        if (StringUtils.isBlank(value)) {
+            redisBean.setStringValue(lockKey,"LOCK",5, TimeUnit.MINUTES);
+            logger.info("获取定时任务锁成功");
+            return true;
+        }
+        logger.info("获取定时任务锁失败");
+        return false;
+    }
+
+    public static void main(String[] args) {
+
+    }
 }
 
 
