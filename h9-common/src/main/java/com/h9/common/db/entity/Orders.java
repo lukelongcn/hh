@@ -245,7 +245,7 @@ public class Orders extends BaseEntity {
 
     public enum statusEnum{
 
-//        UNCONFIRMED(0,"未确认"),
+        UNCONFIRMED(0,"未确认"),
         WAIT_SEND(1,"等待发货"),
         DELIVER(2,"等待收货"),
         CANCEL(3,"已取消"),
