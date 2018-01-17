@@ -54,7 +54,11 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
 
-        return Result.success(hotelRepository.findAll(page, limit).result2Result(HotelListVO::new));
+        return Result.success(hotelRepository.findAll(page, limit).result2Result(hotel ->{
+
+            Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
+            return new HotelListVO(hotel, roomCount.intValue());
+        }));
 
     }
 

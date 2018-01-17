@@ -94,7 +94,7 @@ public class Hotel extends BaseEntity{
 
     @Getter
     public static enum Status{
-        NORMAL(1, "1正常"),
+        NORMAL(1, "正常"),
         BAN(0,"禁用");
         public int code;
         public String desc;
