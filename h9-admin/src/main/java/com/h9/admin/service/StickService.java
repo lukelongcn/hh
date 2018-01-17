@@ -235,4 +235,19 @@ public class StickService {
         }
         return Result.fail();
     }
+
+    /**
+     * 重置贴子所有状态
+     */
+    public Result reset(long stickId) {
+        Stick stick = stickRepository.findOne(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        stick.setOperationState(1);
+        stick.setLockState(1);
+        stick.setState(1);
+        stickRepository.saveAndFlush(stick);
+        return Result.success("重置成功");
+    }
 }

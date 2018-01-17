@@ -133,4 +133,13 @@ public class StickContoller {
     public Result examine(@RequestParam(value = "stickId")long stickId){
         return stickService.examine(stickId);
     }
+
+    /**
+     * 重置贴子所有状态
+     */
+    @PostMapping("/reset")
+    public Result reset(@RequestParam(value = "stickId")long stickId){
+        return stickService.reset(stickId);
+    }
+
 }
