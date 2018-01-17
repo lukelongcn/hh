@@ -198,6 +198,9 @@ public class StickService {
         return stickDetailVO;
     }
 
+    /**
+     * 锁定状态改变
+     */
     public Result lock(long stickId) {
         Stick stick = stickRepository.findOne(stickId);
 
@@ -210,6 +213,25 @@ public class StickService {
             stick.setLockState(1);
             stickRepository.saveAndFlush(stick);
             return Result.success("解锁成功");
+        }
+        return Result.fail();
+    }
+
+    /**
+     * 审批状态改变
+     */
+    public Result examine(long stickId) {
+        Stick stick = stickRepository.findOne(stickId);
+
+        if (stick.getOperationState() ==1){
+            stick.setOperationState(2);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("不通过");
+        }
+        if (stick.getOperationState() == 2){
+            stick.setOperationState(1);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("通过");
         }
         return Result.fail();
     }

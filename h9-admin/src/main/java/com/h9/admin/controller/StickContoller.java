@@ -118,8 +118,19 @@ public class StickContoller {
         return stickService.allDetail(pageNumber,pageSize);
     }
 
+    /**
+     * 锁定状态改变
+     */
     @PostMapping("/lock")
     public Result lock(@RequestParam(value = "stickId")long stickId){
         return stickService.lock(stickId);
+    }
+
+    /**
+     * 审批状态改变
+     */
+    @PostMapping("/examine")
+    public Result examine(@RequestParam(value = "stickId")long stickId){
+        return stickService.examine(stickId);
     }
 }
