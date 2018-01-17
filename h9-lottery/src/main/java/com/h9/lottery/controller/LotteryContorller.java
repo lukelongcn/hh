@@ -66,8 +66,12 @@ public class LotteryContorller {
     public Result startCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @SessionAttribute("curUserId") long userId
                             ,@RequestParam("code") String code){
+        RLock lock = redisson.getLock("lock:" + code);
+        lock.lock(1000, TimeUnit.MILLISECONDS);
         logger.debugv("start userId {0} code {1}" ,userId, code);
-        return lotteryService.lottery(userId,code);
+        Result lottery = lotteryService.lottery(userId, code);
+        lock.unlock();
+        return lottery;
     }
 
 
