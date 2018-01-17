@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import java.math.BigDecimal;
+
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.WAIT_ENSURE;
 
 /**
@@ -36,8 +38,17 @@ public class HotelPayHandler extends AbPayHandler{
 
         Long orderId = payInfo.getOrderId();
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
-        hotelOrder.setOrderStatus(WAIT_ENSURE.getCode());
+        BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
+        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
 
+        hotelOrder.setPayMoney4Wechat(payMoney4Wechat);
+        BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+
+        BigDecimal totalPaidMoney = payMoney4JiuYuan.add(payMoney4Wechat);
+
+        if(totalPaidMoney.compareTo(hotelOrder.getTotalMoney()) >= 0){
+            hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode());
+        }
         hotelOrderRepository.save(hotelOrder);
 
         return true;
