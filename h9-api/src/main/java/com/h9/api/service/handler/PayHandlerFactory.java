@@ -16,14 +16,21 @@ public class PayHandlerFactory {
     
     @Resource
     private RechargePayHandler rechargePayHandler;
-    
+    @Resource
+    private HotelPayHandler hotelPayHandler;
     
     public AbPayHandler getPayHandler(int type){
         AbPayHandler abPayHandler;
         switch (type){
-            case 1:{
+            case 0:{
                 abPayHandler = rechargePayHandler;
-            }default:{
+                break;
+            }
+            case 1:{
+                abPayHandler = hotelPayHandler;
+            }
+
+            default:{
                 abPayHandler = rechargePayHandler;
             }
         }

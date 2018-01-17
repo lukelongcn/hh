@@ -214,7 +214,7 @@ public class HotelService {
 
         String payPlatform = hotelPayDTO.getPayPlatform();
         OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
-        if(findPayPlatformEnum == null) return Result.fail("请传入payPlatform 参数");
+        if(findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
         Result result = null;
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
             commonService.setBalance(userId, hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
@@ -222,12 +222,15 @@ public class HotelService {
             result = Result.success();
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
             result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, OrderDTO.PayMethodEnum.WXJS.getKey());
+
+            if(result.isSuccess()){
+                hotelOrder.setPayMoney4Wechat(hotelOrder.getTotalMoney());
+            }
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY) {
             result = mixedPay(hotelOrder, userAccount);
         }
 
         hotelOrder.setPayMethod(payMethod);
-        hotelOrder.setOrderStatus(WAIT_ENSURE.getCode());
         hotelOrderRepository.save(hotelOrder);
 
         return result;
@@ -246,7 +249,14 @@ public class HotelService {
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
         OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(),payPlatform);
-        Result<OrderVo> orderVoResult = payProvider.initOrder(orderDTO);
+
+        Result<OrderVo> orderVoResult = null;
+        try {
+            orderVoResult = payProvider.initOrder(orderDTO);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail("获取支付信息失败，请稍后再试");
+        }
 
         if (!orderVoResult.isSuccess()) {
             logger.info("获取支付信息失败，获取结果： " + JSONObject.toJSONString(orderVoResult));
