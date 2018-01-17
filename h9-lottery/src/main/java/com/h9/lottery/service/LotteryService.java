@@ -290,11 +290,13 @@ public class LotteryService {
         lotteryResult.setDifferentDate(differentDate > 0 ? differentDate : 0);
         if (differentDate <= 0) {
             RLock lock = redisson.getLock("lock:" +  code);
-            lock.lock(1000, TimeUnit.MILLISECONDS);
-            lottery(null, code);
-            lock.unlock();
+            try {
+                lock.lock(1000, TimeUnit.MILLISECONDS);
+                lottery(null, code);
+            } finally {
+                lock.unlock();
+            }
         }
-
         Integer status = reward.getStatus();
         boolean islottery = status == StatusEnum.END.getCode();
         lotteryResult.setLottery(islottery);
@@ -351,11 +353,9 @@ public class LotteryService {
     @Transactional
     public Result lottery(Long curUserId, String code) {
 
-
         code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
-
             return Result.fail("红包不存在");
         }
         if (curUserId != null) {

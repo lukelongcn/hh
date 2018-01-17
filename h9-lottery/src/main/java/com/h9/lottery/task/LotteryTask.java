@@ -52,9 +52,12 @@ public class LotteryTask {
             try {
                 logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
                 RLock lock = redisson.getLock("lock:" +  reward.getCode());
-                lock.lock(1000, TimeUnit.MILLISECONDS);
-                lotteryService.lottery(null, reward.getCode());
-                lock.unlock();
+                try {
+                    lock.lock(1000, TimeUnit.MILLISECONDS);
+                    lotteryService.lottery(null, reward.getCode());
+                } finally {
+                    lock.unlock();
+                }
                 logger.info("rewardId: " + reward.getId() + "结束");
             } catch (Exception e) {
                 e.printStackTrace();
