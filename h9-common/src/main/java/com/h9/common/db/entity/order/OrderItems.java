@@ -1,6 +1,8 @@
 package com.h9.common.db.entity.order;
 
 import com.h9.common.base.BaseEntity;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -28,7 +30,7 @@ public class OrderItems extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '商品名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '商品名称'")
     private String name;
 
     @Column(name = "image", columnDefinition = "varchar(256) default '' COMMENT '商品图片'")
@@ -47,7 +49,7 @@ public class OrderItems extends BaseEntity {
     @JoinColumn(name = "orders_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '订单id'",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Orders orders;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goods_id",referencedColumnName = "id",foreignKey =@ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotFound(action= NotFoundAction.IGNORE)
     private Goods goods;

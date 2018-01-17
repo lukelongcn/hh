@@ -26,7 +26,7 @@ public class Article extends BaseEntity {
     @Column(name = "title", nullable = false, columnDefinition = "varchar(128) default '' COMMENT '标题'")
     private String title;
 
-    @Column(name = "content", nullable = false, columnDefinition = "varchar(512) default '' COMMENT '内容'")
+    @Column(name = "content", nullable = false, columnDefinition = "text default '' COMMENT '内容'")
     private String content;
 
     @Column(name = "url",  columnDefinition = "varchar(256) default '' COMMENT '跳转链接'")

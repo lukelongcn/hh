@@ -19,9 +19,9 @@ public class WithdrawCashTasks {
     @Resource
     private ConsumeService consumeService;
 
-    @Scheduled(cron = "0 0/30 * * * ?")
-    public void run(){
-
-        consumeService.scan();
-    }
+//    @Scheduled(cron = "0 0/30 * * * ?")
+//    public void run(){
+//
+//        consumeService.scan();
+//    }
 }

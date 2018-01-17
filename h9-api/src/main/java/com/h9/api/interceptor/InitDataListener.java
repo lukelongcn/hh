@@ -1,9 +1,14 @@
 package com.h9.api.interceptor;
 
+import com.h9.api.model.dto.Areas;
+import com.h9.api.model.dto.PayConfig;
 import com.h9.api.service.AddressService;
 import com.h9.api.service.UserService;
-
+import com.h9.api.service.handler.PayHandler;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import org.jboss.logging.Logger;
+import com.h9.common.db.repo.UserRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -20,13 +25,22 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     AddressService addressService;
 
     @Resource
+    private UserRepository userRepository;
+    @Resource
     private UserService userService;
     private Logger logger = Logger.getLogger(this.getClass());
 
+    @Resource
+    private PayHandler payHandler;
+
+
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent)
+    {
         this.initAddressCache();
+        payHandler.initPay();
     }
+
 
     /****
      * 初始化地址区域信息
@@ -48,4 +62,5 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
 //   12345678909
 
     }
+
 }

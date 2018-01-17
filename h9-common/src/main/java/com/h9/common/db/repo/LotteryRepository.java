@@ -73,15 +73,31 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
             "\t(\n" +
             "\t\tSELECT \n" +
             "\t\t\tlottery.user_id, \n" +
+            "\t\t\t# 抽奖总次数\n" +
             "\t\t\tcount(*) lottery_sum \n" +
             "\t\tFROM \n" +
             "\t\t\tlottery \n" +
             "\t\tGROUP BY \n" +
             "\t\t\tlottery.user_id\n" +
-            "\t) a4 \n" +
+            "\t) a4 ,\n" +
+            "\t(\n" +
+            "\t\tSELECT \n" +
+            "\t\t\tuser.id user_id, \n" +
+            "\t\t\t#非饮酒时间扫码次数\n" +
+            "\t\t\tcount(*) lottery_count, \n" +
+            "\t\t\tsum(lottery.money) lottery_money, \n" +
+            "\t\t\tlottery.create_time \n" +
+            "\t\tFROM \n" +
+            "\t\t\tuser, \n" +
+            "\t\t\tlottery \n" +
+            "\t\tWHERE \n" +
+            "\t\t\tlottery.user_id = user.id \n" +
+            "\t\tGROUP BY \n" +
+            "\t\t\tuser.id\n" +
+            "\t) a5\n" +
             "WHERE \n" +
-            "\ta3.user_id = a4.user_id \n" +
-            "\tAND a3.lottery_count / a4.lottery_sum > 0.33 \n" +
+            "\ta3.user_id = a4.user_id and a5.user_id = a4.user_id\n" +
+            "\tAND a3.lottery_count / a4.lottery_sum > 0.33  AND a4.lottery_sum >=70 AND a5.lottery_money > 260 \n" +
             "union \n" +
             "SELECT \n" +
             "\ta1.user_id\n" +
@@ -89,6 +105,7 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
             "\t(\n" +
             "\t\tSELECT \n" +
             "\t\t\tuser.id user_id, \n" +
+            "\t\t\t# 抽奖总次数\n" +
             "\t\t\tcount(*) lottery_count, \n" +
             "\t\t\tsum(lottery.money) lottery_money, \n" +
             "\t\t\tlottery.create_time \n" +
@@ -104,6 +121,7 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
             "\t\tSELECT \n" +
             "\t\t\tid, \n" +
             "\t\t\tlottery.user_id userId, \n" +
+            "\t\t\t# 抽奖天数\n" +
             "\t\t\tcount(*) lottery_day_count \n" +
             "\t\tFROM \n" +
             "\t\t\tlottery \n" +
@@ -113,6 +131,7 @@ public interface LotteryRepository extends BaseRepository<Lottery> {
             "WHERE \n" +
             "\ta1.lottery_money > 260 \n" +
             "\tAND a2.lottery_day_count >= 5 \n" +
+            "\t#日平均开奖数\n" +
             "\tAND a1.lottery_count/a2.lottery_day_count  >= 8 \n" +
             "\tAND a1.user_id = a2.userId")
     List<Object> findBlackUser();

@@ -39,6 +39,7 @@ public class UserAccountVO {
     public UserAccountVO(User user, UserAccount userAccount){
         BeanUtils.copyProperties(userAccount,this);
         BeanUtils.copyProperties(user,this);
+        createTime = user.getCreateTime();
     }
 
     public static UserAccountVO toUserAccountVO(UserAccount userAccount){

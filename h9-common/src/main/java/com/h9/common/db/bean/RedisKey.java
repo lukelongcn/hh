@@ -3,6 +3,7 @@ package com.h9.common.db.bean;
 import com.h9.common.db.entity.config.GlobalProperty;
 
 import java.text.MessageFormat;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,6 +13,7 @@ import java.text.MessageFormat;
  * Time: 9:31
  */
 public class RedisKey {
+    public static String batchRechargeCacheId = "h9:batchRecharge:id_";
     /**
      * description: %s 占位符为手机号码
      */
@@ -25,6 +27,13 @@ public class RedisKey {
      * description: 短信验证码错误次数（区分类型，userId）
      */
     private static String errorCodeCountKey = "h9:sms:code:errorCount:userId:%s:type:%s";
+
+    /**
+     * description: 提现次数
+     */
+    public static String withdrawSuccessCount = "h9:withdraw:userId_%s:count";
+
+    public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
 
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
@@ -42,13 +51,19 @@ public class RedisKey {
         System.out.println(smsCodeKey);
     }
 
+    public static String getWithdrawSuccessCountKey(Long userId) {
+        String format = String.format(withdrawSuccessCount, userId);
+        return format;
+    }
+
+
     public static String getAdminTokenUserIdKey(String token){
         return String.format("h9:admin:userId:%s",token);
     }
 
     /***
      * 获取通用全局配置
-     * @see GlobalProperty
+     * @see com.h9.common.db.entity.GlobalProperty
      * @param code
      * @return
      */
@@ -84,6 +99,15 @@ public class RedisKey {
     public static String getLotteryBefore(Long userId,Long rewardId){
         return String.format("lottery:%d:%d:before",userId,rewardId);
     }
+
+    public static String getBatchRechargeCacheId() {
+        return batchRechargeCacheId+ UUID.randomUUID().toString();
+    }
+
+    public static String getTodayRechargeMoney(Long userId) {
+        return todayRechargeMoney+userId;
+    }
+
 }
 
 
