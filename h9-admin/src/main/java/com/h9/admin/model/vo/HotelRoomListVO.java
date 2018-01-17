@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Created by itservice on 2018/1/4.
@@ -37,7 +38,10 @@ public class HotelRoomListVO {
     private String bedSize;
 
     @ApiModelProperty("房间状态")
-    private String status;
+    private Integer status;
+
+    @ApiModelProperty("状态描述")
+    private String statusDesc;
 
     @ApiModelProperty("酒店名称")
     private  String hotelName;
@@ -50,7 +54,11 @@ public class HotelRoomListVO {
 
         HotelRoomType.Status findStatus = HotelRoomType.Status.findByCode(roomType.getStatus());
         if(findStatus != null){
-            this.setStatus(findStatus.getDesc());
+            this.setStatus(findStatus.getCode());
+            this.setStatusDesc(findStatus.getDesc());
+        }else{
+            this.setStatusDesc("未知状态");
+            this.setStatus(-1);
         }
     }
 

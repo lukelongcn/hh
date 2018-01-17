@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -19,7 +20,6 @@ import java.util.List;
 @Accessors(chain = true)
 @ApiModel(value="酒店列表")
 public class HotelListVO {
-
 
     @ApiModelProperty("id")
     private Long id;
@@ -37,22 +37,35 @@ public class HotelListVO {
     private String detailAddress;
 
     @ApiModelProperty("评分")
-    private Float grade;
+    private BigDecimal grade;
 
     @ApiModelProperty("酒店预订电话")
     private String hotelPhone;
 
 
+    private Integer status;
+
+    private String statusDesc;
 
     public HotelListVO(){}
 
-    public HotelListVO(Hotel hotel){
+    public HotelListVO(Hotel hotel,Integer roomCount){
 
         BeanUtils.copyProperties(hotel, this);
 //        List<String> imagesFromDb = hotel.getImages();
 //        if(!CollectionUtils.isEmpty(imagesFromDb)){
 //            this.images = imagesFromDb.get(0);
 //        }
+        this.setRoomCount(roomCount);
+        Integer status = hotel.getStatus();
+        Hotel.Status findStatus = Hotel.Status.findByCode(status);
+        if(findStatus == null){
+            this.status = -1;
+            this.setStatusDesc("未知状态");
+        }else{
+            this.setStatus(status);
+            this.setStatusDesc(findStatus.getDesc());
+        }
 
     }
 
