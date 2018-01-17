@@ -135,6 +135,8 @@ public class StickService {
         if(stickType == null){
             return Result.fail("请选择分类");
         }
+        stickType.setStickCount(stickType.getStickCount()+1);
+        stickTypeRepository.save(stickType);
         Stick stick = new Stick();
         return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
     }
