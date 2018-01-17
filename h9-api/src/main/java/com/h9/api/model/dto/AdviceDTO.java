@@ -15,7 +15,7 @@ import lombok.Data;
 public class AdviceDTO {
 
     @NotBlank(message = "请填写意见")
-    @Size(min = 2,max = 200,message = "意见过长")
+    @Size(min = 2,max = 200,message = "意见不得少于2位或大于200字")
     private String advice;
 
     @Size(max = 3,message = "图片上传最多三张")
