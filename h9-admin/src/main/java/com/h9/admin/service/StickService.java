@@ -198,4 +198,19 @@ public class StickService {
         return stickDetailVO;
     }
 
+    public Result lock(long stickId) {
+        Stick stick = stickRepository.findOne(stickId);
+
+        if (stick.getLockState() ==1){
+            stick.setLockState(2);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("锁定成功");
+        }
+        if (stick.getLockState() == 2){
+            stick.setLockState(1);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("解锁成功");
+        }
+        return Result.fail();
+    }
 }

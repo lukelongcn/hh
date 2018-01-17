@@ -118,4 +118,8 @@ public class StickContoller {
         return stickService.allDetail(pageNumber,pageSize);
     }
 
+    @PostMapping("/lock")
+    public Result lock(@RequestParam(value = "stickId")long stickId){
+        return stickService.lock(stickId);
+    }
 }
