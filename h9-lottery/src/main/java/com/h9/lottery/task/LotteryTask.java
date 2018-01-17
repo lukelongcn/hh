@@ -6,6 +6,8 @@ import com.h9.common.utils.DateUtil;
 import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.service.LotteryService;
 import org.jboss.logging.Logger;
+import org.redisson.Redisson;
+import org.redisson.core.RLock;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +37,9 @@ public class LotteryTask {
 
     @Resource
     private LotteryConfig lotteryConfig;
+    @Resource
+    private Redisson redisson;
+    
 
     @Scheduled(fixedRate = 5000)
     public void run() {
@@ -45,7 +51,13 @@ public class LotteryTask {
         for (Reward reward : rewardList) {
             try {
                 logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
-                lotteryService.lottery(null, reward.getCode());
+                RLock lock = redisson.getLock("lock:" +  reward.getCode());
+                try {
+                    lock.lock(1000, TimeUnit.MILLISECONDS);
+                    lotteryService.lottery(null, reward.getCode());
+                } finally {
+                    lock.unlock();
+                }
                 logger.info("rewardId: " + reward.getId() + "结束");
             } catch (Exception e) {
                 e.printStackTrace();

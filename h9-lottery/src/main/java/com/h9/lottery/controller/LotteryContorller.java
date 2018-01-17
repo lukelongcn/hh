@@ -51,11 +51,15 @@ public class LotteryContorller {
                               @SessionAttribute("curUserId") long userId,
                           @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request) throws ServiceException {
         RLock lock = redisson.getLock("lock:" + lotteryVo.getCode());
-        logger.debugv("lock start" + userId);
-        lock.lock(1000, TimeUnit.MILLISECONDS);
-        Result result = lotteryService.appCode(userId, lotteryVo, request);
-        lock.unlock();
-        logger.debugv("lock end"+ userId);
+        Result result;
+        try {
+            logger.debugv("lock start" + userId);
+            lock.lock(5, TimeUnit.SECONDS);
+            result = lotteryService.appCode(userId, lotteryVo, request);
+        } finally {
+            lock.unlock();
+            logger.debugv("lock end"+ userId);
+        }
         return result;
     }
 
@@ -65,9 +69,18 @@ public class LotteryContorller {
     @ApiOperation(value = "开始抽奖")
     public Result startCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                           @SessionAttribute("curUserId") long userId
+
                             ,@RequestParam("code") String code){
-        logger.debugv("start userId {0} code {1}" ,userId, code);
-        return lotteryService.lottery(userId,code);
+        RLock lock = redisson.getLock("lock:" + code);
+        Result lottery;
+        try {
+            lock.lock(5, TimeUnit.SECONDS);
+            logger.debugv("start userId {0} code {1}" ,userId, code);
+            lottery = lotteryService.lottery(userId, code);
+        } finally {
+            lock.unlock();
+        }
+        return lottery;
     }
 
 
