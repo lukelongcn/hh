@@ -43,8 +43,20 @@ public class PayInfo extends BaseEntity {
     private Integer status = 1;
 
 
+    public PayInfo( ) {
+    }
+
+    public PayInfo(BigDecimal money, Long orderId, Integer orderType, Long payOrderId, Integer status) {
+        this.money = money;
+        this.orderId = orderId;
+        this.orderType = orderType;
+        this.payOrderId = payOrderId;
+        this.status = status;
+    }
+
     public enum OrderTypeEnum{
-        Recharge(0,"充值");
+        Recharge(0,"充值"),
+        HOTEL(1,"酒店");
 
         OrderTypeEnum(int id,String name){
             this.id = id;

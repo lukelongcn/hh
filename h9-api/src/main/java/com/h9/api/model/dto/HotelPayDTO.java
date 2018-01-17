@@ -16,4 +16,7 @@ public class HotelPayDTO {
 
     @NotNull(message = "请选择要支付的订单Id")
     private Long hotelOrderId;
+//WX(2, "wx"), WXJS(3, "wxjs")
+    @NotNull(message = "请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)")
+    private String payPlatform;
 }

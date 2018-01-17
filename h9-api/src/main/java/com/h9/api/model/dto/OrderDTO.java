@@ -23,6 +23,25 @@ public class OrderDTO {
     private String businessAppId = "" ;
     private int payMethod = PayMethodEnum.WXJS.getKey();
 
+    public OrderDTO(String openId, String orderNo, Long businessOrderId, BigDecimal totalAmount, String businessAppId, int payMethod) {
+        this.openId = openId;
+        this.orderNo = orderNo;
+        this.businessOrderId = businessOrderId;
+        this.totalAmount = totalAmount;
+        this.businessAppId = businessAppId;
+        this.payMethod = payMethod;
+    }
+
+
+    public OrderDTO(String openId, BigDecimal totalAmount, Long businessOrderId,int payMethod) {
+        this.openId = openId;
+        this.totalAmount = totalAmount;
+        this.businessOrderId = businessOrderId;
+        this.payMethod = payMethod;
+    }
+
+    public OrderDTO( ) {
+    }
 
     public enum PayMethodEnum {
         BALANCE(0, "balance"), ALIPAY(1, "alipay"), WX(2, "wx"), WXJS(3, "wxjs"), YWT(4, "ywt"),

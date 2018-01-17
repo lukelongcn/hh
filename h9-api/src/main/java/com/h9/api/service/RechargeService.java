@@ -12,7 +12,7 @@ import com.h9.api.service.handler.RechargePayHandler;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.RechargeOrderRepository;
 import com.h9.common.db.repo.UserRepository;

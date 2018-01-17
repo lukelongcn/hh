@@ -154,6 +154,7 @@ public class BalanceFlow extends BaseEntity {
         TEMP_RED_BAG(9,"抢红包(历临时账户)"),
         RED_BAG(10,"抢红包"),
         VB_TO_MONEY(11,"vb兑换酒元"),
+        BALANCE_PAY(12, "余额支付"),
         REFUND(13,"退款"),
         Recharge(14,"充值"),
         BATCH_RECHARGE(15,"批量充值"),

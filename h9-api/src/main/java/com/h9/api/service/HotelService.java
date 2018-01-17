@@ -1,38 +1,37 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
+import com.h9.api.model.dto.OrderDTO;
 import com.h9.api.model.vo.*;
+import com.h9.api.provider.PayProvider;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.repo.HotelOrderRepository;
-import com.h9.common.db.repo.HotelRepository;
-import com.h9.common.db.repo.HotelRoomTypeRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.utils.DateUtil;
-import com.h9.common.utils.MoneyUtils;
+import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.rmi.CORBA.Util;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.NOT_PAID;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.REFUND_MONEY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.WAIT_ENSURE;
@@ -70,24 +69,24 @@ public class HotelService {
         List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
-            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList,wechatHostUrl));
+            return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList, wechatHostUrl));
         }
-        return Result.success(new HotelDetailVO(hotel, null,wechatHostUrl));
+        return Result.success(new HotelDetailVO(hotel, null, wechatHostUrl));
     }
 
-    public Result hotelList(String city, String queryKey,int page,int limit) {
+    public Result hotelList(String city, String queryKey, int page, int limit) {
 
         if (StringUtils.isNotBlank(queryKey)) {
             PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
-            Page<Hotel> hotelPage = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%",pageRequest);
+            Page<Hotel> hotelPage = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%", pageRequest);
             if (CollectionUtils.isNotEmpty(hotelPage.getContent())) {
                 PageResult<HotelListVO> pageResult = new PageResult<>(hotelPage).result2Result(el -> new HotelListVO(el));
                 return Result.success(pageResult);
             } else {
                 return Result.fail("没有找到此类酒店");
             }
-        }else{
-            return Result.success(hotelRepository.findAll(page,limit).map(HotelListVO::new));
+        } else {
+            return Result.success(hotelRepository.findAll(page, limit).map(HotelListVO::new));
         }
 
     }
@@ -107,13 +106,13 @@ public class HotelService {
             return Result.fail("非可用时段不可预订");
         }
 
-        HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType,userId);
+        HotelOrder hotelOrder = initHotelOrder(addHotelOrderDTO, hotelRoomType, userId);
 
         hotelOrder = hotelOrderRepository.saveAndFlush(hotelOrder);
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
-        return Result.success(new HotelOrderPayVO(hotelOrder,userAccount,hotelOrder.getTotalMoney()));
+        return Result.success(new HotelOrderPayVO(hotelOrder, userAccount, hotelOrder.getTotalMoney()));
     }
 
     /**
@@ -181,13 +180,22 @@ public class HotelService {
         return Result.success(mapResult);
     }
 
+    @Resource
+    private CommonService commonService;
+
+    @Resource
+    private PayProvider payProvider;
+    @Resource
+    private UserRepository userRepository;
+
     /**
      * description: 支付订单
      */
-    public Result payOrder(HotelPayDTO hotelPayDTO) {
+    @Transactional
+    public Result payOrder(HotelPayDTO hotelPayDTO, Long userId) {
 
         Integer payMethod = hotelPayDTO.getPayMethod();
-        if(payMethod == null){
+        if (payMethod == null) {
             return Result.fail("请选择支付方式");
         }
 
@@ -201,34 +209,104 @@ public class HotelService {
             return Result.fail("不能进行此操作");
         }
 
-        if(payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY){
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        User user = userRepository.findOne(userId);
 
-        }else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY){
-
-        }else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY){
-
+        String payPlatform = hotelPayDTO.getPayPlatform();
+        OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
+        if(findPayPlatformEnum == null) return Result.fail("请传入payPlatform 参数");
+        Result result = null;
+        if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
+            commonService.setBalance(userId, hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+            hotelOrder.setPayMoney4JiuYuan(hotelOrder.getTotalMoney());
+            result = Result.success();
+        } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
+            result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, OrderDTO.PayMethodEnum.WXJS.getKey());
+        } else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY) {
+            result = mixedPay(hotelOrder, userAccount);
         }
 
         hotelOrder.setPayMethod(payMethod);
         hotelOrder.setOrderStatus(WAIT_ENSURE.getCode());
         hotelOrderRepository.save(hotelOrder);
 
-        return Result.success("支付成功");
+        return result;
     }
 
-    public Result orderList(Long userId,Integer type, Integer page, Integer limit) {
+    @Resource
+    private PayInfoRepository payInfoRepository;
+
+    private Result getWXPayInfo(HotelOrder hotelOrder, BigDecimal payMoney, User user, int payPlatform) {
+        payProvider.initConfig();
+        PayInfo payInfo = new PayInfo(payMoney, hotelOrder.getId(), PayInfo.OrderTypeEnum.HOTEL.getId(), null, 1);
+        payInfo = payInfoRepository.saveAndFlush(payInfo);
+        String openId = user.getOpenId();
+        if (StringUtils.isBlank(openId)) {
+            logger.info("支付出错，账号" + user.getId() + " openId为空");
+            return Result.fail("支付出错，账号" + user.getId() + " openId为空");
+        }
+        OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(),payPlatform);
+        Result<OrderVo> orderVoResult = payProvider.initOrder(orderDTO);
+
+        if (!orderVoResult.isSuccess()) {
+            logger.info("获取支付信息失败，获取结果： " + JSONObject.toJSONString(orderVoResult));
+            return orderVoResult;
+        }
+
+        OrderVo orderVo = orderVoResult.getData();
+        String pay = payProvider.goPay(orderVo.getPayOrderId(), payInfo.getId());
+        PayVO payVO = new PayVO();
+        payVO.setPayOrderId(orderVo.getPayOrderId());
+        payVO.setPayUrl(pay);
+        payVO.setOrderId(hotelOrder.getId());
+
+        return Result.success(payVO);
+    }
+
+    /**
+     * description: 混合支付
+     */
+    private Result mixedPay(HotelOrder hotelOrder, UserAccount userAccount) {
+        BigDecimal totalMoney = hotelOrder.getTotalMoney();
+        BigDecimal balance = userAccount.getBalance();
+        if (balance.compareTo(totalMoney) >= 0) {
+            //直接用余额支付完
+            commonService.setBalance(userAccount.getUserId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+            BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+            paidMoney4JiuYuan = paidMoney4JiuYuan.add(hotelOrder.getTotalMoney());
+            hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
+            return Result.success();
+        } else {
+            // 余额 + 微信支付
+            if (balance.compareTo(new BigDecimal(0)) > 0) {
+                commonService.setBalance(userAccount.getUserId(), balance, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+                BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+                paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
+                hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
+            }
+            BigDecimal wxPayMoney = totalMoney.subtract(balance);
+            //TODO 微信支付 wxPayMoney 金额
+            BigDecimal paidWXMoney = hotelOrder.getPayMoney4Wechat();
+            paidWXMoney = paidWXMoney.add(wxPayMoney);
+            hotelOrder.setPayMoney4Wechat(paidWXMoney);
+
+        }
+        return Result.success();
+    }
+
+    public Result orderList(Long userId, Integer type, Integer page, Integer limit) {
 
         PageRequest pageRequest = hotelOrderRepository.pageRequest(page, limit);
         Page<HotelOrder> hotelOrderPage = null;
 
         if (type == 1) {
-            hotelOrderPage = hotelOrderRepository.findAllByUserId(userId,pageRequest);
+            hotelOrderPage = hotelOrderRepository.findAllByUserId(userId, pageRequest);
         } else {
             Collection<Integer> statusList = type2HotelOrderStatus(type);
             if (CollectionUtils.isEmpty(statusList)) {
                 return Result.fail("请返回正确的type类型");
             }
-            hotelOrderPage = hotelOrderRepository.findAllBy(userId,statusList, pageRequest);
+            hotelOrderPage = hotelOrderRepository.findAllBy(userId, statusList, pageRequest);
         }
 
         PageResult<Object> pageResult = new PageResult<>(hotelOrderPage).result2Result(el -> new HotelOrderListVO(el));
@@ -257,9 +335,9 @@ public class HotelService {
     public Result orderDetail(Long orderId, Long userId) {
 
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
-        if(hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null) return Result.fail("订单不存在");
 
-        if(!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
 
         return Result.success(new HotelOrderDetailVO(hotelOrder));
     }
@@ -270,22 +348,23 @@ public class HotelService {
 //        List<Hotel> hotelList = hotelRepository.findAllHotelCity();
         List<String> hotelList = hotelRepository.findAllHotelCity();
         long end = System.currentTimeMillis();
-        logger.info("consumer time : "+(end - start)/1000F);
+        logger.info("consumer time : " + (end - start) / 1000F);
 //        List<String> cityList = hotelList.stream().map(el -> el.getCity()).collect(Collectors.toList());
         return Result.success(hotelList);
     }
 
-    public Result<HotelOrder> authOrder(Long hotelOrderId,Long userId){
+    public Result<HotelOrder> authOrder(Long hotelOrderId, Long userId) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
-        if(hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null) return Result.fail("订单不存在");
 
-        if(!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
 
         return Result.success(hotelOrder);
     }
+
     public Result payInfo(Long hotelOrderId, Long userId) {
         Result<HotelOrder> authResult = authOrder(hotelOrderId, userId);
-        if(authResult.getCode() == 1) return authResult;
+        if (authResult.getCode() == 1) return authResult;
 
         UserAccount userAccount = userAccountRepository.findOne(userId);
 
@@ -295,7 +374,7 @@ public class HotelService {
 
     public String orderDetail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
-        if(hotel == null) return "酒店不存在";
+        if (hotel == null) return "酒店不存在";
         return hotel.getHotelInfo();
     }
 }

@@ -86,8 +86,8 @@ public class HotelController {
      */
     @Secured
     @PostMapping("/hotel/order/pay")
-    public Result payOrder(@Valid@RequestBody HotelPayDTO hotelPayDTO){
-        return hotelService.payOrder(hotelPayDTO);
+    public Result payOrder(@Valid@RequestBody HotelPayDTO hotelPayDTO,@SessionAttribute("curUserId") Long userId){
+        return hotelService.payOrder(hotelPayDTO,userId);
     }
 
     /**
