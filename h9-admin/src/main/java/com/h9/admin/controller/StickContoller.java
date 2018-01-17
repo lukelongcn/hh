@@ -34,7 +34,7 @@ public class StickContoller {
     @Resource
     private StickService stickService;
 
-    //@Secured(accessCode = "stick:add")
+    @Secured(accessCode = "stick:add")
     @PostMapping("/type")
     public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
         logger.debugv(JSONObject.toJSONString(stickTypeDTO));

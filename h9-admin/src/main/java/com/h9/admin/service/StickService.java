@@ -8,6 +8,7 @@ import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickDetailVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
+import com.h9.admin.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -80,7 +81,11 @@ public class StickService {
 
 
     public Result getStick(int page,int limit){
-       return Result.success(stickTypeRepository.findAll(page, limit));
+        PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
+        if (pageResult == null){
+            return Result.fail("暂无分类");
+        }
+        return Result.success(pageResult.result2Result(StickTypeVO::new));
     }
 
 
