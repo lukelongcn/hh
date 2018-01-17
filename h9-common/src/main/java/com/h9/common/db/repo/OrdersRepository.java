@@ -50,7 +50,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
             public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (orderDTO.getNo() != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("id").as(String.class),orderDTO.getNo()));
+                    predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class),orderDTO.getNo()));
                 }
                 if (StringUtils.isNotBlank(orderDTO.getPhone())) {
                     predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class),orderDTO.getPhone()));
@@ -65,7 +65,11 @@ public interface OrdersRepository extends BaseRepository<Orders> {
                     predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class),orderDTO.getStatus()));
                 }
                 Predicate[] pre = new Predicate[predicateList.size()];
-                return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
+                if(pre!=null&&pre.length>=0){
+                     return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
+                }else{
+                    return criteriaQuery.getRestriction();
+                }
             }
         };
     }

@@ -23,8 +23,8 @@ import java.util.Date;
 public class SMSProvide {
 
     public static final String smsUrl = "http://106.ihuyi.com/webservice/sms.php?method=Submit";
-    public static final String appId = "cf_tianlitai";
-    public static final String appKey = "1a4772f6b6eee0a3600921a56d13e139";
+    public static final String appId = "cf_hjjt";
+    public static final String appKey = "8e0489c157a016e4eb22a73ccc9095d2";
 
     private Logger logger = Logger.getLogger(this.getClass());
     @Resource

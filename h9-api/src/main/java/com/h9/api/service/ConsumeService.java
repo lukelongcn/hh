@@ -37,10 +37,10 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -140,11 +140,18 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
 
+        //验证每日充值金额不能大于 300（配置）
+        Result verifyTodayMoneyResult = verifyTodayMoney(realPrice, userId);
+        if (verifyTodayMoneyResult.getCode() == 1) {
+            return verifyTodayMoneyResult;
+        }
+
         //校验 code
         String tel = user.getPhone();
 
         Result verifyResult = smsService.verifySmsCodeByType(userId, SMSTypeEnum.MOBILE_RECHARGE.getCode(), tel, mobileRechargeDTO.getCode());
         if (verifyResult != null) return verifyResult;
+
 
         String smsCodeCount = RedisKey.getSmsCodeCount(tel, SMSTypeEnum.MOBILE_RECHARGE.getCode());
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
@@ -164,7 +171,8 @@ public class ConsumeService {
         orderItems.setGoods(goods);
 
         userAccountRepository.save(userAccount);
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO, order.getId());
+        orderItemReposiroty.saveAndFlush(orderItems);
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(),realPrice);
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
@@ -174,28 +182,67 @@ public class ConsumeService {
             if (changeStockResult.getCode() == 1) {
                 return changeStockResult;
             }
-            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             ofPayRecordReposiroty.save(ofPayRecord);
-            orderItemReposiroty.saveAndFlush(orderItems);
+
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
         }
-
 
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            saveRechargeRecord(user,goods.getRealPrice(),orderItems.getOrders().getId());
+            saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
+            addEveryDayRechargeMoney(userId, realPrice);
+            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
+
             return Result.success("充值成功", map);
         } else {
             throw new ServiceException(result);
         }
     }
 
+    private void addEveryDayRechargeMoney(Long userId, BigDecimal money) {
+        String key = RedisKey.getTodayRechargeMoney(userId);
+        String todayRechargeMoney = redisBean.getStringValue(key);
 
-    public void saveRechargeRecord(User user,BigDecimal money,Long orderId){
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(),orderId);
+        if (StringUtils.isBlank(todayRechargeMoney)) {
+            todayRechargeMoney = "0";
+        }
+        BigDecimal rechargedMoeny = new BigDecimal(todayRechargeMoney);
+
+        rechargedMoeny = rechargedMoeny.add(money);
+
+        redisBean.setStringValue(key,MoneyUtils.formatMoney(rechargedMoeny));
+        redisBean.expire(key, DateUtil.getTimesNight());
+    }
+
+    private Result verifyTodayMoney(BigDecimal realPrice, Long userId) {
+        try {
+            String everydayRechargeTotalMoney = configService.getStringConfig("everydayRechargeTotalMoney");
+
+            if (StringUtils.isBlank(everydayRechargeTotalMoney)) {
+                everydayRechargeTotalMoney = "300";
+            }
+            String todayRechargeMoney = redisBean.getStringValue(RedisKey.getTodayRechargeMoney(userId));
+
+            if(StringUtils.isBlank(todayRechargeMoney)){
+                todayRechargeMoney = "0";
+            }
+            BigDecimal rechargedMoney = realPrice.add((new BigDecimal(todayRechargeMoney)));
+            if (rechargedMoney.compareTo(new BigDecimal(everydayRechargeTotalMoney)) > 0) {
+                return Result.fail("每日充值金额不能超过" + MoneyUtils.formatMoney(new BigDecimal(everydayRechargeTotalMoney)));
+            }
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            return Result.fail("金额校验失败");
+        }
+        return Result.success();
+    }
+
+
+    public void saveRechargeRecord(User user, BigDecimal money, Long orderId) {
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 
@@ -359,6 +406,11 @@ public class ConsumeService {
 
     public Result bankWithDraw(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
 
+
+        if (true) {
+            return Result.fail("提现功能正在维护中");
+        }
+
         User user = userRepository.findOne(userId);
         //验证短信
         String smsCodeKey = RedisKey.getSmsCodeKey(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
@@ -374,6 +426,12 @@ public class ConsumeService {
 
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(new BigDecimal(0)) <= 0) return Result.fail("余额不足");
+
+
+        Result verifyWithdrawCount = verifyWithdrawCount(user);
+        if (verifyWithdrawCount.getCode() == 1) {
+            return verifyWithdrawCount;
+        }
 
         String withdrawMax = configService.getStringConfig(ParamConstant.WITHDRAW_MAX);
         BigDecimal max = new BigDecimal(withdrawMax);
@@ -394,7 +452,7 @@ public class ConsumeService {
 //        BigDecimal willWithdrawMoney = castTodayWithdrawMoney.add(balance);
         //一天提现的金额最大值只能是最在额度值
         BigDecimal canWithdrawMoney = max.subtract(castTodayWithdrawMoney);
-        if(balance.compareTo(canWithdrawMoney) < 0){
+        if (balance.compareTo(canWithdrawMoney) < 0) {
             canWithdrawMoney = balance;
         }
         String transAmt = "";
@@ -404,7 +462,7 @@ public class ConsumeService {
 //            transAmt = canWithdrawMoney;
             if ("product".equals(currentEnvironment)) {
                 transAmt = canWithdrawMoney.multiply(new BigDecimal(100)).toString();
-            }else{
+            } else {
                 transAmt = "101";
             }
         }
@@ -425,7 +483,7 @@ public class ConsumeService {
 
         SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
         String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate,currentEnvironment);
+        Result result = chinaPayService.signPay(payParam, merDate, currentEnvironment);
 
         //保存这个提现请求
         WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
@@ -469,6 +527,7 @@ public class ConsumeService {
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
             bankCardRepository.save(userBank);
+            addWithdrawCount(user);
             return Result.success(map);
 
         } else {
@@ -483,6 +542,59 @@ public class ConsumeService {
             withdrawalsRequestReposiroty.save(withdrawalsRequest);
             bankCardRepository.save(userBank);
             return Result.fail("请确认银行卡信息是否正确");
+        }
+    }
+
+    /**
+     * description: 验提现次数，一天3次 晚上 12 点清空
+     */
+    public Result verifyWithdrawCount(User user) {
+        String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
+
+        String count = redisBean.getStringValue(withdrawSuccessCountKey);
+
+        if (StringUtils.isBlank(count)) {
+            return Result.success();
+        }
+        int countInt = 0;
+        try {
+            countInt = Integer.valueOf(count);
+        } catch (NumberFormatException e) {
+            logger.info(e.getMessage(), e);
+            return Result.fail();
+        }
+        logger.info("userId : " + user.getId() + " 已提现次数: " + countInt);
+        if (countInt > 2) {
+            return Result.fail("一天内提现次数不能超过3次，请明天再试");
+        }
+
+        return Result.success();
+    }
+
+    /**
+     * description: 增加提现次数,晚上 12 点清空。
+     */
+    public void addWithdrawCount(User user) {
+        String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
+        String withdrawSuccessCount = redisBean.getStringValue(withdrawSuccessCountKey);
+        //计算到晚上零点的毫秒值
+        Date timesNight = DateUtil.getTimesNight();
+        int delay = (int) (timesNight.getTime() - new Date().getTime());
+        if (StringUtils.isBlank(withdrawSuccessCount)) {
+            logger.info("userId :" + user.getId() + "今天第一次提现");
+            redisBean.setStringValue(withdrawSuccessCountKey, "1", delay, TimeUnit.MILLISECONDS);
+        } else {
+            try {
+                int count = Integer.valueOf(withdrawSuccessCount);
+                count++;
+                redisBean.setStringValue(withdrawSuccessCountKey, count + "", delay, TimeUnit.MILLISECONDS);
+                logger.info("userId :" + user.getId() + "今天提现次数：" + count);
+
+            } catch (NumberFormatException e) {
+                logger.info(e.getMessage(), e);
+                withdrawSuccessCount = "1";
+                redisBean.setStringValue(withdrawSuccessCountKey, withdrawSuccessCount + "", delay, TimeUnit.MILLISECONDS);
+            }
         }
     }
 

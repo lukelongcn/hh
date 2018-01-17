@@ -33,7 +33,7 @@ public class Version extends BaseEntity {
     @Column(name = "upgrade_type",  columnDefinition = "tinyint default 0 COMMENT '升级类型,1:不提示升级,2:建议升级,3:强制升级'")
     private Integer upgradeType;
 
-    @Column(name = "description",  columnDefinition = "varchar(512) default '' COMMENT '描述'")
+    @Column(name = "description",  columnDefinition = "text default '' COMMENT '描述'")
     private String description;
 
     @Column(name = "package_url",  columnDefinition = "varchar(256) default '' COMMENT '包url'")

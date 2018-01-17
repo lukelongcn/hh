@@ -344,27 +344,37 @@ public class LotteryService {
         return Result.success(lotteryResult);
     }
 
+    @Resource
+    private Redisson redisson;
 
     @Transactional
     public Result lottery(Long curUserId, String code) {
+        RLock lock = redisson.getLock("lock:" + code);
+        lock.lock(1000, TimeUnit.MILLISECONDS);
+
         code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
+            lock.unlock();
             return Result.fail("红包不存在");
         }
         if (curUserId != null) {
             if (!curUserId.equals(reward.getUserId())) {
+                lock.unlock();
                 return Result.fail("你无权操作");
             }
         }
         if (reward.getStatus() == END.getCode()) {
+            lock.unlock();
             return Result.success("红包已经抽取");
         }
         if (reward.getStatus() == StatusEnum.FAILD.getCode()) {
+            lock.unlock();
             return Result.success("红包已失效");
         }
         List<Lottery> lotteryList = lotteryRepository.findByReward(reward);
         if (CollectionUtils.isEmpty(lotteryList)) {
+            lock.unlock();
             return Result.fail("没有抽奖记录");
         }
         List<Lottery> lotteries = new ArrayList<>();
@@ -393,6 +403,7 @@ public class LotteryService {
             String balanceFlowType = configService.getValueFromMap("balanceFlowType", "10");
             commonService.setBalance(lotteryUserId, money, LOTTERY, lotteryFlow.getId(), lotteryFlow.getId() + "", balanceFlowType);
         }
+        lock.unlock();
         return Result.success();
     }
 

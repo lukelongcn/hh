@@ -155,6 +155,8 @@ public class BalanceFlow extends BaseEntity {
         RED_BAG(10,"抢红包"),
         VB_TO_MONEY(11,"vb兑换酒元"),
         REFUND(13,"退款"),
+        Recharge(14,"充值"),
+        BATCH_RECHARGE(15,"批量充值"),
         SIGN(16,"签到"),
         STICK_REWARD(17,"打赏");
 

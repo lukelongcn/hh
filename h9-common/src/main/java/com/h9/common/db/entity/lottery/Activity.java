@@ -59,7 +59,7 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_icon",  columnDefinition = "varchar(256) default '' COMMENT '图片路径'")
     private String activityIcon;
 
-    @Column(name = "activity_desc",  columnDefinition = "varchar(128) default '' COMMENT '活动描述'")
+    @Column(name = "activity_desc",  columnDefinition = "text default '' COMMENT '活动描述'")
     private String activityDesc;
 
     @Temporal(TIMESTAMP)

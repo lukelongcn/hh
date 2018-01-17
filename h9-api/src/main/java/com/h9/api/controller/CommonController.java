@@ -2,6 +2,7 @@ package com.h9.api.controller;
 
 import com.h9.api.model.vo.AgreementVO;
 import com.h9.api.provider.WeChatProvider;
+import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.repo.AgreementRepository;
@@ -35,6 +36,7 @@ public class CommonController {
      */
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/page/{code}",produces = MediaType.TEXT_HTML_VALUE)
+    @PrintReqResLog(printRequestParams = true)
     public String agreement(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
         HtmlContent htmlContent = agreementRepository.findByCode(code);
         if(htmlContent == null){
@@ -57,6 +59,7 @@ public class CommonController {
 
     @ApiOperation(value = "获取content")
     @GetMapping(value = "/pageJson/{code}")
+    @PrintReqResLog(printRequestParams = true)
     public Result agreementJson(@NotBlank(message = "页面丢失")@PathVariable("code") String code){
         HtmlContent htmlContent = agreementRepository.findByCode(code);
         if(htmlContent == null){

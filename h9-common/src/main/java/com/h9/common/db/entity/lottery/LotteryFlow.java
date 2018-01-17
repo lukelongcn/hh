@@ -20,7 +20,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "lottery_flow",uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","reward_id"}))
+@Table(name = "lottery_flow")
 public class LotteryFlow extends BaseEntity {
 
 

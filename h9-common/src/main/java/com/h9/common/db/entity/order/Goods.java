@@ -30,7 +30,7 @@ public class Goods extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '充值显示名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '充值显示名称'")
     private String name;
 
     @Column(name = "code", nullable = false, columnDefinition = "varchar(30) default '' COMMENT '商品编码'")
@@ -48,7 +48,7 @@ public class Goods extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 上架 2 下架'")
     private Integer status = 1;
 
-    @Column(name = "description", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '描述'")
+    @Column(name = "description", nullable = false, columnDefinition = "text default '' COMMENT '描述'")
     private String description;
 
     @Column(name = "stock",nullable = false,columnDefinition = "int default 0 COMMENT '库存'")
@@ -56,7 +56,7 @@ public class Goods extends BaseEntity {
 
 //    @Column(name = "goods_type",nullable = false,columnDefinition = "int default 1 COMMENT '类别（1，为手机充值 2，为 滴滴卡兑换）'")
     @ManyToOne()
-    @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '商品类型'")
+    @JoinColumn(name = "goods_type_id",nullable = false,referencedColumnName="id",columnDefinition = "bigint(20)  COMMENT '商品类型'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @NotFound(action= NotFoundAction.IGNORE)
     private GoodsType goodsType;
 

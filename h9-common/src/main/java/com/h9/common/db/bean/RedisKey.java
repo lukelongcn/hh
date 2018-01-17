@@ -3,6 +3,7 @@ package com.h9.common.db.bean;
 import com.h9.common.db.entity.config.GlobalProperty;
 
 import java.text.MessageFormat;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -48,7 +49,7 @@ public class RedisKey {
 
     /***
      * 获取通用全局配置
-     * @see GlobalProperty
+     * @see com.h9.common.db.entity.GlobalProperty
      * @param code
      * @return
      */
