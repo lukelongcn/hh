@@ -216,11 +216,22 @@ public class StickContoller {
         return stickService.updateStick(userId,stickId,stickDto,request);
     }
 
+    /**
+     * 举报类别
+     * @return Result
+     */
     @GetMapping("/getReportType")
     public Result getReportType(){
         return stickService.getReportType();
     }
 
+    /**
+     * 举报贴子
+     * @param userId 用户id
+     * @param stickId 贴子id
+     * @param content 内容
+     * @return Result
+     */
     @Secured
     @PostMapping("report/{stickId}")
     public Result getReport(@SessionAttribute("curUserId")long userId,

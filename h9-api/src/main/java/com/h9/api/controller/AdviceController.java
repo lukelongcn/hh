@@ -38,9 +38,9 @@ public class AdviceController {
 
     /**
      * 提交意见反馈信息
-     * @param userId
-     * @param adviceDTO
-     * @return
+     * @param userId 用户id
+     * @param adviceDTO 请求对象
+     * @return Result
      */
     @Secured
     @PostMapping("/sendAdvice")
