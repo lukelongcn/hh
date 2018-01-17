@@ -28,6 +28,7 @@ public class PayHandlerFactory {
             }
             case 1:{
                 abPayHandler = hotelPayHandler;
+                break;
             }
 
             default:{
