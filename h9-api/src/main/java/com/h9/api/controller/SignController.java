@@ -25,8 +25,8 @@ public class SignController {
 
     /**
      * 每日签到
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return Result
      */
     @Secured
     @GetMapping("/daySign")
@@ -36,8 +36,8 @@ public class SignController {
 
     /**
      * 获取签到页面详情
-     * 。。@param userId
-     * @return
+     * @param userId 用户id
+     * @return Result
      */
     @Secured
     @GetMapping("/signMessage")
