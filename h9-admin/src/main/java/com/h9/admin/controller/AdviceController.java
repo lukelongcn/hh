@@ -29,11 +29,11 @@ public class AdviceController {
 
     @Description("获取用户反馈信息")
     @GetMapping("/userAdvice")
-    public Result userAdvice(@RequestParam(defaultValue = "1") Integer page,
-                             @RequestParam(defaultValue = "10") Integer limit){
+    public Result userAdvice(@RequestParam(defaultValue = "1") Integer pageNumber,
+                             @RequestParam(defaultValue = "10") Integer pageSize){
         Map<String,String> mapConfig = configService.getMapConfig(ParamConstant.ADVICE_TYPE);
 
-        return userAdviceService.getUserAdvice(page,limit,mapConfig);
+        return userAdviceService.getUserAdvice(pageNumber,pageSize,mapConfig);
     }
 
 

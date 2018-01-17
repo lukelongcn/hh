@@ -39,12 +39,12 @@ public interface StickCommentRepository extends BaseRepository<StickComment> {
     List<StickComment> findByBackId(long stickCommentParentId);
 
 
-    @Query("select s from StickComment s where s.level = 1 and s.state = 1  and " +
+    @Query("select s from StickComment s where s.stick.id = ?1 and s.level = 1 and s.state = 1  and " +
             "s.operationState = 1 order by s.createTime DESC")
-    Page<StickComment> findCommentList(Pageable pageRequest);
+    Page<StickComment> findCommentList(long stickId, Pageable pageRequest);
 
-    default PageResult<StickComment> findCommentList(Integer page, Integer limit){
-        Page<StickComment> stickComment =  findCommentList(pageRequest(page,limit));
+    default PageResult<StickComment> findCommentList(long stickId, Integer page, Integer limit){
+        Page<StickComment> stickComment =  findCommentList(stickId, pageRequest(page,limit));
         return new PageResult(stickComment);
     }
 

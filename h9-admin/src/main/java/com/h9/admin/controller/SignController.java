@@ -19,8 +19,8 @@ public class SignController {
     @Resource
     private SignService signService;
     @GetMapping("/getSign")
-    public Result getSign(@RequestParam(defaultValue = "1") Integer page,
-                          @RequestParam(defaultValue = "10") Integer limit){
-        return signService.getSign(page,limit);
+    public Result getSign(@RequestParam(defaultValue = "1") Integer pageNumber,
+                          @RequestParam(defaultValue = "10") Integer pageSize){
+        return signService.getSign(pageNumber,pageSize);
     }
 }

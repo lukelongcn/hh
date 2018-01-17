@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
+import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.model.vo.StickCommentSimpleVO;
 import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickReportVO;
@@ -25,12 +26,15 @@ import com.h9.common.db.repo.UserRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+
+import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,8 +88,8 @@ public class StickService {
     /**
      * 拿到打赏记录
      */
-    public Result getReward(Integer page, Integer limit) {
-        PageResult<StickReward> pageResult = stickRewardResitory.findRewardList(page, limit);
+    public Result getReward(Integer page, Integer limit, long stickId) {
+        PageResult<StickReward> pageResult = stickRewardResitory.findRewardList(stickId,page, limit);
         if (pageResult == null){
             return Result.success("暂无打赏记录");
         }
@@ -114,8 +118,8 @@ public class StickService {
      *  评论列表
      * @return R
      */
-    public Result getComment(Integer page, Integer limit) {
-            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(page, limit);
+    public Result getComment(Integer page, Integer limit, long stickId) {
+            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(stickId,page, limit);
             if (pageResult == null){
                 return Result.success("暂无评论");
             }
@@ -131,5 +135,39 @@ public class StickService {
             stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
         return new StickCommentVO(stickComment,stickCommentSimpleVOS);
+    }
+
+    /**
+     * 编辑
+     */
+    @Transactional
+    public Result updateStick(long stickId, UpdateStickDTO updateStickDTO) {
+        StickType stickType = stickTypeRepository.findOne(updateStickDTO.getTypeId());
+        if(stickType == null){
+            return Result.fail("请选择分类");
+        }
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在或已被删除");
+        }
+        stick.setTitle(updateStickDTO.getTitle());
+        stick.setContent(updateStickDTO.getContent());
+        stick.setStickType(stickType);
+        Stick s= stickRepository.saveAndFlush(stick);
+        return Result.success("编辑成功");
+    }
+
+
+    /**
+     * 删除帖子
+     */
+    public Result delete(long stickId) {
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("帖子已被删除或禁用");
+        }
+        stick.setState(3);
+        stickRepository.save(stick);
+        return Result.success("删除成功");
     }
 }

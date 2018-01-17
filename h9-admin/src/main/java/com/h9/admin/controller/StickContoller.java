@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
+import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
 //import com.sun.org.glassfish.gmbal.Description;
@@ -42,9 +43,9 @@ public class StickContoller {
 
     @Secured(accessCode =  "stick:list")
     @GetMapping("/types")
-    public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int page,
-                           @RequestParam(required = false,name = "page",defaultValue = "20") int limit){
-        return stickService.getStick(page,limit);
+    public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int pageNumber,
+                           @RequestParam(required = false,name = "page",defaultValue = "20") int pageSize){
+        return stickService.getStick(pageNumber,pageSize);
     }
 
     /**
@@ -52,39 +53,57 @@ public class StickContoller {
      */
     @ApiOperation("拿到反馈列表")
     @GetMapping("/getReport")
-    public Result getReport(@RequestParam(defaultValue = "1") Integer page,
-                            @RequestParam(defaultValue = "10") Integer limit){
-        return stickService.getReport(page,limit);
+    public Result getReport(@RequestParam(defaultValue = "1") Integer pageNumber,
+                            @RequestParam(defaultValue = "10") Integer pageSize){
+        return stickService.getReport(pageNumber,pageSize);
     }
 
     /**
      * 拿到打赏记录
-     * @param page 页码
-     * @param limit 个数
+     * @param pageNumber 页码
+     * @param pageSize 个数
      * @return Result
      * */
     @ApiOperation("拿到打赏记录")
     @GetMapping("/getReward")
-    public Result getReward(@RequestParam(defaultValue = "1") Integer page,
-                            @RequestParam(defaultValue = "10") Integer limit){
-       return stickService.getReward(page,limit);
+    public Result getReward(@RequestParam(defaultValue = "1") Integer pageNumber,
+                            @RequestParam(defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "stickId")long stickId){
+       return stickService.getReward(pageNumber,pageSize,stickId);
     }
 
     /**
      * 添加马甲贴子
      */
+    @Secured(accessCode = "stick:addStick")
     @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
     }
 
     /**
+     * 编辑贴子
+     */
+    @Secured(accessCode = "stick:updateStick")
+    @PostMapping("/updateStick")
+    public Result updateStick(@RequestParam(value = "stickId")long stickId,@Valid@RequestBody UpdateStickDTO updateStickDTO){
+        return stickService.updateStick(stickId,updateStickDTO);
+    }
+    /**
      * 评论列表
      */
     @GetMapping("/getComment")
-    public Result getComment(@RequestParam(defaultValue = "1") Integer page,
-                             @RequestParam(defaultValue = "10") Integer limit){
-        return stickService.getComment(page,limit);
+    public Result getComment(@RequestParam(defaultValue = "1") Integer pageNumber,
+                             @RequestParam(defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "stickId")long stickId){
+        return stickService.getComment(pageNumber,pageSize,stickId);
+    }
+    /**
+     * 删除
+     */
+    @PostMapping("/delete")
+    public Result delete( @RequestParam(value = "stickId")long stickId){
+        return stickService.delete(stickId);
     }
 
 }
