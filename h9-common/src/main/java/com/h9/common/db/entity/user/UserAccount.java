@@ -35,6 +35,9 @@ public class UserAccount extends BaseEntity {
     @Column(name = "cash_back_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '签到累计奖励金额'")
     private BigDecimal cashBackMoney = new BigDecimal(0);
 
+    @Column(name = "reward_money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '贴子打赏累计金额'")
+    private BigDecimal rewardMoney = new BigDecimal(0);
+
     public BigDecimal getCashBackMoney() {
         return cashBackMoney;
     }
@@ -66,4 +69,14 @@ public class UserAccount extends BaseEntity {
     public void setvCoins(BigDecimal vCoins) {
         this.vCoins = vCoins;
     }
+
+    public BigDecimal getRewardMoney() {
+        return rewardMoney;
+    }
+
+    public void setRewardMoney(BigDecimal rewardMoney) {
+        this.rewardMoney = rewardMoney;
+    }
+
+
 }

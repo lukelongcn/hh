@@ -59,6 +59,16 @@ public class Stick extends BaseEntity {
     @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子状态 1使用 2禁用 3删除'")
     private Integer state = 1;
 
+    @Column(name = "ip",columnDefinition = "varchar(200) default '' COMMENT 'ip'")
+    private String ip;
+
+    @Column(name = "operation_state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子操作状态状态 1通过 2不通过'")
+    private Integer operationState = 1;
+
+    @Column(name = "lock_state",nullable = false,columnDefinition = "int default 1 COMMENT '锁住状态 1解锁 2锁住'")
+    private Integer lockState = 1;
+
+
     /***************************      地址信息              *************************/
     @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
     private double longitude;
@@ -216,5 +226,29 @@ public class Stick extends BaseEntity {
 
     public void setAnswerTime(Date answerTime) {
         this.answerTime = answerTime;
+    }
+
+    public Integer getOperationState() {
+        return operationState;
+    }
+
+    public void setOperationState(Integer operationState) {
+        this.operationState = operationState;
+    }
+
+    public Integer getLockState() {
+        return lockState;
+    }
+
+    public void setLockState(Integer lockState) {
+        this.lockState = lockState;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }

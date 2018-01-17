@@ -5,6 +5,7 @@ import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.model.vo.StickCommentSimpleVO;
 import com.h9.admin.model.vo.StickCommentVO;
+import com.h9.admin.model.vo.StickDetailVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
 import com.h9.common.base.PageResult;
@@ -16,17 +17,21 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickRewardResitory;
 import com.h9.common.db.repo.StickTypeRepository;
+import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +63,8 @@ public class StickService {
     private StickRepository stickRepository;
     @Resource
     private StickCommentRepository stickCommentRepository;
+    @Resource
+    private UserAccountRepository userAccountRepository;
 
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
@@ -170,4 +177,25 @@ public class StickService {
         stickRepository.save(stick);
         return Result.success("删除成功");
     }
+
+    /**
+     *  拿到所有贴子详情
+     * @return Result
+     */
+    public Result allDetail(Integer pageNumber, Integer pageSize) {
+        PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
+        if (sticklist == null){
+            return Result.fail("暂无贴子");
+        }
+        return Result.success(sticklist.result2Result(this::stickDetail2Vo));
+    }
+
+    private StickDetailVO stickDetail2Vo(Stick stick) {
+        UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
+
+        StickDetailVO stickDetailVO = new StickDetailVO(stick);
+        stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
+        return stickDetailVO;
+    }
+
 }

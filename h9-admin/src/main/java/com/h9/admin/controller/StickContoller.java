@@ -106,4 +106,16 @@ public class StickContoller {
         return stickService.delete(stickId);
     }
 
+    /**
+     * 拿到所有贴子详情
+     * @param pageNumber 页码
+     * @param pageSize 大小
+     * @return Result
+     */
+    @GetMapping("/allDetail")
+    public Result allDetail(@RequestParam(defaultValue = "1") Integer pageNumber,
+                            @RequestParam(defaultValue = "10") Integer pageSize){
+        return stickService.allDetail(pageNumber,pageSize);
+    }
+
 }
