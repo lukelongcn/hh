@@ -34,25 +34,26 @@ public class StickType extends BaseEntity {
     @Column(name = "image", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '板块图片'")
     private String image;
 
-    @Column(name = "stick_count",nullable = false,columnDefinition = "int default 0 COMMENT '贴子数量'")
+    @Column(name = "stick_count",columnDefinition = "int default 0 COMMENT '贴子数量'")
     private Integer stickCount;
 
-    @Column(name = "limit_state",nullable = false,columnDefinition = "int default 1 COMMENT '限制发帖 1不限制 2限制'")
+    @Column(name = "limit_state",nullable = false, columnDefinition = "int default 1 COMMENT '限制发帖 1不限制 2限制'")
     private Integer limitState = 1;
 
-    @Column(name = "examine_state",nullable = false,columnDefinition = "int default 1 COMMENT '发帖后台审核 1是 2否'")
+    @Column(name = "examine_state",nullable = false, columnDefinition = "int default 1 COMMENT '发帖后台审核 1是 2否'")
     private Integer examineState = 1;
 
-    @Column(name = "comment_state",nullable = false,columnDefinition = "int default 1 COMMENT '评论审核 1是 2否'")
+    @Column(name = "comment_state",nullable = false, columnDefinition = "int default 1 COMMENT '评论审核 1是 2否'")
     private Integer commentState = 1;
 
-    @Column(name = "admit_state",nullable = false,columnDefinition = "int default 1 COMMENT '是否允许评论 1是 2否'")
+    @Column(name = "admit_state",nullable = false, columnDefinition = "int default 1 COMMENT '是否允许评论 1是 2否'")
     private Integer admitsState = 1;
 
-    @Column(name = "sort", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '顺序'")
+    @Column(name = "sort", columnDefinition = "varchar(256) default '' COMMENT '顺序'")
     private String sort;
 
-
+    @Column(name = "default_sort",nullable = false, columnDefinition = "int default 1 COMMENT '默认排序 1回复数 2浏览数 3最新发表 4最后回复'")
+    private Integer defaultSort = 1;
 
 
 
