@@ -106,4 +106,40 @@ public class StickContoller {
         return stickService.delete(stickId);
     }
 
+    /**
+     * 拿到所有贴子详情
+     * @param pageNumber 页码
+     * @param pageSize 大小
+     * @return Result
+     */
+    @GetMapping("/allDetail")
+    public Result allDetail(@RequestParam(defaultValue = "1") Integer pageNumber,
+                            @RequestParam(defaultValue = "10") Integer pageSize){
+        return stickService.allDetail(pageNumber,pageSize);
+    }
+
+    /**
+     * 锁定状态改变
+     */
+    @PostMapping("/lock")
+    public Result lock(@RequestParam(value = "stickId")long stickId){
+        return stickService.lock(stickId);
+    }
+
+    /**
+     * 审批状态改变
+     */
+    @PostMapping("/examine")
+    public Result examine(@RequestParam(value = "stickId")long stickId){
+        return stickService.examine(stickId);
+    }
+
+    /**
+     * 重置贴子所有状态
+     */
+    @PostMapping("/reset")
+    public Result reset(@RequestParam(value = "stickId")long stickId){
+        return stickService.reset(stickId);
+    }
+
 }

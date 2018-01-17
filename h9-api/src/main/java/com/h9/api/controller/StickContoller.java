@@ -45,8 +45,9 @@ public class StickContoller {
     @Secured
     @PostMapping("")
     public Result addStick(@SessionAttribute("curUserId") long userId,
-                           @RequestBody @Validated StickDto stickDto){
-        return stickService.addStick(userId,stickDto);
+                           @RequestBody @Validated StickDto stickDto,
+                           HttpServletRequest request){
+        return stickService.addStick(userId,stickDto,request);
     }
 
 
@@ -210,8 +211,9 @@ public class StickContoller {
     @PostMapping("/update/{stickId}")
     public Result update(@SessionAttribute("curUserId")long userId,
                          @PathVariable("stickId")long stickId,
-                         @RequestBody @Validated StickDto stickDto){
-        return stickService.updateStick(userId,stickId,stickDto);
+                         @RequestBody @Validated StickDto stickDto,
+                         HttpServletRequest request){
+        return stickService.updateStick(userId,stickId,stickDto,request);
     }
 
     @GetMapping("/getReportType")

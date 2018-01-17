@@ -130,16 +130,18 @@ public class StickService {
     }
 
     @Transactional
-    public Result addStick(Long userId, StickDto stickDto){
+    public Result addStick(Long userId, StickDto stickDto, HttpServletRequest request){
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
         if(stickType == null){
             return Result.fail("请选择分类");
         }
+        stickType.setStickCount(stickType.getStickCount()+1);
+        stickTypeRepository.save(stickType);
         Stick stick = new Stick();
-        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType)));
+        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
     }
 
-    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType){
+    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
         User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
@@ -158,6 +160,7 @@ public class StickService {
                 stick.setDistrict(addressDetail.getDistrict());
             }
         }
+        stick.setIp(NetworkUtil.getIpAddress(request));
         return stickRepository.saveAndFlush(stick);
     }
 
@@ -446,6 +449,10 @@ public class StickService {
         stickReward.setUser(userRepository.findOne(userId));
         stickReward.setIp(NetworkUtil.getIpAddress(request));
         stickRewardResitory.save(stickReward);
+        // 更新打赏累计金额
+        UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
+        userAccount.setRewardMoney(userAccount.getRewardMoney().add(money));
+        userAccountRepository.save(userAccount);
         // 成功
         return Result.success("打赏成功");
     }
@@ -483,7 +490,7 @@ public class StickService {
     }
 
     @Transactional
-    public Result updateStick(long userId, long stickId, StickDto stickDto) {
+    public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
         Stick stick = stickRepository.findById(stickId);
         if (stick.getUser().getId() != userId){
             return Result.fail("无权操作");
@@ -492,7 +499,7 @@ public class StickService {
         if(stickType == null){
             return Result.fail("请选择分类");
         }
-        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType)));
+        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
     }
 
     /**

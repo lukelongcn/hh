@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.Data;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:TODO
@@ -15,6 +17,7 @@ import javax.validation.constraints.Size;
  * Date: 2017/12/29
  * Time: 17:29
  */
+@Data
 public class StickTypeDTO {
 
     private Long id;
@@ -24,48 +27,29 @@ public class StickTypeDTO {
     @NotBlank(message = "请填写分类描述")
     @Length(min = 2,max = 64,message = "分类描述填写过长或过短")
     private String content;
-    @NotBlank(message = "请选择前景图")
+    @NotBlank(message = "请选择图标")
     private String image;
-    @NotBlank(message = "请选择背景图")
-    private String backImage;
 
-    public Long getId() {
-        return id;
-    }
+    // 限制发帖 1不限制 2限制'
+    @NotNull(message = "请选择发帖限制")
+    private Integer limitState = 1;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // 发帖后台审核 1是 2否
+    @NotNull(message = "请选择发帖审核")
+    private Integer examineState = 1;
 
-    public String getName() {
-        return name;
-    }
+    // 评论审核 1是 2否'
+    @NotNull(message = "请选择评论审核")
+    private Integer commentState = 1;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    // 是否允许评论 1是 2否'
+    @NotNull(message = "请选择是否允许评论")
+    private Integer admitsState = 1;
 
-    public String getContent() {
-        return content;
-    }
+    // 顺序
+    private String sort;
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getBackImage() {
-        return backImage;
-    }
-
-    public void setBackImage(String backImage) {
-        this.backImage = backImage;
-    }
+    // 默认排序 1回复数 2浏览数 3最新发表 4最后回复'
+    @NotNull(message = "请选择默认排序")
+    private Integer defaultSort = 1;
 }

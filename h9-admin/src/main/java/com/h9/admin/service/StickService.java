@@ -5,8 +5,10 @@ import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.model.vo.StickCommentSimpleVO;
 import com.h9.admin.model.vo.StickCommentVO;
+import com.h9.admin.model.vo.StickDetailVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
+import com.h9.admin.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -16,17 +18,21 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.StickCommentRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickRewardResitory;
 import com.h9.common.db.repo.StickTypeRepository;
+import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +64,8 @@ public class StickService {
     private StickRepository stickRepository;
     @Resource
     private StickCommentRepository stickCommentRepository;
+    @Resource
+    private UserAccountRepository userAccountRepository;
 
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
@@ -73,7 +81,11 @@ public class StickService {
 
 
     public Result getStick(int page,int limit){
-       return Result.success(stickTypeRepository.findAll(page, limit));
+        PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
+        if (pageResult == null){
+            return Result.fail("暂无分类");
+        }
+        return Result.success(pageResult.result2Result(StickTypeVO::new));
     }
 
 
@@ -169,5 +181,78 @@ public class StickService {
         stick.setState(3);
         stickRepository.save(stick);
         return Result.success("删除成功");
+    }
+
+    /**
+     *  拿到所有贴子详情
+     * @return Result
+     */
+    public Result allDetail(Integer pageNumber, Integer pageSize) {
+        PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
+        if (sticklist == null){
+            return Result.fail("暂无贴子");
+        }
+        return Result.success(sticklist.result2Result(this::stickDetail2Vo));
+    }
+
+    private StickDetailVO stickDetail2Vo(Stick stick) {
+        UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
+
+        StickDetailVO stickDetailVO = new StickDetailVO(stick);
+        stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
+        return stickDetailVO;
+    }
+
+    /**
+     * 锁定状态改变
+     */
+    public Result lock(long stickId) {
+        Stick stick = stickRepository.findOne(stickId);
+
+        if (stick.getLockState() ==1){
+            stick.setLockState(2);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("锁定成功");
+        }
+        if (stick.getLockState() == 2){
+            stick.setLockState(1);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("解锁成功");
+        }
+        return Result.fail();
+    }
+
+    /**
+     * 审批状态改变
+     */
+    public Result examine(long stickId) {
+        Stick stick = stickRepository.findOne(stickId);
+
+        if (stick.getOperationState() ==1){
+            stick.setOperationState(2);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("不通过");
+        }
+        if (stick.getOperationState() == 2){
+            stick.setOperationState(1);
+            stickRepository.saveAndFlush(stick);
+            return Result.success("通过");
+        }
+        return Result.fail();
+    }
+
+    /**
+     * 重置贴子所有状态
+     */
+    public Result reset(long stickId) {
+        Stick stick = stickRepository.findOne(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        stick.setOperationState(1);
+        stick.setLockState(1);
+        stick.setState(1);
+        stickRepository.saveAndFlush(stick);
+        return Result.success("重置成功");
     }
 }
