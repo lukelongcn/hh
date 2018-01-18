@@ -19,6 +19,7 @@ import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.transform.ResultTransformer;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -214,23 +215,33 @@ public class HotelService {
 
         String payPlatform = hotelPayDTO.getPayPlatform();
         OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
-        if(findPayPlatformEnum == null) return Result.fail("请传入payPlatform 参数");
+        if(findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
         Result result = null;
+
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
-            commonService.setBalance(userId, hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
-            hotelOrder.setPayMoney4JiuYuan(hotelOrder.getTotalMoney());
-            result = Result.success();
+            result = balancePay(hotelOrder,user,userAccount);
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
-            result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, OrderDTO.PayMethodEnum.WXJS.getKey());
+            result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, findPayPlatformEnum.getKey());
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY) {
-            result = mixedPay(hotelOrder, userAccount);
+            result = mixedPay(hotelOrder, userAccount,user,findPayPlatformEnum.getKey());
+        }else{
+            return Result.fail("不支持的支付方式");
         }
 
         hotelOrder.setPayMethod(payMethod);
-        hotelOrder.setOrderStatus(WAIT_ENSURE.getCode());
         hotelOrderRepository.save(hotelOrder);
-
         return result;
+    }
+
+    private Result balancePay(HotelOrder hotelOrder, User user,UserAccount userAccount) {
+        BigDecimal balance = userAccount.getBalance();
+        if (balance.compareTo(hotelOrder.getTotalMoney()) < 0) {
+            return Result.fail("余额不足");
+        }
+        commonService.setBalance(user.getId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+        hotelOrder.setPayMoney4JiuYuan(hotelOrder.getTotalMoney());
+        hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode());
+        return Result.success();
     }
 
     @Resource
@@ -246,7 +257,14 @@ public class HotelService {
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
         OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(),payPlatform);
-        Result<OrderVo> orderVoResult = payProvider.initOrder(orderDTO);
+
+        Result<OrderVo> orderVoResult = null;
+        try {
+            orderVoResult = payProvider.initOrder(orderDTO);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail("获取支付信息失败，请稍后再试");
+        }
 
         if (!orderVoResult.isSuccess()) {
             logger.info("获取支付信息失败，获取结果： " + JSONObject.toJSONString(orderVoResult));
@@ -266,7 +284,7 @@ public class HotelService {
     /**
      * description: 混合支付
      */
-    private Result mixedPay(HotelOrder hotelOrder, UserAccount userAccount) {
+    private Result mixedPay(HotelOrder hotelOrder, UserAccount userAccount, User user, int key) {
         BigDecimal totalMoney = hotelOrder.getTotalMoney();
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(totalMoney) >= 0) {
@@ -284,14 +302,9 @@ public class HotelService {
                 paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
                 hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
             }
-            BigDecimal wxPayMoney = totalMoney.subtract(balance);
-            //TODO 微信支付 wxPayMoney 金额
-            BigDecimal paidWXMoney = hotelOrder.getPayMoney4Wechat();
-            paidWXMoney = paidWXMoney.add(wxPayMoney);
-            hotelOrder.setPayMoney4Wechat(paidWXMoney);
-
+            BigDecimal wxPayMoney = totalMoney.subtract(hotelOrder.getPayMoney4JiuYuan());
+            return getWXPayInfo(hotelOrder, wxPayMoney, user, key);
         }
-        return Result.success();
     }
 
     public Result orderList(Long userId, Integer type, Integer page, Integer limit) {

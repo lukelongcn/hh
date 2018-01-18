@@ -73,6 +73,8 @@ public class HotelOrder extends BaseEntity{
     @Column(name = "user_id",columnDefinition = "bigint comment '用户Id'")
     private Long user_id;
     //待支付，【待确认，预订成功】，已退款，已取消
+
+
     @Getter
     public static enum PayMethodEnum{
         BALANCE_PAY(1, "余额支付"),
