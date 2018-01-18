@@ -1,6 +1,7 @@
 package com.h9.lottery.task;
 
-import com.h9.common.db.entity.Reward;
+import com.h9.common.db.entity.lottery.Reward;
+import org.springframework.stereotype.Component;
 import com.h9.common.db.repo.RewardRepository;
 import com.h9.common.utils.DateUtil;
 import com.h9.lottery.config.LotteryConfig;
