@@ -22,6 +22,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
@@ -263,18 +264,21 @@ public class HotelService {
     @Resource
     private BalanceFlowRepository balanceFlowRepository;
 
+    @Transactional
     public Result<HotelOrderDetail> orderDetail(Long id) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
         if (hotelOrder == null) {
             return Result.fail("订单不存在");
         }
 
-        List<HotelOrderDetail.PayInfo> payInfoList = balanceFlowRepository
-                .findByOrderId(id)
-                .map(el -> new HotelOrderDetail.PayInfo(el))
-                .collect(Collectors.toList());
-
-        HotelOrderDetail hotelOrderDetail = new HotelOrderDetail(hotelOrder,payInfoList);
+        List<HotelOrderDetail.PayInfo> payInfoList = null;
+        try (Stream<BalanceFlow> balanceFlowStream = balanceFlowRepository
+                .findByOrderId(id)) {
+            payInfoList = balanceFlowStream
+                    .map(el -> new HotelOrderDetail.PayInfo(el))
+                    .collect(Collectors.toList());
+        }
+        HotelOrderDetail hotelOrderDetail = new HotelOrderDetail(hotelOrder, payInfoList);
         return Result.success(hotelOrderDetail);
     }
 }
