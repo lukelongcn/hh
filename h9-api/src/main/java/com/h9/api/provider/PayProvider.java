@@ -42,7 +42,7 @@ public class PayProvider {
         return payHost + "/h9/pay/initOrder";
     }
 
-    private String getPrepayURL(long orderId){
+    public String getPrepayURL(long orderId){
         return payHost + "/h9/pay/getPrepay?payOrderId="+orderId;
     }
 

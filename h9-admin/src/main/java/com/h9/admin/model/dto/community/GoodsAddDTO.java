@@ -48,7 +48,7 @@ public class GoodsAddDTO {
 
     @ApiModelProperty(value = "描述",required = true)
     @NotBlank(message = "描述不能为空")
-    @Size(max = 256,message = "描述过长")
+    //@Size(max = 256,message = "描述过长")
     private String description;
 
     @ApiModelProperty(value = "上架开始时间",required = true)
