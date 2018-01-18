@@ -28,8 +28,8 @@ public class BankCardController {
 
     /**
      * 新增银行卡
-     * @param bankCardDTO
-     * @return
+     * @param bankCardDTO 请求对象
+     * @return Result
      */
     @ApiOperation(value = "添加银行卡")
     @PostMapping("/bankCard/add")
@@ -40,8 +40,8 @@ public class BankCardController {
 
     /**
      * 解绑银行卡
-     * @param id
-     * @param userId
+     * @param id id
+     * @param userId 用户id
      * @return 提示信息
      */
     @ApiOperation(value = "解绑银行卡")

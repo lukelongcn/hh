@@ -5,6 +5,7 @@ import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
 import com.h9.api.service.HotelService;
 import com.h9.common.base.Result;
+import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -79,6 +80,7 @@ public class HotelController {
         return hotelService.hotelOptions();
     }
 
+    private Logger logger = Logger.getLogger(this.getClass());
     /**
      * description: 支付订单
      * 支付方式:
@@ -87,7 +89,12 @@ public class HotelController {
     @Secured
     @PostMapping("/hotel/order/pay")
     public Result payOrder(@Valid@RequestBody HotelPayDTO hotelPayDTO,@SessionAttribute("curUserId") Long userId){
-        return hotelService.payOrder(hotelPayDTO,userId);
+        try {
+            return hotelService.payOrder(hotelPayDTO,userId);
+        } catch (Exception e) {
+            logger.info("支付出错，请稍后再试");
+            return Result.fail("支付出错，请稍后再试");
+        }
     }
 
     /**
