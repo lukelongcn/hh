@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.jboss.logging.Logger;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,6 +74,7 @@ public class Hotel extends BaseEntity{
      * @see  Status
      */
     @Column(name = "status",columnDefinition = "int default 1 comment '状态 1正常，0禁用'")
+    @NotNull
     private Integer status;
 
     public void setImages(List<String> images) {

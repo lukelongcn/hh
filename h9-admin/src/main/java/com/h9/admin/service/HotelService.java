@@ -68,6 +68,7 @@ public class HotelService {
 
         if (editHotelDTO.getId() == null) {
             hotel = new Hotel();
+            hotel.setStatus(Hotel.Status.NORMAL.getCode());
         } else {
             hotel = hotelRepository.findOne(editHotelDTO.getId());
         }
