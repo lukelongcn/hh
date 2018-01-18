@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by itservice on 2018/1/3.
@@ -22,4 +23,5 @@ public interface HotelOrderRepository extends BaseRepository<HotelOrder> {
     Page<HotelOrder> findAllByUserId(long userId, Pageable pageRequest);
 
 
+    Stream<HotelOrder> findByOrderStatus(Integer status);
 }

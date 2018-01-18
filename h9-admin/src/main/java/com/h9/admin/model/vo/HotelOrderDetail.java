@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel
+@ApiModel("酒店订单详情")
 public class HotelOrderDetail {
     private Long id;
 
