@@ -71,7 +71,7 @@ public class HotelOrder extends BaseEntity{
     private String include;
 
     @Column(name = "user_id",columnDefinition = "bigint comment '用户Id'")
-    private Long user_id;
+    private Long userId;
     //待支付，【待确认，预订成功】，已退款，已取消
 
     @Column(name = "room_style",columnDefinition = "varchar(200) comment '住宿偏好'")
