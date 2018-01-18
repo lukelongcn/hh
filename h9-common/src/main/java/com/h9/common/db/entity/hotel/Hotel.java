@@ -58,9 +58,11 @@ public class Hotel extends BaseEntity{
     private String city;
 
     @Column(name = "hotel_name",columnDefinition = "varchar(255) comment '酒店名'")
+    @NotNull
     private String hotelName;
 
     @Column(name = "hotel_phone",columnDefinition = "varchar(200) comment '订房电话'")
+    @NotNull
     private String hotelPhone;
 
     @Column(name = "start_reserve_time",columnDefinition = "varchar(200) comment '开始预约时间'")
