@@ -1,21 +1,16 @@
 package com.h9.lottery.task;
 
 import com.h9.common.db.entity.lottery.Reward;
-import org.springframework.stereotype.Component;
 import com.h9.common.db.repo.RewardRepository;
-import com.h9.common.utils.DateUtil;
 import com.h9.lottery.config.LotteryConfig;
 import com.h9.lottery.service.LotteryService;
 import org.jboss.logging.Logger;
 import org.redisson.Redisson;
 import org.redisson.core.RLock;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
