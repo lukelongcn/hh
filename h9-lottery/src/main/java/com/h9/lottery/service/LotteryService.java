@@ -291,7 +291,7 @@ public class LotteryService {
         if (differentDate <= 0) {
             RLock lock = redisson.getLock("lock:" +  code);
             try {
-                lock.lock(1, TimeUnit.MINUTES);
+                lock.lock(30, TimeUnit.SECONDS);
                 lottery(null, code);
             } finally {
                 lock.unlock();

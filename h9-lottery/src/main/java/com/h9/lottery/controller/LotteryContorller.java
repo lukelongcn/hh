@@ -54,7 +54,7 @@ public class LotteryContorller {
         Result result;
         try {
             logger.debugv("lock start" + userId);
-            lock.lock(1, TimeUnit.MINUTES);
+            lock.lock(30, TimeUnit.SECONDS);
             result = lotteryService.appCode(userId, lotteryVo, request);
         } finally {
             lock.unlock();
@@ -74,7 +74,7 @@ public class LotteryContorller {
         RLock lock = redisson.getLock("lock:" + code);
         Result lottery;
         try {
-            lock.lock(1, TimeUnit.MINUTES);
+            lock.lock(30, TimeUnit.SECONDS);
             logger.debugv("start userId {0} code {1}" ,userId, code);
             lottery = lotteryService.lottery(userId, code);
         } finally {
