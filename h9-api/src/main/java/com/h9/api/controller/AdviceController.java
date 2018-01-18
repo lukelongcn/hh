@@ -25,11 +25,11 @@ import javax.validation.Valid;
 @RequestMapping("/advice")
 public class AdviceController {
     @Resource
-    AdviceService adviceService;
+    private AdviceService adviceService;
 
     /**
      * 获取意见反馈类别
-     * @return
+     * @return Result
      */
     @GetMapping("/adviceType")
     public Result adviceType(){
@@ -45,7 +45,8 @@ public class AdviceController {
     @Secured
     @PostMapping("/sendAdvice")
     @Description("提交意见反馈信息")
-    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid@RequestBody AdviceDTO adviceDTO,HttpServletRequest request){
+    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid@RequestBody AdviceDTO adviceDTO,
+                             HttpServletRequest request){
          return  adviceService.sendAdvice(userId,adviceDTO,request);
     }
 }

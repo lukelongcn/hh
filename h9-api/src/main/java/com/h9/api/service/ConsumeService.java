@@ -110,7 +110,6 @@ public class ConsumeService {
     @Resource
     private RechargeRecordRepository rechargeRecordRepository;
 
-
     @Resource
     private OfPayRecordReposiroty ofPayRecordReposiroty;
     private Logger logger = Logger.getLogger(this.getClass());
