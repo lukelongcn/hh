@@ -151,7 +151,10 @@ public class HotelService {
                 .setHotelRoomType(hotelRoomType)
                 .setInclude(hotelRoomType.getInclude())
                 .setTotalMoney(totalMoney)
-                .setUser_id(userId);
+                .setRemarks(addHotelOrderDTO.getRemark())
+                .setUserId(userId)
+                .setRoomStyle(addHotelOrderDTO.getRoomStyle())
+                .setKeepTime(addHotelOrderDTO.getKeepTime());
     }
 
     /**
@@ -255,7 +258,8 @@ public class HotelService {
         PayInfo payInfo = new PayInfo(payMoney, hotelOrder.getId(), PayInfo.OrderTypeEnum.HOTEL.getId(), null, 1);
         payInfo = payInfoRepository.saveAndFlush(payInfo);
         String openId = user.getOpenId();
-        if (StringUtils.isBlank(openId)) {
+
+        if (payPlatform == OrderDTO.PayMethodEnum.WXJS.getKey() && StringUtils.isBlank(openId)) {
             logger.info("支付出错，账号" + user.getId() + " openId为空");
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
@@ -275,24 +279,17 @@ public class HotelService {
         }
 
         OrderVo orderVo = orderVoResult.getData();
-        String pay = payProvider.goPay(orderVo.getPayOrderId(), payInfo.getId());
-        PayVO payVO = new PayVO();
-        payVO.setPayOrderId(orderVo.getPayOrderId());
-        payVO.setPayUrl(pay);
-        payVO.setOrderId(hotelOrder.getId());
 
         if (payPlatform == 3) {
+            String pay = payProvider.goPay(orderVo.getPayOrderId(), payInfo.getId());
+            PayVO payVO = new PayVO();
+            payVO.setPayOrderId(orderVo.getPayOrderId());
+            payVO.setPayUrl(pay);
+            payVO.setOrderId(hotelOrder.getId());
             //公众号
             return Result.success(payVO);
         } else {
-            //app
-            String prepayURL = payProvider.getPrepayURL(payInfo.getOrderId());
-            try {
-                return restTemplate.getForObject(prepayURL, Result.class);
-            } catch (Exception e) {
-                logger.info(e.getMessage(),e);
-                return Result.fail("获取预支付信息出错，请稍后再试");
-            }
+           return payProvider.getPrepayInfo(orderVo);
         }
     }
 
@@ -365,7 +362,7 @@ public class HotelService {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
         if (hotelOrder == null) return Result.fail("订单不存在");
 
-        if (!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUserId().equals(userId)) return Result.fail("无权查看");
 
         return Result.success(new HotelOrderDetailVO(hotelOrder));
     }
@@ -385,7 +382,7 @@ public class HotelService {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
         if (hotelOrder == null) return Result.fail("订单不存在");
 
-        if (!hotelOrder.getUser_id().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUserId().equals(userId)) return Result.fail("无权查看");
 
         return Result.success(hotelOrder);
     }

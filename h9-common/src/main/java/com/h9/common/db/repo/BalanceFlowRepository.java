@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.stream.Stream;
+
 /**
  * @ClassName: BalanceFlowRepository
  * @Description: BalanceFlow 的查询
@@ -20,5 +22,7 @@ public interface BalanceFlowRepository extends BaseRepository<BalanceFlow> {
     @Query("select bf from BalanceFlow  bf where bf.userId = ?1 order by bf.createTime desc")
     Page<BalanceFlow> findByBalance(Long userId, Pageable pageRequest);
 
+
+    Stream<BalanceFlow> findByOrderId(Long orderId);
 
 }

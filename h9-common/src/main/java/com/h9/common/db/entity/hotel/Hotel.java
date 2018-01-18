@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.jboss.logging.Logger;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,9 +58,11 @@ public class Hotel extends BaseEntity{
     private String city;
 
     @Column(name = "hotel_name",columnDefinition = "varchar(255) comment '酒店名'")
+    @NotNull
     private String hotelName;
 
     @Column(name = "hotel_phone",columnDefinition = "varchar(200) comment '订房电话'")
+    @NotNull
     private String hotelPhone;
 
     @Column(name = "start_reserve_time",columnDefinition = "varchar(200) comment '开始预约时间'")
@@ -73,6 +76,7 @@ public class Hotel extends BaseEntity{
      * @see  Status
      */
     @Column(name = "status",columnDefinition = "int default 1 comment '状态 1正常，0禁用'")
+    @NotNull
     private Integer status;
 
     public void setImages(List<String> images) {
