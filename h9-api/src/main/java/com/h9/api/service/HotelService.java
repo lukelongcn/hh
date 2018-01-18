@@ -151,7 +151,10 @@ public class HotelService {
                 .setHotelRoomType(hotelRoomType)
                 .setInclude(hotelRoomType.getInclude())
                 .setTotalMoney(totalMoney)
-                .setUser_id(userId);
+                .setRemarks(addHotelOrderDTO.getRemark())
+                .setUser_id(userId)
+                .setRoomStyle(addHotelOrderDTO.getRoomStyle())
+                .setKeepTime(addHotelOrderDTO.getKeepTime());
     }
 
     /**
@@ -255,7 +258,8 @@ public class HotelService {
         PayInfo payInfo = new PayInfo(payMoney, hotelOrder.getId(), PayInfo.OrderTypeEnum.HOTEL.getId(), null, 1);
         payInfo = payInfoRepository.saveAndFlush(payInfo);
         String openId = user.getOpenId();
-        if (StringUtils.isBlank(openId)) {
+
+        if (payPlatform == OrderDTO.PayMethodEnum.WXJS.getKey() && StringUtils.isBlank(openId)) {
             logger.info("支付出错，账号" + user.getId() + " openId为空");
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
@@ -290,7 +294,7 @@ public class HotelService {
             try {
                 return restTemplate.getForObject(prepayURL, Result.class);
             } catch (Exception e) {
-                logger.info(e.getMessage(),e);
+                logger.info(e.getMessage(), e);
                 return Result.fail("获取预支付信息出错，请稍后再试");
             }
         }

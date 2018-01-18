@@ -5,18 +5,17 @@ import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
 import com.h9.admin.model.vo.HotelListVO;
+import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
 import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
-import com.h9.common.db.repo.HotelOrderRepository;
-import com.h9.common.db.repo.HotelRepository;
-import com.h9.common.db.repo.HotelRoomTypeRepository;
-import com.h9.common.db.repo.HtmlContentRepository;
+import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -34,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.REFUND_MONEY;
 
@@ -54,7 +55,7 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
 
-        return Result.success(hotelRepository.findAll(page, limit).result2Result(hotel ->{
+        return Result.success(hotelRepository.findAll(page, limit).result2Result(hotel -> {
 
             Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
             return new HotelListVO(hotel, roomCount.intValue());
@@ -257,5 +258,23 @@ public class HotelService {
         hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.SUCCESS.getCode());
         hotelOrderRepository.save(hotelOrder);
         return Result.success();
+    }
+
+    @Resource
+    private BalanceFlowRepository balanceFlowRepository;
+
+    public Result<HotelOrderDetail> orderDetail(Long id) {
+        HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
+        if (hotelOrder == null) {
+            return Result.fail("订单不存在");
+        }
+
+        List<HotelOrderDetail.PayInfo> payInfoList = balanceFlowRepository
+                .findByOrderId(id)
+                .map(el -> new HotelOrderDetail.PayInfo(el))
+                .collect(Collectors.toList());
+
+        HotelOrderDetail hotelOrderDetail = new HotelOrderDetail(hotelOrder,payInfoList);
+        return Result.success(hotelOrderDetail);
     }
 }

@@ -74,7 +74,14 @@ public class HotelOrder extends BaseEntity{
     private Long user_id;
     //待支付，【待确认，预订成功】，已退款，已取消
 
+    @Column(name = "room_style",columnDefinition = "varchar(200) comment '住宿偏好'")
+    private String roomStyle;
 
+    @Column(name = "keep_time",columnDefinition = "varchar(200) COMMENT '保留时间'")
+    private String keepTime;
+
+    @Column(name = "remarks",columnDefinition = "varchar(1000) comment '备注'")
+    private String remarks;
     @Getter
     public static enum PayMethodEnum{
         BALANCE_PAY(1, "余额支付"),

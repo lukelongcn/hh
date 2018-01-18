@@ -5,6 +5,7 @@ import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
 import com.h9.admin.model.vo.HotelListVO;
+import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
 import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.admin.service.HotelService;
@@ -115,4 +116,11 @@ public class HotelController {
         return hotelService.ordersList(hotelOrderSearchDTO,pageNumber,pageSize);
     }
 
+
+    @Secured
+    @GetMapping(value = "/hotel/order/detail/{id}")
+    @ApiOperation("酒店订单详情")
+    public Result<HotelOrderDetail> orderDetail(@PathVariable Long id) {
+        return hotelService.orderDetail(id);
+    }
 }
