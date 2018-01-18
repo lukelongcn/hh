@@ -200,10 +200,13 @@ public class StickService {
     @Transactional
     public Result detail(long id) {
         Stick stick = stickRepository.findById(id);
-        if (stick == null) {
-            return Result.fail("帖子不存在");
+        if (stick == null){
+            return Result.fail("贴子不存在或已被删除");
         }
-        //StickComment stickComment = stickCommentRepository.find
+        if (stick.getOperationState()!=1) {
+            return Result.fail("帖子未通过审核");
+        }
+
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setListMap(getBanner(4));
         return Result.success(stickDetailVO);
@@ -315,7 +318,7 @@ public class StickService {
      * 添加贴子或评论回复
      * @param userId 用户id
      * @param stickCommentDTO 请求对象
-     * @param request
+     * @param request 请求
      * @return Result
      */
     public Result addComment(long userId, StickCommentDTO stickCommentDTO, HttpServletRequest request) {
@@ -323,6 +326,9 @@ public class StickService {
         Stick stick = stickRepository.findById(stickCommentDTO.getStickId());
         if (stick == null){
             return Result.fail("贴子不存在或已被删除");
+        }
+        if (stick.getLockState() != 1){
+            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
         }
         StickComment stickComment = new StickComment();
         // 回复的用户
@@ -375,7 +381,7 @@ public class StickService {
         }
         return Result.success(pageResult.result2Result(this::stickComent2Vo));
     }
-    public StickCommentVO stickComent2Vo(StickComment stickComment){
+    private StickCommentVO stickComent2Vo(StickComment stickComment){
         User user = stickComment.getAnswerUser();
         if (user.getId() == null){
             return new StickCommentVO();
@@ -465,6 +471,9 @@ public class StickService {
         if (stick == null){
             return Result.fail("帖子已被删除或禁用");
         }
+        if (stick.getLockState() != 1){
+            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
+        }
         if (stick.getUser().getId() != userId){
             return Result.fail("无权操作");
         }
@@ -489,11 +498,20 @@ public class StickService {
         return Result.success("删除评论成功");
     }
 
+    /**
+     * 编辑贴子
+     */
     @Transactional
     public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
         Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("帖子已被删除或禁用");
+        }
         if (stick.getUser().getId() != userId){
             return Result.fail("无权操作");
+        }
+        if (stick.getLockState() != 1){
+            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
         }
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
         if(stickType == null){
@@ -513,6 +531,9 @@ public class StickService {
         return Result.success(mapListConfig);
     }
 
+    /**
+     * 举报
+     */
     public Result report(long userId, long stickId, String content) {
         Stick stick = stickRepository.findById(stickId);
         StickReport stickReport = new StickReport();

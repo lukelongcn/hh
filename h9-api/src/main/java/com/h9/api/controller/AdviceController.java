@@ -45,7 +45,8 @@ public class AdviceController {
     @Secured
     @PostMapping("/sendAdvice")
     @Description("提交意见反馈信息")
-    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid@RequestBody AdviceDTO adviceDTO,HttpServletRequest request){
+    public Result sendAdvice(@SessionAttribute("curUserId")long userId, @Valid@RequestBody AdviceDTO adviceDTO,
+                             HttpServletRequest request){
          return  adviceService.sendAdvice(userId,adviceDTO,request);
     }
 }
