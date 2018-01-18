@@ -41,16 +41,18 @@ public class HotelPayHandler extends AbPayHandler{
         BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
         payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
 
+        BigDecimal paidMoney = hotelOrder.getPayMoney4Wechat();
+        payMoney4Wechat = payMoney4Wechat.add(paidMoney);
         hotelOrder.setPayMoney4Wechat(payMoney4Wechat);
+
         BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
 
         BigDecimal totalPaidMoney = payMoney4JiuYuan.add(payMoney4Wechat);
-
+        //金额 大于 等于 总金额，订单状态变成 WAIT_ENSURE(2,"待确认")
         if(totalPaidMoney.compareTo(hotelOrder.getTotalMoney()) >= 0){
             hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode());
         }
         hotelOrderRepository.save(hotelOrder);
-
         return true;
     }
 }
