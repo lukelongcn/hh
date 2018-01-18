@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * Created by 李圆 on 2017/11/27
- * @author
+ *
  */
 @RestController
 @RequestMapping("/address")
@@ -35,12 +35,12 @@ import io.swagger.annotations.ApiOperation;
 public class AddressController {
 
     @Resource
-    AddressService addressService;
+    private AddressService addressService;
 
     /**
      * 获取地址列表
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return Result
      */
     @Secured
     @ApiOperation(value = "获取地址列表")
@@ -56,7 +56,7 @@ public class AddressController {
 
     /**
      * 省市区
-     * @return
+     * @return Result
      */
     @PrintReqResLog(printRequestParams = true)
     @ApiOperation(value = "省市区")
@@ -67,9 +67,9 @@ public class AddressController {
 
     /**
      * 添加收货地址
-     * @param userId
-     * @param addressDTO
-     * @return
+     * @param userId 用户id
+     * @param addressDTO 请求对象
+     * @return Result
      */
     @Secured
     @ApiOperation(value = "添加收货地址")
@@ -80,9 +80,9 @@ public class AddressController {
 
     /**
      * 删除收货地址
-     * @param userId
-     * @param id
-     * @return
+     * @param userId 用户id
+     * @param id  地址id
+     * @return Result
      */
     @Secured
     @ApiOperation(value = "删除收货地址")
@@ -94,9 +94,6 @@ public class AddressController {
 
     /**
      * 修改收货地址
-     * @param userId
-     * @param id
-     * @return
      */
     @Secured
     @ApiOperation(value = "修改收货地址")
@@ -109,9 +106,6 @@ public class AddressController {
 
     /**
      * 设定默认地址
-     * @param userId
-     * @param id
-     * @return
      */
     @Secured
     @ApiOperation(value = "设定默认地址")
@@ -133,9 +127,6 @@ public class AddressController {
 
     /**
      * 查询指定地址详情
-     * @param userId
-     * @param id
-     * @return
      */
     @Secured
     @ApiOperation(value = "查询指定地址详情")
