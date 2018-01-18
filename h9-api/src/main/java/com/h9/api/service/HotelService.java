@@ -27,6 +27,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -215,25 +217,24 @@ public class HotelService {
 
         String payPlatform = hotelPayDTO.getPayPlatform();
         OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
-        if(findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
+        if (findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
         Result result = null;
 
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
-            result = balancePay(hotelOrder,user,userAccount);
+            result = balancePay(hotelOrder, user, userAccount);
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
             result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, findPayPlatformEnum.getKey());
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY) {
-            result = mixedPay(hotelOrder, userAccount,user,findPayPlatformEnum.getKey());
-        }else{
+            result = mixedPay(hotelOrder, userAccount, user, findPayPlatformEnum.getKey());
+        } else {
             return Result.fail("不支持的支付方式");
         }
-
         hotelOrder.setPayMethod(payMethod);
         hotelOrderRepository.save(hotelOrder);
         return result;
     }
 
-    private Result balancePay(HotelOrder hotelOrder, User user,UserAccount userAccount) {
+    private Result balancePay(HotelOrder hotelOrder, User user, UserAccount userAccount) {
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(hotelOrder.getTotalMoney()) < 0) {
             return Result.fail("余额不足");
@@ -244,6 +245,8 @@ public class HotelService {
         return Result.success();
     }
 
+    @Resource
+    private RestTemplate restTemplate;
     @Resource
     private PayInfoRepository payInfoRepository;
 
@@ -256,13 +259,13 @@ public class HotelService {
             logger.info("支付出错，账号" + user.getId() + " openId为空");
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
-        OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(),payPlatform);
+        OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(), payPlatform);
 
         Result<OrderVo> orderVoResult = null;
         try {
             orderVoResult = payProvider.initOrder(orderDTO);
         } catch (Exception e) {
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
             return Result.fail("获取支付信息失败，请稍后再试");
         }
 
@@ -278,7 +281,19 @@ public class HotelService {
         payVO.setPayUrl(pay);
         payVO.setOrderId(hotelOrder.getId());
 
-        return Result.success(payVO);
+        if (payPlatform == 3) {
+            //公众号
+            return Result.success(payVO);
+        } else {
+            //app
+            String prepayURL = payProvider.getPrepayURL(payInfo.getOrderId());
+            try {
+                return restTemplate.getForObject(prepayURL, Result.class);
+            } catch (Exception e) {
+                logger.info(e.getMessage(),e);
+                return Result.fail("获取预支付信息出错，请稍后再试");
+            }
+        }
     }
 
     /**
