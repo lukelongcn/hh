@@ -32,6 +32,7 @@ public class StickDetailVO {
     private String createTime;
     private Map<String, List<HomeVO>> listMap;
     private Integer state;
+    private List<StickRewardUser> stickRewardUserList;
 
     public StickDetailVO(Stick stick) {
         id = stick.getId();

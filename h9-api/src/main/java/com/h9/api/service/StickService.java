@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.SignVO;
 import com.h9.api.model.vo.StickCommentSimpleVO;
 import com.h9.api.model.vo.StickCommentVO;
 import com.h9.api.model.vo.StickRewardMoneyVO;
+import com.h9.api.model.vo.StickRewardUser;
 import com.h9.api.model.vo.StickRewardVO;
 import com.h9.api.model.vo.StickSearchVO;
 import com.h9.api.model.vo.StickDetailVO;
@@ -136,6 +138,10 @@ public class StickService {
         if(stickType == null){
             return Result.fail("请选择分类");
         }
+        // 只有管理员权限能发帖
+        if(stickType.getLimitState() != 1){
+            return Result.fail("无权操作");
+        }
         stickType.setStickCount(stickType.getStickCount()+1);
         stickTypeRepository.save(stickType);
         Stick stick = new Stick();
@@ -204,12 +210,23 @@ public class StickService {
         if (stick == null){
             return Result.fail("贴子不存在或已被删除");
         }
-        if (stick.getOperationState()!=1) {
-            return Result.fail("帖子未通过审核");
-        }
-
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setListMap(getBanner(4));
+        // 打赏该贴用户列表
+        List<StickReward> list = stickRewardResitory.findByStickId(id);
+        List<StickRewardUser> stickRewardUserList  = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(list)){
+            stickRewardUserList = list.stream().map(StickRewardUser::new).collect(Collectors.toList());
+        }
+        stickDetailVO.setStickRewardUserList(stickRewardUserList);
+
+        // 如果该分类贴子需要后台审核
+        if (stick.getStickType().getExamineState() == 1){
+            if (stick.getOperationState() == 3) {
+                return Result.fail("待审核");
+            }
+            return Result.success(stickDetailVO);
+        }
         return Result.success(stickDetailVO);
     }
 
@@ -330,6 +347,9 @@ public class StickService {
         }
         if (stick.getLockState() != 1){
             return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
+        }
+        if (stick.getStickType().getAdmitsState() != 1){
+            return Result.fail("该分类下贴子不可评论");
         }
         StickComment stickComment = new StickComment();
         // 回复的用户
@@ -544,4 +564,6 @@ public class StickService {
         stickReportRepository.save(stickReport);
         return Result.success("举报成功");
     }
+
+
 }

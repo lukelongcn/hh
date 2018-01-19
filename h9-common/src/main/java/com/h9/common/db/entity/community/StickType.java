@@ -1,10 +1,13 @@
 package com.h9.common.db.entity.community;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.db.entity.order.Address;
+
 import lombok.Data;
 
 import javax.persistence.*;
 
+import static java.util.Arrays.stream;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -54,6 +57,42 @@ public class StickType extends BaseEntity {
 
     @Column(name = "default_sort",nullable = false, columnDefinition = "int default 1 COMMENT '默认排序 1回复数 2浏览数 3最新发表 4最后回复'")
     private Integer defaultSort = 1;
+
+
+
+
+
+    public enum defaultSortEnum {
+        /**
+         * 默认排序
+         */
+        COMMENT_COUNT(1,"回复数"),
+        READ_COUNT(2,"浏览数"),
+        NEW_STICK(3,"最新发表"),
+        LAST_COMMENT(4,"最后回复");
+
+        defaultSortEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public static String getNameById(int id){
+            StickType.defaultSortEnum defaultSortEnum = stream(values()).filter(o -> o.getId()==id).limit(1).findAny().orElse(null);
+            return defaultSortEnum==null?null:defaultSortEnum.getName();
+        }
+
+        public int getId() {
+
+
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
+    }
 
 
 

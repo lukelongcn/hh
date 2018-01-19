@@ -42,6 +42,9 @@ public class StickContoller {
     }
 
 
+    /**
+     * 发帖
+     */
     @Secured
     @PostMapping("")
     public Result addStick(@SessionAttribute("curUserId") long userId,
