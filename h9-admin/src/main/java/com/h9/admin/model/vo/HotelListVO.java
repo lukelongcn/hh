@@ -58,6 +58,9 @@ public class HotelListVO {
 //        }
         this.setRoomCount(roomCount);
         Integer status = hotel.getStatus();
+        if(status == null){
+            System.out.println();
+        }
         Hotel.Status findStatus = Hotel.Status.findByCode(status);
         if(findStatus == null){
             this.status = -1;

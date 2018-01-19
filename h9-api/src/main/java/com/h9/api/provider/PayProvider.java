@@ -42,7 +42,7 @@ public class PayProvider {
         return payHost + "/h9/pay/initOrder";
     }
 
-    private String getPrepayURL(long orderId){
+    public String getPrepayURL(long orderId){
         return payHost + "/h9/pay/getPrepay?payOrderId="+orderId;
     }
 
@@ -94,12 +94,14 @@ public class PayProvider {
     }
 
 
-
-
-
-
-
-
-
-
+    public Result getPrepayInfo(OrderVo orderVo) {
+        //app
+        String prepayURL = getPrepayURL(orderVo.getPayOrderId());
+        try {
+            return restTemplate.getForObject(prepayURL, Result.class);
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            return Result.fail("获取预支付信息出错，请稍后再试");
+        }
+    }
 }

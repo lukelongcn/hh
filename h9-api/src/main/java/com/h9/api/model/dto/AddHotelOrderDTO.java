@@ -79,6 +79,7 @@ public class AddHotelOrderDTO {
         }
     }
 
+
     public static void main(String[] args) {
         String s = JSONObject.toJSONString(new AddHotelOrderDTO());
         System.out.println(s);

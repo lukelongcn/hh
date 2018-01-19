@@ -5,24 +5,24 @@ import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
 import com.h9.admin.model.vo.HotelListVO;
+import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
 import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
-import com.h9.common.db.repo.HotelOrderRepository;
-import com.h9.common.db.repo.HotelRepository;
-import com.h9.common.db.repo.HotelRoomTypeRepository;
-import com.h9.common.db.repo.HtmlContentRepository;
+import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.REFUND_MONEY;
 
@@ -54,7 +56,7 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
 
-        return Result.success(hotelRepository.findAll(page, limit).result2Result(hotel ->{
+        return Result.success(hotelRepository.findAll(page, limit).result2Result(hotel -> {
 
             Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
             return new HotelListVO(hotel, roomCount.intValue());
@@ -68,6 +70,7 @@ public class HotelService {
 
         if (editHotelDTO.getId() == null) {
             hotel = new Hotel();
+            hotel.setStatus(Hotel.Status.NORMAL.getCode());
         } else {
             hotel = hotelRepository.findOne(editHotelDTO.getId());
         }
@@ -256,5 +259,26 @@ public class HotelService {
         hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.SUCCESS.getCode());
         hotelOrderRepository.save(hotelOrder);
         return Result.success();
+    }
+
+    @Resource
+    private BalanceFlowRepository balanceFlowRepository;
+
+    @Transactional
+    public Result<HotelOrderDetail> orderDetail(Long id) {
+        HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
+        if (hotelOrder == null) {
+            return Result.fail("订单不存在");
+        }
+
+        List<HotelOrderDetail.PayInfo> payInfoList = null;
+        try (Stream<BalanceFlow> balanceFlowStream = balanceFlowRepository
+                .findByOrderId(id)) {
+            payInfoList = balanceFlowStream
+                    .map(el -> new HotelOrderDetail.PayInfo(el))
+                    .collect(Collectors.toList());
+        }
+        HotelOrderDetail hotelOrderDetail = new HotelOrderDetail(hotelOrder, payInfoList);
+        return Result.success(hotelOrderDetail);
     }
 }

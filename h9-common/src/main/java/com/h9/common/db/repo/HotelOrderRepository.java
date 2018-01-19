@@ -9,17 +9,19 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by itservice on 2018/1/3.
  */
 public interface HotelOrderRepository extends BaseRepository<HotelOrder> {
 
-    @Query("select ho from HotelOrder ho where ho.user_id =?1 and ho.orderStatus in ?2 order by ho.createTime")
+    @Query("select ho from HotelOrder ho where ho.userId =?1 and ho.orderStatus in ?2 order by ho.createTime")
     Page<HotelOrder> findAllBy(long userId,Collection status, Pageable pageRequest);
 
-    @Query("select ho from HotelOrder ho where ho.user_id =?1 order by ho.createTime")
+    @Query("select ho from HotelOrder ho where ho.userId =?1 order by ho.createTime")
     Page<HotelOrder> findAllByUserId(long userId, Pageable pageRequest);
 
 
+    Stream<HotelOrder> findByOrderStatus(Integer status);
 }

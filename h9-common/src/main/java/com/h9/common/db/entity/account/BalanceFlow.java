@@ -36,7 +36,7 @@ public class BalanceFlow extends BaseEntity {
 
     /**
      * description: {"11":"vb积分兑换酒元","1":"提现","12":"酒元余额兑换","2":"银联退回","3":"小品会","5":"滴滴兑换","6":"充话费","8":"大转盘","9":"抢红包（临时账号）","10":"抢红包"}
-     * @see FlowType
+     * @see BalanceFlowTypeEnum
      */
     @Column(name = "flow_type",columnDefinition = "bigint(20) default null COMMENT '流水类型'")
     private Long flowType;
@@ -154,9 +154,9 @@ public class BalanceFlow extends BaseEntity {
         TEMP_RED_BAG(9,"抢红包(历临时账户)"),
         RED_BAG(10,"抢红包"),
         VB_TO_MONEY(11,"vb兑换酒元"),
-        BALANCE_PAY(12, "余额支付"),
+        BALANCE_PAY(12, "酒元支付"),
         REFUND(13,"退款"),
-        Recharge(14,"充值"),
+        Recharge(14,"微信支付"),
         BATCH_RECHARGE(15,"批量充值"),
         SIGN(16,"签到"),
         STICK_REWARD(17,"打赏");
@@ -164,6 +164,17 @@ public class BalanceFlow extends BaseEntity {
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;
             this.name = name;
+        }
+
+
+        public static BalanceFlowTypeEnum findByCode(Long id) {
+            BalanceFlowTypeEnum[] values = values();
+            for (BalanceFlowTypeEnum smsTypeEnum : values) {
+                if (id == smsTypeEnum.getId()) {
+                    return smsTypeEnum;
+                }
+            }
+            return null;
         }
 
         private long id;
