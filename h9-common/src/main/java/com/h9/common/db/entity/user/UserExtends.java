@@ -42,6 +42,26 @@ public class UserExtends extends BaseEntity {
     @Column(name = "img_id")
     private Long imgId;
 
+    @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
+    private double longitude;
+
+    @Column(name = "latitude", columnDefinition = "double default 0 COMMENT '维度'")
+    private double latitude;
+    @Column(name="province",columnDefinition = "varchar(50) COMMENT '省'")
+    private String province;
+
+    @Column(name="city",columnDefinition = "varchar(50) COMMENT '市'")
+    private String city;
+
+    @Column(name="district",columnDefinition = "varchar(50) COMMENT '区'")
+    private String district;
+
+    @Column(name="street",columnDefinition = "varchar(50) COMMENT '街道'")
+    private String street;
+
+    @Column(name="street_number",columnDefinition = "varchar(50) COMMENT '街道号'")
+    private String streetNumber;
+
     public Long getImgId() {
         return imgId;
     }
@@ -125,5 +145,61 @@ public class UserExtends extends BaseEntity {
             return sexEnum==null?null:sexEnum.getName();
         }
 
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
     }
 }
