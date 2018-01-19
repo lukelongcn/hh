@@ -71,10 +71,8 @@ public class RedisBean {
         List list = new ArrayList();
         try {
             String value = valueOps.get(key);
-            logger.infov("redis: getStringValue({0}) = {1}", key, value);
-
             if (StringUtils.isEmpty(value)) {
-                logger.warnv("redis: getStringValue({0}) = {1}", key, value);
+                logger.warnv("redis: getStringValue({0}) is null {1}", key, value);
                 return null;
             }
             return JSONArray.parseArray(value,clazz);
