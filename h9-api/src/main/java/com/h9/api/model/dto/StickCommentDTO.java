@@ -28,11 +28,6 @@ public class StickCommentDTO {
     // 父级id
     private Long stickCommentId;
 
-    @NotNull(message = "回复级别不能为空，0:帖子回复 1:评论回复")
-    private Integer level = 1;
-
-    private Integer floor = 1;
-
     private Long notifyUserId;
 
     private Integer likeCount = 0;

@@ -335,15 +335,6 @@ public class StickService {
             return Result.fail("该分类下贴子不可评论");
         }
         StickComment stickComment = new StickComment();
-        // 回复的用户
-        User user = userRepository.findOne(userId);
-        stickComment.setAnswerUser(user);
-        // 回复内容
-        stickComment.setContent(stickCommentDTO.getContent());
-        // 回复级别
-        stickComment.setLevel(stickCommentDTO.getLevel());
-        // 回复楼层
-        stickComment.setFloor(stickCommentDTO.getFloor());
         // @的用户
         Long notifyUserId = stickCommentDTO.getNotifyUserId();
         if (notifyUserId != null){
@@ -355,6 +346,7 @@ public class StickService {
         // 父级id
         Long stickCommentId = stickCommentDTO.getStickCommentId();
         if (stickCommentId != null){
+            stickComment.setLevel(1);
             StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
             if(stickCommentPid!=null){
                 stickComment.setStickComment(stickCommentPid);
@@ -362,6 +354,22 @@ public class StickService {
                 return Result.fail("该楼层不存在或已被删除");
             }
         }
+        //  调用评论共有接口
+        Result result = publicCommnetUse(userId,stickCommentDTO.getContent(),stick,stickComment,request);
+        if (!result.isSuccess()) {
+            return result;
+        }
+        return Result.success("回复成功");
+    }
+    private Result publicCommnetUse(long userId,String content,Stick stick,
+                                    StickComment stickComment,HttpServletRequest request){
+        // 回复的用户
+        User user = userRepository.findOne(userId);
+        stickComment.setAnswerUser(user);
+        // 回复内容
+        stickComment.setContent(content);
+        // 回复楼层
+        stickComment.setFloor(stick.getAnswerCount()+1);
         // 贴子id
         stickComment.setStick(stick);
         //ip
@@ -371,9 +379,8 @@ public class StickService {
         stick.setAnswerCount(stick.getAnswerCount()+1);
         stick.setReadCount(stick.getReadCount()+1);
         stickRepository.save(stick);
-        return Result.success("回复成功");
+        return Result.success();
     }
-
 
     /**
      * 拿到评论
@@ -464,11 +471,18 @@ public class StickService {
         stickReward.setUser(userRepository.findOne(userId));
         stickReward.setIp(NetworkUtil.getIpAddress(request));
         stickReward.setWords(stickRewardJiuYuanDTO.getWords());
-        stickRewardResitory.save(stickReward);
+        stickRewardResitory.saveAndFlush(stickReward);
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         userAccount.setRewardMoney(userAccount.getRewardMoney().add(money));
         userAccountRepository.save(userAccount);
+        // 如果留言不为空 增加评论
+        if (stickRewardJiuYuanDTO.getWords() != null){
+            StickComment stickComment = new StickComment();
+            publicCommnetUse(userId,stickRewardJiuYuanDTO.getWords(),stick,stickComment,request);
+            // 成功
+            return Result.success("打赏成功");
+        }
         // 成功
         return Result.success("打赏成功");
     }
