@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -41,7 +42,14 @@ public class HotelListVO {
 
     @ApiModelProperty("酒店预订电话")
     private String hotelPhone;
-
+    @ApiModelProperty("酒店城市")
+    private String city;
+    @ApiModelProperty("酒店预订开始时间")
+    private String  startReserveTime;
+    @ApiModelProperty("酒店预订结束时间")
+    private String endReserveTime;
+    @ApiModelProperty("酒店介绍")
+    private String hotelInfo;
 
     private Integer status;
 
