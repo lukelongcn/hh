@@ -3,13 +3,10 @@ package com.h9.api.controller;
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
+import com.h9.api.model.dto.StickRewardJiuYuanDTO;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
 
-import org.apache.commons.collections.ResettableListIterator;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.http.HttpRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -154,27 +150,24 @@ public class StickContoller {
 
     /**
      * 点击赞赏金额
-     * @param money 赞赏金额
      * @return Result
      */
     @Secured
-    @GetMapping("/rewardJiuyuan/{stickId}/{money}")
+    @PostMapping("/rewardJiuyuan")
     public Result rewardJiuyuan(@SessionAttribute("curUserId")long userId,
-                                @PathVariable("stickId")long stickId,
-                                @PathVariable("money")BigDecimal money){
-        return stickService.rewardJiuyuan(userId,stickId,money);
+                                @Valid@RequestBody StickRewardJiuYuanDTO stickRewardJiuYuanDTO){
+        return stickService.rewardJiuyuan(userId, stickRewardJiuYuanDTO);
     }
 
     /**
      * 打赏金额
      */
     @Secured
-    @PostMapping("/reward/{stickId}/{money}")
+    @PostMapping("/reward")
     public Result reward(@SessionAttribute("curUserId")long userId,
-                         @PathVariable("stickId")long stickId,
-                         @PathVariable("money")BigDecimal money,
+                         @Valid@RequestBody StickRewardJiuYuanDTO stickRewardJiuYuanDTO,
                          HttpServletRequest request){
-        return stickService.reward(userId,stickId,money,request);
+        return stickService.reward(userId,stickRewardJiuYuanDTO,request);
     }
 
     /**

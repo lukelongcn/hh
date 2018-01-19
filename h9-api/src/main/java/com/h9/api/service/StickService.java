@@ -1,22 +1,19 @@
 package com.h9.api.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
+import com.h9.api.model.dto.StickRewardJiuYuanDTO;
 import com.h9.api.model.vo.HomeVO;
-import com.h9.api.model.vo.SignVO;
-import com.h9.api.model.vo.StickCommentSimpleVO;
-import com.h9.api.model.vo.StickCommentVO;
-import com.h9.api.model.vo.StickRewardMoneyVO;
-import com.h9.api.model.vo.StickRewardUser;
-import com.h9.api.model.vo.StickRewardVO;
-import com.h9.api.model.vo.StickSearchVO;
-import com.h9.api.model.vo.StickDetailVO;
-import com.h9.api.model.vo.StickSampleVO;
-import com.h9.api.model.vo.StickSearchVO;
-import com.h9.api.model.vo.StickTypeDetailVo;
-import com.h9.api.model.vo.StickTypeVO;
+import com.h9.api.model.vo.community.StickCommentSimpleVO;
+import com.h9.api.model.vo.community.StickCommentVO;
+import com.h9.api.model.vo.community.StickRewardMoneyVO;
+import com.h9.api.model.vo.community.StickRewardUser;
+import com.h9.api.model.vo.community.StickRewardVO;
+import com.h9.api.model.vo.community.StickSearchVO;
+import com.h9.api.model.vo.community.StickDetailVO;
+import com.h9.api.model.vo.community.StickSampleVO;
+import com.h9.api.model.vo.community.StickTypeDetailVo;
+import com.h9.api.model.vo.community.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -32,7 +29,6 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
-import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -50,34 +46,21 @@ import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.Config;
-import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.NetworkUtil;
 
-import lombok.extern.jbosslog.JBossLog;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
-import org.springframework.http.HttpRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -435,7 +418,7 @@ public class StickService {
     /**
      * 赞赏酒元
      */
-    public Result rewardJiuyuan(long userId, long stickId, BigDecimal money) {
+    public Result rewardJiuyuan(long userId,StickRewardJiuYuanDTO stickRewardJiuYuanDTO) {
         // 酒元icon
         String icon = configService.getStringConfig(JIUYUAN_ICON);
         // 商品类型
@@ -443,23 +426,28 @@ public class StickService {
         // 前台显示对象
         StickRewardMoneyVO rewardMoneyVO = new StickRewardMoneyVO();
         rewardMoneyVO.setIcon(icon);
-        rewardMoneyVO.setRewardMoney(money);
-        Stick stick = stickRepository.findById(stickId);
+        rewardMoneyVO.setRewardMoney(stickRewardJiuYuanDTO.getReward());
+        // 类型和标题
+        Stick stick = stickRepository.findById(stickRewardJiuYuanDTO.getStickId());
         rewardMoneyVO.setType(goodsType.getName()+"["+stick.getTitle()+"]");
+        // 酒元余额
         User user = userRepository.findOne(userId);
         UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
         rewardMoneyVO.setBalance(userAccount.getBalance());
-
+        // 留言
+        rewardMoneyVO.setWords(stickRewardJiuYuanDTO.getWords());
         return Result.success(rewardMoneyVO);
     }
 
     /**
      * 打赏
      */
-    public Result reward(long userId, long stickId, BigDecimal money, HttpServletRequest request) {
-        if (money.signum() != 1 ){
+    public Result reward(long userId, StickRewardJiuYuanDTO stickRewardJiuYuanDTO, HttpServletRequest request) {
+        if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
             return Result.fail("金额不能为负数");
         }
+        BigDecimal money = stickRewardJiuYuanDTO.getReward();
+        Long stickId = stickRewardJiuYuanDTO.getStickId();
         // 减
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 加
@@ -475,6 +463,7 @@ public class StickService {
         stickReward.setStick(stick);
         stickReward.setUser(userRepository.findOne(userId));
         stickReward.setIp(NetworkUtil.getIpAddress(request));
+        stickReward.setWords(stickRewardJiuYuanDTO.getWords());
         stickRewardResitory.save(stickReward);
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());

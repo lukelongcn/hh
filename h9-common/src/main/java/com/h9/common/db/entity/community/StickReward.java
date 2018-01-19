@@ -47,4 +47,8 @@ public class StickReward extends BaseEntity {
 
     @Column(name = "ip",columnDefinition = "varchar(200) default '' COMMENT 'ip'")
     private String ip;
+
+    @Column(name = "words",columnDefinition = "varchar(200) default '' COMMENT '留言'")
+    private String words;
+
 }

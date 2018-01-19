@@ -1,18 +1,12 @@
-package com.h9.api.model.vo;
+package com.h9.api.model.vo.community;
 
+import com.h9.api.model.vo.community.StickCommentSimpleVO;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.user.User;
-import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.entity.user.UserExtends;
-import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.utils.DateUtil;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 import lombok.Data;
 
