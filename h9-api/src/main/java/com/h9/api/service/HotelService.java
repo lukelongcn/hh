@@ -212,7 +212,7 @@ public class HotelService {
         if (hotelOrder == null) return Result.fail("订单不存在");
 
         if (hotelOrder.getOrderStatus() != HotelOrder.OrderStatusEnum.NOT_PAID.getCode()) {
-            return Result.fail("不能进行此操作");
+            return Result.fail("订单已支付");
         }
 
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
