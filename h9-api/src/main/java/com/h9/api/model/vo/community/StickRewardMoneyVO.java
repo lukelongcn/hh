@@ -1,4 +1,4 @@
-package com.h9.api.model.vo;
+package com.h9.api.model.vo.community;
 
 import java.math.BigDecimal;
 
@@ -19,6 +19,8 @@ public class StickRewardMoneyVO {
    private BigDecimal rewardMoney;
 
    private BigDecimal balance = new BigDecimal(0);
+
+   private String words;
 
    public StickRewardMoneyVO(){
 

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by 李圆 on 2018/1/14
  */
@@ -21,4 +23,7 @@ public interface StickRewardResitory extends BaseRepository<StickReward> {
        Page<StickReward> rewardList = findRewardList(stickId,pageRequest(page,limit));
        return new PageResult(rewardList);
    }
+
+   @Query("select s from StickReward s where s.stick.id = ?1")
+    List<StickReward> findByStickId(Long stickId);
 }

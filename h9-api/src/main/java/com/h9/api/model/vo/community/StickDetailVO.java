@@ -1,26 +1,21 @@
-package com.h9.api.model.vo;
+package com.h9.api.model.vo.community;
 
+import com.h9.api.model.vo.HomeVO;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
 
+import java.util.List;
+import java.util.Map;
+
 import lombok.Data;
 
-import javax.persistence.Column;
-
-import java.util.Date;
-import java.util.List;
-
 /**
- * Created with IntelliJ IDEA.
- * Description:TODO
- * StickSampleVO:刘敏华 shadow.liu@hey900.com
- * Date: 2018/1/2
- * Time: 16:21
+ * Created by 李圆 on 2018/1/5
  */
 @Data
-public class StickSampleVO {
+public class StickDetailVO {
     private long id;
     private String userName;
     private String userAvatar;
@@ -29,13 +24,15 @@ public class StickSampleVO {
     private Integer readCount = 0;
     private Integer likeCount = 0;
     private Integer answerCount = 0;
+    private Integer rewardCount = 0;
     private String typeName;
-    private String spaceTime;
+    private String content;
+    private String createTime;
+    private Map<String, List<HomeVO>> listMap;
+    private Integer state;
+    private List<StickRewardUser> stickRewardUserList;
 
-    public StickSampleVO() {
-    }
-
-    public StickSampleVO(Stick stick) {
+    public StickDetailVO(Stick stick) {
         id = stick.getId();
         User user = stick.getUser();
         if(user!=null){
@@ -45,13 +42,14 @@ public class StickSampleVO {
         title = stick.getTitle();
         readCount = stick.getReadCount();
         likeCount = stick.getLikeCount();
+        rewardCount = stick.getRewardCount();
         answerCount = stick.getAnswerCount();
+        createTime = DateUtil.formatDate(stick.getCreateTime(), DateUtil.FormatType.DAY);
         StickType stickType = stick.getStickType();
         if (stickType != null) {
             typeName = stickType.getName();
         }
-        spaceTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
+        content = stick.getContent();
+        state = stick.getState();
     }
-
-
 }
