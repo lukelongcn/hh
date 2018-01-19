@@ -44,10 +44,16 @@ public class HotelOrderDetailVO {
 
     private String createTime;
 
+    private String statusDesc;
+
     public HotelOrderDetailVO(){}
 
     public HotelOrderDetailVO(HotelOrder hotelOrder){
         BeanUtils.copyProperties(hotelOrder, this);
+
+        Integer orderStatus = hotelOrder.getOrderStatus();
+        HotelOrder.OrderStatusEnum findEnum = HotelOrder.OrderStatusEnum.findByCode(orderStatus);
+        this.setStatusDesc(findEnum.getDesc());
         this.setCreateTime(DateUtil.formatDate(hotelOrder.getCreateTime(), DateUtil.FormatType.MINUTE))
                 .setComeRoomTime(DateUtil.formatDate(hotelOrder.getComeRoomTime(), DateUtil.FormatType.DAY))
                 .setOutRoomTime(DateUtil.formatDate(hotelOrder.getOutRoomTime(), DateUtil.FormatType.DAY))

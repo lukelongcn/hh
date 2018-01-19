@@ -15,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 @Data
 @Accessors(chain = true)
 @ApiModel(value="HotelOrderListVO")
-
 public class HotelOrderListVO {
 
     @ApiModelProperty("订单Id")
