@@ -1,4 +1,4 @@
-package com.h9.api.model.vo;
+package com.h9.api.model.vo.community;
 
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.user.User;

@@ -45,7 +45,7 @@ public class Hotel extends BaseEntity{
     @Column(name = "tips",columnDefinition = "varchar(255) comment '预定提示'")
     private String tips;
 
-    @Column(name = "hotel_info",columnDefinition = "varchar(255) comment '酒店介绍 url'")
+    @Column(name = "hotel_info",columnDefinition = "text comment '酒店介绍 html'")
     private String hotelInfo;
 
     @Column(name= "discount",columnDefinition = "float comment '折扣'")
