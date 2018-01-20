@@ -129,4 +129,12 @@ public class Hotel extends BaseEntity{
         Date endDate = DateUtil.formatDate(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY) +" "+ endReserveTime, DateUtil.FormatType.MINUTE);
         return endDate;
     }
+
+    public String getStartReserveTimeStr(){
+        return startReserveTime;
+    }
+
+    public String getEndReserveTieStr(){
+        return endReserveTime;
+    }
 }

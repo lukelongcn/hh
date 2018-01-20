@@ -1,13 +1,17 @@
 package com.h9.admin.model.vo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -46,12 +50,20 @@ public class HotelRoomListVO {
     @ApiModelProperty("酒店名称")
     private  String hotelName;
 
+    private List<String> images = new ArrayList<>();
+
+
     public HotelRoomListVO( ) {
     }
     public HotelRoomListVO(HotelRoomType roomType) {
         BeanUtils.copyProperties(roomType,this);
         this.setHotelName(roomType.getHotel().getHotelName());
 
+        String jsonImg = roomType.getImage();
+        if(StringUtils.isNotBlank(jsonImg)){
+            List<String> images = JSONObject.parseArray(jsonImg,String.class);
+            this.setImages(images);
+        }
         HotelRoomType.Status findStatus = HotelRoomType.Status.findByCode(roomType.getStatus());
         if(findStatus != null){
             this.setStatus(findStatus.getCode());
