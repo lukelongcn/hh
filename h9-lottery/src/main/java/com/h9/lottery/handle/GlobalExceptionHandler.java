@@ -55,7 +55,6 @@ public class GlobalExceptionHandler {
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
         }
-        IllegalMonitorStateException:
 
         if (e instanceof IllegalMonitorStateException) {
             logger.info(e.getMessage(), e);
