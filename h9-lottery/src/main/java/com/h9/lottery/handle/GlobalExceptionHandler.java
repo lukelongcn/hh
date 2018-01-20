@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
         IllegalMonitorStateException:
 
         if (e instanceof IllegalMonitorStateException) {
+            logger.info(e.getMessage(), e);
             return new Result(1, "服务器处理中", ExceptionUtils.getMessage(e));
         }
         if (e instanceof NoHandlerFoundException) {
