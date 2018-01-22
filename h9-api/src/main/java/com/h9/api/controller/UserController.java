@@ -9,8 +9,6 @@ import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

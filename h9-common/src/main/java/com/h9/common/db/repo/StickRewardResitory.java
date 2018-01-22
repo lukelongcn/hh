@@ -26,4 +26,11 @@ public interface StickRewardResitory extends BaseRepository<StickReward> {
 
    @Query("select s from StickReward s where s.stick.id = ?1")
     List<StickReward> findByStickId(Long stickId);
+
+    @Query("select s from StickReward s where s.user.id = ?1 order by s.createTime DESC ")
+    Page<StickReward> findGiveList(long userId, Pageable pageable);
+    default PageResult<StickReward> findGiveList(long userId, Integer page, Integer limit){
+        Page<StickReward> rewardList = findGiveList(userId,pageRequest(page,limit));
+        return new PageResult(rewardList);
+    }
 }
