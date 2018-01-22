@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,4 +36,17 @@ public class Test666 {
             }
         }
     }*/
+    @Test
+    public void testRefund() throws IOException {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+
+        FileOutputStream fos = new FileOutputStream(new File("D:\\资料\\红包\\cert\\test.p12"));
+        int len = 0;
+        byte[] bytes = new byte[1024];
+
+        while(( len = is.read(bytes)) != -1){
+            fos.write(bytes, 0, len);
+        }
+    }
+
 }
