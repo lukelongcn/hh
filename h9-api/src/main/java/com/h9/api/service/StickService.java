@@ -457,10 +457,15 @@ public class StickService {
      * 打赏
      */
     public Result reward(long userId, StickRewardJiuYuanDTO stickRewardJiuYuanDTO, HttpServletRequest request) {
-        if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
+        /*if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
             return Result.fail("金额不能为负数");
-        }
+        }*/
         BigDecimal money = stickRewardJiuYuanDTO.getReward();
+        UserAccount userAccountD = userAccountRepository.findByUserId(userId);
+        int flag = userAccountD.getBalance().compareTo(money);
+        if (flag == -1){
+            return Result.fail("酒元余额不足");
+        }
         Long stickId = stickRewardJiuYuanDTO.getStickId();
         // 减
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
