@@ -288,7 +288,7 @@ public class HotelService {
             //APP 支付
             Result prepayResult = payProvider.getPrepayInfo(orderVo);
             PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), prepayResult.getData());
-            return Result.success(vo);
+            return Result.success(prepayResult);
         }
     }
 
