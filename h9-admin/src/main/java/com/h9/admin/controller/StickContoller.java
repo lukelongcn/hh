@@ -7,8 +7,6 @@ import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
-import com.sun.org.apache.regexp.internal.RE;
-//import com.sun.org.glassfish.gmbal.Description;
 
 import org.jboss.logging.Logger;
 import org.springframework.validation.annotation.Validated;
@@ -85,7 +83,7 @@ public class StickContoller {
     /**
      * 添加马甲贴子
      */
-    @Secured(accessCode = "stick:addStick")
+    //@Secured(accessCode = "stick:addStick")
     @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
@@ -152,16 +150,25 @@ public class StickContoller {
         return stickService.reset(stickId);
     }
 
+    /**
+     * 评论通过状态
+     */
     @PostMapping("/commentState")
     public Result commentState(@RequestParam(value = "stickCommentId")long stickComentId){
         return stickService.commentState(stickComentId);
     }
 
+    /**
+     * 分类使用状态
+     */
     @PostMapping("/typeState")
     public Result typeState(@RequestParam(value = "stickTypeId")long stickTypeId){
         return stickService.typeState(stickTypeId);
     }
 
+    /**
+     * 删除评论
+     */
     @PostMapping("/deleteComment")
     public Result deleteComment(@RequestParam(value = "stickCommentId")long stickCommentId){
         return stickService.deleteComment(stickCommentId);
