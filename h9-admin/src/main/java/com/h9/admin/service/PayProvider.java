@@ -12,6 +12,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 
@@ -59,7 +61,7 @@ public class PayProvider {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
         byte[] bytes = null;
         try {
-//            InputStream is = new FileInputStream(new File("D:\\资料\\红包\\cert\\apiclient_cert.p12"));
+//            InputStream is = new FileInputStream(new File("D:\\project\\h9-api\\h9-admin\\src\\main\\resources\\cert\\apiclient_cert.p12"));
             bytes = IOUtils.toByteArray(is);
         }catch (NullPointerException ne){
             return Result.fail("证书不存在");
