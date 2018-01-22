@@ -70,9 +70,9 @@ public class PersonalStickController {
      */
     @Secured
     @GetMapping("/rewarded")
-    public Result rewarded(//@SessionAttribute("curUserId")long userId,
+    public Result rewarded(@SessionAttribute("curUserId")long userId,
                            @RequestParam(defaultValue = "1") Integer page,
                            @RequestParam(defaultValue = "10") Integer limit){
-        return personalStickService.rewarded(3,page,limit);
+        return personalStickService.rewarded(userId,page,limit);
     }
 }
