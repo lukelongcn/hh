@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
+import com.h9.admin.model.dto.hotel.RefundDTO;
 import com.h9.admin.model.vo.HotelListVO;
 import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
 import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.entity.hotel.Hotel;
@@ -19,6 +21,7 @@ import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.redisson.RedisPubSubTopicListenerWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -142,7 +146,7 @@ public class HotelService {
         if (room == null) room = new HotelRoomType();
 
         BeanUtils.copyProperties(editRoomDTO, room);
-        List<String> image = editRoomDTO.getImage();
+        List<String> image = editRoomDTO.getImages();
         if (CollectionUtils.isNotEmpty(image)) {
             room.setImage(JSONObject.toJSONString(image));
         }
@@ -214,7 +218,7 @@ public class HotelService {
                 predicateList.add(builder.between(root.get("createTime"), startDate, endDate));
             }
 
-            if (status != null) {
+            if (status != null && status != 0) {
                 predicateList.add(builder.equal(root.get("orderStatus"), status));
             }
 
@@ -280,5 +284,40 @@ public class HotelService {
         }
         HotelOrderDetail hotelOrderDetail = new HotelOrderDetail(hotelOrder, payInfoList);
         return Result.success(hotelOrderDetail);
+    }
+
+    @Resource
+    private CommonService commonService;
+    @Resource
+    private PayProvider payProvider;
+    @Transactional
+    public Result refundOrder(Long id) {
+        HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
+        if (hotelOrder == null) return Result.fail("订单不存在，请稍后再试");
+
+        Integer orderStatus = hotelOrder.getOrderStatus();
+        HotelOrder.OrderStatusEnum orderStatusEnum = HotelOrder.OrderStatusEnum.findByCode(orderStatus);
+        if (orderStatusEnum == null)
+            return Result.fail("订单状态异常");
+
+        if(orderStatusEnum.getCode() != HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode()){
+            return Result.fail("此订单不能退款");
+        }
+
+        BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+        commonService.setBalance(hotelOrder.getUserId(), payMoney4JiuYuan,
+                BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
+                hotelOrder.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
+
+        BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
+
+        Result wxRefundResult = payProvider.refundOrder(id, payMoney4Wechat);
+
+        if(wxRefundResult.getCode() == 0){
+            hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
+            hotelOrderRepository.save(hotelOrder);
+            return Result.success("退款成功");
+        }
+        return wxRefundResult;
     }
 }

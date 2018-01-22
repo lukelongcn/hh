@@ -108,6 +108,9 @@
                 <targetPath>BOOT-INF/classes/</targetPath>
 
             </resource>
+
+
+
         </resources>
     </build>
 

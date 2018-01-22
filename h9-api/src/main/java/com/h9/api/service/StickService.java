@@ -326,7 +326,10 @@ public class StickService {
         // 贴子id
         Stick stick = stickRepository.findById(stickCommentDTO.getStickId());
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被禁用或删除");
         }
         if (stick.getLockState() != 1){
             return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
@@ -350,8 +353,6 @@ public class StickService {
             StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
             if(stickCommentPid!=null){
                 stickComment.setStickComment(stickCommentPid);
-            }else {
-                return Result.fail("该楼层不存在或已被删除");
             }
         }
         //  调用评论共有接口
@@ -397,16 +398,20 @@ public class StickService {
         if (user.getId() == null){
             return new StickCommentVO();
         }
-        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
-        Integer  sex = userExtends.getSex();
         // 拿到回复的回复列表
         List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
-            long stickCommentParentId = stickComment.getId();
-            List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
-            if (CollectionUtils.isNotEmpty(stickCommentChild)){
+        long stickCommentParentId = stickComment.getId();
+        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+        if (CollectionUtils.isNotEmpty(stickCommentChild)){
                 stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
-        return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
+        StickCommentVO stickCommentVO = new StickCommentVO(stickComment);
+        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
+        if (userExtends != null){
+            stickCommentVO.setSex(userExtends.getSex());
+        }
+        stickCommentVO.setList(stickCommentSimpleVOS);
+        return stickCommentVO;
     }
 
     /**
@@ -450,10 +455,15 @@ public class StickService {
      * 打赏
      */
     public Result reward(long userId, StickRewardJiuYuanDTO stickRewardJiuYuanDTO, HttpServletRequest request) {
-        if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
+        /*if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
             return Result.fail("金额不能为负数");
-        }
+        }*/
         BigDecimal money = stickRewardJiuYuanDTO.getReward();
+        UserAccount userAccountD = userAccountRepository.findByUserId(userId);
+        int flag = userAccountD.getBalance().compareTo(money);
+        if (flag == -1){
+            return Result.fail("酒元余额不足");
+        }
         Long stickId = stickRewardJiuYuanDTO.getStickId();
         // 减
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
@@ -560,6 +570,12 @@ public class StickService {
      */
     public Result report(long userId, long stickId, String content) {
         Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被禁用或删除");
+        }
         StickReport stickReport = new StickReport();
         stickReport.setContent(content);
         stickReport.setStick(stick);

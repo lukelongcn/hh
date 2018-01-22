@@ -29,6 +29,7 @@ import com.h9.common.db.repo.UserRepository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
@@ -76,9 +76,21 @@ public class StickService {
         StickType stickType = new StickType();
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
-        return Result.success();
+        return Result.success("添加成功");
     }
 
+    /**
+     * 编辑分类
+     */
+    public Result updateType(long stickTypeId, StickTypeDTO stickTypeDTO) {
+        StickType stickType = stickTypeRepository.findById(stickTypeId);
+        if (stickType == null){
+            return Result.fail("该分类已被删除");
+        }
+        BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
+        stickTypeRepository.save(stickType);
+        return Result.success("编辑成功");
+    }
 
     public Result getStick(int page,int limit){
         PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
@@ -118,10 +130,13 @@ public class StickService {
         }
         Stick stick = new Stick();
         User user = userRepository.findOne(stickDto.getUserId());
+        if (user == null){
+            return Result.fail("用户不存在");
+        }
+        stick.setUser(user);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         stick.setStickType(stickType);
-        stick.setUser(user);
         Stick s= stickRepository.saveAndFlush(stick);
         return Result.success("添加成功");
     }
@@ -185,7 +200,7 @@ public class StickService {
 
     /**
      *  拿到所有贴子详情
-     * @return Result
+     *  @return Result
      */
     public Result allDetail(Integer pageNumber, Integer pageSize) {
         PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
@@ -194,12 +209,18 @@ public class StickService {
         }
         return Result.success(sticklist.result2Result(this::stickDetail2Vo));
     }
-
+    @Value("${path.app.wechat_host}")
+    private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
+        if (stick.getState()!= 1){
+            return new StickDetailVO();
+        }
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
-
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
+        String url = wechatHostUrl+"/?#/stick/detail?id=";
+        url += stick.getId();
+        stickDetailVO.setUrl(url);
         return stickDetailVO;
     }
 
@@ -208,7 +229,9 @@ public class StickService {
      */
     public Result lock(long stickId) {
         Stick stick = stickRepository.findOne(stickId);
-
+        if (stick == null){
+            return Result.fail("该贴不存在");
+        }
         if (stick.getLockState() ==1){
             stick.setLockState(2);
             stickRepository.saveAndFlush(stick);
@@ -227,16 +250,19 @@ public class StickService {
      */
     public Result examine(long stickId) {
         Stick stick = stickRepository.findOne(stickId);
+        if (stick == null){
+            return Result.fail("该贴不存在");
+        }
 
         if (stick.getOperationState() ==1){
             stick.setOperationState(2);
             stickRepository.saveAndFlush(stick);
-            return Result.success("不通过");
+            return Result.success("不通过成功");
         }
         if (stick.getOperationState() == 2){
             stick.setOperationState(1);
             stickRepository.saveAndFlush(stick);
-            return Result.success("通过");
+            return Result.success("通过成功");
         }
         return Result.fail();
     }
@@ -254,5 +280,49 @@ public class StickService {
         stick.setState(1);
         stickRepository.saveAndFlush(stick);
         return Result.success("重置成功");
+    }
+
+    /**
+     * 评论通过状态
+     */
+    public Result commentState(long stickComentId) {
+        StickComment stickComment = stickCommentRepository.findOne(stickComentId);
+        if (stickComment == null){
+            return Result.fail("贴子评论不存在");
+        }
+        if (stickComment.getOperationState() ==1){
+            stickComment.setOperationState(2);
+            stickCommentRepository.saveAndFlush(stickComment);
+            return Result.success("不通过成功");
+        }
+        if (stickComment.getOperationState() == 2){
+            stickComment.setOperationState(1);
+            stickCommentRepository.saveAndFlush(stickComment);
+            return Result.success("通过成功");
+        }
+        return Result.fail();
+    }
+
+    public Result deleteComment(long stickComentId) {
+        StickComment stickComment = stickCommentRepository.findOne(stickComentId);
+        if (stickComment == null){
+            return Result.fail("帖子评论不存在");
+        }
+        if (stickComment.getState() != 1){
+            return Result.fail("该评论已被删除或禁用");
+        }
+        stickComment.setState(3);
+        stickCommentRepository.saveAndFlush(stickComment);
+        return Result.success("删除成功");
+    }
+
+    public Result typeState(long stickTypeId) {
+        StickType stickType = stickTypeRepository.findOne(stickTypeId);
+        if (stickType == null){
+            return Result.fail("该分类不存在");
+        }
+        stickType.setState(3);
+        stickTypeRepository.save(stickType);
+        return Result.success("删除成功");
     }
 }

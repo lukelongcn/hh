@@ -1,6 +1,8 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.LikeDTO;
+import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
@@ -14,8 +16,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
@@ -97,15 +97,16 @@ public class StickContoller {
     /**
      * 点赞帖子或评论
      * @param userId 用户id
-     * @param id 贴子id或评论id
-     * @param type 1：帖子 2：评论
+     * id 贴子id或评论id
+     * type 1：帖子 2：评论
      * @return Result
      */
     @Secured
     @PostMapping("/like")
     public Result like(@SessionAttribute("curUserId")long userId,
-                       @NotNull(message = "id不能为空")@RequestParam(value = "id") long id,
-                       @NotNull(message = "点赞类型不能为空")@RequestParam(value = "type") Integer type){
+                       @Valid@RequestBody LikeDTO likeDTO){
+        Long id = likeDTO.getId();
+        Integer type = likeDTO.getType();
         return stickService.like(userId,id,type);
     }
 
@@ -224,15 +225,16 @@ public class StickContoller {
     /**
      * 举报贴子
      * @param userId 用户id
-     * @param stickId 贴子id
-     * @param content 内容
+     * stickId 贴子id
+     * \content 内容
      * @return Result
      */
     @Secured
-    @PostMapping("report/{stickId}")
+    @PostMapping("report")
     public Result getReport(@SessionAttribute("curUserId")long userId,
-                            @PathVariable("stickId")long stickId,
-                            @RequestParam("content")String content){
+                            @Valid@RequestBody ReportDTO reportDTO){
+        Long stickId = reportDTO.getStickId();
+        String content = reportDTO.getContent();
         return stickService.report(userId,stickId,content);
     }
 }

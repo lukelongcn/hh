@@ -53,6 +53,7 @@ public class HotelOrderListVO {
 
         Integer orderStatus = hotelOrder.getOrderStatus();
         if(orderStatus != null){
+            this.setStatus(orderStatus+"");
             if(orderStatus == HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode()){
                 this.setCanAffirm(true);
                 this.setCanRefund(true);

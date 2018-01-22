@@ -7,7 +7,6 @@ import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
-//import com.sun.org.glassfish.gmbal.Description;
 
 import org.jboss.logging.Logger;
 import org.springframework.validation.annotation.Validated;
@@ -39,6 +38,15 @@ public class StickContoller {
     public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
         logger.debugv(JSONObject.toJSONString(stickTypeDTO));
         return stickService.addStickType(stickTypeDTO);
+    }
+
+    /**
+     * 编辑分类
+     */
+    @PostMapping("/updateType")
+    public Result updateType(@RequestParam(value = "stickTypeId")long stickTypeId,
+                             @RequestBody @Validated StickTypeDTO stickTypeDTO){
+        return stickService.updateType(stickTypeId,stickTypeDTO);
     }
 
     @Secured(accessCode =  "stick:list")
@@ -75,7 +83,7 @@ public class StickContoller {
     /**
      * 添加马甲贴子
      */
-    @Secured(accessCode = "stick:addStick")
+    //@Secured(accessCode = "stick:addStick")
     @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
@@ -84,7 +92,7 @@ public class StickContoller {
     /**
      * 编辑贴子
      */
-    @Secured(accessCode = "stick:updateStick")
+   //@Secured(accessCode = "stick:updateStick")
     @PostMapping("/updateStick")
     public Result updateStick(@RequestParam(value = "stickId")long stickId,@Valid@RequestBody UpdateStickDTO updateStickDTO){
         return stickService.updateStick(stickId,updateStickDTO);
@@ -141,5 +149,31 @@ public class StickContoller {
     public Result reset(@RequestParam(value = "stickId")long stickId){
         return stickService.reset(stickId);
     }
+
+    /**
+     * 评论通过状态
+     */
+    @PostMapping("/commentState")
+    public Result commentState(@RequestParam(value = "stickCommentId")long stickComentId){
+        return stickService.commentState(stickComentId);
+    }
+
+    /**
+     * 分类使用状态
+     */
+    @PostMapping("/typeState")
+    public Result typeState(@RequestParam(value = "stickTypeId")long stickTypeId){
+        return stickService.typeState(stickTypeId);
+    }
+
+    /**
+     * 删除评论
+     */
+    @PostMapping("/deleteComment")
+    public Result deleteComment(@RequestParam(value = "stickCommentId")long stickCommentId){
+        return stickService.deleteComment(stickCommentId);
+    }
+
+
 
 }

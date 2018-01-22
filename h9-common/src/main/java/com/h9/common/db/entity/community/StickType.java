@@ -58,8 +58,8 @@ public class StickType extends BaseEntity {
     @Column(name = "default_sort",nullable = false, columnDefinition = "int default 1 COMMENT '默认排序 1回复数 2浏览数 3最新发表 4最后回复'")
     private Integer defaultSort = 1;
 
-
-
+    @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子评论状态 1使用 2禁用 3删除'")
+    private Integer state = 1;
 
 
     public enum defaultSortEnum {
