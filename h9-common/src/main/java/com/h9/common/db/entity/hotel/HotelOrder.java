@@ -57,6 +57,10 @@ public class HotelOrder extends BaseEntity{
     @Column(name = "room_count",columnDefinition = "int comment '房间数'")
     private Integer roomCount;
 
+    /**
+     * description:
+     * @see PayMethodEnum
+     */
     @Column(name = "pay_method",columnDefinition = "int comment '支付方式'")
     private Integer payMethod;
 
