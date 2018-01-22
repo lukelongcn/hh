@@ -29,6 +29,7 @@ import com.h9.common.db.repo.UserRepository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
@@ -209,11 +209,15 @@ public class StickService {
         }
         return Result.success(sticklist.result2Result(this::stickDetail2Vo));
     }
-
+    @Value("${path.app.wechat_host}")
+    private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
+        String url = wechatHostUrl+"/?#/stick/detail?id=";
+        url += stick.getId();
+        stickDetailVO.setUrl(url);
         return stickDetailVO;
     }
 
