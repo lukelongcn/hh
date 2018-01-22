@@ -3,6 +3,7 @@ package com.h9.api.service;
 import com.h9.api.model.vo.SelfSignVO;
 import com.h9.api.model.vo.community.PersonalCommentVO;
 import com.h9.api.model.vo.community.PersonalGiveRewardVO;
+import com.h9.api.model.vo.community.PersonalRewardedVO;
 import com.h9.api.model.vo.community.PersonalStickVO;
 import com.h9.api.model.vo.community.StickSearchVO;
 import com.h9.common.base.PageResult;
@@ -16,12 +17,15 @@ import com.h9.common.db.repo.StickRepository;
 import com.h9.common.db.repo.StickRewardResitory;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.cfg.CollectionSecondPass;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -64,6 +68,9 @@ public class PersonalStickService {
         return Result.success(pageResult);
     }
 
+    /**
+     * 打赏记录
+     */
     public Result giveReward(long userId, Integer page, Integer limit) {
         PageResult<StickReward> pageResult = stickRewardResitory.findGiveList(userId,page,limit);
         if ( pageResult == null) {
@@ -77,5 +84,25 @@ public class PersonalStickService {
         String icon = configService.getStringConfig(JIUYUAN_ICON);
         personalGiveRewardVO.setIcon(icon);
         return personalGiveRewardVO;
+    }
+
+    /**
+     * 被打赏记录
+     */
+    public Result rewarded(long userId, Integer page, Integer limit) {
+        List<Long> stickIdList = stickRepository.findStickIdByUserId(userId);
+        if (CollectionUtils.isEmpty(stickIdList)){
+            return Result.fail("您还没有发过帖子");
+        }
+        Result result = new Result();
+        stickIdList.forEach(s->{
+            PageResult<StickReward> stickRewardPageResult = stickRewardResitory.findRewardList(s,page,limit);
+            if (stickRewardPageResult == null) {
+                result.setMsg("暂无被打赏记录");
+            }
+            PageResult pageResult = stickRewardPageResult.result2Result(PersonalRewardedVO::new);
+            result.setData(pageResult);
+        });
+        return result;
     }
 }

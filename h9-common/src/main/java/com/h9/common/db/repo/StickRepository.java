@@ -47,4 +47,7 @@ public interface StickRepository extends BaseRepository<Stick> {
 
     @Query("select s from Stick s where s.user.id = ?1 order by s.createTime DESC ")
     Page<Stick> findPersonalStickList(long userId,Pageable pageable);
+
+    @Query("select s.id from Stick s where s.user.id = ?1 order by s.createTime DESC ")
+    List<Long> findStickIdByUserId(long userId);
 }
