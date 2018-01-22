@@ -231,8 +231,8 @@ public class StickContoller {
     @Secured
     @PostMapping("report/{stickId}")
     public Result getReport(@SessionAttribute("curUserId")long userId,
-                            @PathVariable("stickId")long stickId,
-                            @RequestParam("content")String content){
+                            @PathVariable(required = false,value ="stickId")long stickId,
+                            @RequestParam(required = false,value = "content")String content){
         return stickService.report(userId,stickId,content);
     }
 }

@@ -572,6 +572,12 @@ public class StickService {
      */
     public Result report(long userId, long stickId, String content) {
         Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被禁用或删除");
+        }
         StickReport stickReport = new StickReport();
         stickReport.setContent(content);
         stickReport.setStick(stick);
