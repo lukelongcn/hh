@@ -17,7 +17,7 @@ public class Areas {
 
     private String name;
 
-    private List list;
+    private List  list;
 
     public Areas(China china) {
         id = china.getId();
