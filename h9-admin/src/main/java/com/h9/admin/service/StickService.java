@@ -87,11 +87,6 @@ public class StickService {
         if (stickType == null){
             return Result.fail("该分类已被删除");
         }
-        String name = stickTypeDTO.getName();
-        StickType type = stickTypeRepository.findByName(name);
-        if(type!=null){
-            return Result.fail(name+"已经存在");
-        }
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
         return Result.success("编辑成功");
@@ -202,7 +197,7 @@ public class StickService {
 
     /**
      *  拿到所有贴子详情
-     * @return Result
+     *  @return Result
      */
     public Result allDetail(Integer pageNumber, Integer pageSize) {
         PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
@@ -214,7 +209,6 @@ public class StickService {
 
     private StickDetailVO stickDetail2Vo(Stick stick) {
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
-
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
         return stickDetailVO;
@@ -302,6 +296,9 @@ public class StickService {
         StickComment stickComment = stickCommentRepository.findOne(stickComentId);
         if (stickComment == null){
             return Result.fail("帖子评论不存在");
+        }
+        if (stickComment.getState() != 1){
+            return Result.fail("该评论已被删除或禁用");
         }
         stickComment.setState(3);
         stickCommentRepository.saveAndFlush(stickComment);

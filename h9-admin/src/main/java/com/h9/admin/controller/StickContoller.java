@@ -45,7 +45,7 @@ public class StickContoller {
     /**
      * 编辑分类
      */
-    @PostMapping("updateType")
+    @PostMapping("/updateType")
     public Result updateType(@RequestParam(value = "stickTypeId")long stickTypeId,
                              @RequestBody @Validated StickTypeDTO stickTypeDTO){
         return stickService.updateType(stickTypeId,stickTypeDTO);
@@ -163,8 +163,8 @@ public class StickContoller {
     }
 
     @PostMapping("/deleteComment")
-    public Result deleteComment(@RequestParam(value = "stickCommentId")long stickComentId){
-        return stickService.deleteComment(stickComentId);
+    public Result deleteComment(@RequestParam(value = "stickCommentId")long stickCommentId){
+        return stickService.deleteComment(stickCommentId);
     }
 
 
