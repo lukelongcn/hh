@@ -305,6 +305,8 @@ public class HotelService {
                 BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
                 hotelOrder.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
 
+        hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
+
         BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
         //TODO 调用退款接口
         return Result.success("退款成功");
