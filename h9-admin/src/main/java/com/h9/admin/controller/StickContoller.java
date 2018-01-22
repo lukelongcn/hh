@@ -7,6 +7,7 @@ import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.dto.stick.UpdateStickDTO;
 import com.h9.admin.service.StickService;
 import com.h9.common.base.Result;
+import com.sun.org.apache.regexp.internal.RE;
 //import com.sun.org.glassfish.gmbal.Description;
 
 import org.jboss.logging.Logger;
@@ -39,6 +40,15 @@ public class StickContoller {
     public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
         logger.debugv(JSONObject.toJSONString(stickTypeDTO));
         return stickService.addStickType(stickTypeDTO);
+    }
+
+    /**
+     * 编辑分类
+     */
+    @PostMapping("updateType")
+    public Result updateType(@RequestParam(value = "stickTypeId")long stickTypeId,
+                             @RequestBody @Validated StickTypeDTO stickTypeDTO){
+        return stickService.updateType(stickTypeId,stickTypeDTO);
     }
 
     @Secured(accessCode =  "stick:list")
@@ -146,4 +156,17 @@ public class StickContoller {
     public Result commentState(@RequestParam(value = "stickCommentId")long stickComentId){
         return stickService.commentState(stickComentId);
     }
+
+    @PostMapping("/typeState")
+    public Result typeState(@RequestParam(value = "stickTypeId")long stickTypeId){
+        return stickService.typeState(stickTypeId);
+    }
+
+    @PostMapping("/deleteComment")
+    public Result deleteComment(@RequestParam(value = "stickCommentId")long stickComentId){
+        return stickService.deleteComment(stickComentId);
+    }
+
+
+
 }

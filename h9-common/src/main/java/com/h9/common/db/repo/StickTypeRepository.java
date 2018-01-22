@@ -3,6 +3,8 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.db.entity.community.StickType;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -16,4 +18,6 @@ public interface StickTypeRepository extends BaseRepository<StickType> {
 
     StickType findByName(String name);
 
+    @Query("select s from StickType  s where s.id = ?1 and s.state =1")
+    StickType findById(long stickTypeId);
 }

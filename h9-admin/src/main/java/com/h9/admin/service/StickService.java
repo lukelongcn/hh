@@ -76,9 +76,26 @@ public class StickService {
         StickType stickType = new StickType();
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
-        return Result.success();
+        return Result.success("添加成功");
     }
 
+    /**
+     * 编辑分类
+     */
+    public Result updateType(long stickTypeId, StickTypeDTO stickTypeDTO) {
+        StickType stickType = stickTypeRepository.findById(stickTypeId);
+        if (stickType == null){
+            return Result.fail("该分类已被删除");
+        }
+        String name = stickTypeDTO.getName();
+        StickType type = stickTypeRepository.findByName(name);
+        if(type!=null){
+            return Result.fail(name+"已经存在");
+        }
+        BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
+        stickTypeRepository.save(stickType);
+        return Result.success("编辑成功");
+    }
 
     public Result getStick(int page,int limit){
         PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
@@ -260,6 +277,9 @@ public class StickService {
         return Result.success("重置成功");
     }
 
+    /**
+     * 评论通过状态
+     */
     public Result commentState(long stickComentId) {
         StickComment stickComment = stickCommentRepository.findOne(stickComentId);
         if (stickComment == null){
@@ -276,5 +296,25 @@ public class StickService {
             return Result.success("通过成功");
         }
         return Result.fail();
+    }
+
+    public Result deleteComment(long stickComentId) {
+        StickComment stickComment = stickCommentRepository.findOne(stickComentId);
+        if (stickComment == null){
+            return Result.fail("帖子评论不存在");
+        }
+        stickComment.setState(3);
+        stickCommentRepository.saveAndFlush(stickComment);
+        return Result.success("删除成功");
+    }
+
+    public Result typeState(long stickTypeId) {
+        StickType stickType = stickTypeRepository.findOne(stickTypeId);
+        if (stickType == null){
+            return Result.fail("该分类不存在");
+        }
+        stickType.setState(3);
+        stickTypeRepository.save(stickType);
+        return Result.success("删除成功");
     }
 }
