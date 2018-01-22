@@ -29,6 +29,7 @@ public class StickDetailVO {
     private Integer rewardCount = 0;
     private BigDecimal rewardMoney = new BigDecimal(0);
     private String createTime;
+    private String url;
 
     public StickDetailVO(Stick stick){
         id = stick.getId();
