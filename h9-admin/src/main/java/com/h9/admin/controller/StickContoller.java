@@ -83,7 +83,7 @@ public class StickContoller {
     /**
      * 添加马甲贴子
      */
-    @Secured(accessCode = "stick:addStick")
+    //@Secured(accessCode = "stick:addStick")
     @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);

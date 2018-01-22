@@ -130,10 +130,13 @@ public class StickService {
         }
         Stick stick = new Stick();
         User user = userRepository.findOne(stickDto.getUserId());
+        if (user == null){
+            return Result.fail("用户不存在");
+        }
+        stick.setUser(user);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         stick.setStickType(stickType);
-        stick.setUser(user);
         Stick s= stickRepository.saveAndFlush(stick);
         return Result.success("添加成功");
     }
