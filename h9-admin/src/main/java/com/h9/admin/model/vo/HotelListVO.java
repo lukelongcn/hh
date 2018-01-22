@@ -55,6 +55,8 @@ public class HotelListVO {
 
     private String statusDesc;
 
+
+
     public HotelListVO(){}
 
     public HotelListVO(Hotel hotel,Integer roomCount){
@@ -65,6 +67,8 @@ public class HotelListVO {
 //            this.images = imagesFromDb.get(0);
 //        }
         this.setRoomCount(roomCount);
+        this.setStartReserveTime(hotel.getStartReserveTimeStr());
+        this.setEndReserveTime(hotel.getEndReserveTieStr());
         Integer status = hotel.getStatus();
         if(status == null){
             System.out.println();

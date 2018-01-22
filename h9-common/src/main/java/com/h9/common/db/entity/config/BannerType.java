@@ -34,7 +34,7 @@ public class BannerType extends BaseEntity {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型标识'")
     private String code;
 
-    @Column(name = "location",columnDefinition = "tinyint default 1 COMMENT '显示位置，1:首页，2:酒元商城',3社区首页 ，4帖子详情")
+    @Column(name = "location",columnDefinition = "tinyint default 1 COMMENT '显示位置，1:首页，2:酒元商城,3社区首页 ，4帖子详情' ")
     private Integer location;
 
     @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")

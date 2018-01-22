@@ -10,6 +10,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +49,7 @@ public class EditHotelDTO {
     private String detailAddress;
 
     @ApiModelProperty("评分")
-    private Float grade;
+    private BigDecimal grade;
 
     @ApiModelProperty("图片")
     private List<String> images = new ArrayList<>();
