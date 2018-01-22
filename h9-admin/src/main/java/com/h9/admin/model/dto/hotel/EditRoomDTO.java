@@ -37,7 +37,7 @@ public class EditRoomDTO {
     private String include;
 
     @ApiModelProperty("图片")
-    private List<String> image;
+    private List<String> images;
 
     @ApiModelProperty("原价")
     private BigDecimal originalPrice;

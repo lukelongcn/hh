@@ -222,7 +222,6 @@ public class HotelService {
         OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
         if (findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
         Result result = null;
-
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
             result = balancePay(hotelOrder, user, userAccount);
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
@@ -237,16 +236,6 @@ public class HotelService {
         return result;
     }
 
-    private Result balancePay(HotelOrder hotelOrder, User user, UserAccount userAccount) {
-        BigDecimal balance = userAccount.getBalance();
-        if (balance.compareTo(hotelOrder.getTotalMoney()) < 0) {
-            return Result.fail("余额不足");
-        }
-        commonService.setBalance(user.getId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
-        hotelOrder.setPayMoney4JiuYuan(hotelOrder.getTotalMoney());
-        hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode());
-        return Result.success();
-    }
 
     @Resource
     private RestTemplate restTemplate;
@@ -280,6 +269,12 @@ public class HotelService {
 
         OrderVo orderVo = orderVoResult.getData();
 
+        int orderStatus = hotelOrder.getOrderStatus();
+
+        boolean resumePay = false;
+        if (orderStatus == HotelOrder.OrderStatusEnum.NOT_PAID.getCode()) {
+            resumePay = true;
+        }
         if (payPlatform == 3) {
             String pay = payProvider.goPay(orderVo.getPayOrderId(), payInfo.getId());
             PayVO payVO = new PayVO();
@@ -287,10 +282,26 @@ public class HotelService {
             payVO.setPayUrl(pay);
             payVO.setOrderId(hotelOrder.getId());
             //公众号
-            return Result.success(payVO);
+            PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), payVO);
+            return Result.success(vo);
         } else {
-           return payProvider.getPrepayInfo(orderVo);
+            //APP 支付
+            Result prepayResult = payProvider.getPrepayInfo(orderVo);
+            PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), prepayResult.getData());
+            return Result.success(vo);
         }
+    }
+
+    private Result balancePay(HotelOrder hotelOrder, User user, UserAccount userAccount) {
+        BigDecimal balance = userAccount.getBalance();
+        if (balance.compareTo(hotelOrder.getTotalMoney()) < 0) {
+            return Result.fail("余额不足");
+        }
+        commonService.setBalance(user.getId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+        hotelOrder.setPayMoney4JiuYuan(hotelOrder.getTotalMoney());
+        hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode());
+        PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("", false));
+        return Result.success(vo);
     }
 
     /**
@@ -301,21 +312,23 @@ public class HotelService {
         BigDecimal balance = userAccount.getBalance();
         if (balance.compareTo(totalMoney) >= 0) {
             //直接用余额支付完
-            commonService.setBalance(userAccount.getUserId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
-            BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
-            paidMoney4JiuYuan = paidMoney4JiuYuan.add(hotelOrder.getTotalMoney());
-            hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
-            return Result.success();
+//            commonService.setBalance(userAccount.getUserId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+//            BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+//            paidMoney4JiuYuan = paidMoney4JiuYuan.add(hotelOrder.getTotalMoney());
+//            hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
+            return Result.success(balancePay(hotelOrder, user, userAccount));
         } else {
             // 余额 + 微信支付
-            if (balance.compareTo(new BigDecimal(0)) > 0) {
-                commonService.setBalance(userAccount.getUserId(), balance, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
-                BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
-                paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
-                hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
-            }
+//            if (balance.compareTo(new BigDecimal(0)) > 0) {
+//                commonService.setBalance(userAccount.getUserId(), balance, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+//                BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+//                paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
+//                hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
+//            }
             BigDecimal wxPayMoney = totalMoney.subtract(hotelOrder.getPayMoney4JiuYuan());
+            balancePay(hotelOrder, user, userAccount);
             return getWXPayInfo(hotelOrder, wxPayMoney, user, key);
+
         }
     }
 
