@@ -2,6 +2,7 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.LikeDTO;
+import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
@@ -224,15 +225,16 @@ public class StickContoller {
     /**
      * 举报贴子
      * @param userId 用户id
-     * @param stickId 贴子id
-     * @param content 内容
+     * stickId 贴子id
+     * \content 内容
      * @return Result
      */
     @Secured
-    @PostMapping("report/{stickId}")
+    @PostMapping("report")
     public Result getReport(@SessionAttribute("curUserId")long userId,
-                            @PathVariable(required = false,value ="stickId")long stickId,
-                            @RequestParam(required = false,value = "content")String content){
+                            @Valid@RequestBody ReportDTO reportDTO){
+        Long stickId = reportDTO.getStickId();
+        String content = reportDTO.getContent();
         return stickService.report(userId,stickId,content);
     }
 }
