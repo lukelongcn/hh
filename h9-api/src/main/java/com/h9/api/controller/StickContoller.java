@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.LikeDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
@@ -95,15 +96,16 @@ public class StickContoller {
     /**
      * 点赞帖子或评论
      * @param userId 用户id
-     * @param id 贴子id或评论id
-     * @param type 1：帖子 2：评论
+     * id 贴子id或评论id
+     * type 1：帖子 2：评论
      * @return Result
      */
     @Secured
     @PostMapping("/like")
     public Result like(@SessionAttribute("curUserId")long userId,
-                       @NotNull(message = "id不能为空")@RequestParam(value = "id") long id,
-                       @NotNull(message = "点赞类型不能为空")@RequestParam(value = "type") Integer type){
+                       @Valid@RequestBody LikeDTO likeDTO){
+        Long id = likeDTO.getId();
+        Integer type = likeDTO.getType();
         return stickService.like(userId,id,type);
     }
 
