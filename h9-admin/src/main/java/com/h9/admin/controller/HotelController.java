@@ -13,6 +13,7 @@ import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 @Api(description = "酒店相关接口")
 public class HotelController {
 
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
     private HotelService hotelService;
@@ -108,9 +110,9 @@ public class HotelController {
 
 
     @Secured
-    @PostMapping(value = "/hotel/orders")
+    @GetMapping(value = "/hotel/orders")
     @ApiOperation("酒店订单列表")
-    public Result<HotelOrderListVO> ordersList(@RequestBody(required = false) HotelOrderSearchDTO hotelOrderSearchDTO,
+    public Result<HotelOrderListVO> ordersList( HotelOrderSearchDTO hotelOrderSearchDTO,
                                                @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
                                                @RequestParam(required = false, defaultValue = "20") Integer pageSize) {
         return hotelService.ordersList(hotelOrderSearchDTO,pageNumber,pageSize);
@@ -122,5 +124,17 @@ public class HotelController {
     @ApiOperation("酒店订单详情")
     public Result<HotelOrderDetail> orderDetail(@PathVariable Long id) {
         return hotelService.orderDetail(id);
+    }
+
+    @Secured
+    @GetMapping(value = "/hotel/order/refund/{id}")
+    @ApiOperation("退款")
+    public Result refundOrder(@PathVariable Long id){
+        try {
+            return hotelService.refundOrder(id);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail("退款失败，请稍后再试");
+        }
     }
 }
