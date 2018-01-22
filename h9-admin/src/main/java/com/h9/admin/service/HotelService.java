@@ -144,7 +144,7 @@ public class HotelService {
         if (room == null) room = new HotelRoomType();
 
         BeanUtils.copyProperties(editRoomDTO, room);
-        List<String> image = editRoomDTO.getImage();
+        List<String> image = editRoomDTO.getImages();
         if (CollectionUtils.isNotEmpty(image)) {
             room.setImage(JSONObject.toJSONString(image));
         }
