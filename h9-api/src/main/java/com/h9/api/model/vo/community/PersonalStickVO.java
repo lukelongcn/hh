@@ -7,15 +7,19 @@ import com.h9.common.utils.DateUtil;
 
 import java.util.Date;
 
+import lombok.Data;
+
 
 /**
  * Created by 李圆 on 2018/1/22
  */
+@Data
 public class PersonalStickVO {
     private Long userId;
     private String avatar ;
     private String nickName;
     private String title = "";
+    private String content;
     private String typeName;
     private Integer readCount = 0;
     private Integer likeCount = 0;
@@ -31,6 +35,7 @@ public class PersonalStickVO {
             this.nickName = user.getNickName();
         }
         this.title = stick.getTitle();
+        this.content = stick.getContent();
         StickType stickType = stick.getStickType();
         if (stickType != null){
             this.typeName = stickType.getName();

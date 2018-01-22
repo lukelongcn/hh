@@ -41,7 +41,7 @@ public class PersonalStickController {
     /**
      * 我发布的
      */
-    @GetMapping("push")
+    @GetMapping("/push")
     public Result push( @SessionAttribute("curUserId")long userId,
                         @RequestParam(defaultValue = "1") Integer page,
                         @RequestParam(defaultValue = "10") Integer limit){
@@ -49,4 +49,10 @@ public class PersonalStickController {
         return personalStickService.getPush(userId,page,limit);
     }
 
+    @GetMapping("/giveReward")
+    public Result giveReward(@SessionAttribute("curUserId")long userId,
+                             @RequestParam(defaultValue = "1") Integer page,
+                             @RequestParam(defaultValue = "10") Integer limit){
+        return personalStickService.giveReward(userId,page,limit);
+    }
 }
