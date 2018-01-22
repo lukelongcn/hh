@@ -142,4 +142,8 @@ public class StickContoller {
         return stickService.reset(stickId);
     }
 
+    @PostMapping("/commentState")
+    public Result commentState(@RequestParam(value = "stickCommentId")long stickComentId){
+        return stickService.commentState(stickComentId);
+    }
 }

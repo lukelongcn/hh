@@ -15,6 +15,7 @@ import lombok.Data;
 @Data
 public class StickCommentVO {
     private Long id;
+    private Long stickId;
     private Long stickUserId;
     private String nickName;
     private Integer state;
@@ -32,14 +33,15 @@ public class StickCommentVO {
     private String content;
 
     public StickCommentVO(StickComment stickComment,List<StickCommentSimpleVO> list) {
-        this.id = stickComment.getStick().getId();
+        this.id = stickComment.getId();
+        this.stickId = stickComment.getStick().getId();
         User user = stickComment.getStick().getUser();
         if (user != null){
             this.stickUserId = user.getId();
             this.nickName = user.getNickName();
         }
         this.ip = stickComment.getIp();
-        this.state = stickComment.getState();
+        this.state = stickComment.getOperationState();
         this.operationState = stickComment.getOperationState();
         this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
         this.content = stickComment.getContent();

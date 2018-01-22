@@ -43,7 +43,7 @@ public class StickCommentVO {
     // 回复内容
     private String content;
 
-    public StickCommentVO(Integer sex, StickComment stickComment,List<StickCommentSimpleVO> list) {
+    public StickCommentVO(StickComment stickComment) {
         this.id = stickComment.getId();
         User user = stickComment.getAnswerUser();
         if (user != null){
@@ -51,7 +51,6 @@ public class StickCommentVO {
             this.avatar = user.getAvatar();
             this.nickName = user.getNickName();
         }
-        this.sex = sex;
         this.level = stickComment.getLevel();
         User userAit = stickComment.getNotifyUserId();
         if (userAit != null){
@@ -61,7 +60,6 @@ public class StickCommentVO {
 
         this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
         this.content = stickComment.getContent();
-        this.list = list;
     }
 
     public StickCommentVO() {

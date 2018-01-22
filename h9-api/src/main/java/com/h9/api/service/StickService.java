@@ -397,16 +397,20 @@ public class StickService {
         if (user.getId() == null){
             return new StickCommentVO();
         }
-        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
-        Integer  sex = userExtends.getSex();
         // 拿到回复的回复列表
         List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
-            long stickCommentParentId = stickComment.getId();
-            List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
-            if (CollectionUtils.isNotEmpty(stickCommentChild)){
+        long stickCommentParentId = stickComment.getId();
+        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+        if (CollectionUtils.isNotEmpty(stickCommentChild)){
                 stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
-        return new StickCommentVO(sex, stickComment,stickCommentSimpleVOS);
+        StickCommentVO stickCommentVO = new StickCommentVO(stickComment);
+        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
+        if (userExtends != null){
+            stickCommentVO.setSex(userExtends.getSex());
+        }
+        stickCommentVO.setList(stickCommentSimpleVOS);
+        return stickCommentVO;
     }
 
     /**

@@ -208,7 +208,9 @@ public class StickService {
      */
     public Result lock(long stickId) {
         Stick stick = stickRepository.findOne(stickId);
-
+        if (stick == null){
+            return Result.fail("该贴不存在");
+        }
         if (stick.getLockState() ==1){
             stick.setLockState(2);
             stickRepository.saveAndFlush(stick);
@@ -227,16 +229,18 @@ public class StickService {
      */
     public Result examine(long stickId) {
         Stick stick = stickRepository.findOne(stickId);
-
+        if (stick == null){
+            return Result.fail("该贴不存在");
+        }
         if (stick.getOperationState() ==1){
             stick.setOperationState(2);
             stickRepository.saveAndFlush(stick);
-            return Result.success("不通过");
+            return Result.success("不通过成功");
         }
         if (stick.getOperationState() == 2){
             stick.setOperationState(1);
             stickRepository.saveAndFlush(stick);
-            return Result.success("通过");
+            return Result.success("通过成功");
         }
         return Result.fail();
     }
@@ -254,5 +258,23 @@ public class StickService {
         stick.setState(1);
         stickRepository.saveAndFlush(stick);
         return Result.success("重置成功");
+    }
+
+    public Result commentState(long stickComentId) {
+        StickComment stickComment = stickCommentRepository.findOne(stickComentId);
+        if (stickComment == null){
+            return Result.fail("贴子评论不存在");
+        }
+        if (stickComment.getOperationState() ==1){
+            stickComment.setOperationState(2);
+            stickCommentRepository.saveAndFlush(stickComment);
+            return Result.success("不通过成功");
+        }
+        if (stickComment.getOperationState() == 2){
+            stickComment.setOperationState(1);
+            stickCommentRepository.saveAndFlush(stickComment);
+            return Result.success("通过成功");
+        }
+        return Result.fail();
     }
 }

@@ -42,11 +42,7 @@ public class UserExtends extends BaseEntity {
     @Column(name = "img_id")
     private Long imgId;
 
-    @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
-    private double longitude;
 
-    @Column(name = "latitude", columnDefinition = "double default 0 COMMENT '维度'")
-    private double latitude;
     @Column(name="province",columnDefinition = "varchar(50) COMMENT '省'")
     private String province;
 
@@ -145,22 +141,6 @@ public class UserExtends extends BaseEntity {
             return sexEnum==null?null:sexEnum.getName();
         }
 
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
     }
 
     public String getProvince() {
