@@ -326,7 +326,10 @@ public class StickService {
         // 贴子id
         Stick stick = stickRepository.findById(stickCommentDTO.getStickId());
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被禁用或删除");
         }
         if (stick.getLockState() != 1){
             return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");

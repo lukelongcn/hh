@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class StickCommentSimpleVO {
 
+    private Long commentId;
+
     // 用户id
     private Long commentUserId;
 
@@ -27,6 +29,7 @@ public class StickCommentSimpleVO {
     private Long backCommentUserId;
 
     public StickCommentSimpleVO(StickComment stickComment){
+        this.commentId = stickComment.getId();
         User answerUser = stickComment.getAnswerUser();
         this.commentUserId = answerUser.getId();
         this.nickName = answerUser.getNickName();
