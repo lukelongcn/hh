@@ -62,6 +62,7 @@
             </resource>
 
             <resource>
+                <filtering>true</filtering>
                 <directory>src/main/resources/cert</directory>
                 <includes>
                     <include>**/*.p12</include>

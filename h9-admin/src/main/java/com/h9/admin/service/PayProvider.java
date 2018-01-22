@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.hotel.RefundDTO;
 import com.h9.common.base.Result;
 import org.apache.commons.io.IOUtils;
-import org.hibernate.transform.ResultTransformer;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -13,9 +12,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 
