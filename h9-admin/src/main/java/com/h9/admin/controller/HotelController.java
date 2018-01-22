@@ -112,7 +112,7 @@ public class HotelController {
     @Secured
     @GetMapping(value = "/hotel/orders")
     @ApiOperation("酒店订单列表")
-    public Result<HotelOrderListVO> ordersList(@RequestBody(required = false) HotelOrderSearchDTO hotelOrderSearchDTO,
+    public Result<HotelOrderListVO> ordersList( HotelOrderSearchDTO hotelOrderSearchDTO,
                                                @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
                                                @RequestParam(required = false, defaultValue = "20") Integer pageSize) {
         return hotelService.ordersList(hotelOrderSearchDTO,pageNumber,pageSize);
