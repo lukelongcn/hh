@@ -353,8 +353,6 @@ public class StickService {
             StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
             if(stickCommentPid!=null){
                 stickComment.setStickComment(stickCommentPid);
-            }else {
-                return Result.fail("该楼层不存在或已被删除");
             }
         }
         //  调用评论共有接口

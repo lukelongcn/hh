@@ -43,4 +43,7 @@ public class StickDetailVO {
         rewardCount = stick.getRewardCount();
         createTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
     }
+    public StickDetailVO(){
+
+    }
 }

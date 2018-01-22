@@ -92,7 +92,7 @@ public class StickContoller {
     /**
      * 编辑贴子
      */
-    @Secured(accessCode = "stick:updateStick")
+   //@Secured(accessCode = "stick:updateStick")
     @PostMapping("/updateStick")
     public Result updateStick(@RequestParam(value = "stickId")long stickId,@Valid@RequestBody UpdateStickDTO updateStickDTO){
         return stickService.updateStick(stickId,updateStickDTO);

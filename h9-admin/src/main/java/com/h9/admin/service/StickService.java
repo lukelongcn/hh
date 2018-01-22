@@ -212,6 +212,9 @@ public class StickService {
     @Value("${path.app.wechat_host}")
     private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
+        if (stick.getState()!= 1){
+            return new StickDetailVO();
+        }
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
