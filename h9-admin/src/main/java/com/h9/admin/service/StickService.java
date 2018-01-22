@@ -250,6 +250,7 @@ public class StickService {
         if (stick == null){
             return Result.fail("该贴不存在");
         }
+
         if (stick.getOperationState() ==1){
             stick.setOperationState(2);
             stickRepository.saveAndFlush(stick);
