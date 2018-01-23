@@ -34,7 +34,7 @@ public interface StickRepository extends BaseRepository<Stick> {
     @Query("select s from Stick s where s.stickType.id=?1 and s.state = 1  order by s.updateTime desc")
     Page<Stick> findType(Long id,Pageable pageable);
 
-    @Query("select s from Stick s where  s.stickType.name=?1 and s.state = 1 order by s.updateTime desc")
+    @Query("select s from Stick s where  s.stickType.id=?1 and s.state = 1 order by s.updateTime desc")
     Page<Stick> findType(String name, Pageable pageable);
 
 
