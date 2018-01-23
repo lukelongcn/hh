@@ -87,6 +87,9 @@ public class StickService {
      * 编辑分类
      */
     public Result updateType(StickTypeDTO stickTypeDTO) {
+        if (stickTypeDTO.getStickTypeId() == null){
+            return Result.fail("分类id不能为空");
+        }
         Long stickTypeId = stickTypeDTO.getStickTypeId();
         List<StickType> type = stickTypeRepository.findByName(stickTypeDTO.getName());
         if(CollectionUtils.isNotEmpty(type)){
