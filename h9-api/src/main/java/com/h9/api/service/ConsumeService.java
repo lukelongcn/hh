@@ -173,11 +173,7 @@ public class ConsumeService {
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
             OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo, rechargeId);
-            //减库存
-            Result changeStockResult = goodService.changeStock(goods);
-            if (changeStockResult.getCode() == 1) {
-                return changeStockResult;
-            }
+
             ofPayRecordReposiroty.save(ofPayRecord);
 
         } catch (Exception e) {
@@ -193,6 +189,10 @@ public class ConsumeService {
             saveRechargeRecord(user, goods.getRealPrice(), rechargeId, orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
+
+            //减库存
+//            Result changeStockResult = goodService.changeStock(goods);
+
             return Result.success("充值成功", map);
         } else {
 //            order.setStatus(Orders.statusEnum.FAIL.getCode());
