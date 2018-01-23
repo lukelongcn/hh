@@ -29,6 +29,8 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
+import com.h9.common.db.entity.config.BannerType;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -65,6 +67,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.h9.common.constant.ParamConstant.JIUYUAN_ICON;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_DETAIL;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_HOME;
 
 /**
  * Created with IntelliJ IDEA.
@@ -173,7 +177,8 @@ public class StickService {
 
     @Transactional
     public Result home(){
-        return Result.success(getBanner(3));
+        Map<String, List<HomeVO>> banner = getBanner(STICK_HOME.getId());
+        return Result.success(banner);
     }
 
     public Result typeDetail(long typeId){
@@ -194,7 +199,7 @@ public class StickService {
             return Result.fail("贴子不存在或已被删除");
         }
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
-        stickDetailVO.setListMap(getBanner(4));
+        stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
         List<StickReward> list = stickRewardResitory.findByStickId(id);
         List<StickRewardUser> stickRewardUserList  = new ArrayList<>();
