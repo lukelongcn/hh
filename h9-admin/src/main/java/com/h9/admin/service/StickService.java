@@ -88,6 +88,10 @@ public class StickService {
      */
     public Result updateType(StickTypeDTO stickTypeDTO) {
         Long stickTypeId = stickTypeDTO.getStickTypeId();
+        List<StickType> type = stickTypeRepository.findByName(stickTypeDTO.getName());
+        if(CollectionUtils.isNotEmpty(type)){
+            return Result.fail(stickTypeDTO.getName()+"已经存在");
+        }
         StickType stickType = stickTypeRepository.findById(stickTypeId);
         if (stickType == null){
             return Result.fail("该分类已被删除");
