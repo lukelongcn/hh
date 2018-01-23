@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -49,13 +50,17 @@ public class StickContoller {
         return stickService.updateType(stickTypeId,stickTypeDTO);
     }
 
-    @Secured(accessCode =  "stick:list")
+    //@Secured(accessCode =  "stick:list")
     @GetMapping("/types")
     public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int pageNumber,
                            @RequestParam(required = false,name = "page",defaultValue = "20") int pageSize){
         return stickService.getStick(pageNumber,pageSize);
     }
 
+    @GetMapping("/typeDetail/{id}")
+    public Result typeDetail(@PathVariable(value = "id")Long id ){
+        return stickService.typeDetail(id);
+    }
     /**
      * 拿到反馈列表
      */

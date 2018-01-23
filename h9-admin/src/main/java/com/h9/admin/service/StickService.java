@@ -8,6 +8,7 @@ import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickDetailVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
+import com.h9.admin.model.vo.StickTypeDetailVO;
 import com.h9.admin.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -67,6 +68,9 @@ public class StickService {
     @Resource
     private UserAccountRepository userAccountRepository;
 
+    /**
+     * 添加分类
+     */
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
         StickType type = stickTypeRepository.findByName(name);
@@ -92,6 +96,9 @@ public class StickService {
         return Result.success("编辑成功");
     }
 
+    /**
+     * 分类列表
+     */
     public Result getStick(int page,int limit){
         PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
         if (pageResult == null){
@@ -101,6 +108,10 @@ public class StickService {
     }
 
 
+
+    /**
+     * 举报记录
+     */
     public Result getReport(Integer page, Integer limit) {
         PageResult<StickReport> pageResult = stickReportRepository.findReportList(page, limit);
         if (pageResult == null){
@@ -204,7 +215,7 @@ public class StickService {
      *  @return Result
      */
     public Result allDetail(Integer pageNumber, Integer pageSize) {
-        PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
+        PageResult<Stick> sticklist = stickRepository.findAllStick(pageNumber,pageSize);
         if (sticklist == null){
             return Result.fail("暂无贴子");
         }
@@ -213,9 +224,6 @@ public class StickService {
     @Value("${path.app.wechat_host}")
     private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
-        if (stick.getState()!= 1){
-            return new StickDetailVO();
-        }
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
@@ -325,5 +333,16 @@ public class StickService {
         stickType.setState(3);
         stickTypeRepository.save(stickType);
         return Result.success("删除成功");
+    }
+
+    /**
+     * 分类详情
+     */
+    public Result typeDetail(Long id) {
+        StickType stickType = stickTypeRepository.findOne(id);
+        if (stickType == null){
+            return Result.fail("分类不存在");
+        }
+        return Result.success(new StickTypeDetailVO(stickType));
     }
 }

@@ -50,4 +50,13 @@ public interface StickRepository extends BaseRepository<Stick> {
 
     @Query("select s.id from Stick s where s.user.id = ?1 and s.state = 1 order by s.createTime DESC ")
     List<Long> findStickIdByUserId(long userId);
+
+
+    default PageResult<Stick> findAllStick(Integer pageNumber, Integer pageSize){
+        Page<Stick> stickList = findAllStick(pageRequest(pageNumber, pageSize));
+        return new PageResult(stickList);
+    }
+    @Query("select s from Stick s where s.state = 1 order by s.createTime desc ")
+    Page<Stick> findAllStick(Pageable pageRequest);
+
 }
