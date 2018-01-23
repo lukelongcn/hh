@@ -110,7 +110,7 @@ public class ConsumeService {
     @Resource
     private GoodService goodService;
 
-    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) throws ServiceException {
+    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO)  {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -175,6 +175,7 @@ public class ConsumeService {
 
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
+            logger.info("保存充值记录失败");
         }
 
         if (result.getCode() == 0) {
@@ -183,11 +184,13 @@ public class ConsumeService {
             map.put("money", MoneyUtils.formatMoney(realPrice));
             saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
-            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
 
             return Result.success("充值成功", map);
         } else {
-            throw new ServiceException(result);
+            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
+            order.setStatus(Orders.statusEnum.FAIL.getCode());
+            ordersReposiroty.save(order);
+            return Result.fail("充值失败");
         }
     }
 
@@ -255,7 +258,7 @@ public class ConsumeService {
 
     public Result rechargeDenomination(Long userId) {
         User user = userRepository.findOne(userId);
-        GoodsType goodsType = goodsTypeReposiroty.findOne(1L);
+        GoodsType goodsType = goodsTypeReposiroty.findByCode("mobile_recharge");
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
         if (goodsList == null) return Result.fail();
         List<Map<String, String>> list = new ArrayList<>();

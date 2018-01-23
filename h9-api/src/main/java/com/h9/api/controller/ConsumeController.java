@@ -36,12 +36,8 @@ public class ConsumeController {
     public Result mobileRecharge(
             @SessionAttribute("curUserId") Long userId,
             @Valid @RequestBody MobileRechargeDTO mobileRechargeDTO) {
-        try {
             return consumeService.recharge(userId, mobileRechargeDTO);
-        } catch (Exception e) {
-            logger.info(e.getMessage(), e);
-            return Result.fail("充值失败");
-        }
+
     }
 
     /**
