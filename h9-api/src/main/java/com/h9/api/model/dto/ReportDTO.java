@@ -9,5 +9,5 @@ import lombok.Data;
 public class ReportDTO {
     private String content;
     private Long stickId;
-
+    private String reportType;
 }

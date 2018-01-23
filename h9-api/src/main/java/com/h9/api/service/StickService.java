@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
@@ -510,7 +511,7 @@ public class StickService {
             stickComment.setFloor(stick.getAnswerCount()+1);
             // 贴子id
             stickComment.setStick(stick);
-            //ip
+            // ip
             stickComment.setIp(NetworkUtil.getIpAddress(request));
             stickCommentRepository.save(stickComment);
             // 增加阅读数和回复数
@@ -603,7 +604,9 @@ public class StickService {
     /**
      * 举报
      */
-    public Result report(long userId, long stickId, String content) {
+    public Result report(long userId, ReportDTO reportDTO) {
+        Long stickId = reportDTO.getStickId();
+        String content = reportDTO.getContent();
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
             return Result.fail("贴子不存在");
@@ -615,6 +618,7 @@ public class StickService {
         stickReport.setContent(content);
         stickReport.setStick(stick);
         stickReport.setUserId(userId);
+        stickReport.setReportType(reportDTO.getReportType());
         stickReportRepository.save(stickReport);
         return Result.success("举报成功");
     }

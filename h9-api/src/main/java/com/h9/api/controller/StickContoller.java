@@ -233,8 +233,6 @@ public class StickContoller {
     @PostMapping("report")
     public Result getReport(@SessionAttribute("curUserId")long userId,
                             @Valid@RequestBody ReportDTO reportDTO){
-        Long stickId = reportDTO.getStickId();
-        String content = reportDTO.getContent();
-        return stickService.report(userId,stickId,content);
+        return stickService.report(userId,reportDTO);
     }
 }

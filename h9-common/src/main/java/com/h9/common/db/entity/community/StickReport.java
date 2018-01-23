@@ -40,4 +40,7 @@ public class StickReport  extends BaseEntity {
 
     @Column(name = "content", nullable = false, columnDefinition = "varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci default '' COMMENT '内容'")
     private String content;
+
+    @Column(name = "report_type", columnDefinition = "varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci default '' COMMENT '举报类型'")
+    private String reportType;
 }
