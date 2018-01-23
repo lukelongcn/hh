@@ -199,7 +199,7 @@ public class StickContoller {
 
 
     /**
-     *
+     * 编辑贴子
      * @param userId token
      * @param stickId 帖子id
      * @param stickDto 请求对象

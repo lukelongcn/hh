@@ -53,4 +53,6 @@ public class StickTypeDTO {
     // 默认排序 1回复数 2浏览数 3最新发表 4最后回复'
     @NotNull(message = "请选择默认排序")
     private Integer defaultSort = 1;
+
+    private Integer stickCount;
 }

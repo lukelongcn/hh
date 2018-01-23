@@ -3,6 +3,7 @@ package com.h9.api.model.vo.community;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.utils.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -20,6 +21,7 @@ public class PersonalGiveRewardVO {
     private String stickTitle;
     private String stickUserName;
     private String icon;
+    private String createTime;
 
     public PersonalGiveRewardVO(StickReward stickReward){
         this.words = stickReward.getWords();
@@ -34,6 +36,7 @@ public class PersonalGiveRewardVO {
             }
         }
         this.reward = stickReward.getReward();
+        this.createTime = DateUtil.formatDate(stickReward.getCreateTime(), DateUtil.FormatType.SECOND);
     }
 
 }
