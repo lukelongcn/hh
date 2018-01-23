@@ -146,6 +146,7 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
+        order.setPayStatus(2);
         order.setUser(user);
         order.setOrderFrom(2);
         orderItems.setOrders(order);
