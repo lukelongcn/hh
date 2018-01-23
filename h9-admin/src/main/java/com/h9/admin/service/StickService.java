@@ -86,7 +86,8 @@ public class StickService {
     /**
      * 编辑分类
      */
-    public Result updateType(long stickTypeId, StickTypeDTO stickTypeDTO) {
+    public Result updateType(StickTypeDTO stickTypeDTO) {
+        Long stickTypeId = stickTypeDTO.getStickTypeId();
         StickType stickType = stickTypeRepository.findById(stickTypeId);
         if (stickType == null){
             return Result.fail("该分类已被删除");

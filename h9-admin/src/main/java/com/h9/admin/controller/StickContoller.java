@@ -45,9 +45,8 @@ public class StickContoller {
      * 编辑分类
      */
     @PostMapping("/updateType")
-    public Result updateType(@RequestParam(value = "stickTypeId")long stickTypeId,
-                             @RequestBody @Validated StickTypeDTO stickTypeDTO){
-        return stickService.updateType(stickTypeId,stickTypeDTO);
+    public Result updateType(@RequestBody @Validated StickTypeDTO stickTypeDTO){
+        return stickService.updateType(stickTypeDTO);
     }
 
     //@Secured(accessCode =  "stick:list")
