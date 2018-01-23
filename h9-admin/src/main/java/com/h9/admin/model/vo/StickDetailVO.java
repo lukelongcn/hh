@@ -16,32 +16,35 @@ import lombok.Data;
 @Data
 public class StickDetailVO {
     private Long id;
-    private Long stickTypeId;
+    private Long typeId;
     private String stickTypeName;
     private String title = "";
     private String content = "";
     private Long userId;
     private String nickName;
-    private Integer lockState = 1;
-    private Integer operationState = 1;
+    private Integer lockState;
+    private Integer operationState;
     private String ip;
-    private Integer state = 1;
-    private Integer rewardCount = 0;
+    private Integer state;
+    private Integer rewardCount;
     private BigDecimal rewardMoney = new BigDecimal(0);
     private String createTime;
     private String url;
 
-    public StickDetailVO(Stick stick){
-        id = stick.getId();
-        stickTypeId = stick.getStickType().getId();
-        stickTypeName = stick.getStickType().getName();
-        title = stick.getTitle();
-        content = stick.getContent();
-        userId = stick.getUser().getId();
-        nickName = stick.getUser().getNickName();
-        lockState = stick.getLockState();
-        rewardCount = stick.getRewardCount();
-        createTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
+    public StickDetailVO(Stick stick) {
+        this.id = stick.getId();
+        this.typeId = stick.getStickType().getId();
+        this.stickTypeName = stick.getStickType().getName();
+        this.title = stick.getTitle();
+        this.content = stick.getContent();
+        this.userId = stick.getUser().getId();
+        this.nickName = stick.getUser().getNickName();
+        this.lockState = stick.getLockState();
+        this.operationState = stick.getOperationState();
+        this.ip = stick.getIp();
+        this.state = stick.getState();
+        this.rewardCount = stick.getRewardCount();
+        this.createTime = DateUtil.getSpaceTime(stick.getCreateTime(), new Date());
     }
     public StickDetailVO(){
 

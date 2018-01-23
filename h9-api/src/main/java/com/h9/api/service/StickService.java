@@ -29,6 +29,8 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
+import com.h9.common.db.entity.config.BannerType;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -65,6 +67,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.h9.common.constant.ParamConstant.JIUYUAN_ICON;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_DETAIL;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_HOME;
 
 /**
  * Created with IntelliJ IDEA.
@@ -156,6 +160,7 @@ public class StickService {
 
     public Result listStick(String type,int page,Integer limit){
 
+        /* 首页 */
         if(type.equals("config_home")){
             Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
             PageResult<Stick> pageResult = new PageResult(home);
@@ -165,7 +170,8 @@ public class StickService {
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }else{
-            Page<Stick> home = stickRepository.findType(type,stickRepository.pageRequest(page,limit!=null?limit:20));
+            long typeId = Long.parseLong(type);
+            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }
@@ -173,7 +179,8 @@ public class StickService {
 
     @Transactional
     public Result home(){
-        return Result.success(getBanner(3));
+        Map<String, List<HomeVO>> banner = getBanner(STICK_HOME.getId());
+        return Result.success(banner);
     }
 
     public Result typeDetail(long typeId){
@@ -191,10 +198,14 @@ public class StickService {
     public Result detail(long id) {
         Stick stick = stickRepository.findById(id);
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
         }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
+
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
-        stickDetailVO.setListMap(getBanner(4));
+        stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
         List<StickReward> list = stickRewardResitory.findByStickId(id);
         List<StickRewardUser> stickRewardUserList  = new ArrayList<>();
@@ -264,6 +275,9 @@ public class StickService {
             Stick stick = stickRepository.findById(id);
             if (stick == null){
                 return Result.fail("点赞失败,贴子不存在");
+            }
+            if (stick.getState() != 1){
+                return Result.fail("贴子已被删除或禁用");
             }
             // 判断该用户是否为该贴点过赞
             StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
@@ -423,6 +437,12 @@ public class StickService {
             mapListConfig = new ArrayList<>();
         }
         Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
         StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
         return Result.success(stickRewardVO);
     }
@@ -469,6 +489,7 @@ public class StickService {
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 加
         Stick stick = stickRepository.findById(stickId);
+
         Result resultRe = commonService.setBalance(stick.getUser().getId(),money, BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 失败
         if(resultRe.getCode()==Result.FAILED_CODE && resultDe.getCode()==Result.FAILED_CODE){
@@ -503,7 +524,10 @@ public class StickService {
     public Result delete(long userId, long stickId) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         if (stick.getLockState() != 1){
             return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
@@ -539,7 +563,10 @@ public class StickService {
     public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         if (stick.getUser().getId() != userId){
             return Result.fail("无权操作");

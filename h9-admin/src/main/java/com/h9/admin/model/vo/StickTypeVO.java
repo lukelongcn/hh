@@ -12,9 +12,13 @@ import lombok.Data;
 @Data
 public class StickTypeVO {
     private Long id;
-    private Integer defaultSort = 1;
-    private String image;
+
     private String name;
+
+    private String content;
+
+    private String image;
+
 
     public StickTypeVO(StickType stickType) {
         BeanUtils.copyProperties(stickType,this);

@@ -3,6 +3,8 @@ package com.h9.admin.model.dto.stick;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import sun.util.resources.ga.LocaleNames_ga;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -12,6 +14,8 @@ import lombok.Data;
  */
 @Data
 public class UpdateStickDTO {
+
+    private Long stickId;
 
     @NotBlank(message = "请填写标题")
     @Length(max = 64,message = "标题填写过长")
