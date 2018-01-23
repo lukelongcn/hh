@@ -185,7 +185,6 @@ public class ConsumeService {
             saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
-
             return Result.success("充值成功", map);
         } else {
             order.setStatus(Orders.statusEnum.FAIL.getCode());
