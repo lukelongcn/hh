@@ -196,8 +196,12 @@ public class StickService {
     public Result detail(long id) {
         Stick stick = stickRepository.findById(id);
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
         }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
+
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
@@ -269,6 +273,9 @@ public class StickService {
             Stick stick = stickRepository.findById(id);
             if (stick == null){
                 return Result.fail("点赞失败,贴子不存在");
+            }
+            if (stick.getState() != 1){
+                return Result.fail("贴子已被删除或禁用");
             }
             // 判断该用户是否为该贴点过赞
             StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
@@ -428,6 +435,12 @@ public class StickService {
             mapListConfig = new ArrayList<>();
         }
         Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
         StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
         return Result.success(stickRewardVO);
     }
@@ -474,6 +487,7 @@ public class StickService {
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 加
         Stick stick = stickRepository.findById(stickId);
+
         Result resultRe = commonService.setBalance(stick.getUser().getId(),money, BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 失败
         if(resultRe.getCode()==Result.FAILED_CODE && resultDe.getCode()==Result.FAILED_CODE){
@@ -508,7 +522,10 @@ public class StickService {
     public Result delete(long userId, long stickId) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         if (stick.getLockState() != 1){
             return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
@@ -544,7 +561,10 @@ public class StickService {
     public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         if (stick.getUser().getId() != userId){
             return Result.fail("无权操作");

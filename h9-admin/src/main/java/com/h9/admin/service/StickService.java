@@ -73,7 +73,7 @@ public class StickService {
      */
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
-        StickType type = stickTypeRepository.findByName(name);
+        List<StickType> type = stickTypeRepository.findByName(name);
         if(type!=null){
             return Result.fail(name+"已经存在");
         }
@@ -91,6 +91,11 @@ public class StickService {
         if (stickType == null){
             return Result.fail("该分类已被删除");
         }
+        String name = stickTypeDTO.getName();
+        List<StickType> type = stickTypeRepository.findByName(name);
+        if(type!=null){
+            return Result.fail(name+"已经存在");
+        }
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
         return Result.success("编辑成功");
@@ -100,7 +105,7 @@ public class StickService {
      * 分类列表
      */
     public Result getStick(int page,int limit){
-        PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
+        PageResult<StickType> pageResult = stickTypeRepository.findAllType(page, limit);
         if (pageResult == null){
             return Result.fail("暂无分类");
         }
@@ -187,7 +192,10 @@ public class StickService {
         }
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         stick.setTitle(updateStickDTO.getTitle());
         stick.setContent(updateStickDTO.getContent());
@@ -203,7 +211,10 @@ public class StickService {
     public Result delete(long stickId) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         stick.setState(3);
         stickRepository.save(stick);
