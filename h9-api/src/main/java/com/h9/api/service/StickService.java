@@ -513,10 +513,10 @@ public class StickService {
             //ip
             stickComment.setIp(NetworkUtil.getIpAddress(request));
             stickCommentRepository.save(stickComment);
-            /*// 增加阅读数和回复数
+            // 增加阅读数和回复数
             stick.setAnswerCount(stick.getAnswerCount()+1);
             stick.setReadCount(stick.getReadCount()+1);
-            stickRepository.save(stick);*/
+            stickRepository.save(stick);
         }
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
