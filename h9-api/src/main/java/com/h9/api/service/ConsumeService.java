@@ -110,7 +110,7 @@ public class ConsumeService {
     @Resource
     private GoodService goodService;
 
-    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO)  {
+    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -161,11 +161,11 @@ public class ConsumeService {
 
         userAccountRepository.save(userAccount);
         orderItemReposiroty.saveAndFlush(orderItems);
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(),realPrice);
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(), realPrice);
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
-            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
+            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo, order);
             //减库存
             Result changeStockResult = goodService.changeStock(goods);
             if (changeStockResult.getCode() == 1) {
@@ -204,7 +204,7 @@ public class ConsumeService {
 
         rechargedMoeny = rechargedMoeny.add(money);
 
-        redisBean.setStringValue(key,MoneyUtils.formatMoney(rechargedMoeny));
+        redisBean.setStringValue(key, MoneyUtils.formatMoney(rechargedMoeny));
         redisBean.expire(key, DateUtil.getTimesNight());
     }
 
@@ -217,7 +217,7 @@ public class ConsumeService {
             }
             String todayRechargeMoney = redisBean.getStringValue(RedisKey.getTodayRechargeMoney(userId));
 
-            if(StringUtils.isBlank(todayRechargeMoney)){
+            if (StringUtils.isBlank(todayRechargeMoney)) {
                 todayRechargeMoney = "0";
             }
             BigDecimal rechargedMoney = realPrice.add((new BigDecimal(todayRechargeMoney)));
@@ -237,7 +237,7 @@ public class ConsumeService {
         rechargeRecordRepository.save(rechargeRecord);
     }
 
-    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo) {
+    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo, Orders order) {
 
         OfPayRecord ofPayRecord = new OfPayRecord();
         ofPayRecord.setErrMsg(orderinfo.getErr_msg());
@@ -247,7 +247,7 @@ public class ConsumeService {
         ofPayRecord.setCardnum(orderinfo.getCardnum());
         ofPayRecord.setOrdercash(orderinfo.getOrdercash());
         ofPayRecord.setCardname(orderinfo.getCardname());
-        ofPayRecord.setSporderId(orderinfo.getSporder_id());
+        ofPayRecord.setSporderId(order.getId()+"");
         ofPayRecord.setGameUserid(orderinfo.getGame_userid());
         ofPayRecord.setGameState(orderinfo.getGame_state());
 
