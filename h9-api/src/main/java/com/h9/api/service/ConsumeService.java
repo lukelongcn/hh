@@ -164,8 +164,10 @@ public class ConsumeService {
 
         Result result = null;
         if (currentEnvironment.equals("product")) {
+            logger.info("调用 recharge method");
             result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
         } else {
+            logger.info("调用 rechargeTest method");
             result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
         }
 
