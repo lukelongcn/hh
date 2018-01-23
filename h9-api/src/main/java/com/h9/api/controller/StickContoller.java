@@ -199,18 +199,19 @@ public class StickContoller {
 
 
     /**
-     *
+     * 编辑贴子
      * @param userId token
      * @param stickId 帖子id
      * @param stickDto 请求对象
      * @return Result
      */
+    //@Secured
     @PostMapping("/update/{stickId}")
-    public Result update(@SessionAttribute("curUserId")long userId,
+    public Result update(//@SessionAttribute("curUserId")long userId,
                          @PathVariable("stickId")long stickId,
                          @RequestBody @Validated StickDto stickDto,
                          HttpServletRequest request){
-        return stickService.updateStick(userId,stickId,stickDto,request);
+        return stickService.updateStick(2,stickId,stickDto,request);
     }
 
     /**
@@ -233,8 +234,6 @@ public class StickContoller {
     @PostMapping("report")
     public Result getReport(@SessionAttribute("curUserId")long userId,
                             @Valid@RequestBody ReportDTO reportDTO){
-        Long stickId = reportDTO.getStickId();
-        String content = reportDTO.getContent();
-        return stickService.report(userId,stickId,content);
+        return stickService.report(userId,reportDTO);
     }
 }

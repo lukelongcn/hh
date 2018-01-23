@@ -21,6 +21,7 @@ import com.h9.common.db.entity.config.ArticleType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserExtends;
+import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
@@ -74,7 +75,7 @@ public class UserService {
     private ConfigService configService;
     private Logger logger = Logger.getLogger(this.getClass());
 
-    public Result loginFromPhone(UserLoginDTO userLoginDTO) {
+    public Result loginFromPhone(UserLoginDTO userLoginDTO,int client) {
         String phone = userLoginDTO.getPhone();
 
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
@@ -102,6 +103,7 @@ public class UserService {
         if (user == null) {
             //第一登录 生成用户信息
             user = initUserInfo(phone);
+            user.setClient(client);
             int loginCount = user.getLoginCount();
             user.setLoginCount(++loginCount);
             user.setLastLoginTime(new Date());
@@ -117,6 +119,7 @@ public class UserService {
             userExtendsRepository.save(userExtends);
         } else {
             int loginCount = user.getLoginCount();
+            user.setClient(client);
             user.setLoginCount(++loginCount);
             user.setLastLoginTime(new Date());
             user = userRepository.saveAndFlush(user);
@@ -326,6 +329,7 @@ public class UserService {
             LoginResultVO loginResult = getLoginResult(user);
             user.setLoginCount(user.getLoginCount() + 1);
             user.setLastLoginTime(user.getLastLoginTime());
+            user.setClient(UserRecord.ClientEnum.WEIXIN.getId());
             userRepository.save(user);
             return Result.success(loginResult);
         } else {
@@ -334,6 +338,7 @@ public class UserService {
                 return Result.fail("微信登录失败，获取用户信息失败，请同意授权");
             }
             user = userInfo.convert();
+            user.setClient(UserRecord.ClientEnum.WEIXIN.getId());
             user.setLoginCount(1);
             user.setLastLoginTime(new Date());
             User userFromDb = userRepository.saveAndFlush(user);

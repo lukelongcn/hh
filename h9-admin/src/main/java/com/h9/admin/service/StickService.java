@@ -8,6 +8,7 @@ import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickDetailVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
+import com.h9.admin.model.vo.StickTypeDetailVO;
 import com.h9.admin.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -67,10 +68,13 @@ public class StickService {
     @Resource
     private UserAccountRepository userAccountRepository;
 
+    /**
+     * 添加分类
+     */
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
-        StickType type = stickTypeRepository.findByName(name);
-        if(type!=null){
+        List<StickType> type = stickTypeRepository.findByName(name);
+        if(CollectionUtils.isNotEmpty(type)){
             return Result.fail(name+"已经存在");
         }
         StickType stickType = new StickType();
@@ -82,7 +86,15 @@ public class StickService {
     /**
      * 编辑分类
      */
-    public Result updateType(long stickTypeId, StickTypeDTO stickTypeDTO) {
+    public Result updateType(StickTypeDTO stickTypeDTO) {
+        if (stickTypeDTO.getStickTypeId() == null){
+            return Result.fail("分类id不能为空");
+        }
+        Long stickTypeId = stickTypeDTO.getStickTypeId();
+        List<StickType> type = stickTypeRepository.findByName(stickTypeDTO.getName());
+        if(CollectionUtils.isNotEmpty(type)){
+            return Result.fail(stickTypeDTO.getName()+"已经存在");
+        }
         StickType stickType = stickTypeRepository.findById(stickTypeId);
         if (stickType == null){
             return Result.fail("该分类已被删除");
@@ -92,15 +104,20 @@ public class StickService {
         return Result.success("编辑成功");
     }
 
+    /**
+     * 分类列表
+     */
     public Result getStick(int page,int limit){
-        PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
+        PageResult<StickType> pageResult = stickTypeRepository.findAllType(page, limit);
         if (pageResult == null){
             return Result.fail("暂无分类");
         }
         return Result.success(pageResult.result2Result(StickTypeVO::new));
     }
 
-
+    /**
+     * 举报记录
+     */
     public Result getReport(Integer page, Integer limit) {
         PageResult<StickReport> pageResult = stickReportRepository.findReportList(page, limit);
         if (pageResult == null){
@@ -168,14 +185,18 @@ public class StickService {
      * 编辑
      */
     @Transactional
-    public Result updateStick(long stickId, UpdateStickDTO updateStickDTO) {
+    public Result updateStick(UpdateStickDTO updateStickDTO) {
+        long stickId = updateStickDTO.getStickId();
         StickType stickType = stickTypeRepository.findOne(updateStickDTO.getTypeId());
         if(stickType == null){
             return Result.fail("请选择分类");
         }
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         stick.setTitle(updateStickDTO.getTitle());
         stick.setContent(updateStickDTO.getContent());
@@ -191,7 +212,10 @@ public class StickService {
     public Result delete(long stickId) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         stick.setState(3);
         stickRepository.save(stick);
@@ -203,7 +227,7 @@ public class StickService {
      *  @return Result
      */
     public Result allDetail(Integer pageNumber, Integer pageSize) {
-        PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
+        PageResult<Stick> sticklist = stickRepository.findAllStick(pageNumber,pageSize);
         if (sticklist == null){
             return Result.fail("暂无贴子");
         }
@@ -212,9 +236,6 @@ public class StickService {
     @Value("${path.app.wechat_host}")
     private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
-        if (stick.getState()!= 1){
-            return new StickDetailVO();
-        }
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
@@ -324,5 +345,16 @@ public class StickService {
         stickType.setState(3);
         stickTypeRepository.save(stickType);
         return Result.success("删除成功");
+    }
+
+    /**
+     * 分类详情
+     */
+    public Result typeDetail(Long id) {
+        StickType stickType = stickTypeRepository.findOne(id);
+        if (stickType == null){
+            return Result.fail("分类不存在");
+        }
+        return Result.success(new StickTypeDetailVO(stickType));
     }
 }

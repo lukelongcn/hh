@@ -2,6 +2,7 @@ package com.h9.common.db.entity.user;
 
 import com.h9.common.base.BaseEntity;
 import com.h9.common.common.ConstantConfig;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Time: 11:16
  */
 //,uniqueConstraints = @UniqueConstraint(columnNames="userId")
+@Data
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
@@ -81,6 +83,9 @@ public class User extends BaseEntity {
 
     @Column(name = "sign_days", nullable = false, columnDefinition = "tinyint default 0 COMMENT '连续签到天数'")
     private Integer signDays = 0;
+
+    @Column(name = "client",columnDefinition = "int default 0 COMMENT '客户端'")
+    private Integer client;
 
     public Integer getSignCount() {
 

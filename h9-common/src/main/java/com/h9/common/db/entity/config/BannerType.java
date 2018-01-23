@@ -1,6 +1,7 @@
 package com.h9.common.db.entity.config;
 
 import com.h9.common.base.BaseEntity;
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  * Date: 2017/10/27
  * Time: 18:13
  */
+@Data
 @Entity
 @Table(name = "banner_type")
 public class BannerType extends BaseEntity {
@@ -54,77 +56,6 @@ public class BannerType extends BaseEntity {
     @Transient
     private Integer bannerCount;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Integer getLocation() {
-        return location;
-    }
-
-    public void setLocation(Integer location) {
-        this.location = location;
-    }
-
-    public Integer getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Integer enable) {
-        this.enable = enable;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public Integer getBannerCount() {
-        return bannerCount;
-    }
-
-    public void setBannerCount(Integer bannerCount) {
-        this.bannerCount = bannerCount;
-    }
-
-    public String getLocationDesc() {
-        return locationDesc;
-    }
-
-    public void setLocationDesc(String locationDesc) {
-        this.locationDesc = locationDesc;
-    }
 
     public BannerType() {
     }
@@ -176,4 +107,37 @@ public class BannerType extends BaseEntity {
             this.name = name;
         }
     }
+
+    public enum LocaltionEnum {
+        HOME(1,"首页"),
+        STROE(2,"商店"),
+        STICK_HOME(3,"社区首页"),
+        STICK_DETAIL(4,"帖子详情");
+
+        LocaltionEnum(int id,String name){
+            this.id = id;
+            this.name = name;
+        }
+
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
 }

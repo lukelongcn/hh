@@ -87,6 +87,16 @@ public class PersonalStickService {
     }
 
     /**
+     * 贴子打赏记录
+     */
+    public Result rewardList(long stickId, Integer page, Integer limit) {
+        PageResult<StickReward> pageResult = stickRewardResitory.findRewardList(stickId,page,limit);
+        if ( pageResult == null) {
+            return Result.fail("暂无打赏记录");
+        }
+        return Result.success(pageResult.result2Result(this::getGive));
+    }
+    /**
      * 被打赏记录
      */
     public Result rewarded(long userId, Integer page, Integer limit) {
@@ -105,4 +115,6 @@ public class PersonalStickService {
         });
         return result;
     }
+
+
 }

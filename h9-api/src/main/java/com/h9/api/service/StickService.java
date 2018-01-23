@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
@@ -24,11 +25,16 @@ import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
+import com.h9.common.db.entity.community.StickImage;
 import com.h9.common.db.entity.community.StickLike;
 import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
+import com.h9.common.db.entity.config.BannerType;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum;
+
+import com.h9.common.db.entity.config.Image;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -37,6 +43,7 @@ import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
+import com.h9.common.db.repo.StickImageRespository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
@@ -54,6 +61,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -61,10 +69,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.h9.common.constant.ParamConstant.JIUYUAN_ICON;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_DETAIL;
+import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_HOME;
 
 /**
  * Created with IntelliJ IDEA.
@@ -106,6 +118,8 @@ public class StickService {
     private StickReportRepository stickReportRepository;
     @Resource
     private StickRewardResitory stickRewardResitory;
+    @Resource
+    private StickImageRespository stickImageRespository;
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
@@ -128,13 +142,23 @@ public class StickService {
         stickType.setStickCount(stickType.getStickCount()+1);
         stickTypeRepository.save(stickType);
         Stick stick = new Stick();
-        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
+        Stick stickSave = controllStick(1,userId,stickDto,stick,stickType,request);
+        StickSampleVO stickSampleVO = new StickSampleVO(stickSave);
+        List<String> imageList = stickImageRespository.findByStickId(stick.getId());
+        stickSampleVO.setImages(imageList);
+        return Result.success(stickSampleVO);
     }
 
-    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
+    /**
+     * 编辑或添加贴子
+     * @param flag 1 添加  2 编辑
+     */
+    private Stick controllStick(Integer flag,Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
         User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
+        // 匹配图片
+        Result result = image(flag,stick,stickDto.getContent());
         stick.setStickType(stickType);
         stick.setUser(user);
         double latitude = stickDto.getLatitude();
@@ -154,8 +178,76 @@ public class StickService {
         return stickRepository.saveAndFlush(stick);
     }
 
-    public Result listStick(String type,int page,Integer limit){
+    /**
+     * 编辑贴子
+     */
+    @Transactional
+    public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
+        if (stick.getUser().getId() != userId){
+            return Result.fail("无权操作");
+        }
+        if (stick.getLockState() != 1){
+            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
+        }
+        StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
+        if(stickType == null){
+            return Result.fail("请选择分类");
+        }
+        Stick stickSave = controllStick(2,userId,stickDto,stick,stickType,request);
+        StickSampleVO stickSampleVO = new StickSampleVO(stickSave);
+        List<String> imageList = stickImageRespository.findByStickId(stick.getId());
+        stickSampleVO.setImages(imageList);
+        return Result.success(stickSampleVO);
+    }
 
+    /**
+     * 匹配图片
+     * @param flag 1 添加  2 编辑
+     */
+    @Transactional
+    public Result image(Integer flag, Stick stick, String content){
+        String regex = "<image .*?</image >";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(content);
+        while(m.find()){
+            // 新增
+            if (flag == 1){
+                StickImage stickImage = new StickImage();
+                //获取匹配的image标签
+                stickImage.setImage(m.group());
+                stickImage.setStick(stick);
+                stickImageRespository.saveAndFlush(stickImage);
+            }
+            // 编辑
+            else if(flag == 2){
+                List<StickImage> list = stickImageRespository.updateImages(stick.getId());
+                if (CollectionUtils.isNotEmpty(list)){
+                    list.forEach(stickImage -> {
+                        stickImage.setImage(m.group());
+                        stickImageRespository.saveAndFlush(stickImage);
+                    });
+                }else {
+                    StickImage stickImage = new StickImage();
+                    //获取匹配的image标签
+                    stickImage.setImage(m.group());
+                    stickImage.setStick(stick);
+                    stickImageRespository.saveAndFlush(stickImage);
+                }
+            }
+            System.out.println(m.start()+":"+m.end());
+        }
+        return Result.success();
+    }
+
+    public Result listStick(String type,int page,Integer limit){
+        /* 首页 */
         if(type.equals("config_home")){
             Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
             PageResult<Stick> pageResult = new PageResult(home);
@@ -165,7 +257,8 @@ public class StickService {
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }else{
-            Page<Stick> home = stickRepository.findType(type,stickRepository.pageRequest(page,limit!=null?limit:20));
+            long typeId = Long.parseLong(type);
+            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }
@@ -173,13 +266,17 @@ public class StickService {
 
     @Transactional
     public Result home(){
-        return Result.success(getBanner(3));
+        Map<String, List<HomeVO>> banner = getBanner(STICK_HOME.getId());
+        return Result.success(banner);
     }
 
     public Result typeDetail(long typeId){
         StickType stickType = stickTypeRepository.findOne(typeId);
         if(stickType==null){
             return Result.fail("分类不存在");
+        }
+        if (stickType.getState() != 1){
+            return Result.fail("改分类已被删除");
         }
         return Result.success(new StickTypeDetailVo(stickType));
     }
@@ -191,10 +288,14 @@ public class StickService {
     public Result detail(long id) {
         Stick stick = stickRepository.findById(id);
         if (stick == null){
-            return Result.fail("贴子不存在或已被删除");
+            return Result.fail("贴子不存在");
         }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
+
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
-        stickDetailVO.setListMap(getBanner(4));
+        stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
         List<StickReward> list = stickRewardResitory.findByStickId(id);
         List<StickRewardUser> stickRewardUserList  = new ArrayList<>();
@@ -264,6 +365,9 @@ public class StickService {
             Stick stick = stickRepository.findById(id);
             if (stick == null){
                 return Result.fail("点赞失败,贴子不存在");
+            }
+            if (stick.getState() != 1){
+                return Result.fail("贴子已被删除或禁用");
             }
             // 判断该用户是否为该贴点过赞
             StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
@@ -355,20 +459,11 @@ public class StickService {
                 stickComment.setStickComment(stickCommentPid);
             }
         }
-        //  调用评论共有接口
-        Result result = publicCommnetUse(userId,stickCommentDTO.getContent(),stick,stickComment,request);
-        if (!result.isSuccess()) {
-            return result;
-        }
-        return Result.success("回复成功");
-    }
-    private Result publicCommnetUse(long userId,String content,Stick stick,
-                                    StickComment stickComment,HttpServletRequest request){
         // 回复的用户
         User user = userRepository.findOne(userId);
         stickComment.setAnswerUser(user);
         // 回复内容
-        stickComment.setContent(content);
+        stickComment.setContent(stickCommentDTO.getContent());
         // 回复楼层
         stickComment.setFloor(stick.getAnswerCount()+1);
         // 贴子id
@@ -380,7 +475,7 @@ public class StickService {
         stick.setAnswerCount(stick.getAnswerCount()+1);
         stick.setReadCount(stick.getReadCount()+1);
         stickRepository.save(stick);
-        return Result.success();
+        return Result.success("回复成功");
     }
 
     /**
@@ -423,6 +518,12 @@ public class StickService {
             mapListConfig = new ArrayList<>();
         }
         Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("贴子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
         StickRewardVO stickRewardVO = new StickRewardVO(stick,mapListConfig);
         return Result.success(stickRewardVO);
     }
@@ -455,10 +556,11 @@ public class StickService {
      * 打赏
      */
     public Result reward(long userId, StickRewardJiuYuanDTO stickRewardJiuYuanDTO, HttpServletRequest request) {
-        /*if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
+        if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
             return Result.fail("金额不能为负数");
-        }*/
+        }
         BigDecimal money = stickRewardJiuYuanDTO.getReward();
+        // 余额与打赏金额对比
         UserAccount userAccountD = userAccountRepository.findByUserId(userId);
         int flag = userAccountD.getBalance().compareTo(money);
         if (flag == -1){
@@ -469,6 +571,7 @@ public class StickService {
         Result resultDe = commonService.setBalance(userId,money.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 加
         Stick stick = stickRepository.findById(stickId);
+
         Result resultRe = commonService.setBalance(stick.getUser().getId(),money, BalanceFlow.BalanceFlowTypeEnum.STICK_REWARD.getId(),stickId,"","");
         // 失败
         if(resultRe.getCode()==Result.FAILED_CODE && resultDe.getCode()==Result.FAILED_CODE){
@@ -482,17 +585,30 @@ public class StickService {
         stickReward.setIp(NetworkUtil.getIpAddress(request));
         stickReward.setWords(stickRewardJiuYuanDTO.getWords());
         stickRewardResitory.saveAndFlush(stickReward);
+        // 如果留言不为空 增加评论
+        if (stickRewardJiuYuanDTO.getWords() != null){
+            StickComment stickComment = new StickComment();
+            // 回复的用户
+            User user = userRepository.findOne(userId);
+            stickComment.setAnswerUser(user);
+            // 回复内容
+            stickComment.setContent(stickRewardJiuYuanDTO.getWords());
+            // 回复楼层
+            stickComment.setFloor(stick.getAnswerCount()+1);
+            // 贴子id
+            stickComment.setStick(stick);
+            // ip
+            stickComment.setIp(NetworkUtil.getIpAddress(request));
+            stickCommentRepository.save(stickComment);
+            // 增加阅读数和回复数
+            stick.setAnswerCount(stick.getAnswerCount()+1);
+            stick.setReadCount(stick.getReadCount()+1);
+            stickRepository.save(stick);
+        }
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         userAccount.setRewardMoney(userAccount.getRewardMoney().add(money));
         userAccountRepository.save(userAccount);
-        // 如果留言不为空 增加评论
-        if (stickRewardJiuYuanDTO.getWords() != null){
-            StickComment stickComment = new StickComment();
-            publicCommnetUse(userId,stickRewardJiuYuanDTO.getWords(),stick,stickComment,request);
-            // 成功
-            return Result.success("打赏成功");
-        }
         // 成功
         return Result.success("打赏成功");
     }
@@ -503,7 +619,10 @@ public class StickService {
     public Result delete(long userId, long stickId) {
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
         }
         if (stick.getLockState() != 1){
             return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
@@ -533,28 +652,6 @@ public class StickService {
     }
 
     /**
-     * 编辑贴子
-     */
-    @Transactional
-    public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
-        Stick stick = stickRepository.findById(stickId);
-        if (stick == null){
-            return Result.fail("帖子已被删除或禁用");
-        }
-        if (stick.getUser().getId() != userId){
-            return Result.fail("无权操作");
-        }
-        if (stick.getLockState() != 1){
-            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
-        }
-        StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
-        if(stickType == null){
-            return Result.fail("请选择分类");
-        }
-        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
-    }
-
-    /**
      * 拿到举报类型
      */
     public Result getReportType() {
@@ -568,7 +665,9 @@ public class StickService {
     /**
      * 举报
      */
-    public Result report(long userId, long stickId, String content) {
+    public Result report(long userId, ReportDTO reportDTO) {
+        Long stickId = reportDTO.getStickId();
+        String content = reportDTO.getContent();
         Stick stick = stickRepository.findById(stickId);
         if (stick == null){
             return Result.fail("贴子不存在");
@@ -580,6 +679,7 @@ public class StickService {
         stickReport.setContent(content);
         stickReport.setStick(stick);
         stickReport.setUserId(userId);
+        stickReport.setReportType(reportDTO.getReportType());
         stickReportRepository.save(stickReport);
         return Result.success("举报成功");
     }

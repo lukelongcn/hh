@@ -9,12 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,7 +57,7 @@ public class PersonalStickController {
     }
 
     /**
-     * 打赏记录
+     * 个人打赏记录
      */
     @Secured
     @GetMapping("/giveReward")
@@ -63,6 +65,16 @@ public class PersonalStickController {
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
         return personalStickService.giveReward(userId,page,limit);
+    }
+
+    /**
+     * 贴子打赏记录
+     */
+    @GetMapping("/rewardList/{stickId}")
+    public Result rewardList(@PathVariable(value = "stickId")long stickId,
+                             @RequestParam(defaultValue = "1") Integer page,
+                             @RequestParam(defaultValue = "10") Integer limit){
+        return personalStickService.rewardList(stickId,page,limit);
     }
 
     /**

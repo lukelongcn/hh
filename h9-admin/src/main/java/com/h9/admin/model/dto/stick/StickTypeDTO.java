@@ -21,6 +21,7 @@ import lombok.Data;
 public class StickTypeDTO {
 
     private Long id;
+    private Long stickTypeId;
     @NotBlank(message = "请填写分类名称")
     @Length(min = 2,max = 64,message = "分类名称填写过长或过短")
     private String name;
@@ -52,4 +53,6 @@ public class StickTypeDTO {
     // 默认排序 1回复数 2浏览数 3最新发表 4最后回复'
     @NotNull(message = "请选择默认排序")
     private Integer defaultSort = 1;
+
+    private Integer stickCount;
 }

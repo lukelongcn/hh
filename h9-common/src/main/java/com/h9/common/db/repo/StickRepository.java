@@ -34,7 +34,7 @@ public interface StickRepository extends BaseRepository<Stick> {
     @Query("select s from Stick s where s.stickType.id=?1 and s.state = 1  order by s.updateTime desc")
     Page<Stick> findType(Long id,Pageable pageable);
 
-    @Query("select s from Stick s where  s.stickType.name=?1 and s.state = 1 order by s.updateTime desc")
+    @Query("select s from Stick s where  s.stickType.id=?1 and s.state = 1 order by s.updateTime desc")
     Page<Stick> findType(String name, Pageable pageable);
 
 
@@ -42,7 +42,7 @@ public interface StickRepository extends BaseRepository<Stick> {
     Page<Stick> findStickList(String str, Pageable pageRequest);
 
 
-    @Query("select s from Stick s where s.id = ?1 and s.state =1")
+    @Query("select s from Stick s where s.id = ?1")
     Stick findById(long stickId);
 
     @Query("select s from Stick s where s.user.id = ?1 and s.state = 1 order by s.createTime DESC ")
@@ -50,4 +50,13 @@ public interface StickRepository extends BaseRepository<Stick> {
 
     @Query("select s.id from Stick s where s.user.id = ?1 and s.state = 1 order by s.createTime DESC ")
     List<Long> findStickIdByUserId(long userId);
+
+
+    default PageResult<Stick> findAllStick(Integer pageNumber, Integer pageSize){
+        Page<Stick> stickList = findAllStick(pageRequest(pageNumber, pageSize));
+        return new PageResult(stickList);
+    }
+    @Query("select s from Stick s where s.state = 1 order by s.createTime desc ")
+    Page<Stick> findAllStick(Pageable pageRequest);
+
 }
