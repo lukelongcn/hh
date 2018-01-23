@@ -316,7 +316,7 @@ public class HotelService {
 //            BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
 //            paidMoney4JiuYuan = paidMoney4JiuYuan.add(hotelOrder.getTotalMoney());
 //            hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
-            return Result.success(balancePay(hotelOrder, user, userAccount));
+            return balancePay(hotelOrder, user, userAccount);
         } else {
             // 余额 + 微信支付
 //            if (balance.compareTo(new BigDecimal(0)) > 0) {
