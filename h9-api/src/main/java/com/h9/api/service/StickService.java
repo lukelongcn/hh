@@ -25,6 +25,7 @@ import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
+import com.h9.common.db.entity.community.StickImage;
 import com.h9.common.db.entity.community.StickLike;
 import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
@@ -32,6 +33,8 @@ import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
 import com.h9.common.db.entity.config.BannerType;
 import static com.h9.common.db.entity.config.BannerType.LocaltionEnum;
+
+import com.h9.common.db.entity.config.Image;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -40,6 +43,7 @@ import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
+import com.h9.common.db.repo.StickImageRespository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
@@ -57,6 +61,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -64,6 +69,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -111,6 +118,8 @@ public class StickService {
     private StickReportRepository stickReportRepository;
     @Resource
     private StickRewardResitory stickRewardResitory;
+    @Resource
+    private StickImageRespository stickImageRespository;
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
@@ -133,13 +142,23 @@ public class StickService {
         stickType.setStickCount(stickType.getStickCount()+1);
         stickTypeRepository.save(stickType);
         Stick stick = new Stick();
-        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
+        Stick stickSave = controllStick(1,userId,stickDto,stick,stickType,request);
+        StickSampleVO stickSampleVO = new StickSampleVO(stickSave);
+        List<String> imageList = stickImageRespository.findByStickId(stick.getId());
+        stickSampleVO.setImages(imageList);
+        return Result.success(stickSampleVO);
     }
 
-    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
+    /**
+     * 编辑或添加贴子
+     * @param flag 1 添加  2 编辑
+     */
+    private Stick controllStick(Integer flag,Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
         User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
+        // 匹配图片
+        Result result = image(flag,stick,stickDto.getContent());
         stick.setStickType(stickType);
         stick.setUser(user);
         double latitude = stickDto.getLatitude();
@@ -159,8 +178,75 @@ public class StickService {
         return stickRepository.saveAndFlush(stick);
     }
 
-    public Result listStick(String type,int page,Integer limit){
+    /**
+     * 编辑贴子
+     */
+    @Transactional
+    public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
+        Stick stick = stickRepository.findById(stickId);
+        if (stick == null){
+            return Result.fail("帖子不存在");
+        }
+        if (stick.getState() != 1){
+            return Result.fail("贴子已被删除或禁用");
+        }
+        if (stick.getUser().getId() != userId){
+            return Result.fail("无权操作");
+        }
+        if (stick.getLockState() != 1){
+            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
+        }
+        StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
+        if(stickType == null){
+            return Result.fail("请选择分类");
+        }
+        Stick stickSave = controllStick(2,userId,stickDto,stick,stickType,request);
+        StickSampleVO stickSampleVO = new StickSampleVO(stickSave);
+        List<String> imageList = stickImageRespository.findByStickId(stick.getId());
+        stickSampleVO.setImages(imageList);
+        return Result.success(stickSampleVO);
+    }
 
+    /**
+     * 匹配图片
+     * @param flag 1 添加  2 编辑
+     */
+    @Transactional
+    public Result image(Integer flag, Stick stick, String content){
+        String regex = "<image .*?</image >";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(content);
+        while(m.find()){
+            // 新增
+            if (flag == 1){
+                StickImage stickImage = new StickImage();
+                //获取匹配的image标签
+                stickImage.setImage(m.group());
+                stickImage.setStick(stick);
+                stickImageRespository.saveAndFlush(stickImage);
+            }
+            // 编辑
+            else if(flag == 2){
+                List<StickImage> list = stickImageRespository.updateImages(stick.getId());
+                if (CollectionUtils.isNotEmpty(list)){
+                    list.forEach(stickImage -> {
+                        stickImage.setImage(m.group());
+                        stickImageRespository.saveAndFlush(stickImage);
+                    });
+                }else {
+                    StickImage stickImage = new StickImage();
+                    //获取匹配的image标签
+                    stickImage.setImage(m.group());
+                    stickImage.setStick(stick);
+                    stickImageRespository.saveAndFlush(stickImage);
+                }
+            }
+            System.out.println(m.start()+":"+m.end());
+        }
+        return Result.success();
+    }
+
+    public Result listStick(String type,int page,Integer limit){
         /* 首页 */
         if(type.equals("config_home")){
             Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
@@ -563,31 +649,6 @@ public class StickService {
         stickComment.setState(3);
         stickCommentRepository.save(stickComment);
         return Result.success("删除评论成功");
-    }
-
-    /**
-     * 编辑贴子
-     */
-    @Transactional
-    public Result updateStick(long userId, long stickId, StickDto stickDto, HttpServletRequest request) {
-        Stick stick = stickRepository.findById(stickId);
-        if (stick == null){
-            return Result.fail("帖子不存在");
-        }
-        if (stick.getState() != 1){
-            return Result.fail("贴子已被删除或禁用");
-        }
-        if (stick.getUser().getId() != userId){
-            return Result.fail("无权操作");
-        }
-        if (stick.getLockState() != 1){
-            return Result.fail("该贴处于管理员锁住状态，不可评论，编辑或删除");
-        }
-        StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
-        if(stickType == null){
-            return Result.fail("请选择分类");
-        }
-        return Result.success(new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request)));
     }
 
     /**
