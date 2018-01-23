@@ -168,7 +168,8 @@ public class StickService {
      * 编辑
      */
     @Transactional
-    public Result updateStick(long stickId, UpdateStickDTO updateStickDTO) {
+    public Result updateStick(UpdateStickDTO updateStickDTO) {
+        long stickId = updateStickDTO.getStickId();
         StickType stickType = stickTypeRepository.findOne(updateStickDTO.getTypeId());
         if(stickType == null){
             return Result.fail("请选择分类");
