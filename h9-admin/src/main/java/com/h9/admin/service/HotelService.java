@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
+import com.h9.admin.model.dto.hotel.RefundDTO;
 import com.h9.admin.model.vo.HotelListVO;
 import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
@@ -20,6 +21,7 @@ import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.redisson.RedisPubSubTopicListenerWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -286,6 +288,8 @@ public class HotelService {
 
     @Resource
     private CommonService commonService;
+    @Resource
+    private PayProvider payProvider;
     @Transactional
     public Result refundOrder(Long id) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
@@ -297,7 +301,7 @@ public class HotelService {
             return Result.fail("订单状态异常");
 
         if(orderStatusEnum.getCode() != HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode()){
-            return Result.fail("此订单 不能退款");
+            return Result.fail("此订单不能退款");
         }
 
         BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
@@ -305,10 +309,15 @@ public class HotelService {
                 BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
                 hotelOrder.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
 
-        hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
-
         BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
-        //TODO 调用退款接口
-        return Result.success("退款成功");
+
+        Result wxRefundResult = payProvider.refundOrder(id, payMoney4Wechat);
+
+        if(wxRefundResult.getCode() == 0){
+            hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
+            hotelOrderRepository.save(hotelOrder);
+            return Result.success("退款成功");
+        }
+        return wxRefundResult;
     }
 }
