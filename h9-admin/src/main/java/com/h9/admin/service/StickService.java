@@ -108,8 +108,6 @@ public class StickService {
         return Result.success(pageResult.result2Result(StickTypeVO::new));
     }
 
-
-
     /**
      * 举报记录
      */
