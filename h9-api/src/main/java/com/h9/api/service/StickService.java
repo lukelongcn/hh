@@ -372,20 +372,11 @@ public class StickService {
                 stickComment.setStickComment(stickCommentPid);
             }
         }
-        //  调用评论共有接口
-        Result result = publicCommnetUse(userId,stickCommentDTO.getContent(),stick,stickComment,request);
-        if (!result.isSuccess()) {
-            return result;
-        }
-        return Result.success("回复成功");
-    }
-    private Result publicCommnetUse(long userId,String content,Stick stick,
-                                    StickComment stickComment,HttpServletRequest request){
         // 回复的用户
         User user = userRepository.findOne(userId);
         stickComment.setAnswerUser(user);
         // 回复内容
-        stickComment.setContent(content);
+        stickComment.setContent(stickCommentDTO.getContent());
         // 回复楼层
         stickComment.setFloor(stick.getAnswerCount()+1);
         // 贴子id
@@ -397,7 +388,7 @@ public class StickService {
         stick.setAnswerCount(stick.getAnswerCount()+1);
         stick.setReadCount(stick.getReadCount()+1);
         stickRepository.save(stick);
-        return Result.success();
+        return Result.success("回复成功");
     }
 
     /**
@@ -478,9 +469,9 @@ public class StickService {
      * 打赏
      */
     public Result reward(long userId, StickRewardJiuYuanDTO stickRewardJiuYuanDTO, HttpServletRequest request) {
-        /*if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
+        if (stickRewardJiuYuanDTO.getReward().signum() != 1 ){
             return Result.fail("金额不能为负数");
-        }*/
+        }
         BigDecimal money = stickRewardJiuYuanDTO.getReward();
         // 余额与打赏金额对比
         UserAccount userAccountD = userAccountRepository.findByUserId(userId);
@@ -507,15 +498,30 @@ public class StickService {
         stickReward.setIp(NetworkUtil.getIpAddress(request));
         stickReward.setWords(stickRewardJiuYuanDTO.getWords());
         stickRewardResitory.saveAndFlush(stickReward);
+        // 如果留言不为空 增加评论
+        if (stickRewardJiuYuanDTO.getWords() != null){
+            StickComment stickComment = new StickComment();
+            // 回复的用户
+            User user = userRepository.findOne(userId);
+            stickComment.setAnswerUser(user);
+            // 回复内容
+            stickComment.setContent(stickRewardJiuYuanDTO.getWords());
+            // 回复楼层
+            stickComment.setFloor(stick.getAnswerCount()+1);
+            // 贴子id
+            stickComment.setStick(stick);
+            //ip
+            stickComment.setIp(NetworkUtil.getIpAddress(request));
+            stickCommentRepository.save(stickComment);
+            /*// 增加阅读数和回复数
+            stick.setAnswerCount(stick.getAnswerCount()+1);
+            stick.setReadCount(stick.getReadCount()+1);
+            stickRepository.save(stick);*/
+        }
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         userAccount.setRewardMoney(userAccount.getRewardMoney().add(money));
         userAccountRepository.save(userAccount);
-        // 如果留言不为空 增加评论
-        if (stickRewardJiuYuanDTO.getWords() != null){
-            StickComment stickComment = new StickComment();
-            publicCommnetUse(userId,stickRewardJiuYuanDTO.getWords(),stick,stickComment,request);
-        }
         // 成功
         return Result.success("打赏成功");
     }
