@@ -169,7 +169,8 @@ public class StickService {
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }else{
-            Page<Stick> home = stickRepository.findType(type,stickRepository.pageRequest(page,limit!=null?limit:20));
+            long typeId = Long.parseLong(type);
+            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }
