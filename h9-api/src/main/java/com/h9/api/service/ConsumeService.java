@@ -184,10 +184,10 @@ public class ConsumeService {
             map.put("money", MoneyUtils.formatMoney(realPrice));
             saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
+            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
 
             return Result.success("充值成功", map);
         } else {
-            commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             order.setStatus(Orders.statusEnum.FAIL.getCode());
             ordersReposiroty.save(order);
             return Result.fail("充值失败");
