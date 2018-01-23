@@ -161,8 +161,8 @@ public class ConsumeService {
 
 //        userAccountRepository.save(userAccount);
         String rechargeId = UUID.randomUUID().toString().replace("-", "");
-//        Result result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
-        Result result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
+        Result result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
+//        Result result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
 
         //保存充值记录（包括失败成功）
         try {
