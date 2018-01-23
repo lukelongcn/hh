@@ -188,6 +188,9 @@ public class StickService {
         if(stickType==null){
             return Result.fail("分类不存在");
         }
+        if (stickType.getState() != 1){
+            return Result.fail("改分类已被删除");
+        }
         return Result.success(new StickTypeDetailVo(stickType));
     }
 
@@ -479,6 +482,7 @@ public class StickService {
             return Result.fail("金额不能为负数");
         }*/
         BigDecimal money = stickRewardJiuYuanDTO.getReward();
+        // 余额与打赏金额对比
         UserAccount userAccountD = userAccountRepository.findByUserId(userId);
         int flag = userAccountD.getBalance().compareTo(money);
         if (flag == -1){
@@ -511,8 +515,6 @@ public class StickService {
         if (stickRewardJiuYuanDTO.getWords() != null){
             StickComment stickComment = new StickComment();
             publicCommnetUse(userId,stickRewardJiuYuanDTO.getWords(),stick,stickComment,request);
-            // 成功
-            return Result.success("打赏成功");
         }
         // 成功
         return Result.success("打赏成功");
