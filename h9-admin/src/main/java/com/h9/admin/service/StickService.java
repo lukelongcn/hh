@@ -8,6 +8,7 @@ import com.h9.admin.model.vo.StickCommentVO;
 import com.h9.admin.model.vo.StickDetailVO;
 import com.h9.admin.model.vo.StickReportVO;
 import com.h9.admin.model.vo.StickRewardVO;
+import com.h9.admin.model.vo.StickTypeDetailVO;
 import com.h9.admin.model.vo.StickTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -105,6 +106,8 @@ public class StickService {
         }
         return Result.success(pageResult.result2Result(StickTypeVO::new));
     }
+
+
 
     /**
      * 举报记录
@@ -330,5 +333,16 @@ public class StickService {
         stickType.setState(3);
         stickTypeRepository.save(stickType);
         return Result.success("删除成功");
+    }
+
+    /**
+     * 分类详情
+     */
+    public Result typeDetail(Long id) {
+        StickType stickType = stickTypeRepository.findOne(id);
+        if (stickType == null){
+            return Result.fail("分类不存在");
+        }
+        return Result.success(new StickTypeDetailVO(stickType));
     }
 }

@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 public class StickDetailVO {
     private Long id;
-    private Long stickTypeId;
+    private Long typeId;
     private String stickTypeName;
     private String title = "";
     private String content = "";
@@ -33,7 +33,7 @@ public class StickDetailVO {
 
     public StickDetailVO(Stick stick){
         id = stick.getId();
-        stickTypeId = stick.getStickType().getId();
+        typeId = stick.getStickType().getId();
         stickTypeName = stick.getStickType().getName();
         title = stick.getTitle();
         content = stick.getContent();
