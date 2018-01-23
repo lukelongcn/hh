@@ -33,6 +33,7 @@ public class PersonalGiveRewardVO {
                 this.stickUserName = user.getNickName();
             }
         }
+        this.reward = stickReward.getReward();
     }
 
 }

@@ -160,6 +160,7 @@ public class StickService {
 
     public Result listStick(String type,int page,Integer limit){
 
+        /* 首页 */
         if(type.equals("config_home")){
             Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
             PageResult<Stick> pageResult = new PageResult(home);

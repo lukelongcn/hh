@@ -4,6 +4,8 @@ import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
@@ -19,6 +21,8 @@ public class PersonalRewardedVO {
 
     private String createTime;
 
+    private BigDecimal reward = new BigDecimal(0);
+
     public PersonalRewardedVO(StickReward stickReward){
         this.createTime = DateUtil.formatDate(stickReward.getCreateTime(), DateUtil.FormatType.SECOND);
         User user = stickReward.getUser();
@@ -27,5 +31,6 @@ public class PersonalRewardedVO {
             this.rewardNickName = user.getNickName();
         }
         this.words = stickReward.getWords();
+        this.reward = stickReward.getReward();
     }
 }
