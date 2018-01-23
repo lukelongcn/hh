@@ -92,11 +92,6 @@ public class StickService {
         if (stickType == null){
             return Result.fail("该分类已被删除");
         }
-        String name = stickTypeDTO.getName();
-        List<StickType> type = stickTypeRepository.findByName(name);
-        if(type!=null){
-            return Result.fail(name+"已经存在");
-        }
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
         return Result.success("编辑成功");

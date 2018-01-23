@@ -20,6 +20,7 @@ import lombok.Data;
 @Data
 public class StickTypeDTO {
 
+    private Long id;
     @NotNull(message = "分类id不能为空")
     private Long stickTypeId;
     @NotBlank(message = "请填写分类名称")
