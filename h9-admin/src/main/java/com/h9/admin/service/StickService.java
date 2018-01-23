@@ -74,7 +74,7 @@ public class StickService {
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
         List<StickType> type = stickTypeRepository.findByName(name);
-        if(type!=null){
+        if(CollectionUtils.isNotEmpty(type)){
             return Result.fail(name+"已经存在");
         }
         StickType stickType = new StickType();
