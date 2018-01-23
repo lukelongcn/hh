@@ -212,7 +212,7 @@ public class StickService {
      *  @return Result
      */
     public Result allDetail(Integer pageNumber, Integer pageSize) {
-        PageResult<Stick> sticklist = stickRepository.findAll(pageNumber,pageSize);
+        PageResult<Stick> sticklist = stickRepository.findAllStick(pageNumber,pageSize);
         if (sticklist == null){
             return Result.fail("暂无贴子");
         }
@@ -221,9 +221,6 @@ public class StickService {
     @Value("${path.app.wechat_host}")
     private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
-        if (stick.getState()!= 1){
-            return new StickDetailVO();
-        }
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
