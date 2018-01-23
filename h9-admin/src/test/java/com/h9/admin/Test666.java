@@ -39,14 +39,23 @@ public class Test666 {
     @Test
     public void testRefund() throws IOException {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+        InputStream is2 = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
 
-        FileOutputStream fos = new FileOutputStream(new File("D:\\资料\\红包\\cert\\test.p12"));
+
+        File file = new File("/Users/ln/Documents/test.p12");
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        System.out.println("path :"+file.getAbsolutePath());
+        FileOutputStream fos = new FileOutputStream(file);
         int len = 0;
         byte[] bytes = new byte[1024];
 
         while(( len = is.read(bytes)) != -1){
             fos.write(bytes, 0, len);
         }
+        System.out.println("read finish!");
     }
 
 }
