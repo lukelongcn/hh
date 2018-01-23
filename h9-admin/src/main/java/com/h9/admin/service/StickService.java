@@ -67,6 +67,9 @@ public class StickService {
     @Resource
     private UserAccountRepository userAccountRepository;
 
+    /**
+     * 添加分类
+     */
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
         StickType type = stickTypeRepository.findByName(name);
@@ -92,6 +95,9 @@ public class StickService {
         return Result.success("编辑成功");
     }
 
+    /**
+     * 分类列表
+     */
     public Result getStick(int page,int limit){
         PageResult<StickType> pageResult = stickTypeRepository.findAll(page, limit);
         if (pageResult == null){
@@ -100,7 +106,9 @@ public class StickService {
         return Result.success(pageResult.result2Result(StickTypeVO::new));
     }
 
-
+    /**
+     * 举报记录
+     */
     public Result getReport(Integer page, Integer limit) {
         PageResult<StickReport> pageResult = stickReportRepository.findReportList(page, limit);
         if (pageResult == null){

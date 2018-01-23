@@ -12,9 +12,30 @@ import lombok.Data;
 @Data
 public class StickTypeVO {
     private Long id;
-    private Integer defaultSort = 1;
-    private String image;
+
     private String name;
+
+    private String content;
+
+    private String image;
+
+    private Integer stickCount;
+
+    private Integer limitState = 1;
+
+    private Integer examineState = 1;
+
+    private Integer commentState = 1;
+
+    private Integer admitsState = 1;
+
+    private String sort;
+
+    private Integer defaultSort = 1;
+
+    private Integer state = 1;
+
+
 
     public StickTypeVO(StickType stickType) {
         BeanUtils.copyProperties(stickType,this);
