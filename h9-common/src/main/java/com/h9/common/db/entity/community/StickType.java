@@ -38,7 +38,7 @@ public class StickType extends BaseEntity {
     private String image;
 
     @Column(name = "stick_count",columnDefinition = "int default 0 COMMENT '贴子数量'")
-    private Integer stickCount;
+    private Integer stickCount = 0;
 
     @Column(name = "limit_state",nullable = false, columnDefinition = "int default 1 COMMENT '限制发帖 1不限制 2限制'")
     private Integer limitState = 1;

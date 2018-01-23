@@ -42,7 +42,7 @@ public interface StickRepository extends BaseRepository<Stick> {
     Page<Stick> findStickList(String str, Pageable pageRequest);
 
 
-    @Query("select s from Stick s where s.id = ?1 and s.state =1")
+    @Query("select s from Stick s where s.id = ?1")
     Stick findById(long stickId);
 
     @Query("select s from Stick s where s.user.id = ?1 and s.state = 1 order by s.createTime DESC ")
