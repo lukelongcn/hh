@@ -430,12 +430,12 @@ public class ApiApplicationTests {
 
     @Test
     public void testRecharge(){
-        MobileRechargeDTO mobileRechargeDTO = new MobileRechargeDTO();
-        mobileRechargeDTO.setCode("0000");
-        mobileRechargeDTO.setTel("17673140753");
-        MobileRechargeService service = new MobileRechargeService();
-        Result recharge = service.recharge(mobileRechargeDTO, 10L, new BigDecimal("0.01"));
-        System.out.println(recharge);
+//        MobileRechargeDTO mobileRechargeDTO = new MobileRechargeDTO();
+//        mobileRechargeDTO.setCode("0000");
+//        mobileRechargeDTO.setTel("17673140753");
+//        MobileRechargeService service = new MobileRechargeService();
+//        Result recharge = service.recharge(mobileRechargeDTO, 10L, new BigDecimal("0.01"));
+//        System.out.println(recharge);
     }
 }
 

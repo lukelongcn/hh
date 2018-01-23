@@ -16,6 +16,9 @@ public class RechargeRecord extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "recharge_id",columnDefinition = "varchar(255) comment 'h9商户对第三方充值订单的id,UUID'")
+    private String rechargeId;
+
     @Column(name = "user_id")
     private Long userId;
 
@@ -28,15 +31,29 @@ public class RechargeRecord extends BaseEntity {
     @Column(name = "tel", columnDefinition = "varchar(50) COMMENT '充值的手机号码'")
     private String tel;
 
+    /**
+     * description: order id
+     */
     @Column(name = "order_id")
     private Long orderId;
 
-    public RechargeRecord(Long userId, BigDecimal money, String userName, String tel,Long orderId) {
+
+
+    public RechargeRecord(Long userId, BigDecimal money, String userName, String tel,String rechargeId,Long orderId) {
         this.userId = userId;
         this.money = money;
         this.userName = userName;
         this.tel = tel;
         this.orderId = orderId;
+        this.rechargeId = rechargeId;
+    }
+
+    public String getRechargeId() {
+        return rechargeId;
+    }
+
+    public void setRechargeId(String rechargeId) {
+        this.rechargeId = rechargeId;
     }
 
     public RechargeRecord( ) {

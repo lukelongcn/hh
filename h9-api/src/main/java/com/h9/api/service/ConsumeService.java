@@ -159,13 +159,15 @@ public class ConsumeService {
         orderItems.setName(goods.getName());
         orderItems.setGoods(goods);
 
-        userAccountRepository.save(userAccount);
-        orderItemReposiroty.saveAndFlush(orderItems);
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(), realPrice);
+//        userAccountRepository.save(userAccount);
+        String rechargeId = UUID.randomUUID().toString().replace("-", "");
+//        Result result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
+        Result result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
+
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
-            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo, order);
+            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo, rechargeId);
             //减库存
             Result changeStockResult = goodService.changeStock(goods);
             if (changeStockResult.getCode() == 1) {
@@ -182,13 +184,14 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
+            orderItemReposiroty.saveAndFlush(orderItems);
+            saveRechargeRecord(user, goods.getRealPrice(), rechargeId,orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             return Result.success("充值成功", map);
         } else {
-            order.setStatus(Orders.statusEnum.FAIL.getCode());
-            ordersReposiroty.save(order);
+//            order.setStatus(Orders.statusEnum.FAIL.getCode());
+//            ordersReposiroty.save(order);
             return Result.fail("充值失败");
         }
     }
@@ -232,12 +235,12 @@ public class ConsumeService {
     }
 
 
-    public void saveRechargeRecord(User user, BigDecimal money, Long orderId) {
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), orderId);
+    public void saveRechargeRecord(User user, BigDecimal money, String rechargeId,Long orderId) {
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), rechargeId,orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 
-    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo, Orders order) {
+    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo, String rechargeId) {
 
         OfPayRecord ofPayRecord = new OfPayRecord();
         ofPayRecord.setErrMsg(orderinfo.getErr_msg());
@@ -247,7 +250,7 @@ public class ConsumeService {
         ofPayRecord.setCardnum(orderinfo.getCardnum());
         ofPayRecord.setOrdercash(orderinfo.getOrdercash());
         ofPayRecord.setCardname(orderinfo.getCardname());
-        ofPayRecord.setSporderId(order.getId()+"");
+        ofPayRecord.setSporderId(rechargeId);
         ofPayRecord.setGameUserid(orderinfo.getGame_userid());
         ofPayRecord.setGameState(orderinfo.getGame_state());
 
