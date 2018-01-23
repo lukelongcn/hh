@@ -161,8 +161,13 @@ public class ConsumeService {
 
 //        userAccountRepository.save(userAccount);
         String rechargeId = UUID.randomUUID().toString().replace("-", "");
-        Result result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
-//        Result result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
+
+        Result result = null;
+        if (currentEnvironment.equals("product")) {
+            result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
+        } else {
+            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
+        }
 
         //保存充值记录（包括失败成功）
         try {
@@ -185,7 +190,7 @@ public class ConsumeService {
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
             orderItemReposiroty.saveAndFlush(orderItems);
-            saveRechargeRecord(user, goods.getRealPrice(), rechargeId,orderItems.getOrders().getId());
+            saveRechargeRecord(user, goods.getRealPrice(), rechargeId, orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
             return Result.success("充值成功", map);
@@ -235,8 +240,8 @@ public class ConsumeService {
     }
 
 
-    public void saveRechargeRecord(User user, BigDecimal money, String rechargeId,Long orderId) {
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), rechargeId,orderId);
+    public void saveRechargeRecord(User user, BigDecimal money, String rechargeId, Long orderId) {
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), rechargeId, orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 
