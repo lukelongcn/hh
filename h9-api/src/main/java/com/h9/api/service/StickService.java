@@ -55,6 +55,7 @@ import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.NetworkUtil;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -565,7 +566,7 @@ public class StickService {
         stickReward.setWords(stickRewardJiuYuanDTO.getWords());
         stickRewardResitory.saveAndFlush(stickReward);
         // 如果留言不为空 增加评论
-        if (stickRewardJiuYuanDTO.getWords() != null){
+        if (StringUtils.isNotBlank(stickReward.getWords())){
             StickComment stickComment = new StickComment();
             // 回复的用户
             User user = userRepository.findOne(userId);
