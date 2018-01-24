@@ -293,6 +293,7 @@ public class LotteryService {
             RLock lock = redisson.getLock("lock:" +  code);
             try {
                 lock.lock(30, TimeUnit.SECONDS);
+                logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
                 lottery(null, code);
             } finally {
                 lock.unlock();
@@ -376,10 +377,10 @@ public class LotteryService {
 
             return Result.fail("没有抽奖记录");
         }
-        logger.debugv("lottery start 中奖名单为：开始处理");
+        logger.debugv("lottery start 中奖名单为：开始处理 {0}",code);
         List<Lottery> lotteries = new ArrayList<>();
         List<LotteryFlow> lotteryFlows = getReward(reward, lotteryList, lotteries);
-        logger.debugv("lottery start 中奖名单为：{0}", JSONObject.toJSONString(lotteryFlows));
+        logger.debugv("lottery start 中奖名单为：{0} {1}", JSONObject.toJSONString(lotteryFlows),code);
         lotteryRepository.save(lotteries);
         lotteryFlowRepository.save(lotteryFlows);
         LotteryModel lotteryModel = factoryProvider.updateLotteryStatus(code);

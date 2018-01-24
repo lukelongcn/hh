@@ -54,6 +54,7 @@ public class LotteryTask {
                 RLock lock = redisson.getLock("lock:" +  reward.getCode());
                 try {
                     lock.lock(1000, TimeUnit.MILLISECONDS);
+                    logger.debugv("lottery start 中奖名单为：定时任务开奖 code:{0}", reward.getCode());
                     lotteryService.lottery(null, reward.getCode());
                 } finally {
                     lock.unlock();
