@@ -42,29 +42,40 @@ public class LotteryTask {
     
 
     @Scheduled(fixedRate = 5000)
-    public void run() {
-
-        List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
-        if(rewardList == null){
-            return;
-        }
-        for (Reward reward : rewardList) {
-            try {
-                logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
-                RLock lock = redisson.getLock("lock:" +  reward.getCode());
-                try {
-                    lock.lock(1000, TimeUnit.MILLISECONDS);
-                    logger.debugv("lottery start 中奖名单为：定时任务开奖 code:{0}", reward.getCode());
-                    lotteryService.lottery(null, reward.getCode());
-                } finally {
-                    lock.unlock();
-                }
-                logger.info("rewardId: " + reward.getId() + "结束");
-            } catch (Exception e) {
-                e.printStackTrace();
+    public void run() throws InterruptedException {
+        RLock lockTask = redisson.getLock("lock:lottery:task" );
+        try{
+            boolean isLock = lockTask.tryLock(2000l, TimeUnit.MILLISECONDS);
+            if(!isLock){
+                logger.debugv("沒拿到锁 {0}", new Date());
+                return;
             }
+            List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
+            if(rewardList == null){
+                return;
+            }
+            for (Reward reward : rewardList) {
+                try {
+                    logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
+                    RLock lock = redisson.getLock("lock:" +  reward.getCode());
+                    try {
+                        lock.lock(1000, TimeUnit.MILLISECONDS);
+                        logger.debugv("lottery start 中奖名单为：定时任务开奖 code:{0}", reward.getCode());
+                        lotteryService.lottery(null, reward.getCode());
+                    } finally {
+                        lock.unlock();
+                    }
+                    logger.info("rewardId: " + reward.getId() + "结束");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
+            }
+        }finally {
+            lockTask.unlock();
         }
+
+
 
     }
 }
