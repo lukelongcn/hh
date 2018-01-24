@@ -35,7 +35,7 @@ public class StickSampleVO {
     private String userName;
     private String userAvatar;
     private String title;
-    private String images;
+    private List<String> images;
     private Integer readCount = 0;
     private Integer likeCount = 0;
     private Integer answerCount = 0;
@@ -62,7 +62,7 @@ public class StickSampleVO {
         }
         spaceTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
         images = stick.getImages();
-        System.out.println(images);
+        System.out.println(stick.getImages());
     }
 
 }

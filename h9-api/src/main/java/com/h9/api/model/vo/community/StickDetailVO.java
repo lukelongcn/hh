@@ -25,7 +25,7 @@ public class StickDetailVO {
     private String userName;
     private String userAvatar;
     private String title;
-    private String images;
+    private List<String> images;
     private Integer readCount = 0;
     private Integer likeCount = 0;
     private Integer answerCount = 0;
