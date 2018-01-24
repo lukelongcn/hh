@@ -1,5 +1,6 @@
 package com.h9.lottery.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -352,15 +353,13 @@ public class LotteryService {
 
     @Transactional
     public Result lottery(Long curUserId, String code) {
-
-
+        logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
         }
         if (curUserId != null) {
             if (!curUserId.equals(reward.getUserId())) {
-
                 return Result.fail("你无权操作");
             }
         }
@@ -379,6 +378,7 @@ public class LotteryService {
         }
         List<Lottery> lotteries = new ArrayList<>();
         List<LotteryFlow> lotteryFlows = getReward(reward, lotteryList, lotteries);
+        logger.debugv("lottery start 中奖名单为：{0}", JSONObject.toJSONString(lotteryFlows));
         lotteryRepository.save(lotteries);
         lotteryFlowRepository.save(lotteryFlows);
         LotteryModel lotteryModel = factoryProvider.updateLotteryStatus(code);
