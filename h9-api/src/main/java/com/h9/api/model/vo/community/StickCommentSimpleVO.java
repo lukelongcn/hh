@@ -35,7 +35,10 @@ public class StickCommentSimpleVO {
         this.nickName = answerUser.getNickName();
         this.content = stickComment.getContent();
         User notifyUserId = stickComment.getNotifyUserId();
-        this.backCommentUserId = notifyUserId.getId();
-        this.backNickName = notifyUserId.getNickName();
+        if(notifyUserId!=null){
+            this.backCommentUserId = notifyUserId.getId();
+            this.backNickName = notifyUserId.getNickName();
+        }
+
     }
 }

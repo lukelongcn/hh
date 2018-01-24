@@ -1,5 +1,7 @@
 package com.h9.common.db.entity.community;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.h9.common.base.BaseEntity;
 import com.h9.common.db.entity.user.User;
@@ -10,6 +12,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -69,7 +72,6 @@ public class Stick extends BaseEntity {
     @Column(name = "lock_state",nullable = false,columnDefinition = "int default 1 COMMENT '锁住状态 1解锁 2锁住'")
     private Integer lockState = 1;
 
-    @JsonIgnore
     @Column(name = "images",columnDefinition = "varchar(200) default '' COMMENT '照片'")
     private String images;
 
@@ -256,11 +258,20 @@ public class Stick extends BaseEntity {
         this.ip = ip;
     }
 
-    public String getImages() {
-        return images;
+    public List<String> getImages() {
+        try {
+            return JSONArray.parseArray(images, String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
-    public void setImages(String images) {
-        this.images = images;
+    public void setImages(List<String> images) {
+        try {
+            this.images = JSONArray.toJSONString(images);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

@@ -163,18 +163,14 @@ public class StickService {
      * @return R
      */
     public Result getComment(Integer page, Integer limit, long stickId) {
-            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(stickId,page, limit);
-            if (pageResult == null){
-                return Result.success("暂无评论");
-            }
+            PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
             return Result.success(pageResult.result2Result(this::stickComent2Vo));
     }
 
     private StickCommentVO stickComent2Vo(StickComment stickComment) {
         // 拿到回复的回复列表
         List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
-        long stickCommentParentId = stickComment.getId();
-        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickComment.getId());
         if (CollectionUtils.isNotEmpty(stickCommentChild)){
             stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
