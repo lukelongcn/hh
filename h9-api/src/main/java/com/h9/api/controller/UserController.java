@@ -32,7 +32,8 @@ public class UserController {
      */
     @PostMapping("/user/phone/login")
     @ApiOperation("手机号登录")
-    public Result<LoginResultVO> phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO,@RequestHeader(value = "client",required = false)int client){
+    public Result<LoginResultVO> phoneLogin(@Valid@RequestBody UserLoginDTO userLoginDTO,
+                                            @RequestHeader(value = "client", required = false,defaultValue = "0")Integer client){
         return userService.loginFromPhone(userLoginDTO,client);
     }
 
