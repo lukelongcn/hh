@@ -73,7 +73,7 @@ public class HotelService {
 
         Hotel hotel = null;
         List<String> images = editHotelDTO.getImages();
-        if(images!=null||images.size()>9){
+        if(images!=null&&images.size()>9){
             return Result.fail("图片最多选9张");
         }
 
