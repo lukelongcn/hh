@@ -9,7 +9,7 @@ import com.h9.common.base.Result;
  * Date: 2017/12/7
  * Time: 10:22
  */
-public class ServiceException extends Exception{
+public class ServiceException extends RuntimeException{
     private int code = 1;
 
     public ServiceException(int code) {
