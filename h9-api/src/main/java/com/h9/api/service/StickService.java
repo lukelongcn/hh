@@ -53,12 +53,15 @@ import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.NetworkUtil;
+import com.sun.corba.se.impl.resolver.ORBDefaultInitRefResolverImpl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,6 +121,7 @@ public class StickService {
     private StickReportRepository stickReportRepository;
     @Resource
     private StickRewardResitory stickRewardResitory;
+    private SortParameters.Order order;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -229,12 +233,23 @@ public class StickService {
             Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
-        }else if(type.equals("config_hot")){
+        }
+        // 热门
+        else if(type.equals("config_hot")){
             Page<Stick> home = stickRepository.find4Hot(stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
-        }else{
+        }
+        // 分类贴子列表
+        else{
             long typeId = Long.parseLong(type);
+            StickType stickType = stickTypeRepository.findOne(typeId);
+            Integer defaultSort = stickType.getDefaultSort();
+
+            if (StickType.defaultSortEnum.COMMENT_COUNT.getId() == defaultSort)
+            {
+                Sort sort = new Sort(Sort.Direction.DESC,"");
+            }
             Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
@@ -248,7 +263,7 @@ public class StickService {
     }
 
     /**
-     *  分类下贴子列表
+     *  分类头部信息
      */
     public Result typeDetail(long typeId){
         StickType stickType = stickTypeRepository.findOne(typeId);
