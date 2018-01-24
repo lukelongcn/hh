@@ -170,8 +170,7 @@ public class StickService {
     private StickCommentVO stickComent2Vo(StickComment stickComment) {
         // 拿到回复的回复列表
         List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
-        long stickCommentParentId = stickComment.getId();
-        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
+        List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickComment.getId());
         if (CollectionUtils.isNotEmpty(stickCommentChild)){
             stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }

@@ -23,5 +23,5 @@ public interface HotelOrderRepository extends BaseRepository<HotelOrder> {
     Page<HotelOrder> findAllByUserId(long userId, Pageable pageRequest);
 
 
-    Stream<HotelOrder> findByOrderStatus(Integer status);
+    List<HotelOrder> findByOrderStatus(Integer status);
 }

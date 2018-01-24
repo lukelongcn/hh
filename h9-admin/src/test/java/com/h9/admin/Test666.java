@@ -1,5 +1,6 @@
 package com.h9.admin;
 
+import com.h9.admin.job.HotelOrderJob;
 import com.h9.admin.service.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,13 @@ public class Test666 {
             fos.write(bytes, 0, len);
         }
         System.out.println("read finish!");
+    }
+
+    @Resource
+    private HotelOrderJob job;
+    @Test
+    public void testTask(){
+        job.scan();
     }
 
 }

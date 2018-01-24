@@ -297,7 +297,8 @@ public class HotelService {
         if (balance.compareTo(hotelOrder.getTotalMoney()) < 0) {
             return Result.fail("余额不足");
         }
-        commonService.setBalance(user.getId(), hotelOrder.getTotalMoney(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+        BigDecimal payMoney = hotelOrder.getTotalMoney().abs().negate();
+        commonService.setBalance(user.getId(), payMoney, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
         hotelOrder.setPayMoney4JiuYuan(hotelOrder.getTotalMoney());
         hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode());
         PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("", false));

@@ -19,8 +19,7 @@ public class StickCommentVO {
     private Long commentUserId;
     private String avatar ;
     private String nickName;
-    private Integer sex ;
-    private Integer likeCount;
+    private Integer sex = 1;
 
 
     // 评论间隔时间
@@ -58,7 +57,7 @@ public class StickCommentVO {
             this.aitNickName = userAit.getNickName();
             this.aitUserId = userAit.getId();
         }
-        this.likeCount = stickComment.getLikeCount();
+        floor = stickComment.getFloor();
         this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
         this.content = stickComment.getContent();
     }
