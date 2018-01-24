@@ -1,13 +1,18 @@
 package com.h9.api.model.vo.community;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.vo.HomeVO;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lombok.Data;
 
@@ -20,7 +25,7 @@ public class StickDetailVO {
     private String userName;
     private String userAvatar;
     private String title;
-    private List<String> images;
+    private String images;
     private Integer readCount = 0;
     private Integer likeCount = 0;
     private Integer answerCount = 0;
@@ -51,5 +56,9 @@ public class StickDetailVO {
         }
         content = stick.getContent();
         state = stick.getState();
+        images = stick.getImages();
+        System.out.println(images);
     }
+
+
 }

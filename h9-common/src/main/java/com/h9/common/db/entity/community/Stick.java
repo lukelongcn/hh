@@ -1,5 +1,6 @@
 package com.h9.common.db.entity.community;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.h9.common.base.BaseEntity;
 import com.h9.common.db.entity.user.User;
 import org.hibernate.annotations.Fetch;
@@ -68,6 +69,9 @@ public class Stick extends BaseEntity {
     @Column(name = "lock_state",nullable = false,columnDefinition = "int default 1 COMMENT '锁住状态 1解锁 2锁住'")
     private Integer lockState = 1;
 
+    @JsonIgnore
+    @Column(name = "images",columnDefinition = "varchar(200) default '' COMMENT '照片'")
+    private String images;
 
     /***************************      地址信息              *************************/
     @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
@@ -250,5 +254,13 @@ public class Stick extends BaseEntity {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getImages() {
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
     }
 }
