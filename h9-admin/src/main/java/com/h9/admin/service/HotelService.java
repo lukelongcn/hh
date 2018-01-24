@@ -72,6 +72,10 @@ public class HotelService {
     public Result editHotel(EditHotelDTO editHotelDTO) {
 
         Hotel hotel = null;
+        List<String> images = editHotelDTO.getImages();
+        if(images!=null||images.size()>9){
+            return Result.fail("图片最多选9张");
+        }
 
         if (editHotelDTO.getId() == null) {
             hotel = new Hotel();
@@ -80,7 +84,7 @@ public class HotelService {
             hotel = hotelRepository.findOne(editHotelDTO.getId());
         }
         BeanUtils.copyProperties(editHotelDTO, hotel);
-        hotel.setImages(editHotelDTO.getImages());
+        hotel.setImages(images);
 
         String hotelInfo = editHotelDTO.getHotelInfo();
 
