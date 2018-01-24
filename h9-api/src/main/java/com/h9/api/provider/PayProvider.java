@@ -32,6 +32,8 @@ public class PayProvider {
     
     @Resource
     private RestTemplate restTemplate;
+    @Value("{path.admin.host}")
+    private String adminHost;
     
 
     private String initUrl(){
@@ -105,5 +107,19 @@ public class PayProvider {
         }
     }
 
+//    /**
+//     * description: 酒店 订单退款 ，调用后台管系统的退款 接口
+//     */
+//    public Result refundHotelOrder(Long orderId){
+//        String url = adminHost+"/h9/admin/hotel/order/refund";
+//        try {
+//            Result result = restTemplate.getForObject(adminHost, Result.class, orderId);
+//            return result;
+//        } catch (RestClientException e) {
+//            logger.info(e.getMessage(),e);
+//            logger.info("退款接口异常");
+//        }
+//        return Result.fail();
+//    }
 
 }
