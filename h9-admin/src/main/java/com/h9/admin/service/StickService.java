@@ -163,10 +163,7 @@ public class StickService {
      * @return R
      */
     public Result getComment(Integer page, Integer limit, long stickId) {
-            PageResult<StickComment> pageResult = stickCommentRepository.findCommentList(stickId,page, limit);
-            if (pageResult == null){
-                return Result.success("暂无评论");
-            }
+            PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
             return Result.success(pageResult.result2Result(this::stickComent2Vo));
     }
 
