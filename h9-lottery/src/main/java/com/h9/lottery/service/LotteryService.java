@@ -376,6 +376,7 @@ public class LotteryService {
 
             return Result.fail("没有抽奖记录");
         }
+        logger.debugv("lottery start 中奖名单为：开始处理");
         List<Lottery> lotteries = new ArrayList<>();
         List<LotteryFlow> lotteryFlows = getReward(reward, lotteryList, lotteries);
         logger.debugv("lottery start 中奖名单为：{0}", JSONObject.toJSONString(lotteryFlows));
