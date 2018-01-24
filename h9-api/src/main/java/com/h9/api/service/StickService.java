@@ -53,12 +53,15 @@ import com.h9.common.db.repo.UserExtendsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.NetworkUtil;
+import com.sun.corba.se.impl.resolver.ORBDefaultInitRefResolverImpl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -170,7 +173,7 @@ public class StickService {
             }
         }
         stick.setIp(NetworkUtil.getIpAddress(request));
-        stick.setImages(images);
+        stick.setImages(images.subList(0,9));
         System.out.println(images);
         return stickRepository.saveAndFlush(stick);
     }
@@ -229,12 +232,23 @@ public class StickService {
             Page<Stick> home = stickRepository.find4Home(stickRepository.pageRequest(page,limit!=null?limit:5));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
-        }else if(type.equals("config_hot")){
+        }
+        // 热门
+        else if(type.equals("config_hot")){
             Page<Stick> home = stickRepository.find4Hot(stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
-        }else{
+        }
+        // 分类贴子列表
+        else{
             long typeId = Long.parseLong(type);
+            StickType stickType = stickTypeRepository.findOne(typeId);
+            Integer defaultSort = stickType.getDefaultSort();
+
+            if (StickType.defaultSortEnum.COMMENT_COUNT.getId() == defaultSort)
+            {
+                Sort sort = new Sort(Sort.Direction.DESC,"");
+            }
             Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
@@ -248,7 +262,7 @@ public class StickService {
     }
 
     /**
-     *  分类下贴子列表
+     *  分类头部信息
      */
     public Result typeDetail(long typeId){
         StickType stickType = stickTypeRepository.findOne(typeId);
@@ -400,7 +414,7 @@ public class StickService {
     }
 
     /**
-     * 添加贴子或评论回复
+     * 添加贴子回复或添加评论回复
      * @param userId 用户id
      * @param stickCommentDTO 请求对象
      * @param request 请求
@@ -445,7 +459,7 @@ public class StickService {
         // 回复内容
         stickComment.setContent(stickCommentDTO.getContent());
         // 回复楼层
-        stickComment.setFloor(stick.getAnswerCount()+1);
+        stickComment.setFloor(stick.getFloorCount()+1);
         // 贴子id
         stickComment.setStick(stick);
         //ip
@@ -454,6 +468,8 @@ public class StickService {
         // 增加阅读数和回复数
         stick.setAnswerCount(stick.getAnswerCount()+1);
         stick.setReadCount(stick.getReadCount()+1);
+        stick.setFloorCount(stick.getFloorCount()+1);
+        stick.setAnswerTime(new Date());
         stickRepository.save(stick);
         return Result.success("回复成功");
     }

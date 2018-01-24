@@ -62,7 +62,6 @@ public class StickSampleVO {
         }
         spaceTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
         images = stick.getImages();
-        System.out.println(stick.getImages());
     }
 
 }
