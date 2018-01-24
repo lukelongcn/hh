@@ -75,7 +75,7 @@ public class UserService {
     private ConfigService configService;
     private Logger logger = Logger.getLogger(this.getClass());
 
-    public Result loginFromPhone(UserLoginDTO userLoginDTO,int client) {
+    public Result loginFromPhone(UserLoginDTO userLoginDTO,Integer client) {
         String phone = userLoginDTO.getPhone();
 
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
