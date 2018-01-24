@@ -169,7 +169,8 @@ public class StickService {
             }
         }
         stick.setIp(NetworkUtil.getIpAddress(request));
-        stick.setImages(images.toString());
+        stick.setImages(images);
+        System.out.println(images);
         return stickRepository.saveAndFlush(stick);
     }
 
