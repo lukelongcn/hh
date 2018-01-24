@@ -305,6 +305,9 @@ public class StickService {
             }
             return Result.success(stickDetailVO);
         }
+
+        stick.setReadCount(stick.getReadCount()+1);
+        stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);
     }
 
@@ -449,16 +452,12 @@ public class StickService {
         stickComment.setAnswerUser(user);
         // 回复内容
         stickComment.setContent(stickCommentDTO.getContent());
-        // 回复楼层
-        stickComment.setFloor(stick.getFloorCount()+1);
         // 贴子id
         stickComment.setStick(stick);
         //ip
         stickComment.setIp(NetworkUtil.getIpAddress(request));
-        // 增加阅读数和回复数
+        // 增加回复数
         stick.setAnswerCount(stick.getAnswerCount()+1);
-        stick.setReadCount(stick.getReadCount()+1);
-        stick.setFloorCount(stick.getFloorCount()+1);
         stick.setAnswerTime(new Date());
 
         // 父级id
@@ -470,8 +469,13 @@ public class StickService {
                 stickComment.setStickComment(stickCommentPid);
                 // 回复楼层
                 stickComment.setFloor(0);
-                stick.setFloorCount(stick.getFloorCount()-1);
+            }else {
+                return Result.fail("该评论不存在或已被删除");
             }
+        }else {
+            // 回复楼层
+            stickComment.setFloor(stick.getFloorCount()+1);
+            stick.setFloorCount(stick.getFloorCount()+1);
         }
         stickRepository.save(stick);
         stickCommentRepository.save(stickComment);
