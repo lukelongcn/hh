@@ -33,7 +33,7 @@ public class Hotel extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "images",columnDefinition = "varchar(1000) COMMENT '酒店图片'")
+    @Column(name = "images",columnDefinition = "varchar(2000) COMMENT '酒店图片'")
     private String images;
 
     @Column(name = "grade",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '酒店评分'")
