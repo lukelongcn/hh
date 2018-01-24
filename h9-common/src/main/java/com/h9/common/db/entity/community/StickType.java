@@ -85,8 +85,6 @@ public class StickType extends BaseEntity {
         }
 
         public int getId() {
-
-
             return id;
         }
         public String getName() {

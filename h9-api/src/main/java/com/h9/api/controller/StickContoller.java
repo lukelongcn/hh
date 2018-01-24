@@ -65,7 +65,9 @@ public class StickContoller {
     }
 
 
-
+    /**
+     * 分类下贴子列表
+     */
     @GetMapping("/{type}/detail")
     public Result home(@PathVariable("type") long typeId) {
         return stickService.typeDetail(typeId);
