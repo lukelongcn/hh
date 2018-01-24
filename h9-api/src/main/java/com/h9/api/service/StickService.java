@@ -249,12 +249,25 @@ public class StickService {
             long typeId = Long.parseLong(type);
             StickType stickType = stickTypeRepository.findOne(typeId);
             Integer defaultSort = stickType.getDefaultSort();
-
-            if (StickType.defaultSortEnum.COMMENT_COUNT.getId() == defaultSort)
-            {
-                Sort sort = new Sort(Sort.Direction.DESC,"");
+            // 默认时间排序
+            Sort sort = new Sort(Sort.Direction.DESC,"createTime");
+            // 最后回复的帖子排在前面
+            if (StickType.defaultSortEnum.COMMENT_COUNT.getId() == defaultSort) {
+                sort = new Sort(Sort.Direction.DESC,"answerCount");
             }
-            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
+            // 浏览数最多的帖子排在前面
+            else if (StickType.defaultSortEnum.READ_COUNT.getId() == defaultSort){
+                sort = new Sort(Sort.Direction.DESC,"readCount");
+            }
+            // 最新发表的帖子排在前面
+            else if (StickType.defaultSortEnum.NEW_STICK.getId() == defaultSort){
+                sort = new Sort(Sort.Direction.DESC,"createTime");
+            }
+            // 回复数最多的帖子排在最前面
+            else if (StickType.defaultSortEnum.LAST_COMMENT.getId() == defaultSort){
+                sort = new Sort(Sort.Direction.DESC,"answerTime");
+            }
+            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20,sort));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }
