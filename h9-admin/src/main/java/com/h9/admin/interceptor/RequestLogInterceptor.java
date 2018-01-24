@@ -1,7 +1,9 @@
 package com.h9.admin.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.common.annotations.PrintReqResLog;
 import org.jboss.logging.Logger;
+import org.springframework.core.NamedThreadLocal;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -24,9 +27,14 @@ import java.util.Map;
 public class RequestLogInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
 
+    private NamedThreadLocal<Long> startTimeThreadLocal = new NamedThreadLocal<Long>("StopWatch-StartTime");
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-
+        //1、开始时间
+        long beginTime = System.currentTimeMillis();
+        //线程绑定变量（该数据只有当前请求的线程可见）
+        startTimeThreadLocal.set(beginTime);
 
         String method = httpServletRequest.getMethod();
         if (HttpMethod.OPTIONS.name().equals(method)) {
@@ -83,7 +91,25 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
+        long endTime = System.currentTimeMillis();//2、结束时间
+        long beginTime = startTimeThreadLocal.get();//得到线程绑定的局部变量（开始时间）
+        long consumeTime = endTime - beginTime;//3、消耗的时间
+        if (consumeTime > 300) {//此处认为处理时间超过300毫秒的请求为慢请求
+            logger.info("lowPerformance: "+consumeTime+", url: " + httpServletRequest.getRequestURL());
+        }
 
+
+        HandlerMethod handlerMethod = (HandlerMethod) o;
+        PrintReqResLog printReqResLog = handlerMethod.getMethodAnnotation(PrintReqResLog.class);
+        printResInfo(httpServletResponse);
+
+        if (printReqResLog == null) {
+            printResResult(httpServletResponse);
+        } else {
+            if (printReqResLog.printResponseResult()) {
+                printResResult(httpServletResponse);
+            }
+        }
     }
 
     //打印参数
@@ -116,5 +142,27 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         }else{
             logger.info("request param: " + new java.lang.String(buffer));
         }
+    }
+
+
+    /**
+     * description: 打印响应参数
+     */
+    private void printResInfo(HttpServletResponse response) throws UnsupportedEncodingException {
+        logger.info("-------------------响应信息-------------------");
+        logger.info("http code : " + response.getStatus());
+
+    }
+
+    /**
+     * description: 打印响应参数
+     */
+    private void printResResult(HttpServletResponse response) throws UnsupportedEncodingException {
+        CustomServletResponseWrapper customServletResponseWrapper = (CustomServletResponseWrapper) response;
+        String responseStr = new String(customServletResponseWrapper.toByteArray(), response.getCharacterEncoding());
+        logger.info("response content: " + responseStr);
+        logger.info("---------------------------------------------");
+        logger.info("");
+
     }
 }
