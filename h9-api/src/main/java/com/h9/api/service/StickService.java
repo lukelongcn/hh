@@ -246,13 +246,16 @@ public class StickService {
         return Result.success(banner);
     }
 
+    /**
+     *  分类下贴子列表
+     */
     public Result typeDetail(long typeId){
         StickType stickType = stickTypeRepository.findOne(typeId);
         if(stickType==null){
             return Result.fail("分类不存在");
         }
         if (stickType.getState() != 1){
-            return Result.fail("改分类已被删除");
+            return Result.fail("该分类已被删除");
         }
         return Result.success(new StickTypeDetailVo(stickType));
     }
