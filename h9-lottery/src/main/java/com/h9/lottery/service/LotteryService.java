@@ -353,7 +353,7 @@ public class LotteryService {
     @Transactional
     public Result lottery(Long curUserId, String code) {
 
-        code = LotteryConstantConfig.path2Code(code);
+
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
