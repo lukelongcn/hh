@@ -121,7 +121,6 @@ public class StickService {
     private StickReportRepository stickReportRepository;
     @Resource
     private StickRewardResitory stickRewardResitory;
-    private SortParameters.Order order;
 
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
@@ -174,7 +173,7 @@ public class StickService {
             }
         }
         stick.setIp(NetworkUtil.getIpAddress(request));
-        stick.setImages(images);
+        stick.setImages(images.subList(0,9));
         System.out.println(images);
         return stickRepository.saveAndFlush(stick);
     }
@@ -415,7 +414,7 @@ public class StickService {
     }
 
     /**
-     * 添加贴子或评论回复
+     * 添加贴子回复或添加评论回复
      * @param userId 用户id
      * @param stickCommentDTO 请求对象
      * @param request 请求
@@ -460,7 +459,7 @@ public class StickService {
         // 回复内容
         stickComment.setContent(stickCommentDTO.getContent());
         // 回复楼层
-        stickComment.setFloor(stick.getAnswerCount()+1);
+        stickComment.setFloor(stick.getFloorCount()+1);
         // 贴子id
         stickComment.setStick(stick);
         //ip
@@ -469,6 +468,8 @@ public class StickService {
         // 增加阅读数和回复数
         stick.setAnswerCount(stick.getAnswerCount()+1);
         stick.setReadCount(stick.getReadCount()+1);
+        stick.setFloorCount(stick.getFloorCount()+1);
+        stick.setAnswerTime(new Date());
         stickRepository.save(stick);
         return Result.success("回复成功");
     }
