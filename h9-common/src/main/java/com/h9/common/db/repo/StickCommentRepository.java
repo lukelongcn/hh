@@ -35,7 +35,7 @@ public interface StickCommentRepository extends BaseRepository<StickComment> {
     }
 
 
-    @Query("select s from StickComment s where s.id = ?1 and  s.state = 1 order by s.createTime ASC ")
+    @Query("select s from StickComment s where s.stickComment.id = ?1 and  s.state = 1 order by s.createTime ASC ")
     List<StickComment> findByBackId(long stickCommentParentId);
 
 

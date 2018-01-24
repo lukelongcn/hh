@@ -57,7 +57,7 @@ public class StickCommentVO {
             this.aitNickName = userAit.getNickName();
             this.aitUserId = userAit.getId();
         }
-
+        floor = stickComment.getFloor();
         this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
         this.content = stickComment.getContent();
     }
