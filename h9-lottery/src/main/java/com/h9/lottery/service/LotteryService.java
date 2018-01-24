@@ -449,6 +449,11 @@ public class LotteryService {
             lotteryFlow.setDesc(remarkList.get(i % count));
             lotteryFlow.setRemarks("抢红包");
             lotteryFlows.add(lotteryFlow);
+            LotteryFlow lotteryFlow1 = lotteryFlowRepository.findByReward(reward, userId);
+            if(lotteryFlow1!=null){
+                throw new ServiceException("服务器处理中");
+            }
+
         }
         return lotteryFlows;
     }
