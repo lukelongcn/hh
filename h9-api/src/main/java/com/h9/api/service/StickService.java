@@ -55,6 +55,7 @@ import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.NetworkUtil;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -246,13 +247,16 @@ public class StickService {
         return Result.success(banner);
     }
 
+    /**
+     *  分类下贴子列表
+     */
     public Result typeDetail(long typeId){
         StickType stickType = stickTypeRepository.findOne(typeId);
         if(stickType==null){
             return Result.fail("分类不存在");
         }
         if (stickType.getState() != 1){
-            return Result.fail("改分类已被删除");
+            return Result.fail("该分类已被删除");
         }
         return Result.success(new StickTypeDetailVo(stickType));
     }
@@ -562,7 +566,7 @@ public class StickService {
         stickReward.setWords(stickRewardJiuYuanDTO.getWords());
         stickRewardResitory.saveAndFlush(stickReward);
         // 如果留言不为空 增加评论
-        if (stickRewardJiuYuanDTO.getWords() != null){
+        if (StringUtils.isNotBlank(stickReward.getWords())){
             StickComment stickComment = new StickComment();
             // 回复的用户
             User user = userRepository.findOne(userId);

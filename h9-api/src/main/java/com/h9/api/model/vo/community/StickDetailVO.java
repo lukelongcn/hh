@@ -21,6 +21,7 @@ import lombok.Data;
  */
 @Data
 public class StickDetailVO {
+    private long userId;
     private long id;
     private String userName;
     private String userAvatar;
@@ -41,6 +42,7 @@ public class StickDetailVO {
         id = stick.getId();
         User user = stick.getUser();
         if(user!=null){
+            userId = user.getId();
             userName = user.getNickName();
             userAvatar = user.getAvatar();
         }

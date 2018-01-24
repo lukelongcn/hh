@@ -53,13 +53,18 @@ public class HotelOrderDetailVO {
 
         Integer orderStatus = hotelOrder.getOrderStatus();
         HotelOrder.OrderStatusEnum findEnum = HotelOrder.OrderStatusEnum.findByCode(orderStatus);
+
+
+        int nightSum = DateUtil.nightSum(hotelOrder.getComeRoomTime(), hotelOrder.getOutRoomTime());
         this.setStatusDesc(findEnum.getDesc());
         this.setCreateTime(DateUtil.formatDate(hotelOrder.getCreateTime(), DateUtil.FormatType.MINUTE))
                 .setComeRoomTime(DateUtil.formatDate(hotelOrder.getComeRoomTime(), DateUtil.FormatType.DAY))
                 .setOutRoomTime(DateUtil.formatDate(hotelOrder.getOutRoomTime(), DateUtil.FormatType.DAY))
                 .setTotalMoney(MoneyUtils.formatMoney(hotelOrder.getTotalMoney()))
                 .setPayMoney4JiuYuan(MoneyUtils.formatMoney(hotelOrder.getPayMoney4JiuYuan()))
+                .setStayNightCount(nightSum)
                 .setPayMoney4Wechat(MoneyUtils.formatMoney(hotelOrder.getPayMoney4Wechat()));
+
     }
 
 }
