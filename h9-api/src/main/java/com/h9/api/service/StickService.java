@@ -444,15 +444,6 @@ public class StickService {
                 stickComment.setNotifyUserId(aitUser);
             }
         }
-        // 父级id
-        Long stickCommentId = stickCommentDTO.getStickCommentId();
-        if (stickCommentId != null){
-            stickComment.setLevel(1);
-            StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
-            if(stickCommentPid!=null){
-                stickComment.setStickComment(stickCommentPid);
-            }
-        }
         // 回复的用户
         User user = userRepository.findOne(userId);
         stickComment.setAnswerUser(user);
@@ -464,13 +455,26 @@ public class StickService {
         stickComment.setStick(stick);
         //ip
         stickComment.setIp(NetworkUtil.getIpAddress(request));
-        stickCommentRepository.save(stickComment);
         // 增加阅读数和回复数
         stick.setAnswerCount(stick.getAnswerCount()+1);
         stick.setReadCount(stick.getReadCount()+1);
         stick.setFloorCount(stick.getFloorCount()+1);
         stick.setAnswerTime(new Date());
+
+        // 父级id
+        Long stickCommentId = stickCommentDTO.getStickCommentId();
+        if (stickCommentId != null){
+            stickComment.setLevel(1);
+            StickComment stickCommentPid = stickCommentRepository.findById(stickCommentId);
+            if(stickCommentPid!=null){
+                stickComment.setStickComment(stickCommentPid);
+                // 回复楼层
+                stickComment.setFloor(0);
+                stick.setFloorCount(stick.getFloorCount()-1);
+            }
+        }
         stickRepository.save(stick);
+        stickCommentRepository.save(stickComment);
         return Result.success("回复成功");
     }
 
