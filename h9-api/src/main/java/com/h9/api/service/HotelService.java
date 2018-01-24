@@ -78,9 +78,12 @@ public class HotelService {
     }
 
     public Result hotelList(String city, String queryKey, int page, int limit) {
+        PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
 
+        if ("全部".equals(city)) {
+            return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
+        }
         if (StringUtils.isNotBlank(queryKey)) {
-            PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
             Page<Hotel> hotelPage = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%", pageRequest);
             if (CollectionUtils.isNotEmpty(hotelPage.getContent())) {
                 PageResult<HotelListVO> pageResult = new PageResult<>(hotelPage).result2Result(el -> new HotelListVO(el));
@@ -389,7 +392,9 @@ public class HotelService {
         long end = System.currentTimeMillis();
         logger.info("consumer time : " + (end - start) / 1000F);
 //        List<String> cityList = hotelList.stream().map(el -> el.getCity()).collect(Collectors.toList());
-        return Result.success(hotelList);
+        LinkedList<String> linkedList = new LinkedList<>(hotelList);
+        linkedList.addFirst("全部");
+        return Result.success(linkedList);
     }
 
     public Result<HotelOrder> authOrder(Long hotelOrderId, Long userId) {
