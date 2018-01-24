@@ -25,7 +25,6 @@ import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;
-import com.h9.common.db.entity.community.StickImage;
 import com.h9.common.db.entity.community.StickLike;
 import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
@@ -43,7 +42,6 @@ import com.h9.common.db.repo.BannerRepository;
 import com.h9.common.db.repo.GoodsTypeReposiroty;
 import com.h9.common.db.repo.StickCommentLikeRepository;
 import com.h9.common.db.repo.StickCommentRepository;
-import com.h9.common.db.repo.StickImageRespository;
 import com.h9.common.db.repo.StickLikeRepository;
 import com.h9.common.db.repo.StickReportRepository;
 import com.h9.common.db.repo.StickRepository;
@@ -118,8 +116,7 @@ public class StickService {
     private StickReportRepository stickReportRepository;
     @Resource
     private StickRewardResitory stickRewardResitory;
-    @Resource
-    private StickImageRespository stickImageRespository;
+
     public Result getStickType(){
         List<StickType> stickTypes = stickTypeRepository.findAll();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
@@ -142,23 +139,19 @@ public class StickService {
         stickType.setStickCount(stickType.getStickCount()+1);
         stickTypeRepository.save(stickType);
         Stick stick = new Stick();
-        Stick stickSave = controllStick(1,userId,stickDto,stick,stickType,request);
-        StickSampleVO stickSampleVO = new StickSampleVO(stickSave);
-        List<String> imageList = stickImageRespository.findByStickId(stick.getId());
-        stickSampleVO.setImages(imageList);
+        StickSampleVO stickSampleVO = new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request));
         return Result.success(stickSampleVO);
     }
 
     /**
      * 编辑或添加贴子
-     * @param flag 1 添加  2 编辑
      */
-    private Stick controllStick(Integer flag,Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
+    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
         User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         // 匹配图片
-        Result result = image(flag,stick,stickDto.getContent());
+        List<String> images = image(stickDto.getContent());
         stick.setStickType(stickType);
         stick.setUser(user);
         double latitude = stickDto.getLatitude();
@@ -175,6 +168,7 @@ public class StickService {
             }
         }
         stick.setIp(NetworkUtil.getIpAddress(request));
+        stick.setImages(images.toString());
         return stickRepository.saveAndFlush(stick);
     }
 
@@ -200,51 +194,31 @@ public class StickService {
         if(stickType == null){
             return Result.fail("请选择分类");
         }
-        Stick stickSave = controllStick(2,userId,stickDto,stick,stickType,request);
-        StickSampleVO stickSampleVO = new StickSampleVO(stickSave);
-        List<String> imageList = stickImageRespository.findByStickId(stick.getId());
-        stickSampleVO.setImages(imageList);
+        StickSampleVO stickSampleVO = new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request));
         return Result.success(stickSampleVO);
     }
 
     /**
      * 匹配图片
-     * @param flag 1 添加  2 编辑
      */
-    @Transactional
-    public Result image(Integer flag, Stick stick, String content){
-        String regex = "<image .*?</image >";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(content);
-        while(m.find()){
-            // 新增
-            if (flag == 1){
-                StickImage stickImage = new StickImage();
-                //获取匹配的image标签
-                stickImage.setImage(m.group());
-                stickImage.setStick(stick);
-                stickImageRespository.saveAndFlush(stickImage);
+    private List<String> image(String content){
+        List<String> imagesList = new ArrayList<>();
+        String img = "";
+        String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
+        Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
+        Matcher m_image = p_image.matcher(content);
+        while (m_image.find()) {
+            // 得到<img />数据
+            img = m_image.group();
+            // 匹配<img>中的src数据
+            Matcher m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(img);
+            while (m.find()) {
+                imagesList.add(m.group(1));
             }
-            // 编辑
-            else if(flag == 2){
-                List<StickImage> list = stickImageRespository.updateImages(stick.getId());
-                if (CollectionUtils.isNotEmpty(list)){
-                    list.forEach(stickImage -> {
-                        stickImage.setImage(m.group());
-                        stickImageRespository.saveAndFlush(stickImage);
-                    });
-                }else {
-                    StickImage stickImage = new StickImage();
-                    //获取匹配的image标签
-                    stickImage.setImage(m.group());
-                    stickImage.setStick(stick);
-                    stickImageRespository.saveAndFlush(stickImage);
-                }
-            }
-            System.out.println(m.start()+":"+m.end());
         }
-        return Result.success();
+        return imagesList;
     }
+
 
     public Result listStick(String type,int page,Integer limit){
         /* 首页 */

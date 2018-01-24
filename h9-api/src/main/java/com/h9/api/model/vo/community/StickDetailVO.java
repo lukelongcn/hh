@@ -20,7 +20,7 @@ public class StickDetailVO {
     private String userName;
     private String userAvatar;
     private String title;
-    private List<String> images;
+    private String images;
     private Integer readCount = 0;
     private Integer likeCount = 0;
     private Integer answerCount = 0;
@@ -51,5 +51,6 @@ public class StickDetailVO {
         }
         content = stick.getContent();
         state = stick.getState();
+        images = stick.getImages();
     }
 }
