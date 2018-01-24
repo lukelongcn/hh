@@ -2,6 +2,9 @@ package com.h9.admin.model.vo;
 
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.utils.DateUtil;
+
+import java.util.Date;
 
 import lombok.Data;
 
@@ -26,6 +29,8 @@ public class StickCommentSimpleVO {
     // 被回复人id
     private Long backCommentUserId;
 
+    private String spaceTime;
+
     public StickCommentSimpleVO(StickComment stickComment){
         User answerUser = stickComment.getAnswerUser();
         this.commentUserId = answerUser.getId();
@@ -34,5 +39,7 @@ public class StickCommentSimpleVO {
         User notifyUserId = stickComment.getNotifyUserId();
         this.backCommentUserId = notifyUserId.getId();
         this.backNickName = notifyUserId.getNickName();
+        this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
+        System.out.println(spaceTime);
     }
 }
