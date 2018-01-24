@@ -47,9 +47,10 @@ public class LotteryTask {
         try{
             boolean isLock = lockTask.tryLock(2000l, TimeUnit.MILLISECONDS);
             if(!isLock){
-                logger.debugv("沒拿到锁 {0}", new Date());
+                logger.debugv("沒拿到锁 {0}", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_SECOND));
                 return;
             }
+
             List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
             if(rewardList == null){
                 return;
