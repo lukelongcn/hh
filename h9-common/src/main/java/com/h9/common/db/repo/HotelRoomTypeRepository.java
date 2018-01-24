@@ -17,7 +17,7 @@ public interface HotelRoomTypeRepository extends BaseRepository<HotelRoomType> {
     Page<HotelRoomType> findByHotel(Hotel hotel, Pageable pageable);
 
     List<HotelRoomType> findByHotel(Hotel hotel);
-    
-    @Query("select hrt from HotelRoomType hrt where hrt.hotel=?1 and hrt.status=1")
+
+    @Query("select count(hrt)from HotelRoomType hrt where hrt.hotel=?1 and hrt.status=1")
     Long countByHotel(Hotel hotel);
 }
