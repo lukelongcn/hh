@@ -37,10 +37,8 @@ public class StickDetailVO {
     private Map<String, List<HomeVO>> listMap;
     private Integer state;
     private List<StickRewardUser> stickRewardUserList;
-
     // 经度
     private double longitude;
-
     //维度
     private double latitude;
 
