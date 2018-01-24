@@ -73,8 +73,8 @@ public class StickService {
      */
     public Result addStickType(StickTypeDTO stickTypeDTO){
         String name = stickTypeDTO.getName();
-        List<StickType> type = stickTypeRepository.findByName(name);
-        if(CollectionUtils.isNotEmpty(type)){
+        StickType type = stickTypeRepository.findByName(name);
+        if(type != null){
             return Result.fail(name+"已经存在");
         }
         StickType stickType = new StickType();
@@ -91,11 +91,11 @@ public class StickService {
             return Result.fail("分类id不能为空");
         }
         Long stickTypeId = stickTypeDTO.getStickTypeId();
-        List<StickType> type = stickTypeRepository.findByName(stickTypeDTO.getName());
-        if(CollectionUtils.isNotEmpty(type)){
+        StickType stickType = stickTypeRepository.findById(stickTypeId);
+        StickType type = stickTypeRepository.findByName(stickTypeDTO.getName());
+        if(type.getName() != stickType.getName()){
             return Result.fail(stickTypeDTO.getName()+"已经存在");
         }
-        StickType stickType = stickTypeRepository.findById(stickTypeId);
         if (stickType == null){
             return Result.fail("该分类已被删除");
         }

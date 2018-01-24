@@ -21,7 +21,7 @@ import java.util.List;
 @Repository
 public interface StickTypeRepository extends BaseRepository<StickType> {
 
-    List<StickType> findByName(String name);
+    StickType findByName(String name);
 
     @Query("select s from StickType  s where s.id = ?1 and s.state =1")
     StickType findById(long stickTypeId);
