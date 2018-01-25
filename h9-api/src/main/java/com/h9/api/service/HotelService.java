@@ -113,7 +113,7 @@ public class HotelService {
         Date startReserveTime = hotel.getStartReserveTime();
         Date endReserveTime = hotel.getEndReserveTime();
 
-        if (comeRoomTime.getTime() < startReserveTime.getTime() || comeRoomTime.getTime() > endReserveTime.getTime()) {
+        if (comeRoomTime.before(startReserveTime)|| comeRoomTime.after(endReserveTime)) {
             return Result.fail("非可用时段不可预订");
         }
 
