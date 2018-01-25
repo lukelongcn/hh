@@ -37,6 +37,12 @@ public class StickDetailVO {
     private Map<String, List<HomeVO>> listMap;
     private Integer state;
     private List<StickRewardUser> stickRewardUserList;
+    // 经度
+    private double longitude;
+    //维度
+    private double latitude;
+
+    private Long stickTypeId;
 
     public StickDetailVO(Stick stick) {
         id = stick.getId();
@@ -54,12 +60,14 @@ public class StickDetailVO {
         createTime = DateUtil.formatDate(stick.getCreateTime(), DateUtil.FormatType.DAY);
         StickType stickType = stick.getStickType();
         if (stickType != null) {
+            stickTypeId = stickType.getId();
             typeName = stickType.getName();
         }
         content = stick.getContent();
         state = stick.getState();
         images = stick.getImages();
-        System.out.println(images);
+        this.latitude = stick.getLatitude();
+        this.longitude = stick.getLongitude();
     }
 
 

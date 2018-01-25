@@ -76,7 +76,7 @@ public class StickType extends BaseEntity {
             this.name = name;
         }
 
-        private int id;
+        private Integer id;
         private String name;
 
         public static String getNameById(int id){
@@ -84,14 +84,14 @@ public class StickType extends BaseEntity {
             return defaultSortEnum==null?null:defaultSortEnum.getName();
         }
 
-        public int getId() {
+        public Integer getId() {
             return id;
         }
         public String getName() {
             return name;
         }
 
-        public void setId(int id) {
+        public void setId(Integer id) {
             this.id = id;
         }
 

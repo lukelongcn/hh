@@ -67,6 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
@@ -173,7 +174,12 @@ public class StickService {
             }
         }
         stick.setIp(NetworkUtil.getIpAddress(request));
-        stick.setImages(images.subList(0,9));
+        if (images.size()>9){
+            stick.setImages(images.subList(0,9));
+        }
+        else {
+            stick.setImages(images);
+        }
         System.out.println(images);
         return stickRepository.saveAndFlush(stick);
     }
@@ -244,12 +250,26 @@ public class StickService {
             long typeId = Long.parseLong(type);
             StickType stickType = stickTypeRepository.findOne(typeId);
             Integer defaultSort = stickType.getDefaultSort();
-
-            if (StickType.defaultSortEnum.COMMENT_COUNT.getId() == defaultSort)
-            {
-                Sort sort = new Sort(Sort.Direction.DESC,"");
+            // 默认时间排序
+            String sort = "createTime";
+            // 最后回复的帖子排在前面
+            if (defaultSort.equals(StickType.defaultSortEnum.COMMENT_COUNT.getId())) {
+                sort = "answerCount";
             }
-            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20));
+            // 浏览数最多的帖子排在前面
+            else if (defaultSort.equals(StickType.defaultSortEnum.READ_COUNT.getId()) ){
+                sort = "readCount";
+            }
+            // 最新发表的帖子排在前面
+            else if (defaultSort.equals(StickType.defaultSortEnum.NEW_STICK.getId())){
+                sort = "createTime";
+            }
+            // 回复数最多的帖子排在最前面
+            else if (defaultSort.equals(StickType.defaultSortEnum.LAST_COMMENT.getId())){
+                sort = "answerTime";
+            }
+            Page<Stick> home = stickRepository.findType(typeId,stickRepository.pageRequest(page,limit!=null?limit:20,
+                    new Sort(Sort.Direction.DESC,sort)));
             PageResult<Stick> pageResult = new PageResult(home);
             return Result.success(pageResult.result2Result(StickSampleVO::new));
         }
