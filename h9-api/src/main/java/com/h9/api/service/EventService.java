@@ -18,7 +18,7 @@ public class EventService {
         // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
         if (signature != null && CheckoutUtil.checkSignature(signature, timestamp, nonce)) {
             logger.info("验证成功");
-            return verifyTokenDTO.getNonce();
+            return verifyTokenDTO.getEchostr();
         }else{
             logger.info("验证失败");
             return "验证失败";
