@@ -17,6 +17,7 @@ import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.transform.ResultTransformer;
@@ -81,7 +82,11 @@ public class HotelService {
         PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
 
         if ("全部".equals(city)) {
-            return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
+            if (StringUtils.isNotBlank(queryKey)) {
+                return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
+            }else{
+                return Result.success(hotelRepository.findAll(page, limit).map(HotelListVO::new));
+            }
         }
         if (StringUtils.isNotBlank(queryKey)) {
             Page<Hotel> hotelPage = hotelRepository.findByCityAndHotelName(city, "%" + queryKey + "%", pageRequest);
