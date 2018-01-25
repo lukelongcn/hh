@@ -101,7 +101,11 @@ public class StickService {
         }
         StickType type = stickTypeRepository.findByName(stickTypeDTO.getName());
         if (type != null){
-            if (!type.getId().equals(stickType.getId())){
+            if (type.getId().equals(stickType.getId())){
+                BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
+                stickTypeRepository.save(stickType);
+                return Result.success("编辑成功");
+            }else {
                 return Result.fail(stickTypeDTO.getName()+"已经存在");
             }
         }
