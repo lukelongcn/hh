@@ -541,7 +541,7 @@ public class UserService {
         if(targetUser == null){
             return Result.fail("用户不存在");
         }
-        TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), MoneyUtils.formatMoney(balance));
+        TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), targetUser.getPhone(),MoneyUtils.formatMoney(balance));
         return Result.success(vo);
     }
 }

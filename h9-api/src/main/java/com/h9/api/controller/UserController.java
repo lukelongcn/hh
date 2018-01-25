@@ -126,9 +126,9 @@ public class UserController {
     /**
      * description: 转账信息
      */
-    @GetMapping("/user/transfer/info")
+    @GetMapping("/user/transfer/info/{phone}")
     @Secured
-    public Result transferInfo(@SessionAttribute("curUserId")Long userId, @RequestParam String phone){
+    public Result transferInfo(@SessionAttribute("curUserId")Long userId, @PathVariable String phone){
         return userService.transferInfo(userId,phone);
     }
 

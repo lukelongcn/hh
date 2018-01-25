@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 public class TransferInfoVO {
     private String img;
     private String targetUserName;
+    private String targetUserPhone;
     private String balance;
-
 
 }
