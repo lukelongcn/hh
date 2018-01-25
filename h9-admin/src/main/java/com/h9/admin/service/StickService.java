@@ -170,7 +170,7 @@ public class StickService {
             stick.setImages(images);
         }
         Stick s= stickRepository.saveAndFlush(stick);
-        return Result.success("添加成功");
+        return Result.success("添加成功",s);
     }
 
     /**
@@ -212,8 +212,16 @@ public class StickService {
         stick.setTitle(updateStickDTO.getTitle());
         stick.setContent(updateStickDTO.getContent());
         stick.setStickType(stickType);
+        // 匹配图片
+        List<String> images = commonService.image(updateStickDTO.getContent());
+        if (images.size()>9){
+            stick.setImages(images.subList(0,9));
+        }
+        else {
+            stick.setImages(images);
+        }
         Stick s= stickRepository.saveAndFlush(stick);
-        return Result.success("编辑成功");
+        return Result.success("编辑成功",s);
     }
 
 
