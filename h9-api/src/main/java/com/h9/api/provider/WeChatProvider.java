@@ -1,12 +1,17 @@
 package com.h9.api.provider;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPObject;
+import com.google.gson.JsonObject;
+import com.h9.api.model.dto.MenuDTO;
 import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +24,7 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -219,10 +225,37 @@ public class WeChatProvider {
     }
 
 
+    public void createMenu(){
+        MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
+        MenuDTO menuDTO =  builder
+                .button(Arrays.asList(
+                        new MenuDTO.ButtonBean()
+                                .setType("clink")
+                                .setName("扫瓶盖抢红包2"),
+                        new MenuDTO.ButtonBean()
+                                .setType("clink")
+                                .setName("徽酒商城2"),
+                        new MenuDTO.ButtonBean()
+                                .setType("clink")
+                                .setName("旅游健康基金2"))
+                ).build();
+
+        String accessToken = getWeChatAccessToken();
+        String createMenuUrl = " https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
+
+        Result4wx result = restTemplate.postForObject(createMenuUrl, JSONObject.toJSONString(menuDTO), Result4wx.class);
+        logger.info("创建菜单结果：" + JSONObject.toJSONString(result));
+
+    }
 
 
 
-
+    @Data
+    @Accessors(chain = true)
+    public static class Result4wx{
+        private String errcode;
+        private String errmsg;
+    }
 
 
 

@@ -1,7 +1,10 @@
 package com.h9.api.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.Areas;
+import com.h9.api.model.dto.MenuDTO;
 import com.h9.api.model.dto.PayConfig;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.AddressService;
 import com.h9.api.service.UserService;
 import com.h9.api.service.handler.PayHandler;
@@ -17,7 +20,9 @@ import org.jboss.logging.Logger;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -39,13 +44,25 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     @Resource
     private PayHandler payHandler;
     private Logger logger = Logger.getLogger(this.getClass());
-
+    @Resource
+    private RestTemplate restTemplate;
+    @Resource
+    private WeChatProvider weChatProvider;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent)
     {
         this.initAddressCache();
         payHandler.initPay();
+        this.initWXMenu();
+    }
+
+    /**
+     * 初始化微信公众号的菜单
+     *
+     */
+    private void initWXMenu() {
+        weChatProvider.createMenu();
     }
 
     /****
