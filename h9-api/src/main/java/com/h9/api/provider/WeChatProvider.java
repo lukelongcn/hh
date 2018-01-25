@@ -230,13 +230,16 @@ public class WeChatProvider {
         MenuDTO menuDTO =  builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
-                                .setType("clink")
+                                .setType("click")
+                                .setKey("1")
                                 .setName("扫瓶盖抢红包2"),
                         new MenuDTO.ButtonBean()
-                                .setType("clink")
+                                .setType("click")
+                                .setKey("2")
                                 .setName("徽酒商城2"),
                         new MenuDTO.ButtonBean()
-                                .setType("clink")
+                                .setType("click")
+                                .setKey("3")
                                 .setName("旅游健康基金2"))
                 ).build();
 
@@ -251,16 +254,19 @@ public class WeChatProvider {
 
     public static void main(String[] args) {
         MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
-        MenuDTO menuDTO =  builder
+        MenuDTO menuDTO = builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
-                                .setType("clink")
+                                .setType("click")
+                                .setKey("fdsa")
                                 .setName("扫瓶盖抢红包2"),
                         new MenuDTO.ButtonBean()
-                                .setType("clink")
+                                .setType("click")
+                                .setKey("2")
                                 .setName("徽酒商城2"),
                         new MenuDTO.ButtonBean()
-                                .setType("clink")
+                                .setType("click")
+                                .setKey("5")
                                 .setName("旅游健康基金2"))
                 ).build();
 
