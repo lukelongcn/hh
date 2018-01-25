@@ -1,6 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
+import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.hotel.Hotel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,13 +14,20 @@ import java.util.List;
  */
 public interface HotelRepository  extends BaseRepository<Hotel>{
 
-    @Query("select o from Hotel  o where o.city = ?1 or ( o.detailAddress like ?2 or o.hotelName like ?2)")
+    @Query("select o from Hotel  o where (o.city = ?1 or ( o.detailAddress like ?2 or o.hotelName like ?2)) and o.status = 1")
     Page<Hotel> findByCityAndHotelName(String city, String hotelName, Pageable pageable);
 
-    @Query("select o from Hotel  o where  o.detailAddress like ?1 or o.hotelName like ?1")
+    @Query("select o from Hotel  o where ( o.detailAddress like ?1 or o.hotelName like ?1 ) and o.status = 1")
     Page<Hotel> findByHotelName( String hotelName, Pageable pageable);
 
-    @Query("select o.city from Hotel o group by o.city")
+    @Query("select o.city from Hotel o where o.status = 1 group by o.city")
     List<String> findAllHotelCity();
 
+
+    @Query("select o from Hotel o where o.status =1")
+    Page<Hotel> findAllHotel(Pageable pageable);
+    default PageResult<Hotel> findAllHotel(int page, int limit){
+        Page<Hotel> hotels =  findAllHotel(pageRequest(page,limit));
+        return new PageResult(hotels);
+    }
 }

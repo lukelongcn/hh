@@ -85,7 +85,7 @@ public class HotelService {
             if (StringUtils.isNotBlank(queryKey)) {
                 return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
             }else{
-                return Result.success(hotelRepository.findAll(page, limit).map(HotelListVO::new));
+                return Result.success(hotelRepository.findAllHotel(page, limit).map(HotelListVO::new));
             }
         }
         if (StringUtils.isNotBlank(queryKey)) {
@@ -97,7 +97,7 @@ public class HotelService {
                 return Result.fail("没有找到此类酒店");
             }
         } else {
-            return Result.success(hotelRepository.findAll(page, limit).map(HotelListVO::new));
+            return Result.success(hotelRepository.findAllHotel(page, limit).map(HotelListVO::new));
         }
 
     }
