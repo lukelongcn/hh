@@ -26,7 +26,6 @@ public class StickTypeDTO {
     @Length(min = 2,max = 64,message = "分类名称填写过长或过短")
     private String name;
     @NotBlank(message = "请填写分类描述")
-    @Length(min = 2,max = 64,message = "分类描述填写过长或过短")
     private String content;
     @NotBlank(message = "请选择图标")
     private String image;
