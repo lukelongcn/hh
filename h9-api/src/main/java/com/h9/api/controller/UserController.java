@@ -5,6 +5,7 @@ import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.SmsService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -150,5 +152,11 @@ public class UserController {
                                @RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "10") Integer limit){
         return userService.transactions(userId,page,limit);
+    }
+
+//    @Secured
+    @GetMapping("/user/redEnvelope")
+    public void redEnvelope(HttpServletRequest request,HttpServletResponse response){
+         userService.getRedEnvelope(request,response);
     }
 }

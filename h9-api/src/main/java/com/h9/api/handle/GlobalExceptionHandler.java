@@ -1,5 +1,6 @@
 package com.h9.api.handle;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import com.h9.common.common.ServiceException;
@@ -44,6 +45,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Object hanldeException(Exception e, HttpServletRequest request) {
 
+        logger.info(e.getMessage(),e);
         if (e instanceof MethodArgumentTypeMismatchException) {
             logger.info(e.getMessage(),e);
             return new Result(1, "请传入正确的参数," + e.getMessage());
@@ -57,7 +59,9 @@ public class GlobalExceptionHandler {
 
 
         if (e instanceof HttpRequestMethodNotSupportedException) {
-            return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
+            Result result = new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
+            logger.info("result : "+ JSONObject.toJSONString(result));
+            return result;
         }
 
         if (e instanceof NoHandlerFoundException) {

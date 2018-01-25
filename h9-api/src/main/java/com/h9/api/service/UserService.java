@@ -3,10 +3,7 @@ package com.h9.api.service;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.api.enums.SMSTypeEnum;
-import com.h9.api.model.dto.TransferDTO;
-import com.h9.api.model.dto.UserLoginDTO;
-import com.h9.api.model.dto.UserPersonInfoDTO;
-import com.h9.api.model.dto.WechatConfig;
+import com.h9.api.model.dto.*;
 import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.TransferInfoVO;
@@ -37,10 +34,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -83,6 +90,9 @@ public class UserService {
     private ConfigService configService;
     @Resource
     private TransactionsRepository transactionsRepository;
+
+    @Resource
+    private RestTemplate restTemplate;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -538,10 +548,62 @@ public class UserService {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
         User targetUser = userRepository.findByPhone(phone);
-        if(targetUser == null){
+        if (targetUser == null) {
             return Result.fail("用户不存在");
         }
-        TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), targetUser.getPhone(),MoneyUtils.formatMoney(balance));
+        TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), targetUser.getPhone(), MoneyUtils.formatMoney(balance));
         return Result.success(vo);
     }
+
+    public void getRedEnvelope(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = weChatProvider.getWeChatAccessToken();
+
+        String ticket = getTicket(accessToken);
+        String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+        if (StringUtils.isNotBlank(ticket)) {
+            try {
+                response.sendRedirect(url);
+            } catch (IOException e) {
+                logger.info("重定向失败");
+            }
+        }
+
+    }
+
+
+
+    public String getTicket(String accessToken) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        TicketDTO ticketDTO = new TicketDTO();
+        ticketDTO.setAction_name("QR_SCENE");
+        ticketDTO.setExpire_seconds(604800);
+        TicketDTO.ActionInfoBean actionInfoBean = new TicketDTO.ActionInfoBean();
+        TicketDTO.ActionInfoBean.SceneBean sceneBean = new TicketDTO.ActionInfoBean.SceneBean();
+        sceneBean.setScene_id(123);
+        actionInfoBean.setScene(sceneBean);
+        ticketDTO.setAction_info(actionInfoBean);
+
+        String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + accessToken;
+        String json = JSONObject.toJSONString(ticketDTO);
+        logger.info(json);
+        String body = null;
+        try {
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_JSON);
+//            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity(params, headers);
+            body = restTemplate.postForEntity(url, json, String.class).getBody();
+        } catch (RestClientException e) {
+            logger.info(e.getMessage(), e);
+            logger.info("获取ticket失败");
+            return null;
+        }
+        logger.info("result: " + body);
+        JSONObject object = JSONObject.parseObject(body);
+        String ticket = object.getString("ticket");
+
+        return ticket;
+    }
+
+
 }
