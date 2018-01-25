@@ -52,7 +52,7 @@ public class LotteryTask {
             }
             long start = System.currentTimeMillis();
             List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
-            if(rewardList == null&&rewardList.isEmpty()){
+            if(rewardList == null||rewardList.isEmpty()){
                 return;
             }
             for (Reward reward : rewardList) {
