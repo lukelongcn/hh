@@ -11,6 +11,7 @@ import com.h9.api.model.dto.Areas;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.FileService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -428,14 +429,13 @@ public class ApiApplicationTests {
     @Resource
     private LotteryRepository lotteryRepository;
 
+    @Resource
+    private WeChatProvider weChatProvider;
+
     @Test
     public void testRecharge(){
-//        MobileRechargeDTO mobileRechargeDTO = new MobileRechargeDTO();
-//        mobileRechargeDTO.setCode("0000");
-//        mobileRechargeDTO.setTel("17673140753");
-//        MobileRechargeService service = new MobileRechargeService();
-//        Result recharge = service.recharge(mobileRechargeDTO, 10L, new BigDecimal("0.01"));
-//        System.out.println(recharge);
+        String weChatAccessToken = weChatProvider.getWeChatAccessToken();
+        System.out.println(weChatAccessToken);
     }
 }
 
