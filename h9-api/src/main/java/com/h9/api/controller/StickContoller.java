@@ -2,6 +2,7 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.LikeDTO;
+import com.h9.api.model.dto.LocationDTO;
 import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
@@ -49,7 +50,13 @@ public class StickContoller {
         return stickService.addStick(userId,stickDto,request);
     }
 
-
+    /**
+     * 获取地址
+     */
+    @PostMapping("/address")
+    public Result address(@Valid@RequestBody LocationDTO locationDTO){
+        return stickService.address(locationDTO);
+    }
 
     @GetMapping("/{type}/list")
     public Result listStick(@PathVariable("type") String type,

@@ -1,11 +1,13 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.model.dto.LocationDTO;
 import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.community.StickAddressVO;
 import com.h9.api.model.vo.community.StickCommentSimpleVO;
 import com.h9.api.model.vo.community.StickCommentVO;
 import com.h9.api.model.vo.community.StickRewardMoneyVO;
@@ -129,6 +131,26 @@ public class StickService {
         return Result.success(stickTypeVOS);
     }
 
+    /**
+     * 获取地址
+     */
+    @Transactional
+    public Result address(LocationDTO locationDTO) {
+        StickAddressVO stickAddressVO = new StickAddressVO();
+        CommonService.AddressResult addressDetail = commonService.getAddressDetail(locationDTO.getLatitude(), locationDTO.getLongitude());
+        if(addressDetail!=null){
+            stickAddressVO.setAddress(addressDetail.getDetailAddress());
+            stickAddressVO.setCity(addressDetail.getCity());
+            stickAddressVO.setProvince(addressDetail.getProvince());
+            stickAddressVO.setDistrict(addressDetail.getDistrict());
+        }else {
+            return Result.fail("未找到详细地址，请检查经纬度");
+        }
+        stickAddressVO.setLatitude(locationDTO.getLatitude());
+        stickAddressVO.setLongitude(locationDTO.getLongitude());
+        return Result.success(stickAddressVO);
+    }
+
     @Transactional
     public Result addStick(Long userId, StickDto stickDto, HttpServletRequest request){
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
@@ -149,7 +171,8 @@ public class StickService {
     /**
      * 编辑或添加贴子
      */
-    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
+    @Transactional
+    public Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
         User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());

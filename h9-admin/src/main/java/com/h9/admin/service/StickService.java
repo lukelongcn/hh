@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.stick.LocationDTO;
 import com.h9.admin.model.dto.stick.StickDTO;
 import com.h9.admin.model.dto.stick.StickTypeDTO;
 import com.h9.admin.model.dto.stick.UpdateStickDTO;
