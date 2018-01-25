@@ -1,9 +1,13 @@
 package com.h9.api.controller;
 
 import com.h9.api.model.dto.VerifyTokenDTO;
+import com.h9.api.service.EventService;
 import com.h9.common.utils.CheckoutUtil;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * Created by itservice on 2018/1/25.
@@ -12,18 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class EventController {
 
+    @Resource
+    private EventService eventService;
+
+    private Logger logger = Logger.getLogger(this.getClass());
     @GetMapping(value = "/wx/event")
     public String verifyToken( VerifyTokenDTO verifyTokenDTO) {
-        String signature = verifyTokenDTO.getSignature();
-        String timestamp = verifyTokenDTO.getTimestamp();
-        String nonce = verifyTokenDTO.getNonce();
-        // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
-        if (signature != null && CheckoutUtil.checkSignature(signature, timestamp, nonce)) {
-            return verifyTokenDTO.getNonce();
-        }else{
-            return "验证失败";
-        }
-
+       return eventService.handle(verifyTokenDTO);
     }
 
 
