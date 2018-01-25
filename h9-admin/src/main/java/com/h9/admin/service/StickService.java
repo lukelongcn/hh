@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -67,6 +69,8 @@ public class StickService {
     private StickCommentRepository stickCommentRepository;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private CommonService commonService;
 
     /**
      * 添加分类
@@ -154,6 +158,14 @@ public class StickService {
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         stick.setStickType(stickType);
+        // 匹配图片
+        List<String> images = commonService.image(stickDto.getContent());
+        if (images.size()>9){
+            stick.setImages(images.subList(0,9));
+        }
+        else {
+            stick.setImages(images);
+        }
         Stick s= stickRepository.saveAndFlush(stick);
         return Result.success("添加成功");
     }

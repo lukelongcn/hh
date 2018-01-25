@@ -157,7 +157,7 @@ public class StickService {
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         // 匹配图片
-        List<String> images = image(stickDto.getContent());
+        List<String> images = commonService.image(stickDto.getContent());
         stick.setStickType(stickType);
         stick.setUser(user);
         double latitude = stickDto.getLatitude();
@@ -208,27 +208,6 @@ public class StickService {
         }
         StickSampleVO stickSampleVO = new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request));
         return Result.success(stickSampleVO);
-    }
-
-    /**
-     * 匹配图片
-     */
-    private List<String> image(String content){
-        List<String> imagesList = new ArrayList<>();
-        String img = "";
-        String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
-        Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
-        Matcher m_image = p_image.matcher(content);
-        while (m_image.find()) {
-            // 得到<img />数据
-            img = m_image.group();
-            // 匹配<img>中的src数据
-            Matcher m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(img);
-            while (m.find()) {
-                imagesList.add(m.group(1));
-            }
-        }
-        return imagesList;
     }
 
 
