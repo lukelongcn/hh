@@ -301,7 +301,6 @@ public class StickService {
             }
             return Result.success(stickDetailVO);
         }
-
         stick.setReadCount(stick.getReadCount()+1);
         stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);
