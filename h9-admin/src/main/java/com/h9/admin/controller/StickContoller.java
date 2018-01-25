@@ -34,7 +34,7 @@ public class StickContoller {
     @Resource
     private StickService stickService;
 
-    //@Secured(accessCode = "stick:add")
+    @Secured(accessCode = "stick:add")
     @PostMapping("/type")
     public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
         logger.debugv(JSONObject.toJSONString(stickTypeDTO));
@@ -49,7 +49,7 @@ public class StickContoller {
         return stickService.updateType(stickTypeDTO);
     }
 
-    //@Secured(accessCode =  "stick:list")
+    @Secured(accessCode =  "stick:list")
     @GetMapping("/types")
     public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int pageNumber,
                            @RequestParam(required = false,name = "page",defaultValue = "20") int pageSize){
