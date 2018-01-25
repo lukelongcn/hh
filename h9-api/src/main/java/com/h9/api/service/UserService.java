@@ -1,16 +1,20 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.api.enums.SMSTypeEnum;
+import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.dto.WechatConfig;
+import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
@@ -21,15 +25,21 @@ import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
+import com.h9.common.utils.MoneyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.transform.ResultTransformer;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +80,9 @@ public class UserService {
 
     @Resource
     private ConfigService configService;
+    @Resource
+    private TransactionsRepository transactionsRepository;
+
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO) {
@@ -93,7 +106,7 @@ public class UserService {
             if (!"dev".equals(currentEnvironment)) {
                 if (!code.equals(redisCode)) return Result.fail("验证码不正确");
             }
-        }else{
+        } else {
             redisCode = "0000";
         }
         User user = userRepository.findByPhone(phone);
@@ -417,6 +430,7 @@ public class UserService {
         return list;
     }
 
+
     public Result questionHelp() {
 
         ArticleType articleType = articleTypeRepository.findByCode("questionHelp");
@@ -439,4 +453,78 @@ public class UserService {
     }
 
 
+    /**
+     * description: 转账
+     *
+     * @param userId      转账发起方的用户Id
+     * @param transferDTO 转账参数
+     * @see TransferDTO
+     */
+    @Transactional
+    public Result transfer(Long userId, TransferDTO transferDTO) {
+        User user = userRepository.findOne(userId);
+        if (user == null) return Result.fail("账号不存在");
+
+        String targetUserPhone = transferDTO.getTargetUserPhone();
+        User targetUser = userRepository.findByPhone(targetUserPhone);
+        if (targetUser == null) return Result.fail("请输入正确的账号");
+
+        BigDecimal transferMoney = transferDTO.getTransferMoney();
+
+        if (transferMoney.compareTo(new BigDecimal(0)) <= 0) {
+            return Result.fail("请填写正确的金额");
+        }
+
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        if (userAccount.getBalance().compareTo(transferMoney) < 0) {
+            return Result.fail("余额不足，请充值后再试");
+        }
+
+        Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
+                transferMoney, transferDTO.getRemarks());
+        transactionsRepository.saveAndFlush(transactions);
+
+        commonService.setBalance(user.getId(), transferMoney.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
+                transactions.getId(), "", transferDTO.getRemarks());
+        commonService.setBalance(targetUser.getId(), transferMoney, BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
+                transactions.getId(), "", transferDTO.getRemarks());
+
+        return Result.success("转账成功");
+    }
+
+    /**
+     * description: 转账记录
+     */
+    public Result transactions(Long userId, Integer page, Integer limit) {
+
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, sort);
+        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId, pageRequest);
+
+        if (CollectionUtils.isEmpty(pageObj.getContent())) {
+            return Result.success(new PageResult<>(pageObj));
+        }
+
+        Map<String, String> iconMap = configService.getMapConfig("balanceFlowImg");
+        String img = iconMap.get(BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId());
+
+        PageResult<BalanceFlowVO> result = new PageResult<>(pageObj).result2Result(el -> {
+            String money = MoneyUtils.formatMoney(el.getTransferMoney());
+            if (el.getUserId().equals(userId)) {
+                money = "-" + money;
+            } else {
+                money = "+" + money;
+            }
+            BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
+                    DateUtil.formatDate(el.getCreateTime(),
+                            DateUtil.FormatType.MONTH),
+                    el.getRemarks(),
+                    img,
+                    DateUtil.formatDate(el.getCreateTime(), DateUtil.FormatType.MINUTE));
+            return balanceFlowVO;
+        });
+
+        return Result.success(result);
+
+    }
 }

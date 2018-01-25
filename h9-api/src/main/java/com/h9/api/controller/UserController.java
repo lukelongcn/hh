@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
@@ -119,5 +120,25 @@ public class UserController {
     public Result Config(HttpServletRequest request){
         String refer = request.getHeader("Referer");
         return userService.getConfig(refer);
+    }
+    
+    /**
+     * description: 用户转账
+     */
+    @PostMapping("/user/transfer")
+    @Secured
+    public Result transfer(@SessionAttribute("curUserId")Long userId, @Valid@RequestBody TransferDTO transferDTO){
+        return userService.transfer(userId,transferDTO);
+    }
+    
+    /**
+     * description: 转账记录
+     */
+    @Secured
+    @GetMapping("/user/transactions")
+    public Result transactions(@SessionAttribute("curUserId")Long userId,
+                               @RequestParam(defaultValue = "1") Integer page,
+                               @RequestParam(defaultValue = "10") Integer limit){
+        return userService.transactions(userId,page,limit);
     }
 }
