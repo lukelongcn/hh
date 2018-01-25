@@ -247,7 +247,9 @@ public class WeChatProvider {
         logger.info("accessToken : "+accessToken);
         String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
 
-        Result4wx result = restTemplate.postForObject(createMenuUrl, JSONObject.toJSONString(menuDTO), Result4wx.class);
+        String json = JSONObject.toJSONString(menuDTO);
+        logger.info("request json : "+json);
+        Result4wx result = restTemplate.postForObject(createMenuUrl, json, Result4wx.class);
         logger.info("创建菜单结果：" + JSONObject.toJSONString(result));
 
     }
@@ -255,20 +257,20 @@ public class WeChatProvider {
 
     public static void main(String[] args) {
         MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
-        MenuDTO menuDTO = builder
+        MenuDTO menuDTO =  builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
                                 .setType("click")
-                                .setKey("fdsa")
-                                .setName("扫瓶盖抢红包2"),
+                                .setKey("12")
+                                .setName("扫瓶盖抢红包21"),
                         new MenuDTO.ButtonBean()
                                 .setType("click")
-                                .setKey("2")
-                                .setName("徽酒商城2"),
+                                .setKey("23")
+                                .setName("徽酒商城21"),
                         new MenuDTO.ButtonBean()
                                 .setType("click")
-                                .setKey("5")
-                                .setName("旅游健康基金2"))
+                                .setKey("31")
+                                .setName("旅游健康基金21"))
                 ).build();
 
         System.out.println(JSONObject.toJSONString(menuDTO));
