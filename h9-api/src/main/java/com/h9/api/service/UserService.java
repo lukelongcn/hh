@@ -9,6 +9,7 @@ import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.model.vo.TransferInfoVO;
 import com.h9.api.model.vo.UserInfoVO;
 import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.WeChatProvider;
@@ -469,6 +470,10 @@ public class UserService {
         User targetUser = userRepository.findByPhone(targetUserPhone);
         if (targetUser == null) return Result.fail("请输入正确的账号");
 
+        if (targetUser.getId().equals(userId)) {
+            return Result.success("不能给自已转账");
+        }
+
         BigDecimal transferMoney = transferDTO.getTransferMoney();
 
         if (transferMoney.compareTo(new BigDecimal(0)) <= 0) {
@@ -479,6 +484,7 @@ public class UserService {
         if (userAccount.getBalance().compareTo(transferMoney) < 0) {
             return Result.fail("余额不足，请充值后再试");
         }
+
 
         Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
                 transferMoney, transferDTO.getRemarks());
@@ -526,5 +532,16 @@ public class UserService {
 
         return Result.success(result);
 
+    }
+
+    public Result transferInfo(Long userId, String phone) {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        BigDecimal balance = userAccount.getBalance();
+        User targetUser = userRepository.findByPhone(phone);
+        if(targetUser == null){
+            return Result.fail("用户不存在");
+        }
+        TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), MoneyUtils.formatMoney(balance));
+        return Result.success(vo);
     }
 }

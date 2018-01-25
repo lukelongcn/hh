@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by itservice on 2018/1/25.
  */
 
-
+@XmlRootElement(name = "xml")
 public class EventDTO {
-
+    @XmlAttribute
     private String ToUserName;
 
     public String getToUserName() {

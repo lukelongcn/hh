@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EventController {
 
-    @PostMapping(value = "/wx/event")
+    @PostMapping(value = "/wx/event",consumes = "application/xml")
     public  Result test(@RequestBody EventDTO eventDTO){
 
         System.out.println(eventDTO);

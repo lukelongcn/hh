@@ -121,7 +121,17 @@ public class UserController {
         String refer = request.getHeader("Referer");
         return userService.getConfig(refer);
     }
-    
+
+
+    /**
+     * description: 转账信息
+     */
+    @GetMapping("/user/transfer/info")
+    @Secured
+    public Result transferInfo(@SessionAttribute("curUserId")Long userId, @RequestParam String phone){
+        return userService.transferInfo(userId,phone);
+    }
+
     /**
      * description: 用户转账
      */
