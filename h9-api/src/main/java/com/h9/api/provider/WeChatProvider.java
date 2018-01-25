@@ -231,19 +231,20 @@ public class WeChatProvider {
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
                                 .setType("click")
-                                .setKey("1")
-                                .setName("扫瓶盖抢红包2"),
+                                .setKey("12")
+                                .setName("扫瓶盖抢红包21"),
                         new MenuDTO.ButtonBean()
                                 .setType("click")
-                                .setKey("2")
-                                .setName("徽酒商城2"),
+                                .setKey("23")
+                                .setName("徽酒商城21"),
                         new MenuDTO.ButtonBean()
                                 .setType("click")
-                                .setKey("3")
-                                .setName("旅游健康基金2"))
+                                .setKey("31")
+                                .setName("旅游健康基金21"))
                 ).build();
 
         String accessToken = getWeChatAccessToken();
+        logger.info("accessToken : "+accessToken);
         String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
 
         Result4wx result = restTemplate.postForObject(createMenuUrl, JSONObject.toJSONString(menuDTO), Result4wx.class);
