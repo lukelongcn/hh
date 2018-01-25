@@ -41,16 +41,16 @@ public class LotteryTask {
     private Redisson redisson;
     
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     public void run() throws InterruptedException {
         RLock lockTask = redisson.getLock("lock:lottery:task" );
         try{
-            boolean isLock = lockTask.tryLock(2000l, TimeUnit.MILLISECONDS);
+            boolean isLock = lockTask.tryLock(4l, TimeUnit.SECONDS);
             if(!isLock){
                 logger.debugv("沒拿到锁 {0}", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_SECOND));
                 return;
             }
-
+            long start = System.currentTimeMillis();
             List<Reward> rewardList = rewardRepository.findByEndTimeAndStatus(new Date());
             if(rewardList == null){
                 return;
@@ -70,8 +70,9 @@ public class LotteryTask {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
+            long end = System.currentTimeMillis();
+            logger.debugv("定时开奖="+(end - start)+"毫秒");
         }finally {
             lockTask.unlock();
         }
