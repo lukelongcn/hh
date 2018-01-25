@@ -72,7 +72,7 @@ public class LotteryTask {
                 }
             }
             long end = System.currentTimeMillis();
-            logger.debugv("定时开奖="+(end - start)+"毫秒");
+            logger.debugv("定时开奖="+(end - start)+"毫秒"+rewardList.size());
         }finally {
             lockTask.unlock();
         }
