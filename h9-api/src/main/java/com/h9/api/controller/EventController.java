@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by itservice on 2018/1/25.
  */
 
-@Controller
+@RestController
 public class EventController {
 
     @GetMapping(value = "/wx/event")
@@ -20,9 +20,10 @@ public class EventController {
         // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
         if (signature != null && CheckoutUtil.checkSignature(signature, timestamp, nonce)) {
             return verifyTokenDTO.getNonce();
+        }else{
+            return "验证失败";
         }
 
-        return "";
     }
 
 
