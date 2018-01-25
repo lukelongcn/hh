@@ -1,11 +1,10 @@
 package com.h9.api.controller;
 
-import com.h9.api.model.dto.EventDTO;
-import com.h9.common.base.Result;
-import org.springframework.stereotype.Controller;
+import com.h9.api.model.dto.VerifyTokenDTO;
+import com.h9.common.utils.CheckoutUtil;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -15,11 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EventController {
 
-    @PostMapping(value = "/wx/event",consumes = "application/xml")
-    public  Result test(@RequestBody EventDTO eventDTO){
+    @GetMapping(value = "/wx/event/verify/token")
+    public String verifyToken(@RequestBody VerifyTokenDTO verifyTokenDTO) {
+        String signature = verifyTokenDTO.getSignature();
+        String timestamp = verifyTokenDTO.getTimestamp();
+        String nonce = verifyTokenDTO.getNonce();
+        // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
+        if (signature != null && CheckoutUtil.checkSignature(signature, timestamp, nonce)) {
 
-        System.out.println(eventDTO);
-        return Result.success(eventDTO);
+            return verifyTokenDTO.getNonce();
+        }
+
+        return "";
     }
 
 
