@@ -53,5 +53,4 @@ public class StickTypeDTO {
     @NotNull(message = "请选择默认排序")
     private Integer defaultSort = 1;
 
-    private Integer stickCount;
 }
