@@ -50,6 +50,9 @@ public class AddHotelOrderDTO {
     @NotNull(message = "请填写入住时间")
     private Date comeRoomTime;
 
+    @NotNull(message = "请填写离开时间")
+    private Date outRoomTime;
+
     public void setComeRoomTime(String comeRoomTime) throws MissingServletRequestParameterException {
 
         Logger logger = Logger.getLogger(this.getClass());
@@ -63,10 +66,6 @@ public class AddHotelOrderDTO {
         }
 
     }
-
-
-    @NotNull(message = "请填写离开时间")
-    private Date outRoomTime;
 
     public void setOutRoomTime(String outRoomTime) throws MissingServletRequestParameterException {
         Logger logger = Logger.getLogger(this.getClass());
