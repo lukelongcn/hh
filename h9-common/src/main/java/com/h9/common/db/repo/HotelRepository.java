@@ -26,16 +26,8 @@ public interface HotelRepository  extends BaseRepository<Hotel>{
 
     @Query("select o from Hotel  o where o.city = ?1  and o.status = 1")
     Page<Hotel> findByCity(String city,Pageable pageable);
-    default PageResult<Hotel> findByCity(String city, int page, int limit){
-        Page<Hotel> hotels = findByCity(city, pageRequest(page,limit));
-        return new PageResult<>(hotels);
-    }
 
     @Query("select o from Hotel o where o.status =1")
     Page<Hotel> findAllHotel(Pageable pageable);
-    default PageResult<Hotel> findAllHotel(int page, int limit){
-        Page<Hotel> hotels =  findAllHotel(pageRequest(page,limit));
-        return new PageResult(hotels);
-    }
 
 }
