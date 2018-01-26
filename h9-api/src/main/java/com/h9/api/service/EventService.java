@@ -116,16 +116,25 @@ public class EventService {
         transactionsRepository.saveAndFlush(transactions);
 
         //扫码者加钱,展示码的人 扣钱
-        commonService.setBalance(user.getId(), redEnvelopeDTO.getMoney(),
+
+        Result result = commonService.setBalance(redEnvelopeDTO.getUserId(), redEnvelopeDTO.getMoney().abs().negate(),
                 BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
                 transactions.getId(), "", "红包");
 
-        commonService.setBalance(redEnvelopeDTO.getUserId(), redEnvelopeDTO.getMoney().abs().negate(),
-                BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
-                transactions.getId(), "", "红包");
+        if (result.getCode() == 0) {
 
-        //让redis 二维码 消失
-        redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
+            commonService.setBalance(user.getId(), redEnvelopeDTO.getMoney(),
+                    BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
+                    transactions.getId(), "", "红包");
+
+            //让redis 二维码 消失
+            redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
+
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(redEnvelopeDTO.getTempId()),"",1,TimeUnit.SECONDS);
+        }
+
+
+
 
     }
 }

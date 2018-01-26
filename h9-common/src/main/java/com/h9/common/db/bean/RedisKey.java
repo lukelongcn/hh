@@ -44,7 +44,19 @@ public class RedisKey {
 
     public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
 
+    /**
+     * description: 红包二维码
+     */
     public static String QR_CODE = "h9:qr:code:";
+
+    /**
+     * description: 二维码对应的 临时 UUID，码和tempId 共存亡
+     */
+    public static String  QR_CODE_TEMP_ID = "h9:qr:code:tempId:";
+
+    public static String getQrCodeTempId(String tempId) {
+        return QR_CODE_TEMP_ID+tempId;
+    }
 
     public static String getQrCode(Long userId) {
         return QR_CODE+""+userId;
