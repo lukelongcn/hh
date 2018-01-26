@@ -19,6 +19,8 @@ import java.util.List;
 @Accessors(chain = true)
 public class HotelListVO {
 
+    private String city;
+
     private String image = "";
 
     private String hotelName = "";

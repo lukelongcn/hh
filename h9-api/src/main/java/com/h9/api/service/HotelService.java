@@ -68,7 +68,7 @@ public class HotelService {
     public Result detail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
 
-        if (hotel == null) return Result.fail("酒店不存在");
+        if (hotel == null){ return Result.fail("酒店不存在");}
 
         List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
 
@@ -81,7 +81,7 @@ public class HotelService {
     public Result hotelList(String city, String queryKey, int page, int limit) {
         PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
 
-        if ("全部".equals(city)) {
+        if (city.equals("全部")) {
             if (StringUtils.isNotBlank(queryKey)) {
                 return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
             }else{
@@ -97,9 +97,8 @@ public class HotelService {
                 return Result.fail("没有找到此类酒店");
             }
         } else {
-            return Result.success(hotelRepository.findAllHotel(page, limit).map(HotelListVO::new));
+            return Result.success(hotelRepository.findByCity(city,page, limit).map(HotelListVO::new));
         }
-
     }
 
     public Result addOrder(AddHotelOrderDTO addHotelOrderDTO, Long userId) {
@@ -214,10 +213,10 @@ public class HotelService {
         }
 
         HotelOrder.PayMethodEnum payMethodEnum = HotelOrder.PayMethodEnum.findByCode(payMethod);
-        if (payMethodEnum == null) return Result.fail("请选择支付方式");
+        if (payMethodEnum == null){ return Result.fail("请选择支付方式");}
 
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelPayDTO.getHotelOrderId());
-        if (hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null) {return Result.fail("订单不存在");}
 
         if (hotelOrder.getOrderStatus() != HotelOrder.OrderStatusEnum.NOT_PAID.getCode()) {
             return Result.fail("订单已支付");
@@ -228,7 +227,7 @@ public class HotelService {
 
         String payPlatform = hotelPayDTO.getPayPlatform();
         OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
-        if (findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
+        if (findPayPlatformEnum == null) {return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");}
         Result result = null;
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
             result = balancePay(hotelOrder, user, userAccount);
@@ -382,9 +381,9 @@ public class HotelService {
     public Result orderDetail(Long orderId, Long userId) {
 
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
-        if (hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null){ return Result.fail("订单不存在");}
 
-        if (!hotelOrder.getUserId().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUserId().equals(userId)) {return Result.fail("无权查看");}
 
         return Result.success(new HotelOrderDetailVO(hotelOrder));
     }
@@ -404,16 +403,16 @@ public class HotelService {
 
     public Result<HotelOrder> authOrder(Long hotelOrderId, Long userId) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
-        if (hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null) {return Result.fail("订单不存在");}
 
-        if (!hotelOrder.getUserId().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUserId().equals(userId)) {return Result.fail("无权查看");}
 
         return Result.success(hotelOrder);
     }
 
     public Result payInfo(Long hotelOrderId, Long userId) {
         Result<HotelOrder> authResult = authOrder(hotelOrderId, userId);
-        if (authResult.getCode() == 1) return authResult;
+        if (authResult.getCode() == 1){ return authResult;}
 
         UserAccount userAccount = userAccountRepository.findOne(userId);
 
@@ -423,7 +422,7 @@ public class HotelService {
 
     public String orderDetail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
-        if (hotel == null) return "酒店不存在";
+        if (hotel == null) {return "酒店不存在";}
         return hotel.getHotelInfo();
     }
 }
