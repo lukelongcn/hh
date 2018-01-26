@@ -17,7 +17,7 @@ public class RedEnvelopeCodeVO {
     private String codeUrl;
     private String money;
 
-    private List<Map<Object, Object>> transferRecord= new ArrayList();
+//    private List<Map<Object, Object>> transferRecord= new ArrayList();
 
     /**
      *

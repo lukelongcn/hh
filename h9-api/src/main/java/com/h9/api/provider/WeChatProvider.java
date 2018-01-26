@@ -47,6 +47,8 @@ public class WeChatProvider {
     private String jsSecret;
     @Value("${common.wechat.callback}")
     private String url;
+    @Value("${path.app.wechat_host}")
+    private String host;
     @Resource
     private RestTemplate restTemplate;
 
@@ -230,17 +232,20 @@ public class WeChatProvider {
         MenuDTO menuDTO =  builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
-                                .setType("click")
+                                .setType("view")
                                 .setKey("12")
-                                .setName("扫瓶盖抢红包212"),
+                                .setUrl(host+"/h9-weixin/#/active/hongbao")
+                                .setName("扫瓶盖抢红包"),
                         new MenuDTO.ButtonBean()
-                                .setType("click")
+                                .setType("view")
                                 .setKey("23")
-                                .setName("徽酒商城212"),
+                                .setUrl(host+"/h9-weixin/#/shop")
+                                .setName("徽酒商城"),
                         new MenuDTO.ButtonBean()
-                                .setType("click")
+                                .setType("view")
                                 .setKey("31")
-                                .setName("旅游健康基金212"))
+                                .setUrl(host+"/h9-weixin/#/account/personal")
+                                .setName("旅游健康基金"))
                 ).build();
 
         String accessToken = getWeChatAccessToken();
@@ -260,17 +265,20 @@ public class WeChatProvider {
         MenuDTO menuDTO =  builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
-                                .setType("click")
+                                .setType("view")
                                 .setKey("12")
-                                .setName("扫瓶盖抢红包21"),
+                                .setUrl("https://weixin-h9.thy360.com/h9-weixin/#/active/hongbao")
+                                .setName("扫瓶盖抢红包"),
                         new MenuDTO.ButtonBean()
-                                .setType("click")
+                                .setType("view")
                                 .setKey("23")
-                                .setName("徽酒商城21"),
+                                .setUrl("https://weixin-h9.thy360.com/h9-weixin/#/shop")
+                                .setName("徽酒商城"),
                         new MenuDTO.ButtonBean()
-                                .setType("click")
+                                .setType("view")
                                 .setKey("31")
-                                .setName("旅游健康基金21"))
+                                .setUrl("https://weixin-h9.thy360.com/h9-weixin/#/account/personal")
+                                .setName("旅游健康基金"))
                 ).build();
 
         System.out.println(JSONObject.toJSONString(menuDTO));

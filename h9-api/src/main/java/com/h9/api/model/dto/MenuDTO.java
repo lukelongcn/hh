@@ -39,6 +39,7 @@ public class MenuDTO {
         private String type;
         private String name;
         private String key;
+        private String url;
         private List<SubButtonBean> sub_button;
 
 

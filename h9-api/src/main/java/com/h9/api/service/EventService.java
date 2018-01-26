@@ -10,6 +10,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlowType;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.TransactionsRepository;
@@ -112,11 +113,11 @@ public class EventService {
             // 注册用户
             user = userService.registUser(openId);
         }
-        Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(), redEnvelopeDTO.getMoney(), "红包");
+        Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
+                redEnvelopeDTO.getMoney(), "红包", BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),redEnvelopeDTO.getTempId());
         transactionsRepository.saveAndFlush(transactions);
 
         //扫码者加钱,展示码的人 扣钱
-
         Result result = commonService.setBalance(redEnvelopeDTO.getUserId(), redEnvelopeDTO.getMoney().abs().negate(),
                 BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
                 transactions.getId(), "", "红包");
