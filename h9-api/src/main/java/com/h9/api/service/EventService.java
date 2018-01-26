@@ -76,7 +76,7 @@ public class EventService {
             handleSubscribeAndScan(map);
         }
 
-        return "ok";
+        return "";
     }
 
 
