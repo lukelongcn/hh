@@ -1,6 +1,7 @@
 package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
+import lombok.Data;
 
 import javax.persistence.Table;
 
@@ -14,6 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Created by 李圆
  * on 2017/11/2
  */
+@Data
 @Entity
 @Table(name = "bank_type")
 public class BankType extends BaseEntity {
@@ -35,45 +37,8 @@ public class BankType extends BaseEntity {
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '状态， 1：启用，0：禁用'")
     private Integer status;
 
-    public String getBankImg() {
-        return bankImg;
-    }
-
-    public void setBankImg(String bankImg) {
-        this.bankImg = bankImg;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+    @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '编码'")
+    private String code;
 
     public enum StatusEnum {
         DISABLED(0,"禁用"),
