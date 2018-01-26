@@ -110,7 +110,7 @@ public class ConsumeController {
      * description: 提现
      */
 
-    @PostMapping(value = "/withdraw/callback",produces = {"text/html"})
+    @PostMapping(value = "/withdraw/callback",consumes ={"application/x-www-form-urlencoded"}, produces = {"text/html"})
     public String bankWithdraw(@RequestBody  SuNingResult suNingResult) {
         logger.debugv(JSONObject.toJSONString(suNingResult));
         return consumeService.callback(suNingResult);
