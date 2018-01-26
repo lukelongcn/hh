@@ -29,7 +29,7 @@ public class EventController {
        return eventService.handle(verifyTokenDTO);
     }
 
-    @PostMapping(value = "/wx/event",consumes = "application/xml")
+    @PostMapping(value = "/wx/event",consumes = "text/xml")
     public String wxEventCallback(HttpServletRequest request) {
         return eventService.wxEventCallBack(request);
     }
