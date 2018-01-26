@@ -644,16 +644,17 @@ public class UserService {
             Transactions transactions = transactionsRepository.findByTempId(tempId);
             if (transactions != null) {
 
-                Map<Object, Object> record = new HashMap<>();
+                Map<String, String> mapVO = new HashMap<>();
                 Long targetUserId = transactions.getTargetUserId();
                 User targetUser = userRepository.findOne(targetUserId);
-                record.put("nickName", targetUser.getNickName());
-                record.put("time", DateUtil.getSpaceTime(transactions.getCreateTime(), new Date()));
-                record.put("img", targetUser.getAvatar());
-                record.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
+                mapVO.put("nickName", targetUser.getNickName());
+                mapVO.put("time", DateUtil.getSpaceTime(transactions.getCreateTime(), new Date()));
+                mapVO.put("img", targetUser.getAvatar());
+                mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
 
-                Result.success(record);
+                return Result.success(mapVO);
             }
+
             return Result.success("");
         }
         return Result.fail("红包未被领取");
