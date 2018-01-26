@@ -289,10 +289,11 @@ public class WeChatProvider {
         String type = "交易类型：红包";
         String curAmount = "交易金额："+ MoneyUtils.formatMoney(money)+"元";
         String remark = "祝您生活愉快！";
+        String link = host+"/h9-weixin/#/account/personal";
         TemplateDTO templateDTO = TemplateDTO.builder()
                 .touser(openId)
                 .template_id("ZLRkh_yfy3Yx9LbRBejAB9nZ7SYFueCNk4HvT5nVCRY")
-                .url("http://weixin.qq.com/download")
+                .url(link)
                 .data(new TemplateDTO.DataBean()
                         .setFirst(new TemplateDTO.DataBean.FirstBean()
                                 .setValue("到账通知"))
