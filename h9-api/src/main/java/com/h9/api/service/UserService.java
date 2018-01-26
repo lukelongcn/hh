@@ -558,11 +558,11 @@ public class UserService {
             }
 
             //存放redis tempId;
-            String tempId = UUID.randomUUID().toString();
+            String tempId = UUID.randomUUID().toString().replace("-","");
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url,money,userId,1,tempId);
             redisBean.setStringValue(RedisKey.getQrCode(userId),JSONObject.toJSONString(redEnvelopeDTO),1,TimeUnit.DAYS);
-
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId),tempId,1,TimeUnit.DAYS);
             List<Map<Object, Object>> transferList = new ArrayList<>();
             Map<Object, Object> record = new HashMap<>();
             record.put("nickName", "张三");
