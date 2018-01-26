@@ -88,18 +88,20 @@ public class EventService {
 
         String eventKey = map.get("EventKey");
 
+        eventKey = eventKey.replace("qrscene_", "");
+
         String codeJson = redisBean.getStringValue(RedisKey.getQrCode(eventKey));
 
-        if(StringUtils.isBlank(codeJson)){
+        if (StringUtils.isBlank(codeJson)) {
 
-            logger.info("codeJson 为空: "+codeJson);
-            return ;
+            logger.info("codeJson 为空: " + codeJson);
+            return;
         }
 
         RedEnvelopeDTO redEnvelopeDTO = JSONObject.parseObject(codeJson, RedEnvelopeDTO.class);
 
-        logger.info("redEnvelopeDTO: "+JSONObject.toJSONString(redEnvelopeDTO));
-        if(redEnvelopeDTO.getStatus() == 0){
+        logger.info("redEnvelopeDTO: " + JSONObject.toJSONString(redEnvelopeDTO));
+        if (redEnvelopeDTO.getStatus() == 0) {
 
             logger.info("二维码失效了");
             return;
@@ -125,7 +127,7 @@ public class EventService {
                 transactions.getId(), "", "红包");
 
         //让redis 二维码 消失
-        redisBean.setStringValue(RedisKey.getQrCode(eventKey),"",1, TimeUnit.SECONDS);
+        redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
 
     }
 }
