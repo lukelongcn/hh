@@ -165,4 +165,15 @@ public class UserController {
                             @SessionAttribute("curUserId")Long userId,@RequestParam BigDecimal money){
         return userService.getRedEnvelope(request,response,userId,money);
     }
+
+
+    /**
+     * description: 采用轮洵策略查询红包二维码的状态
+     */
+    @Secured
+    @GetMapping("/user/redEnvelope/code/{tempId}/status")
+    public Result redEnvelopeStatus(@SessionAttribute("curUserId")Long userId,@RequestParam String tempId){
+        return userService.redEnvelopeStatus(tempId);
+    }
+
 }

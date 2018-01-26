@@ -19,4 +19,11 @@ public class RedEnvelopeCodeVO {
 
     private List<Map<Object, Object>> transferRecord= new ArrayList();
 
+    /**
+     *
+     * description: 客户端会拿首这个tempId 来轮洵服务器，查看红包状态
+     *
+     */
+    private String tempId;
+
 }

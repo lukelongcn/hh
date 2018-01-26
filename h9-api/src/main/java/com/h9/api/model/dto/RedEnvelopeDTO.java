@@ -27,4 +27,6 @@ public class RedEnvelopeDTO {
      */
     private int status;
 
+    private String tempId;
+
 }

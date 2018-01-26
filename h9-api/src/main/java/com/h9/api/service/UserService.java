@@ -557,8 +557,10 @@ public class UserService {
                 return Result.fail("获取二维码失败");
             }
 
+            //存放redis tempId;
+            String tempId = UUID.randomUUID().toString();
             //在 redis 中记录 红包二维码信息
-            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url,money,userId,1);
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url,money,userId,1,tempId);
             redisBean.setStringValue(RedisKey.getQrCode(userId),JSONObject.toJSONString(redEnvelopeDTO),1,TimeUnit.DAYS);
 
             List<Map<Object, Object>> transferList = new ArrayList<>();
@@ -569,6 +571,7 @@ public class UserService {
             transferList.add(record);
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
+                    .setTempId(tempId)
                     .setTransferRecord(transferList)
                     .setMoney(MoneyUtils.formatMoney(money));
 
@@ -637,4 +640,14 @@ public class UserService {
 
         return user;
     }
+
+    public Result redEnvelopeStatus(String tempId) {
+        String value = redisBean.getStringValue(RedisKey.getQrCodeTempId(tempId));
+        if (StringUtils.isBlank(value)) {
+
+            return Result.success("红包已被领取");
+        }
+        return Result.fail("红包未被领取");
+    }
+
 }
