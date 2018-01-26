@@ -462,7 +462,7 @@ public class ConsumeService {
         String purpose = "提现";
 //        String signFlag = "1";
 //        TODO
-        canWithdrawMoney = new BigDecimal(0);
+        canWithdrawMoney = new BigDecimal(1);
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
