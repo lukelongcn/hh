@@ -11,6 +11,8 @@ import com.h9.api.model.dto.Areas;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
+import com.h9.api.provider.SuNingProvider;
+import com.h9.api.provider.model.WithdrawDTO;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.FileService;
 import com.h9.api.service.UserService;
@@ -446,6 +448,25 @@ public class ApiApplicationTests {
     public  void testCreateMenu(){
         weChatProvider.createMenu();
     }
+
+    @Resource
+    private SuNingProvider suNingProvider;
+
+    @Resource
+    private UserBankRepository bankRepository;
+
+
+    @Test
+    public void  testWithdraw(){
+        UserBank userBank = bankRepository.findOne(231L);
+        if(userBank==null){
+            logger.debugv("用户银行卡");
+        }
+        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,new BigDecimal(0.01),1l,"1");
+        Result withdraw = suNingProvider.withdraw(withdrawDTO);
+        logger.debugv(JSONObject.toJSONString(withdraw));
+    }
+
 }
 
 

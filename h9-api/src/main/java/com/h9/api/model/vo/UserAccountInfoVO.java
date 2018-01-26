@@ -21,6 +21,7 @@ public class UserAccountInfoVO {
     private String nickName;
     private Integer withdrawalCount;
     private String tel;
+    private boolean canWithdeawal = false;
 
     public UserAccountInfoVO(User user, UserAccount userAccount, String cardNum, String tel, String max){
         this.balance = MoneyUtils.formatMoney(userAccount.getBalance());
@@ -89,5 +90,11 @@ public class UserAccountInfoVO {
         this.cardNum = cardNum;
     }
 
+    public boolean isCanWithdeawal() {
+        return canWithdeawal;
+    }
 
+    public void setCanWithdeawal(boolean canWithdeawal) {
+        this.canWithdeawal = canWithdeawal;
+    }
 }
