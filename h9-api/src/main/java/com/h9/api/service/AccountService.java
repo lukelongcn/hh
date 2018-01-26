@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.config.GlobalConfig;
 import com.h9.api.model.vo.BalanceFlowVO;
 import com.h9.api.model.vo.MyCouponsVO;
 import com.h9.api.model.vo.UserAccountInfoVO;
@@ -9,7 +10,6 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
-import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
@@ -104,6 +104,11 @@ public class AccountService {
         return userAccount.getBalance();
     }
 
+    @Resource
+    private GlobalConfig gloabeConfig;
+
+
+
     public Result accountInfo(Long userId) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         User user = userRepository.findOne(userId);
@@ -113,7 +118,9 @@ public class AccountService {
             max = "100";
             logger.error("没有找到提现最大值参数，默认为: " + max);
         }
+        boolean canWithdrawConfig = gloabeConfig.getCanWithdrawConfig();
         UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "", user.getPhone(), max);
+        userAccountInfoVO.setCanWithdeawal(canWithdrawConfig);
         return Result.success(userAccountInfoVO);
     }
 
