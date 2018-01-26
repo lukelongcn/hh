@@ -617,12 +617,13 @@ public class UserService {
     }
 
 
-    public User registUser(){
+    public User registUser(String openId){
         //第一登录 生成用户信息
         User user = initUserInfo("");
         int loginCount = user.getLoginCount();
         user.setLoginCount(++loginCount);
         user.setLastLoginTime(new Date());
+        user.setOpenId(openId);
         User userFromDb = userRepository.saveAndFlush(user);
 
         UserAccount userAccount = new UserAccount();

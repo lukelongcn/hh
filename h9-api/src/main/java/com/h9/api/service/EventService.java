@@ -110,7 +110,7 @@ public class EventService {
         User user = userRepository.findByOpenId(openId);
         if (user == null) {
             // 注册用户
-            user = userService.registUser();
+            user = userService.registUser(openId);
         }
         Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(), redEnvelopeDTO.getMoney(), "红包");
         transactionsRepository.saveAndFlush(transactions);
