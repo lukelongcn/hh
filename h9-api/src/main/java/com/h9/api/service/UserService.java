@@ -559,19 +559,10 @@ public class UserService {
 
             String ticket = getTicket(accessToken);
             String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
-//            if (StringUtils.isNotBlank(ticket)) {
-//                try {
-//                    response.sendRedirect(url);
-//                } catch (IOException e) {
-//                    logger.info("重定向失败");
-//                }
-//            }
 
             if (StringUtils.isEmpty(ticket)) {
                 return Result.fail("获取二维码失败");
             }
-
-
 
             List<Map<Object, Object>> transferList = new ArrayList<>();
             Map<Object, Object> record = new HashMap<>();
@@ -596,10 +587,12 @@ public class UserService {
         RestTemplate restTemplate = new RestTemplate();
         TicketDTO ticketDTO = new TicketDTO();
         ticketDTO.setAction_name("QR_SCENE");
-        ticketDTO.setExpire_seconds(604800);
+        //一天失效
+        ticketDTO.setExpire_seconds(86400);
         TicketDTO.ActionInfoBean actionInfoBean = new TicketDTO.ActionInfoBean();
         TicketDTO.ActionInfoBean.SceneBean sceneBean = new TicketDTO.ActionInfoBean.SceneBean();
-        sceneBean.setScene_id(123);
+        String sceneStr = UUID.randomUUID().toString().replace("-", "");
+        sceneBean.setScene_str(sceneStr);
         actionInfoBean.setScene(sceneBean);
         ticketDTO.setAction_info(actionInfoBean);
 
@@ -608,9 +601,6 @@ public class UserService {
         logger.info(json);
         String body = null;
         try {
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_JSON);
-//            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity(params, headers);
             body = restTemplate.postForEntity(url, json, String.class).getBody();
         } catch (RestClientException e) {
             logger.info(e.getMessage(), e);

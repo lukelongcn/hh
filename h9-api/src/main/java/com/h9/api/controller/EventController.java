@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 
 /**
@@ -29,8 +30,8 @@ public class EventController {
     }
 
     @PostMapping(value = "/wx/event",consumes = "application/xml")
-    public String wxEventCallback(@RequestBody EventDTO eventDTO) {
-        return eventService.wxEventCallBack(eventDTO);
+    public String wxEventCallback(HttpServletRequest request) {
+        return eventService.wxEventCallBack(request);
     }
 
 
