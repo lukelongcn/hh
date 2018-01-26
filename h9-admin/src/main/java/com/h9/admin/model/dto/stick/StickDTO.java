@@ -18,7 +18,6 @@ public class StickDTO {
     @Length(max = 64,message = "标题填写过长")
     private String title;
     @NotBlank(message = "请填写内容")
-    @Length(max = 1000,message = "内容过长")
     private String content;
     @NotNull(message = "请选择分类")
     private Long typeId;
