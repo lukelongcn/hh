@@ -111,7 +111,7 @@ public class ConsumeController {
      */
 
     @PostMapping(value = "/withdraw/callback",consumes ={"application/x-www-form-urlencoded"}, produces = {"text/html"})
-    public String bankWithdraw(@RequestBody  SuNingResult suNingResult) {
+    public String bankWithdraw(SuNingResult suNingResult) {
         logger.debugv(JSONObject.toJSONString(suNingResult));
         return consumeService.callback(suNingResult);
     }

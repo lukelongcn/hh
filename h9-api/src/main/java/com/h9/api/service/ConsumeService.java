@@ -25,6 +25,7 @@ import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
@@ -466,7 +467,8 @@ public class ConsumeService {
 //        String city = userBank.getCity();
         String purpose = "提现";
 //        String signFlag = "1";
-
+//        TODO
+        canWithdrawMoney = new BigDecimal(0);
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
