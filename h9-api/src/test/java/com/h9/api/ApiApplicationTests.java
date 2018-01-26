@@ -441,6 +441,11 @@ public class ApiApplicationTests {
                 "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT");
         System.out.println(ticket);
     }
+
+    @Test
+    public  void testCreateMenu(){
+        weChatProvider.createMenu();
+    }
 }
 
 

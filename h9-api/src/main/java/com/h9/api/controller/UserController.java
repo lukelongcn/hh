@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -154,9 +155,14 @@ public class UserController {
         return userService.transactions(userId,page,limit);
     }
 
-//    @Secured
-    @GetMapping("/user/redEnvelope")
-    public void redEnvelope(HttpServletRequest request,HttpServletResponse response){
-         userService.getRedEnvelope(request,response);
+    /**
+     * description: 转账二维码
+     */
+    @Secured
+    @GetMapping("/user/redEnvelope/code")
+    public Result redEnvelope(HttpServletRequest request,
+                            HttpServletResponse response,
+                            @SessionAttribute("curUserId")Long userId,@RequestParam BigDecimal money){
+        return userService.getRedEnvelope(request,response,userId,money);
     }
 }

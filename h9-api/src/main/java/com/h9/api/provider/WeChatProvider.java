@@ -232,15 +232,15 @@ public class WeChatProvider {
                         new MenuDTO.ButtonBean()
                                 .setType("click")
                                 .setKey("12")
-                                .setName("扫瓶盖抢红包21"),
+                                .setName("扫瓶盖抢红包212"),
                         new MenuDTO.ButtonBean()
                                 .setType("click")
                                 .setKey("23")
-                                .setName("徽酒商城21"),
+                                .setName("徽酒商城212"),
                         new MenuDTO.ButtonBean()
                                 .setType("click")
                                 .setKey("31")
-                                .setName("旅游健康基金21"))
+                                .setName("旅游健康基金212"))
                 ).build();
 
         String accessToken = getWeChatAccessToken();
@@ -249,7 +249,7 @@ public class WeChatProvider {
 
         String json = JSONObject.toJSONString(menuDTO);
         logger.info("request json : "+json);
-        Result4wx result = restTemplate.postForObject(createMenuUrl, json, Result4wx.class);
+        Result4wx result = restTemplate.postForObject(createMenuUrl, menuDTO, Result4wx.class);
         logger.info("创建菜单结果：" + JSONObject.toJSONString(result));
 
     }

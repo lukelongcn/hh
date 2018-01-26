@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.model.dto.EventDTO;
 import com.h9.api.model.dto.VerifyTokenDTO;
 import com.h9.common.utils.CheckoutUtil;
 import org.jboss.logging.Logger;
@@ -23,5 +24,9 @@ public class EventService {
             logger.info("验证失败");
             return "验证失败";
         }
+    }
+
+    public String wxEventCallBack(EventDTO eventDTO) {
+        return null;
     }
 }

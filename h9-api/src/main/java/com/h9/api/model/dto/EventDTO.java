@@ -2,18 +2,15 @@ package com.h9.api.model.dto;
 
 import lombok.Data;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 /**
  * Created by itservice on 2018/1/25.
  */
 
-@XmlRootElement(name = "xml")
+@XmlRootElement
 public class EventDTO {
-    @XmlAttribute
+    @XmlElement(name = "ToUserName")
     private String ToUserName;
 
     public String getToUserName() {
@@ -24,3 +21,5 @@ public class EventDTO {
         ToUserName = toUserName;
     }
 }
+
+

@@ -555,21 +555,32 @@ public class UserService {
         return Result.success(vo);
     }
 
-    public void getRedEnvelope(HttpServletRequest request, HttpServletResponse response) {
-        String accessToken = weChatProvider.getWeChatAccessToken();
+    public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
+        if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
 
-        String ticket = getTicket(accessToken);
-        String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
-        if (StringUtils.isNotBlank(ticket)) {
-            try {
-                response.sendRedirect(url);
-            } catch (IOException e) {
-                logger.info("重定向失败");
+            String accessToken = weChatProvider.getWeChatAccessToken();
+
+            String ticket = getTicket(accessToken);
+            String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+//            if (StringUtils.isNotBlank(ticket)) {
+//                try {
+//                    response.sendRedirect(url);
+//                } catch (IOException e) {
+//                    logger.info("重定向失败");
+//                }
+//            }
+
+            if (StringUtils.isEmpty(ticket)) {
+                return Result.fail("获取二维码失败");
             }
+            Map<Object, Object> vo = new HashMap<>();
+            vo.put("codeUrl", url);
+            vo.put("money", money);
+            return Result.success(vo);
         }
 
+        return Result.fail("请填写正确的金额");
     }
-
 
 
     public String getTicket(String accessToken) {
