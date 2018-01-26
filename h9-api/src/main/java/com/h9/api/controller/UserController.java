@@ -1,9 +1,11 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.SmsService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -119,5 +123,46 @@ public class UserController {
     public Result Config(HttpServletRequest request){
         String refer = request.getHeader("Referer");
         return userService.getConfig(refer);
+    }
+
+
+    /**
+     * description: 转账信息
+     */
+    @GetMapping("/user/transfer/info/{phone}")
+    @Secured
+    public Result transferInfo(@SessionAttribute("curUserId")Long userId, @PathVariable String phone){
+        return userService.transferInfo(userId,phone);
+    }
+
+    /**
+     * description: 用户转账
+     */
+    @PostMapping("/user/transfer")
+    @Secured
+    public Result transfer(@SessionAttribute("curUserId")Long userId, @Valid@RequestBody TransferDTO transferDTO){
+        return userService.transfer(userId,transferDTO);
+    }
+    
+    /**
+     * description: 转账记录
+     */
+    @Secured
+    @GetMapping("/user/transactions")
+    public Result transactions(@SessionAttribute("curUserId")Long userId,
+                               @RequestParam(defaultValue = "1") Integer page,
+                               @RequestParam(defaultValue = "10") Integer limit){
+        return userService.transactions(userId,page,limit);
+    }
+
+    /**
+     * description: 转账二维码
+     */
+    @Secured
+    @GetMapping("/user/redEnvelope/code")
+    public Result redEnvelope(HttpServletRequest request,
+                            HttpServletResponse response,
+                            @SessionAttribute("curUserId")Long userId,@RequestParam BigDecimal money){
+        return userService.getRedEnvelope(request,response,userId,money);
     }
 }

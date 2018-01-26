@@ -11,7 +11,9 @@ import com.h9.api.model.dto.Areas;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.FileService;
+import com.h9.api.service.UserService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -428,14 +430,21 @@ public class ApiApplicationTests {
     @Resource
     private LotteryRepository lotteryRepository;
 
+    @Resource
+    private WeChatProvider weChatProvider;
+
+    @Resource
+    private UserService userService;
     @Test
     public void testRecharge(){
-//        MobileRechargeDTO mobileRechargeDTO = new MobileRechargeDTO();
-//        mobileRechargeDTO.setCode("0000");
-//        mobileRechargeDTO.setTel("17673140753");
-//        MobileRechargeService service = new MobileRechargeService();
-//        Result recharge = service.recharge(mobileRechargeDTO, 10L, new BigDecimal("0.01"));
-//        System.out.println(recharge);
+        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
+                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT");
+        System.out.println(ticket);
+    }
+
+    @Test
+    public  void testCreateMenu(){
+        weChatProvider.createMenu();
     }
 }
 

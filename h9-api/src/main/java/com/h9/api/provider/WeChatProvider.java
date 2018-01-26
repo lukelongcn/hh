@@ -1,12 +1,17 @@
 package com.h9.api.provider;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPObject;
+import com.google.gson.JsonObject;
+import com.h9.api.model.dto.MenuDTO;
 import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +24,7 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -219,10 +225,63 @@ public class WeChatProvider {
     }
 
 
+    public void createMenu(){
+        MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
+        MenuDTO menuDTO =  builder
+                .button(Arrays.asList(
+                        new MenuDTO.ButtonBean()
+                                .setType("click")
+                                .setKey("12")
+                                .setName("扫瓶盖抢红包212"),
+                        new MenuDTO.ButtonBean()
+                                .setType("click")
+                                .setKey("23")
+                                .setName("徽酒商城212"),
+                        new MenuDTO.ButtonBean()
+                                .setType("click")
+                                .setKey("31")
+                                .setName("旅游健康基金212"))
+                ).build();
+
+        String accessToken = getWeChatAccessToken();
+        logger.info("accessToken : "+accessToken);
+        String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
+
+        String json = JSONObject.toJSONString(menuDTO);
+        logger.info("request json : "+json);
+        Result4wx result = restTemplate.postForObject(createMenuUrl, menuDTO, Result4wx.class);
+        logger.info("创建菜单结果：" + JSONObject.toJSONString(result));
+
+    }
 
 
+    public static void main(String[] args) {
+        MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
+        MenuDTO menuDTO =  builder
+                .button(Arrays.asList(
+                        new MenuDTO.ButtonBean()
+                                .setType("click")
+                                .setKey("12")
+                                .setName("扫瓶盖抢红包21"),
+                        new MenuDTO.ButtonBean()
+                                .setType("click")
+                                .setKey("23")
+                                .setName("徽酒商城21"),
+                        new MenuDTO.ButtonBean()
+                                .setType("click")
+                                .setKey("31")
+                                .setName("旅游健康基金21"))
+                ).build();
 
+        System.out.println(JSONObject.toJSONString(menuDTO));
+    }
 
+    @Data
+    @Accessors(chain = true)
+    public static class Result4wx{
+        private String errcode;
+        private String errmsg;
+    }
 
 
 
