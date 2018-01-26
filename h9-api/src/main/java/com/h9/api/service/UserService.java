@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.*;
-import com.h9.api.model.vo.BalanceFlowVO;
-import com.h9.api.model.vo.LoginResultVO;
-import com.h9.api.model.vo.TransferInfoVO;
-import com.h9.api.model.vo.UserInfoVO;
+import com.h9.api.model.vo.*;
 import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
@@ -573,10 +570,21 @@ public class UserService {
             if (StringUtils.isEmpty(ticket)) {
                 return Result.fail("获取二维码失败");
             }
-            Map<Object, Object> vo = new HashMap<>();
-            vo.put("codeUrl", url);
-            vo.put("money", money);
-            return Result.success(vo);
+
+
+
+            List<Map<Object, Object>> transferList = new ArrayList<>();
+            Map<Object, Object> record = new HashMap<>();
+            record.put("nickName", "张三");
+            record.put("time", "30分钟前");
+            record.put("money", "2.00");
+            transferList.add(record);
+            RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
+                    .setCodeUrl(url)
+                    .setTransferRecord(transferList)
+                    .setMoney(MoneyUtils.formatMoney(money));
+
+            return Result.success(redEnvelopeCodeVO);
         }
 
         return Result.fail("请填写正确的金额");
