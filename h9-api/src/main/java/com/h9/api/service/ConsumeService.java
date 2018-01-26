@@ -5,6 +5,8 @@ import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.provider.ChinaPayService;
 import com.h9.api.provider.SuNingProvider;
+import com.h9.api.provider.model.SuNingContent;
+import com.h9.api.provider.model.SuNingResult;
 import com.h9.api.provider.model.WithdrawDTO;
 import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
@@ -479,6 +481,8 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
+            //转账成功
+            commonService.setBalance(withdrawalsRecord.getUserId(), withdrawalsRecord.getMoney().abs().negate(), 1L, withdrawalsRecord.getId(), withdrawalsRecord.getId()+"", "提现");
             return Result.success(map);
         }else{
             return withdrawResult;
@@ -499,13 +503,7 @@ public class ConsumeService {
 //        withdrawalsRequest.setMerDate(merDate);
 //        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
 //
-//        //设置默认银行卡
-//        UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
-//        if (defaulBank != null) {
-//            defaulBank.setDefaultSelect(0);
-//            bankCardRepository.save(defaulBank);
-//        }
-//        userBank.setDefaultSelect(1);
+//
 //
 //        UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
 //        withdrawalsRecord.setUserRecord(userRecord);
@@ -769,5 +767,50 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
         return Result.success("校验成功");
+    }
+
+
+    public String callback(SuNingResult suNingResult){
+        if(suNingResult == null){
+            return "";
+        }
+        SuNingContent content = suNingResult.getContent();
+        if (content == null) {
+            return "";
+        }
+
+        String batchNo = content.getBatchNo();
+        Long orderId = Long.parseLong(batchNo);
+        String status = content.getStatus();
+        if ( "07".equals(status) ) {
+            WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
+
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+
+            //设置默认银行卡
+            UserBank defaulBank = bankCardRepository.getDefaultBank(withdrawalsRecord.getUserId());
+            if (defaulBank != null) {
+                defaulBank.setDefaultSelect(0);
+                bankCardRepository.save(defaulBank);
+            }
+            UserBank userBank = withdrawalsRecord.getUserBank();
+            userBank.setDefaultSelect(1);
+            bankCardRepository.save(userBank);
+
+            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
+            oldWithdrawMoney = oldWithdrawMoney.add(withdrawalsRecord.getMoney());
+            Long withdrawCount = userBank.getWithdrawCount();
+            withdrawCount++;
+            userBank.setWithdrawCount(withdrawCount);
+            userBank.setWithdrawMoney(oldWithdrawMoney);
+
+            bankCardRepository.save(userBank);
+            Long userId = withdrawalsRecord.getUserId();
+            User user = userRepository.findOne(userId);
+            addWithdrawCount(user);
+            return "true";
+        }
+        return "false";
     }
 }
