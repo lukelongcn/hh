@@ -26,5 +26,6 @@ public class SuNingContent {
     private String status;
     private String errorCode;
     private String errorMsg;
+    private String transferOrders;
 
 }

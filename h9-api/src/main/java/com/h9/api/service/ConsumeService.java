@@ -478,6 +478,7 @@ public class ConsumeService {
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
             //转账成功
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
             commonService.setBalance(withdrawalsRecord.getUserId(), withdrawalsRecord.getMoney().abs().negate(), 1L, withdrawalsRecord.getId(), withdrawalsRecord.getId()+"", "提现");
             return Result.success(map);
         }else{
@@ -778,9 +779,12 @@ public class ConsumeService {
         String batchNo = content.getBatchNo();
         Long orderId = Long.parseLong(batchNo);
         String status = content.getStatus();
-        if ( "07".equals(status) ) {
-            WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
+        WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
+        if(withdrawalsRecord.getStatus() == WithdrawalsRecord.statusEnum.FINISH.getCode()){
+            return "true";
+        }
 
+        if ( "07".equals(status) ) {
             withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
 
@@ -806,6 +810,9 @@ public class ConsumeService {
             User user = userRepository.findOne(userId);
             addWithdrawCount(user);
             return "true";
+        }else if("04".equals(status) ){
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         }
         return "false";
     }
