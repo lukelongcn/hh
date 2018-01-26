@@ -65,8 +65,8 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
 !netpayclient.jar
+!*/lib/*
 *.war
 *.ear
 *.zip
