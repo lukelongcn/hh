@@ -1,7 +1,6 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.*;
 import com.h9.api.model.vo.*;
@@ -22,29 +21,21 @@ import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.transform.ResultTransformer;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -176,8 +167,10 @@ public class UserService {
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        CharSequence charSequence = phone.subSequence(3, 7);
-        user.setNickName(phone.replace(charSequence, "****"));
+        if (StringUtils.isNotBlank(phone)) {
+            CharSequence charSequence = phone.subSequence(3, 7);
+            user.setNickName(phone.replace(charSequence, "****"));
+        }
         user.setLastLoginTime(new Date());
 //        GlobalProperty defaultHead = globalPropertyRepository.findByCode(ParamConstant.DEFUALT_HEAD);
 
@@ -557,12 +550,16 @@ public class UserService {
 
             String accessToken = weChatProvider.getWeChatAccessToken();
 
-            String ticket = getTicket(accessToken);
+            String ticket = getTicket(accessToken,userId);
             String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
 
             if (StringUtils.isEmpty(ticket)) {
                 return Result.fail("获取二维码失败");
             }
+
+            //在 redis 中记录 红包二维码信息
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url,money,userId,1);
+            redisBean.setStringValue(RedisKey.getQrCode(userId),JSONObject.toJSONString(redEnvelopeDTO),1,TimeUnit.DAYS);
 
             List<Map<Object, Object>> transferList = new ArrayList<>();
             Map<Object, Object> record = new HashMap<>();
@@ -582,17 +579,22 @@ public class UserService {
     }
 
 
-    public String getTicket(String accessToken) {
+    /**
+     * description:  getTicket
+     *
+     */
+    public String getTicket(String accessToken, Long userId) {
 
         RestTemplate restTemplate = new RestTemplate();
         TicketDTO ticketDTO = new TicketDTO();
         ticketDTO.setAction_name("QR_SCENE");
+
         //一天失效
         ticketDTO.setExpire_seconds(86400);
         TicketDTO.ActionInfoBean actionInfoBean = new TicketDTO.ActionInfoBean();
         TicketDTO.ActionInfoBean.SceneBean sceneBean = new TicketDTO.ActionInfoBean.SceneBean();
-        String sceneStr = UUID.randomUUID().toString().replace("-", "");
-        sceneBean.setScene_str(sceneStr);
+        sceneBean.setScene_id(userId.intValue());
+
         actionInfoBean.setScene(sceneBean);
         ticketDTO.setAction_info(actionInfoBean);
 
@@ -615,4 +617,23 @@ public class UserService {
     }
 
 
+    public User registUser(){
+        //第一登录 生成用户信息
+        User user = initUserInfo("");
+        int loginCount = user.getLoginCount();
+        user.setLoginCount(++loginCount);
+        user.setLastLoginTime(new Date());
+        User userFromDb = userRepository.saveAndFlush(user);
+
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(userFromDb.getId());
+        userAccountRepository.save(userAccount);
+
+        UserExtends userExtends = new UserExtends();
+        userExtends.setUserId(userFromDb.getId());
+        userExtends.setSex(1);
+        userExtendsRepository.save(userExtends);
+
+        return user;
+    }
 }

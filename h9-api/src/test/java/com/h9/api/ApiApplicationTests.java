@@ -8,8 +8,6 @@ import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
-import com.h9.api.model.dto.MobileRechargeDTO;
-import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.SuNingProvider;
 import com.h9.api.provider.model.WithdrawDTO;
@@ -43,9 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -439,9 +435,9 @@ public class ApiApplicationTests {
     private UserService userService;
     @Test
     public void testRecharge(){
-        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
-                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT");
-        System.out.println(ticket);
+//        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
+//                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT", userId);
+//        System.out.println(ticket);
     }
 
     @Test

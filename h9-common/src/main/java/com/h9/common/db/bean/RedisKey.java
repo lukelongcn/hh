@@ -44,6 +44,16 @@ public class RedisKey {
 
     public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
 
+    public static String QR_CODE = "h9:qr:code:";
+
+    public static String getQrCode(Long userId) {
+        return QR_CODE+""+userId;
+    }
+
+    public static String getQrCode(String userId) {
+        return QR_CODE+""+userId;
+    }
+
     public static String getTodayRechargeMoney(Long userId) {
         return todayRechargeMoney+userId;
     }
