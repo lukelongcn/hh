@@ -29,4 +29,9 @@ public class RedEnvelopeDTO {
 
     private String tempId;
 
+    /**
+     * description: 发起方的OpenId
+     */
+    private String openId;
+
 }

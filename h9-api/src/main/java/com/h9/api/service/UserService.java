@@ -557,11 +557,11 @@ public class UserService {
             if (StringUtils.isEmpty(ticket)) {
                 return Result.fail("获取二维码失败");
             }
-
+            User user = userRepository.findOne(userId);
             //存放redis tempId;
             String tempId = UUID.randomUUID().toString().replace("-", "");
             //在 redis 中记录 红包二维码信息
-            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId);
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId,user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
             redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), tempId, 1, TimeUnit.DAYS);
 

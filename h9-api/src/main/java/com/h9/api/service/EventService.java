@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +45,8 @@ public class EventService {
     private CommonService commonService;
     @Resource
     private TransactionsRepository transactionsRepository;
+    @Resource
+    private WeChatProvider weChatProvider;
 
     public String handle(VerifyTokenDTO verifyTokenDTO) {
         String signature = verifyTokenDTO.getSignature();
@@ -132,10 +135,11 @@ public class EventService {
             redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
 
             redisBean.setStringValue(RedisKey.getQrCodeTempId(redEnvelopeDTO.getTempId()),"",1,TimeUnit.SECONDS);
+
+            //发送模块消息给用户
+            weChatProvider.sendTemplate(openId,redEnvelopeDTO.getMoney());
+            weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(),redEnvelopeDTO.getMoney().abs().negate());
         }
-
-
-
 
     }
 }

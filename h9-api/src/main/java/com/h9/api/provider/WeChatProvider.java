@@ -6,10 +6,13 @@ import com.google.gson.JsonObject;
 import com.h9.api.model.dto.MenuDTO;
 import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.provider.model.OpenIdCode;
+import com.h9.api.provider.model.TemplateDTO;
 import com.h9.api.provider.model.WeChatUser;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
@@ -22,11 +25,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -259,6 +261,63 @@ public class WeChatProvider {
 
     }
 
+    @Deprecated
+    public Result getTemplate(String accessToken){
+        if (StringUtils.isBlank(accessToken)) {
+            return Result.fail();
+        }
+        String url = "https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token=" + accessToken;
+        Map<String, Object> params = new HashMap<>();
+        params.put("template_id_short", "ZLRkh_yfy3Yx9LbRBejAB9nZ7SYFueCNk4HvT5nVCRY");
+        Result4wx result4wx = restTemplate.postForObject(url, params, Result4wx.class);
+        if (result4wx.getErrcode().equals("0")) {
+            return Result.success(result4wx.getTemplate_id());
+        }else{
+            return Result.fail();
+        }
+    }
+
+    public Result sendTemplate(String openId, BigDecimal money){
+        String accessToken = getWeChatAccessToken();
+        if (StringUtils.isBlank(accessToken)) {
+            return Result.fail();
+        }
+
+        String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
+
+        String date = "交易时间："+ DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_MINUTE);
+        String type = "交易类型：红包";
+        String curAmount = "交易金额："+ MoneyUtils.formatMoney(money)+"元";
+        String remark = "祝您生活愉快！";
+        TemplateDTO templateDTO = TemplateDTO.builder()
+                .touser(openId)
+                .template_id("ZLRkh_yfy3Yx9LbRBejAB9nZ7SYFueCNk4HvT5nVCRY")
+                .url("http://weixin.qq.com/download")
+                .data(new TemplateDTO.DataBean()
+                        .setFirst(new TemplateDTO.DataBean.FirstBean()
+                                .setValue("到账通知"))
+                        .setTradeDateTime(new TemplateDTO.DataBean.TradeDateTimeBean()
+                                .setValue(date))
+                        .setTradeType(new TemplateDTO.DataBean.TradeTypeBean()
+                                .setValue(type))
+                        .setCurAmount(new TemplateDTO.DataBean.CurAmountBean()
+                                .setValue(curAmount))
+                        .setRemark(new TemplateDTO.DataBean.RemarkBean()
+                                .setValue(remark))
+
+                ).build();
+
+        String requestBody = JSONObject.toJSONString(templateDTO);
+        logger.info("请求数据："+requestBody);
+        Result4wx result4wx = restTemplate.postForObject(url, templateDTO, Result4wx.class);
+        logger.info("发送模块消息结果：" + JSONObject.toJSONString(result4wx));
+
+        if (result4wx.getErrcode().equals("0")) {
+            return Result.success();
+        }else{
+            return Result.fail();
+        }
+    }
 
     public static void main(String[] args) {
         MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
@@ -289,6 +348,8 @@ public class WeChatProvider {
     public static class Result4wx{
         private String errcode;
         private String errmsg;
+        private String template_id;
+        private String msgid;
     }
 
 
