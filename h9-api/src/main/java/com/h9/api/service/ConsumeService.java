@@ -4,6 +4,8 @@ import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.provider.ChinaPayService;
+import com.h9.api.provider.SuNingProvider;
+import com.h9.api.provider.model.WithdrawDTO;
 import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
@@ -27,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,15 +52,9 @@ public class ConsumeService {
     @Resource
     private RedisBean redisBean;
     @Resource
-    private SMSProvide smService;
-    @Resource
     private UserRepository userRepository;
     @Resource
-    private SMSLogReposiroty smsLogReposiroty;
-    @Resource
     private UserAccountRepository userAccountRepository;
-    @Resource
-    private UserExtendsRepository userExtendsRepository;
     @Resource
     private MobileRechargeService mobileRechargeService;
     @Resource
@@ -75,13 +72,9 @@ public class ConsumeService {
     @Resource
     private WithdrawalsRecordRepository withdrawalsRecordReposiroty;
     @Resource
-    private AccountService accountService;
-    @Resource
     private UserBankRepository userBankRepository;
     @Resource
     private WithdrawalsFailsReposiroty withdrawalsFailsReposiroty;
-    @Resource
-    private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private CommonService commonService;
     @Resource
@@ -93,11 +86,11 @@ public class ConsumeService {
     @Value("${chinaPay.merId}")
     private String merId;
     @Resource
-    private GlobalPropertyRepository globalPropertyRepository;
-    @Resource
     private ConfigService configService;
     @Resource
     private RechargeRecordRepository rechargeRecordRepository;
+    @Resource
+    private SuNingProvider suNingProvider;
 
 
     @Resource
@@ -464,82 +457,97 @@ public class ConsumeService {
             }
         }
 
-        String cardNo = userBank.getNo();
-        String usrName = userBank.getName();
-        String openBank = bankType.getBankName();
-        String prov = userBank.getProvince();
-        String city = userBank.getCity();
+//        String cardNo = userBank.getNo();
+//        String usrName = userBank.getName();
+//        String openBank = bankType.getBankName();
+//        String prov = userBank.getProvince();
+//        String city = userBank.getCity();
         String purpose = "提现";
-        String signFlag = "1";
+//        String signFlag = "1";
 
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
-        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
+        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,canWithdrawMoney,withdrawalsRecord.getId(),merSeqId);
+        Result withdrawResult = suNingProvider.withdraw(withdrawDTO);
 
-        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
-        String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate, currentEnvironment);
-
-        //保存这个提现请求
-        WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
-        withdrawalsRequest.setWithdrawCashId(withdrawalsRecord.getId());
-        BeanUtils.copyProperties(payParam, withdrawalsRequest);
-        withdrawalsRequest.setBankReturnData(result.getData().toString());
-        withdrawalsRequest.setMerDate(merDate);
-        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
         String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
         redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
-        //设置默认银行卡
-        UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
-        if (defaulBank != null) {
-            defaulBank.setDefaultSelect(0);
-            bankCardRepository.save(defaulBank);
-        }
-        userBank.setDefaultSelect(1);
 
-        UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
-        withdrawalsRecord.setUserRecord(userRecord);
-
-        if (result.getData().toString().startsWith("responseCode=0000")) {
-            if (result.getData().toString().contains("stat=s")) {
-                //转账成功
-                commonService.setBalance(userId, canWithdrawMoney.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
-                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
-            } else {
-                //转账尚未到用户卡上
-                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
-            }
-            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
-            oldWithdrawMoney = oldWithdrawMoney.add(balance);
-            Long withdrawCount = userBank.getWithdrawCount();
-            withdrawCount++;
-            userBank.setWithdrawCount(withdrawCount);
-            userBank.setWithdrawMoney(oldWithdrawMoney);
-
+        if(withdrawResult.isSuccess()){
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
-            withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
-            bankCardRepository.save(userBank);
-            addWithdrawCount(user);
             return Result.success(map);
-
-        } else {
-            //提现失败
-            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
-            BeanUtils.copyProperties(payParam, withdrawalsRecord);
-            withdrawalsRecordReposiroty.save(withdrawalsRecord);
-            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
-            BeanUtils.copyProperties(payParam, withdrawalsFails);
-            withdrawalsFails.setBankReturnData(result.getData().toString());
-            withdrawalsFailsReposiroty.save(withdrawalsFails);
-            withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            bankCardRepository.save(userBank);
-            return Result.fail("请确认银行卡信息是否正确");
+        }else{
+            return withdrawResult;
         }
+
+//
+//        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
+//
+//        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+//        String merDate = format.format(new Date());
+//        Result result = chinaPayService.signPay(payParam, merDate, currentEnvironment);
+//
+//        //保存这个提现请求
+//        WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
+//        withdrawalsRequest.setWithdrawCashId(withdrawalsRecord.getId());
+//        BeanUtils.copyProperties(payParam, withdrawalsRequest);
+//        withdrawalsRequest.setBankReturnData(result.getData().toString());
+//        withdrawalsRequest.setMerDate(merDate);
+//        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
+//
+//        //设置默认银行卡
+//        UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
+//        if (defaulBank != null) {
+//            defaulBank.setDefaultSelect(0);
+//            bankCardRepository.save(defaulBank);
+//        }
+//        userBank.setDefaultSelect(1);
+//
+//        UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
+//        withdrawalsRecord.setUserRecord(userRecord);
+//
+//        if (result.getData().toString().startsWith("responseCode=0000")) {
+//            if (result.getData().toString().contains("stat=s")) {
+//                //转账成功
+//                commonService.setBalance(userId, canWithdrawMoney.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
+//                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+//            } else {
+//                //转账尚未到用户卡上
+//                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
+//            }
+//            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
+//            oldWithdrawMoney = oldWithdrawMoney.add(balance);
+//            Long withdrawCount = userBank.getWithdrawCount();
+//            withdrawCount++;
+//            userBank.setWithdrawCount(withdrawCount);
+//            userBank.setWithdrawMoney(oldWithdrawMoney);
+//
+//            Map<String, String> map = new HashMap<>();
+//            map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
+//            map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
+//            withdrawalsRequestReposiroty.save(withdrawalsRequest);
+//            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+//            bankCardRepository.save(userBank);
+//            addWithdrawCount(user);
+//            return Result.success(map);
+//
+//        } else {
+//            //提现失败
+//            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+//            BeanUtils.copyProperties(payParam, withdrawalsRecord);
+//            withdrawalsRecordReposiroty.save(withdrawalsRecord);
+//            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+//            BeanUtils.copyProperties(payParam, withdrawalsFails);
+//            withdrawalsFails.setBankReturnData(result.getData().toString());
+//            withdrawalsFailsReposiroty.save(withdrawalsFails);
+//            withdrawalsRequestReposiroty.save(withdrawalsRequest);
+//            bankCardRepository.save(userBank);
+//            return Result.fail("请确认银行卡信息是否正确");
+//        }
     }
 
     /**
