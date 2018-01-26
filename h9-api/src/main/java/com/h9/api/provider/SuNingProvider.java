@@ -92,7 +92,7 @@ public class SuNingProvider {
             if(http_result!=null&&http_result.containsKey("responseCode")){
                 String responseCode = http_result.getString("responseCode");
                 if("0000".equals(responseCode)){
-                    Result.success();
+                    return Result.success();
                 }
             }
             logger.debugv(post);
