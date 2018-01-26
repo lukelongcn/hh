@@ -277,6 +277,8 @@ public class WeChatProvider {
         }
     }
 
+    @Value("${wx.template.id}")
+    private String templateId;
     public Result sendTemplate(String openId, BigDecimal money){
         String accessToken = getWeChatAccessToken();
         if (StringUtils.isBlank(accessToken)) {
@@ -285,14 +287,14 @@ public class WeChatProvider {
 
         String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
 
-        String date = "交易时间："+ DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_MINUTE);
-        String type = "交易类型：红包";
-        String curAmount = "交易金额："+ MoneyUtils.formatMoney(money)+"元";
+        String date = ""+ DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_MINUTE);
+        String type = "红包";
+        String curAmount = ""+ MoneyUtils.formatMoney(money)+"元";
         String remark = "祝您生活愉快！";
         String link = host+"/h9-weixin/#/account/personal";
         TemplateDTO templateDTO = TemplateDTO.builder()
                 .touser(openId)
-                .template_id("ZLRkh_yfy3Yx9LbRBejAB9nZ7SYFueCNk4HvT5nVCRY")
+                .template_id(templateId)
                 .url(link)
                 .data(new TemplateDTO.DataBean()
                         .setFirst(new TemplateDTO.DataBean.FirstBean()
