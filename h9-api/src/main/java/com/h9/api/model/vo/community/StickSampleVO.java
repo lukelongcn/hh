@@ -53,9 +53,9 @@ public class StickSampleVO {
             userAvatar = user.getAvatar();
         }
         title = stick.getTitle();
-        if(stick.getReadCount()!=null) readCount = stick.getReadCount();
-        if(stick.getLikeCount()!=null)likeCount = stick.getLikeCount();
-        if(stick.getAnswerCount()!=null) answerCount = stick.getAnswerCount();
+        if(stick.getReadCount()!=null) { readCount = stick.getReadCount();}
+        if(stick.getLikeCount()!=null){ likeCount = stick.getLikeCount();}
+        if(stick.getAnswerCount()!=null) { answerCount = stick.getAnswerCount();}
         StickType stickType = stick.getStickType();
         if (stickType != null) {
             typeName = stickType.getName();
