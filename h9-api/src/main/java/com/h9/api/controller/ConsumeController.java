@@ -10,7 +10,6 @@ import com.h9.api.provider.model.SuNingResult;
 import com.h9.api.service.ConsumeService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
-import okhttp3.MediaType;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,8 +109,8 @@ public class ConsumeController {
      * description: 提现
      */
 
-    @PostMapping(value = "/withdraw/callback",produces = {"text/html"})
-    public String bankWithdraw(@RequestBody  SuNingResult suNingResult) {
+    @PostMapping(value = "/withdraw/callback",consumes ={"application/x-www-form-urlencoded"}, produces = {"text/html"})
+    public String bankWithdraw(SuNingResult suNingResult) {
         logger.debugv(JSONObject.toJSONString(suNingResult));
         return consumeService.callback(suNingResult);
     }

@@ -1,5 +1,6 @@
 package com.h9.api.provider.model;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 /**
@@ -13,11 +14,15 @@ import lombok.Data;
 @Data
 public class SuNingResult {
 
-    private SuNingContent content;
+    private String content;
     private String sign;
     private String sign_type;
     private String vk_version;
 
+
+    public SuNingContent getContent(){
+        return JSONObject.parseObject(content, SuNingContent.class);
+    }
 
 
 }

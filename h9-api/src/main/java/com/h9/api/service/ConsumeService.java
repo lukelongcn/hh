@@ -1,21 +1,21 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
+import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.DidiCardVerifyDTO;
+import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.provider.ChinaPayService;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SuNingProvider;
 import com.h9.api.provider.model.SuNingContent;
+import com.h9.api.provider.model.SuNingOrders;
 import com.h9.api.provider.model.SuNingResult;
 import com.h9.api.provider.model.WithdrawDTO;
-import com.h9.common.common.CommonService;
-import com.h9.api.model.dto.DidiCardDTO;
-import com.h9.api.model.dto.MobileRechargeDTO;
-import com.h9.api.provider.MobileRechargeService;
-import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
-import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -27,16 +27,13 @@ import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -466,7 +463,8 @@ public class ConsumeService {
 //        String city = userBank.getCity();
         String purpose = "提现";
 //        String signFlag = "1";
-
+//        TODO
+        canWithdrawMoney = new BigDecimal(1);
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
@@ -482,6 +480,7 @@ public class ConsumeService {
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
             //转账成功
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
             commonService.setBalance(withdrawalsRecord.getUserId(), withdrawalsRecord.getMoney().abs().negate(), 1L, withdrawalsRecord.getId(), withdrawalsRecord.getId()+"", "提现");
             return Result.success(map);
         }else{
@@ -772,19 +771,33 @@ public class ConsumeService {
 
     public String callback(SuNingResult suNingResult){
         if(suNingResult == null){
-            return "";
+            return "false";
         }
+
+        try {
+            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+            withdrawalsFails.setBankReturnData(JSONObject.toJSONString(suNingResult));
+            withdrawalsFailsReposiroty.save(withdrawalsFails);
+        } catch (Exception e) {
+
+        }
+
         SuNingContent content = suNingResult.getContent();
         if (content == null) {
-            return "";
+            return "false";
         }
 
         String batchNo = content.getBatchNo();
         Long orderId = Long.parseLong(batchNo);
         String status = content.getStatus();
-        if ( "07".equals(status) ) {
-            WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
+        WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
 
+        if(withdrawalsRecord.getStatus() == WithdrawalsRecord.statusEnum.FINISH.getCode()){
+            return "true";
+        }
+
+        SuNingOrders transferOrder = content.getTransferOrder();
+        if ( "true".equals(transferOrder.getSuccess()) ) {
             withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
 
@@ -810,6 +823,11 @@ public class ConsumeService {
             User user = userRepository.findOne(userId);
             addWithdrawCount(user);
             return "true";
+        }else if("false".equals(transferOrder.getSuccess())){
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+        }else{
+            logger.debugv("回调异常");
         }
         return "false";
     }
