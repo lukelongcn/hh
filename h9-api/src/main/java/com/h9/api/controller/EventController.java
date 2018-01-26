@@ -34,5 +34,4 @@ public class EventController {
         return eventService.wxEventCallBack(request);
     }
 
-
 }

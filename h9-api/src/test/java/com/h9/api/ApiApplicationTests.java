@@ -33,7 +33,6 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import com.suning.epps.codec.RSAUtil;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,9 +43,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -442,9 +439,9 @@ public class ApiApplicationTests {
     private UserService userService;
     @Test
     public void testRecharge(){
-        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
-                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT");
-        System.out.println(ticket);
+//        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
+//                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT", userId);
+//        System.out.println(ticket);
     }
 
     @Test
@@ -465,32 +462,10 @@ public class ApiApplicationTests {
         if(userBank==null){
             logger.debugv("用户银行卡");
         }
-        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,new BigDecimal(0.01),2l,"1");
+        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,new BigDecimal(0.01),1l,"1");
         Result withdraw = suNingProvider.withdraw(withdrawDTO);
         logger.debugv(JSONObject.toJSONString(withdraw));
     }
-
-    @Test
-    public  void createRsaKey() throws Exception {
-        // 生成一对公私钥，路径可以自己填
-        RSAUtil.createKey("G:/RSA/public.key", "G:/RSA/private.key", 1024);
-        // 转换为公钥对象
-        PublicKey pubKey = RSAUtil.resolvePublicKey("G:/RSA/public.key");
-        // 转换为私钥对象
-        PrivateKey priKey = RSAUtil.resolvePrivateKey("G:/RSA/private.key");
-        // Base64编码后的公钥字符串
-        System.out.println("公钥：" + Base64.encodeBase64String(pubKey.getEncoded()));
-        // Base64编码后的私钥字符串
-        System.out.println("私钥：" + Base64.encodeBase64String(priKey.getEncoded()));
-        String data = "B64DC35297E509D8078FDD64DDBBED73";
-        // RSA加签
-        String signData = RSAUtil.sign(data, priKey);
-        System.out.println("签名值为：" + signData);
-        // RSA验签
-        boolean result = RSAUtil.vertiy(data, signData, pubKey);
-        System.out.println("验签结果为：" + result);
-    }
-
 
 }
 
