@@ -1,10 +1,15 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.EventDTO;
 import com.h9.api.model.dto.VerifyTokenDTO;
 import com.h9.common.utils.CheckoutUtil;
+import com.h9.common.utils.XMLUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Created by itservice on 2018/1/25.
@@ -26,7 +31,15 @@ public class EventService {
         }
     }
 
-    public String wxEventCallBack(EventDTO eventDTO) {
-        return null;
+    public String wxEventCallBack(HttpServletRequest request) {
+
+        try {
+            Map<String, String> map = XMLUtils.parseXml(request);
+            logger.info("wx request params:"+ JSONObject.toJSONString(map));
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            logger.info("解析微信请求出错");
+        }
+        return "ok";
     }
 }
