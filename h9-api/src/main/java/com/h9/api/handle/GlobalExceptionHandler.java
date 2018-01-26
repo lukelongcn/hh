@@ -46,6 +46,8 @@ public class GlobalExceptionHandler {
     public Object hanldeException(Exception e, HttpServletRequest request) {
 
         logger.info(e.getMessage(),e);
+        printReqInfo(request);
+
         if (e instanceof MethodArgumentTypeMismatchException) {
             logger.info(e.getMessage(),e);
             return new Result(1, "请传入正确的参数," + e.getMessage());
@@ -114,6 +116,17 @@ public class GlobalExceptionHandler {
         }
         logger.info("hanldeException 服务器繁忙，请稍后再试");
         return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙，请稍后再试", ExceptionUtils.getStackTrace(e));
+    }
+
+    /**
+     * description: 打印请求参数
+     */
+    public void printReqInfo(HttpServletRequest httpServletRequest) {
+        logger.info("");
+        logger.infov("-------------------请求信息-------------------");
+        logger.info("method: " + httpServletRequest.getMethod());
+        logger.info("url: " + httpServletRequest.getRequestURL());
+        logger.info("content-type: " + httpServletRequest.getHeader("Content-Type"));
     }
 
 }
