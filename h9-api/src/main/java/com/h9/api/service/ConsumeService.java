@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.DidiCardVerifyDTO;
@@ -9,6 +10,7 @@ import com.h9.api.provider.ChinaPayService;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.api.provider.SuNingProvider;
 import com.h9.api.provider.model.SuNingContent;
+import com.h9.api.provider.model.SuNingOrders;
 import com.h9.api.provider.model.SuNingResult;
 import com.h9.api.provider.model.WithdrawDTO;
 import com.h9.common.base.Result;
@@ -769,22 +771,33 @@ public class ConsumeService {
 
     public String callback(SuNingResult suNingResult){
         if(suNingResult == null){
-            return "";
+            return "false";
         }
+
+        try {
+            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+            withdrawalsFails.setBankReturnData(JSONObject.toJSONString(suNingResult));
+            withdrawalsFailsReposiroty.save(withdrawalsFails);
+        } catch (Exception e) {
+
+        }
+
         SuNingContent content = suNingResult.getContent();
         if (content == null) {
-            return "";
+            return "false";
         }
 
         String batchNo = content.getBatchNo();
         Long orderId = Long.parseLong(batchNo);
         String status = content.getStatus();
         WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
+
         if(withdrawalsRecord.getStatus() == WithdrawalsRecord.statusEnum.FINISH.getCode()){
             return "true";
         }
 
-        if ( "07".equals(status) ) {
+        SuNingOrders transferOrder = content.getTransferOrder();
+        if ( "true".equals(transferOrder.getSuccess()) ) {
             withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
 
@@ -810,9 +823,11 @@ public class ConsumeService {
             User user = userRepository.findOne(userId);
             addWithdrawCount(user);
             return "true";
-        }else if("04".equals(status) ){
+        }else if("false".equals(transferOrder.getSuccess())){
             withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
             withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+        }else{
+            logger.debugv("回调异常");
         }
         return "false";
     }

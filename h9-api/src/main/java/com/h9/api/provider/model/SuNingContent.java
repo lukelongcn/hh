@@ -1,5 +1,8 @@
 package com.h9.api.provider.model;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import lombok.Data;
 
 import java.util.List;
@@ -28,4 +31,12 @@ public class SuNingContent {
     private String errorMsg;
     private String transferOrders;
 
+
+    public List<SuNingOrders> getTransferOrders(){
+        return JSONArray.parseArray(transferOrders, SuNingOrders.class);
+    }
+
+    public SuNingOrders getTransferOrder(){
+        return getTransferOrders().get(0);
+    }
 }
