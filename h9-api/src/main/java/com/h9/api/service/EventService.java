@@ -70,25 +70,23 @@ public class EventService {
         }
         String event = map.get("Event");
         if (WeChatProvider.EventEnum.SUBSCRIBE.getValue().equals(event)) {
-            handleSubscribe(map);
+            handleSubscribeAndScan(map);
         } else if (WeChatProvider.EventEnum.SCAN.getValue().equals(event)) {
-            handleScan(map);
+            handleSubscribeAndScan(map);
         }
 
         return "ok";
     }
 
-    private void handleScan(Map<String, String> map) {
-
-
-    }
 
     @Transactional
-    private void handleSubscribe(Map<String, String> map) {
+    private void handleSubscribeAndScan(Map<String, String> map) {
 
         String eventKey = map.get("EventKey");
 
-        eventKey = eventKey.replace("qrscene_", "");
+        if (eventKey.contains("qrscene_")) {
+            eventKey = eventKey.replace("qrscene_", "");
+        }
 
         String codeJson = redisBean.getStringValue(RedisKey.getQrCode(eventKey));
 
