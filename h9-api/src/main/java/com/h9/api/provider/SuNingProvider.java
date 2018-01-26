@@ -49,7 +49,8 @@ public class SuNingProvider {
     private String publicKeyIndex = "0001";
     private String productCode = "01070000042";
     private String goodType = "220029";
-    private String notifyUrl = "https://console-dev-h9.thy360.com/wechat/index";
+    @Value("${shuning.withdraw.callback}")
+    private String notifyUrl;
     private String myPrivateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAIJc6uye1r6ZUtRGy+R0oLaUsAZd" +
             "r3ra2w2f+ID1cFhPZh6bQU7mFzC2z6MflUL3GhMjDPQQwP8Rt9sn366ECuGC3bVrl9dr1g+Q/52q" +
             "PpZy4C2tXTPOQbyTbTzfpXCnTCXai1en3i9kjilDS0aLRa4w1JkHf+AvHA/kUllAHSRhAgMBAAEC" +

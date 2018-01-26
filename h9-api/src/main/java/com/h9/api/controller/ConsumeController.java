@@ -1,13 +1,16 @@
 package com.h9.api.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.DidiCardDTO;
 import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.api.model.dto.MobileRechargeVerifyDTO;
+import com.h9.api.provider.model.SuNingResult;
 import com.h9.api.service.ConsumeService;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
+import okhttp3.MediaType;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,6 +104,16 @@ public class ConsumeController {
             , @RequestParam(required = false, defaultValue = "0") double latitude, HttpServletRequest request) {
 
         return consumeService.bankWithDraw(userId, bankId, code, longitude, latitude, request);
+    }
+
+    /**
+     * description: 提现
+     */
+
+    @PostMapping(value = "/withdraw/callback",produces = {"text/html"})
+    public String bankWithdraw(@RequestBody  SuNingResult suNingResult) {
+        logger.debugv(JSONObject.toJSONString(suNingResult));
+        return consumeService.callback(suNingResult);
     }
 
     /**
