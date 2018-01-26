@@ -45,11 +45,23 @@ public class SuNingProvider {
     @Value("${shuning.withdraw.host}")
     private String POST_Host;
 
-    private String merchantNo = "suning";
-    private String publicKeyIndex = "xpy1";
-    private String payMerchantNo ="70055995";
-    private String productCode = "01060000029";
+    private String merchantNo = "70057039";
+    private String publicKeyIndex = "0001";
+    private String productCode = "01070000042";
+    private String goodType = "220029";
     private String notifyUrl = "https://console-dev-h9.thy360.com/wechat/index";
+    private String myPrivateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAIJc6uye1r6ZUtRGy+R0oLaUsAZd" +
+            "r3ra2w2f+ID1cFhPZh6bQU7mFzC2z6MflUL3GhMjDPQQwP8Rt9sn366ECuGC3bVrl9dr1g+Q/52q" +
+            "PpZy4C2tXTPOQbyTbTzfpXCnTCXai1en3i9kjilDS0aLRa4w1JkHf+AvHA/kUllAHSRhAgMBAAEC" +
+            "gYAydXK9KfInDkPARLLw96+pXD4SCLs+i23UhUHz8IyOshTt7dxGhMsfIPOXyUbGB81A8QU3hzCc" +
+            "yifnHTT4YMWw3K/2e8BJ37acMncd0tEdtxPfMNCqoqmJRB61uUFRhBjorfS5CJviYVrbPenzAuHq" +
+            "rVvaviiO2v22529fyShtUQJBALx8HKcH3lZ6S2/tE6fi/KONtCrpevBD+0Ffz5pe8QBD+1LSmKTm" +
+            "BZQyNH2A7rWR4M1CKJFe2HejnyknL2P5p30CQQCxDxWEHj3ZawaiPB/soXOE+DXd92Vk5boopVS6" +
+            "QnwBTy9LfUuOtks+7FL7fLo40K31zC8Q7MY+y+QUWPVGp+21AkA108vq95hLYgmBIVdnrq8vlhxJ" +
+            "1PvC+ecbOF11XH++76sqb/IfxYD6XYwX+2YwfESS2b30Jf3zzMp7WjFyf62RAkB80zCNCzD5Zb2w" +
+            "hIjRL2WcmcyIJxEBl/+tBhn8kkCQP74ND1FEVHop6zv5do5m3Z+2yPNpkDOXM/Eg8zJAVMV9AkBP" +
+            "xWC/hpaQg5oBbbS+qLYW6M/PWyLVn5q2bgI+twnTFUn1BlGdn/ySPqcx/qKt61IwxHkQH0GsD/W9" +
+            "u5ez9LQ4";
 
 
     public String  getWithdraw(){
@@ -75,18 +87,20 @@ public class SuNingProvider {
             params.add("body", body);
             logger.debugv(JSONObject.toJSONString(params));
             String post = suNingHandler.post(getWithdraw(), params);
+            JSONObject http_result = JSONObject.parseObject(post);
+            if(http_result!=null&&http_result.containsKey("responseCode")){
+                String responseCode = http_result.getString("responseCode");
+                if("0000".equals(responseCode)){
+                    Result.success();
+                }
+            }
             logger.debugv(post);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return Result.success();
+        return Result.fail("提现失败");
     }
-
-
-
-
 
 
     public String sign(String param) throws InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
@@ -95,9 +109,9 @@ public class SuNingProvider {
         signMap.put("merchantNo", merchantNo);
         signMap.put("publicKeyIndex",publicKeyIndex);
         signMap.put("inputCharset", "UTF-8");
-        String wagKeyString = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIWvIOflNkPsEvGWCvvTM4tlWcodoPbC52Q6EXsv9UJyOqbzfX9u9xGRLiUv3fOs9J02QQPK6ZPQiR0g8RvPv2858bh5finE13iwIuYTpgSRZVi2Kn7goer4qqwXD_TjM1B6PIpOylJksbF9RESZP0A8cG2twJprdZ54xYj4HIGvAgMBAAECgYAPG-b9LpO-g3z0nv-ozIsD0zWduVGK8iZS1plJMfdnRh_I5LYnY_Q6oQz1GP7d3otbBVm9wv45PZVxnFqDySwajI4uAP9ZZQ8RHrPTNttFgLm3OQ0shbIUhBi2vXorxicR-EnS4qWpCOP10o5JrlpieZ295S2p7Dn_xmIoRgPRKQJBAN4ilfdxuEU3E-eiPo98gUXFPpCCCXKla4JMvN2R6em8d0MVYT8g0rXoXS44UnEg0vOoJ7ulPh5Col6ilqR2op0CQQCaEIGvc2PDa8jHXSmDuwpl4ogqafNyY7FCjPqWvlG-_auU0qaKBuVhIEMuy-3ZUMFFCsmGkMOKr_7ACTW3bM27AkEAwCihHIYmhtGniWhjwBJPbgC8J5wl-iQ5RWWGuBGCjSz46nIzRr3pKW2SNeqI_s4LTrY3cO74NoskFMOHl0v9TQJARmWofH0jZtZHZiGBqLm8pJWAVrEXFnvLMXetwVexjq3myxf-FS_VfC37xNRWGGi4B05Ii352e1az9xe-PdQvpQJATWPfQc1IR-cefoAvEcUyQlTsthVQkJ3wUpRMEosw2V5a1f9euwhJXJDf6ca8zOhtyfXuTIag1YturYfKyXgY3w";
-        String digest = MD5Util.getMD5(Digest.mapToString(Digest.treeMap(signMap)));
-        PrivateKey privateKey = RSAUtil.getPrivateKey(wagKeyString);
+        String digest = Digest.digest(Digest.mapToString(Digest.treeMap(signMap)));
+        logger.debugv("digest"+digest);
+        PrivateKey privateKey = RSAUtil.getPrivateKey(myPrivateKey);
         String signature = RSAUtil.sign(digest, privateKey);
         logger.debugv("sign:"+signature);
         return signature;
@@ -132,7 +146,7 @@ public class SuNingProvider {
     public JSONObject bulidBatchContentJosn(WithdrawDTO withdrawDTO,String body ) {
         JSONObject contentObject = new JSONObject();
         contentObject.put("batchNo", withdrawDTO.getOrderId());
-        contentObject.put("merchantNo", payMerchantNo);// 70057241;70056575
+        contentObject.put("merchantNo", merchantNo);// 70057241;70056575
         contentObject.put("productCode", productCode);
         contentObject.put("totalNum", 1);
         contentObject.put("totalAmount", withdrawDTO.getMoneyPercent());// 40*detailNum
@@ -142,7 +156,7 @@ public class SuNingProvider {
         contentObject.put("detailData", body);
         contentObject.put("notifyUrl", notifyUrl);
         contentObject.put("batchOrderName", "提现");
-        contentObject.put("goodsType", "220026");
+        contentObject.put("goodsType", goodType);
         return contentObject;
     }
 

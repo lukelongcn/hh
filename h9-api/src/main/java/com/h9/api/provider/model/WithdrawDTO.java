@@ -24,13 +24,16 @@ public class WithdrawDTO {
     private String bankName;
     private String name;
     private String no;
-    private String bankTypeCode;
+    private String bankTypeCode="";
     private String province;
     private String city;
     private String orderNo;
     private Long orderId;
 
-    public WithdrawDTO(UserBank userBank,BigDecimal money,long orderId,String orderNo) {
+    public WithdrawDTO() {
+    }
+
+    public WithdrawDTO(UserBank userBank, BigDecimal money, long orderId, String orderNo) {
         BeanUtils.copyProperties(userBank,this);
         this.money = money;
         moneyPercent = money.multiply(new BigDecimal(100)).longValue();
@@ -39,6 +42,8 @@ public class WithdrawDTO {
         this.orderNo = orderNo;
         bankTypeCode = userBank.getBankType().getCode();
         bankName = userBank.getBankType().getBankName();
+        date = new Date();
+        bankTypeCode = "ICBC";
     }
 
     public String getDate(){
