@@ -49,8 +49,8 @@ public class TransferDTO {
         }
     }
 
-    private Integer page = 1;
-    private Integer limit = 10;
+    private Integer pageNumber = 1;
+    private Integer pageSize = 10;
 
     public static void main(String[] args) {
         System.out.println(new Date().getTime());
