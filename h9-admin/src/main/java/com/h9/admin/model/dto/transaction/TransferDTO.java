@@ -1,5 +1,7 @@
 package com.h9.admin.model.dto.transaction;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +16,16 @@ import java.util.Date;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel("参数")
 public class TransferDTO {
-    private Integer type = 1;
+
+    @ApiModelProperty("0 为全部 1为转账 2为红包")
+    private Integer type = 0;
+    @ApiModelProperty("付款人手机")
     private String originPhone;
+    @ApiModelProperty("收款人手机")
     private String targetPhone;
+
     private Date startTime;
     private Date endTime;
 

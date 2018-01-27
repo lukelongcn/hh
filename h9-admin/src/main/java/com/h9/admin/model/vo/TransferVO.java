@@ -51,7 +51,7 @@ public class TransferVO {
 
         String targetNickName = transactions.getTargetNickName();
         if (StringUtils.isNotBlank(targetNickName)) {
-            this.setTargetUser(nickName + "(" + transactions.getPhone() + ")");
+            this.setTargetUser(targetNickName + "(" + transactions.getTargetPhone() + ")");
         }
 
         this.setMoney(MoneyUtils.formatMoney(transactions.getTransferMoney()));
