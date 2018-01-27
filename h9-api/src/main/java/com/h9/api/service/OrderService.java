@@ -49,8 +49,14 @@ public class OrderService {
         return order;
     }
 
-    public Result orderList(Long userId, Integer page, Integer size) {
-        PageResult<Orders> pageResult = ordersReposiroty.findByUser(userId, page, size);
+    public Result orderList(int status,Long userId, Integer page, Integer size) {
+        PageResult<Orders> pageResult = null;
+        if(status == -1){
+            pageResult = ordersReposiroty.findByUser(userId, page, size);
+        }else{
+            pageResult = ordersReposiroty.findByUser(userId,status, page, size);
+        }
+
         return Result.success(pageResult.result2Result(OrderListVO::convert));
     }
 

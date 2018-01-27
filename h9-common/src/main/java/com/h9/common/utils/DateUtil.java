@@ -6,6 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -60,6 +64,48 @@ public class DateUtil {
         return new SimpleDateFormat(formatType.format).format(date);
 
     }
+
+
+    public static String getSpaceTime(Date begin, Date end) {
+        long between = 0;
+        try {
+            // 得到两者的毫秒数
+            between = (end.getTime() - begin.getTime());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        long day = between / (24 * 60 * 60 * 1000);
+        long hour = (between / (60 * 60 * 1000) - day * 24);
+        long min = ((between / (60 * 1000)) - day * 24 * 60 - hour * 60);
+
+        StringBuffer result = new StringBuffer();
+
+        if (min <= 60 && hour == 0 && day == 0) {
+            result.append(min);
+            result.append("分钟前");
+            return result.toString();
+        }
+        if (day == 0 && hour > 0) {
+            result.append(hour);
+            result.append("小时前");
+            return result.toString();
+        }
+        if (begin.before(getCurrentYearStartTime())) {
+            return DateUtil.formatDate(begin, FormatType.MINUTE);
+        }
+        LocalDate localDate = DateUtil.trans(begin);
+        return localDate.format(DateTimeFormatter.ofPattern("MM-dd"));
+
+    }
+
+    public static LocalDate trans(Date date) {
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        // atZone()方法返回在指定时区从此Instant生成的ZonedDateTime。
+        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+        return localDate;
+    }
+
 
     public static Date formatDate(String date,FormatType formatType){
         if(StringUtils.isNotBlank(date)) {

@@ -1,9 +1,11 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.vo.LoginResultVO;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.SmsService;
 import com.h9.api.service.UserService;
 import com.h9.common.base.Result;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -120,4 +124,66 @@ public class UserController {
         String refer = request.getHeader("Referer");
         return userService.getConfig(refer);
     }
+
+
+    /**
+     * description: 转账信息
+     */
+    @GetMapping("/user/transfer/info/{phone}")
+    @Secured
+    public Result transferInfo(@SessionAttribute("curUserId")Long userId, @PathVariable String phone){
+        return userService.transferInfo(userId,phone);
+    }
+
+    /**
+     * description: 用户转账
+     */
+    @PostMapping("/user/transfer")
+    @Secured
+    public Result transfer(@SessionAttribute("curUserId")Long userId, @Valid@RequestBody TransferDTO transferDTO){
+        return userService.transfer(userId,transferDTO);
+    }
+    
+    /**
+     * description: 转账记录
+     * @param  type 1 为转账 2 为推广红包
+     */
+    @Secured
+    @GetMapping("/user/transactions")
+    public Result transactions(@SessionAttribute("curUserId")Long userId,
+                               @RequestParam(defaultValue = "1") Integer page,
+                               @RequestParam(defaultValue = "10") Integer limit,
+                               @RequestParam(defaultValue = "1") Integer type){
+        return userService.transactions(userId,page,limit,type);
+    }
+
+    /**
+     * description: 转账二维码
+     */
+    @Secured
+    @GetMapping("/user/redEnvelope/code")
+    public Result redEnvelope(HttpServletRequest request,
+                            HttpServletResponse response,
+                            @SessionAttribute("curUserId")Long userId,@RequestParam BigDecimal money){
+        return userService.getRedEnvelope(request,response,userId,money);
+    }
+
+
+    /**
+     * description: 采用轮洵策略查询红包二维码的状态
+     */
+    @Secured
+    @GetMapping("/user/redEnvelope/code/{tempId}")
+    public Result redEnvelopeStatus(@SessionAttribute("curUserId")Long userId,@PathVariable String tempId){
+        return userService.redEnvelopeStatus(tempId);
+    }
+
+//    @Secured
+//    @GetMapping("/user/redEnvelope/qr/record")
+//    public Result qrRecord(@SessionAttribute("curUserId")Long userId,
+//                           @RequestParam(defaultValue = "1") Integer page,
+//                           @RequestParam(defaultValue = "10") Integer limit){
+//        return userService.qrRecord(userId,page,limit);
+//    }
+
 }

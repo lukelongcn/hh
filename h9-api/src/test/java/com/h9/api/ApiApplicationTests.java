@@ -1,17 +1,21 @@
 package com.h9.api;
 
-//import com.h9.api.provider.ChinaPayService;
-//import com.h9.api.provider.MobileRechargeService;
+
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
-import com.h9.api.model.dto.MobileRechargeDTO;
-import com.h9.api.provider.MobileRechargeService;
+import org.apache.commons.net.util.Base64;
+
 import com.h9.api.provider.SMSProvide;
+import com.h9.api.provider.SuNingProvider;
+import com.h9.api.provider.model.WithdrawDTO;
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.FileService;
+import com.h9.api.service.UserService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -39,15 +43,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -428,14 +432,47 @@ public class ApiApplicationTests {
     @Resource
     private LotteryRepository lotteryRepository;
 
+    @Resource
+    private WeChatProvider weChatProvider;
+
+    @Resource
+    private UserService userService;
     @Test
     public void testRecharge(){
-//        MobileRechargeDTO mobileRechargeDTO = new MobileRechargeDTO();
-//        mobileRechargeDTO.setCode("0000");
-//        mobileRechargeDTO.setTel("17673140753");
-//        MobileRechargeService service = new MobileRechargeService();
-//        Result recharge = service.recharge(mobileRechargeDTO, 10L, new BigDecimal("0.01"));
-//        System.out.println(recharge);
+//        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
+//                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT", userId);
+//        System.out.println(ticket);
+    }
+
+    @Test
+    public  void testCreateMenu(){
+        weChatProvider.createMenu();
+    }
+
+    @Resource
+    private SuNingProvider suNingProvider;
+
+    @Resource
+    private UserBankRepository bankRepository;
+
+
+    @Test
+    public void  testWithdraw(){
+        UserBank userBank = bankRepository.findOne(231L);
+        if(userBank==null){
+            logger.debugv("用户银行卡");
+        }
+        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,new BigDecimal(0.01),1l,"1");
+        Result withdraw = suNingProvider.withdraw(withdrawDTO);
+        logger.debugv(JSONObject.toJSONString(withdraw));
+    }
+
+    @Test
+    public void testGetTemplate(){
+
+        String accessToken = weChatProvider.getWeChatAccessToken();
+        Result result = weChatProvider.sendTemplate("oXW4Mw2JMAlYYrH9R6X2VLbqFAGQ",new BigDecimal(100000));
+        System.out.println(JSONObject.toJSONString(result));
     }
 }
 
