@@ -58,12 +58,12 @@ public class WeChatProvider {
     public String getJSCode(String appId, String redirectUrl, String state) {
         String realUrl = "";
         try {
-            realUrl =  URLEncoder.encode(redirectUrl, "utf-8");
+            realUrl = URLEncoder.encode(redirectUrl, "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return MessageFormat.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=" +
-                "code&scope={2}&state={3}#wechat_redirect", appId ,realUrl, "snsapi_userinfo", state);  //snsapi_base
+                "code&scope={2}&state={3}#wechat_redirect", appId, realUrl, "snsapi_userinfo", state);  //snsapi_base
     }
 
     public String getJSCode(String appId, String state) {
@@ -126,8 +126,7 @@ public class WeChatProvider {
     }
 
 
-
-    public  String getTicketTokenUrl() {
+    public String getTicketTokenUrl() {
         return MessageFormat.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", jsAppId, jsSecret);
     }
 
@@ -160,6 +159,15 @@ public class WeChatProvider {
         return null;
     }
 
+    public String getWeChatAccessToken(Boolean flush) {
+        if (!flush) {
+            return getWeChatAccessToken();
+        } else {
+            redisBean.setStringValue(RedisKey.wechatAccessToken, "", 1, TimeUnit.MILLISECONDS);
+            return getWeChatAccessToken();
+        }
+    }
+
 
     public String getTicket() {
         String ticket = redisBean.getStringValue(RedisKey.wechatTicket);
@@ -186,7 +194,6 @@ public class WeChatProvider {
         }
         return null;
     }
-
 
 
     public Result<WechatConfig> getConfig(String url) {
@@ -229,40 +236,40 @@ public class WeChatProvider {
     }
 
 
-    public void createMenu(){
+    public void createMenu() {
         MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
-        MenuDTO menuDTO =  builder
+        MenuDTO menuDTO = builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("12")
-                                .setUrl(host+"/h9-weixin/#/active/hongbao")
+                                .setUrl(host + "/h9-weixin/#/active/hongbao")
                                 .setName("扫瓶盖抢红包"),
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("23")
-                                .setUrl(host+"/h9-weixin/#/shop")
+                                .setUrl(host + "/h9-weixin/#/shop")
                                 .setName("徽酒商城"),
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("31")
-                                .setUrl(host+"/h9-weixin/#/account/personal")
+                                .setUrl(host + "/h9-weixin/#/account/personal")
                                 .setName("旅游健康基金"))
                 ).build();
 
         String accessToken = getWeChatAccessToken();
-        logger.info("accessToken : "+accessToken);
+        logger.info("accessToken : " + accessToken);
         String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
 
         String json = JSONObject.toJSONString(menuDTO);
-        logger.info("request json : "+json);
+        logger.info("request json : " + json);
         Result4wx result = restTemplate.postForObject(createMenuUrl, menuDTO, Result4wx.class);
         logger.info("创建菜单结果：" + JSONObject.toJSONString(result));
 
     }
 
     @Deprecated
-    public Result getTemplate(String accessToken){
+    public Result getTemplate(String accessToken) {
         if (StringUtils.isBlank(accessToken)) {
             return Result.fail();
         }
@@ -272,26 +279,27 @@ public class WeChatProvider {
         Result4wx result4wx = restTemplate.postForObject(url, params, Result4wx.class);
         if (result4wx.getErrcode().equals("0")) {
             return Result.success(result4wx.getTemplate_id());
-        }else{
+        } else {
             return Result.fail();
         }
     }
 
     @Value("${wx.template.id}")
     private String templateId;
-    public Result sendTemplate(String openId, BigDecimal money){
+
+    public Result sendTemplate(String openId, BigDecimal money) {
         String accessToken = getWeChatAccessToken();
         if (StringUtils.isBlank(accessToken)) {
             return Result.fail();
         }
 
-        String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
+        String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + accessToken;
 
-        String date = ""+ DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_MINUTE);
+        String date = "" + DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_MINUTE);
         String type = "红包";
-        String curAmount = ""+ MoneyUtils.formatMoney(money)+"元";
+        String curAmount = "" + MoneyUtils.formatMoney(money) + "元";
         String remark = "祝您生活愉快！";
-        String link = host+"/h9-weixin/#/account/personal";
+        String link = host + "/h9-weixin/#/account/personal";
         TemplateDTO templateDTO = TemplateDTO.builder()
                 .touser(openId)
                 .template_id(templateId)
@@ -311,20 +319,20 @@ public class WeChatProvider {
                 ).build();
 
         String requestBody = JSONObject.toJSONString(templateDTO);
-        logger.info("请求数据："+requestBody);
+        logger.info("请求数据：" + requestBody);
         Result4wx result4wx = restTemplate.postForObject(url, templateDTO, Result4wx.class);
         logger.info("发送模块消息结果：" + JSONObject.toJSONString(result4wx));
 
         if (result4wx.getErrcode().equals("0")) {
             return Result.success();
-        }else{
+        } else {
             return Result.fail();
         }
     }
 
     public static void main(String[] args) {
         MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
-        MenuDTO menuDTO =  builder
+        MenuDTO menuDTO = builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
                                 .setType("view")
@@ -348,7 +356,7 @@ public class WeChatProvider {
 
     @Data
     @Accessors(chain = true)
-    public static class Result4wx{
+    public static class Result4wx {
         private String errcode;
         private String errmsg;
         private String template_id;
@@ -356,7 +364,7 @@ public class WeChatProvider {
     }
 
 
-    public enum EventEnum{
+    public enum EventEnum {
         SUBSCRIBE("subscribe"),
         SCAN("SCAN");
 

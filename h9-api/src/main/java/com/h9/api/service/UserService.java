@@ -519,8 +519,6 @@ public class UserService {
             String money = MoneyUtils.formatMoney(el.getTransferMoney());
             if (el.getUserId().equals(userId)) {
                 money = "-" + money;
-            } else {
-                money = "+" + money;
             }
             BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
                     DateUtil.formatDate(el.getCreateTime(),
@@ -609,8 +607,13 @@ public class UserService {
             return null;
         }
         logger.info("result: " + body);
-        JSONObject object = JSONObject.parseObject(body);
-        String ticket = object.getString("ticket");
+        Map<String,String> mapRes = JSONObject.parseObject(body,Map.class);
+        String errCode = mapRes.get("errcode");
+        if (errCode.equals("40001")) {
+            //accessToken 无效
+            weChatProvider.getWeChatAccessToken(true);
+        }
+        String ticket = mapRes.get("ticket");
 
         return ticket;
     }
