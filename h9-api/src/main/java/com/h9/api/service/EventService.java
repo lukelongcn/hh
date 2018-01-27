@@ -116,17 +116,22 @@ public class EventService {
             // 注册用户
             user = userService.registUser(openId);
         }
-        Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
-                redEnvelopeDTO.getMoney(), "红包推广", BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),redEnvelopeDTO.getTempId());
-        transactionsRepository.saveAndFlush(transactions);
+        User originUser = userRepository.findOne(redEnvelopeDTO.getUserId());
 
-        //扫码者加钱,展示码的人 扣钱
+        Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
+                redEnvelopeDTO.getMoney(), "红包推广",
+                BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
+                redEnvelopeDTO.getTempId(),originUser.getPhone(),
+                user.getPhone(),originUser.getNickName(),user.getNickName());
+
+        transactionsRepository.saveAndFlush(transactions);
+        //展示码的人 扣钱
         Result result = commonService.setBalance(redEnvelopeDTO.getUserId(), redEnvelopeDTO.getMoney().abs().negate(),
                 BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
                 transactions.getId(), "", "红包推广");
 
         if (result.getCode() == 0) {
-
+            //扫码者加钱
             commonService.setBalance(user.getId(), redEnvelopeDTO.getMoney(),
                     BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
                     transactions.getId(), "", "红包推广");

@@ -30,6 +30,8 @@ public class Transactions extends BaseEntity{
     @Column(name = "user_id",columnDefinition = "bigint comment '发起转账的用户'")
     private Long userId;
 
+
+
     @Column(name = "target_user_id",columnDefinition = "bigint comment '转账接受方用户'")
     private Long targetUserId;
 
@@ -44,4 +46,16 @@ public class Transactions extends BaseEntity{
 
     @Column(name = "temp_id",columnDefinition = "varchar(200) comment 'tempId'")
     private String tempId;
+
+    @Column(name="phone",columnDefinition = "varchar(200) comment '发起人手机号码'")
+    private String phone;
+
+    @Column(name="target_phone",columnDefinition = "varchar(200) comment '接受方手机号码'")
+    private String targetPhone;
+
+    @Column(name = "nickName",columnDefinition = "varchar(500) comment '发起人妮称'")
+    private String nickName;
+
+    @Column(name = "target_nick_name",columnDefinition = "varchar(500) comment '接受方妮称'")
+    private String targetNickName;
 }

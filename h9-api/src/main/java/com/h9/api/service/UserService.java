@@ -489,7 +489,9 @@ public class UserService {
 
 
         Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
-                transferMoney, transferDTO.getRemarks(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),"");
+                transferMoney, transferDTO.getRemarks(),
+                BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),"",
+                user.getPhone(), targetUser.getPhone(),user.getNickName(),targetUser.getNickName());
         transactionsRepository.saveAndFlush(transactions);
 
         commonService.setBalance(user.getId(), transferMoney.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
