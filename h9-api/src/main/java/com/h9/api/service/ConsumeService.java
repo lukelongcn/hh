@@ -658,7 +658,7 @@ public class ConsumeService {
     /**
      * description: 获取指定用户今日还可提现的金额
      */
-    private BigDecimal getUserWithdrawTodayMoney(Long userId) {
+    public BigDecimal getUserWithdrawTodayMoney(Long userId) {
 
         String max = configService.getStringConfig("withdrawMax");
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
