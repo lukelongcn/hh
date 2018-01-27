@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ConfigService {
 
+    public static final String BALANCEFLOWTYPE = "balanceFlowType";
     @Resource
     private RedisBean redisBean;
 

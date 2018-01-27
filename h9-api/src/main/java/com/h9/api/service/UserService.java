@@ -471,7 +471,7 @@ public class UserService {
         if (targetUser == null) return Result.fail("请输入正确的账号");
 
         if (targetUser.getId().equals(userId)) {
-            return Result.success("不能给自已转账");
+            return Result.fail("不能给自已转账");
         }
 
         BigDecimal transferMoney = transferDTO.getTransferMoney();
@@ -512,18 +512,24 @@ public class UserService {
             return Result.success(new PageResult<>(pageObj));
         }
 
-        Map<String, String> iconMap = configService.getMapConfig("balanceFlowImg");
-        String img = iconMap.get(BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId());
 
         PageResult<BalanceFlowVO> result = new PageResult<>(pageObj).result2Result(el -> {
             String money = MoneyUtils.formatMoney(el.getTransferMoney());
             if (el.getUserId().equals(userId)) {
                 money = "-" + money;
             }
+            Long balanceFlowType = el.getBalanceFlowType();
+            Map typeMap = configService.getMapConfig(ConfigService.BALANCEFLOWTYPE);
+            Long findUserId = el.getUserId();
+            User findUser = userRepository.findOne(findUserId);
+            Long targetUserId = el.getTargetUserId();
+            User targetUser = userRepository.findOne(targetUserId);
+            String img = targetUser.getAvatar();
+            Object remarks = typeMap.get(balanceFlowType+"");
             BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
                     DateUtil.formatDate(el.getCreateTime(),
                             DateUtil.FormatType.MONTH),
-                    el.getRemarks(),
+                    remarks,
                     img,
                     DateUtil.formatDate(el.getCreateTime(), DateUtil.FormatType.MINUTE));
             return balanceFlowVO;
@@ -546,6 +552,11 @@ public class UserService {
 
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
+
+            UserAccount userAccount = userAccountRepository.findByUserId(userId);
+            if (userAccount.getBalance().compareTo(money) < 0) {
+                return Result.fail("余额不足"+MoneyUtils.formatMoney(money));
+            }
 
             String accessToken = weChatProvider.getWeChatAccessToken();
 
@@ -655,12 +666,12 @@ public class UserService {
                 mapVO.put("img", targetUser.getAvatar());
                 mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
 
-                return Result.success(mapVO);
+                return Result.fail("领取成功",mapVO);
             }
 
             return Result.success("");
         }
-        return Result.fail("红包未被领取");
+        return Result.success("红包未被领取");
     }
 
     public Result qrRecord(Long userId, Integer page, Integer limit) {
