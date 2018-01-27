@@ -146,13 +146,15 @@ public class UserController {
     
     /**
      * description: 转账记录
+     * @param  type 1 为转账 2 为推广红包
      */
     @Secured
     @GetMapping("/user/transactions")
     public Result transactions(@SessionAttribute("curUserId")Long userId,
                                @RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "10") Integer limit){
-        return userService.transactions(userId,page,limit);
+                               @RequestParam(defaultValue = "10") Integer limit,
+                               @RequestParam(defaultValue = "1") Integer type){
+        return userService.transactions(userId,page,limit,type);
     }
 
     /**

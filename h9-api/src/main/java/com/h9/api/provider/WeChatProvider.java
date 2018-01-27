@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
 import com.google.gson.JsonObject;
 import com.h9.api.model.dto.MenuDTO;
+import com.h9.api.model.dto.TicketDTO;
 import com.h9.api.model.dto.WechatConfig;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.TemplateDTO;
@@ -158,6 +159,49 @@ public class WeChatProvider {
         }
         return null;
     }
+
+
+    /**
+     * description:  getTicket
+     */
+    public String getCodeTicket(String accessToken, Long userId) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        TicketDTO ticketDTO = new TicketDTO();
+        ticketDTO.setAction_name("QR_SCENE");
+
+        //一天失效
+        ticketDTO.setExpire_seconds(86400);
+        TicketDTO.ActionInfoBean actionInfoBean = new TicketDTO.ActionInfoBean();
+        TicketDTO.ActionInfoBean.SceneBean sceneBean = new TicketDTO.ActionInfoBean.SceneBean();
+        sceneBean.setScene_id(userId.intValue());
+
+        actionInfoBean.setScene(sceneBean);
+        ticketDTO.setAction_info(actionInfoBean);
+
+        String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + accessToken;
+        String json = JSONObject.toJSONString(ticketDTO);
+        logger.info(json);
+        String body = null;
+        try {
+            body = restTemplate.postForEntity(url, json, String.class).getBody();
+        } catch (RestClientException e) {
+            logger.info(e.getMessage(), e);
+            logger.info("获取ticket失败");
+            return null;
+        }
+        logger.info("result: " + body);
+//        Map<String,String> mapRes = JSONObject.parseObject(body,Map.class);
+        Result4wx result4wx = JSONObject.parseObject(body, Result4wx.class);
+
+        if (result4wx.getErrcode().equals("40001")) {
+            logger.info("accessToken 无效，重新获取");
+            getWeChatAccessToken(true);
+        }
+
+        return result4wx.getTicket();
+    }
+
 
     public String getWeChatAccessToken(Boolean flush) {
         if (!flush) {
@@ -357,10 +401,11 @@ public class WeChatProvider {
     @Data
     @Accessors(chain = true)
     public static class Result4wx {
-        private String errcode;
-        private String errmsg;
-        private String template_id;
-        private String msgid;
+        private String errcode = "";
+        private String errmsg = "";
+        private String template_id = "";
+        private String msgid= "";
+        private String ticket= "";
     }
 
 

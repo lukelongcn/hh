@@ -117,19 +117,19 @@ public class EventService {
             user = userService.registUser(openId);
         }
         Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
-                redEnvelopeDTO.getMoney(), "红包", BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),redEnvelopeDTO.getTempId());
+                redEnvelopeDTO.getMoney(), "红包推广", BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),redEnvelopeDTO.getTempId());
         transactionsRepository.saveAndFlush(transactions);
 
         //扫码者加钱,展示码的人 扣钱
         Result result = commonService.setBalance(redEnvelopeDTO.getUserId(), redEnvelopeDTO.getMoney().abs().negate(),
                 BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
-                transactions.getId(), "", "红包");
+                transactions.getId(), "", "红包推广");
 
         if (result.getCode() == 0) {
 
             commonService.setBalance(user.getId(), redEnvelopeDTO.getMoney(),
                     BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
-                    transactions.getId(), "", "红包");
+                    transactions.getId(), "", "红包推广");
 
             //让redis 二维码 消失
             redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);

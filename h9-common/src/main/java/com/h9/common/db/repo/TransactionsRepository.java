@@ -14,7 +14,8 @@ import java.util.List;
  */
 public interface TransactionsRepository extends BaseRepository<Transactions> {
 
-    Page<Transactions> findByUserIdOrTargetUserId(Long id,Long targetUserId, Pageable pageable);
+    @Query(value = "select o from Transactions  o where (o.userId = ?1 or o.targetUserId = ?2) and o.balanceFlowType = ?3")
+    Page<Transactions> findByUserIdOrTargetUserId(Long id,Long targetUserId, Long balanceFlowType,Pageable pageable);
 
     @Query(value = "select o from Transactions  o where o.userId = ?2 and o.balanceFlowType = ?1")
     Page<Transactions> findByBalanceFlowType(Long type,Long userId,Pageable pageable);

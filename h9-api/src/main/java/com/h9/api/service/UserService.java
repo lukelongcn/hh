@@ -40,6 +40,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
+
 
 /**
  * Created by itservice on 2017/10/26.
@@ -502,16 +504,17 @@ public class UserService {
     /**
      * description: 转账记录
      */
-    public Result transactions(Long userId, Integer page, Integer limit) {
+    public Result transactions(Long userId, Integer page, Integer limit, Integer type) {
 
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, sort);
-        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId, pageRequest);
+
+        Long findBalanceType = type == 1 ? BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId():RED_ENVELOPE.getId();
+        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId,findBalanceType, pageRequest);
 
         if (CollectionUtils.isEmpty(pageObj.getContent())) {
             return Result.success(new PageResult<>(pageObj));
         }
-
 
         PageResult<BalanceFlowVO> result = new PageResult<>(pageObj).result2Result(el -> {
             String money = MoneyUtils.formatMoney(el.getTransferMoney());
@@ -521,7 +524,6 @@ public class UserService {
             Long balanceFlowType = el.getBalanceFlowType();
             Map typeMap = configService.getMapConfig(ConfigService.BALANCEFLOWTYPE);
             Long findUserId = el.getUserId();
-            User findUser = userRepository.findOne(findUserId);
             Long targetUserId = el.getTargetUserId();
             User targetUser = userRepository.findOne(targetUserId);
             String img = targetUser.getAvatar();
@@ -547,7 +549,7 @@ public class UserService {
             return Result.fail("用户不存在");
         }
 
-        if (phone.equals(userId)) {
+        if (phone.equals(phone)) {
             return Result.fail("不能给自己转账");
         }
 
@@ -565,7 +567,7 @@ public class UserService {
 
             String accessToken = weChatProvider.getWeChatAccessToken();
 
-            String ticket = getTicket(accessToken, userId);
+            String ticket = weChatProvider.getCodeTicket(accessToken, userId);
             String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
 
             if (StringUtils.isEmpty(ticket)) {
@@ -593,41 +595,7 @@ public class UserService {
     }
 
 
-    /**
-     * description:  getTicket
-     */
-    public String getTicket(String accessToken, Long userId) {
 
-        RestTemplate restTemplate = new RestTemplate();
-        TicketDTO ticketDTO = new TicketDTO();
-        ticketDTO.setAction_name("QR_SCENE");
-
-        //一天失效
-        ticketDTO.setExpire_seconds(86400);
-        TicketDTO.ActionInfoBean actionInfoBean = new TicketDTO.ActionInfoBean();
-        TicketDTO.ActionInfoBean.SceneBean sceneBean = new TicketDTO.ActionInfoBean.SceneBean();
-        sceneBean.setScene_id(userId.intValue());
-
-        actionInfoBean.setScene(sceneBean);
-        ticketDTO.setAction_info(actionInfoBean);
-
-        String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + accessToken;
-        String json = JSONObject.toJSONString(ticketDTO);
-        logger.info(json);
-        String body = null;
-        try {
-            body = restTemplate.postForEntity(url, json, String.class).getBody();
-        } catch (RestClientException e) {
-            logger.info(e.getMessage(), e);
-            logger.info("获取ticket失败");
-            return null;
-        }
-        logger.info("result: " + body);
-        Map<String,String> mapRes = JSONObject.parseObject(body,Map.class);
-        String ticket = mapRes.get("ticket");
-
-        return ticket;
-    }
 
 
     public User registUser(String openId) {
@@ -678,7 +646,7 @@ public class UserService {
 
         PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
         Page<Transactions> transactionsPage = transactionsRepository.
-                findByBalanceFlowType(BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(), userId, pageRequest);
+                findByBalanceFlowType(RED_ENVELOPE.getId(), userId, pageRequest);
         if (transactionsPage.isLast()) {
             return Result.success(new PageResult<>(transactionsPage));
         }
