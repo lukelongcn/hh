@@ -6,6 +6,7 @@ import com.h9.admin.model.dto.community.GoodsTypeAddDTO;
 import com.h9.admin.model.dto.community.GoodsTypeEditDTO;
 import com.h9.admin.model.dto.transaction.CardCouponsListAddDTO;
 import com.h9.admin.model.dto.transaction.TransferDTO;
+import com.h9.admin.model.vo.TransferVO;
 import com.h9.admin.service.TransactionService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -95,7 +96,7 @@ public class TransactionController {
     @Secured()
     @GetMapping(value="/transfer")
     @ApiOperation("转账列表")
-    public Result transferList( TransferDTO transferDTO){
+    public Result<TransferVO> transferList(TransferDTO transferDTO){
         return this.transactionService.transferList(transferDTO);
     }
 

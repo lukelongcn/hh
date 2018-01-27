@@ -4,6 +4,8 @@ import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +22,19 @@ import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.USER_TRANS
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel("转账记录")
 public class TransferVO {
+    @ApiModelProperty("")
     private Long id;
+    @ApiModelProperty("类型")
     private String type;
+    @ApiModelProperty("付款人")
     private String originUser;
+    @ApiModelProperty("收款")
     private String targetUser;
+    @ApiModelProperty("金额")
     private String money;
+    @ApiModelProperty("时间")
     private String time;
 
     public TransferVO(Transactions transactions){
