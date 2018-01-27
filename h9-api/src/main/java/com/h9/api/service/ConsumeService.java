@@ -611,7 +611,11 @@ public class ConsumeService {
         return Result.success();
     }
 
-    public Result scan() {
+    /****
+     * 定时扫描提现银行处理中的状态
+     * @return
+     */
+    public void scan() {
         List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
 
         String reduce = withdrawCashRecord.stream()
@@ -619,32 +623,14 @@ public class ConsumeService {
                 .reduce("", (x, y) -> x + " ," + y);
 
         logger.info("没有到账的订单列表：" + reduce);
-        //查询状态
-        withdrawCashRecord.forEach(wr -> {
-            WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());
-            if (withdrawRequest != null) {
-                Result result = chinaPayService.query(withdrawRequest);
-                String cpReturnData = result.getData().toString();
-                logger.info("scan result : " + cpReturnData + " " + wr);
+        withdrawCashRecord.forEach(withdrawalsRecord -> {
+            Result<SuNingContent> result = suNingProvider.queryResult(withdrawalsRecord.getId());
+            if(result.isSuccess()){
+                SuNingContent resultData = result.getData();
+                handlerCallback(resultData);
 
-                if (cpReturnData.contains("|s|")) {
-                    //此笔交易银行显示已完成了，把订单状态改变
-                    logger.info("提现记录Id:" + wr.getId());
-                    wr.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
-                }
-
-                if (cpReturnData.contains("|9|")) {
-                    //此笔交易银联打款失败
-                    wr.setStatus(WithdrawalsRecord.statusEnum.WITHDRA_EXPCETION.getCode());
-//                    Long userId = wr.getUserId();
-//                    commonService.setBalance(userId, wr.getMoney(), 2L, wr.getId(), "", "银联退回");
-                }
-
-                withdrawalsRecordReposiroty.save(wr);
             }
-
         });
-        return null;
     }
 
 
@@ -768,21 +754,26 @@ public class ConsumeService {
         return Result.success("校验成功");
     }
 
-
+    /***
+     * 处理回调
+     * @param suNingResult
+     * @return
+     */
     public String callback(SuNingResult suNingResult){
         if(suNingResult == null){
             return "false";
         }
-
-        try {
-            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
-            withdrawalsFails.setBankReturnData(JSONObject.toJSONString(suNingResult));
-            withdrawalsFailsReposiroty.save(withdrawalsFails);
-        } catch (Exception e) {
-
-        }
-
+        recordResult(JSONObject.toJSONString(suNingResult));
         SuNingContent content = suNingResult.getContent();
+        return handlerCallback(content);
+    }
+
+    /***
+     * 苏宁处理结果
+     * @param content
+     * @return
+     */
+    private String handlerCallback(SuNingContent content) {
         if (content == null) {
             return "false";
         }
@@ -830,5 +821,16 @@ public class ConsumeService {
             logger.debugv("回调异常");
         }
         return "false";
+    }
+
+
+    public void recordResult(String result){
+        try {
+            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+            withdrawalsFails.setBankReturnData(result);
+            withdrawalsFailsReposiroty.save(withdrawalsFails);
+        } catch (Exception e) {
+            logger.debugv(e.getMessage(),e);
+        }
     }
 }
