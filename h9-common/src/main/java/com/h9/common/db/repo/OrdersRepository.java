@@ -41,7 +41,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
         return new PageResult(byUser);
     }
 
-    @Query("SELECT o from Orders o where o.user.id=?1 and status = ?1 order by o.id desc")
+    @Query("SELECT o from Orders o where o.user.id=?1 and status = ?2 order by o.id desc")
     Page<Orders> findByUser(Long userId, int status,Pageable pageable);
 
     default PageResult<Orders> findByUser(Long userId, int status ,int page, int limit){
