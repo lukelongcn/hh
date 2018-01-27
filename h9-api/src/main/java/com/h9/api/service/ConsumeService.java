@@ -448,7 +448,7 @@ public class ConsumeService {
 
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
         withdrawalsRecord.setUserRecord(userRecord);
-        withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+        withdrawalsRecord = withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
         WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,canWithdrawMoney,withdrawalsRecord.getId(),merSeqId);
@@ -463,6 +463,7 @@ public class ConsumeService {
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
             //转账成功
             withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
+            withdrawalsRecordReposiroty.save(withdrawalsRecord);
             commonService.setBalance(withdrawalsRecord.getUserId(), withdrawalsRecord.getMoney().abs().negate(), 1L, withdrawalsRecord.getId(), withdrawalsRecord.getId()+"", "提现");
             return Result.success(map);
         }else{
