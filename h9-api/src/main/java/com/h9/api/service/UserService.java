@@ -543,13 +543,14 @@ public class UserService {
 
     public Result transferInfo(Long userId, String phone) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        User user = userRepository.findOne(userId);
         BigDecimal balance = userAccount.getBalance();
         User targetUser = userRepository.findByPhone(phone);
         if (targetUser == null) {
             return Result.fail("用户不存在");
         }
 
-        if (targetUser.getPhone().equals(phone)) {
+        if (user.getPhone().equals(phone)) {
             return Result.fail("不能给自己转账");
         }
 
