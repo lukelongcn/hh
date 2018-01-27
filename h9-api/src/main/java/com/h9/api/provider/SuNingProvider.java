@@ -3,6 +3,7 @@ package com.h9.api.provider;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.provider.handler.SuNingHandler;
+import com.h9.api.provider.model.SuNingContent;
 import com.h9.api.provider.model.WithdrawDTO;
 import com.h9.common.base.Result;
 import com.h9.common.utils.MD5Util;
@@ -75,9 +76,9 @@ public class SuNingProvider {
 
 
     public Result withdraw(WithdrawDTO withdrawDTO) {
-        JSONArray batchData = createBatchData(withdrawDTO);
-        String body = batchData.toJSONString();
         try {
+            JSONArray batchData = createBatchData(withdrawDTO);
+            String body = batchData.toJSONString();
             String sign = sign(body);
             MultiValueMap<String, String> params= new LinkedMultiValueMap<String, String>();
             params.add("merchantNo", merchantNo);
@@ -105,7 +106,7 @@ public class SuNingProvider {
 
 
     public String sign(String param) throws InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        Map<String, String> signMap = new HashMap<String, String>();
+        Map<String, String> signMap = new HashMap<>();
         signMap.put("body", param);
         signMap.put("merchantNo", merchantNo);
         signMap.put("publicKeyIndex",publicKeyIndex);
@@ -190,6 +191,65 @@ public class SuNingProvider {
         return detailArray;
 
     }
+
+
+    public Result queryResult(Long recordId){
+        try {
+            String sign = signQuery(recordId);
+            MultiValueMap<String, String> params= new LinkedMultiValueMap<String, String>();
+            params.add("merchantNo", merchantNo);
+            params.add("publicKeyIndex", publicKeyIndex);
+            params.add("signature", sign);
+            params.add("signAlgorithm", "RSA");
+            params.add("inputCharset", "UTF-8");
+            params.add("batchNo", recordId+"");
+            params.add("payMerchantNo", merchantNo);
+            String post = suNingHandler.post(getWithdrawQueryUrl(), params);
+            JSONObject http_result = JSONObject.parseObject(post);
+            if(http_result!=null&&http_result.containsKey("responseCode")){
+                String responseCode = http_result.getString("responseCode");
+                if("0000".equals(responseCode)){
+                    JSONObject jsonObject = http_result.getJSONObject(
+                            "content");
+                    SuNingContent suNingContent = JSONObject.parseObject(jsonObject.toJSONString(), SuNingContent.class);
+                    return Result.success(suNingContent);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.getMessage(),e);
+        }
+        return Result.fail();
+    }
+
+
+
+    public String signQuery(Long recordId){
+        Map<String, String> signMap = new HashMap<>();
+        signMap.put("batchNo", recordId+"");
+        signMap.put("payMerchantNo", merchantNo);
+        signMap.put("merchantNo", merchantNo);
+        signMap.put("publicKeyIndex",publicKeyIndex);
+        signMap.put("inputCharset", "UTF-8");
+        String digest = Digest.digest(Digest.mapToString(Digest.treeMap(signMap)));
+        logger.debugv("digest"+digest);
+        String signature = null;
+        try {
+            PrivateKey privateKey = RSAUtil.getPrivateKey(myPrivateKey);
+            signature = RSAUtil.sign(digest, privateKey);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+        logger.debugv("sign:"+signature);
+        return signature;
+    }
+
+
 
 
 }
