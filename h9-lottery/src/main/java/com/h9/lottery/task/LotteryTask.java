@@ -41,7 +41,7 @@ public class LotteryTask {
     private Redisson redisson;
     
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0/1 * * * * *")
     public void run() throws InterruptedException {
         RLock lockTask = redisson.getLock("lock:lottery:task" );
         try{
