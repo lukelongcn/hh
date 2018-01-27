@@ -193,7 +193,7 @@ public class SuNingProvider {
     }
 
 
-    public Result queryResult(Long recordId){
+    public Result<SuNingContent> queryResult(Long recordId){
         try {
             String sign = signQuery(recordId);
             MultiValueMap<String, String> params= new LinkedMultiValueMap<String, String>();
