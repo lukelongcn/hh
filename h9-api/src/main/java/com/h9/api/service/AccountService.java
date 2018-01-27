@@ -119,8 +119,10 @@ public class AccountService {
             logger.error("没有找到提现最大值参数，默认为: " + max);
         }
         boolean canWithdrawConfig = gloabeConfig.getCanWithdrawConfig();
+        boolean canTransConfig = gloabeConfig.getCanTransConfig();
         UserAccountInfoVO userAccountInfoVO = new UserAccountInfoVO(user, userAccount, cardCount + "", user.getPhone(), max);
         userAccountInfoVO.setCanWithdeawal(canWithdrawConfig);
+        userAccountInfoVO.setCanTransConfig(canTransConfig);
         return Result.success(userAccountInfoVO);
     }
 

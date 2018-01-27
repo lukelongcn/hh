@@ -47,7 +47,7 @@ public interface WithdrawalsRecordRepository extends BaseRepository<WithdrawalsR
     /**
      * description: 查询指定用户当天提现的金额
      */
-    @Query(value = "select sum(money) from withdrawals_record where to_days(withdrawals_record.create_time) = TO_DAYS(NOW()) and user_id = ?1 and status = 3",nativeQuery = true)
+    @Query(value = "select sum(money) from withdrawals_record where to_days(withdrawals_record.create_time) = TO_DAYS(NOW()) and user_id = ?1 and (status = 3 OR status = 2)",nativeQuery = true)
     Object findByTodayWithdrawMoney(Long userId);
 
     /**
