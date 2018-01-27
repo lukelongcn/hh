@@ -31,10 +31,12 @@ public class BalanceFlowVO {
     private String imgUrl;
     private String createTime;
 
-    public BalanceFlowVO(String money, String month, String remarks, String imgUrl, String createTime) {
+    public BalanceFlowVO(String money, String month, Object remarks, String imgUrl, String createTime) {
         this.money = money;
         this.month = month;
-        this.remarks = remarks;
+        if (remarks != null) {
+            this.remarks = remarks.toString();
+        }
         this.imgUrl = imgUrl;
         this.createTime = createTime;
     }
