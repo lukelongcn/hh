@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class TransferDTO {
     @NotNull(message = "请输入要转入的账户")
     private String targetUserPhone;
-    @NotNull(message = "请添写金额")
+    @NotNull(message = "请填写金额")
     private BigDecimal transferMoney;
     private String remarks;
 }
