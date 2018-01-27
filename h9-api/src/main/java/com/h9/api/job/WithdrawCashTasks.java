@@ -20,8 +20,8 @@ public class WithdrawCashTasks {
 
     @Resource
     private ConsumeService consumeService;
-    //TODO 改时间改成 30分钟
-    @Scheduled(cron = "0 0/5 * * * ?")
+    
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void run(){
         logger.debugv("提现定时检任务");
         consumeService.scan();

@@ -78,7 +78,7 @@ public class ConfigService {
     }
 
 
-    public Map getMapConfig(String code) {
+    public Map<String,String> getMapConfig(String code) {
         logger.info("getMapConfig code: "+code);
         Object config = getConfig(code);
         if (config instanceof Map) {
