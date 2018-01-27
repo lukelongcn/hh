@@ -546,6 +546,11 @@ public class UserService {
         if (targetUser == null) {
             return Result.fail("用户不存在");
         }
+
+        if (phone.equals(userId)) {
+            return Result.fail("不能给自己转账");
+        }
+
         TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), targetUser.getPhone(), MoneyUtils.formatMoney(balance));
         return Result.success(vo);
     }
