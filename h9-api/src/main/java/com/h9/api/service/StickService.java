@@ -33,10 +33,7 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
-import com.h9.common.db.entity.config.BannerType;
-import static com.h9.common.db.entity.config.BannerType.LocaltionEnum;
 
-import com.h9.common.db.entity.config.Image;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -72,8 +69,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

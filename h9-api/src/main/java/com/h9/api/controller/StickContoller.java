@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created with IntelliJ IDEA.
@@ -236,7 +235,7 @@ public class StickContoller {
      * 举报贴子
      * @param userId 用户id
      * stickId 贴子id
-     * \content 内容
+     * content 内容
      * @return Result
      */
     @Secured

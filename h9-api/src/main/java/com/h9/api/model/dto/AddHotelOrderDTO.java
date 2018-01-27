@@ -7,14 +7,12 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.constraints.NotNull;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.SimpleFormatter;
 
 /**
  * Created by itservice on 2018/1/3.

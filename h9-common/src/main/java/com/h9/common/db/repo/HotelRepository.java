@@ -6,6 +6,7 @@ import com.h9.common.db.entity.hotel.Hotel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface HotelRepository  extends BaseRepository<Hotel>{
     @Query("select o from Hotel o where o.status =1")
     Page<Hotel> findAllHotel(Pageable pageable);
 
+    @Query("select o from Hotel o where o.status =1")
+    PageResult<Hotel> findAllHotelList(PageRequest pageRequest, Sort sort);
 }
