@@ -72,5 +72,7 @@ public class ParamConstant {
     // 短信一天发送次数
     public static final String CAN_Withdraw = "withdraw:enable";
 
+    public static final String CAN_TRANS= "trans:enable";
+
 
 }

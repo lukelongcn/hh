@@ -21,7 +21,6 @@ public class GlobalConfig {
     private ConfigService configService;
 
     public boolean getCanWithdrawConfig(){
-
         String stringConfig = configService.getStringConfig(ParamConstant.CAN_Withdraw);
         if(StringUtils.isEmpty(stringConfig)){
             return false;
@@ -31,10 +30,21 @@ public class GlobalConfig {
             }else{
                 return true;
             }
-
-
         }
+    }
 
+
+    public boolean getCanTransConfig(){
+        String stringConfig = configService.getStringConfig(ParamConstant.CAN_TRANS);
+        if(StringUtils.isEmpty(stringConfig)){
+            return false;
+        }else{
+            if("0".equals(stringConfig)||"false".equals(stringConfig)){
+                return false;
+            }else{
+                return true;
+            }
+        }
     }
 
 
