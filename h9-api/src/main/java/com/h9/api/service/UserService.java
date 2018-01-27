@@ -624,11 +624,6 @@ public class UserService {
         }
         logger.info("result: " + body);
         Map<String,String> mapRes = JSONObject.parseObject(body,Map.class);
-        String errCode = mapRes.get("errcode");
-        if ("40001".equals(errCode)) {
-            //accessToken 无效
-            weChatProvider.getWeChatAccessToken(true);
-        }
         String ticket = mapRes.get("ticket");
 
         return ticket;
