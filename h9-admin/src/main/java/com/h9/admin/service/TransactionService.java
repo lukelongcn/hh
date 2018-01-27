@@ -187,7 +187,7 @@ public class TransactionService {
 
         Specification<Transactions> specification = getTransferListSpecification(transferDTO);
         Sort sort = new Sort( Sort.Direction.DESC,"id");
-        PageRequest pageRequest = transactionsRepository.pageRequest(transferDTO.getPage(), transferDTO.getLimit(),sort);
+        PageRequest pageRequest = transactionsRepository.pageRequest(transferDTO.getPageNumber(), transferDTO.getPageSize(),sort);
         Page<Transactions> transactionsPage = transactionsRepository.findAll(specification, pageRequest);
         PageResult<TransferVO> pageResult = new PageResult<>(transactionsPage).result2Result(el -> new TransferVO(el));
         return Result.success(pageResult);
