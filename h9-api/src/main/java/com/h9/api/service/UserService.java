@@ -487,7 +487,7 @@ public class UserService {
 
 
         Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
-                transferMoney, transferDTO.getRemarks());
+                transferMoney, transferDTO.getRemarks(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),"");
         transactionsRepository.saveAndFlush(transactions);
 
         commonService.setBalance(user.getId(), transferMoney.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
@@ -495,7 +495,8 @@ public class UserService {
         commonService.setBalance(targetUser.getId(), transferMoney, BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
                 transactions.getId(), "", transferDTO.getRemarks());
 
-        return Result.success("转账成功");
+        String tips = targetUser.getNickName() + " (" + targetUser.getPhone() + ") 已收到您的转账";
+        return Result.success(new TransferResultVO(tips,1));
     }
 
     /**
@@ -518,8 +519,6 @@ public class UserService {
             String money = MoneyUtils.formatMoney(el.getTransferMoney());
             if (el.getUserId().equals(userId)) {
                 money = "-" + money;
-            } else {
-                money = "+" + money;
             }
             BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
                     DateUtil.formatDate(el.getCreateTime(),
@@ -550,29 +549,25 @@ public class UserService {
 
             String accessToken = weChatProvider.getWeChatAccessToken();
 
-            String ticket = getTicket(accessToken,userId);
+            String ticket = getTicket(accessToken, userId);
             String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
 
             if (StringUtils.isEmpty(ticket)) {
                 return Result.fail("获取二维码失败");
             }
-
+            User user = userRepository.findOne(userId);
             //存放redis tempId;
-            String tempId = UUID.randomUUID().toString().replace("-","");
+            String tempId = UUID.randomUUID().toString().replace("-", "");
             //在 redis 中记录 红包二维码信息
-            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url,money,userId,1,tempId);
-            redisBean.setStringValue(RedisKey.getQrCode(userId),JSONObject.toJSONString(redEnvelopeDTO),1,TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId),tempId,1,TimeUnit.DAYS);
-            List<Map<Object, Object>> transferList = new ArrayList<>();
-            Map<Object, Object> record = new HashMap<>();
-            record.put("nickName", "张三");
-            record.put("time", "30分钟前");
-            record.put("money", "2.00");
-            transferList.add(record);
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId,user.getOpenId());
+            redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), tempId, 1, TimeUnit.DAYS);
+
+
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
                     .setTempId(tempId)
-                    .setTransferRecord(transferList)
+//                    .setTransferRecord(transferList)
                     .setMoney(MoneyUtils.formatMoney(money));
 
             return Result.success(redEnvelopeCodeVO);
@@ -584,7 +579,6 @@ public class UserService {
 
     /**
      * description:  getTicket
-     *
      */
     public String getTicket(String accessToken, Long userId) {
 
@@ -613,14 +607,19 @@ public class UserService {
             return null;
         }
         logger.info("result: " + body);
-        JSONObject object = JSONObject.parseObject(body);
-        String ticket = object.getString("ticket");
+        Map<String,String> mapRes = JSONObject.parseObject(body,Map.class);
+        String errCode = mapRes.get("errcode");
+        if (errCode.equals("40001")) {
+            //accessToken 无效
+            weChatProvider.getWeChatAccessToken(true);
+        }
+        String ticket = mapRes.get("ticket");
 
         return ticket;
     }
 
 
-    public User registUser(String openId){
+    public User registUser(String openId) {
         //第一登录 生成用户信息
         User user = initUserInfo("");
         int loginCount = user.getLoginCount();
@@ -645,9 +644,43 @@ public class UserService {
         String value = redisBean.getStringValue(RedisKey.getQrCodeTempId(tempId));
         if (StringUtils.isBlank(value)) {
 
-            return Result.success("红包已被领取");
+            Transactions transactions = transactionsRepository.findByTempId(tempId);
+            if (transactions != null) {
+
+                Map<String, String> mapVO = new HashMap<>();
+                Long targetUserId = transactions.getTargetUserId();
+                User targetUser = userRepository.findOne(targetUserId);
+                mapVO.put("nickName", targetUser.getNickName());
+                mapVO.put("time", DateUtil.getSpaceTime(transactions.getCreateTime(), new Date()));
+                mapVO.put("img", targetUser.getAvatar());
+                mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
+
+                return Result.success(mapVO);
+            }
+
+            return Result.success("");
         }
         return Result.fail("红包未被领取");
     }
 
+    public Result qrRecord(Long userId, Integer page, Integer limit) {
+
+        PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
+        Page<Transactions> transactionsPage = transactionsRepository.
+                findByBalanceFlowType(BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(), userId, pageRequest);
+        if (transactionsPage.isLast()) {
+            return Result.success(new PageResult<>(transactionsPage));
+        }
+
+        PageResult<Map<Object, Object>> pageResult = new PageResult<>(transactionsPage).result2Result(el -> {
+            Map<Object, Object> record = new HashMap<>();
+            record.put("nickName", "张三");
+            record.put("time", "30分钟前");
+            record.put("img", "");
+            record.put("money", "2.00");
+            return record;
+        });
+
+        return Result.success(pageResult);
+    }
 }

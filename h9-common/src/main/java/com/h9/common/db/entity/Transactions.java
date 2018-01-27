@@ -39,4 +39,9 @@ public class Transactions extends BaseEntity{
     @Column(name = "remarks",columnDefinition = "varchar(500) comment '备注'")
     private String remarks;
 
+    @Column(name = "balance_flow_type",columnDefinition = "varchar(20) comment '流水类型'")
+    private Long balanceFlowType;
+
+    @Column(name = "temp_id",columnDefinition = "varchar(200) comment 'tempId'")
+    private String tempId;
 }

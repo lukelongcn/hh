@@ -176,4 +176,12 @@ public class UserController {
         return userService.redEnvelopeStatus(tempId);
     }
 
+//    @Secured
+//    @GetMapping("/user/redEnvelope/qr/record")
+//    public Result qrRecord(@SessionAttribute("curUserId")Long userId,
+//                           @RequestParam(defaultValue = "1") Integer page,
+//                           @RequestParam(defaultValue = "10") Integer limit){
+//        return userService.qrRecord(userId,page,limit);
+//    }
+
 }

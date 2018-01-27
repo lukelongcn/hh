@@ -10,6 +10,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlowType;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.User;
 import com.h9.common.db.repo.TransactionsRepository;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +45,8 @@ public class EventService {
     private CommonService commonService;
     @Resource
     private TransactionsRepository transactionsRepository;
+    @Resource
+    private WeChatProvider weChatProvider;
 
     public String handle(VerifyTokenDTO verifyTokenDTO) {
         String signature = verifyTokenDTO.getSignature();
@@ -75,7 +79,7 @@ public class EventService {
             handleSubscribeAndScan(map);
         }
 
-        return "ok";
+        return "";
     }
 
 
@@ -112,11 +116,11 @@ public class EventService {
             // 注册用户
             user = userService.registUser(openId);
         }
-        Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(), redEnvelopeDTO.getMoney(), "红包");
+        Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
+                redEnvelopeDTO.getMoney(), "红包", BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),redEnvelopeDTO.getTempId());
         transactionsRepository.saveAndFlush(transactions);
 
         //扫码者加钱,展示码的人 扣钱
-
         Result result = commonService.setBalance(redEnvelopeDTO.getUserId(), redEnvelopeDTO.getMoney().abs().negate(),
                 BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
                 transactions.getId(), "", "红包");
@@ -131,10 +135,11 @@ public class EventService {
             redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
 
             redisBean.setStringValue(RedisKey.getQrCodeTempId(redEnvelopeDTO.getTempId()),"",1,TimeUnit.SECONDS);
+
+            //发送模块消息给用户
+            weChatProvider.sendTemplate(openId,redEnvelopeDTO.getMoney());
+            weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(),redEnvelopeDTO.getMoney().abs().negate());
         }
-
-
-
 
     }
 }

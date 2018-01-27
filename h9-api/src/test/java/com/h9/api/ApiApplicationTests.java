@@ -467,6 +467,13 @@ public class ApiApplicationTests {
         logger.debugv(JSONObject.toJSONString(withdraw));
     }
 
+    @Test
+    public void testGetTemplate(){
+
+        String accessToken = weChatProvider.getWeChatAccessToken();
+        Result result = weChatProvider.sendTemplate("oXW4Mw2JMAlYYrH9R6X2VLbqFAGQ",new BigDecimal(100000));
+        System.out.println(JSONObject.toJSONString(result));
+    }
 }
 
 
