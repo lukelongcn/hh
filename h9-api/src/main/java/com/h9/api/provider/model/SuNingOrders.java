@@ -4,7 +4,6 @@ import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * SuNingOrders:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/26
  * Time: 17:41

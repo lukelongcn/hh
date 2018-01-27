@@ -14,7 +14,6 @@ import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * RedisConfig:刘敏华 shadow.liu@hey900.com
  * Date: 2017/12/23
  * Time: 13:45

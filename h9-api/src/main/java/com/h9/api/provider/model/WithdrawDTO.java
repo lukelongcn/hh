@@ -10,7 +10,6 @@ import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * WithdrawDTO:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/25
  * Time: 15:21
