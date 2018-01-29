@@ -83,9 +83,13 @@ public class HotelService {
 
         if (StringUtils.isBlank(city) || "全部".equals(city)) {
             if (StringUtils.isNotBlank(queryKey)) {
-                return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
+                Page<Hotel> findPage = hotelRepository.findByHotelName("%" + queryKey + "%", pageRequest);
+                PageResult<HotelListVO> pageResult = new PageResult<>(findPage).result2Result(el -> new HotelListVO(el));
+                return Result.success(pageResult);
             }else{
-                return Result.success(hotelRepository.findAllHotel(pageRequest).map(HotelListVO::new));
+                Page<Hotel> findPage = hotelRepository.findAllHotel(pageRequest);
+                PageResult<HotelListVO> pageResult = new PageResult<>(findPage).result2Result(el -> new HotelListVO(el));
+                return Result.success(pageResult);
             }
         }
         if (StringUtils.isNotBlank(queryKey)) {
