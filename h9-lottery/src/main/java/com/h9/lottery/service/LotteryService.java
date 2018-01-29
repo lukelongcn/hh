@@ -352,7 +352,7 @@ public class LotteryService {
     @Resource
     private Redisson redisson;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Result lottery(Long curUserId, String code) {
         logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
         Reward reward = rewardRepository.findByCode4Update(code);
