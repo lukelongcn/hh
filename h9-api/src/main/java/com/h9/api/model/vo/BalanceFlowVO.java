@@ -26,6 +26,16 @@ public class BalanceFlowVO {
     private String imgUrl;
     private String createTime;
 
+    public BalanceFlowVO(String money, String month, Object remarks, String imgUrl, String createTime) {
+        this.money = money;
+        this.month = month;
+        if (remarks != null) {
+            this.remarks = remarks.toString();
+        }
+        this.imgUrl = imgUrl;
+        this.createTime = createTime;
+    }
+
     public BalanceFlowVO(BalanceFlow balanceFlow, Map<String, String> iconMap, Map<String, String> nameMap) {
         BeanUtils.copyProperties(balanceFlow, this);
         Date createTime = balanceFlow.getCreateTime();

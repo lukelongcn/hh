@@ -1,12 +1,15 @@
 package com.h9.common.utils;
 
 
+
 import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -67,6 +70,50 @@ public class DateUtil {
 
     }
 
+
+    public static String getSpaceTime(Date begin, Date end) {
+        long between = 0;
+        try {
+            // 得到两者的毫秒数
+            between = (end.getTime() - begin.getTime());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        long day = between / (24 * 60 * 60 * 1000);
+        long hour = (between / (60 * 60 * 1000) - day * 24);
+        long min = ((between / (60 * 1000)) - day * 24 * 60 - hour * 60);
+
+        StringBuffer result = new StringBuffer();
+
+        if (min <= 60 && hour == 0 && day == 0) {
+            result.append(min);
+            result.append("分钟前");
+            return result.toString();
+        }
+        if (day == 0 && hour > 0) {
+            result.append(hour);
+            result.append("小时前");
+            return result.toString();
+        }
+        if (begin.before(getCurrentYearStartTime())) {
+            return DateUtil.formatDate(begin, FormatType.MINUTE);
+        }
+        LocalDate localDate = DateUtil.trans(begin);
+        return localDate.format(DateTimeFormatter.ofPattern("MM-dd"));
+
+    }
+
+    public static LocalDate trans(Date date) {
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        // atZone()方法返回在指定时区从此Instant生成的ZonedDateTime。
+        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+        return localDate;
+    }
+
+
+    public static Date formatDate(String date,FormatType formatType){
+        if(StringUtils.isNotBlank(date)) {
     public static Date formatDate(String date, FormatType formatType) {
         if (StringUtils.isNotBlank(date)) {
             try {
@@ -187,6 +234,7 @@ public class DateUtil {
     }
 
 
+
     // 获得昨天0点时间
     public static Date getYesterdaymorning() {
         Calendar cal = Calendar.getInstance();
@@ -213,7 +261,7 @@ public class DateUtil {
 
     /***
      * 获得当天24点时间
-     */
+      */
 
     public static Date getTimesNight() {
         Calendar cal = Calendar.getInstance();
@@ -463,9 +511,9 @@ public class DateUtil {
         long day = between / (24 * 60 * 60 * 1000);
         long hour = (between / (60 * 60 * 1000) - day * 24);
         long min = ((between / (60 * 1000)) - day * 24 * 60 - hour * 60);
-        long s = (between / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
-        long ms = (between - day * 24 * 60 * 60 * 1000 - hour * 60 * 60 * 1000
-                - min * 60 * 1000 - s * 1000);
+		long s = (between / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
+		long ms = (between - day * 24 * 60 * 60 * 1000 - hour * 60 * 60 * 1000
+				- min * 60 * 1000 - s * 1000);
 
         StringBuffer result = new StringBuffer();
         if (day != 0) {
@@ -480,61 +528,20 @@ public class DateUtil {
             result.append(min);
             result.append("分");
         }
-        if (s != 0) {
-            result.append(s);
-            result.append("s");
-        }
-        if (ms != 0) {
-            result.append(ms);
-            result.append("毫秒");
-        }
+		if (s != 0) {
+			result.append(s);
+			result.append("s");
+		}
+		if (ms != 0) {
+			result.append(ms);
+			result.append("毫秒");
+		}
 
         return result.toString();
     }
 
-
-    public static String getSpaceTime(Date begin, Date end) {
-        long between = 0;
-        try {
-            // 得到两者的毫秒数
-            between = (end.getTime() - begin.getTime());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        long day = between / (24 * 60 * 60 * 1000);
-        long hour = (between / (60 * 60 * 1000) - day * 24);
-        long min = ((between / (60 * 1000)) - day * 24 * 60 - hour * 60);
-
-        StringBuffer result = new StringBuffer();
-
-        if (min <= 60 && hour == 0 && day == 0) {
-            result.append(min);
-            result.append("分钟前");
-            return result.toString();
-        }
-        if (day == 0 && hour > 0) {
-            result.append(hour);
-            result.append("小时前");
-            return result.toString();
-        }
-        if (begin.before(getCurrentYearStartTime())) {
-            return DateUtil.formatDate(begin, FormatType.MINUTE);
-        }
-        LocalDate localDate = DateUtil.trans(begin);
-        return localDate.format(DateTimeFormatter.ofPattern("MM-dd"));
-
-    }
-
-    public static LocalDate trans(Date date) {
-        Instant instant = date.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault();
-        // atZone()方法返回在指定时区从此Instant生成的ZonedDateTime。
-        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
-        return localDate;
-    }
-
     @SuppressWarnings("Duplicates")
-    public static Date getDayOfMax(Date date) {
+    public static Date getDayOfMax(Date date){
         Calendar calendar = Calendar.getInstance();
 
         calendar.setTime(date);
@@ -548,7 +555,7 @@ public class DateUtil {
     }
 
 
-    public static Date getDayOfMix(Date date) {
+    public static Date getDayOfMix(Date date){
         Calendar calendar = Calendar.getInstance();
 
         calendar.setTime(date);
@@ -567,23 +574,22 @@ public class DateUtil {
      * @param type 要获取的类型 @see #AM_PM #HOUR_OF_DAY
      * @return
      */
-    public static int get(Date date, int type) {
+    public static int get(Date date,int type){
         Calendar calendar = Calendar.getInstance();
-        if (type == Calendar.DAY_OF_WEEK) {
+        if(type == Calendar.DAY_OF_WEEK){
             calendar.setFirstDayOfWeek(Calendar.MONDAY);
         }
         calendar.setTime(date);
         return calendar.get(type);
     }
-
     /**
-     * @param date
-     * @param days 天数，正为加，负为减
-     * @return java.util.Date
-     * @Author:George
-     * @Description:
-     * @Date:2017/11/7 20:45
-     */
+    *   @Author:George
+    *   @Description:
+    *   @Date:2017/11/7 20:45
+    *	@param date
+    *	@param days 天数，正为加，负为减
+    *   @return java.util.Date
+    */
     public static Date addDays(Date date, Integer days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -591,23 +597,4 @@ public class DateUtil {
         return calendar.getTime();
     }
 
-    public static int nightSum(Date startDate, Date endDate) {
-
-        long nightSecond = endDate.getTime() - startDate.getTime();
-
-        double result = nightSecond / (1000 * 60 * 60 * 24D);
-
-        if (result < 1 && result > 0) {
-            return 1;
-        }
-
-//        return new BigDecimal(result).setScale(0, RoundingMode.CEILING).intValue();
-
-        return (int)Math.ceil(result);
-    }
-
-    public static void main(String[] args) {
-        int i = nightSum(new Date(), DateUtil.getDate(new Date(), 2, Calendar.DAY_OF_YEAR));
-        System.out.println(i);
-    }
 }

@@ -67,7 +67,7 @@ fabric.properties
 # Package Files #
 *.jar
 !netpayclient.jar
-!*/lib/*.jar
+!*/lib/*
 *.war
 *.ear
 *.zip

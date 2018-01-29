@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * PayVO:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/11
  * Time: 18:37

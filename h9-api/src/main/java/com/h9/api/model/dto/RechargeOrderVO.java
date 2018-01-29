@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * RechargeOrderVO:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/12
  * Time: 10:19

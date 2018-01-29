@@ -98,6 +98,9 @@ public class RandomDataUtil {
         if(num+generateNum>totalCount){
             num=num-generateNum;
         }
+        if(num<0){
+            num = 0;
+        }
 
         return  num;
     }

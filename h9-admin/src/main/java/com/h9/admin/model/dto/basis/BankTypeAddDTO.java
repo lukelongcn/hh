@@ -32,6 +32,8 @@ public class BankTypeAddDTO {
     @NotNull(message = "状态不能为空")
     private Integer status;
 
+    private String code;
+
     public String getBankName() {
         return bankName;
     }
@@ -62,6 +64,14 @@ public class BankTypeAddDTO {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public BankType toBankType(){

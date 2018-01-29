@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * PayConfig:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/11
  * Time: 17:22

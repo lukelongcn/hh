@@ -46,6 +46,50 @@ public class RedisKey {
 
     public static String addressKey = "h9:address:areas";
 
+    /**
+     * description: 提现次数
+     */
+    public static String withdrawSuccessCount = "h9:withdraw:userId_%s:count";
+
+    public static String batchRechargeCacheId = "h9:batchRecharge:id_";
+
+    public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
+
+    /**
+     * description: 红包二维码
+     */
+    public static String QR_CODE = "h9:qr:code:";
+
+    /**
+     * description: 二维码对应的 临时 UUID，码和tempId 共存亡
+     */
+    public static String  QR_CODE_TEMP_ID = "h9:qr:code:tempId:";
+
+    public static String getQrCodeTempId(String tempId) {
+        return QR_CODE_TEMP_ID+tempId;
+    }
+
+    public static String getQrCode(Long userId) {
+        return QR_CODE+""+userId;
+    }
+
+    public static String getQrCode(String userId) {
+        return QR_CODE+""+userId;
+    }
+
+    public static String getTodayRechargeMoney(Long userId) {
+        return todayRechargeMoney+userId;
+    }
+
+    public static String getBatchRechargeCacheId() {
+        return batchRechargeCacheId+ UUID.randomUUID().toString();
+    }
+
+    public static String getWithdrawSuccessCountKey(Long userId) {
+        String format = String.format(withdrawSuccessCount, userId);
+        return format;
+    }
+
     public static void main(String[] args) {
         String smsCodeKey = getSmsCodeKey("17673140753", 1);
         System.out.println(smsCodeKey);
@@ -100,13 +144,6 @@ public class RedisKey {
         return String.format("lottery:%d:%d:before",userId,rewardId);
     }
 
-    public static String getBatchRechargeCacheId() {
-        return batchRechargeCacheId+ UUID.randomUUID().toString();
-    }
-
-    public static String getTodayRechargeMoney(Long userId) {
-        return todayRechargeMoney+userId;
-    }
 
 }
 
