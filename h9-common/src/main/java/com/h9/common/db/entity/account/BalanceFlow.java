@@ -1,4 +1,4 @@
-package com.h9.common.db.entity.account;
+package com.h9.common.db.entity;
 
 import com.h9.common.base.BaseEntity;
 
@@ -159,7 +159,9 @@ public class BalanceFlow extends BaseEntity {
         Recharge(14,"微信支付"),
         BATCH_RECHARGE(15,"批量充值"),
         SIGN(16,"签到"),
-        STICK_REWARD(17,"打赏");
+        STICK_REWARD(17,"打赏"),
+        USER_TRANSFER(20,"转账"),
+        RED_ENVELOPE(21,"红包推广");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;

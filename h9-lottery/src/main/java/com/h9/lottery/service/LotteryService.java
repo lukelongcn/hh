@@ -1,5 +1,6 @@
 package com.h9.lottery.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -47,7 +48,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.h9.common.db.entity.account.BalanceFlow.FlowType.LOTTERY;
+
+import static com.h9.common.db.entity.BalanceFlow.FlowType.LOTTERY;
 import static com.h9.common.db.entity.lottery.Reward.StatusEnum.END;
 
 /**
@@ -296,6 +298,7 @@ public class LotteryService {
             RLock lock = redisson.getLock("lock:" +  code);
             try {
                 lock.lock(30, TimeUnit.SECONDS);
+                logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
                 lottery(null, code);
             } finally {
                 lock.unlock();
@@ -354,17 +357,15 @@ public class LotteryService {
     @Resource
     private Redisson redisson;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Result lottery(Long curUserId, String code) {
-
-        code = LotteryConstantConfig.path2Code(code);
+        logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
         Reward reward = rewardRepository.findByCode4Update(code);
         if (reward == null) {
             return Result.fail("红包不存在");
         }
         if (curUserId != null) {
             if (!curUserId.equals(reward.getUserId())) {
-
                 return Result.fail("你无权操作");
             }
         }
@@ -381,8 +382,10 @@ public class LotteryService {
 
             return Result.fail("没有抽奖记录");
         }
+        logger.debugv("lottery start 中奖名单为：开始处理 {0}",code);
         List<Lottery> lotteries = new ArrayList<>();
         List<LotteryFlow> lotteryFlows = getReward(reward, lotteryList, lotteries);
+        logger.debugv("lottery start 中奖名单为：{0} {1}", JSONObject.toJSONString(lotteryFlows),code);
         lotteryRepository.save(lotteries);
         lotteryFlowRepository.save(lotteryFlows);
         LotteryModel lotteryModel = factoryProvider.updateLotteryStatus(code);
@@ -453,6 +456,11 @@ public class LotteryService {
             lotteryFlow.setDesc(remarkList.get(i % count));
             lotteryFlow.setRemarks("抢红包");
             lotteryFlows.add(lotteryFlow);
+            LotteryFlow lotteryFlow1 = lotteryFlowRepository.findByReward(reward, userId);
+            if(lotteryFlow1!=null){
+                throw new ServiceException("服务器处理中");
+            }
+
         }
         return lotteryFlows;
     }

@@ -25,7 +25,9 @@ public class LotteryConstantConfig {
 
 
     public static String path2Code(String code){
-        if(code.contains("1h9.cc/")){
+        if(code.contains("http://1h9.cc/")){
+            return code.replace("http://1h9.cc/", "");
+        }if(code.contains("1h9.cc/")){
             return code.replace("1h9.cc/", "");
         } if(code.contains(Lottery_QR_PATH)){
             return code.replace(Lottery_QR_PATH, "");

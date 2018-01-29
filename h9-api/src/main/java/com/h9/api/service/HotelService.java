@@ -1,5 +1,7 @@
 package com.h9.api.service;
 
+
+
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
@@ -10,6 +12,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
@@ -17,25 +20,21 @@ import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
-import io.netty.util.internal.StringUtil;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.transform.ResultTransformer;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY;
+import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.NOT_PAID;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.REFUND_MONEY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.WAIT_ENSURE;

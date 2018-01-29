@@ -49,8 +49,8 @@ public class MobileRechargeService {
     /**
      * description: 测试环境调用
      */
-    public Result rechargeTest(MobileRechargeDTO mobileRechargeDTO, Long id, BigDecimal realPrice) {
-        String userpwsmd5 = MD5Util.getMD5(userpws);
+    public Result rechargeTest(MobileRechargeDTO mobileRechargeDTO, String rechargeId, BigDecimal realPrice) {
+        String userpwsmd5 = "4c625b7861a92c7971cd2029c2fd3c4a";
         String cardid = "140101";
         String cardnum = "50";
         //商户订单号
@@ -62,7 +62,7 @@ public class MobileRechargeService {
 //        String mg5_str = "B662CA03452882C761BC75585BA2483F";
         String version = "6.0";
         MultiValueMap<String, String> map = new LinkedMultiValueMap();
-        map.add("userid", userId);
+        map.add("userid", "A08566");
         map.add("userpws", userpwsmd5);
         map.add("cardid", cardid);
         map.add("cardnum", cardnum);
@@ -73,7 +73,7 @@ public class MobileRechargeService {
         String s = userId + userpwsmd5 + cardid + cardnum + sporderId + sporder_time + game_userid;
         s += keyStr;
         String md5 = MD5Util.getMD5(s);
-        map.add("md5_str", md5.toUpperCase());
+        map.add("md5_str", "B662CA03452882C761BC75585BA2483F");
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
@@ -87,7 +87,7 @@ public class MobileRechargeService {
             if (rechargeResult.retcode.equals("1")) {
                 return Result.success("充值成功",rechargeResult);
             } else {
-                return Result.success("充值失败",rechargeResult);
+                return Result.fail("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
             logger.info(e.getMessage(), e);
@@ -108,7 +108,7 @@ public class MobileRechargeService {
     /**
      * description: 正式环境调用
      */
-    public Result recharge(MobileRechargeDTO mobileRechargeDTO, Long orderid, BigDecimal realPrice) {
+    public Result recharge(MobileRechargeDTO mobileRechargeDTO, String rechargeId, BigDecimal realPrice) {
         logger.info("短信充值 " + JSONObject.toJSONString(mobileRechargeDTO));
         String userpwsmd5 = MD5Util.getMD5(userpws).toLowerCase();
         String cardid = "140101";
@@ -121,7 +121,7 @@ public class MobileRechargeService {
         }
 
         //商户订单号
-        String sporderId = orderid+"";
+        String sporderId = rechargeId;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String sporder_time = formatter.format(new Date());
         String game_userid = mobileRechargeDTO.getTel();

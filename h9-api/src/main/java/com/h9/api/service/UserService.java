@@ -1,6 +1,9 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
+import com.h9.api.model.dto.*;
+import com.h9.api.model.vo.*;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
 import com.h9.api.model.dto.WechatConfig;
@@ -9,13 +12,15 @@ import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
 import com.h9.api.provider.model.WeChatUser;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.config.Article;
 import com.h9.common.db.entity.config.ArticleType;
 import com.h9.common.db.entity.user.User;
@@ -25,17 +30,28 @@ import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
+import com.h9.common.utils.MoneyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
 
 
 /**
@@ -73,6 +89,12 @@ public class UserService {
 
     @Resource
     private ConfigService configService;
+    @Resource
+    private TransactionsRepository transactionsRepository;
+
+    @Resource
+    private RestTemplate restTemplate;
+
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO,Integer client) {
@@ -96,7 +118,7 @@ public class UserService {
             if (!"dev".equals(currentEnvironment)) {
                 if (!code.equals(redisCode)) return Result.fail("验证码不正确");
             }
-        }else{
+        } else {
             redisCode = "0000";
         }
         User user = userRepository.findByPhone(phone);
@@ -160,8 +182,10 @@ public class UserService {
         user.setAvatar("");
         user.setLoginCount(0);
         user.setPhone(phone);
-        CharSequence charSequence = phone.subSequence(3, 7);
-        user.setNickName(phone.replace(charSequence, "****"));
+        if (StringUtils.isNotBlank(phone)) {
+            CharSequence charSequence = phone.subSequence(3, 7);
+            user.setNickName(phone.replace(charSequence, "****"));
+        }
         user.setLastLoginTime(new Date());
 //        GlobalProperty defaultHead = globalPropertyRepository.findByCode(ParamConstant.DEFUALT_HEAD);
 
@@ -424,6 +448,7 @@ public class UserService {
         return list;
     }
 
+
     public Result questionHelp() {
 
         ArticleType articleType = articleTypeRepository.findByCode("questionHelp");
@@ -446,4 +471,213 @@ public class UserService {
     }
 
 
+    /**
+     * description: 转账
+     *
+     * @param userId      转账发起方的用户Id
+     * @param transferDTO 转账参数
+     * @see TransferDTO
+     */
+    @Transactional
+    public Result transfer(Long userId, TransferDTO transferDTO) {
+        User user = userRepository.findOne(userId);
+        if (user == null) return Result.fail("账号不存在");
+
+        String targetUserPhone = transferDTO.getTargetUserPhone();
+        User targetUser = userRepository.findByPhone(targetUserPhone);
+        if (targetUser == null) return Result.fail("请输入正确的账号");
+
+        if (targetUser.getId().equals(userId)) {
+            return Result.fail("不能给自已转账");
+        }
+
+        BigDecimal transferMoney = transferDTO.getTransferMoney();
+
+        if (transferMoney.compareTo(new BigDecimal(0)) <= 0) {
+            return Result.fail("请填写正确的金额");
+        }
+
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        if (userAccount.getBalance().compareTo(transferMoney) < 0) {
+            return Result.fail("余额不足，请充值后再试");
+        }
+
+
+        Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
+                transferMoney, transferDTO.getRemarks(),
+                BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),"",
+                user.getPhone(), targetUser.getPhone(),user.getNickName(),targetUser.getNickName());
+        transactionsRepository.saveAndFlush(transactions);
+
+        commonService.setBalance(user.getId(), transferMoney.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
+                transactions.getId(), "", transferDTO.getRemarks());
+        commonService.setBalance(targetUser.getId(), transferMoney, BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
+                transactions.getId(), "", transferDTO.getRemarks());
+
+        String tips = targetUser.getNickName() + " (" + targetUser.getPhone() + ") 已收到您的转账";
+        return Result.success(new TransferResultVO(tips,1));
+    }
+
+    /**
+     * description: 转账记录
+     */
+    public Result transactions(Long userId, Integer page, Integer limit, Integer type) {
+
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, sort);
+
+        Long findBalanceType = type == 1 ? BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId():RED_ENVELOPE.getId();
+        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId,findBalanceType, pageRequest);
+
+        if (CollectionUtils.isEmpty(pageObj.getContent())) {
+            return Result.success(new PageResult<>(pageObj));
+        }
+
+        PageResult<BalanceFlowVO> result = new PageResult<>(pageObj).result2Result(el -> {
+            String money = MoneyUtils.formatMoney(el.getTransferMoney());
+            if (el.getUserId().equals(userId)) {
+                money = "-" + money;
+            }
+            Long balanceFlowType = el.getBalanceFlowType();
+            Map typeMap = configService.getMapConfig(ConfigService.BALANCEFLOWTYPE);
+            Long findUserId = el.getUserId();
+            Long targetUserId = el.getTargetUserId();
+            User targetUser = userRepository.findOne(targetUserId);
+            String img = targetUser.getAvatar();
+            Object remarks = typeMap.get(balanceFlowType+"");
+            BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
+                    DateUtil.formatDate(el.getCreateTime(),
+                            DateUtil.FormatType.MONTH),
+                    remarks,
+                    img,
+                    DateUtil.formatDate(el.getCreateTime(), DateUtil.FormatType.MINUTE));
+            return balanceFlowVO;
+        });
+
+        return Result.success(result);
+
+    }
+
+    public Result transferInfo(Long userId, String phone) {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        User user = userRepository.findOne(userId);
+        BigDecimal balance = userAccount.getBalance();
+        User targetUser = userRepository.findByPhone(phone);
+        if (targetUser == null) {
+            return Result.fail("用户不存在");
+        }
+
+        if (user.getPhone().equals(phone)) {
+            return Result.fail("不能给自己转账");
+        }
+
+        TransferInfoVO vo = new TransferInfoVO(targetUser.getAvatar(), targetUser.getNickName(), targetUser.getPhone(), MoneyUtils.formatMoney(balance));
+        return Result.success(vo);
+    }
+
+    public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
+        if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
+
+            UserAccount userAccount = userAccountRepository.findByUserId(userId);
+            if (userAccount.getBalance().compareTo(money) < 0) {
+                return Result.fail("余额不足"+MoneyUtils.formatMoney(money));
+            }
+
+            String accessToken = weChatProvider.getWeChatAccessToken();
+
+            String ticket = weChatProvider.getCodeTicket(accessToken, userId);
+            String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+
+            if (StringUtils.isEmpty(ticket)) {
+                return Result.fail("获取二维码失败");
+            }
+            User user = userRepository.findOne(userId);
+            //存放redis tempId;
+            String tempId = UUID.randomUUID().toString().replace("-", "");
+            //在 redis 中记录 红包二维码信息
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId,user.getOpenId());
+            redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), tempId, 1, TimeUnit.DAYS);
+
+
+            RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
+                    .setCodeUrl(url)
+                    .setTempId(tempId)
+//                    .setTransferRecord(transferList)
+                    .setMoney(MoneyUtils.formatMoney(money));
+
+            return Result.success(redEnvelopeCodeVO);
+        }
+
+        return Result.fail("请填写正确的金额");
+    }
+
+
+
+
+
+    public User registUser(String openId) {
+        //第一登录 生成用户信息
+        User user = initUserInfo("");
+        int loginCount = user.getLoginCount();
+        user.setLoginCount(++loginCount);
+        user.setLastLoginTime(new Date());
+        user.setOpenId(openId);
+        User userFromDb = userRepository.saveAndFlush(user);
+
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(userFromDb.getId());
+        userAccountRepository.save(userAccount);
+
+        UserExtends userExtends = new UserExtends();
+        userExtends.setUserId(userFromDb.getId());
+        userExtends.setSex(1);
+        userExtendsRepository.save(userExtends);
+
+        return user;
+    }
+
+    public Result redEnvelopeStatus(String tempId) {
+        String value = redisBean.getStringValue(RedisKey.getQrCodeTempId(tempId));
+        if (StringUtils.isBlank(value)) {
+
+            Transactions transactions = transactionsRepository.findByTempId(tempId);
+            if (transactions != null) {
+
+                Map<String, String> mapVO = new HashMap<>();
+                Long targetUserId = transactions.getTargetUserId();
+                User targetUser = userRepository.findOne(targetUserId);
+                mapVO.put("nickName", targetUser.getNickName());
+                mapVO.put("time", DateUtil.getSpaceTime(transactions.getCreateTime(), new Date()));
+                mapVO.put("img", targetUser.getAvatar());
+                mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
+
+                return Result.fail("领取成功",mapVO);
+            }
+
+            return Result.success("");
+        }
+        return Result.success("红包未被领取");
+    }
+
+    public Result qrRecord(Long userId, Integer page, Integer limit) {
+
+        PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
+        Page<Transactions> transactionsPage = transactionsRepository.
+                findByBalanceFlowType(RED_ENVELOPE.getId(), userId, pageRequest);
+        if (transactionsPage.isLast()) {
+            return Result.success(new PageResult<>(transactionsPage));
+        }
+
+        PageResult<Map<Object, Object>> pageResult = new PageResult<>(transactionsPage).result2Result(el -> {
+            Map<Object, Object> record = new HashMap<>();
+            record.put("nickName", "张三");
+            record.put("time", "30分钟前");
+            record.put("img", "");
+            record.put("money", "2.00");
+            return record;
+        });
+
+        return Result.success(pageResult);
+    }
 }

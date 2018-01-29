@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
@@ -52,9 +52,13 @@ public class CommonService {
         this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
-        if (newbalance.compareTo(new BigDecimal(0)) < 0) {
-            return Result.fail("余额不足");
+
+        if (money.compareTo(new BigDecimal(0)) < 0) {
+            if (newbalance.compareTo(new BigDecimal(0)) < 0) {
+                return Result.fail("余额不足");
+            }
         }
+
         userAccount.setBalance(newbalance);
         BalanceFlow balanceFlow = new BalanceFlow();
         balanceFlow.setBalance(newbalance);

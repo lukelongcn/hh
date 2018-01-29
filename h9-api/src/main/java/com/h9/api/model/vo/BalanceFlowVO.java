@@ -1,6 +1,6 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.account.VCoinsFlow;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -25,6 +25,16 @@ public class BalanceFlowVO {
     private String remarks;
     private String imgUrl;
     private String createTime;
+
+    public BalanceFlowVO(String money, String month, Object remarks, String imgUrl, String createTime) {
+        this.money = money;
+        this.month = month;
+        if (remarks != null) {
+            this.remarks = remarks.toString();
+        }
+        this.imgUrl = imgUrl;
+        this.createTime = createTime;
+    }
 
     public BalanceFlowVO(BalanceFlow balanceFlow, Map<String, String> iconMap, Map<String, String> nameMap) {
         BeanUtils.copyProperties(balanceFlow, this);

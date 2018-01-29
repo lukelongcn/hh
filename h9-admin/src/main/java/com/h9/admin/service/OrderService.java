@@ -8,7 +8,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.OrderItems;

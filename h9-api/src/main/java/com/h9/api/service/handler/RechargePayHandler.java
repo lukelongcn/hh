@@ -3,9 +3,10 @@ package com.h9.api.service.handler;
 import com.h9.api.model.dto.PayNotifyVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
-import com.h9.common.db.entity.account.BalanceFlow;
+
 import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.RechargeOrderRepository;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * RechargePayHandler:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/11
  * Time: 20:41

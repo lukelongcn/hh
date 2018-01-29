@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ConfigService {
 
+    public static final String BALANCEFLOWTYPE = "balanceFlowType";
     @Resource
     private RedisBean redisBean;
 
@@ -91,7 +92,7 @@ public class ConfigService {
         }
     }
 
-    public Map getMapConfig(String code) {
+    public Map<String,String> getMapConfig(String code) {
         logger.info("getMapConfig code: "+code);
         Object config = getConfig(code);
         if (config instanceof Map) {
