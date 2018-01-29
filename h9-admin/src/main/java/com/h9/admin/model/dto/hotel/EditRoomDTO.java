@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -25,8 +27,8 @@ public class EditRoomDTO {
     private String roomName;
 
     @ApiModelProperty("房间类型名")
+    @NotNull(message = "")
     private String typeName;
-
 
     @ApiModelProperty("房间尺寸")
     @NotNull(message = "请添写房间尺寸")
@@ -37,12 +39,16 @@ public class EditRoomDTO {
     private String include;
 
     @ApiModelProperty("图片")
+    @Size(max = 9,message = "图片不得超过九张")
+    @NotNull(message = "请添加图片")
     private List<String> images;
 
     @ApiModelProperty("原价")
+    @NotNull(message = "请输入原价")
     private BigDecimal originalPrice;
 
     @ApiModelProperty("售价")
+    @NotNull(message = "请输入售价")
     private BigDecimal realPrice;
 
     @ApiModelProperty("酒店Id")
