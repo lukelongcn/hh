@@ -31,10 +31,8 @@ import com.h9.common.db.repo.UserRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +65,8 @@ public class StickService {
     private StickCommentRepository stickCommentRepository;
     @Resource
     private UserAccountRepository userAccountRepository;
+    @Resource
+    private CommonService commonService;
 
     /**
      * 添加分类
@@ -87,6 +87,7 @@ public class StickService {
      * 编辑分类
      */
     public Result updateType(StickTypeDTO stickTypeDTO) {
+
         if (stickTypeDTO.getStickTypeId() == null){
             return Result.fail("分类id不能为空");
         }
@@ -96,12 +97,19 @@ public class StickService {
             return Result.fail("该分类已被删除");
         }
         StickType type = stickTypeRepository.findByName(stickTypeDTO.getName());
-        if(!type.getId().equals(stickType.getId())){
-            return Result.fail(stickTypeDTO.getName()+"已经存在");
+        if (type != null){
+            if (type.getId().equals(stickType.getId())){
+                BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
+                stickTypeRepository.save(stickType);
+                return Result.success("编辑成功");
+            }else {
+                return Result.fail(stickTypeDTO.getName()+"已经存在");
+            }
         }
         BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
         stickTypeRepository.save(stickType);
         return Result.success("编辑成功");
+
     }
 
     /**
@@ -154,8 +162,16 @@ public class StickService {
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
         stick.setStickType(stickType);
+        // 匹配图片
+        List<String> images = commonService.image(stickDto.getContent());
+        if (images.size()>9){
+            stick.setImages(images.subList(0,9));
+        }
+        else {
+            stick.setImages(images);
+        }
         Stick s= stickRepository.saveAndFlush(stick);
-        return Result.success("添加成功");
+        return Result.success("添加成功",s);
     }
 
     /**
@@ -197,8 +213,16 @@ public class StickService {
         stick.setTitle(updateStickDTO.getTitle());
         stick.setContent(updateStickDTO.getContent());
         stick.setStickType(stickType);
+        // 匹配图片
+        List<String> images = commonService.image(updateStickDTO.getContent());
+        if (images.size()>9){
+            stick.setImages(images.subList(0,9));
+        }
+        else {
+            stick.setImages(images);
+        }
         Stick s= stickRepository.saveAndFlush(stick);
-        return Result.success("编辑成功");
+        return Result.success("编辑成功",s);
     }
 
 
@@ -352,5 +376,13 @@ public class StickService {
             return Result.fail("分类不存在");
         }
         return Result.success(new StickTypeDetailVO(stickType));
+    }
+
+    /**
+     *  后台贴子详情
+     */
+    public Result detail(long id) {
+        Stick stick = stickRepository.findOne(id);
+        return Result.success(stick);
     }
 }

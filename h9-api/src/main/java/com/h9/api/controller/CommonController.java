@@ -78,9 +78,9 @@ public class CommonController {
 
     /*****
      * @param appId 需要获取授权的appId
-     * @param  //url回调路径 需要base64编码
-     * @param response
-     * @throws IOException
+     * url回调路径 需要base64编码
+     * @param response 重定向
+     * @throws IOException 异常
      */
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
@@ -93,8 +93,8 @@ public class CommonController {
      *
      * @param code 授权码
      * @param state 回调路径
-     * @param response
-     * @throws IOException
+     * @param response 重定向
+     * @throws IOException 异常
      */
     @ApiOperation(value = "微信回调")
     @GetMapping("/wechat/callback")

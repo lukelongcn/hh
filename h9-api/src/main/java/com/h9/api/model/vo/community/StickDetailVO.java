@@ -8,6 +8,8 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.modle.vo.Config;
 import com.h9.common.utils.DateUtil;
 
+import org.springframework.beans.BeanUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,10 +41,15 @@ public class StickDetailVO {
     private List<StickRewardUser> stickRewardUserList;
     // 经度
     private double longitude;
+
     //维度
     private double latitude;
 
     private Long stickTypeId;
+
+    // 地址
+    private String address;
+
 
     public StickDetailVO(Stick stick) {
         id = stick.getId();
@@ -52,22 +59,14 @@ public class StickDetailVO {
             userName = user.getNickName();
             userAvatar = user.getAvatar();
         }
-        title = stick.getTitle();
-        readCount = stick.getReadCount();
-        likeCount = stick.getLikeCount();
-        rewardCount = stick.getRewardCount();
-        answerCount = stick.getAnswerCount();
+        BeanUtils.copyProperties(stick,this);
         createTime = DateUtil.formatDate(stick.getCreateTime(), DateUtil.FormatType.DAY);
         StickType stickType = stick.getStickType();
         if (stickType != null) {
             stickTypeId = stickType.getId();
             typeName = stickType.getName();
         }
-        content = stick.getContent();
-        state = stick.getState();
-        images = stick.getImages();
-        this.latitude = stick.getLatitude();
-        this.longitude = stick.getLongitude();
+
     }
 
 

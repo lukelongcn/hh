@@ -2,6 +2,7 @@ package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
 import com.h9.api.model.dto.LikeDTO;
+import com.h9.api.model.dto.LocationDTO;
 import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,7 +49,13 @@ public class StickContoller {
         return stickService.addStick(userId,stickDto,request);
     }
 
-
+    /**
+     * 获取地址
+     */
+    @PostMapping("/address")
+    public Result address(@Valid@RequestBody LocationDTO locationDTO){
+        return stickService.address(locationDTO);
+    }
 
     @GetMapping("/{type}/list")
     public Result listStick(@PathVariable("type") String type,
@@ -229,7 +235,7 @@ public class StickContoller {
      * 举报贴子
      * @param userId 用户id
      * stickId 贴子id
-     * \content 内容
+     * content 内容
      * @return Result
      */
     @Secured

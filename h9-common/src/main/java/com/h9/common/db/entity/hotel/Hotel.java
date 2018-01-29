@@ -5,6 +5,8 @@ package com.h9.common.db.entity.hotel;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.BaseEntity;
 import com.h9.common.utils.DateUtil;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,10 +22,9 @@ import java.util.List;
 /**
  * description: 酒店
  */
+@Data
 @Entity
 @Table(name = "hotel")
-@Getter
-@Setter
 @Accessors(chain = true)
 public class Hotel extends BaseEntity{
     @Transient
@@ -93,6 +94,10 @@ public class Hotel extends BaseEntity{
             logger.debugv("图片解析出错，请检查数据"+getId());
         }
         return new ArrayList<>();
+    }
+
+    public Long getId() {
+        return id;
     }
 
 

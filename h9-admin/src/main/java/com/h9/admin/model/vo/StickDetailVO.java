@@ -7,6 +7,7 @@ import com.h9.common.utils.DateUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -30,6 +31,7 @@ public class StickDetailVO {
     private BigDecimal rewardMoney = new BigDecimal(0);
     private String createTime;
     private String url;
+    private List<String> images;
 
     public StickDetailVO(Stick stick) {
         this.id = stick.getId();
@@ -45,6 +47,8 @@ public class StickDetailVO {
         this.state = stick.getState();
         this.rewardCount = stick.getRewardCount();
         this.createTime = DateUtil.getSpaceTime(stick.getCreateTime(), new Date());
+        this.images = stick.getImages();
+
     }
     public StickDetailVO(){
 

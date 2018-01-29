@@ -27,6 +27,8 @@ public class HotelOrderPayVO {
 
     private String unpaidMoney;
 
+    private String hotelName;
+
     public HotelOrderPayVO(){}
 
     public HotelOrderPayVO(HotelOrder hotelOrder, UserAccount userAccount, BigDecimal totalMoney){
@@ -47,5 +49,7 @@ public class HotelOrderPayVO {
 
         BigDecimal unpayMoney = totalMoney.subtract(new BigDecimal(getPaidMoney()));
         this.setUnpaidMoney(MoneyUtils.formatMoney(unpayMoney));
+        this.hotelName = hotelOrder.getHotelName();
+
     }
 }

@@ -31,7 +31,7 @@ public class HotelController {
     @Resource
     private HotelService hotelService;
 
-    @Secured
+    //@Secured
     @GetMapping(value = "/hotels")
     @ApiOperation("酒店列表")
     public Result<HotelListVO> hotelList(@RequestParam(required = false, defaultValue = "1") Integer pageNumber,

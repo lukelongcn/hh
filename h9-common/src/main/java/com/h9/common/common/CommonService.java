@@ -20,6 +20,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -229,4 +233,25 @@ public class CommonService {
         }
     }
 
+
+    /**
+     * 根据内容匹配图片
+     */
+    public List<String> image(String content){
+        List<String> imagesList = new ArrayList<>();
+        String img = "";
+        String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
+        Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
+        Matcher m_image = p_image.matcher(content);
+        while (m_image.find()) {
+            // 得到<img />数据
+            img = m_image.group();
+            // 匹配<img>中的src数据
+            Matcher m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(img);
+            while (m.find()) {
+                imagesList.add(m.group(1));
+            }
+        }
+        return imagesList;
+    }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ public class HotelDetailVO {
     private Long id;
     private List<String> images = new ArrayList<>();
     private String hotelName;
-    private Float grade;
+    private BigDecimal grade = new BigDecimal(0);
     private String detailAddress;
     private String tips;
     private List<RoomListVO> roomList = new ArrayList<>();
@@ -28,7 +29,6 @@ public class HotelDetailVO {
     public HotelDetailVO() {
     }
 
-
     public HotelDetailVO(Hotel hotel,List<HotelRoomType> roomType,String wechatHostUrl) {
         BeanUtils.copyProperties(hotel, this);
         if(roomType != null){
@@ -36,7 +36,7 @@ public class HotelDetailVO {
             this.setRoomList(roomList);
         }
         images = hotel.getImages();
-        String url = wechatHostUrl+"/?#/account/articleDetail?id=";
+        String url = wechatHostUrl+"/h9-weixin/#/account/articleDetail?id=";
         url += hotel.getId();
         url += "&type=hotel";
         this.setHotelInfo(url);

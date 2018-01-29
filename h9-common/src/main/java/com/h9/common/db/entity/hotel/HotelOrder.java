@@ -1,8 +1,6 @@
 package com.h9.common.db.entity.hotel;
 
 import com.h9.common.base.BaseEntity;
-import com.h9.common.db.entity.order.Orders;
-import com.h9.common.db.entity.user.User;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

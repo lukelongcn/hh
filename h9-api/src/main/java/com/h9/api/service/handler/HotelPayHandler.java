@@ -52,13 +52,16 @@ public class HotelPayHandler extends AbPayHandler{
         BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
 
         //记录两条流水
+
+        commonService.setBalance(hotelOrder.getUserId(), payInfo.getMoney().abs().negate(),
+                BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getId(), hotelOrder.getId(), "",
+                BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getName());
+
         commonService.setBalance(hotelOrder.getUserId(), payInfo.getMoney().abs(),
                 BalanceFlow.BalanceFlowTypeEnum.Recharge.getId(), hotelOrder.getId(), "",
                 BalanceFlow.BalanceFlowTypeEnum.Recharge.getName());
 
-        commonService.setBalance(hotelOrder.getUserId(), payInfo.getMoney().abs().negate(),
-                BalanceFlow.BalanceFlowTypeEnum.Recharge.getId(), hotelOrder.getId(), "",
-                BalanceFlow.BalanceFlowTypeEnum.Recharge.getName());
+
 
         BigDecimal totalPaidMoney = payMoney4JiuYuan.add(payMoney4Wechat);
         //金额 大于 等于 总金额，订单状态变成 WAIT_ENSURE(2,"待确认")
