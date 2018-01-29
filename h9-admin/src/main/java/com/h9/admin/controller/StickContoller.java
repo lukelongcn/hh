@@ -189,4 +189,13 @@ public class StickContoller {
     public Result deleteComment(@RequestParam(value = "stickCommentId")long stickCommentId){
         return stickService.deleteComment(stickCommentId);
     }
+
+    /**
+     * 贴子详情
+     */
+    @Secured(accessCode = "stick:deleteComment")
+    @GetMapping("/detail/{id}")
+    public Result detail(@PathVariable(value = "id")long id){
+        return stickService.detail(id);
+    }
 }
