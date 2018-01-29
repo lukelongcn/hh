@@ -189,4 +189,9 @@ public class StickContoller {
     public Result deleteComment(@RequestParam(value = "stickCommentId")long stickCommentId){
         return stickService.deleteComment(stickCommentId);
     }
+
+    @GetMapping("/detail/{id}")
+    public Result detail(@PathVariable(value = "id")long id){
+        return stickService.detail(id);
+    }
 }

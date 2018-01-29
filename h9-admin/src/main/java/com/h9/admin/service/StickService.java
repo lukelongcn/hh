@@ -377,4 +377,12 @@ public class StickService {
         }
         return Result.success(new StickTypeDetailVO(stickType));
     }
+
+    /**
+     *  后台贴子详情
+     */
+    public Result detail(long id) {
+        Stick stick = stickRepository.findOne(id);
+        return Result.success(stick);
+    }
 }

@@ -128,12 +128,9 @@ public class HotelService {
     }
 
     public Result roomList(Long hotelId, int page, int limit) {
-
         Hotel hotel = hotelRepository.findOne(hotelId);
-        if (hotel == null) return Result.fail("此酒店不存在的。");
-
-        return Result.success(hotelRoomTypeRepository.findAll(page, limit).map(HotelRoomListVO::new));
-
+        if (hotel == null){ return Result.fail("此酒店不存在的。");}
+        return Result.success(hotelRoomTypeRepository.findAllRoom(hotelId,page, limit).map(HotelRoomListVO::new));
     }
 
     public Result editRoom(EditRoomDTO editRoomDTO) {
