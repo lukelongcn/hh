@@ -16,21 +16,21 @@ import java.util.List;
  */
 public interface HotelRepository  extends BaseRepository<Hotel>{
 
-    @Query("select o from Hotel  o where o.city = ?1 and ( o.detailAddress like ?2 or o.hotelName like ?2) and o.status = 1")
+    @Query("select o from Hotel  o where o.city = ?1 and ( o.detailAddress like ?2 or o.hotelName like ?2) and o.status = 1  order by o.createTime DESC ")
     Page<Hotel> findByCityAndHotelName(String city, String hotelName, Pageable pageable);
 
-    @Query("select o from Hotel  o where ( o.detailAddress like ?1 or o.hotelName like ?1 ) and o.status = 1")
+    @Query("select o from Hotel  o where ( o.detailAddress like ?1 or o.hotelName like ?1 ) and o.status = 1  order by o.createTime DESC ")
     Page<Hotel> findByHotelName( String hotelName, Pageable pageable);
 
     @Query("select o.city from Hotel o where o.status = 1 group by o.city")
     List<String> findAllHotelCity();
 
-    @Query("select o from Hotel  o where o.city = ?1  and o.status = 1")
+    @Query("select o from Hotel  o where o.city = ?1  and o.status = 1  order by o.createTime DESC ")
     Page<Hotel> findByCity(String city,Pageable pageable);
 
-    @Query("select o from Hotel o where o.status =1")
+    @Query("select o from Hotel o where o.status =1  order by o.createTime DESC ")
     Page<Hotel> findAllHotel(Pageable pageable);
 
-    @Query("select o from Hotel o where o.status =1")
+    @Query("select o from Hotel o where o.status =1  order by o.createTime DESC ")
     PageResult<Hotel> findAllHotelList(PageRequest pageRequest, Sort sort);
 }
