@@ -27,7 +27,7 @@ public class EditRoomDTO {
     private String roomName;
 
     @ApiModelProperty("房间类型名")
-    @NotNull(message = "")
+    @NotNull(message = "请填写房间类型名")
     private String typeName;
 
     @ApiModelProperty("房间尺寸")
