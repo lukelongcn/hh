@@ -81,7 +81,7 @@ public class HotelService {
     public Result hotelList(String city, String queryKey, int page, int limit) {
         PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
 
-        if ("全部".equals(city)) {
+        if (StringUtils.isBlank(city) || "全部".equals(city)) {
             if (StringUtils.isNotBlank(queryKey)) {
                 return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
             }else{
