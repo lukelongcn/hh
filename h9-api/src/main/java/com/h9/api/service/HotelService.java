@@ -104,7 +104,10 @@ public class HotelService {
                 return Result.fail("没有找到此类酒店");
             }
         } else {
-            return Result.success(hotelRepository.findByCity(city,pageRequest).map(HotelListVO::new));
+
+            Page<Hotel> hotelPage = hotelRepository.findByCity(city, pageRequest);
+            PageResult<HotelListVO> pageResult = new PageResult<>(hotelPage).result2Result(el -> new HotelListVO(el));
+            return Result.success(pageResult);
         }
     }
 

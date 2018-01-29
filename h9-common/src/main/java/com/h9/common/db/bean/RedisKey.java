@@ -1,8 +1,10 @@
 package com.h9.common.db.bean;
 
 import com.h9.common.db.entity.config.GlobalProperty;
+import com.h9.common.utils.DateUtil;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -34,6 +36,16 @@ public class RedisKey {
     public static String withdrawSuccessCount = "h9:withdraw:userId_%s:count";
 
     public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
+
+    /**
+     * description: 用户人数
+     */
+    public static String userCountKey ="h9:user:count:";
+
+    public static String getUserCountKey(Date date) {
+        if(date == null) return "";
+        return userCountKey+ DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY);
+    }
 
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
