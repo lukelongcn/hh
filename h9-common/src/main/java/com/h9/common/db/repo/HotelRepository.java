@@ -31,6 +31,7 @@ public interface HotelRepository  extends BaseRepository<Hotel>{
     @Query("select o from Hotel o where o.status =1  order by o.createTime DESC ")
     Page<Hotel> findAllHotel(Pageable pageable);
 
-    @Query("select o from Hotel o where o.status =1  order by o.createTime DESC ")
-    PageResult<Hotel> findAllHotelList(PageRequest pageRequest, Sort sort);
+    @Query("select o from Hotel o  where o.status =1  order by o.createTime DESC ")
+    PageResult<Hotel> findAllHotelList(PageRequest pageRequest);
+
 }

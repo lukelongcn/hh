@@ -62,8 +62,8 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
-        PageRequest pageRequest = hotelRepository.pageRequest(page,limit);
-        return Result.success(hotelRepository.findAllHotelList(pageRequest,sort).result2Result(hotel -> {
+        PageRequest pageRequest = hotelRepository.pageRequest(page,limit,sort);
+        return Result.success(hotelRepository.findAllHotelList(pageRequest).result2Result(hotel -> {
             Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
             return new HotelListVO(hotel, roomCount.intValue());
         }));
