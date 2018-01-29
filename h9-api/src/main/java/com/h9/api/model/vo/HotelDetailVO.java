@@ -36,7 +36,7 @@ public class HotelDetailVO {
             this.setRoomList(roomList);
         }
         images = hotel.getImages();
-        String url = wechatHostUrl+"/?#/account/articleDetail?id=";
+        String url = wechatHostUrl+"/h9-weixin/#/account/articleDetail?id=";
         url += hotel.getId();
         url += "&type=hotel";
         this.setHotelInfo(url);
