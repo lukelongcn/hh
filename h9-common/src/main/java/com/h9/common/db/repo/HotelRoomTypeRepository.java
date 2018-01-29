@@ -29,4 +29,6 @@ public interface HotelRoomTypeRepository extends BaseRepository<HotelRoomType> {
         Page<HotelRoomType> hotelRooms = findAllRoom(hotelId,pageRequest(page,limit));
         return new PageResult<>(hotelRooms);
     }
+
+    List<HotelRoomType> findByHotelAndStatus(Hotel hotel,Integer status);
 }

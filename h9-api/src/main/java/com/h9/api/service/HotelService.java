@@ -70,7 +70,10 @@ public class HotelService {
 
         if (hotel == null){ return Result.fail("酒店不存在");}
 
-        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
+//        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
+
+        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findByHotelAndStatus(hotel, 1);
+
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
             return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList, wechatHostUrl));
