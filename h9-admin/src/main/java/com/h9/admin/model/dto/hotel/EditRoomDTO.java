@@ -26,8 +26,7 @@ public class EditRoomDTO {
     @NotNull(message = "请添写房间名")
     private String roomName;
 
-    @ApiModelProperty("床型")
-    @NotNull(message = "请填写床型")
+    @ApiModelProperty("房间类型名")
     private String typeName;
 
     @ApiModelProperty("房间尺寸")
@@ -39,7 +38,6 @@ public class EditRoomDTO {
     private String include;
 
     @ApiModelProperty("图片")
-    @Size(max = 9,message = "图片不得超过九张")
     @NotNull(message = "请添加图片")
     private List<String> images;
 
