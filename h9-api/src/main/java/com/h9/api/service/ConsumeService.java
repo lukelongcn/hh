@@ -19,6 +19,7 @@ import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.account.BankType;
 import com.h9.common.db.entity.account.CardCoupons;
 import com.h9.common.db.entity.account.RechargeRecord;

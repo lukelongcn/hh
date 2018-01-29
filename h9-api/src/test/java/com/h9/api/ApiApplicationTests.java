@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
+import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.user.UserBank;
 import org.apache.commons.net.util.Base64;
 
 import com.h9.api.provider.SMSProvide;
@@ -26,7 +28,6 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
-import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.CardCoupons;
 import com.h9.common.db.entity.order.Address;
 import com.h9.common.db.entity.order.China;

@@ -37,7 +37,6 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     private UserRepository userRepository;
     @Resource
     private UserService userService;
-    private Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
     private PayHandler payHandler;

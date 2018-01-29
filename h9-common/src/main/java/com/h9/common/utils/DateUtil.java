@@ -113,8 +113,6 @@ public class DateUtil {
 
 
     public static Date formatDate(String date,FormatType formatType){
-        if(StringUtils.isNotBlank(date)) {
-    public static Date formatDate(String date, FormatType formatType) {
         if (StringUtils.isNotBlank(date)) {
             try {
                 return new SimpleDateFormat(formatType.format).parse(date);
@@ -596,5 +594,23 @@ public class DateUtil {
         calendar.add(Calendar.DATE, days);
         return calendar.getTime();
     }
+
+
+
+    public static int nightSum(Date startDate, Date endDate) {
+
+        long nightSecond = endDate.getTime() - startDate.getTime();
+
+        double result = nightSecond / (1000 * 60 * 60 * 24D);
+
+        if (result < 1 && result > 0) {
+            return 1;
+        }
+
+//        return new BigDecimal(result).setScale(0, RoundingMode.CEILING).intValue();
+
+        return (int)Math.ceil(result);
+    }
+
 
 }

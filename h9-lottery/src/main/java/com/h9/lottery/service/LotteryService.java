@@ -48,7 +48,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.h9.common.db.entity.account.BalanceFlow.FlowType.LOTTERY;
+
+import static com.h9.common.db.entity.BalanceFlow.FlowType.LOTTERY;
 import static com.h9.common.db.entity.lottery.Reward.StatusEnum.END;
 
 /**

@@ -11,7 +11,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.account.VB2Money;
 import com.h9.common.db.entity.account.VCoinsFlow;
 import com.h9.common.db.entity.order.GoodsType;

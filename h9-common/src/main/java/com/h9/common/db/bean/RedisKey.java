@@ -13,7 +13,8 @@ import java.util.UUID;
  * Time: 9:31
  */
 public class RedisKey {
-    public static String batchRechargeCacheId = "h9:batchRecharge:id_";
+
+
     /**
      * description: %s 占位符为手机号码
      */
@@ -28,12 +29,7 @@ public class RedisKey {
      */
     private static String errorCodeCountKey = "h9:sms:code:errorCount:userId:%s:type:%s";
 
-    /**
-     * description: 提现次数
-     */
-    public static String withdrawSuccessCount = "h9:withdraw:userId_%s:count";
 
-    public static String todayRechargeMoney = "h9:mobile:recharge:userId_";
 
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
@@ -95,11 +91,6 @@ public class RedisKey {
         System.out.println(smsCodeKey);
     }
 
-    public static String getWithdrawSuccessCountKey(Long userId) {
-        String format = String.format(withdrawSuccessCount, userId);
-        return format;
-    }
-
 
     public static String getAdminTokenUserIdKey(String token){
         return String.format("h9:admin:userId:%s",token);
@@ -107,7 +98,7 @@ public class RedisKey {
 
     /***
      * 获取通用全局配置
-     * @see com.h9.common.db.entity.GlobalProperty
+     * @see com.h9.common.db.entity.config.GlobalProperty
      * @param code
      * @return
      */

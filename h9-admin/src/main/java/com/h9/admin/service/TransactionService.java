@@ -6,6 +6,7 @@ import com.h9.admin.model.dto.transaction.CardCouponsListAddDTO;
 import com.h9.admin.model.dto.transaction.TransferDTO;
 import com.h9.admin.model.vo.TransferVO;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.account.CardCoupons;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.GoodsType;

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.service.HotelService;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
-import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.utils.DateUtil;

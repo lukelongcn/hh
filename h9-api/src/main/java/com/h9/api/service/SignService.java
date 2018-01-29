@@ -9,7 +9,8 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.account.BalanceFlow;
+
+import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserSign;
