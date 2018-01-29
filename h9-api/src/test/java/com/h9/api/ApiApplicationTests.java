@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
-import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.UserBank;
 import org.apache.commons.net.util.Base64;
 

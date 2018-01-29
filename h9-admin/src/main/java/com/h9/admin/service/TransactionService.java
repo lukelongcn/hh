@@ -44,8 +44,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER;
+
 
 /**
  * @author: George

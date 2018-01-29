@@ -19,8 +19,8 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.Transactions;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.Article;
 import com.h9.common.db.entity.config.ArticleType;
 import com.h9.common.db.entity.user.User;
@@ -51,7 +51,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
 
 
 /**

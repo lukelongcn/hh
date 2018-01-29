@@ -24,7 +24,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.community.Stick;
 import com.h9.common.db.entity.community.StickComment;
 import com.h9.common.db.entity.community.StickCommentLike;

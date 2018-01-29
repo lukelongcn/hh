@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;

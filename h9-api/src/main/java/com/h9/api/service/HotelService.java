@@ -12,7 +12,6 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
@@ -34,7 +33,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.NOT_PAID;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.REFUND_MONEY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.WAIT_ENSURE;

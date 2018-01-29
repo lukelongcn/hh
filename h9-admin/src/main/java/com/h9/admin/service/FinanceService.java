@@ -2,7 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
-import com.h9.common.db.entity.BalanceFlow;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.VB2Money;
 import com.h9.common.db.entity.lottery.LotteryFlow;
 import com.h9.common.db.entity.lottery.LotteryFlowRecord;

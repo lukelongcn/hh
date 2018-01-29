@@ -1,4 +1,4 @@
-package com.h9.common.db.entity;
+package com.h9.common.db.entity.account;
 
 import com.h9.common.base.BaseEntity;
 
