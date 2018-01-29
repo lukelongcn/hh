@@ -21,7 +21,6 @@ import java.math.BigDecimal;
  * TestController:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/31
  * Time: 10:26
- * @author
  */
 @RestController
 @Api(value = "测试相关接口",description = "测试相关接口")

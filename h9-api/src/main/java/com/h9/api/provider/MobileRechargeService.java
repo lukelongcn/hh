@@ -6,7 +6,6 @@ import com.h9.common.base.Result;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
 import org.jboss.logging.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;

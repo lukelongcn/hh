@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.redisson.RedisPubSubTopicListenerWrapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -61,8 +62,8 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
-        return Result.success(hotelRepository.findAll(page, limit,sort).result2Result(hotel -> {
-
+        PageRequest pageRequest = hotelRepository.pageRequest(page,limit);
+        return Result.success(hotelRepository.findAllHotelList(pageRequest,sort).result2Result(hotel -> {
             Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
             return new HotelListVO(hotel, roomCount.intValue());
         }));

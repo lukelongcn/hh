@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -34,7 +33,7 @@ public class StickContoller {
     @Resource
     private StickService stickService;
 
-    //@Secured(accessCode = "stick:add")
+    @Secured(accessCode = "stick:addType")
     @PostMapping("/type")
     public Result addType( @RequestBody @Validated StickTypeDTO stickTypeDTO){
         logger.debugv(JSONObject.toJSONString(stickTypeDTO));
@@ -44,18 +43,20 @@ public class StickContoller {
     /**
      * 编辑分类
      */
+    @Secured(accessCode =  "stick:updateType")
     @PostMapping("/updateType")
     public Result updateType(@RequestBody @Validated StickTypeDTO stickTypeDTO){
         return stickService.updateType(stickTypeDTO);
     }
 
-    //@Secured(accessCode =  "stick:list")
+    @Secured(accessCode =  "stick:listType")
     @GetMapping("/types")
     public Result listType(@RequestParam(required = false,name = "page",defaultValue = "1") int pageNumber,
                            @RequestParam(required = false,name = "page",defaultValue = "20") int pageSize){
         return stickService.getStick(pageNumber,pageSize);
     }
 
+    @Secured(accessCode =  "stick:typeDetail")
     @GetMapping("/typeDetail/{id}")
     public Result typeDetail(@PathVariable(value = "id")Long id ){
         return stickService.typeDetail(id);
@@ -64,6 +65,7 @@ public class StickContoller {
      * 拿到反馈列表
      */
     @ApiOperation("拿到反馈列表")
+    @Secured(accessCode =  "stick:getReport")
     @GetMapping("/getReport")
     public Result getReport(@RequestParam(defaultValue = "1") Integer pageNumber,
                             @RequestParam(defaultValue = "10") Integer pageSize){
@@ -76,6 +78,7 @@ public class StickContoller {
      * @param pageSize 个数
      * @return Result
      * */
+    @Secured(accessCode =  "stick:getReward")
     @ApiOperation("拿到打赏记录")
     @GetMapping("/getReward")
     public Result getReward(@RequestParam(defaultValue = "1") Integer pageNumber,
@@ -87,7 +90,7 @@ public class StickContoller {
     /**
      * 添加马甲贴子
      */
-    //@Secured(accessCode = "stick:addStick")
+    @Secured(accessCode = "stick:addStick")
     @PostMapping("/addStick")
     public Result addStick(@Valid@RequestBody StickDTO stickDTO){
         return stickService.addStick(stickDTO);
@@ -96,7 +99,7 @@ public class StickContoller {
     /**
      * 编辑贴子
      */
-   //@Secured(accessCode = "stick:updateStick")
+    @Secured(accessCode = "stick:updateStick")
     @PostMapping("/updateStick")
     public Result updateStick(@Valid@RequestBody UpdateStickDTO updateStickDTO){
         return stickService.updateStick(updateStickDTO);
@@ -104,6 +107,7 @@ public class StickContoller {
     /**
      * 评论列表
      */
+    @Secured(accessCode = "stick:getComment")
     @GetMapping("/getComment")
     public Result getComment(@RequestParam(defaultValue = "1") Integer pageNumber,
                              @RequestParam(defaultValue = "10") Integer pageSize,
@@ -113,6 +117,7 @@ public class StickContoller {
     /**
      * 删除
      */
+    @Secured(accessCode = "stick:delete")
     @PostMapping("/delete")
     public Result delete( @RequestParam(value = "stickId")long stickId){
         return stickService.delete(stickId);
@@ -124,6 +129,7 @@ public class StickContoller {
      * @param pageSize 大小
      * @return Result
      */
+    @Secured(accessCode = "stick:allDetail")
     @GetMapping("/allDetail")
     public Result allDetail(@RequestParam(defaultValue = "1") Integer pageNumber,
                             @RequestParam(defaultValue = "10") Integer pageSize){
@@ -133,6 +139,7 @@ public class StickContoller {
     /**
      * 锁定状态改变
      */
+    @Secured(accessCode = "stick:lock")
     @PostMapping("/lock")
     public Result lock(@RequestParam(value = "stickId")long stickId){
         return stickService.lock(stickId);
@@ -141,6 +148,7 @@ public class StickContoller {
     /**
      * 审批状态改变
      */
+    @Secured(accessCode = "stick:examine")
     @PostMapping("/examine")
     public Result examine(@RequestParam(value = "stickId")long stickId){
         return stickService.examine(stickId);
@@ -149,6 +157,7 @@ public class StickContoller {
     /**
      * 重置贴子所有状态
      */
+    @Secured(accessCode = "stick:reset")
     @PostMapping("/reset")
     public Result reset(@RequestParam(value = "stickId")long stickId){
         return stickService.reset(stickId);
@@ -157,6 +166,7 @@ public class StickContoller {
     /**
      * 评论通过状态
      */
+    @Secured(accessCode = "stick:commentState")
     @PostMapping("/commentState")
     public Result commentState(@RequestParam(value = "stickCommentId")long stickComentId){
         return stickService.commentState(stickComentId);
@@ -165,6 +175,7 @@ public class StickContoller {
     /**
      * 分类使用状态
      */
+    @Secured(accessCode = "stick:typeState")
     @PostMapping("/typeState")
     public Result typeState(@RequestParam(value = "stickTypeId")long stickTypeId){
         return stickService.typeState(stickTypeId);
@@ -173,11 +184,9 @@ public class StickContoller {
     /**
      * 删除评论
      */
+    @Secured(accessCode = "stick:deleteComment")
     @PostMapping("/deleteComment")
     public Result deleteComment(@RequestParam(value = "stickCommentId")long stickCommentId){
         return stickService.deleteComment(stickCommentId);
     }
-
-
-
 }

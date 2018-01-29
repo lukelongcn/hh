@@ -140,7 +140,6 @@ public class SignService {
     }
 
     private BigDecimal getSignReward(String list11, String list21){
-        //Double x = d1 +(Math.random()*d2);
         double d1 = Double.parseDouble(list11);
         double d2 = Double.parseDouble(list21);
         Random random = new Random();
