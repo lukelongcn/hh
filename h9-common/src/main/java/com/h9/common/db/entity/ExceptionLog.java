@@ -9,7 +9,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * ExceptionLog:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/16
  * Time: 11:30

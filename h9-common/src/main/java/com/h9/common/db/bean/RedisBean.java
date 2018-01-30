@@ -2,9 +2,14 @@ package com.h9.common.db.bean;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.h9.common.utils.DateUtil;
+import org.apache.poi.ss.formula.functions.T;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -42,7 +47,10 @@ public class RedisBean {
     private ZSetOperations<String, String> zsetOps;
 
 
-    public void setObject(String key,Object object){
+
+
+
+    public void setObject(String key, Object object){
         String value = JSONObject.toJSONString(object);
         if(value != null && value.length() < 500){
             logger.infov("redis: setStringValue({0},{1})", key,value );
@@ -98,9 +106,13 @@ public class RedisBean {
         return listOps;
     }
 
+
+
     public SetOperations<String, String> getSetOps() {
         return setOps;
     }
+
+
 
     public ZSetOperations<String, String> getZSetOps() {
         return zsetOps;
@@ -238,6 +250,7 @@ public class RedisBean {
         }
         return listOps.leftPushAll(k, vs);
     }
+
 
 
 

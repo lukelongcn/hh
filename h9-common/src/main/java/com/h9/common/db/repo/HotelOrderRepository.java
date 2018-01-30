@@ -23,5 +23,6 @@ public interface HotelOrderRepository extends BaseRepository<HotelOrder> {
     Page<HotelOrder> findAllByUserId(long userId, Pageable pageRequest);
 
 
-    List<HotelOrder> findByOrderStatus(Integer status);
+    @Query("select o from HotelOrder o where o.orderStatus in(?1,?2)")
+    List<HotelOrder> findByOrderStatus(Integer status,Integer status2);
 }

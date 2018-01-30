@@ -100,13 +100,12 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     /**
      * description: 打印请求参数
      */
-    private void printReqInfo(HttpServletRequest httpServletRequest) {
+    public void printReqInfo(HttpServletRequest httpServletRequest) {
         logger.info("");
         logger.infov("-------------------请求信息-------------------");
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
         logger.info("content-type: " + httpServletRequest.getHeader("Content-Type"));
-
     }
 
     /**

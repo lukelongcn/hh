@@ -25,29 +25,29 @@ public class WithdrawalsFails extends BaseEntity {
     @Column(name="status",columnDefinition = "int default 0 COMMENT'处理状态,1为未处理 2为处理完成'")
     private Integer status;
 
-    @Column(name="bank_return_data",nullable = false,columnDefinition = "varchar(1000) default '' COMMENT '银行返回的数据' ")
+    @Column(name="bank_return_data",columnDefinition = "varchar(2000) default '' COMMENT '银行返回的数据' ")
     private String bankReturnData;
-    @Column(name = "mer_seq_id",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '商户订单' ")
+    @Column(name = "mer_seq_id",columnDefinition = "varchar(255) default '' COMMENT '商户订单' ")
     private String merSeqId;
-    @Column(name = "card_no",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '提现卡号' ")
+    @Column(name = "card_no",columnDefinition = "varchar(255) default '' COMMENT '提现卡号' ")
     private String cardNo;
-    @Column(name = "ser_name",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '提现人名' ")
+    @Column(name = "ser_name",columnDefinition = "varchar(255) default '' COMMENT '提现人名' ")
     private String usrName;
-    @Column(name = "open_bank",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '开户银行' ")
+    @Column(name = "open_bank",columnDefinition = "varchar(255) default '' COMMENT '开户银行' ")
     private String openBank;
-    @Column(name = "prov",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '开户省份' ")
+    @Column(name = "prov",columnDefinition = "varchar(255) default '' COMMENT '开户省份' ")
     private String prov;
-    @Column(name = "city",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '城市' ")
+    @Column(name = "city",columnDefinition = "varchar(255) default '' COMMENT '城市' ")
     private String city;
-    @Column(name = "trans_amt",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '金额' ")
+    @Column(name = "trans_amt",columnDefinition = "varchar(255) default '' COMMENT '金额' ")
     private String transAmt;
-    @Column(name = "purpose",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '目的' ")
+    @Column(name = "purpose",columnDefinition = "varchar(255) default '' COMMENT '目的' ")
     private String purpose;
-    @Column(name = "version",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '' ")
+    @Column(name = "version",columnDefinition = "varchar(255) default '' COMMENT '' ")
     private String version = "20151207";
-    @Column(name = "signFlag",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '' ")
+    @Column(name = "signFlag",columnDefinition = "varchar(255) default '' COMMENT '' ")
     private String signFlag = "1";
-    @Column(name = "term_type",nullable = false,columnDefinition = "varchar(255) default '' COMMENT '' ")
+    @Column(name = "term_type",columnDefinition = "varchar(255) default '' COMMENT '' ")
     private String termType = "7";
 
     public WithdrawalsFails(){}

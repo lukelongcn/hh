@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 
+import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -57,5 +58,14 @@ public class TestController {
         } catch (Exception e) {
             return Result.fail(e.getMessage());
         }
+    }
+
+    @Resource
+    private WeChatProvider weChatProvider;
+    @GetMapping("/test/ast")
+    public String getast(){
+
+        String weChatAccessToken = weChatProvider.getWeChatAccessToken();
+        return weChatAccessToken;
     }
 }

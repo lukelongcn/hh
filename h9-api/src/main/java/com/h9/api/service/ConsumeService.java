@@ -1,20 +1,24 @@
 package com.h9.api.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
-import com.h9.api.model.dto.DidiCardVerifyDTO;
-import com.h9.api.model.dto.MobileRechargeVerifyDTO;
-import com.h9.api.provider.ChinaPayService;
-import com.h9.common.common.CommonService;
 import com.h9.api.model.dto.DidiCardDTO;
+import com.h9.api.model.dto.DidiCardVerifyDTO;
 import com.h9.api.model.dto.MobileRechargeDTO;
+import com.h9.api.model.dto.MobileRechargeVerifyDTO;
 import com.h9.api.provider.MobileRechargeService;
-import com.h9.api.provider.SMSProvide;
+import com.h9.api.provider.SuNingProvider;
+import com.h9.api.provider.model.SuNingContent;
+import com.h9.api.provider.model.SuNingOrders;
+import com.h9.api.provider.model.SuNingResult;
+import com.h9.api.provider.model.WithdrawDTO;
 import com.h9.common.base.Result;
+import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
-import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.BankType;
 import com.h9.common.db.entity.account.CardCoupons;
@@ -34,7 +38,6 @@ import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -60,15 +62,9 @@ public class ConsumeService {
     @Resource
     private RedisBean redisBean;
     @Resource
-    private SMSProvide smService;
-    @Resource
     private UserRepository userRepository;
     @Resource
-    private SMSLogReposiroty smsLogReposiroty;
-    @Resource
     private UserAccountRepository userAccountRepository;
-    @Resource
-    private UserExtendsRepository userExtendsRepository;
     @Resource
     private MobileRechargeService mobileRechargeService;
     @Resource
@@ -82,33 +78,25 @@ public class ConsumeService {
     @Resource
     private GoodsTypeReposiroty goodsTypeReposiroty;
     @Resource
-    private ChinaPayService chinaPayService;
-    @Resource
     private WithdrawalsRecordRepository withdrawalsRecordReposiroty;
-    @Resource
-    private AccountService accountService;
     @Resource
     private UserBankRepository userBankRepository;
     @Resource
     private WithdrawalsFailsReposiroty withdrawalsFailsReposiroty;
     @Resource
-    private BalanceFlowRepository balanceFlowRepository;
-    @Resource
     private CommonService commonService;
     @Resource
     private CardCouponsRepository cardCouponsRepository;
-    @Resource
-    private WithdrawalsRequestReposiroty withdrawalsRequestReposiroty;
     @Resource
     private BankCardRepository bankCardRepository;
     @Value("${chinaPay.merId}")
     private String merId;
     @Resource
-    private GlobalPropertyRepository globalPropertyRepository;
-    @Resource
     private ConfigService configService;
     @Resource
     private RechargeRecordRepository rechargeRecordRepository;
+    @Resource
+    private SuNingProvider suNingProvider;
 
     @Resource
     private OfPayRecordReposiroty ofPayRecordReposiroty;
@@ -120,7 +108,7 @@ public class ConsumeService {
     @Resource
     private GoodService goodService;
 
-    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) throws ServiceException {
+    public Result recharge(Long userId, MobileRechargeDTO mobileRechargeDTO) {
         OrderItems orderItems = new OrderItems();
         User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
@@ -156,6 +144,7 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
+        order.setPayStatus(2);
         order.setUser(user);
         order.setOrderFrom(2);
         orderItems.setOrders(order);
@@ -171,38 +160,46 @@ public class ConsumeService {
 
         userAccountRepository.save(userAccount);
         orderItemReposiroty.saveAndFlush(orderItems);
+
+        String rechargeId = UUID.randomUUID().toString().replace("-", "");
         Result result = null;
-        if(currentEnvironment.equals("product")){
-            result= mobileRechargeService.recharge(mobileRechargeDTO, orderItems.getOrders().getId(),realPrice);
-        }else{
-            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, orderItems.getOrders().getId(),realPrice);
+        if (currentEnvironment.equals("product")) {
+            logger.info("调用 recharge method");
+            result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
+        } else {
+            logger.info("调用 rechargeTest method");
+            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
         }
+
         //保存充值记录（包括失败成功）
         try {
             MobileRechargeService.Orderinfo orderinfo = (MobileRechargeService.Orderinfo) result.getData();
-            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo);
-            //减库存
-            Result changeStockResult = goodService.changeStock(goods);
-            if (changeStockResult.getCode() == 1) {
-                return changeStockResult;
-            }
+            OfPayRecord ofPayRecord = convertOfPayRecord(orderinfo, rechargeId);
+
             ofPayRecordReposiroty.save(ofPayRecord);
 
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
+            logger.info("保存充值记录失败");
         }
 
         if (result.getCode() == 0) {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            saveRechargeRecord(user, goods.getRealPrice(), orderItems.getOrders().getId());
+            orderItemReposiroty.saveAndFlush(orderItems);
+            saveRechargeRecord(user, goods.getRealPrice(), rechargeId, orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
 
+            //减库存
+//            Result changeStockResult = goodService.changeStock(goods);
+
             return Result.success("充值成功", map);
         } else {
-            throw new ServiceException(result);
+//            order.setStatus(Orders.statusEnum.FAIL.getCode());
+//            ordersReposiroty.save(order);
+            return Result.fail("充值失败");
         }
     }
 
@@ -217,7 +214,7 @@ public class ConsumeService {
 
         rechargedMoeny = rechargedMoeny.add(money);
 
-        redisBean.setStringValue(key,MoneyUtils.formatMoney(rechargedMoeny));
+        redisBean.setStringValue(key, MoneyUtils.formatMoney(rechargedMoeny));
         redisBean.expire(key, DateUtil.getTimesNight());
     }
 
@@ -230,7 +227,7 @@ public class ConsumeService {
             }
             String todayRechargeMoney = redisBean.getStringValue(RedisKey.getTodayRechargeMoney(userId));
 
-            if(StringUtils.isBlank(todayRechargeMoney)){
+            if (StringUtils.isBlank(todayRechargeMoney)) {
                 todayRechargeMoney = "0";
             }
             BigDecimal rechargedMoney = realPrice.add((new BigDecimal(todayRechargeMoney)));
@@ -245,12 +242,12 @@ public class ConsumeService {
     }
 
 
-    public void saveRechargeRecord(User user, BigDecimal money, Long orderId) {
-        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), orderId);
+    private  void saveRechargeRecord(User user, BigDecimal money, String rechargeId, Long orderId) {
+        RechargeRecord rechargeRecord = new RechargeRecord(user.getId(), money, user.getNickName(), user.getPhone(), rechargeId, orderId);
         rechargeRecordRepository.save(rechargeRecord);
     }
 
-    public OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo) {
+    private OfPayRecord convertOfPayRecord(MobileRechargeService.Orderinfo orderinfo, String rechargeId) {
 
         OfPayRecord ofPayRecord = new OfPayRecord();
         ofPayRecord.setErrMsg(orderinfo.getErr_msg());
@@ -260,7 +257,7 @@ public class ConsumeService {
         ofPayRecord.setCardnum(orderinfo.getCardnum());
         ofPayRecord.setOrdercash(orderinfo.getOrdercash());
         ofPayRecord.setCardname(orderinfo.getCardname());
-        ofPayRecord.setSporderId(orderinfo.getSporder_id());
+        ofPayRecord.setSporderId(rechargeId);
         ofPayRecord.setGameUserid(orderinfo.getGame_userid());
         ofPayRecord.setGameState(orderinfo.getGame_state());
 
@@ -270,7 +267,7 @@ public class ConsumeService {
 
     public Result rechargeDenomination(Long userId) {
         User user = userRepository.findOne(userId);
-        GoodsType goodsType = goodsTypeReposiroty.findOne(1L);
+        GoodsType goodsType = goodsTypeReposiroty.findByCode("mobile_recharge");
         List<Goods> goodsList = goodsReposiroty.findByGoodsType(goodsType);
         if (goodsList == null) return Result.fail();
         List<Map<String, String>> list = new ArrayList<>();
@@ -301,7 +298,7 @@ public class ConsumeService {
 
         List<Goods> goodsList = goodsReposiroty.findByGoodsTypeAndStatus(goodsType);
 
-        goodsList.stream().forEach(goods -> {
+        goodsList.forEach(goods -> {
             Map<String, Object> map = new HashMap<>();
             map.put("imgUrl", goods.getImg());
 //            Object count = cardCouponsRepository.getCount(goods.getId());
@@ -330,12 +327,13 @@ public class ConsumeService {
         Long id = didiCardDTO.getId();
 
         Goods goods = goodsReposiroty.findOne(id);
+        if (goods == null) return Result.fail("商品不存在");
+
         BigDecimal price = goods.getRealPrice();
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
         }
 
-        if (goods == null) return Result.fail("商品不存在");
 
         CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
         if (cardCoupons == null) return Result.fail("卡劵不存在");
@@ -394,14 +392,12 @@ public class ConsumeService {
         Long id = didiCardDTO.getId();
 
         Goods goods = goodsReposiroty.findOne(id);
-        BigDecimal price = goods.getRealPrice();
+        if (goods == null) return Result.fail("商品不存在");
 
+        BigDecimal price = goods.getRealPrice();
         if (accountBalance.compareTo(price) < 0) {
             return Result.fail("余额不足");
         }
-
-        if (goods == null) return Result.fail("商品不存在");
-
         CardCoupons cardCoupons = cardCouponsRepository.findByGoodsId(goods.getId());
         if (cardCoupons == null) return Result.fail("卡劵不存在");
 
@@ -409,11 +405,6 @@ public class ConsumeService {
     }
 
     public Result bankWithDraw(Long userId, Long bankId, String code, double longitude, double latitude, HttpServletRequest request) {
-
-
-        if (true) {
-            return Result.fail("提现功能正在维护中");
-        }
 
         User user = userRepository.findOne(userId);
         //验证短信
@@ -459,100 +450,101 @@ public class ConsumeService {
         if (balance.compareTo(canWithdrawMoney) < 0) {
             canWithdrawMoney = balance;
         }
-        String transAmt = "";
+
         if (canWithdrawMoney.compareTo(new BigDecimal(0)) <= 0) {
             return Result.fail("您今日的提现金额超过每日额度");
-        } else {
-//            transAmt = canWithdrawMoney;
-            if ("product".equals(currentEnvironment)) {
-                transAmt = canWithdrawMoney.multiply(new BigDecimal(100)).toString();
-            } else {
-                transAmt = "101";
-            }
         }
 
-        String cardNo = userBank.getNo();
-        String usrName = userBank.getName();
-        String openBank = bankType.getBankName();
-        String prov = userBank.getProvince();
-        String city = userBank.getCity();
         String purpose = "提现";
-        String signFlag = "1";
+        UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
 
         WithdrawalsRecord withdrawalsRecord = new WithdrawalsRecord(user, canWithdrawMoney, userBank, purpose);
-        withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+        withdrawalsRecord.setUserRecord(userRecord);
+        withdrawalsRecord = withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
         String merSeqId = String.valueOf(withdrawalsRecord.getId());
 
-        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
+        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,canWithdrawMoney,withdrawalsRecord.getId(),merSeqId);
+        Result withdrawResult = suNingProvider.withdraw(withdrawDTO);
 
-        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
-        String merDate = format.format(new Date());
-        Result result = chinaPayService.signPay(payParam, merDate, currentEnvironment);
-
-        //保存这个提现请求
-        WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
-        withdrawalsRequest.setWithdrawCashId(withdrawalsRecord.getId());
-        BeanUtils.copyProperties(payParam, withdrawalsRequest);
-        withdrawalsRequest.setBankReturnData(result.getData().toString());
-        withdrawalsRequest.setMerDate(merDate);
-        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
         String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.CASH_RECHARGE.getCode());
         redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
-        //设置默认银行卡
-        UserBank defaulBank = bankCardRepository.getDefaultBank(userId);
-        if (defaulBank != null) {
-            defaulBank.setDefaultSelect(0);
-            bankCardRepository.save(defaulBank);
-        }
-        userBank.setDefaultSelect(1);
 
-        UserRecord userRecord = commonService.newUserRecord(userId, latitude, longitude, request);
-        withdrawalsRecord.setUserRecord(userRecord);
-
-        if (result.getData().toString().startsWith("responseCode=0000")) {
-            if (result.getData().toString().contains("stat=s")) {
-                //转账成功
-                commonService.setBalance(userId, canWithdrawMoney.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
-                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
-            } else {
-                //转账尚未到用户卡上
-                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
-            }
-            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
-            oldWithdrawMoney = oldWithdrawMoney.add(balance);
-            Long withdrawCount = userBank.getWithdrawCount();
-            withdrawCount++;
-            userBank.setWithdrawCount(withdrawCount);
-            userBank.setWithdrawMoney(oldWithdrawMoney);
-
+        if(withdrawResult.isSuccess()){
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
-            withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
-            bankCardRepository.save(userBank);
-            addWithdrawCount(user);
-            return Result.success(map);
-
-        } else {
-            //提现失败
-            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
-            BeanUtils.copyProperties(payParam, withdrawalsRecord);
+            //转账成功
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
             withdrawalsRecordReposiroty.save(withdrawalsRecord);
-            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
-            BeanUtils.copyProperties(payParam, withdrawalsFails);
-            withdrawalsFails.setBankReturnData(result.getData().toString());
-            withdrawalsFailsReposiroty.save(withdrawalsFails);
-            withdrawalsRequestReposiroty.save(withdrawalsRequest);
-            bankCardRepository.save(userBank);
-            return Result.fail("请确认银行卡信息是否正确");
+            commonService.setBalance(withdrawalsRecord.getUserId(), withdrawalsRecord.getMoney().abs().negate(), 1L, withdrawalsRecord.getId(), withdrawalsRecord.getId()+"", "提现");
+            return Result.success(map);
+        }else{
+            return withdrawResult;
         }
+
+//
+//        ChinaPayService.PayParam payParam = new ChinaPayService.PayParam(merSeqId, cardNo, usrName, openBank, prov, city, transAmt, signFlag, purpose);
+//
+//        SimpleDateFormat format = new SimpleDateFormat("YYYYMMdd");
+//        String merDate = format.format(new Date());
+//        Result result = chinaPayService.signPay(payParam, merDate, currentEnvironment);
+//
+//        //保存这个提现请求
+//        WithdrawalsRequest withdrawalsRequest = new WithdrawalsRequest();
+//        withdrawalsRequest.setWithdrawCashId(withdrawalsRecord.getId());
+//        BeanUtils.copyProperties(payParam, withdrawalsRequest);
+//        withdrawalsRequest.setBankReturnData(result.getData().toString());
+//        withdrawalsRequest.setMerDate(merDate);
+//        redisBean.expire(smsCodeKey, 1, TimeUnit.SECONDS);
+//
+//
+//
+
+//
+//        if (result.getData().toString().startsWith("responseCode=0000")) {
+//            if (result.getData().toString().contains("stat=s")) {
+//                //转账成功
+//                commonService.setBalance(userId, canWithdrawMoney.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
+//                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+//            } else {
+//                //转账尚未到用户卡上
+//                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
+//            }
+//            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
+//            oldWithdrawMoney = oldWithdrawMoney.add(balance);
+//            Long withdrawCount = userBank.getWithdrawCount();
+//            withdrawCount++;
+//            userBank.setWithdrawCount(withdrawCount);
+//            userBank.setWithdrawMoney(oldWithdrawMoney);
+//
+//            Map<String, String> map = new HashMap<>();
+//            map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
+//            map.put("money", "" + MoneyUtils.formatMoney(canWithdrawMoney));
+//            withdrawalsRequestReposiroty.save(withdrawalsRequest);
+//            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+//            bankCardRepository.save(userBank);
+//            addWithdrawCount(user);
+//            return Result.success(map);
+//
+//        } else {
+//            //提现失败
+//            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+//            BeanUtils.copyProperties(payParam, withdrawalsRecord);
+//            withdrawalsRecordReposiroty.save(withdrawalsRecord);
+//            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+//            BeanUtils.copyProperties(payParam, withdrawalsFails);
+//            withdrawalsFails.setBankReturnData(result.getData().toString());
+//            withdrawalsFailsReposiroty.save(withdrawalsFails);
+//            withdrawalsRequestReposiroty.save(withdrawalsRequest);
+//            bankCardRepository.save(userBank);
+//            return Result.fail("请确认银行卡信息是否正确");
+//        }
     }
 
     /**
      * description: 验提现次数，一天3次 晚上 12 点清空
      */
-    public Result verifyWithdrawCount(User user) {
+    private Result verifyWithdrawCount(User user) {
         String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
 
         String count = redisBean.getStringValue(withdrawSuccessCountKey);
@@ -560,7 +552,7 @@ public class ConsumeService {
         if (StringUtils.isBlank(count)) {
             return Result.success();
         }
-        int countInt = 0;
+        int countInt;
         try {
             countInt = Integer.valueOf(count);
         } catch (NumberFormatException e) {
@@ -578,7 +570,7 @@ public class ConsumeService {
     /**
      * description: 增加提现次数,晚上 12 点清空。
      */
-    public void addWithdrawCount(User user) {
+    private void addWithdrawCount(User user) {
         String withdrawSuccessCountKey = RedisKey.getWithdrawSuccessCountKey(user.getId());
         String withdrawSuccessCount = redisBean.getStringValue(withdrawSuccessCountKey);
         //计算到晚上零点的毫秒值
@@ -613,7 +605,10 @@ public class ConsumeService {
         return Result.success();
     }
 
-    public Result scan() {
+    /****
+     * 定时扫描提现银行处理中的状态
+     */
+    public void scan() {
         List<WithdrawalsRecord> withdrawCashRecord = withdrawalsRecordReposiroty.findByStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());
 
         String reduce = withdrawCashRecord.stream()
@@ -621,32 +616,14 @@ public class ConsumeService {
                 .reduce("", (x, y) -> x + " ," + y);
 
         logger.info("没有到账的订单列表：" + reduce);
-        //查询状态
-        withdrawCashRecord.forEach(wr -> {
-            WithdrawalsRequest withdrawRequest = withdrawalsRequestReposiroty.findByLastTry(wr.getId());
-            if (withdrawRequest != null) {
-                Result result = chinaPayService.query(withdrawRequest);
-                String cpReturnData = result.getData().toString();
-                logger.info("scan result : " + cpReturnData + " " + wr);
+        withdrawCashRecord.forEach(withdrawalsRecord -> {
+            Result<SuNingContent> result = suNingProvider.queryResult(withdrawalsRecord.getId());
+            if(result.isSuccess()){
+                SuNingContent resultData = result.getData();
+                handlerCallback(resultData);
 
-                if (cpReturnData.contains("|s|")) {
-                    //此笔交易银行显示已完成了，把订单状态改变
-                    logger.info("提现记录Id:" + wr.getId());
-                    wr.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
-                }
-
-                if (cpReturnData.contains("|9|")) {
-                    //此笔交易银联打款失败
-                    wr.setStatus(WithdrawalsRecord.statusEnum.WITHDRA_EXPCETION.getCode());
-//                    Long userId = wr.getUserId();
-//                    commonService.setBalance(userId, wr.getMoney(), 2L, wr.getId(), "", "银联退回");
-                }
-
-                withdrawalsRecordReposiroty.save(wr);
             }
-
         });
-        return null;
     }
 
 
@@ -661,10 +638,7 @@ public class ConsumeService {
                 map.put("bankImg", bank.getBankType().getBankImg());
                 map.put("name", bank.getBankType().getBankName());
                 String no = bank.getNo();
-                int length = no.length();
-
                 map.put("no", CharacterFilter.hiddenBankCardInfo(no));
-
                 map.put("id", bank.getId() + "");
                 map.put("color", bank.getBankType().getColor());
                 bankList.add(map);
@@ -733,7 +707,7 @@ public class ConsumeService {
 
         //当天提现的金额
         Object todayWithdrawMoney = withdrawalsRecordReposiroty.findByTodayWithdrawMoney(userId);
-        BigDecimal castTodayWithdrawMoney = null;
+        BigDecimal castTodayWithdrawMoney;
 
         if (todayWithdrawMoney == null) {
             castTodayWithdrawMoney = new BigDecimal(0);
@@ -751,7 +725,6 @@ public class ConsumeService {
     }
 
     public Result rechargeVerify(Long userId, MobileRechargeVerifyDTO mobileRechargeDTO) {
-        User user = userService.getCurrentUser(userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
 
         BigDecimal balance = userAccount.getBalance();
@@ -768,5 +741,83 @@ public class ConsumeService {
             return Result.fail("余额不足");
         }
         return Result.success("校验成功");
+    }
+
+    /***
+     * 处理回调
+     * @param
+     * @return String 要求处理回调成功放回true
+     */
+    public String callback(SuNingResult suNingResult){
+        if(suNingResult == null){
+            return "false";
+        }
+        recordResult(JSONObject.toJSONString(suNingResult));
+        SuNingContent content = suNingResult.getContent();
+        return handlerCallback(content);
+    }
+
+    /***
+     * 苏宁处理结果
+     * @param
+     * @return
+     */
+    private String handlerCallback(SuNingContent content) {
+        if (content == null) {
+            return "false";
+        }
+
+        String batchNo = content.getBatchNo();
+        Long orderId = Long.parseLong(batchNo);
+        WithdrawalsRecord withdrawalsRecord = withdrawalsRecordReposiroty.findByLockId(orderId);
+        if(withdrawalsRecord.getStatus() == WithdrawalsRecord.statusEnum.FINISH.getCode()){
+            return "true";
+        }
+
+        SuNingOrders transferOrder = content.getTransferOrder();
+        if ( "true".equals(transferOrder.getSuccess()) ) {
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+
+            //设置默认银行卡
+            UserBank defaulBank = bankCardRepository.getDefaultBank(withdrawalsRecord.getUserId());
+            if (defaulBank != null) {
+                defaulBank.setDefaultSelect(0);
+                bankCardRepository.save(defaulBank);
+            }
+            UserBank userBank = withdrawalsRecord.getUserBank();
+            userBank.setDefaultSelect(1);
+            bankCardRepository.save(userBank);
+
+            BigDecimal oldWithdrawMoney = userBank.getWithdrawMoney();
+            oldWithdrawMoney = oldWithdrawMoney.add(withdrawalsRecord.getMoney());
+            Long withdrawCount = userBank.getWithdrawCount();
+            withdrawCount++;
+            userBank.setWithdrawCount(withdrawCount);
+            userBank.setWithdrawMoney(oldWithdrawMoney);
+
+            bankCardRepository.save(userBank);
+            Long userId = withdrawalsRecord.getUserId();
+            User user = userRepository.findOne(userId);
+            addWithdrawCount(user);
+            return "true";
+        }else if("false".equals(transferOrder.getSuccess())){
+            withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FAIL.getCode());
+            withdrawalsRecordReposiroty.saveAndFlush(withdrawalsRecord);
+        }else{
+            logger.debugv(batchNo+"--订单处理中");
+        }
+        return "false";
+    }
+
+
+    private void recordResult(String result){
+        try {
+            WithdrawalsFails withdrawalsFails = new WithdrawalsFails();
+            withdrawalsFails.setBankReturnData(result);
+            withdrawalsFailsReposiroty.save(withdrawalsFails);
+        } catch (Exception e) {
+            logger.debugv(e.getMessage(),e);
+        }
     }
 }

@@ -71,9 +71,12 @@ public class ParamConstant {
 
     // 意见反馈类别
     public static final String ADVICE_TYPE = "adviceType";
+    // 短信一天发送次数
+    public static final String CAN_Withdraw = "withdraw:enable";
 
     // 打赏金额
     public static final String REWARD_MONEY = "reward_money";
+    public static final String CAN_TRANS= "trans:enable";
 
     // 签到奖励概率
     public static final String SIGN_REWARD_CHANCE = "sign_reward_chance";
