@@ -87,6 +87,17 @@ public class User extends BaseEntity {
     @Column(name = "client",columnDefinition = "int default 0 COMMENT '客户端'")
     private Integer client;
 
+    @Column(name = "city",columnDefinition = "varchar(200) comment '城市'")
+    private String city;
+
+    @Column(name = "longitude", columnDefinition = "double default 0 COMMENT '经度'")
+    private double longitude;
+
+    @Column(name = "latitude", columnDefinition = "double default 0 COMMENT '维度'")
+    private double latitude;
+
+
+
     public Integer getSignCount() {
 
         return signCount;

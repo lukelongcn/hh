@@ -89,7 +89,7 @@ public class HotelOrderJob {
         UserCount userCountEntity = null;
         if (CollectionUtils.isNotEmpty(dayKeyList)) {
             userCountEntity = dayKeyList.get(0);
-        }else{
+        } else {
             userCountEntity = new UserCount();
         }
 
@@ -103,6 +103,7 @@ public class HotelOrderJob {
         Long peopleNumbers = userCountEntity.getPeopleNumbers();
         peopleNumbers += userCount;
         userCountEntity.setPeopleNumbers(peopleNumbers);
+        userCountEntity.setDayKey(dateKey);
         userCountRepository.save(userCountEntity);
         logger.info("userCount: " + userCount);
     }

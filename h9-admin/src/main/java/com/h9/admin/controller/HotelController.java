@@ -4,6 +4,7 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
+import com.h9.admin.model.dto.hotel.RoomStatusDTO;
 import com.h9.admin.model.vo.HotelListVO;
 import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
@@ -104,8 +105,8 @@ public class HotelController {
     @Secured
     @PutMapping(value = "/hotel/order/status")
     @ApiOperation("更改订单状态,1 确认 2退款")
-    public Result changeOrderStatus(@RequestBody Long hotelOrderId,@ApiParam("1 确认 2退款") @RequestBody Integer status) {
-        return hotelService.changeOrderStatus(hotelOrderId,status);
+    public Result changeOrderStatus( @RequestBody RoomStatusDTO roomStatusDTO) {
+        return hotelService.changeOrderStatus(roomStatusDTO);
     }
 
 
@@ -126,15 +127,16 @@ public class HotelController {
         return hotelService.orderDetail(id);
     }
 
-    @Secured
-    @GetMapping(value = "/hotel/order/refund/{id}")
-    @ApiOperation("退款")
-    public Result refundOrder(@PathVariable Long id){
-        try {
-            return hotelService.refundOrder(id);
-        } catch (Exception e) {
-            logger.info(e.getMessage(),e);
-            return Result.fail("退款失败，请稍后再试");
-        }
-    }
+
+//    @Secured
+//    @GetMapping(value = "/hotel/order/refund/{id}")
+//    @ApiOperation("退款")
+//    public Result refundOrder(@PathVariable Long id){
+//        try {
+//            return hotelService.refundOrder(id);
+//        } catch (Exception e) {
+//            logger.info(e.getMessage(),e);
+//            return Result.fail("退款失败，请稍后再试");
+//        }
+//    }
 }

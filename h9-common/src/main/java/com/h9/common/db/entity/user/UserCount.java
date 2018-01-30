@@ -20,8 +20,8 @@ public class UserCount extends BaseEntity{
     private Long id;
 
 
-    @Column(name = "day_key",columnDefinition = "varchar(50) comment '日期（如2017-01-01）'")
-    private String dayKey = DateUtil.formatDate(new Date(), DateUtil.FormatType.MONTH);
+    @Column(name = "day_key",columnDefinition = "varchar(50) comment '月份（如2017-01）'")
+    private String dayKey ;
 
     @Column(name = "people_numbers",columnDefinition = "bigint comment'人数'")
     private Long peopleNumbers = 0L;
