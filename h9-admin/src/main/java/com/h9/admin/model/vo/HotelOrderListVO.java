@@ -31,6 +31,10 @@ public class HotelOrderListVO {
     private String totalMoney;
     @ApiModelProperty("订单状态")
     private String status;
+
+    @ApiModelProperty("订单状态描述")
+    private String statusDesc;
+
     @ApiModelProperty("入住时间")
     private String comeRoomTime;
     @ApiModelProperty("离开时间")
@@ -58,9 +62,9 @@ public class HotelOrderListVO {
                 this.setCanAffirm(true);
                 this.setCanRefund(true);
             }
-            if(orderStatus == HotelOrder.OrderStatusEnum.SUCCESS.getCode()){
-                this.setCanRefund(true);
-            }
+//            if(orderStatus == HotelOrder.OrderStatusEnum.SUCCESS.getCode()){
+//                this.setCanRefund(true);
+//            }
 
         }
     }
