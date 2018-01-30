@@ -498,10 +498,8 @@ public class StickService {
         }
         stickRepository.save(stick);
         stickComment  = stickCommentRepository.save(stickComment);
-        Map map = new HashMap();
-        map.put("id",stickComment.getId());
-        map.put("content",stickComment.getContent());
-        return Result.success("回复成功",map);
+
+        return Result.success("回复成功",stickComment);
     }
 
     /**
