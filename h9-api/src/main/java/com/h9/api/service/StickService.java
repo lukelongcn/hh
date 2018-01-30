@@ -1,11 +1,13 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.model.dto.LocationDTO;
 import com.h9.api.model.dto.ReportDTO;
 import com.h9.api.model.dto.StickCommentDTO;
 import com.h9.api.model.dto.StickDto;
 import com.h9.api.model.dto.StickRewardJiuYuanDTO;
 import com.h9.api.model.vo.HomeVO;
+import com.h9.api.model.vo.community.StickAddressVO;
 import com.h9.api.model.vo.community.StickCommentSimpleVO;
 import com.h9.api.model.vo.community.StickCommentVO;
 import com.h9.api.model.vo.community.StickRewardMoneyVO;
@@ -31,10 +33,7 @@ import com.h9.common.db.entity.community.StickReport;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.db.entity.community.StickType;
 import com.h9.common.db.entity.config.Banner;
-import com.h9.common.db.entity.config.BannerType;
-import static com.h9.common.db.entity.config.BannerType.LocaltionEnum;
 
-import com.h9.common.db.entity.config.Image;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -70,8 +69,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -129,6 +126,26 @@ public class StickService {
         return Result.success(stickTypeVOS);
     }
 
+    /**
+     * 获取地址
+     */
+    @Transactional
+    public Result address(LocationDTO locationDTO) {
+        StickAddressVO stickAddressVO = new StickAddressVO();
+        CommonService.AddressResult addressDetail = commonService.getAddressDetail(locationDTO.getLatitude(), locationDTO.getLongitude());
+        if(addressDetail!=null){
+            stickAddressVO.setAddress(addressDetail.getDetailAddress());
+            stickAddressVO.setCity(addressDetail.getCity());
+            stickAddressVO.setProvince(addressDetail.getProvince());
+            stickAddressVO.setDistrict(addressDetail.getDistrict());
+        }else {
+            return Result.fail("未找到详细地址，请检查经纬度");
+        }
+        stickAddressVO.setLatitude(locationDTO.getLatitude());
+        stickAddressVO.setLongitude(locationDTO.getLongitude());
+        return Result.success(stickAddressVO);
+    }
+
     @Transactional
     public Result addStick(Long userId, StickDto stickDto, HttpServletRequest request){
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
@@ -149,7 +166,8 @@ public class StickService {
     /**
      * 编辑或添加贴子
      */
-    private Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
+    @Transactional
+    public Stick controllStick(Long userId,StickDto stickDto,Stick stick,StickType stickType, HttpServletRequest request){
         User user = userRepository.findOne(userId);
         stick.setTitle(stickDto.getTitle());
         stick.setContent(stickDto.getContent());
@@ -301,7 +319,6 @@ public class StickService {
             }
             return Result.success(stickDetailVO);
         }
-
         stick.setReadCount(stick.getReadCount()+1);
         stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);

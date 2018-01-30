@@ -56,6 +56,10 @@ public class GlobalExceptionHandler {
             return new Result(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方法不被允许", ExceptionUtils.getMessage(e));
         }
 
+        if (e instanceof IllegalMonitorStateException) {
+            logger.info(e.getMessage(), e);
+            return new Result(1, "服务器处理中", ExceptionUtils.getMessage(e));
+        }
         if (e instanceof NoHandlerFoundException) {
             return new Result(HttpStatus.NOT_FOUND.value(), "页面丢失");
         }

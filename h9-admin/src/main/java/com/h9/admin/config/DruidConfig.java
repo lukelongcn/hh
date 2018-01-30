@@ -13,7 +13,6 @@ import java.sql.SQLException;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
  * DruidConfig:刘敏华 shadow.liu@hey900.com
  * Date: 2017/12/22
  * Time: 18:37

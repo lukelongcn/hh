@@ -1,5 +1,7 @@
 package com.h9.api.service;
 
+
+
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.AddHotelOrderDTO;
 import com.h9.api.model.dto.HotelPayDTO;
@@ -17,18 +19,14 @@ import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
-import io.netty.util.internal.StringUtil;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.transform.ResultTransformer;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -68,9 +66,12 @@ public class HotelService {
     public Result detail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
 
-        if (hotel == null) return Result.fail("酒店不存在");
+        if (hotel == null){ return Result.fail("酒店不存在");}
 
-        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
+//        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findAll(Example.of(new HotelRoomType().setStatus(1)));
+
+        List<HotelRoomType> hotelRoomTypeList = hotelRoomTypeRepository.findByHotelAndStatus(hotel, 1);
+
 
         if (CollectionUtils.isNotEmpty(hotelRoomTypeList)) {
             return Result.success(new HotelDetailVO(hotel, hotelRoomTypeList, wechatHostUrl));
@@ -81,11 +82,15 @@ public class HotelService {
     public Result hotelList(String city, String queryKey, int page, int limit) {
         PageRequest pageRequest = hotelRepository.pageRequest(page, limit);
 
-        if ("全部".equals(city)) {
+        if (StringUtils.isBlank(city) || "全部".equals(city)) {
             if (StringUtils.isNotBlank(queryKey)) {
-                return Result.success(hotelRepository.findByHotelName("%"+queryKey+"%",pageRequest).map(HotelListVO::new));
+                Page<Hotel> findPage = hotelRepository.findByHotelName("%" + queryKey + "%", pageRequest);
+                PageResult<HotelListVO> pageResult = new PageResult<>(findPage).result2Result(el -> new HotelListVO(el));
+                return Result.success(pageResult);
             }else{
-                return Result.success(hotelRepository.findAll(page, limit).map(HotelListVO::new));
+                Page<Hotel> findPage = hotelRepository.findAllHotel(pageRequest);
+                PageResult<HotelListVO> pageResult = new PageResult<>(findPage).result2Result(el -> new HotelListVO(el));
+                return Result.success(pageResult);
             }
         }
         if (StringUtils.isNotBlank(queryKey)) {
@@ -97,9 +102,11 @@ public class HotelService {
                 return Result.fail("没有找到此类酒店");
             }
         } else {
-            return Result.success(hotelRepository.findAll(page, limit).map(HotelListVO::new));
-        }
 
+            Page<Hotel> hotelPage = hotelRepository.findByCity(city, pageRequest);
+            PageResult<HotelListVO> pageResult = new PageResult<>(hotelPage).result2Result(el -> new HotelListVO(el));
+            return Result.success(pageResult);
+        }
     }
 
     public Result addOrder(AddHotelOrderDTO addHotelOrderDTO, Long userId) {
@@ -113,7 +120,7 @@ public class HotelService {
         Date startReserveTime = hotel.getStartReserveTime();
         Date endReserveTime = hotel.getEndReserveTime();
 
-        if (comeRoomTime.getTime() < startReserveTime.getTime() || comeRoomTime.getTime() > endReserveTime.getTime()) {
+        if (comeRoomTime.before(startReserveTime)|| comeRoomTime.after(endReserveTime)) {
             return Result.fail("非可用时段不可预订");
         }
 
@@ -214,10 +221,10 @@ public class HotelService {
         }
 
         HotelOrder.PayMethodEnum payMethodEnum = HotelOrder.PayMethodEnum.findByCode(payMethod);
-        if (payMethodEnum == null) return Result.fail("请选择支付方式");
+        if (payMethodEnum == null){ return Result.fail("请选择支付方式");}
 
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelPayDTO.getHotelOrderId());
-        if (hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null) {return Result.fail("订单不存在");}
 
         if (hotelOrder.getOrderStatus() != HotelOrder.OrderStatusEnum.NOT_PAID.getCode()) {
             return Result.fail("订单已支付");
@@ -228,7 +235,7 @@ public class HotelService {
 
         String payPlatform = hotelPayDTO.getPayPlatform();
         OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(payPlatform);
-        if (findPayPlatformEnum == null) return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");
+        if (findPayPlatformEnum == null) {return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");}
         Result result = null;
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
             result = balancePay(hotelOrder, user, userAccount);
@@ -383,9 +390,9 @@ public class HotelService {
     public Result orderDetail(Long orderId, Long userId) {
 
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
-        if (hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null){ return Result.fail("订单不存在");}
 
-        if (!hotelOrder.getUserId().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUserId().equals(userId)) {return Result.fail("无权查看");}
 
         return Result.success(new HotelOrderDetailVO(hotelOrder));
     }
@@ -405,16 +412,16 @@ public class HotelService {
 
     public Result<HotelOrder> authOrder(Long hotelOrderId, Long userId) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
-        if (hotelOrder == null) return Result.fail("订单不存在");
+        if (hotelOrder == null) {return Result.fail("订单不存在");}
 
-        if (!hotelOrder.getUserId().equals(userId)) return Result.fail("无权查看");
+        if (!hotelOrder.getUserId().equals(userId)) {return Result.fail("无权查看");}
 
         return Result.success(hotelOrder);
     }
 
     public Result payInfo(Long hotelOrderId, Long userId) {
         Result<HotelOrder> authResult = authOrder(hotelOrderId, userId);
-        if (authResult.getCode() == 1) return authResult;
+        if (authResult.getCode() == 1){ return authResult;}
 
         UserAccount userAccount = userAccountRepository.findOne(userId);
 
@@ -424,7 +431,7 @@ public class HotelService {
 
     public String orderDetail(Long hotelId) {
         Hotel hotel = hotelRepository.findOne(hotelId);
-        if (hotel == null) return "酒店不存在";
+        if (hotel == null) {return "酒店不存在";}
         return hotel.getHotelInfo();
     }
 }

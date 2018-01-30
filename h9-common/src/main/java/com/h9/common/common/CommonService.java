@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
@@ -43,6 +44,8 @@ public class CommonService {
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private UserRecordRepository userRecordRepository;
+    @Resource
+    private UserRepository userRepository;
 
 
     @Transactional
@@ -52,9 +55,13 @@ public class CommonService {
         this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
-        if (newbalance.compareTo(new BigDecimal(0)) < 0) {
-            return Result.fail("余额不足");
+
+        if (money.compareTo(new BigDecimal(0)) < 0) {
+            if (newbalance.compareTo(new BigDecimal(0)) < 0) {
+                return Result.fail("余额不足");
+            }
         }
+
         userAccount.setBalance(newbalance);
         BalanceFlow balanceFlow = new BalanceFlow();
         balanceFlow.setBalance(newbalance);
@@ -110,6 +117,8 @@ public class CommonService {
 
         userRecord.setLatitude(latitude);
         userRecord.setLongitude(longitude);
+
+
         try {
             String refer = request.getHeader("Referer");
             String userAgent = request.getHeader("User-Agent");
@@ -132,11 +141,22 @@ public class CommonService {
 
                     userRecord.setProvince(data.getString("province"));
                     userRecord.setCity(data.getString("city"));
+                    User user = userRepository.findOne(userId);
+
                     userRecord.setDistrict(data.getString("district"));
                     userRecord.setStreet(data.getString("street"));
                     userRecord.setStreetNumber(data.getString("street_number"));
-
                     userRecord.setAddress(detailAddress);
+
+                    if(user != null){
+                        user.setLongitude(longitude);
+                        user.setLatitude(latitude);
+                        user.setCity(data.getString("city"));
+                        user.setProvince(data.getString("province"));
+                        user.setStreet(data.getString("street"));
+                        user.setStreetNumber(data.getString("street_number"));
+                        userRepository.save(user);
+                    }
                 }
 
             }
@@ -145,6 +165,7 @@ public class CommonService {
         } catch (Exception ex) {
             logger.debugv(ex.getMessage(), ex);
         }
+
 
         return userRecordRepository.saveAndFlush(userRecord);
     }

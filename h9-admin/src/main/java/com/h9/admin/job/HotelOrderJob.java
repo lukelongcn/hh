@@ -4,20 +4,31 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.service.HotelService;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.hotel.HotelOrder;
+import com.h9.common.db.entity.user.UserCount;
 import com.h9.common.db.repo.HotelOrderRepository;
+import com.h9.common.db.repo.UserCountRepository;
 import com.h9.common.utils.DateUtil;
+import com.mysql.jdbc.TimeUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.WAIT_ENSURE;
 
 /**
  * Created by itservice on 2018/1/18.
@@ -36,6 +47,11 @@ public class HotelOrderJob {
     private HotelService hotelService;
     @Resource
     private Lock lock;
+    @Resource
+    private UserCountRepository userCountRepository;
+
+    @Resource
+    private RedisBean redisBean;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void scan() {
@@ -47,7 +63,12 @@ public class HotelOrderJob {
         if (!lock.getLock(lockKey)) {
             return;
         }
-        List<HotelOrder> resultStream = hotelOrderRepository.findByOrderStatus(HotelOrder.OrderStatusEnum.NOT_PAID.getCode());
+
+        calcUserCount();
+
+        List<HotelOrder> resultStream = hotelOrderRepository.findByOrderStatus(
+                HotelOrder.OrderStatusEnum.NOT_PAID.getCode()
+                , WAIT_ENSURE.getCode());
         resultStream.forEach(order -> {
             try {
                 handleOrder(order);
@@ -56,6 +77,35 @@ public class HotelOrderJob {
             }
         });
 
+
+    }
+
+    private void calcUserCount() {
+        //统计活跃人数
+        Date date = DateUtil.getDate(new Date(), -1, Calendar.DAY_OF_YEAR);
+        String dateKey = DateUtil.formatDate(date, DateUtil.FormatType.DAY);
+        List<UserCount> dayKeyList = userCountRepository.findByDayKey(dateKey);
+
+        UserCount userCountEntity = null;
+        if (CollectionUtils.isNotEmpty(dayKeyList)) {
+            userCountEntity = dayKeyList.get(0);
+        } else {
+            userCountEntity = new UserCount();
+        }
+
+        Long userCount = redisBean.getStringTemplate()
+                .execute((RedisCallback<Long>) connection ->
+                        connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
+                                .getKeySerializer())
+                                .serialize(dateKey)));
+
+
+        Long peopleNumbers = userCountEntity.getPeopleNumbers();
+        peopleNumbers += userCount;
+        userCountEntity.setPeopleNumbers(peopleNumbers);
+        userCountEntity.setDayKey(dateKey);
+        userCountRepository.save(userCountEntity);
+        logger.info("userCount: " + userCount);
     }
 
     public void handleOrder(HotelOrder order) {
@@ -64,6 +114,7 @@ public class HotelOrderJob {
 
         logger.info("处理定订单id:" + order.getId());
 
+        order.setOrderStatus(HotelOrder.OrderStatusEnum.CANCEL.getCode());
 
         if (payMoney4Wechat.compareTo(new BigDecimal(0)) > 0) {
 
@@ -71,9 +122,10 @@ public class HotelOrderJob {
             Result result = hotelService.refundOrder(order.getId());
             logger.info("退款 结果： " + JSONObject.toJSONString(result));
 
-            if(result.getCode() == 1){
+            if (result.getCode() == 1) {
                 return;
             }
+            order.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
         }
 
         if (payMoney4JiuYuan.compareTo(new BigDecimal(0)) > 0) {
@@ -82,9 +134,9 @@ public class HotelOrderJob {
                     BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
                     order.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
             logger.info("退酒元成功，酒店订单Id: " + order.getId() + " 金额：" + payMoney4JiuYuan);
+            order.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
         }
 
-        order.setOrderStatus(HotelOrder.OrderStatusEnum.CANCEL.getCode());
         hotelOrderRepository.save(order);
     }
 }

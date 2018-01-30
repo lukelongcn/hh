@@ -9,6 +9,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
+
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -89,7 +90,9 @@ public class SignService {
         userSignNew = userSignRepository.saveAndFlush(userSignNew);
 
         // 签到奖励金额加入到用户酒元余额中
-        Result result = commonService.setBalance(userId,userSignNew.getCashBack(), BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSignNew.getId(),"","");
+        Result result = commonService.setBalance(userId,userSignNew.getCashBack(),
+                BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSignNew.getId(), "",
+                BalanceFlow.BalanceFlowTypeEnum.SIGN.getName());
         if(result.getCode()==Result.FAILED_CODE){
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
             throw new ServiceException("签到失败");
@@ -140,7 +143,6 @@ public class SignService {
     }
 
     private BigDecimal getSignReward(String list11, String list21){
-        //Double x = d1 +(Math.random()*d2);
         double d1 = Double.parseDouble(list11);
         double d2 = Double.parseDouble(list21);
         Random random = new Random();

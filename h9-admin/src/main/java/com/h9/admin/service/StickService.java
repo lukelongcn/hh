@@ -31,15 +31,11 @@ import com.h9.common.db.repo.UserRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -91,6 +87,7 @@ public class StickService {
      * 编辑分类
      */
     public Result updateType(StickTypeDTO stickTypeDTO) {
+
         if (stickTypeDTO.getStickTypeId() == null){
             return Result.fail("分类id不能为空");
         }
@@ -101,7 +98,11 @@ public class StickService {
         }
         StickType type = stickTypeRepository.findByName(stickTypeDTO.getName());
         if (type != null){
-            if (!type.getId().equals(stickType.getId())){
+            if (type.getId().equals(stickType.getId())){
+                BeanUtils.copyProperties(stickTypeDTO,stickType,"id");
+                stickTypeRepository.save(stickType);
+                return Result.success("编辑成功");
+            }else {
                 return Result.fail(stickTypeDTO.getName()+"已经存在");
             }
         }
@@ -375,5 +376,13 @@ public class StickService {
             return Result.fail("分类不存在");
         }
         return Result.success(new StickTypeDetailVO(stickType));
+    }
+
+    /**
+     *  后台贴子详情
+     */
+    public Result detail(long id) {
+        Stick stick = stickRepository.findOne(id);
+        return Result.success(stick);
     }
 }

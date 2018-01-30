@@ -5,6 +5,7 @@ import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
 import com.h9.admin.model.dto.hotel.RefundDTO;
+import com.h9.admin.model.dto.hotel.RoomStatusDTO;
 import com.h9.admin.model.vo.HotelListVO;
 import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
@@ -23,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.redisson.RedisPubSubTopicListenerWrapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -61,14 +64,14 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
-        return Result.success(hotelRepository.findAll(page, limit,sort).result2Result(hotel -> {
-
+        PageRequest pageRequest = hotelRepository.pageRequest(page,limit,sort);
+        Page<Hotel> findPage = hotelRepository.findAllHotelList(pageRequest);
+        return Result.success(new PageResult<>(findPage).result2Result(hotel -> {
             Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
             return new HotelListVO(hotel, roomCount.intValue());
         }));
 
     }
-
     public Result editHotel(EditHotelDTO editHotelDTO) {
 
         Hotel hotel = null;
@@ -127,12 +130,9 @@ public class HotelService {
     }
 
     public Result roomList(Long hotelId, int page, int limit) {
-
         Hotel hotel = hotelRepository.findOne(hotelId);
-        if (hotel == null) return Result.fail("此酒店不存在的。");
-
-        return Result.success(hotelRoomTypeRepository.findAll(page, limit).map(HotelRoomListVO::new));
-
+        if (hotel == null){ return Result.fail("此酒店不存在的。");}
+        return Result.success(hotelRoomTypeRepository.findAllRoom(hotelId,page, limit).map(HotelRoomListVO::new));
     }
 
     public Result editRoom(EditRoomDTO editRoomDTO) {
@@ -231,8 +231,10 @@ public class HotelService {
         };
     }
 
-    public Result changeOrderStatus(Long hotelOrderId, Integer status) {
+    public Result changeOrderStatus(RoomStatusDTO roomStatusDTO) {
 
+        Long hotelOrderId = roomStatusDTO.getHotelOrderId();
+        int status = roomStatusDTO.getStatus();
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
         if (hotelOrder == null) return Result.fail("订单不存在");
 
@@ -256,10 +258,7 @@ public class HotelService {
 
     private Result refundOrder(HotelOrder hotelOrder) {
         if (hotelOrder == null) return Result.fail("退款失败，订单不存在");
-        //TODO 调用微信退款
-        hotelOrder.setOrderStatus(REFUND_MONEY.getCode());
-        hotelOrderRepository.save(hotelOrder);
-        return Result.success();
+        return refundOrder(hotelOrder.getId());
     }
 
     public Result affirmOrder(HotelOrder hotelOrder) {

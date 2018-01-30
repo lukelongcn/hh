@@ -23,7 +23,7 @@ public class StickTypeDTO {
     private Long id;
     private Long stickTypeId;
     @NotBlank(message = "请填写分类名称")
-    @Length(min = 2,max = 64,message = "分类名称填写过长或过短")
+    @Length(min = 2,max = 1000,message = "板块介绍填写过长或过短")
     private String name;
     @NotBlank(message = "请填写分类描述")
     private String content;
@@ -53,5 +53,4 @@ public class StickTypeDTO {
     @NotNull(message = "请选择默认排序")
     private Integer defaultSort = 1;
 
-    private Integer stickCount;
 }

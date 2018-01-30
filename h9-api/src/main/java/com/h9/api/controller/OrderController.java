@@ -25,8 +25,9 @@ public class OrderController {
     @Secured
     @GetMapping("/orders")
     public Result orderList(@SessionAttribute("curUserId")long userId,
+                            @RequestParam(defaultValue = "-1",required = false) Integer status,
                             @RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit) {
-        return orderService.orderList(userId,page,limit);
+        return orderService.orderList(status,userId,page,limit);
     }
 
     /**

@@ -167,12 +167,6 @@ public class SmsService {
     private Result sendSMSValdite(Long userId, String phone, int smsType) {
 
         if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
-
-            return Result.fail("提现功能正在维护中");
-        }
-
-
-        if(smsType == SMSTypeEnum.CASH_RECHARGE.getCode()){
             //判断提现额度
             BigDecimal todayCanWithdrawMoney = consumeService.getUserWithdrawTodayMoney(userId);
 
@@ -203,7 +197,7 @@ public class SmsService {
     public Result sendSMSCode(String phone) {
 
 
-        if(!MobileUtils.isMobileNO(phone)) return Result.fail("请填写正确的手机号");
+        if(!MobileUtils.isMobileNO(phone)){ return Result.fail("请填写正确的手机号"); }
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);

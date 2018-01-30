@@ -1,6 +1,7 @@
 package com.h9.admin.model.vo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

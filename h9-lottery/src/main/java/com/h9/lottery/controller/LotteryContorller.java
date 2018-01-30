@@ -4,6 +4,7 @@ import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ServiceException;
+import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.interceptor.Secured;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
@@ -76,6 +77,7 @@ public class LotteryContorller {
         try {
             lock.lock(30, TimeUnit.SECONDS);
             logger.debugv("start userId {0} code {1}" ,userId, code);
+            code = LotteryConstantConfig.path2Code(code);
             lottery = lotteryService.lottery(userId, code);
         } finally {
             lock.unlock();
