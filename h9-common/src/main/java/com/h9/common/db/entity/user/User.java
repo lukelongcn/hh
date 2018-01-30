@@ -96,7 +96,15 @@ public class User extends BaseEntity {
     @Column(name = "latitude", columnDefinition = "double default 0 COMMENT '维度'")
     private double latitude;
 
+    @Column(name="province",columnDefinition = "varchar(50) COMMENT '省'")
+    private String province;
 
+
+    @Column(name="street",columnDefinition = "varchar(50) COMMENT '街道'")
+    private String street;
+
+    @Column(name="street_number",columnDefinition = "varchar(50) COMMENT '街道号'")
+    private String streetNumber;
 
     public Integer getSignCount() {
 

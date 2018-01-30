@@ -118,12 +118,7 @@ public class CommonService {
         userRecord.setLatitude(latitude);
         userRecord.setLongitude(longitude);
 
-        User user = userRepository.findOne(userId);
-        if(user != null){
-            user.setLongitude(longitude);
-            user.setLatitude(latitude);
 
-        }
         try {
             String refer = request.getHeader("Referer");
             String userAgent = request.getHeader("User-Agent");
@@ -146,11 +141,22 @@ public class CommonService {
 
                     userRecord.setProvince(data.getString("province"));
                     userRecord.setCity(data.getString("city"));
-                    user.setCity(data.getString("city"));
+                    User user = userRepository.findOne(userId);
+
                     userRecord.setDistrict(data.getString("district"));
                     userRecord.setStreet(data.getString("street"));
                     userRecord.setStreetNumber(data.getString("street_number"));
                     userRecord.setAddress(detailAddress);
+
+                    if(user != null){
+                        user.setLongitude(longitude);
+                        user.setLatitude(latitude);
+                        user.setCity(data.getString("city"));
+                        user.setProvince(data.getString("province"));
+                        user.setStreet(data.getString("street"));
+                        user.setStreetNumber(data.getString("street_number"));
+                        userRepository.save(user);
+                    }
                 }
 
             }
@@ -161,7 +167,6 @@ public class CommonService {
         }
 
 
-        userRepository.save(user);
         return userRecordRepository.saveAndFlush(userRecord);
     }
 
