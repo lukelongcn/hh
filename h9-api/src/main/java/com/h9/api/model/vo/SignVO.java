@@ -30,7 +30,7 @@ public class SignVO {
 
     public SignVO(UserSign userSign) {
         this.cashBack = userSign.getCashBack();
-        this.createTime = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.SECOND);
+        this.createTime = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.MINUTE);
         User user = userSign.getUser();
         if (user != null) {
             nickName = user.getNickName();

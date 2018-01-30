@@ -15,6 +15,7 @@ import lombok.Data;
  */
 @Data
 public class PersonalStickVO {
+    private Long stickId;
     private Long userId;
     private String avatar ;
     private String nickName;
@@ -45,6 +46,7 @@ public class PersonalStickVO {
         this.likeCount = stick.getLikeCount();
         this.rewardCount = stick.getRewardCount();
         this.createTime = DateUtil.getSpaceTime(stick.getCreateTime(),new Date());
+        this.stickId = stick.getId();
     }
 
 }

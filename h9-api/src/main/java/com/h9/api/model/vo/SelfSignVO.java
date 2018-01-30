@@ -17,7 +17,7 @@ public class SelfSignVO {
 
     public SelfSignVO(UserSign userSign){
         BeanUtils.copyProperties(userSign,this);
-        this.createTime = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.SECOND);
+        this.createTime = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.MINUTE);
     }
 
 
