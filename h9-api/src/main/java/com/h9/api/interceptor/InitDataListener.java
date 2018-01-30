@@ -54,8 +54,7 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     {
         this.initAddressCache();
         payHandler.initPay();
-//        this.initWXMenu();
-        //TODO 以后加回来
+        this.initWXMenu();
     }
 
     /**
