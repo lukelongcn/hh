@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
@@ -43,6 +44,8 @@ public class CommonService {
     private BalanceFlowRepository balanceFlowRepository;
     @Resource
     private UserRecordRepository userRecordRepository;
+    @Resource
+    private UserRepository userRepository;
 
 
     @Transactional
@@ -114,6 +117,13 @@ public class CommonService {
 
         userRecord.setLatitude(latitude);
         userRecord.setLongitude(longitude);
+
+        User user = userRepository.findOne(userId);
+        if(user != null){
+            user.setLongitude(longitude);
+            user.setLatitude(latitude);
+
+        }
         try {
             String refer = request.getHeader("Referer");
             String userAgent = request.getHeader("User-Agent");
@@ -136,10 +146,10 @@ public class CommonService {
 
                     userRecord.setProvince(data.getString("province"));
                     userRecord.setCity(data.getString("city"));
+                    user.setCity(data.getString("city"));
                     userRecord.setDistrict(data.getString("district"));
                     userRecord.setStreet(data.getString("street"));
                     userRecord.setStreetNumber(data.getString("street_number"));
-
                     userRecord.setAddress(detailAddress);
                 }
 
@@ -150,6 +160,8 @@ public class CommonService {
             logger.debugv(ex.getMessage(), ex);
         }
 
+
+        userRepository.save(user);
         return userRecordRepository.saveAndFlush(userRecord);
     }
 
