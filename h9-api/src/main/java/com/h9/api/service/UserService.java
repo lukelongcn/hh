@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.zxing.WriterException;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.*;
 import com.h9.api.model.vo.*;
@@ -31,6 +32,7 @@ import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
+import com.h9.common.utils.QRCodeUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -47,6 +49,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -679,5 +682,19 @@ public class UserService {
         });
 
         return Result.success(pageResult);
+    }
+
+    public Result getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            QRCodeUtil.writeToStream("123", response.getOutputStream(), 300, 300);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        String replace = UUID.randomUUID().toString().replace("-", "");
+        System.out.println(replace);
     }
 }
