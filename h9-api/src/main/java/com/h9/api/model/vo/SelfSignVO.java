@@ -42,4 +42,20 @@ public class SelfSignVO {
     public void setCashBack(BigDecimal cashBack) {
         this.cashBack = cashBack;
     }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
 }
