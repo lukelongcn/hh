@@ -167,6 +167,12 @@ public class UserController {
         return userService.getRedEnvelope(request,response,userId,money);
     }
 
+    @GetMapping("/user/redEnvelope/qrcode")
+    public void ownRedEnvelope(HttpServletRequest request,
+                              HttpServletResponse response,
+                               @RequestParam String tempId){
+         userService.getOwnRedEnvelope(request,response,tempId);
+    }
 
     /**
      * description: 采用轮洵策略查询红包二维码的状态

@@ -75,7 +75,7 @@ public class Stick extends BaseEntity {
     @Column(name = "lock_state",nullable = false,columnDefinition = "int default 1 COMMENT '锁住状态 1解锁 2锁住'")
     private Integer lockState = 1;
 
-    @Column(name = "images",columnDefinition = "varchar(200) default '' COMMENT '照片'")
+    @Column(name = "images",columnDefinition = "varchar(200) default '[]' COMMENT '照片'")
     private String images;
 
     /***************************      地址信息              *************************/
@@ -272,6 +272,9 @@ public class Stick extends BaseEntity {
 
     public void setImages(List<String> images) {
         try {
+            if(images == null){
+                images = new ArrayList<>();
+            }
             this.images = JSONArray.toJSONString(images);
         }catch (Exception e){
             e.printStackTrace();

@@ -22,6 +22,7 @@ public class PersonalGiveRewardVO {
     private String stickUserName;
     private String icon;
     private String createTime;
+    private String payMethod = "";
 
     public PersonalGiveRewardVO(StickReward stickReward){
         this.words = stickReward.getWords();

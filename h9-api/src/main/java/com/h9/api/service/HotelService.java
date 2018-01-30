@@ -240,6 +240,7 @@ public class HotelService {
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
             result = balancePay(hotelOrder, user, userAccount);
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
+
             result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, findPayPlatformEnum.getKey());
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY) {
             result = mixedPay(hotelOrder, userAccount, user, findPayPlatformEnum.getKey());
@@ -258,7 +259,6 @@ public class HotelService {
     private PayInfoRepository payInfoRepository;
 
     private Result getWXPayInfo(HotelOrder hotelOrder, BigDecimal payMoney, User user, int payPlatform) {
-        payProvider.initConfig();
         PayInfo payInfo = new PayInfo(payMoney, hotelOrder.getId(), PayInfo.OrderTypeEnum.HOTEL.getId(), null, 1);
         payInfo = payInfoRepository.saveAndFlush(payInfo);
         String openId = user.getOpenId();
@@ -267,6 +267,7 @@ public class HotelService {
             logger.info("支付出错，账号" + user.getId() + " openId为空");
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
+        logger.debugv("payPlatform:"+payPlatform);
         OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(), payPlatform);
 
         Result<OrderVo> orderVoResult = null;

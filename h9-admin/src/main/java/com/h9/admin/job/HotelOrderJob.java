@@ -114,6 +114,7 @@ public class HotelOrderJob {
 
         logger.info("处理定订单id:" + order.getId());
 
+        order.setOrderStatus(HotelOrder.OrderStatusEnum.CANCEL.getCode());
 
         if (payMoney4Wechat.compareTo(new BigDecimal(0)) > 0) {
 
@@ -124,6 +125,7 @@ public class HotelOrderJob {
             if (result.getCode() == 1) {
                 return;
             }
+            order.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
         }
 
         if (payMoney4JiuYuan.compareTo(new BigDecimal(0)) > 0) {
@@ -132,9 +134,9 @@ public class HotelOrderJob {
                     BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
                     order.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
             logger.info("退酒元成功，酒店订单Id: " + order.getId() + " 金额：" + payMoney4JiuYuan);
+            order.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
         }
 
-        order.setOrderStatus(HotelOrder.OrderStatusEnum.CANCEL.getCode());
         hotelOrderRepository.save(order);
     }
 }

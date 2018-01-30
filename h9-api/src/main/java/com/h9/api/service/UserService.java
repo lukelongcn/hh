@@ -31,6 +31,10 @@ import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
+import com.h9.common.utils.QRCodeUtil;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.filters.Watermark;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -45,9 +49,16 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -97,7 +108,7 @@ public class UserService {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    public Result loginFromPhone(UserLoginDTO userLoginDTO,Integer client) {
+    public Result loginFromPhone(UserLoginDTO userLoginDTO, Integer client) {
         String phone = userLoginDTO.getPhone();
 
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
@@ -505,8 +516,8 @@ public class UserService {
 
         Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
                 transferMoney, transferDTO.getRemarks(),
-                BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),"",
-                user.getPhone(), targetUser.getPhone(),user.getNickName(),targetUser.getNickName());
+                BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(), "",
+                user.getPhone(), targetUser.getPhone(), user.getNickName(), targetUser.getNickName());
         transactionsRepository.saveAndFlush(transactions);
 
         commonService.setBalance(user.getId(), transferMoney.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
@@ -515,7 +526,7 @@ public class UserService {
                 transactions.getId(), "", transferDTO.getRemarks());
 
         String tips = targetUser.getNickName() + " (" + targetUser.getPhone() + ") 已收到您的转账";
-        return Result.success(new TransferResultVO(tips,1));
+        return Result.success(new TransferResultVO(tips, 1));
     }
 
     /**
@@ -526,8 +537,8 @@ public class UserService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, sort);
 
-        Long findBalanceType = type == 1 ? BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId():RED_ENVELOPE.getId();
-        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId,findBalanceType, pageRequest);
+        Long findBalanceType = type == 1 ? BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId() : RED_ENVELOPE.getId();
+        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId, findBalanceType, pageRequest);
 
         if (CollectionUtils.isEmpty(pageObj.getContent())) {
             return Result.success(new PageResult<>(pageObj));
@@ -544,7 +555,7 @@ public class UserService {
             Long targetUserId = el.getTargetUserId();
             User targetUser = userRepository.findOne(targetUserId);
             String img = targetUser.getAvatar();
-            Object remarks = typeMap.get(balanceFlowType+"");
+            Object remarks = typeMap.get(balanceFlowType + "");
             BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
                     DateUtil.formatDate(el.getCreateTime(),
                             DateUtil.FormatType.MONTH),
@@ -580,7 +591,7 @@ public class UserService {
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             if (userAccount.getBalance().compareTo(money) < 0) {
-                return Result.fail("余额不足"+MoneyUtils.formatMoney(money));
+                return Result.fail("余额不足" + MoneyUtils.formatMoney(money));
             }
 
             String accessToken = weChatProvider.getWeChatAccessToken();
@@ -595,7 +606,7 @@ public class UserService {
             //存放redis tempId;
             String tempId = UUID.randomUUID().toString().replace("-", "");
             //在 redis 中记录 红包二维码信息
-            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId,user.getOpenId());
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
             redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), tempId, 1, TimeUnit.DAYS);
 
@@ -611,9 +622,6 @@ public class UserService {
 
         return Result.fail("请填写正确的金额");
     }
-
-
-
 
 
     public User registUser(String openId) {
@@ -652,7 +660,7 @@ public class UserService {
                 mapVO.put("img", targetUser.getAvatar());
                 mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
 
-                return Result.fail("领取成功",mapVO);
+                return Result.fail("领取成功", mapVO);
             }
 
             return Result.success("");
@@ -679,5 +687,25 @@ public class UserService {
         });
 
         return Result.success(pageResult);
+    }
+
+    public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
+            Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
+            String url = configService.getStringConfig("hlzjIcon");
+            BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
+            //Positions 实现了 Position 并提供九个坐标, 分别是 上左, 上中, 上右, 中左, 中中, 中右, 下左, 下中, 下右 我们使用正中的位置
+            Watermark watermark = new Watermark(Positions.CENTER, bufferedImageSY, 1F);
+            builder.watermark(watermark).scale(1F).outputFormat("png").toOutputStream(outputStream);
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        String replace = UUID.randomUUID().toString().replace("-", "");
+        System.out.println(replace);
     }
 }
