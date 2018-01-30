@@ -39,6 +39,7 @@ public class PersonalCommentVO {
             this.title = stick.getTitle();
             User user = stick.getUser();
             images = stick.getImages();
+            stickId = stick.getId();
             if (user != null){
                 this.stickUserId = user.getId();
                 this.stickNickName = user.getNickName();
