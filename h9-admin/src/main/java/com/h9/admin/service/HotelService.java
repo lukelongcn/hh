@@ -5,6 +5,7 @@ import com.h9.admin.model.dto.HotelOrderSearchDTO;
 import com.h9.admin.model.dto.hotel.EditHotelDTO;
 import com.h9.admin.model.dto.hotel.EditRoomDTO;
 import com.h9.admin.model.dto.hotel.RefundDTO;
+import com.h9.admin.model.dto.hotel.RoomStatusDTO;
 import com.h9.admin.model.vo.HotelListVO;
 import com.h9.admin.model.vo.HotelOrderDetail;
 import com.h9.admin.model.vo.HotelOrderListVO;
@@ -230,8 +231,10 @@ public class HotelService {
         };
     }
 
-    public Result changeOrderStatus(Long hotelOrderId, Integer status) {
+    public Result changeOrderStatus(RoomStatusDTO roomStatusDTO) {
 
+        Long hotelOrderId = roomStatusDTO.getHotelOrderId();
+        int status = roomStatusDTO.getStatus();
         HotelOrder hotelOrder = hotelOrderRepository.findOne(hotelOrderId);
         if (hotelOrder == null) return Result.fail("订单不存在");
 
