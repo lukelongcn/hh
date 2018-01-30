@@ -552,7 +552,7 @@ public class UserService {
             return Result.fail("用户不存在");
         }
 
-        if (user.getPhone().equals(phone)) {
+        if (phone.equals(user.getPhone())) {
             return Result.fail("不能给自己转账");
         }
 
