@@ -1,7 +1,6 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.zxing.WriterException;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.*;
 import com.h9.api.model.vo.*;
@@ -59,6 +58,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -689,25 +689,19 @@ public class UserService {
         return Result.success(pageResult);
     }
 
-    public Result getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response) {
+    public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
             ServletOutputStream outputStream = response.getOutputStream();
-            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage("123", 300, 300);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
-            String path = "D:\\soft\\download\\Seafile\\温家楠\\欢乐之家\\欢乐之家icon\\icon48.png";
-            BufferedImage bufferedImageSY = ImageIO.read(new File(path));
+            String url = configService.getStringConfig("hlzjIcon");
+            BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
             //Positions 实现了 Position 并提供九个坐标, 分别是 上左, 上中, 上右, 中左, 中中, 中右, 下左, 下中, 下右 我们使用正中的位置
             Watermark watermark = new Watermark(Positions.CENTER, bufferedImageSY, 1F);
-
-            File file = new File("d://test/qr.png");
-//            builder.watermark(watermark).scale(1F).toFile(file);
-            builder.watermark(watermark).scale(1F).toOutputStream(outputStream);
-
-//            QRCodeUtil.writeToStream("123", response.getOutputStream(), 300, 300);
+            builder.watermark(watermark).scale(1F).outputFormat("png").toOutputStream(outputStream);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
         }
-        return null;
     }
 
     public static void main(String[] args) {

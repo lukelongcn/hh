@@ -167,10 +167,11 @@ public class UserController {
         return userService.getRedEnvelope(request,response,userId,money);
     }
 
-    @GetMapping("/user/redEnvelope/own/code")
+    @GetMapping("/user/redEnvelope/qrcode")
     public void ownRedEnvelope(HttpServletRequest request,
-                              HttpServletResponse response){
-         userService.getOwnRedEnvelope(request,response);
+                              HttpServletResponse response,
+                               @RequestParam String tempId){
+         userService.getOwnRedEnvelope(request,response,tempId);
     }
 
     /**
