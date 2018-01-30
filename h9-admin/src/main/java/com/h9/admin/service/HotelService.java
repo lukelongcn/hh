@@ -258,10 +258,7 @@ public class HotelService {
 
     private Result refundOrder(HotelOrder hotelOrder) {
         if (hotelOrder == null) return Result.fail("退款失败，订单不存在");
-        //TODO 调用微信退款
-        hotelOrder.setOrderStatus(REFUND_MONEY.getCode());
-        hotelOrderRepository.save(hotelOrder);
-        return Result.success();
+        return refundOrder(hotelOrder.getId());
     }
 
     public Result affirmOrder(HotelOrder hotelOrder) {
