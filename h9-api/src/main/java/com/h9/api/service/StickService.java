@@ -119,7 +119,7 @@ public class StickService {
     private StickRewardResitory stickRewardResitory;
 
     public Result getStickType(){
-        List<StickType> stickTypes = stickTypeRepository.findAll();
+        List<StickType> stickTypes = stickTypeRepository.findAllTypeList();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
         if(stickTypes !=null){
             stickTypeVOS = stickTypes.stream().map(StickTypeVO::new).collect(Collectors.toList());

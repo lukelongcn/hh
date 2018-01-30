@@ -33,4 +33,7 @@ public interface StickTypeRepository extends BaseRepository<StickType> {
    }
     @Query("select s from StickType s where s.state = 1 order by s.createTime desc ")
     Page<StickType> findAllType(Pageable pageRequest);
+
+    @Query("select s from StickType s where s.state = 1 order by s.createTime desc ")
+    List<StickType> findAllTypeList();
 }
