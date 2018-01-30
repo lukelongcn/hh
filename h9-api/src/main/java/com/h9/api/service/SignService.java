@@ -90,7 +90,9 @@ public class SignService {
         userSignNew = userSignRepository.saveAndFlush(userSignNew);
 
         // 签到奖励金额加入到用户酒元余额中
-        Result result = commonService.setBalance(userId,userSignNew.getCashBack(), BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSignNew.getId(),"","");
+        Result result = commonService.setBalance(userId,userSignNew.getCashBack(),
+                BalanceFlow.BalanceFlowTypeEnum.SIGN.getId(),userSignNew.getId(), "",
+                BalanceFlow.BalanceFlowTypeEnum.SIGN.getName());
         if(result.getCode()==Result.FAILED_CODE){
             this.logger.errorf("签到奖励用户金额失败,msg:{0}",result.getMsg());
             throw new ServiceException("签到失败");
