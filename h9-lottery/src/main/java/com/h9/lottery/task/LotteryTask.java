@@ -41,7 +41,7 @@ public class LotteryTask {
     private Redisson redisson;
     
 
-    @Scheduled(cron = "0/1 * * * * *")
+    @Scheduled(cron = "0/10 * * * * *")
     public void run() throws InterruptedException {
         RLock lockTask = redisson.getLock("lock:lottery:task" );
         try{
@@ -60,7 +60,7 @@ public class LotteryTask {
                     logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
                     RLock lock = redisson.getLock("lock:" +  reward.getCode());
                     try {
-                        lock.lock(1000, TimeUnit.MILLISECONDS);
+                        lock.lock(30, TimeUnit.SECONDS);
                         logger.debugv("lottery start 中奖名单为：定时任务开奖 code:{0}", reward.getCode());
                         lotteryService.lottery(null, reward.getCode());
                     } finally {

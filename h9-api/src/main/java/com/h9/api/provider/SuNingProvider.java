@@ -44,11 +44,14 @@ public class SuNingProvider {
 
     @Value("${shuning.withdraw.host}")
     private String POST_Host;
-
-    private String merchantNo = "70057039";
-    private String publicKeyIndex = "0001";
-    private String productCode = "01070000042";
-    private String goodType = "220029";
+    @Value("${shuning.withdraw.merchantNo}")
+    private String merchantNo ;
+    @Value("${shuning.withdraw.publicKeyIndex}")
+    private String publicKeyIndex ;
+    @Value("${shuning.withdraw.productCode}")
+    private String productCode ;
+    @Value("${shuning.withdraw.goodType}")
+    private String goodType;
     @Value("${shuning.withdraw.callback}")
     private String notifyUrl;
     private String myPrivateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAIJc6uye1r6ZUtRGy+R0oLaUsAZd" +
