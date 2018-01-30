@@ -1,6 +1,8 @@
 package com.h9.common.db.entity.user;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.utils.DateUtil;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -17,19 +19,20 @@ public class UserCount extends BaseEntity{
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(name = "date",columnDefinition = "datetime comment '具体时间'")
-    private Date date;
 
     @Column(name = "day_key",columnDefinition = "varchar(50) comment '日期（如2017-01-01）'")
-    private String dayKey;
+    private String dayKey = DateUtil.formatDate(new Date(), DateUtil.FormatType.MONTH);
 
     @Column(name = "people_numbers",columnDefinition = "bigint comment'人数'")
-    private Long peopleNumbers;
+    private Long peopleNumbers = 0L;
 
-    public UserCount(Date date, String dayKey, Long peopleNumbers) {
-        this.date = date;
+    public UserCount( String dayKey, Long peopleNumbers) {
         this.dayKey = dayKey;
         this.peopleNumbers = peopleNumbers;
+    }
+
+
+    public UserCount( ) {
     }
 
     public Long getId() {
@@ -40,13 +43,7 @@ public class UserCount extends BaseEntity{
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
-    }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     public String getDayKey() {
         return dayKey;

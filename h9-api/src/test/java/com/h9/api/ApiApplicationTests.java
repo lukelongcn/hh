@@ -88,34 +88,7 @@ public class ApiApplicationTests {
 
     @Test
     public void test2222() {
-        Address address = new Address();
-        //address.setUserId(userId);
-        address.setName("12312");
-        address.setPhone("13456458529");
-
-        //String provinceName = chinaRepository.findName(8);
-        // String cityName = chinaRepository.findName(addressDTO.getCid());
-        //String areaName = chinaRepository.findName(addressDTO.getAid());
-        address.setProvince("312312");
-        address.setCity("asdas");
-        address.setDistict("2312");
-        //设值地址id
-        //address.setPid();
-        //address.setCid(addressDTO.getCid());
-        //address.setAid(addressDTO.getAid());
-        //设值详细地址
-        address.setAddress("3131");
-        // 设置是否为默认地址
-        // if(addressDTO.getDefaultAddress() == 1){
-        //    addressRepository.updateDefault(userId);
-        //  }
-        address.setDefaultAddress(1);
-
-        // 使用状态设为开启
-        address.setStatus(1);
-        address = addressRepository.saveAndFlush(address);
-
-        logger.debug(address.getId());
+        System.out.println("hello");
     }
 
     private String accessKey = "9HVEtM7CFBFDTivYyrIci1Y9XV5K-hIWa2vIxRLO";

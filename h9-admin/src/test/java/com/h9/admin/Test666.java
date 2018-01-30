@@ -61,6 +61,7 @@ public class Test666 {
 
     @Resource
     private HotelOrderJob job;
+
     @Test
     public void testTask(){
         job.scan();

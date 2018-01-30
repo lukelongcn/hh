@@ -15,9 +15,15 @@ public class SelfSignVO {
 
     private BigDecimal cashBack = new BigDecimal(0);
 
+    private String day;
+
+    private String hour;
+
     public SelfSignVO(UserSign userSign){
         BeanUtils.copyProperties(userSign,this);
         this.createTime = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.SECOND);
+        this.day = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.DAY);
+        this.hour = DateUtil.formatDate(userSign.getCreateTime(), DateUtil.FormatType.SINGLE_HOUR);
     }
 
 

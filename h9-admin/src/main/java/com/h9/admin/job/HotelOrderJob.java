@@ -13,6 +13,7 @@ import com.h9.common.db.repo.HotelOrderRepository;
 import com.h9.common.db.repo.UserCountRepository;
 import com.h9.common.utils.DateUtil;
 import com.mysql.jdbc.TimeUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -62,6 +63,9 @@ public class HotelOrderJob {
         if (!lock.getLock(lockKey)) {
             return;
         }
+
+        calcUserCount();
+
         List<HotelOrder> resultStream = hotelOrderRepository.findByOrderStatus(
                 HotelOrder.OrderStatusEnum.NOT_PAID.getCode()
                 , WAIT_ENSURE.getCode());
@@ -73,18 +77,34 @@ public class HotelOrderJob {
             }
         });
 
+
+    }
+
+    private void calcUserCount() {
         //统计活跃人数
-        Date date = DateUtil.getDate(new Date(), 1, Calendar.DAY_OF_YEAR);
+        Date date = DateUtil.getDate(new Date(), -1, Calendar.DAY_OF_YEAR);
+        String dateKey = DateUtil.formatDate(date, DateUtil.FormatType.DAY);
+        List<UserCount> dayKeyList = userCountRepository.findByDayKey(dateKey);
+
+        UserCount userCountEntity = null;
+        if (CollectionUtils.isNotEmpty(dayKeyList)) {
+            userCountEntity = dayKeyList.get(0);
+        }else{
+            userCountEntity = new UserCount();
+        }
+
         Long userCount = redisBean.getStringTemplate()
                 .execute((RedisCallback<Long>) connection ->
                         connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
                                 .getKeySerializer())
-                                .serialize(DateUtil.formatDate(date, DateUtil.FormatType.DAY))));
+                                .serialize(dateKey)));
 
 
-        UserCount userCountEntity = new UserCount (date, DateUtil.formatDate(date, DateUtil.FormatType.DAY), userCount);
+        Long peopleNumbers = userCountEntity.getPeopleNumbers();
+        peopleNumbers += userCount;
+        userCountEntity.setPeopleNumbers(peopleNumbers);
         userCountRepository.save(userCountEntity);
-        logger.info("userCount: "+userCount);
+        logger.info("userCount: " + userCount);
     }
 
     public void handleOrder(HotelOrder order) {
