@@ -8,6 +8,8 @@ import com.h9.common.utils.DateUtil;
 import org.springframework.stereotype.Component;
 
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -25,6 +27,7 @@ public class PersonalCommentVO {
     private String stickNickName;
     private Long pCommentId;
     private String pContent;
+    private List<String> images;
 
     public PersonalCommentVO(StickComment stickComment){
         this.commentId = stickComment.getId();
@@ -35,6 +38,8 @@ public class PersonalCommentVO {
         if (stick != null){
             this.title = stick.getTitle();
             User user = stick.getUser();
+            images = stick.getImages();
+            stickId = stick.getId();
             if (user != null){
                 this.stickUserId = user.getId();
                 this.stickNickName = user.getNickName();
@@ -45,6 +50,7 @@ public class PersonalCommentVO {
             this.pCommentId = pStickComment.getId();
             this.pContent = pStickComment.getContent();
         }
+
     }
 
 }

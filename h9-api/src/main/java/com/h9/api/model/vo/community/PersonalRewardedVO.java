@@ -23,6 +23,8 @@ public class PersonalRewardedVO {
 
     private BigDecimal reward = new BigDecimal(0);
 
+    private Long stickId;
+
     public PersonalRewardedVO(StickReward stickReward){
         this.createTime = DateUtil.formatDate(stickReward.getCreateTime(), DateUtil.FormatType.SECOND);
         User user = stickReward.getUser();
@@ -32,5 +34,6 @@ public class PersonalRewardedVO {
         }
         this.words = stickReward.getWords();
         this.reward = stickReward.getReward();
+        this.stickId = stickReward.getStick().getId();
     }
 }
