@@ -22,6 +22,8 @@ public class StickRewardMoneyVO {
 
    private String words;
 
+   private String title;
+
    public StickRewardMoneyVO(){
 
    }

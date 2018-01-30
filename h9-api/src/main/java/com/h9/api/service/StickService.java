@@ -55,6 +55,7 @@ import com.h9.common.utils.NetworkUtil;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -370,6 +371,7 @@ public class StickService {
      * @return Result
      */
     public Result like( long userId,long id, Integer type) {
+        Map map = new HashMap();
         /* 点赞贴子*/
         if (type == 1){
             Stick stick = stickRepository.findById(id);
@@ -391,12 +393,14 @@ public class StickService {
                 stickLike.setStatus(1);
                 stickLikeRepository.save(stickLike);
             }else{
-                return Result.fail("您已经点过赞啦");
+                map.put("flag","0");
+                return Result.fail("您已经点过赞啦",map);
             }
             // 贴子点赞数加一
             stick.setLikeCount(stick.getLikeCount()+1);
             stickRepository.save(stick);
-            return Result.success("点赞成功");
+            map.put("flag","1");
+            return Result.success("点赞成功",map);
         }
 
         /* 点赞评论*/
@@ -417,12 +421,14 @@ public class StickService {
                 stickCommentLike.setStatus(1);
                 stickCommentLikeRepository.save(stickCommentLike);
             }else{
-                return Result.fail("您已经点过赞啦");
+                map.put("flag","0");
+                return Result.fail("您已经点过赞啦",map);
             }
             // 评论点赞数加一
             stickComment.setLikeCount(stickComment.getLikeCount()+1);
             stickCommentRepository.save(stickComment);
-            return Result.success("点赞成功");
+            map.put("flag","1");
+            return Result.success("点赞成功",map);
         }
 
         /* 点赞类型不存在*/
@@ -491,8 +497,11 @@ public class StickService {
             stick.setFloorCount(stick.getFloorCount()+1);
         }
         stickRepository.save(stick);
-        stickCommentRepository.save(stickComment);
-        return Result.success("回复成功");
+        stickComment  = stickCommentRepository.save(stickComment);
+        Map map = new HashMap();
+        map.put("id",stickComment.getId());
+        map.put("content",stickComment.getContent());
+        return Result.success("回复成功",map);
     }
 
     /**
@@ -553,19 +562,27 @@ public class StickService {
         String icon = configService.getStringConfig(JIUYUAN_ICON);
         // 商品类型
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.STICK_REWARD.getCode());
+        if (goodsType == null){
+            return Result.fail("商品类型不存在");
+        }
         // 前台显示对象
         StickRewardMoneyVO rewardMoneyVO = new StickRewardMoneyVO();
         rewardMoneyVO.setIcon(icon);
         rewardMoneyVO.setRewardMoney(stickRewardJiuYuanDTO.getReward());
         // 类型和标题
         Stick stick = stickRepository.findById(stickRewardJiuYuanDTO.getStickId());
-        rewardMoneyVO.setType(goodsType.getName()+"["+stick.getTitle()+"]");
+        if (stick != null){
+            rewardMoneyVO.setTitle(stick.getTitle());
+        }
+        rewardMoneyVO.setType(goodsType.getName());
         // 酒元余额
         User user = userRepository.findOne(userId);
-        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
-        rewardMoneyVO.setBalance(userAccount.getBalance());
-        // 留言
-        rewardMoneyVO.setWords(stickRewardJiuYuanDTO.getWords());
+        if (user != null){
+            UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+            rewardMoneyVO.setBalance(userAccount.getBalance());
+            // 留言
+            rewardMoneyVO.setWords(stickRewardJiuYuanDTO.getWords());
+        }
         return Result.success(rewardMoneyVO);
     }
 
