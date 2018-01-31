@@ -55,6 +55,7 @@ import com.h9.common.utils.NetworkUtil;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -118,7 +119,7 @@ public class StickService {
     private StickRewardResitory stickRewardResitory;
 
     public Result getStickType(){
-        List<StickType> stickTypes = stickTypeRepository.findAll();
+        List<StickType> stickTypes = stickTypeRepository.findAllTypeList();
         List<StickTypeVO> stickTypeVOS = new ArrayList<>();
         if(stickTypes !=null){
             stickTypeVOS = stickTypes.stream().map(StickTypeVO::new).collect(Collectors.toList());
@@ -146,6 +147,9 @@ public class StickService {
         return Result.success(stickAddressVO);
     }
 
+    /**
+     * 添加贴子
+     */
     @Transactional
     public Result addStick(Long userId, StickDto stickDto, HttpServletRequest request){
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
@@ -195,7 +199,6 @@ public class StickService {
         else {
             stick.setImages(images);
         }
-        System.out.println(images);
         return stickRepository.saveAndFlush(stick);
     }
 
@@ -293,15 +296,18 @@ public class StickService {
      * 获取帖子详情
      */
     @Transactional
-    public Result detail(long id) {
+    public Result detail(long userId, long id) {
+        Integer flag = 0;
         Stick stick = stickRepository.findById(id);
         if (stick == null){
             return Result.fail("贴子不存在");
         }
+        if (stick.getOperationState() != 1){
+            return Result.fail("尚未通过审核");
+        }
         if (stick.getState() != 1){
             return Result.fail("贴子已被删除或禁用");
         }
-
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
@@ -320,6 +326,14 @@ public class StickService {
             return Result.success(stickDetailVO);
         }
         stick.setReadCount(stick.getReadCount()+1);
+        // 该用户是否为该评论点过赞
+        StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
+        if (stickLike != null){
+            if (stickLike.getStatus() == 1 ){
+                flag = 1;
+            }
+        }
+        stickDetailVO.setFlag(flag);
         stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);
     }
@@ -491,21 +505,24 @@ public class StickService {
             stick.setFloorCount(stick.getFloorCount()+1);
         }
         stickRepository.save(stick);
-        stickCommentRepository.save(stickComment);
-        return Result.success("回复成功");
+        stickComment  = stickCommentRepository.save(stickComment);
+
+        return Result.success("回复成功",stickComment);
     }
 
     /**
      * 拿到评论
      */
-    public Result getComment(long stickId, Integer page, Integer limit) {
+    public Result getComment(long userId, long stickId, Integer page, Integer limit) {
         PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
         if (pageResult == null){
             return Result.success("暂无评论");
         }
-        return Result.success(pageResult.result2Result(this::stickComent2Vo));
+        return Result.success(pageResult.result2Result(el -> stickComent2Vo(userId,el.getStickComment())));
     }
-    private StickCommentVO stickComent2Vo(StickComment stickComment){
+    @Transactional
+    public StickCommentVO stickComent2Vo(long userId,StickComment stickComment){
+        Integer flag = 0;
         User user = stickComment.getAnswerUser();
         if (user.getId() == null){
             return new StickCommentVO();
@@ -523,6 +540,13 @@ public class StickService {
             stickCommentVO.setSex(userExtends.getSex());
         }
         stickCommentVO.setList(stickCommentSimpleVOS);
+        StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserIdAndStickCommentId(userId,stickComment.getId());
+        if (stickCommentLike != null){
+            if (stickCommentLike.getStatus() == 1 ){
+                flag = 1;
+            }
+        }
+        stickCommentVO.setFlag(flag);
         return stickCommentVO;
     }
 
@@ -553,19 +577,27 @@ public class StickService {
         String icon = configService.getStringConfig(JIUYUAN_ICON);
         // 商品类型
         GoodsType goodsType = goodsTypeReposiroty.findByCode(GoodsType.GoodsTypeEnum.STICK_REWARD.getCode());
+        if (goodsType == null){
+            return Result.fail("商品类型不存在");
+        }
         // 前台显示对象
         StickRewardMoneyVO rewardMoneyVO = new StickRewardMoneyVO();
         rewardMoneyVO.setIcon(icon);
         rewardMoneyVO.setRewardMoney(stickRewardJiuYuanDTO.getReward());
         // 类型和标题
         Stick stick = stickRepository.findById(stickRewardJiuYuanDTO.getStickId());
-        rewardMoneyVO.setType(goodsType.getName()+"["+stick.getTitle()+"]");
+        if (stick != null){
+            rewardMoneyVO.setTitle(stick.getTitle());
+        }
+        rewardMoneyVO.setType(goodsType.getName());
         // 酒元余额
         User user = userRepository.findOne(userId);
-        UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
-        rewardMoneyVO.setBalance(userAccount.getBalance());
-        // 留言
-        rewardMoneyVO.setWords(stickRewardJiuYuanDTO.getWords());
+        if (user != null){
+            UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+            rewardMoneyVO.setBalance(userAccount.getBalance());
+            // 留言
+            rewardMoneyVO.setWords(stickRewardJiuYuanDTO.getWords());
+        }
         return Result.success(rewardMoneyVO);
     }
 

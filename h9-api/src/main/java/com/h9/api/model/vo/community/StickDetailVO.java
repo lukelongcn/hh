@@ -50,6 +50,8 @@ public class StickDetailVO {
     // 地址
     private String address;
 
+    // 是否点赞  0 无
+    private Integer flag;
 
     public StickDetailVO(Stick stick) {
         id = stick.getId();
