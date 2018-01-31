@@ -609,6 +609,7 @@ public class UserService {
                     return Result.fail("获取二维码失败");
                 }
             }else{
+                //https://localhost:6305/h9/api/user/redEnvelope/qrcode?tempId=1
                 url = host+"/h9/api/user/redEnvelope/qrcode?tempId="+tempId;
             }
 
@@ -699,7 +700,8 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-            String link = host+"/user/redEnvelope/scan/qrcode?tempId="+tempId;
+            String link = host+"/h9/api/user/redEnvelope/scan/qrcode?tempId="+tempId;
+            logger.info("link : "+link);
             ServletOutputStream outputStream = response.getOutputStream();
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
