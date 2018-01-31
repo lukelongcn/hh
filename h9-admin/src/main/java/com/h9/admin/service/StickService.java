@@ -274,6 +274,7 @@ public class StickService {
      * 锁定状态改变
      */
     public Result lock(long stickId) {
+        Integer lockState;
         Stick stick = stickRepository.findOne(stickId);
         if (stick == null){
             return Result.fail("该贴不存在");
@@ -281,12 +282,14 @@ public class StickService {
         if (stick.getLockState() ==1){
             stick.setLockState(2);
             stickRepository.saveAndFlush(stick);
-            return Result.success("锁定成功");
+            lockState = 2;
+            return Result.success("锁定成功",lockState);
         }
         if (stick.getLockState() == 2){
             stick.setLockState(1);
             stickRepository.saveAndFlush(stick);
-            return Result.success("解锁成功");
+            lockState = 1;
+            return Result.success("解锁成功",lockState);
         }
         return Result.fail();
     }
@@ -295,6 +298,7 @@ public class StickService {
      * 审批状态改变
      */
     public Result examine(long stickId) {
+        Integer operationState;
         Stick stick = stickRepository.findOne(stickId);
         if (stick == null){
             return Result.fail("该贴不存在");
@@ -303,12 +307,14 @@ public class StickService {
         if (stick.getOperationState() ==1){
             stick.setOperationState(2);
             stickRepository.saveAndFlush(stick);
-            return Result.success("不通过成功");
+            operationState = 2;
+            return Result.success("不通过成功",operationState);
         }
         if (stick.getOperationState() == 2){
             stick.setOperationState(1);
             stickRepository.saveAndFlush(stick);
-            return Result.success("通过成功");
+            operationState = 1;
+            return Result.success("通过成功",operationState);
         }
         return Result.fail();
     }
@@ -332,19 +338,22 @@ public class StickService {
      * 评论通过状态
      */
     public Result commentState(long stickComentId) {
+        Integer commentOperationState;
         StickComment stickComment = stickCommentRepository.findOne(stickComentId);
         if (stickComment == null){
             return Result.fail("贴子评论不存在");
         }
         if (stickComment.getOperationState() ==1){
             stickComment.setOperationState(2);
+            commentOperationState = 2;
             stickCommentRepository.saveAndFlush(stickComment);
-            return Result.success("不通过成功");
+            return Result.success("不通过成功",commentOperationState);
         }
         if (stickComment.getOperationState() == 2){
             stickComment.setOperationState(1);
+            commentOperationState = 1;
             stickCommentRepository.saveAndFlush(stickComment);
-            return Result.success("通过成功");
+            return Result.success("通过成功",commentOperationState);
         }
         return Result.fail();
     }
