@@ -154,7 +154,7 @@ public class UserController {
     }
 
     /**
-     * description: 转账二维码
+     * description: 推广红包二维码界面
      *
      */
     @Secured
@@ -176,6 +176,9 @@ public class UserController {
         userService.getOwnRedEnvelope(request, response, tempId);
     }
 
+    /**
+     * description: 扫描 推广红包
+     */
     @Secured
     @GetMapping("/user/redEnvelope/scan/qrcode")
     public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId) {
