@@ -129,7 +129,7 @@ public class StickContoller {
      * @param pageSize 大小
      * @return Result
      */
-    @Secured(accessCode = "stick:allDetail")
+    //@Secured(accessCode = "stick:allDetail")
     @GetMapping("/allDetail")
     public Result allDetail(@RequestParam(defaultValue = "1") Integer pageNumber,
                             @RequestParam(defaultValue = "10") Integer pageSize){

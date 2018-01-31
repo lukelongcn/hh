@@ -36,6 +36,6 @@ public interface StickRewardResitory extends BaseRepository<StickReward> {
         return new PageResult(rewardList);
     }
 
-    @Query("select count(u.reward) from StickReward u where u.stick.id = ?1")
+    @Query("select sum(u.reward) from StickReward u where u.stick.id = ?1")
     BigDecimal findRewardCount(Long stickId);
 }
