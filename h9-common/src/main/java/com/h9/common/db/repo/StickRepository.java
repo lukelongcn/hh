@@ -27,18 +27,18 @@ public interface StickRepository extends BaseRepository<Stick> {
     Page<Stick> find4Home(Pageable pageable);
 
 
-    @Query("select s from Stick s where s.state = 1 order by s.readCount desc")
+    @Query("select s from Stick s where s.state = 1 and s.operationState = 1 order by s.readCount desc")
     Page<Stick> find4Hot( Pageable pageable);
 
 
-    @Query("select s from Stick s where s.stickType.id=?1 and s.state = 1  order by s.updateTime desc")
+    @Query("select s from Stick s where s.stickType.id=?1 and s.state = 1  and s.operationState = 1  order by s.updateTime desc")
     Page<Stick> findType(Long id,Pageable pageable);
 
-    @Query("select s from Stick s where  s.stickType.id=?1 and s.state = 1 order by s.updateTime desc")
+    @Query("select s from Stick s where  s.stickType.id=?1 and s.state = 1 and s.operationState = 1  order by s.updateTime desc")
     Page<Stick> findType(String name, Pageable pageable);
 
 
-    @Query("select s from Stick s where s.title like ?1 and s.state = 1 order by s.createTime DESC")
+    @Query("select s from Stick s where s.title like ?1 and s.state = 1 and s.operationState = 1  order by s.createTime DESC")
     Page<Stick> findStickList(String str, Pageable pageRequest);
 
 
