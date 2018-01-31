@@ -62,6 +62,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.h9.api.provider.WeChatProvider.EventEnum.SCAN;
 import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
 
 
@@ -73,6 +74,8 @@ import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RE
 public class UserService {
     @Value("${h9.current.envir}")
     private String currentEnvironment;
+    @Value("${path.app.wechat_host}")
+    private String host;
     @Resource
     private RedisBean redisBean;
     @Resource
@@ -593,23 +596,28 @@ public class UserService {
             if (userAccount.getBalance().compareTo(money) < 0) {
                 return Result.fail("余额不足" + MoneyUtils.formatMoney(money));
             }
+            String tempId = UUID.randomUUID().toString().replace("-", "");
 
-            String accessToken = weChatProvider.getWeChatAccessToken();
-
-            String ticket = weChatProvider.getCodeTicket(accessToken, userId);
-            String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
-
-            if (StringUtils.isEmpty(ticket)) {
-                return Result.fail("获取二维码失败");
+            //	client 整形类型 1 andoird 2 ios 3 公众号
+            String client = request.getHeader("clinet");
+            String url = "";
+            if ("3".equals(client)) {
+                String accessToken = weChatProvider.getWeChatAccessToken();
+                String ticket = weChatProvider.getCodeTicket(accessToken, userId);
+                 url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+                if (StringUtils.isEmpty(ticket)) {
+                    return Result.fail("获取二维码失败");
+                }
+            }else{
+                url = host+"/h9/api/user/redEnvelope/qrcode?tempId="+tempId;
             }
+
             User user = userRepository.findOne(userId);
             //存放redis tempId;
-            String tempId = UUID.randomUUID().toString().replace("-", "");
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), tempId, 1, TimeUnit.DAYS);
-
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId+"", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
@@ -691,8 +699,9 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
+            String link = host+"/user/redEnvelope/scan/qrcode?tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
-            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getStringConfig("hlzjIcon");
             BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
@@ -708,4 +717,18 @@ public class UserService {
         String replace = UUID.randomUUID().toString().replace("-", "");
         System.out.println(replace);
     }
+
+    @Resource
+    private EventService eventService;
+
+    public Result scanQRCode(String tempId, Long userId) {
+        Map<String, String> map = new HashMap<>();
+        map.put("Event",SCAN.getValue());
+        map.put("tempId", tempId);
+        map.put("EventKey", "");
+        map.put("client", "app");
+        map.put("scanUserId", userId + "");
+        return eventService.handleSubscribeAndScan(map);
+    }
+
 }

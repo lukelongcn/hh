@@ -50,9 +50,12 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent)
     {
         this.initAddressCache();
-        payHandler.initPay();
+        try {
+            payHandler.initPay();
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+        }
 //        this.initWXMenu();
-        //TODO 以后加回来
     }
 
     /**

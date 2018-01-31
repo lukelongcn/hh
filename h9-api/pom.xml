@@ -159,5 +159,12 @@
                 <package.environment>test</package.environment>
             </properties>
         </profile>
+
+        <profile>
+            <id>local</id>
+            <properties>
+                <package.environment>local</package.environment>
+            </properties>
+        </profile>
     </profiles>
 </project>

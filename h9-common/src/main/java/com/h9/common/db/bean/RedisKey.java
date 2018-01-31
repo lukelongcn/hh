@@ -69,7 +69,8 @@ public class RedisKey {
     public static String QR_CODE = "h9:qr:code:";
 
     /**
-     * description: 二维码对应的 临时 UUID，码和tempId 共存亡
+     * description: 二维码对应的 临时 UUID，码和 红包二维码 共存亡
+     * value 对应 userId
      */
     public static String  QR_CODE_TEMP_ID = "h9:qr:code:tempId:";
 
