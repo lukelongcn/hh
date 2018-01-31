@@ -19,12 +19,9 @@ public class StickRewardUser {
     private String avatar ;
     private String nickName;
 
-    public StickRewardUser(StickReward stickReward){
-        User user = stickReward.getUser();
-        if (user!= null){
-            this.userId = user.getId();
-            this.avatar = user.getAvatar();
-            this.nickName = user.getNickName();
-        }
+    public StickRewardUser(User user){
+        this.userId = user.getId();
+        this.avatar = user.getAvatar();
+        this.nickName = user.getNickName();
     }
 }

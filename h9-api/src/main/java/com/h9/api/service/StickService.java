@@ -311,7 +311,7 @@ public class StickService {
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
-        List<StickReward> list = stickRewardResitory.findByStickId(id);
+        List<User> list = stickRewardResitory.findByStickId(id);
         List<StickRewardUser> stickRewardUserList  = new ArrayList<>();
         if(!CollectionUtils.isEmpty(list)){
             stickRewardUserList = list.stream().map(StickRewardUser::new).collect(Collectors.toList());
