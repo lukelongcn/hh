@@ -33,6 +33,7 @@ public class RoomListVO {
 
     public RoomListVO(HotelRoomType roomType) {
         BeanUtils.copyProperties(roomType, this);
+        this.setTypeName(roomType.getRoomName());
         this.setCanCancel("不可取消");
     }
 }
