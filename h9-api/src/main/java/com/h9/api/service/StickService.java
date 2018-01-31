@@ -654,8 +654,10 @@ public class StickService {
             // 增加阅读数和回复数
             stick.setAnswerCount(stick.getAnswerCount()+1);
             stick.setReadCount(stick.getReadCount()+1);
-            stickRepository.save(stick);
         }
+        // 打赏数+1
+        stick.setRewardCount(stick.getRewardCount()+1);
+        stickRepository.save(stick);
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         userAccount.setRewardMoney(userAccount.getRewardMoney().add(money));
