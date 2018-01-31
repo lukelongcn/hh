@@ -337,7 +337,7 @@ public class HotelService {
         } else {
 //             余额 + 微信支付
             if (balance.compareTo(new BigDecimal(0)) > 0) {
-                commonService.setBalance(userAccount.getUserId(), balance, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+                commonService.setBalance(userAccount.getUserId(), balance.abs().negate(), BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
                 BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
                 paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
                 hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
