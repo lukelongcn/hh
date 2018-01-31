@@ -658,7 +658,6 @@ public class StickService {
         // 打赏数+1
         stick.setRewardCount(stick.getRewardCount()+1);
         stickRepository.save(stick);
-        System.out.println(stick.getRewardCount()+"*********************");
         // 更新打赏累计金额
         UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         userAccount.setRewardMoney(userAccount.getRewardMoney().add(money));
