@@ -16,6 +16,7 @@ import com.h9.common.db.repo.TransactionsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.CheckoutUtil;
 import com.h9.common.utils.XMLUtils;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
@@ -61,10 +62,8 @@ public class EventService {
         }
     }
 
-    public String wxEventCallBack(HttpServletRequest request) {
-        Map<String, String> map = null;
+    public String wxEventCallBack(Map<String, String> map ) {
         try {
-            map = XMLUtils.parseXml(request);
             logger.info("wx request params:" + JSONObject.toJSONString(map));
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
@@ -83,7 +82,7 @@ public class EventService {
 
 
     @Transactional
-    private void handleSubscribeAndScan(Map<String, String> map) {
+    public Result handleSubscribeAndScan(Map<String, String> map) {
 
         String eventKey = map.get("EventKey");
 
@@ -91,12 +90,32 @@ public class EventService {
             eventKey = eventKey.replace("qrscene_", "");
         }
 
-        String codeJson = redisBean.getStringValue(RedisKey.getQrCode(eventKey));
+
+        //发送方帐号（一个OpenID）
+        String openId = map.get("FromUserName");
+        User user = null;
+
+        String codeJson = null;
+        String client = map.get("client");
+        if ("app".equals(client)) {
+            eventKey = map.get("tempId");
+            String userId = redisBean.getStringValue(RedisKey.getQrCodeTempId(eventKey));
+            if (StringUtils.isBlank(userId)) {
+                logger.info("tempId 为空，二维码失效或者已被领取");
+                return Result.fail("tempId 为空");
+            }
+            codeJson = redisBean.getStringValue(RedisKey.getQrCode(userId));
+            String userIdStr = map.get("scanUserId");
+            Long sacnUserId = Long.valueOf(userIdStr);
+            user = userRepository.findOne(sacnUserId);
+        }else{
+            user = userRepository.findByOpenId(openId);
+            codeJson = redisBean.getStringValue(RedisKey.getQrCode(eventKey));
+        }
 
         if (StringUtils.isBlank(codeJson)) {
-
             logger.info("codeJson 为空: " + codeJson);
-            return;
+            return Result.fail("codeJson 为空");
         }
 
         RedEnvelopeDTO redEnvelopeDTO = JSONObject.parseObject(codeJson, RedEnvelopeDTO.class);
@@ -105,12 +124,9 @@ public class EventService {
         if (redEnvelopeDTO.getStatus() == 0) {
 
             logger.info("二维码失效了");
-            return;
+            return Result.fail("二维码失效了");
         }
 
-        //发送方帐号（一个OpenID）
-        String openId = map.get("FromUserName");
-        User user = userRepository.findByOpenId(openId);
         if (user == null) {
             // 注册用户
             user = userService.registUser(openId);
@@ -137,13 +153,13 @@ public class EventService {
 
             //让redis 二维码 消失
             redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
-
+            //让 redis tempId 消失
             redisBean.setStringValue(RedisKey.getQrCodeTempId(redEnvelopeDTO.getTempId()),"",1,TimeUnit.SECONDS);
-
-            //发送模块消息给用户
+            //发送模块消息给两方用户
             weChatProvider.sendTemplate(openId,redEnvelopeDTO.getMoney());
             weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(),redEnvelopeDTO.getMoney().abs().negate());
         }
 
+        return Result.fail();
     }
 }
