@@ -156,14 +156,12 @@ public class StickService {
         if(stickType == null){
            return Result.fail("请选择分类");
         }
-        if (stickType != null){
-            // 只有管理员权限能发帖
-            if(stickType.getLimitState() != 1){
-                return Result.fail("无权操作");
-            }
-            stickType.setStickCount(stickType.getStickCount()+1);
-            stickTypeRepository.save(stickType);
+        // 只有管理员权限能发帖
+        if(stickType.getLimitState() != 1){
+            return Result.fail("无权操作");
         }
+        stickType.setStickCount(stickType.getStickCount()+1);
+        stickTypeRepository.save(stickType);
         Stick stick = new Stick();
         StickSampleVO stickSampleVO = new StickSampleVO(controllStick(userId,stickDto,stick,stickType,request));
         return Result.success(stickSampleVO);
