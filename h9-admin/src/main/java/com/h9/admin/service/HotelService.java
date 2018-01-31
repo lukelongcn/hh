@@ -65,7 +65,7 @@ public class HotelService {
 
     public Result hotelList(int page, int limit) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
-        PageRequest pageRequest = hotelRepository.pageRequest(page,limit,sort);
+        PageRequest pageRequest = hotelRepository.pageRequest(page, limit, sort);
         Page<Hotel> findPage = hotelRepository.findAllHotelList(pageRequest);
         return Result.success(new PageResult<>(findPage).result2Result(hotel -> {
             Long roomCount = hotelRoomTypeRepository.countByHotel(hotel);
@@ -73,11 +73,12 @@ public class HotelService {
         }));
 
     }
+
     public Result editHotel(EditHotelDTO editHotelDTO) {
 
         Hotel hotel = null;
         List<String> images = editHotelDTO.getImages();
-        if(images!=null&&images.size()>9){
+        if (images != null && images.size() > 9) {
             return Result.fail("图片最多选9张");
         }
 
@@ -132,8 +133,10 @@ public class HotelService {
 
     public Result roomList(Long hotelId, int page, int limit) {
         Hotel hotel = hotelRepository.findOne(hotelId);
-        if (hotel == null){ return Result.fail("此酒店不存在的。");}
-        return Result.success(hotelRoomTypeRepository.findAllRoom(hotelId,page, limit).map(HotelRoomListVO::new));
+        if (hotel == null) {
+            return Result.fail("此酒店不存在的。");
+        }
+        return Result.success(hotelRoomTypeRepository.findAllRoom(hotelId, page, limit).map(HotelRoomListVO::new));
     }
 
     public Result editRoom(EditRoomDTO editRoomDTO) {
@@ -225,7 +228,7 @@ public class HotelService {
                 if (startDate.getTime() == endDate.getTime()) {
                     Date newEndDate = DateUtil.getTimesNight(startDate);
                     predicateList.add(builder.between(root.get("createTime"), startDate, newEndDate));
-                }else{
+                } else {
                     predicateList.add(builder.between(root.get("createTime"), startDate, endDate));
                 }
             }
@@ -301,6 +304,7 @@ public class HotelService {
     private CommonService commonService;
     @Resource
     private PayProvider payProvider;
+
     @Transactional
     public Result refundOrder(Long id) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
@@ -311,24 +315,27 @@ public class HotelService {
         if (orderStatusEnum == null)
             return Result.fail("订单状态异常");
 
-        if(orderStatusEnum.getCode() != HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode()){
+        if (orderStatusEnum.getCode() != HotelOrder.OrderStatusEnum.WAIT_ENSURE.getCode()) {
             return Result.fail("此订单不能退款");
         }
 
-        BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
-        commonService.setBalance(hotelOrder.getUserId(), payMoney4JiuYuan,
-                BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
-                hotelOrder.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
-
         BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
-
-        Result wxRefundResult = payProvider.refundOrder(id, payMoney4Wechat);
-
-        if(wxRefundResult.getCode() == 0){
-            hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
-            hotelOrderRepository.save(hotelOrder);
-            return Result.success("退款成功");
+        if (payMoney4Wechat.compareTo(new BigDecimal(0)) > 0) {
+            Result result = payProvider.refundOrder(id, payMoney4Wechat);
+            if (result.getCode() == 1) {
+                return result;
+            }
         }
-        return wxRefundResult;
+
+        BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+        if (payMoney4JiuYuan.compareTo(new BigDecimal(0)) > 0) {
+            commonService.setBalance(hotelOrder.getUserId(), payMoney4JiuYuan,
+                    BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
+                    hotelOrder.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
+        }
+
+        hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
+        hotelOrderRepository.save(hotelOrder);
+        return Result.success("退款成功");
     }
 }

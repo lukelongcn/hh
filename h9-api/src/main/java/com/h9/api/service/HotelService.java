@@ -160,7 +160,7 @@ public class HotelService {
                 .setHotelName(hotelRoomType.getHotel().getHotelName())
                 .setPhone(addHotelOrderDTO.getPhone())
                 .setRoomer(addHotelOrderDTO.getStayRoomer())
-                .setRoomTypeName(hotelRoomType.getTypeName())
+                .setRoomTypeName(hotelRoomType.getRoomName())
                 .setRoomCount(addHotelOrderDTO.getRoomCount())
                 .setHotel(hotelRoomType.getHotel())
                 .setHotelRoomType(hotelRoomType)
@@ -240,8 +240,9 @@ public class HotelService {
         if (payMethodEnum == HotelOrder.PayMethodEnum.BALANCE_PAY) {
             result = balancePay(hotelOrder, user, userAccount);
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.WECHAT_PAY) {
-
-            result = getWXPayInfo(hotelOrder, hotelOrder.getTotalMoney(), user, findPayPlatformEnum.getKey());
+            BigDecimal totalMoney = hotelOrder.getTotalMoney();
+            BigDecimal needPayMoney = totalMoney.subtract(hotelOrder.getPayMoney4JiuYuan()).subtract(hotelOrder.getPayMoney4Wechat());
+            result = getWXPayInfo(hotelOrder, needPayMoney, user, findPayPlatformEnum.getKey());
         } else if (payMethodEnum == HotelOrder.PayMethodEnum.MIXED_PAY) {
             result = mixedPay(hotelOrder, userAccount, user, findPayPlatformEnum.getKey());
         } else {

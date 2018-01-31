@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,5 +41,8 @@ public class HotelDetailVO {
         url += hotel.getId();
         url += "&type=hotel";
         this.setHotelInfo(url);
+        String startReserveTimeStr = hotel.getStartReserveTimeStr();
+        String endReserveTieStr = hotel.getEndReserveTieStr();
+        this.tips = "酒店预定时间为" + startReserveTimeStr + "至" + endReserveTieStr + "其他时间暂不支持预定！";
     }
 }

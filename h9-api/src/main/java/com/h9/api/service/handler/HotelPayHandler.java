@@ -44,7 +44,7 @@ public class HotelPayHandler extends AbPayHandler{
         Long orderId = payInfo.getOrderId();
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
         BigDecimal payMoney4Wechat = payInfo.getMoney();
-        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
+//        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
 
         BigDecimal paidMoney = hotelOrder.getPayMoney4Wechat();
         payMoney4Wechat = payMoney4Wechat.add(paidMoney);
@@ -54,14 +54,15 @@ public class HotelPayHandler extends AbPayHandler{
 
         //记录两条流水
 
-        commonService.setBalance(hotelOrder.getUserId(), payInfo.getMoney().abs().negate(),
-                BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getId(), hotelOrder.getId(), "",
-                BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getName());
+
 
         commonService.setBalance(hotelOrder.getUserId(), payInfo.getMoney().abs(),
                 BalanceFlow.BalanceFlowTypeEnum.Recharge.getId(), hotelOrder.getId(), "",
                 BalanceFlow.BalanceFlowTypeEnum.Recharge.getName());
 
+        commonService.setBalance(hotelOrder.getUserId(), payInfo.getMoney().abs().negate(),
+                BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getId(), hotelOrder.getId(), "",
+                BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getName());
 
 
         BigDecimal totalPaidMoney = payMoney4JiuYuan.add(payMoney4Wechat);

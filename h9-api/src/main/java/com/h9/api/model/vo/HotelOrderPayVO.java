@@ -39,15 +39,19 @@ public class HotelOrderPayVO {
         BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
         BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
 
+        BigDecimal paidMoneyDe = new BigDecimal(0);
         if(payMoney4JiuYuan != null){
             this.setPaidMoney(MoneyUtils.formatMoney(payMoney4JiuYuan));
+            paidMoneyDe= paidMoneyDe.add(payMoney4JiuYuan);
         }
 
         if(payMoney4Wechat != null){
             this.setPaidMoney(MoneyUtils.formatMoney(payMoney4Wechat));
+            paidMoneyDe = paidMoneyDe.add(payMoney4Wechat);
         }
 
-        BigDecimal unpayMoney = totalMoney.subtract(new BigDecimal(getPaidMoney()));
+        this.paidMoney = MoneyUtils.formatMoney(paidMoneyDe);
+        BigDecimal unpayMoney = totalMoney.subtract(paidMoneyDe);
         this.setUnpaidMoney(MoneyUtils.formatMoney(unpayMoney));
         this.hotelName = hotelOrder.getHotelName();
 
