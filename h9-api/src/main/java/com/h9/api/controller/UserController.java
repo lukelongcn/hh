@@ -8,6 +8,7 @@ import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.SmsService;
 import com.h9.api.service.UserService;
+import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -169,6 +170,7 @@ public class UserController {
      * description: app 推广红包二维码 生成
      *
      */
+    @PrintReqResLog(printRequestParams = true)
     @GetMapping("/user/redEnvelope/qrcode")
     public void ownRedEnvelope(HttpServletRequest request,
                                HttpServletResponse response,

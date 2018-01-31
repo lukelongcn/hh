@@ -1,9 +1,9 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.h9.api.model.dto.EventDTO;
 import com.h9.api.model.dto.RedEnvelopeDTO;
 import com.h9.api.model.dto.VerifyTokenDTO;
+import com.h9.api.model.vo.ScanRedEnvelopeVO;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -15,16 +15,13 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.TransactionsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.CheckoutUtil;
-import com.h9.common.utils.XMLUtils;
-import io.netty.util.internal.StringUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -102,7 +99,7 @@ public class EventService {
             String userId = redisBean.getStringValue(RedisKey.getQrCodeTempId(eventKey));
             if (StringUtils.isBlank(userId)) {
                 logger.info("tempId 为空，二维码失效或者已被领取");
-                return Result.fail("tempId 为空");
+                return Result.fail("谢谢惠顾");
             }
             codeJson = redisBean.getStringValue(RedisKey.getQrCode(userId));
             String userIdStr = map.get("scanUserId");
@@ -115,7 +112,7 @@ public class EventService {
 
         if (StringUtils.isBlank(codeJson)) {
             logger.info("codeJson 为空: " + codeJson);
-            return Result.fail("codeJson 为空");
+            return Result.fail("谢谢惠顾");
         }
 
         RedEnvelopeDTO redEnvelopeDTO = JSONObject.parseObject(codeJson, RedEnvelopeDTO.class);
@@ -124,7 +121,7 @@ public class EventService {
         if (redEnvelopeDTO.getStatus() == 0) {
 
             logger.info("二维码失效了");
-            return Result.fail("二维码失效了");
+            return Result.fail("谢谢惠顾");
         }
 
         if (user.getId().equals(redEnvelopeDTO.getUserId())) {
@@ -161,8 +158,11 @@ public class EventService {
             //发送模块消息给两方用户
             weChatProvider.sendTemplate(openId,redEnvelopeDTO.getMoney());
             weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(),redEnvelopeDTO.getMoney().abs().negate());
+            ScanRedEnvelopeVO vo = new ScanRedEnvelopeVO(MoneyUtils.formatMoney(redEnvelopeDTO.getMoney()),
+                    originUser.getAvatar(),originUser.getNickName());
+            return Result.success(vo);
         }
 
-        return Result.success();
+        return Result.fail();
     }
 }
