@@ -63,8 +63,8 @@ public class Stick extends BaseEntity {
     @Column(name = "state",nullable = false,columnDefinition = "int default 1 COMMENT '帖子状态 1使用 2禁用 3删除'")
     private Integer state = 1;
 
-    @Column(name = "floor_count",nullable = false,columnDefinition = "int default 1 COMMENT '楼层数量'")
-    private Integer floorCount = 1;
+    @Column(name = "floor_count",nullable = false,columnDefinition = "int default 0 COMMENT '楼层数量'")
+    private Integer floorCount = 0;
 
     @Column(name = "ip",columnDefinition = "varchar(200) default '' COMMENT 'ip'")
     private String ip;

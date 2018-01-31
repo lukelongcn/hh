@@ -3,6 +3,7 @@ package com.h9.common.db.repo;
 import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.community.StickReward;
+import com.h9.common.db.entity.user.User;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +26,8 @@ public interface StickRewardResitory extends BaseRepository<StickReward> {
        return new PageResult(rewardList);
    }
 
-   @Query("select distinct s from StickReward s where  s.stick.id = ?1")
-    List<StickReward> findByStickId(Long stickId);
+   @Query("select distinct(s.user) from StickReward s where  s.stick.id = ?1")
+    List<User> findByStickId(Long stickId);
 
     @Query("select s from StickReward s where s.user.id = ?1 order by s.createTime DESC ")
     Page<StickReward> findGiveList(long userId, Pageable pageable);
