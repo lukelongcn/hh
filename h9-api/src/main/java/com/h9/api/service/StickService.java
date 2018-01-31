@@ -297,13 +297,9 @@ public class StickService {
      */
     @Transactional
     public Result detail(long userId, long id) {
-        Integer flag = 0;
         Stick stick = stickRepository.findById(id);
         if (stick == null){
             return Result.fail("贴子不存在");
-        }
-        if (stick.getOperationState() != 1){
-            return Result.fail("尚未通过审核");
         }
         if (stick.getState() != 1){
             return Result.fail("贴子已被删除或禁用");
@@ -317,23 +313,25 @@ public class StickService {
             stickRewardUserList = list.stream().map(StickRewardUser::new).collect(Collectors.toList());
         }
         stickDetailVO.setStickRewardUserList(stickRewardUserList);
-
+        stick.setReadCount(stick.getReadCount()+1);
+        stickDetailVO.setFlag(0);
+        // 该用户是否为该评论点过赞
+        StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
+        if (stickLike != null){
+            if (stickLike.getStatus() == 1 ){
+                stickDetailVO.setFlag(1);
+            }
+        }
         // 如果该分类贴子需要后台审核
         if (stick.getStickType().getExamineState() == 1){
             if (stick.getOperationState() == 3) {
                 return Result.fail("待审核");
             }
+            if (stick.getOperationState() == 2){
+                return Result.fail("尚未通过审核");
+            }
             return Result.success(stickDetailVO);
         }
-        stick.setReadCount(stick.getReadCount()+1);
-        // 该用户是否为该评论点过赞
-        StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
-        if (stickLike != null){
-            if (stickLike.getStatus() == 1 ){
-                flag = 1;
-            }
-        }
-        stickDetailVO.setFlag(flag);
         stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);
     }
@@ -518,13 +516,12 @@ public class StickService {
         if (pageResult == null){
             return Result.success("暂无评论");
         }
-        return Result.success(pageResult.result2Result(el -> stickComent2Vo(userId,el.getStickComment())));
+        return Result.success(pageResult.result2Result(el -> stickComent2Vo(userId,el)));
     }
     @Transactional
     public StickCommentVO stickComent2Vo(long userId,StickComment stickComment){
         Integer flag = 0;
-        User user = stickComment.getAnswerUser();
-        if (user.getId() == null){
+        if (stickComment.getAnswerUser() == null){
             return new StickCommentVO();
         }
         // 拿到回复的回复列表
@@ -535,7 +532,7 @@ public class StickService {
                 stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
         StickCommentVO stickCommentVO = new StickCommentVO(stickComment);
-        UserExtends userExtends = userExtendsRepository.findByUserId(user.getId());
+        UserExtends userExtends = userExtendsRepository.findByUserId(stickComment.getAnswerUser().getId());
         if (userExtends != null){
             stickCommentVO.setSex(userExtends.getSex());
         }

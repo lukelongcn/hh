@@ -142,6 +142,7 @@ public class StickContoller {
      * @param limit 个数
      * @return Result
      */
+    @Secured
     @GetMapping("/getComment")
     public Result getComment(@SessionAttribute("curUserId")long userId,
                              @RequestParam("stickId")long stickId,
