@@ -139,7 +139,7 @@ public class StickContoller {
     /**
      * 锁定状态改变
      */
-    //@Secured(accessCode = "stick:lock")
+    @Secured(accessCode = "stick:lock")
     @PostMapping("/lock")
     public Result lock(@RequestParam(value = "stickId")long stickId){
         return stickService.lock(stickId);
@@ -148,7 +148,7 @@ public class StickContoller {
     /**
      * 审批状态改变
      */
-    //@Secured(accessCode = "stick:examine")
+    @Secured(accessCode = "stick:examine")
     @PostMapping("/examine")
     public Result examine(@RequestParam(value = "stickId")long stickId){
         return stickService.examine(stickId);
@@ -166,7 +166,7 @@ public class StickContoller {
     /**
      * 评论通过状态
      */
-    //@Secured(accessCode = "stick:commentState")
+    @Secured(accessCode = "stick:commentState")
     @PostMapping("/commentState")
     public Result commentState(@RequestParam(value = "stickCommentId")long stickComentId){
         return stickService.commentState(stickComentId);
