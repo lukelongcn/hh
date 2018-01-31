@@ -335,13 +335,13 @@ public class HotelService {
 //            hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
             return balancePay(hotelOrder, user, userAccount);
         } else {
-            // 余额 + 微信支付
-//            if (balance.compareTo(new BigDecimal(0)) > 0) {
-//                commonService.setBalance(userAccount.getUserId(), balance, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
-//                BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
-//                paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
-//                hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
-//            }
+//             余额 + 微信支付
+            if (balance.compareTo(new BigDecimal(0)) > 0) {
+                commonService.setBalance(userAccount.getUserId(), balance, BALANCE_PAY.getId(), hotelOrder.getId(), "", BALANCE_PAY.getName());
+                BigDecimal paidMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
+                paidMoney4JiuYuan = paidMoney4JiuYuan.add(balance);
+                hotelOrder.setPayMoney4JiuYuan(paidMoney4JiuYuan);
+            }
             BigDecimal wxPayMoney = totalMoney.subtract(hotelOrder.getPayMoney4JiuYuan());
             balancePay(hotelOrder, user, userAccount);
             return getWXPayInfo(hotelOrder, wxPayMoney, user, key);
