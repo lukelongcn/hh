@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -256,9 +257,13 @@ public class StickService {
     @Value("${path.app.wechat_host}")
     private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
-        UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
-        stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
+        BigDecimal bigDecimal = stickRewardResitory.findRewardCount(stick.getId());
+        if (bigDecimal != null){
+            stickDetailVO.setRewardMoney(bigDecimal);
+        }else {
+            stickDetailVO.setRewardMoney(new BigDecimal(0));
+        }
         String url = wechatHostUrl+"/?#/stick/detail?id=";
         url += stick.getId();
         stickDetailVO.setUrl(url);
