@@ -147,6 +147,9 @@ public class StickService {
         return Result.success(stickAddressVO);
     }
 
+    /**
+     * 添加贴子
+     */
     @Transactional
     public Result addStick(Long userId, StickDto stickDto, HttpServletRequest request){
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
@@ -196,7 +199,6 @@ public class StickService {
         else {
             stick.setImages(images);
         }
-        System.out.println(images);
         return stickRepository.saveAndFlush(stick);
     }
 
@@ -294,15 +296,18 @@ public class StickService {
      * 获取帖子详情
      */
     @Transactional
-    public Result detail(long id) {
+    public Result detail(long userId, long id) {
+        Integer flag = 0;
         Stick stick = stickRepository.findById(id);
         if (stick == null){
             return Result.fail("贴子不存在");
         }
+        if (stick.getOperationState() != 1){
+            return Result.fail("尚未通过审核");
+        }
         if (stick.getState() != 1){
             return Result.fail("贴子已被删除或禁用");
         }
-
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
         stickDetailVO.setListMap(getBanner(STICK_DETAIL.getId()));
         // 打赏该贴用户列表
@@ -321,6 +326,14 @@ public class StickService {
             return Result.success(stickDetailVO);
         }
         stick.setReadCount(stick.getReadCount()+1);
+        // 该用户是否为该评论点过赞
+        StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
+        if (stickLike != null){
+            if (stickLike.getStatus() == 1 ){
+                flag = 1;
+            }
+        }
+        stickDetailVO.setFlag(flag);
         stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);
     }
@@ -371,7 +384,6 @@ public class StickService {
      * @return Result
      */
     public Result like( long userId,long id, Integer type) {
-        Map map = new HashMap();
         /* 点赞贴子*/
         if (type == 1){
             Stick stick = stickRepository.findById(id);
@@ -393,14 +405,12 @@ public class StickService {
                 stickLike.setStatus(1);
                 stickLikeRepository.save(stickLike);
             }else{
-                map.put("flag","0");
-                return Result.fail("您已经点过赞啦",map);
+                return Result.fail("您已经点过赞啦");
             }
             // 贴子点赞数加一
             stick.setLikeCount(stick.getLikeCount()+1);
             stickRepository.save(stick);
-            map.put("flag","1");
-            return Result.success("点赞成功",map);
+            return Result.success("点赞成功");
         }
 
         /* 点赞评论*/
@@ -421,14 +431,12 @@ public class StickService {
                 stickCommentLike.setStatus(1);
                 stickCommentLikeRepository.save(stickCommentLike);
             }else{
-                map.put("flag","0");
-                return Result.fail("您已经点过赞啦",map);
+                return Result.fail("您已经点过赞啦");
             }
             // 评论点赞数加一
             stickComment.setLikeCount(stickComment.getLikeCount()+1);
             stickCommentRepository.save(stickComment);
-            map.put("flag","1");
-            return Result.success("点赞成功",map);
+            return Result.success("点赞成功");
         }
 
         /* 点赞类型不存在*/
@@ -505,14 +513,16 @@ public class StickService {
     /**
      * 拿到评论
      */
-    public Result getComment(long stickId, Integer page, Integer limit) {
+    public Result getComment(long userId, long stickId, Integer page, Integer limit) {
         PageResult<StickComment> pageResult = stickCommentRepository.findStickCommentList(stickId,page, limit);
         if (pageResult == null){
             return Result.success("暂无评论");
         }
-        return Result.success(pageResult.result2Result(this::stickComent2Vo));
+        return Result.success(pageResult.result2Result(el -> stickComent2Vo(userId,el.getStickComment())));
     }
-    private StickCommentVO stickComent2Vo(StickComment stickComment){
+    @Transactional
+    public StickCommentVO stickComent2Vo(long userId,StickComment stickComment){
+        Integer flag = 0;
         User user = stickComment.getAnswerUser();
         if (user.getId() == null){
             return new StickCommentVO();
@@ -530,6 +540,13 @@ public class StickService {
             stickCommentVO.setSex(userExtends.getSex());
         }
         stickCommentVO.setList(stickCommentSimpleVOS);
+        StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserIdAndStickCommentId(userId,stickComment.getId());
+        if (stickCommentLike != null){
+            if (stickCommentLike.getStatus() == 1 ){
+                flag = 1;
+            }
+        }
+        stickCommentVO.setFlag(flag);
         return stickCommentVO;
     }
 

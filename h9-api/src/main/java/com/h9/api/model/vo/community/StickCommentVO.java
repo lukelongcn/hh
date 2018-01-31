@@ -44,6 +44,9 @@ public class StickCommentVO {
     // 回复内容
     private String content;
 
+    // 是否点过赞
+    private Integer flag;
+
     public StickCommentVO(StickComment stickComment) {
         this.id = stickComment.getId();
         User user = stickComment.getAnswerUser();
