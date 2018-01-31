@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -33,4 +34,7 @@ public interface StickRewardResitory extends BaseRepository<StickReward> {
         Page<StickReward> rewardList = findGiveList(userId,pageRequest(page,limit));
         return new PageResult(rewardList);
     }
+
+    @Query("select count(u.reward) from StickReward u where u.stick.id = ?1")
+    BigDecimal findRewardCount(Long stickId);
 }

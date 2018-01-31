@@ -23,7 +23,7 @@ import java.util.List;
 @Repository
 public interface StickRepository extends BaseRepository<Stick> {
 
-    @Query("select s from Stick s where s.state = 1 order by s.createTime desc")
+    @Query("select s from Stick s where s.state = 1  and s.operationState = 1 order by s.createTime desc")
     Page<Stick> find4Home(Pageable pageable);
 
 
