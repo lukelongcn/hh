@@ -127,6 +127,9 @@ public class EventService {
             return Result.fail("二维码失效了");
         }
 
+        if (user.getId().equals(redEnvelopeDTO.getUserId())) {
+            return Result.fail("自己不能扫自己的推广红包");
+        }
         if (user == null) {
             // 注册用户
             user = userService.registUser(openId);
@@ -160,6 +163,6 @@ public class EventService {
             weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(),redEnvelopeDTO.getMoney().abs().negate());
         }
 
-        return Result.fail();
+        return Result.success();
     }
 }

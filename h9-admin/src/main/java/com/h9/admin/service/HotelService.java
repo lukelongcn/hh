@@ -19,6 +19,7 @@ import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.repo.*;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -219,8 +220,14 @@ public class HotelService {
                 predicateList.add(builder.equal(root.get("phone"), phone));
             }
 
+
             if (startDate != null && endDate != null) {
-                predicateList.add(builder.between(root.get("createTime"), startDate, endDate));
+                if (startDate.getTime() == endDate.getTime()) {
+                    Date newEndDate = DateUtil.getTimesNight(startDate);
+                    predicateList.add(builder.between(root.get("createTime"), startDate, newEndDate));
+                }else{
+                    predicateList.add(builder.between(root.get("createTime"), startDate, endDate));
+                }
             }
 
             if (status != null && status != 0) {
