@@ -44,7 +44,7 @@ public class HotelPayHandler extends AbPayHandler{
         Long orderId = payInfo.getOrderId();
         HotelOrder hotelOrder = hotelOrderRepository.findOne(orderId);
         BigDecimal payMoney4Wechat = payInfo.getMoney();
-        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
+//        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
 
         BigDecimal paidMoney = hotelOrder.getPayMoney4Wechat();
         payMoney4Wechat = payMoney4Wechat.add(paidMoney);
