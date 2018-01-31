@@ -154,7 +154,7 @@ public class StickService {
     public Result addStick(Long userId, StickDto stickDto, HttpServletRequest request){
         StickType stickType = stickTypeRepository.findOne(stickDto.getTypeId());
         if(stickType == null){
-           //return Result.fail("请选择分类");
+           return Result.fail("请选择分类");
         }
         if (stickType != null){
             // 只有管理员权限能发帖
