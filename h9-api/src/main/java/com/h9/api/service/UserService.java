@@ -76,6 +76,9 @@ public class UserService {
     private String currentEnvironment;
     @Value("${path.app.wechat_host}")
     private String host;
+    @Value("${path.app.host}")
+    private String appHost;
+
     @Resource
     private RedisBean redisBean;
     @Resource
@@ -610,7 +613,7 @@ public class UserService {
                 }
             }else{
                 //https://localhost:6305/h9/api/user/redEnvelope/qrcode?tempId=1
-                url = host+"/h9/api/user/redEnvelope/qrcode?tempId="+tempId;
+                url = appHost+"/h9/api/user/redEnvelope/qrcode?tempId="+tempId;
             }
 
             User user = userRepository.findOne(userId);
@@ -700,10 +703,10 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-            String link = host+"/h9/api/user/redEnvelope/scan/qrcode?tempId="+tempId;
-            logger.info("link : "+link);
+//            String link = host+"/h9/api/user/redEnvelope/scan/qrcode?tempId="+tempId;
+            logger.info("tempId : "+tempId);
             ServletOutputStream outputStream = response.getOutputStream();
-            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getStringConfig("hlzjIcon");
             BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
