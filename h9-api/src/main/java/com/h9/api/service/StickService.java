@@ -199,6 +199,10 @@ public class StickService {
         else {
             stick.setImages(images);
         }
+        // 如果该分类贴子需要后台审核 进入待审核状态
+        if (stick.getStickType().getExamineState() == 1){
+            stick.setOperationState(3);
+        }
         return stickRepository.saveAndFlush(stick);
     }
 
@@ -314,25 +318,26 @@ public class StickService {
         }
         stickDetailVO.setStickRewardUserList(stickRewardUserList);
         stick.setReadCount(stick.getReadCount()+1);
-        stickDetailVO.setFlag(0);
         // 该用户是否为该评论点过赞
+        stickDetailVO.setFlag(0);
         StickLike stickLike = stickLikeRepository.findByUserIdAndStickId(userId,id);
         if (stickLike != null){
             if (stickLike.getStatus() == 1 ){
                 stickDetailVO.setFlag(1);
             }
         }
+        stick = stickRepository.saveAndFlush(stick);
         // 如果该分类贴子需要后台审核
-        if (stick.getStickType().getExamineState() == 1){
+        if (stick.getStickType().getExamineState() == 1) {
             if (stick.getOperationState() == 3) {
+                System.out.println(stick.getOperationState());
                 return Result.fail("待审核");
             }
-            if (stick.getOperationState() == 2){
+            else if (stick.getOperationState() == 2) {
                 return Result.fail("尚未通过审核");
             }
             return Result.success(stickDetailVO);
         }
-        stickRepository.saveAndFlush(stick);
         return Result.success(stickDetailVO);
     }
 
