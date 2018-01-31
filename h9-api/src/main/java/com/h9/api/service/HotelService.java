@@ -160,7 +160,7 @@ public class HotelService {
                 .setHotelName(hotelRoomType.getHotel().getHotelName())
                 .setPhone(addHotelOrderDTO.getPhone())
                 .setRoomer(addHotelOrderDTO.getStayRoomer())
-                .setRoomTypeName(hotelRoomType.getTypeName())
+                .setRoomTypeName(hotelRoomType.getRoomName())
                 .setRoomCount(addHotelOrderDTO.getRoomCount())
                 .setHotel(hotelRoomType.getHotel())
                 .setHotelRoomType(hotelRoomType)
