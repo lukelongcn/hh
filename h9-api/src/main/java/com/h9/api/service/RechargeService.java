@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -107,7 +108,8 @@ public class RechargeService {
 
     public Map<String, String> callback(PayNotifyVO payNotifyVO) {
         long orderId = Long.parseLong(payNotifyVO.getOrder_id());
-        PayInfo payInfo = payInfoRepository.findOne(orderId);
+        List<PayInfo> payInfoList = payInfoRepository.findByOrderIdOrderByIdDesc(new Long(orderId));
+        PayInfo payInfo = payInfoList.get(0);
         AbPayHandler payHandler = payHandlerFactory.getPayHandler(payInfo.getOrderType());
         boolean callback = false;
 
