@@ -15,6 +15,7 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.RechargeOrderRepository;
 import com.h9.common.db.repo.UserRepository;
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,9 +108,8 @@ public class RechargeService {
     
 
     public Map<String, String> callback(PayNotifyVO payNotifyVO) {
-        long orderId = Long.parseLong(payNotifyVO.getOrder_id());
-        List<PayInfo> payInfoList = payInfoRepository.findByOrderIdOrderByIdDesc(new Long(orderId));
-        PayInfo payInfo = payInfoList.get(0);
+        long payInfoId = Long.parseLong(payNotifyVO.getOrder_id());
+        PayInfo payInfo = payInfoRepository.findOne(payInfoId);
         AbPayHandler payHandler = payHandlerFactory.getPayHandler(payInfo.getOrderType());
         boolean callback = false;
 
