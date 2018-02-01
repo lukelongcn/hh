@@ -93,7 +93,18 @@ public class LotteryContorller {
             @ApiParam(value = "用户token" ,name = "token",required = true,type="header")
             @SessionAttribute("curUserId") long userId,@RequestParam("code") String code){
         logger.debugv("room userId {0} code {1}" ,userId, code);
-        return lotteryService.getLotteryRoom(userId,code);
+
+        RLock lock = redisson.getLock("lock:" + code);
+        Result lottery;
+        try {
+            lock.lock(30, TimeUnit.SECONDS);
+            logger.debugv("start userId {0} code {1}" ,userId, code);
+            code = LotteryConstantConfig.path2Code(code);
+            lottery = lotteryService.getLotteryRoom(userId,code);
+        } finally {
+            lock.unlock();
+        }
+        return lottery;
     }
 
 
