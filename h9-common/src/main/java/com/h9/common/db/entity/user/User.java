@@ -106,50 +106,9 @@ public class User extends BaseEntity {
     @Column(name="street_number",columnDefinition = "varchar(50) COMMENT '街道号'")
     private String streetNumber;
 
-    public Integer getSignCount() {
-
-        return signCount;
-    }
-
-    public void setSignCount(Integer signCount) {
-        this.signCount = signCount;
-    }
-
-    public Integer getSignDays() {
-        return signDays;
-    }
-
-    public void setSignDays(Integer signDays) {
-        this.signDays = signDays;
-    }
-
     public User() {
     }
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getOpenId() {
-        return openId;
-    }
-
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
 
     public String getAvatar() {
         if(StringUtils.isNotEmpty(avatar)){
@@ -158,97 +117,7 @@ public class User extends BaseEntity {
         return ConstantConfig.DEFAULT_HEAD;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
 
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public Date getLastLoginTime() {
-        return lastLoginTime;
-    }
-
-    public void setLastLoginTime(Date lastLoginTime) {
-        this.lastLoginTime = lastLoginTime;
-    }
-
-    public Integer getLoginCount() {
-        return loginCount;
-    }
-
-    public void setLoginCount(Integer loginCount) {
-        this.loginCount = loginCount;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getIsAdmin() {
-        return isAdmin;
-    }
-
-    public void setIsAdmin(Integer isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUnionId() {
-        return unionId;
-    }
-
-    public void setUnionId(String unionId) {
-        this.unionId = unionId;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Long getH9UserId() {
-        return h9UserId;
-    }
-
-    public void setH9UserId(Long h9UserId) {
-        this.h9UserId = h9UserId;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 
     public enum IsAdminEnum{
         NOTADMIN(0,"普通用户"),

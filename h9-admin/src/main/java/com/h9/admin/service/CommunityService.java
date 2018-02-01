@@ -36,6 +36,8 @@ public class CommunityService {
 
     private final String BANNER_TYPE_LOCATION = "bannerTypeLocation";
 
+    private final String BANNER_TYPE= "banner:type";
+
     @Autowired
     private BannerTypeRepository bannerTypeRepository;
     @Autowired
@@ -57,16 +59,20 @@ public class CommunityService {
         return Result.success(this.configService.getMapListConfig(BANNER_TYPE_LOCATION));
     }
 
+    public Result<List<Config>> listBannerType() {
+        return Result.success(this.configService.getMapListConfig(BANNER_TYPE));
+    }
+
     public Result<BannerType> addBannerType(BannerType bannerType) {
-        if (this.bannerTypeRepository.findByCode(bannerType.getCode()) != null) {
-            return Result.fail("标识已存在");
-        }
+//        if (this.bannerTypeRepository.findByCode(bannerType.getCode()) != null) {
+//            return Result.fail("标识已存在");
+//        }
         return Result.success(this.bannerTypeRepository.save(bannerType));
     }
 
-    public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO) {
+    public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO) {
         PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
-        Page<BannerType> bannerTypes = this.bannerTypeRepository.findAllByPage(pageRequest);
+        Page<BannerType> bannerTypes = this.bannerTypeRepository.findAllByPage(pageDTO.getLocaltion(),pageRequest);
         List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
         bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));
         PageResult<BannerType> pageResult = new PageResult<>(bannerTypes);

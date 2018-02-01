@@ -42,6 +42,13 @@ public class CommunityController {
         return this.communityService.listBannerTypeLocation();
     }
 
+    @Secured
+    @GetMapping(value="/banner_type/type")
+    @ApiOperation("获取功能类别所有位置")
+    public Result<List<Config>> listBannerType(){
+        return this.communityService.listBannerType();
+    }
+
     @Secured(accessCode = "banner_type:add")
     @PostMapping(value="/banner_type")
     @ApiOperation("增加功能类别")
@@ -59,7 +66,7 @@ public class CommunityController {
     @Secured(accessCode = "banner_type:list")
     @GetMapping(value="/banner_type/page")
     @ApiOperation("分页获取功能类别")
-    public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO){
+    public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO){
         return this.communityService.getBannerTypes(pageDTO);
     }
 
