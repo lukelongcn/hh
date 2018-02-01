@@ -24,7 +24,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public class BannerType extends BaseEntity {
 
 
-
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
@@ -49,6 +48,11 @@ public class BannerType extends BaseEntity {
     @Column(name = "end_time",nullable = false,columnDefinition = "datetime COMMENT '结束时间'")
     @Temporal(TIMESTAMP)
     private Date endTime;
+
+    @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
+    private Integer sort = 1;
+
+
 
     @Transient
     private String locationDesc;
