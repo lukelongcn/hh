@@ -43,6 +43,8 @@ public class BannerTypeAddDTO {
    @NotNull(message = "上线结束时间不能为空")
     private Date endTime;
 
+   private int sort = 1;
+
     public String getName() {
         return name;
     }
@@ -100,5 +102,13 @@ public class BannerTypeAddDTO {
     public BannerType toBannerType(BannerType bannerType){
         BeanUtils.copyProperties(this,bannerType);
         return  bannerType;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
     }
 }

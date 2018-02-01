@@ -66,7 +66,7 @@ public class CommunityController {
     @Secured(accessCode = "banner_type:list")
     @GetMapping(value="/banner_type/page")
     @ApiOperation("分页获取功能类别")
-    public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO){
+    public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO){
         return this.communityService.getBannerTypes(pageDTO);
     }
 
