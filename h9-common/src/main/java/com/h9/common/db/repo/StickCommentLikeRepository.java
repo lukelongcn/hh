@@ -19,4 +19,5 @@ public interface StickCommentLikeRepository extends BaseRepository<StickCommentL
 
     @Query("select s from StickCommentLike  s where s.userId = ?1 and s.stickCommentId = ?2")
     StickCommentLike findByUserIdAndStickCommentId(long id, long userId);
+
 }

@@ -34,8 +34,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -256,19 +259,23 @@ public class StickService {
     @Value("${path.app.wechat_host}")
     private String wechatHostUrl;
     private StickDetailVO stickDetail2Vo(Stick stick) {
-        UserAccount userAccount = userAccountRepository.findByUserId(stick.getUser().getId());
         StickDetailVO stickDetailVO = new StickDetailVO(stick);
-        stickDetailVO.setRewardMoney(userAccount.getRewardMoney());
+        BigDecimal bigDecimal = stickRewardResitory.findRewardCount(stick.getId());
+        if (bigDecimal != null){
+            stickDetailVO.setRewardMoney(bigDecimal);
+        }else {
+            stickDetailVO.setRewardMoney(new BigDecimal(0));
+        }
         String url = wechatHostUrl+"/?#/stick/detail?id=";
         url += stick.getId();
         stickDetailVO.setUrl(url);
         return stickDetailVO;
     }
-
     /**
      * 锁定状态改变
      */
     public Result lock(long stickId) {
+        Map map = new HashMap();
         Stick stick = stickRepository.findOne(stickId);
         if (stick == null){
             return Result.fail("该贴不存在");
@@ -276,12 +283,14 @@ public class StickService {
         if (stick.getLockState() ==1){
             stick.setLockState(2);
             stickRepository.saveAndFlush(stick);
-            return Result.success("锁定成功");
+            map.put("lockState","2");
+            return Result.success("锁定成功",map);
         }
         if (stick.getLockState() == 2){
             stick.setLockState(1);
             stickRepository.saveAndFlush(stick);
-            return Result.success("解锁成功");
+            map.put("lockState","1");
+            return Result.success("解锁成功",map);
         }
         return Result.fail();
     }
@@ -290,6 +299,7 @@ public class StickService {
      * 审批状态改变
      */
     public Result examine(long stickId) {
+        Map map = new HashMap();
         Stick stick = stickRepository.findOne(stickId);
         if (stick == null){
             return Result.fail("该贴不存在");
@@ -298,12 +308,14 @@ public class StickService {
         if (stick.getOperationState() ==1){
             stick.setOperationState(2);
             stickRepository.saveAndFlush(stick);
-            return Result.success("不通过成功");
+            map.put("operationState","2");
+            return Result.success("不通过成功",map);
         }
         if (stick.getOperationState() == 2){
             stick.setOperationState(1);
             stickRepository.saveAndFlush(stick);
-            return Result.success("通过成功");
+            map.put("operationState","2");
+            return Result.success("通过成功",map);
         }
         return Result.fail();
     }
@@ -327,19 +339,22 @@ public class StickService {
      * 评论通过状态
      */
     public Result commentState(long stickComentId) {
+        Map map = new HashMap();
         StickComment stickComment = stickCommentRepository.findOne(stickComentId);
         if (stickComment == null){
             return Result.fail("贴子评论不存在");
         }
         if (stickComment.getOperationState() ==1){
             stickComment.setOperationState(2);
+            map.put("commentOperationState","2");
             stickCommentRepository.saveAndFlush(stickComment);
-            return Result.success("不通过成功");
+            return Result.success("不通过成功",map);
         }
         if (stickComment.getOperationState() == 2){
             stickComment.setOperationState(1);
+            map.put("commentOperationState","1");
             stickCommentRepository.saveAndFlush(stickComment);
-            return Result.success("通过成功");
+            return Result.success("通过成功",map);
         }
         return Result.fail();
     }
@@ -358,13 +373,15 @@ public class StickService {
     }
 
     public Result typeState(long stickTypeId) {
+        Map map = new HashMap<>();
         StickType stickType = stickTypeRepository.findOne(stickTypeId);
         if (stickType == null){
             return Result.fail("该分类不存在");
         }
         stickType.setState(3);
         stickTypeRepository.save(stickType);
-        return Result.success("删除成功");
+        map.put("typeState","3");
+        return Result.success("删除成功",map);
     }
 
     /**

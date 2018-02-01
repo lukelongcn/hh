@@ -50,9 +50,9 @@ public class HotelListVO {
     private String endReserveTime;
     @ApiModelProperty("酒店介绍")
     private String hotelInfo;
-
+    @ApiModelProperty("状态")
     private Integer status;
-
+    @ApiModelProperty("状态描述")
     private String statusDesc;
 
 

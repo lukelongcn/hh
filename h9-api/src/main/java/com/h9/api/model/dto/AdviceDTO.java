@@ -21,7 +21,7 @@ public class AdviceDTO {
     @Size(max = 3,message = "图片上传最多三张")
     private List<String> adviceImgList;
 
-    @Size(min = 2,max = 30,message = "联系方式长度2-30个字符")
+    @Size(max = 30,message = "联系方式长度2-30个字符")
     private String connect;
 
     private Integer anonymous;

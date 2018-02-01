@@ -63,6 +63,7 @@ public class HotelOrderDetailVO {
                 .setTotalMoney(MoneyUtils.formatMoney(hotelOrder.getTotalMoney()))
                 .setPayMoney4JiuYuan(MoneyUtils.formatMoney(hotelOrder.getPayMoney4JiuYuan()))
                 .setStayNightCount(nightSum)
+                .setRoomTypeName(hotelOrder.getRoomTypeName())
                 .setPayMoney4Wechat(MoneyUtils.formatMoney(hotelOrder.getPayMoney4Wechat()));
 
     }

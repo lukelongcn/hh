@@ -65,7 +65,7 @@ public class PayProvider {
     }
 
 
-    public Result<OrderVo> initOrder(OrderDTO orderDTO){
+    public Result<OrderVo> initOrder( OrderDTO orderDTO){
         try {
             logger.debugv(initOrderURL());
             orderDTO.setBusinessAppId(payConfig.getBusinessAppId());

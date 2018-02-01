@@ -10,12 +10,14 @@ import com.h9.api.model.dto.StickRewardJiuYuanDTO;
 import com.h9.api.service.StickService;
 import com.h9.common.base.Result;
 
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 /**
  * Created with IntelliJ IDEA.
@@ -72,7 +74,7 @@ public class StickContoller {
 
 
     /**
-     * 分类下贴子列表
+     * 分类头部信息
      */
     @GetMapping("/{type}/detail")
     public Result home(@PathVariable("type") long typeId) {
@@ -85,9 +87,10 @@ public class StickContoller {
      * @param id 帖子id
      * @return Result
      */
+    @Secured
     @GetMapping("/detail/{id}")
-    public Result detail(@PathVariable("id")long id){
-        return stickService.detail(id);
+    public Result detail(@SessionAttribute("curUserId") long userId,@PathVariable("id")long id){
+        return stickService.detail(userId,id);
     }
 
     /**
@@ -139,11 +142,13 @@ public class StickContoller {
      * @param limit 个数
      * @return Result
      */
+    @Secured
     @GetMapping("/getComment")
-    public Result getComment(@RequestParam("stickId")long stickId,
+    public Result getComment(@SessionAttribute("curUserId")long userId,
+                             @RequestParam("stickId")long stickId,
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit){
-        return stickService.getComment(stickId,page,limit);
+        return stickService.getComment(userId,stickId,page,limit);
     }
 
 

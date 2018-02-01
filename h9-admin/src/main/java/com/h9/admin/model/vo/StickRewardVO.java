@@ -1,5 +1,6 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.community.StickReward;
 import com.h9.common.utils.DateUtil;
 
@@ -21,6 +22,7 @@ public class StickRewardVO {
     private long stickId;
     private String createTime;
     private String nickName;
+    private String payMethod;
 
     public StickRewardVO(StickReward stickReward){
         BeanUtils.copyProperties(stickReward,this);
@@ -28,5 +30,6 @@ public class StickRewardVO {
         this.stickId = stickReward.getStick().getId();
         this.createTime = DateUtil.formatDate(stickReward.getCreateTime(), DateUtil.FormatType.SECOND);
         this.nickName = stickReward.getUser().getNickName();
+        payMethod = BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY.getName();
     }
 }

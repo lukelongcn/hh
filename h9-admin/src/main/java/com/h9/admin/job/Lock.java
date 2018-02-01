@@ -29,7 +29,7 @@ public class Lock {
         String value = redisBean.getStringValue(lockKey);
 
         if (StringUtils.isBlank(value)) {
-            redisBean.setStringValue(lockKey,"LOCK",5, TimeUnit.SECONDS);
+            redisBean.setStringValue(lockKey,"LOCK",5, TimeUnit.MINUTES);
             logger.info("获取定时任务锁成功, key: "+lockKey);
             return true;
         }
