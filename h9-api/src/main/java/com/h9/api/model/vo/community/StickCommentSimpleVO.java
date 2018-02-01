@@ -1,10 +1,16 @@
 package com.h9.api.model.vo.community;
 
+import com.h9.api.model.dto.Areas;
 import com.h9.common.db.entity.community.StickComment;
+import com.h9.common.db.entity.order.China;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
 
+import org.springframework.util.CollectionUtils;
+
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Data;
 
@@ -33,6 +39,8 @@ public class StickCommentSimpleVO {
 
     private String spaceTime;
 
+    private List<StickCommentSimpleVO> list;
+
     public StickCommentSimpleVO(StickComment stickComment){
         this.commentId = stickComment.getId();
         User answerUser = stickComment.getAnswerUser();
@@ -45,5 +53,9 @@ public class StickCommentSimpleVO {
             this.backNickName = notifyUserId.getNickName();
         }
         this.spaceTime = DateUtil.getSpaceTime(stickComment.getCreateTime(),new Date());
+        List<StickComment> areas = stickComment.getList();
+        if (!CollectionUtils.isEmpty(areas)){
+            this.list = areas.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
+        }
     }
 }

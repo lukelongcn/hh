@@ -1,7 +1,11 @@
 package com.h9.common.db.entity.community;
 
 import com.h9.common.base.BaseEntity;
+import com.h9.common.db.entity.order.China;
 import com.h9.common.db.entity.user.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -39,6 +43,10 @@ public class StickComment extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '父级'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private StickComment stickComment;
+
+    @OneToMany(mappedBy = "stickComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(" id asc ")
+    private List<StickComment> list = new ArrayList<>();
 
     @Column(name = "level",nullable = false,columnDefinition = "int default 0 COMMENT '评论级别 0:帖子回复 1:评论回复'")
     private Integer level = 0;
@@ -158,5 +166,13 @@ public class StickComment extends BaseEntity {
 
     public void setOperationState(Integer operationState) {
         this.operationState = operationState;
+    }
+
+    public List<StickComment> getList() {
+        return list;
+    }
+
+    public void setList(List<StickComment> list) {
+        this.list = list;
     }
 }

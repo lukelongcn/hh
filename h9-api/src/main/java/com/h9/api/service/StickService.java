@@ -529,19 +529,22 @@ public class StickService {
         if (stickComment.getAnswerUser() == null){
             return new StickCommentVO();
         }
-        // 拿到回复的回复列表
+        // 拿到子集回复列表
         List<StickCommentSimpleVO> stickCommentSimpleVOS = new ArrayList<>();
         long stickCommentParentId = stickComment.getId();
         List<StickComment> stickCommentChild= stickCommentRepository.findByBackId(stickCommentParentId);
         if (CollectionUtils.isNotEmpty(stickCommentChild)){
-                stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
+            stickCommentSimpleVOS = stickCommentChild.stream().map(StickCommentSimpleVO::new).collect(Collectors.toList());
         }
+
+        // 拿到性别
         StickCommentVO stickCommentVO = new StickCommentVO(stickComment);
         UserExtends userExtends = userExtendsRepository.findByUserId(stickComment.getAnswerUser().getId());
         if (userExtends != null){
             stickCommentVO.setSex(userExtends.getSex());
         }
         stickCommentVO.setList(stickCommentSimpleVOS);
+        // 该用户是否点过赞
         StickCommentLike stickCommentLike = stickCommentLikeRepository.findByUserIdAndStickCommentId(userId,stickComment.getId());
         if (stickCommentLike != null){
             if (stickCommentLike.getStatus() == 1 ){
