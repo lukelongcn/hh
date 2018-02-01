@@ -296,14 +296,8 @@ public class LotteryService {
         long differentDate = lastDate.getTime() - nowDate.getTime();
         lotteryResult.setDifferentDate(differentDate > 0 ? differentDate : 0);
         if (differentDate <= 0) {
-            RLock lock = redisson.getLock("lock:" +  code);
-            try {
-                lock.lock(30, TimeUnit.SECONDS);
-                logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
-                lottery(null, code);
-            } finally {
-                lock.unlock();
-            }
+            logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
+            lottery(null, code);
         }
         Integer status = reward.getStatus();
         boolean islottery = status == StatusEnum.END.getCode();
