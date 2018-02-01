@@ -36,6 +36,8 @@ public class CommunityService {
 
     private final String BANNER_TYPE_LOCATION = "bannerTypeLocation";
 
+    private final String BANNER_TYPE= "banner:type";
+
     @Autowired
     private BannerTypeRepository bannerTypeRepository;
     @Autowired
@@ -55,6 +57,10 @@ public class CommunityService {
 
     public Result<List<Config>> listBannerTypeLocation() {
         return Result.success(this.configService.getMapListConfig(BANNER_TYPE_LOCATION));
+    }
+
+    public Result<List<Config>> listBannerType() {
+        return Result.success(this.configService.getMapListConfig(BANNER_TYPE));
     }
 
     public Result<BannerType> addBannerType(BannerType bannerType) {

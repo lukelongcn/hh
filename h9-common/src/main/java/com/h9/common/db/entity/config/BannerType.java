@@ -54,6 +54,7 @@ public class BannerType extends BaseEntity {
 
 
 
+
     @Transient
     private String locationDesc;
 
@@ -143,5 +144,36 @@ public class BannerType extends BaseEntity {
         }
     }
 
+
+
+    public enum TypeEnum {
+        Roll("Roll","滚动广告位"),
+        TWO("TWO","双联banner"),;
+
+
+        TypeEnum(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        private String id;
+        private String name;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
 }

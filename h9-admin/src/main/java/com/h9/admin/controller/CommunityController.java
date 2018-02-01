@@ -42,6 +42,13 @@ public class CommunityController {
         return this.communityService.listBannerTypeLocation();
     }
 
+    @Secured
+    @GetMapping(value="/banner_type/type")
+    @ApiOperation("获取功能类别所有位置")
+    public Result<List<Config>> listBannerType(){
+        return this.communityService.listBannerType();
+    }
+
     @Secured(accessCode = "banner_type:add")
     @PostMapping(value="/banner_type")
     @ApiOperation("增加功能类别")
