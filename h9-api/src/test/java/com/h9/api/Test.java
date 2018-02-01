@@ -31,8 +31,12 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static sun.net.www.protocol.http.HttpURLConnection.userAgent;
 
 /**
  * Created by itservice on 2017/11/2.
@@ -45,10 +49,20 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String s = "111111111111113";
-        String substring = s.substring(0, 14);
-        System.out.println(substring);
+        Pattern pattern = Pattern.compile(";\\s?(\\S*?\\s?\\S*?)\\s?(Build)?/");
+//        String userAgent = "Mozilla/5.0 (Linux; Android 6.0.1; NX531J Build/MMB29M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 ";
+//        String userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Mobile/15C202 MicroMessenger/6.6.1 NetType/WIFI Language/zh_CN";
+//        String userAgent = "Dalvik/2.1.0 (Linux; U; Android 7.1.1; MI 6 MIUI/7.12.7)";
+        String userAgent = "Mozilla/5.0 (Linux; Android 5.0; R7Plus Build/LRX21M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/043806 Mobile Safari/537.36 MicroMessenger/6.6.1.1220(0x26060135) NetType/WIFI Language/zh_CN";
+        Matcher matcher = pattern.matcher(userAgent);
+        String model = null;
+        if (matcher.find()) {
+            model = matcher.group(1).trim();
+            System.out.println("通过userAgent解析出机型：" + model);
+        }
     }
+
+
 
     @org.junit.Test
     public void downLoad() throws UnsupportedEncodingException {
@@ -453,6 +467,7 @@ public class Test {
         System.out.println(anInt1);
         System.out.println("read data");
     }
+
 
 
 }

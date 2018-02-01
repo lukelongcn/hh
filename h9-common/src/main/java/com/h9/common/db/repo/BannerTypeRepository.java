@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 /**
  * @author: George
  * @date: 2017/11/1 16:57
@@ -20,4 +22,6 @@ public interface BannerTypeRepository extends BaseRepository<BannerType> {
 
     @Query("select o from BannerType o order by o.enable desc , o.id desc ")
     Page<BannerType> findAllByPage(Pageable page);
+
+    List<BannerType> findByLocation(Integer location);
 }
