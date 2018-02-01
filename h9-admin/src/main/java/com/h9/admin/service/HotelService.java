@@ -13,6 +13,7 @@ import com.h9.admin.model.vo.HotelRoomListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
+import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.entity.hotel.Hotel;
@@ -305,6 +306,8 @@ public class HotelService {
     @Resource
     private PayProvider payProvider;
 
+    @Resource
+    private PayInfoRepository payInfoRepository;
     @Transactional
     public Result refundOrder(Long id) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
@@ -321,7 +324,13 @@ public class HotelService {
 
         BigDecimal payMoney4Wechat = hotelOrder.getPayMoney4Wechat();
         if (payMoney4Wechat.compareTo(new BigDecimal(0)) > 0) {
-            Result result = payProvider.refundOrder(id, payMoney4Wechat);
+
+            List<PayInfo> payInfoList = payInfoRepository.findByOrderIdOrderByIdDesc(id);
+            if(CollectionUtils.isEmpty(payInfoList)){
+                return Result.fail("预支付记录不存在");
+            }
+            PayInfo payInfo = payInfoList.get(0);
+            Result result = payProvider.refundOrder(payInfo.getId(), payMoney4Wechat);
             if (result.getCode() == 1) {
                 return result;
             }

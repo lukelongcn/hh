@@ -84,6 +84,7 @@ public class HotelOrder extends BaseEntity{
 
     @Column(name = "remarks",columnDefinition = "varchar(1000) comment '备注'")
     private String remarks;
+
     @Getter
     public static enum PayMethodEnum{
         BALANCE_PAY(1, "余额支付"),

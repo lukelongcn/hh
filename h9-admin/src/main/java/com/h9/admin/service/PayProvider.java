@@ -58,11 +58,12 @@ public class PayProvider {
 
     public Result refundOrder(Long id, BigDecimal payMoney4Wechat) {
 
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
         byte[] bytes = null;
         try {
-//            InputStream is = new FileInputStream(new File("D:\\project\\h9-api\\h9-admin\\src\\main\\resources\\cert\\apiclient_cert.p12"));
+            InputStream is = new FileInputStream(new File("D:\\project\\h9-api\\h9-admin\\src\\main\\resources\\cert\\apiclient_cert.p12"));
             bytes = IOUtils.toByteArray(is);
+            IOUtils.closeQuietly(is);
         }catch (NullPointerException ne){
             return Result.fail("证书不存在");
         }catch (Exception e) {
