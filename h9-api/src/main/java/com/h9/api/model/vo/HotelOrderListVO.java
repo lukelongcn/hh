@@ -58,7 +58,7 @@ public class HotelOrderListVO {
                 .setOutRoomTime(DateUtil.formatDate(hotelOrder.getOutRoomTime(), DateUtil.FormatType.DAY))
                 .setStayNightCount(dayChange)
                 .setRoomCount(hotelOrder.getRoomCount())
-                .setRoomTypeName(roomType.getTypeName())
+                .setRoomTypeName(hotelOrder.getRoomTypeName())
                 .setOrderMoney(MoneyUtils.formatMoney(hotelOrder.getTotalMoney()))
                 .setId(hotelOrder.getId());
     }
