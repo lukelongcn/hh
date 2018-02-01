@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,12 +33,12 @@ public class TravelService {
      */
     public Result bannerList(long userId, Integer tab) {
         int location = tab2Location(tab);
-        List<BannerType> bannerTypeList = bannerTypeRepository.findByLocation(location);
+        List<BannerType> bannerTypeList = bannerTypeRepository.findByLocation(location,new Date());
 
         List<TravelPageVO> listVO = bannerTypeList
                 .stream()
                 .map(bannerType -> {
-                    List<Banner> bannerList = bannerRepository.findAllByBannerTypeIdOrder(bannerType.getId());
+                    List<Banner> bannerList = bannerRepository.findAllByBanner(bannerType.getId());
                     TravelPageVO vo = new TravelPageVO(bannerType.getCode(), bannerList);
                     return vo;
                 }).collect(Collectors.toList());

@@ -14,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.xml.ws.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +32,8 @@ public interface BannerTypeRepository extends BaseRepository<BannerType> {
     @Query("select o from BannerType o order by o.enable desc , o.id desc ")
     Page<BannerType> findAllByPage(Pageable page);
 
-    List<BannerType> findByLocation(Integer location);
+    @Query("select o from BannerType o where o.startTime < ?2 and o.endTime > ?2 and o.location = ?1")
+    List<BannerType> findByLocation(Integer location, Date date);
 
     @Query("select o from BannerType o where o.location=?1 order by o.enable desc , o.id desc ")
     Page<BannerType> findAllByPage(int location,Pageable page);
