@@ -269,7 +269,7 @@ public class HotelService {
             return Result.fail("支付出错，账号" + user.getId() + " openId为空");
         }
         logger.debugv("payPlatform:"+payPlatform);
-        OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(), payPlatform);
+        OrderDTO orderDTO = new OrderDTO(openId, payMoney, hotelOrder.getId(), payPlatform);
 
         Result<OrderVo> orderVoResult = null;
         try {
