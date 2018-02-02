@@ -290,7 +290,12 @@ public class LotteryService {
         lotteryResult.setDifferentDate(differentDate > 0 ? differentDate : 0);
         if (differentDate <= 0 && reward.getStatus()!=StatusEnum.END.getCode()) {
             logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
-            lottery(null, code);
+            try{
+                lottery(null, code);
+            }catch (Exception ex){
+
+            }
+
         }
         Integer status = reward.getStatus();
         boolean islottery = status == StatusEnum.END.getCode();
@@ -345,10 +350,11 @@ public class LotteryService {
     @Resource
     private Redisson redisson;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public Result lottery(Long curUserId, String code) {
         logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
-        Reward reward = rewardRepository.findByCode4Update(code);
+        Reward reward = rewardRepository.findByCode(code);
+        logger.debugv("rewardId {0},status {1}",reward.getId(),reward.getStatus());
         if (reward == null) {
             return Result.fail("红包不存在");
         }
@@ -380,8 +386,7 @@ public class LotteryService {
         if (lotteryModel != null) {
             reward.setFactoryStatus(lotteryModel.getState());
         }
-        //变更奖励状态
-        reward.setStatus(END.getCode());
+
         if (curUserId != null) {
             //手动开启奖励的
             reward.setStartType(1);
@@ -389,7 +394,14 @@ public class LotteryService {
             //自动开启奖励的
             reward.setStartType(2);
         }
-        rewardRepository.save(reward);
+        rewardRepository.saveAndFlush(reward);
+
+        long updateRewardStatus = rewardRepository.updateRewardStatus(reward.getId());
+        if(updateRewardStatus==0){
+            throw new ServiceException("服务器处理中请稍后再试");
+        }
+
+
         //变更用余额
         for (int i = 0; i < lotteryFlows.size(); i++) {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);
