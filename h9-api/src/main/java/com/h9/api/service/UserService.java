@@ -713,9 +713,12 @@ public class UserService {
 //            tempId = "hlzj://tempId="+tempId;
             logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
-            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getStringConfig("hlzjIcon");
+            if (StringUtils.isBlank(url)) {
+                logger.info("二维码中间水印图片没有设置");
+            }
             BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
             //Positions 实现了 Position 并提供九个坐标, 分别是 上左, 上中, 上右, 中左, 中中, 中右, 下左, 下中, 下右 我们使用正中的位置
             Watermark watermark = new Watermark(Positions.CENTER, bufferedImageSY, 1F);
