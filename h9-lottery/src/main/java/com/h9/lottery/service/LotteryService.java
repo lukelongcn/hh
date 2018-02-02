@@ -396,7 +396,7 @@ public class LotteryService {
         }
         rewardRepository.saveAndFlush(reward);
 
-        long updateRewardStatus = rewardRepository.updateRewardStatus(reward.getId(),StatusEnum.END.getCode());
+        int updateRewardStatus = rewardRepository.updateRewardStatus(reward.getId(),StatusEnum.END.getCode());
         if(updateRewardStatus==0){
             throw new ServiceException("服务器处理中请稍后再试");
         }
