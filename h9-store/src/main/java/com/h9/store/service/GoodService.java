@@ -193,6 +193,7 @@ public class GoodService {
                 .desc(goods.getDescription())
                 .price(MoneyUtils.formatMoney(goods.getRealPrice()))
                 .name(goods.getName())
+                .unit(goods.getUnit())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
                 .stock(goods.getStock())
                 .balance(MoneyUtils.formatMoney(userAccount.getBalance()))

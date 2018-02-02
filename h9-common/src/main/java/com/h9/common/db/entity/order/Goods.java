@@ -35,6 +35,9 @@ public class Goods extends BaseEntity {
 
     @Column(name = "code", nullable = false, columnDefinition = "varchar(30) default '' COMMENT '商品编码'")
     private String code;
+    
+    @Column(name = "unit", nullable = false, columnDefinition = "varchar(32) default '' COMMENT '单位'")
+    private String unit;
 
     @Column(name = "real_price",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '售价'")
     private BigDecimal realPrice = new BigDecimal(0);
@@ -186,6 +189,14 @@ public class Goods extends BaseEntity {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public enum StatusEnum {
