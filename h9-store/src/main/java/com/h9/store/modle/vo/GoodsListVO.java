@@ -13,6 +13,7 @@ public class GoodsListVO {
     private String name;
     private String price;
     private Long id;
+    private String unit ;
 
     public GoodsListVO(){}
 
@@ -21,5 +22,6 @@ public class GoodsListVO {
         this.name = goods.getName();
         this.price = MoneyUtils.formatMoney(goods.getRealPrice());
         this.id = goods.getId();
+        this.unit = goods.getUnit();
     }
 }
