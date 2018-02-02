@@ -5,6 +5,12 @@ import chinapay.PrivateKey;
 import chinapay.SecureLink;
 import chinapay.util.SecureUtil;
 import com.google.gson.Gson;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -21,15 +27,19 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,17 +59,26 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        Pattern pattern = Pattern.compile(";\\s?(\\S*?\\s?\\S*?)\\s?(Build)?/");
-//        String userAgent = "Mozilla/5.0 (Linux; Android 6.0.1; NX531J Build/MMB29M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 ";
-//        String userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Mobile/15C202 MicroMessenger/6.6.1 NetType/WIFI Language/zh_CN";
-//        String userAgent = "Dalvik/2.1.0 (Linux; U; Android 7.1.1; MI 6 MIUI/7.12.7)";
-        String userAgent = "Mozilla/5.0 (Linux; Android 5.0; R7Plus Build/LRX21M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/043806 Mobile Safari/537.36 MicroMessenger/6.6.1.1220(0x26060135) NetType/WIFI Language/zh_CN";
-        Matcher matcher = pattern.matcher(userAgent);
-        String model = null;
-        if (matcher.find()) {
-            model = matcher.group(1).trim();
-            System.out.println("通过userAgent解析出机型：" + model);
-        }
+            try {
+                MultiFormatReader formatReader = new MultiFormatReader();
+
+//                File file = new File("E:/code/img.png");
+                String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQGY7zwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyMkw1cWtSdEtjYzMxalFKUmhxMXcAAgR03HNaAwSAUQEA";
+                BufferedImage image = ImageIO.read(new URL(url));
+                BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
+
+                //定义二维码参数
+                HashMap hints = new HashMap();
+                hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+                Result result =  formatReader.decode(binaryBitmap,hints);
+
+                System.out.println("解析结果"+result.toString());
+                System.out.println("二维码类型"+result.getBarcodeFormat());
+                System.out.println("二维码内容"+result.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
     }
 
 
@@ -469,5 +488,19 @@ public class Test {
     }
 
 
+    @org.junit.Test
+    public  void testCert() throws IOException {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+
+        FileOutputStream fos = new FileOutputStream(new File("d://test/cert/apiclient_cert.p12"));
+        int len = 0;
+        byte[] bytes = new byte[2048];
+        while ((len = is.read(bytes)) != -1) {
+
+            fos.write(bytes,0,len);
+        }
+        is.close();
+        fos.close();
+    }
 
 }
