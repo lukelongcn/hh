@@ -709,7 +709,7 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-            String link = host + "/h9/api/user/redEnvelope/scan/qrcode?tempId=" + tempId;
+            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
