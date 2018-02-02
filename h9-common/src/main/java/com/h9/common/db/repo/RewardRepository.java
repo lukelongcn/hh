@@ -95,7 +95,7 @@ public interface RewardRepository extends BaseRepository<Reward> {
 
     @Transactional
     @Modifying
-    @Query("update Reward r set r.status=3 where r.status<>3 and r.id=?1")
-    public long updateRewardStatus(long rewardId);
+    @Query("update Reward r set r.status=?2 where r.status<>?2 and r.id=?1")
+    public long updateRewardStatus(long rewardId,int status);
 
 }
