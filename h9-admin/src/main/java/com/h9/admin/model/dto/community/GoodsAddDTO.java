@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -29,6 +30,10 @@ public class GoodsAddDTO {
     @ApiModelProperty(value = "商品类型id",required = true)
     @NotNull(message = "商品类型不能为空")
     private Long goodsTypeId;
+
+    @ApiModelProperty(value = "商品单位",required = true)
+    @NotNull(message = "商品单位不能为空")
+    private String unit;
 
     @ApiModelProperty(value = "图片",required = true)
     @NotBlank(message = "图片不能为空")
@@ -161,6 +166,14 @@ public class GoodsAddDTO {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public Goods toGoods(){

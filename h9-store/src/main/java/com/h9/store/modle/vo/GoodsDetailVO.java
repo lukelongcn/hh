@@ -18,6 +18,7 @@ public class GoodsDetailVO {
     private String tip;
     private int stock = 0;
     private String balance = "0";
+    private String unit = "";
 
 
 }

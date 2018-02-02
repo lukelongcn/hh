@@ -39,7 +39,7 @@ public interface BannerTypeRepository extends BaseRepository<BannerType> {
     Page<BannerType> findAllByPage(int location,Pageable page);
 
 
-    public default Page<BannerType> findAllByPage(Integer location,Pageable page){
+    public default Page<BannerType> findAll4Page(Integer location,Pageable page){
         if(location == null){
             return findAllByPage(page);
         }else{
