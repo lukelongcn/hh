@@ -198,7 +198,7 @@ public class UserController {
     @GetMapping("/user/redEnvelope/scan/redirect")
     public void redirect(@RequestParam String tempId,HttpServletResponse response) {
 
-        String url = wxHost+"/#/account/hongbao/result?id="+tempId;
+        String url = wxHost+"/h9-weixin/#/account/hongbao/result?id="+tempId;
         try {
             response.sendRedirect(url);
         } catch (IOException e) {

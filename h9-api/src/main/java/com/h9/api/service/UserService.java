@@ -44,6 +44,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -755,4 +757,23 @@ public class UserService {
     }
 
 
+    public void addUserCount(String userId){
+        try {
+            Long userIdLong = Long.valueOf(userId);
+            logger.info("userIdLong : "+userIdLong);
+            redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
+            Long userCount = redisBean.getStringTemplate()
+                    .execute((RedisCallback<Long>) connection ->
+                            connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
+                                    .getKeySerializer())
+                                    .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
+            logger.info("userCount: "+userCount);
+        } catch (NumberFormatException e) {
+            logger.info("解析UserId 出错: " + userId);
+        }
+    }
+
+    public void addUserCount(Long userId){
+        addUserCount(userId);
+    }
 }
