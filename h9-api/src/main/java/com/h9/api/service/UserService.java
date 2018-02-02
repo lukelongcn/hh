@@ -607,9 +607,11 @@ public class UserService {
             //	client 整形类型 1 andoird 2 ios 3 公众号
             String client = request.getHeader("client");
             String url = "";
+            long nextVal = sequenceUtil.getNextVal();
+
             if ("3".equals(client)) {
                 String accessToken = weChatProvider.getWeChatAccessToken();
-                String ticket = weChatProvider.getCodeTicket(accessToken, userId);
+                String ticket = weChatProvider.getCodeTicket(accessToken, nextVal);
                  url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
                 if (StringUtils.isEmpty(ticket)) {
                     return Result.fail("获取二维码失败");
@@ -623,7 +625,6 @@ public class UserService {
             //存放redis tempId;
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
-            long nextVal = sequenceUtil.getNextVal();
             redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
             redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId+"", 1, TimeUnit.DAYS);
 
