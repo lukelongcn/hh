@@ -78,12 +78,12 @@ public class RedisKey {
         return QR_CODE_TEMP_ID+tempId;
     }
 
-    public static String getQrCode(Long userId) {
-        return QR_CODE+""+userId;
+    public static String getQrCode(Long sequenceId) {
+        return QR_CODE+""+sequenceId;
     }
 
-    public static String getQrCode(String userId) {
-        return QR_CODE+""+userId;
+    public static String getQrCode(String sequenceId) {
+        return QR_CODE+""+sequenceId;
     }
 
     public static String getTodayRechargeMoney(Long userId) {
