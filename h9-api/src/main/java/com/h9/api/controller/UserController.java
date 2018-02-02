@@ -192,12 +192,13 @@ public class UserController {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    @Value("{path.app.wechat_host}")
+    @Value("${path.app.wechat_host}")
     private String wxHost;
+
     @GetMapping("/user/redEnvelope/scan/redirect")
     public void redirect(@RequestParam String tempId,HttpServletResponse response) {
 
-        String url = wxHost+"#/account/hongbao/result?tempId="+tempId;
+        String url = wxHost+"/#/account/hongbao/result?id="+tempId;
         try {
             response.sendRedirect(url);
         } catch (IOException e) {
