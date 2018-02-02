@@ -711,9 +711,9 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
+//            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
+            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
-            logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
             logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
