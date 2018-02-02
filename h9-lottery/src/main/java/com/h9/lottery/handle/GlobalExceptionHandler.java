@@ -1,5 +1,6 @@
 package com.h9.lottery.handle;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import com.h9.common.common.ServiceException;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -92,11 +94,21 @@ public class GlobalExceptionHandler {
         // 以上错误都不匹配
         logger.info(e.getMessage(), e);
         if (System.currentTimeMillis() - time > 5 * 60 * 1000) {
-            mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: " + request.getRequestURL() + ExceptionUtils.getStackTrace(e));
+            mailService.sendtMail("徽酒服务器错误" + currentEnvironment, getMailContent(request,e));
             time = System.currentTimeMillis();
         }
 
         return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙，请稍后再试", ExceptionUtils.getStackTrace(e));
     }
 
+
+
+    public String getMailContent(HttpServletRequest request,Exception ex){
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("uri:" + request.getRequestURI()+"\n\r<BR>");
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        stringBuffer.append("param:" + JSONObject.toJSONString(parameterMap)+"\n\r<BR>");
+        stringBuffer.append(ExceptionUtils.getStackTrace(ex));
+        return stringBuffer.toString();
+    }
 }
