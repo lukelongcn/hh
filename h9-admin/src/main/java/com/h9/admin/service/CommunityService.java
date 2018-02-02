@@ -98,9 +98,9 @@ public class CommunityService {
         if (bannerType == null) {
             return Result.fail("功能类别不存在");
         }
-        if (this.bannerRepository.findByTitle(bannerAddDTO.getTitle()) != null) {
+        /*if (this.bannerRepository.findByTitle(bannerAddDTO.getTitle()) != null) {
             return Result.fail("名称已存在");
-        }
+        }*/
         Banner banner = bannerAddDTO.toBanner();
         banner.setBannerType(bannerType);
         return Result.success(this.bannerRepository.save(banner));
