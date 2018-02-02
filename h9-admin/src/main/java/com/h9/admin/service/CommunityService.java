@@ -246,9 +246,9 @@ public class CommunityService {
         if (b == null) {
             return Result.fail("功能类型不存在");
         }
-        if (this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(), bannerType.getCode()) != null) {
-            return Result.fail("标识已存在");
-        }
+//        if (this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(), bannerType.getCode()) != null) {
+//            return Result.fail("标识已存在");
+//        }
         BeanUtils.copyProperties(bannerType, b);
         return Result.success(this.bannerTypeRepository.save(b));
     }
