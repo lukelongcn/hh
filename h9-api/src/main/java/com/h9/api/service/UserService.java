@@ -595,6 +595,7 @@ public class UserService {
 
     @Resource
     private SequenceUtil sequenceUtil;
+
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
 
@@ -607,18 +608,18 @@ public class UserService {
             //	client 整形类型 1 andoird 2 ios 3 公众号
             String client = request.getHeader("client");
             String url = "";
-            long nextVal = sequenceUtil.getNextVal();
+            Long nextVal = sequenceUtil.getNextVal();
 
             if ("3".equals(client)) {
                 String accessToken = weChatProvider.getWeChatAccessToken();
                 String ticket = weChatProvider.getCodeTicket(accessToken, nextVal);
-                 url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+                url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
                 if (StringUtils.isEmpty(ticket)) {
                     return Result.fail("获取二维码失败");
                 }
-            }else{
+            } else {
                 //https://localhost:6305/h9/api/user/redEnvelope/qrcode?tempId=1
-                url = appHost+"/h9/api/user/redEnvelope/qrcode?tempId="+tempId;
+                url = appHost + "/h9/api/user/redEnvelope/qrcode?tempId=" + tempId;
             }
 
             User user = userRepository.findOne(userId);
@@ -626,7 +627,7 @@ public class UserService {
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId+"", 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId + "", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
@@ -708,9 +709,9 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-//            String link = host+"/h9/api/user/redEnvelope/scan/qrcode?tempId="+tempId;
-            tempId = "hlzj://tempId="+tempId;
-            logger.info("tempId : "+tempId);
+            String link = host + "/h9/api/user/redEnvelope/scan/qrcode?tempId=" + tempId;
+//            tempId = "hlzj://tempId="+tempId;
+            logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
@@ -725,8 +726,10 @@ public class UserService {
     }
 
     public static void main(String[] args) {
-        String replace = UUID.randomUUID().toString().replace("-", "");
-        System.out.println(replace);
+        String url = "h9/api/user/redEnvelope/scan/qrcode?tempId=123";
+        int index = url.indexOf("tempId=");
+        String substring = url.substring(index + 7, url.length());
+        System.out.println(substring);
     }
 
     @Resource
@@ -734,17 +737,19 @@ public class UserService {
 
     public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
-        if (tempId.contains("hlzj://tempId=")) {
-            //表示扫得是 app 展示的二维码
-            tempId = tempId.replace("hlzj://tempId=", "");
+        int index = tempId.indexOf("tempId=");
+        if (StringUtils.isBlank(tempId)) {
+            return Result.fail("二维码超时");
         }
+        tempId = tempId.substring(index + 7, tempId.length());
 
-        map.put("Event",SCAN.getValue());
+        map.put("Event", SCAN.getValue());
         map.put("tempId", tempId);
         map.put("EventKey", "");
         map.put("client", "app");
         map.put("scanUserId", userId + "");
         return eventService.handleSubscribeAndScan(map);
     }
+
 
 }
