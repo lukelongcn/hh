@@ -19,6 +19,7 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.bean.SequenceUtil;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.Article;
@@ -43,6 +44,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -592,6 +595,9 @@ public class UserService {
         return Result.success(vo);
     }
 
+    @Resource
+    private SequenceUtil sequenceUtil;
+
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
 
@@ -604,24 +610,26 @@ public class UserService {
             //	client 整形类型 1 andoird 2 ios 3 公众号
             String client = request.getHeader("client");
             String url = "";
+            Long nextVal = sequenceUtil.getNextVal();
+
             if ("3".equals(client)) {
                 String accessToken = weChatProvider.getWeChatAccessToken();
-                String ticket = weChatProvider.getCodeTicket(accessToken, userId);
-                 url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+                String ticket = weChatProvider.getCodeTicket(accessToken, nextVal);
+                url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
                 if (StringUtils.isEmpty(ticket)) {
                     return Result.fail("获取二维码失败");
                 }
-            }else{
+            } else {
                 //https://localhost:6305/h9/api/user/redEnvelope/qrcode?tempId=1
-                url = appHost+"/h9/api/user/redEnvelope/qrcode?tempId="+tempId;
+                url = appHost + "/h9/api/user/redEnvelope/qrcode?tempId=" + tempId;
             }
 
             User user = userRepository.findOne(userId);
             //存放redis tempId;
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
-            redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId+"", 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId + "", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
@@ -703,12 +711,16 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-//            String link = host+"/h9/api/user/redEnvelope/scan/qrcode?tempId="+tempId;
-            logger.info("tempId : "+tempId);
+            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
+//            tempId = "hlzj://tempId="+tempId;
+            logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
-            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getStringConfig("hlzjIcon");
+            if (StringUtils.isBlank(url)) {
+                logger.info("二维码中间水印图片没有设置");
+            }
             BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
             //Positions 实现了 Position 并提供九个坐标, 分别是 上左, 上中, 上右, 中左, 中中, 中右, 下左, 下中, 下右 我们使用正中的位置
             Watermark watermark = new Watermark(Positions.CENTER, bufferedImageSY, 1F);
@@ -719,8 +731,10 @@ public class UserService {
     }
 
     public static void main(String[] args) {
-        String replace = UUID.randomUUID().toString().replace("-", "");
-        System.out.println(replace);
+        String url = "h9/api/user/redEnvelope/scan/qrcode?tempId=123";
+        int index = url.indexOf("tempId=");
+        String substring = url.substring(index + 7, url.length());
+        System.out.println(substring);
     }
 
     @Resource
@@ -728,7 +742,13 @@ public class UserService {
 
     public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
-        map.put("Event",SCAN.getValue());
+        int index = tempId.indexOf("tempId=");
+        if (StringUtils.isBlank(tempId)) {
+            return Result.fail("二维码超时");
+        }
+        tempId = tempId.substring(index + 7, tempId.length());
+
+        map.put("Event", SCAN.getValue());
         map.put("tempId", tempId);
         map.put("EventKey", "");
         map.put("client", "app");
@@ -736,4 +756,24 @@ public class UserService {
         return eventService.handleSubscribeAndScan(map);
     }
 
+
+    public void addUserCount(String userId){
+        try {
+            Long userIdLong = Long.valueOf(userId);
+            logger.info("userIdLong : "+userIdLong);
+            redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
+            Long userCount = redisBean.getStringTemplate()
+                    .execute((RedisCallback<Long>) connection ->
+                            connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
+                                    .getKeySerializer())
+                                    .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
+            logger.info("userCount: "+userCount);
+        } catch (NumberFormatException e) {
+            logger.info("解析UserId 出错: " + userId);
+        }
+    }
+
+    public void addUserCount(Long userId){
+        addUserCount(userId);
+    }
 }

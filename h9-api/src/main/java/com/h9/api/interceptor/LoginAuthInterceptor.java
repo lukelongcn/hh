@@ -1,6 +1,7 @@
 package com.h9.api.interceptor;
 
 import com.h9.api.handle.UnAuthException;
+import com.h9.api.service.UserService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.utils.DateUtil;
@@ -34,6 +35,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
     @Resource
     private RedisBean redisBean;
+    @Resource
+    private UserService userService;
 
     @SuppressWarnings("Duplicates")
     @Override
@@ -70,21 +73,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 }
                 MDC.put("userId", userId);
                 // 统计人数
+                userService.addUserCount(userId);
 
-                try {
-
-                    Long userIdLong = Long.valueOf(userId);
-                    redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
-                    Long userCount = redisBean.getStringTemplate()
-                            .execute((RedisCallback<Long>) connection ->
-                                    connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
-                                    .getKeySerializer())
-                                    .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
-                    logger.info("userCount: "+userCount);
-
-                } catch (NumberFormatException e) {
-                    logger.info("解析UserId 出错: " + userId);
-                }
                 if (StringUtils.isEmpty(userId)) {
                     throw new UnAuthException(401, "请重新登录");
                 }

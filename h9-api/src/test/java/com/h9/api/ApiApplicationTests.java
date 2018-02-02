@@ -149,8 +149,10 @@ public class ApiApplicationTests {
     }
 
 
-    ////@Test
+    @Test
     public void contextLoads() {
+
+        redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), 4, true);
 
     }
 
@@ -182,13 +184,11 @@ public class ApiApplicationTests {
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
 
-    //    ////@Test
+        @Test
     public void test() {
-        String key = RedisKey.getTokenUserIdKey("ff444b6d-ac89-41a3-8e8b-de3c59fd6d26");
-        String stringValue = redisBean.getStringValue(key);
-        redisBean.setStringValue(key, "");
 
-        System.out.println(stringValue);
+        redisBean.getValueOps().setBit(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY), 10, true);
+
     }
 
     //    @Resource
