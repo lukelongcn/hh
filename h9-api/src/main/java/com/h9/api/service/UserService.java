@@ -715,6 +715,7 @@ public class UserService {
 //            tempId = "hlzj://tempId="+tempId;
             logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
+            logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getStringConfig("hlzjIcon");

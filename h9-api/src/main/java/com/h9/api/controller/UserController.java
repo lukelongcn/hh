@@ -200,6 +200,7 @@ public class UserController {
 
         String url = wxHost+"/h9-weixin/#/account/hongbao/result?id="+tempId;
         try {
+            logger.info("url: "+url);
             response.sendRedirect(url);
         } catch (IOException e) {
             logger.info("重定向失败 url: "+url);
