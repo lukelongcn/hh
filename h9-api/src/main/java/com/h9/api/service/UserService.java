@@ -19,6 +19,7 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.db.bean.SequenceUtil;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.Article;
@@ -592,6 +593,8 @@ public class UserService {
         return Result.success(vo);
     }
 
+    @Resource
+    private SequenceUtil sequenceUtil;
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
 
@@ -620,7 +623,8 @@ public class UserService {
             //存放redis tempId;
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
-            redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
+            long nextVal = sequenceUtil.getNextVal();
+            redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
             redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId+"", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
@@ -704,6 +708,7 @@ public class UserService {
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
 //            String link = host+"/h9/api/user/redEnvelope/scan/qrcode?tempId="+tempId;
+            tempId = "hlzj://tempId="+tempId;
             logger.info("tempId : "+tempId);
             ServletOutputStream outputStream = response.getOutputStream();
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(tempId, 300, 300);
@@ -728,6 +733,11 @@ public class UserService {
 
     public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
+        if (tempId.contains("hlzj://tempId=")) {
+            //表示扫得是 app 展示的二维码
+            tempId = tempId.replace("hlzj://tempId=", "");
+        }
+
         map.put("Event",SCAN.getValue());
         map.put("tempId", tempId);
         map.put("EventKey", "");
