@@ -12,6 +12,8 @@ import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -186,6 +189,23 @@ public class UserController {
     public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId) {
         return userService.scanQRCode(tempId,userId);
     }
+
+    private Logger logger = Logger.getLogger(this.getClass());
+
+    @Value("${path.app.wechat_host}")
+    private String wxHost;
+
+    @GetMapping("/user/redEnvelope/scan/redirect")
+    public void redirect(@RequestParam String tempId,HttpServletResponse response) {
+
+        String url = wxHost+"/#/account/hongbao/result?id="+tempId;
+        try {
+            response.sendRedirect(url);
+        } catch (IOException e) {
+            logger.info("重定向失败 url: "+url);
+        }
+    }
+
 
     /**
      * description: 采用轮洵策略查询红包二维码的状态
