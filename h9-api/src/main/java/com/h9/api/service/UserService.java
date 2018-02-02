@@ -602,7 +602,7 @@ public class UserService {
             String tempId = UUID.randomUUID().toString().replace("-", "");
 
             //	client 整形类型 1 andoird 2 ios 3 公众号
-            String client = request.getHeader("clinet");
+            String client = request.getHeader("client");
             String url = "";
             if ("3".equals(client)) {
                 String accessToken = weChatProvider.getWeChatAccessToken();

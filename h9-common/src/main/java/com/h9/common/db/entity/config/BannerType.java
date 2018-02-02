@@ -35,21 +35,25 @@ public class BannerType extends BaseEntity {
     @Column(name = "code", nullable = false, columnDefinition = "varchar(64) default '' COMMENT 'banner类型标识'")
     private String code;
 
-    @Column(name = "location",columnDefinition = "tinyint default 1 COMMENT '显示位置，1:首页，2:酒元商城,3社区首页 ，4帖子详情' ")
+    /**
+     * description:
+     * @see LocaltionEnum
+     */
+    @Column(name = "location", columnDefinition = "tinyint default 1 COMMENT '显示位置，1:首页，2:酒元商城,3社区首页 ，4帖子详情，5 为旅游健康卡' ")
     private Integer location;
 
-    @Column(name = "enable",nullable = false,columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")
+    @Column(name = "enable", nullable = false, columnDefinition = "tinyint default 1 COMMENT '是否启用 1启用 0 禁用'")
     private Integer enable;
 
-    @Column(name = "start_time",nullable = false,columnDefinition = "datetime COMMENT '开始时间'")
+    @Column(name = "start_time", nullable = false, columnDefinition = "datetime COMMENT '开始时间'")
     @Temporal(TIMESTAMP)
     private Date startTime;
 
-    @Column(name = "end_time",nullable = false,columnDefinition = "datetime COMMENT '结束时间'")
+    @Column(name = "end_time", nullable = false, columnDefinition = "datetime COMMENT '结束时间'")
     @Temporal(TIMESTAMP)
     private Date endTime;
 
-    @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序'")
+    @Column(name = "sort", nullable = false, columnDefinition = "tinyint default 1 COMMENT '排序'")
     private Integer sort = 1;
 
 
@@ -65,8 +69,8 @@ public class BannerType extends BaseEntity {
     public BannerType() {
     }
 
-    public BannerType(BannerType bannerType,int bannerCount) {
-        BeanUtils.copyProperties(bannerType,this);
+    public BannerType(BannerType bannerType, int bannerCount) {
+        BeanUtils.copyProperties(bannerType, this);
         this.bannerCount = bannerCount;
     }
 
@@ -85,10 +89,10 @@ public class BannerType extends BaseEntity {
     }
 
     public enum EnableEnum {
-        DISABLED(0,"禁用"),
-        ENABLED(1,"启用");
+        DISABLED(0, "禁用"),
+        ENABLED(1, "启用");
 
-        EnableEnum(int id,String name){
+        EnableEnum(int id, String name) {
             this.id = id;
             this.name = name;
         }
@@ -114,12 +118,15 @@ public class BannerType extends BaseEntity {
     }
 
     public enum LocaltionEnum {
-        HOME(1,"首页"),
-        STROE(2,"商店"),
-        STICK_HOME(3,"社区首页"),
-        STICK_DETAIL(4,"帖子详情");
+        HOME(1, "首页"),
+        STROE(2, "商店"),
+        STICK_HOME(3, "社区首页"),
+        STICK_DETAIL(4, "帖子详情"),
+        TRAVEL_ALL(5,"旅游+健康"),
+        TRAVEL_CHECK(6,"体检"),
+        TRAVEL(7,"旅游");
 
-        LocaltionEnum(int id,String name){
+        LocaltionEnum(int id, String name) {
             this.id = id;
             this.name = name;
         }
@@ -141,6 +148,17 @@ public class BannerType extends BaseEntity {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public static LocaltionEnum findByCode(int code){
+            LocaltionEnum[] values = values();
+            for(LocaltionEnum enumEl : values){
+                if(enumEl.id == code){
+
+                    return enumEl;
+                }
+            }
+            return null;
         }
     }
 

@@ -5,6 +5,12 @@ import chinapay.PrivateKey;
 import chinapay.SecureLink;
 import chinapay.util.SecureUtil;
 import com.google.gson.Gson;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -21,18 +27,26 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static sun.net.www.protocol.http.HttpURLConnection.userAgent;
 
 /**
  * Created by itservice on 2017/11/2.
@@ -45,10 +59,29 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String s = "111111111111113";
-        String substring = s.substring(0, 14);
-        System.out.println(substring);
+            try {
+                MultiFormatReader formatReader = new MultiFormatReader();
+
+//                File file = new File("E:/code/img.png");
+                String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQGY7zwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyMkw1cWtSdEtjYzMxalFKUmhxMXcAAgR03HNaAwSAUQEA";
+                BufferedImage image = ImageIO.read(new URL(url));
+                BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
+
+                //定义二维码参数
+                HashMap hints = new HashMap();
+                hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+                Result result =  formatReader.decode(binaryBitmap,hints);
+
+                System.out.println("解析结果"+result.toString());
+                System.out.println("二维码类型"+result.getBarcodeFormat());
+                System.out.println("二维码内容"+result.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
     }
+
+
 
     @org.junit.Test
     public void downLoad() throws UnsupportedEncodingException {
@@ -454,5 +487,20 @@ public class Test {
         System.out.println("read data");
     }
 
+
+    @org.junit.Test
+    public  void testCert() throws IOException {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+
+        FileOutputStream fos = new FileOutputStream(new File("d://test/cert/apiclient_cert.p12"));
+        int len = 0;
+        byte[] bytes = new byte[2048];
+        while ((len = is.read(bytes)) != -1) {
+
+            fos.write(bytes,0,len);
+        }
+        is.close();
+        fos.close();
+    }
 
 }

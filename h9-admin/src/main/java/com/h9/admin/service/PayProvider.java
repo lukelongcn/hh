@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 
@@ -63,6 +64,7 @@ public class PayProvider {
         try {
 //            InputStream is = new FileInputStream(new File("D:\\project\\h9-api\\h9-admin\\src\\main\\resources\\cert\\apiclient_cert.p12"));
             bytes = IOUtils.toByteArray(is);
+            IOUtils.closeQuietly(is);
         }catch (NullPointerException ne){
             return Result.fail("证书不存在");
         }catch (Exception e) {

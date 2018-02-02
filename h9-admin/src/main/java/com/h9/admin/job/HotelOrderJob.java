@@ -118,7 +118,7 @@ public class HotelOrderJob {
 
         if (payMoney4Wechat.compareTo(new BigDecimal(0)) > 0) {
 
-            logger.info("退 微信支付金额成功，酒店订单Id: " + order.getId() + payMoney4Wechat);
+            logger.info("退 微信支付金额成功，酒店订单Id: " + order.getId() +"，金额："+ payMoney4Wechat);
             Result result = hotelService.refundOrder(order.getId());
             logger.info("退款 结果： " + JSONObject.toJSONString(result));
 
