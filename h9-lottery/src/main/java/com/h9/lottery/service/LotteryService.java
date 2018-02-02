@@ -288,7 +288,7 @@ public class LotteryService {
         lotteryResult.setEndTime(endTime);
         long differentDate = lastDate.getTime() - nowDate.getTime();
         lotteryResult.setDifferentDate(differentDate > 0 ? differentDate : 0);
-        if (differentDate <= 0) {
+        if (differentDate <= 0 && reward.getStatus()!=StatusEnum.END.getCode()) {
             logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
             lottery(null, code);
         }
