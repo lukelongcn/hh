@@ -52,7 +52,7 @@ public class LotteryTask {
         for (Reward reward : rewardList) {
             try {
                 logger.info("rewardId: " + reward.getId() +""+  reward.getCode() + "开始");
-                RLock lock = redisson.getLock("lock:" +  reward.getCode());
+                RLock lock = redisson.getLock("lock:start:" +  reward.getCode());
                 try {
                     lock.lock(30, TimeUnit.SECONDS);
                     logger.debugv("lottery start 中奖名单为：定时任务开奖 code:{0}", reward.getCode());
