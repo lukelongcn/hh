@@ -48,7 +48,7 @@ public class HomeService {
         StoreHomeVO vo = new StoreHomeVO().setBanners(banners)
                 .setBalance(MoneyUtils.formatMoney(balance));
 
-        Result<List<Goods>> findResult = orderService.findHotConvertOrders(0, 6);
+        Result<List<Goods>> findResult = orderService.findHotConvertOrders(0, 100);
         if (findResult.getCode() == 0) {
             List<Goods> orderList = findResult.getData();
 

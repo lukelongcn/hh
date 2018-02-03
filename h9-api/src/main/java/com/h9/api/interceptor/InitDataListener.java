@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 
 /**
  * Created by 李圆 on 2017/12/4
+ *
  */
 @Component
 public class InitDataListener implements ApplicationListener<ApplicationReadyEvent> {
@@ -37,7 +38,6 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     private UserRepository userRepository;
     @Resource
     private UserService userService;
-
     @Resource
     private PayHandler payHandler;
     private Logger logger = Logger.getLogger(this.getClass());
@@ -55,7 +55,7 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
         } catch (Exception e) {
             logger.info(e.getMessage(),e);
         }
-//        this.initWXMenu();
+        this.initWXMenu();
     }
 
     /**
