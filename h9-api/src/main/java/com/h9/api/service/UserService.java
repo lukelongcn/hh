@@ -44,6 +44,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -501,6 +503,10 @@ public class UserService {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("账号不存在");
 
+        if (transferDTO.getTransferMoney().compareTo(new BigDecimal(0.01)) < 0) {
+            return Result.fail("最小金额为0.01");
+        }
+
         String targetUserPhone = transferDTO.getTargetUserPhone();
         User targetUser = userRepository.findByPhone(targetUserPhone);
         if (targetUser == null) return Result.fail("请输入正确的账号");
@@ -598,6 +604,9 @@ public class UserService {
 
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
+            if (money.compareTo(new BigDecimal(0.01)) < 0) {
+                return Result.fail("最小金额为0.01");
+            }
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             if (userAccount.getBalance().compareTo(money) < 0) {
@@ -627,13 +636,13 @@ public class UserService {
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId + "", 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), nextVal + "", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
                     .setTempId(tempId)
 //                    .setTransferRecord(transferList)
-                    .setMoney(MoneyUtils.formatMoney(money));
+                    .setMoney(money);
 
             return Result.success(redEnvelopeCodeVO);
         }
@@ -709,10 +718,11 @@ public class UserService {
 
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
-            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
+//            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
+            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
-            logger.info("tempId : " + link);
             ServletOutputStream outputStream = response.getOutputStream();
+            logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getStringConfig("hlzjIcon");
@@ -740,11 +750,13 @@ public class UserService {
 
     public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
-        int index = tempId.indexOf("tempId=");
         if (StringUtils.isBlank(tempId)) {
             return Result.fail("二维码超时");
         }
-        tempId = tempId.substring(index + 7, tempId.length());
+        if (tempId.contains("tempId=")) {
+            int index = tempId.indexOf("tempId=");
+            tempId = tempId.substring(index + 7, tempId.length());
+        }
 
         map.put("Event", SCAN.getValue());
         map.put("tempId", tempId);
@@ -755,4 +767,23 @@ public class UserService {
     }
 
 
+    public void addUserCount(String userId){
+        try {
+            Long userIdLong = Long.valueOf(userId);
+            logger.info("userIdLong : "+userIdLong);
+            redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
+            Long userCount = redisBean.getStringTemplate()
+                    .execute((RedisCallback<Long>) connection ->
+                            connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
+                                    .getKeySerializer())
+                                    .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
+            logger.info("userCount: "+userCount);
+        } catch (NumberFormatException e) {
+            logger.info("解析UserId 出错: " + userId);
+        }
+    }
+
+    public void addUserCount(Long userId){
+        addUserCount(userId);
+    }
 }

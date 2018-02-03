@@ -186,7 +186,8 @@ public class UserController {
      */
     @Secured
     @GetMapping("/user/redEnvelope/scan/qrcode")
-    public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId) {
+    public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId,
+                             HttpServletRequest request) {
         return userService.scanQRCode(tempId,userId);
     }
 
@@ -198,8 +199,9 @@ public class UserController {
     @GetMapping("/user/redEnvelope/scan/redirect")
     public void redirect(@RequestParam String tempId,HttpServletResponse response) {
 
-        String url = wxHost+"/#/account/hongbao/result?id="+tempId;
+        String url = wxHost+"/h9-weixin/#/account/hongbao/result?id="+tempId;
         try {
+            logger.info("url: "+url);
             response.sendRedirect(url);
         } catch (IOException e) {
             logger.info("重定向失败 url: "+url);

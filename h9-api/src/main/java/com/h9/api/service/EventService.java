@@ -96,12 +96,12 @@ public class EventService {
         String client = map.get("client");
         if ("app".equals(client)) {
             eventKey = map.get("tempId");
-            String userId = redisBean.getStringValue(RedisKey.getQrCodeTempId(eventKey));
-            if (StringUtils.isBlank(userId)) {
+            String sequenceId = redisBean.getStringValue(RedisKey.getQrCodeTempId(eventKey));
+            if (StringUtils.isBlank(sequenceId)) {
                 logger.info("tempId 为空，二维码失效或者已被领取");
                 return Result.fail("谢谢惠顾");
             }
-            codeJson = redisBean.getStringValue(RedisKey.getQrCode(userId));
+            codeJson = redisBean.getStringValue(RedisKey.getQrCode(sequenceId));
             String userIdStr = map.get("scanUserId");
             Long sacnUserId = Long.valueOf(userIdStr);
             user = userRepository.findOne(sacnUserId);
