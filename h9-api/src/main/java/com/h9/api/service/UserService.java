@@ -61,6 +61,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -742,16 +743,12 @@ public class UserService {
     private EventService eventService;
 
     public Result scanQRCode(String tempId, Long userId) {
+        //改成路径解析
+        if(tempId.contains("tempId=")) {
+            int index = tempId.indexOf("tempId=");
+            tempId = tempId.substring(index + 7, tempId.length());
+        }
         Map<String, String> map = new HashMap<>();
-        if (!tempId.contains("tempId=")) {
-            return Result.fail("扫码异常");
-        }
-        int index = tempId.indexOf("tempId=");
-        if (StringUtils.isBlank(tempId)) {
-            return Result.fail("二维码超时");
-        }
-        tempId = tempId.substring(index + 7, tempId.length());
-
         map.put("Event", SCAN.getValue());
         map.put("tempId", tempId);
         map.put("EventKey", "");
