@@ -61,7 +61,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -504,6 +503,10 @@ public class UserService {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("账号不存在");
 
+        if (transferDTO.getTransferMoney().compareTo(new BigDecimal(0.01)) < 0) {
+            return Result.fail("最小金额为0.01");
+        }
+
         String targetUserPhone = transferDTO.getTargetUserPhone();
         User targetUser = userRepository.findByPhone(targetUserPhone);
         if (targetUser == null) return Result.fail("请输入正确的账号");
@@ -601,6 +604,9 @@ public class UserService {
 
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
+            if (money.compareTo(new BigDecimal(0.01)) < 0) {
+                return Result.fail("最小金额为0.01");
+            }
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             if (userAccount.getBalance().compareTo(money) < 0) {
@@ -630,7 +636,7 @@ public class UserService {
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId + "", 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), nextVal + "", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
@@ -743,12 +749,15 @@ public class UserService {
     private EventService eventService;
 
     public Result scanQRCode(String tempId, Long userId) {
-        //改成路径解析
-        if(tempId.contains("tempId=")) {
+        Map<String, String> map = new HashMap<>();
+        if (StringUtils.isBlank(tempId)) {
+            return Result.fail("二维码超时");
+        }
+        if (tempId.contains("tempId=")) {
             int index = tempId.indexOf("tempId=");
             tempId = tempId.substring(index + 7, tempId.length());
         }
-        Map<String, String> map = new HashMap<>();
+
         map.put("Event", SCAN.getValue());
         map.put("tempId", tempId);
         map.put("EventKey", "");
