@@ -503,6 +503,10 @@ public class UserService {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("账号不存在");
 
+        if (transferDTO.getTransferMoney().compareTo(new BigDecimal(0.01)) < 0) {
+            return Result.fail("最小金额为0.01");
+        }
+
         String targetUserPhone = transferDTO.getTargetUserPhone();
         User targetUser = userRepository.findByPhone(targetUserPhone);
         if (targetUser == null) return Result.fail("请输入正确的账号");
@@ -600,6 +604,9 @@ public class UserService {
 
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
+            if (money.compareTo(new BigDecimal(0.01)) < 0) {
+                return Result.fail("最小金额为0.01");
+            }
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             if (userAccount.getBalance().compareTo(money) < 0) {
