@@ -629,7 +629,7 @@ public class UserService {
             //在 redis 中记录 红包二维码信息
             RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
             redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), userId + "", 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), nextVal + "", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
@@ -741,7 +741,7 @@ public class UserService {
     @Resource
     private EventService eventService;
 
-    public Result scanQRCode(String tempId, Long userId) {
+    public Result scanQRCode(String tempId, Long userId, HttpServletRequest request) {
         Map<String, String> map = new HashMap<>();
         if (!tempId.contains("tempId=")) {
             return Result.fail("扫码异常");
