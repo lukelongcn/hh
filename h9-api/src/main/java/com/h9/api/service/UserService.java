@@ -743,14 +743,13 @@ public class UserService {
 
     public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
-        if (!tempId.contains("tempId=")) {
-            return Result.fail("扫码异常");
-        }
-        int index = tempId.indexOf("tempId=");
         if (StringUtils.isBlank(tempId)) {
             return Result.fail("二维码超时");
         }
-        tempId = tempId.substring(index + 7, tempId.length());
+        if (tempId.contains("tempId=")) {
+            int index = tempId.indexOf("tempId=");
+            tempId = tempId.substring(index + 7, tempId.length());
+        }
 
         map.put("Event", SCAN.getValue());
         map.put("tempId", tempId);
