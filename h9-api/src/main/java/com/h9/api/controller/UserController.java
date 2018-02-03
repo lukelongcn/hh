@@ -188,7 +188,7 @@ public class UserController {
     @GetMapping("/user/redEnvelope/scan/qrcode")
     public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId,
                              HttpServletRequest request) {
-        return userService.scanQRCode(tempId,userId,request);
+        return userService.scanQRCode(tempId,userId);
     }
 
     private Logger logger = Logger.getLogger(this.getClass());
