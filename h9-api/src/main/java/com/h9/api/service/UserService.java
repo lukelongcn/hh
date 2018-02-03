@@ -741,7 +741,7 @@ public class UserService {
     @Resource
     private EventService eventService;
 
-    public Result scanQRCode(String tempId, Long userId, HttpServletRequest request) {
+    public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
         if (!tempId.contains("tempId=")) {
             return Result.fail("扫码异常");
