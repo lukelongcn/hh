@@ -1,5 +1,6 @@
 package com.h9.lottery.service;
 
+
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -9,14 +10,17 @@ import com.h9.common.common.ServiceException;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
-import com.h9.common.db.entity.Reward.StatusEnum;
+import com.h9.common.db.entity.config.SystemBlackList;
+import com.h9.common.db.entity.config.WhiteUserList;
+import com.h9.common.db.entity.lottery.*;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
-import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.config.LotteryConfig;
+import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
@@ -26,27 +30,26 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.redisson.Redisson;
-import org.redisson.core.RLock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
 import java.util.stream.Collectors;
 
-import static com.h9.common.db.entity.BalanceFlow.FlowType.LOTTERY;
-import static com.h9.common.db.entity.Reward.StatusEnum.END;
-
+import static com.h9.common.db.entity.account.BalanceFlow.FlowType.LOTTERY;
+import static com.h9.common.db.entity.lottery.Reward.StatusEnum.END;
+import static com.h9.common.db.entity.lottery.Reward.StatusEnum.FAILD;
+import static com.h9.common.db.entity.lottery.Reward.StatusEnum;
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -107,7 +110,7 @@ public class LotteryService {
             return Result.fail("您扫的条码不存在");
         }
         Integer status = reward.getStatus();
-        if (status == StatusEnum.FAILD.getCode()) {
+        if (status == Reward.StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
         User user = userRepository.findOne(userId);
@@ -121,7 +124,7 @@ public class LotteryService {
 //          放回是否开奖
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
             lotteryResultDto.setRoomUser(lottery.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
-            lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
+            lotteryResultDto.setLottery(reward.getStatus() == END.getCode());
             return Result.success(lotteryResultDto);
         } else {
             //  s 第一次参数这个活动
@@ -133,7 +136,7 @@ public class LotteryService {
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
             lotteryResultDto.setLottery(false);
             lotteryResultDto.setRoomUser(false);
-            lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
+            lotteryResultDto.setLottery(reward.getStatus() == Reward.StatusEnum.END.getCode());
             //是第一个用户
             lottery = new Lottery();
             int partakeCount = lotteryRepository.findCountByReward(rewardId);
