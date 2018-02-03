@@ -635,7 +635,7 @@ public class UserService {
                     .setCodeUrl(url)
                     .setTempId(tempId)
 //                    .setTransferRecord(transferList)
-                    .setMoney(MoneyUtils.formatMoney(money));
+                    .setMoney(money);
 
             return Result.success(redEnvelopeCodeVO);
         }
@@ -743,6 +743,9 @@ public class UserService {
 
     public Result scanQRCode(String tempId, Long userId) {
         Map<String, String> map = new HashMap<>();
+        if (!tempId.contains("tempId=")) {
+            return Result.fail("扫码异常");
+        }
         int index = tempId.indexOf("tempId=");
         if (StringUtils.isBlank(tempId)) {
             return Result.fail("二维码超时");

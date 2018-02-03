@@ -3,6 +3,7 @@ package com.h9.api.model.vo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class RedEnvelopeCodeVO {
 
     private String codeUrl;
-    private String money;
+    private BigDecimal money;
 
 //    private List<Map<Object, Object>> transferRecord= new ArrayList();
 
