@@ -13,6 +13,7 @@ public class GoodsListVO {
     private String name;
     private String price;
     private Long id;
+
     private String unit ;
 
     public GoodsListVO(){}
