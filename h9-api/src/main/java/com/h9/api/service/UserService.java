@@ -753,9 +753,9 @@ public class UserService {
         if (StringUtils.isBlank(tempId)) {
             return Result.fail("二维码超时");
         }
-        if (tempId.contains("tempId=")) {
+        if (tempId.contains("id=")) {
             int index = tempId.indexOf("tempId=");
-            tempId = tempId.substring(index + 7, tempId.length());
+            tempId = tempId.substring(index + 3, tempId.length());
         }
 
         map.put("Event", SCAN.getValue());
