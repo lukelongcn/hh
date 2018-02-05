@@ -724,7 +724,7 @@ public class UserService {
 //            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
 //            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
             tempId = URLEncoder.encode(tempId, "UTF-8");
-            String link = host + "/user/temp/redirect?id=" + tempId;
+            String link = host + "/h9/api/user/temp/redirect?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
             logger.info("二维码内容："+link);
