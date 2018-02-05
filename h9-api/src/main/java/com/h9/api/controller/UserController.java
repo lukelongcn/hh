@@ -22,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -181,6 +183,11 @@ public class UserController {
         userService.getOwnRedEnvelope(request, response, tempId);
     }
 
+    @GetMapping("/user/temp/redirect")
+    public void tempRedirect(HttpServletResponse response,@RequestParam String id){
+        userService.tempRedirect(response,id);
+
+    }
     /**
      * description: 扫描 推广红包
      */

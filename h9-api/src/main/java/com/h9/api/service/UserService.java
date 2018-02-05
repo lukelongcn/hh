@@ -722,10 +722,11 @@ public class UserService {
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
 //            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
-            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+//            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+            tempId = URLEncoder.encode(tempId, "UTF-8");
+            String link = host + "/user/temp/redirect?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
-//            link = URLEncoder.encode(link, "UTF-8");
             logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
@@ -797,5 +798,19 @@ public class UserService {
 
     public void addUserCount(Long userId){
         addUserCount(userId);
+    }
+
+    public void tempRedirect(HttpServletResponse response, String tempId) {
+        try {
+
+            String decode = URLDecoder.decode(tempId, "UTF-8");
+            response.sendRedirect(decode);
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            logger.info("解码失败");
+        }
+
+
     }
 }
