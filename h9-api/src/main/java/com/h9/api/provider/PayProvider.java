@@ -95,9 +95,9 @@ public class PayProvider {
     }
 
 
-    public Result getPrepayInfo(OrderVo orderVo) {
+    public Result getPrepayInfo(Long payOrderId) {
         //app
-        String prepayURL = getPrepayURL(orderVo.getPayOrderId());
+        String prepayURL = getPrepayURL(payOrderId);
         try {
             return restTemplate.getForObject(prepayURL, Result.class);
         } catch (Exception e) {
