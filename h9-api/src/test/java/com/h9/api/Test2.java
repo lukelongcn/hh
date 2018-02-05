@@ -1,66 +1,24 @@
 package com.h9.api;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.BeanUtils;
 
-/**
- * Created by itservice on 2017/11/14.
- */
-class Person {
-    private String name;
-    private String age;
-
-    public static class PersonBuilder {
-
-        private String name;
-        private String age;
-
-        public PersonBuilder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public PersonBuilder setAge(String age) {
-            this.age = age;
-            return this;
-        }
-
-        public Person builder() {
-            Person person = new Person();
-            BeanUtils.copyProperties(PersonBuilder.this, person);
-            return person;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAge() {
-            return age;
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-}
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class Test2 {
 
     public static void main(String[] args) {
-        Person person = new Person.PersonBuilder().setAge("1").setName("ldh").builder();
-        System.out.println(person.getName());
-        System.out.println(person.getAge());
+        String url = "https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=bdf36da128284557bf9dc8f79e1ba722";
+        try {
+            String encode = URLEncoder.encode(url, "UTF-8");
+            System.out.println(encode);
+
+            String decode = URLDecoder.decode(encode, "UTF-8");
+            System.out.println(decode);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -60,8 +60,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -722,6 +725,7 @@ public class UserService {
             String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
+            link = URLEncoder.encode(link, "UTF-8");
             logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
@@ -752,6 +756,14 @@ public class UserService {
         Map<String, String> map = new HashMap<>();
         if (StringUtils.isBlank(tempId)) {
             return Result.fail("二维码超时");
+        }
+
+        //tempId 存放的是url ,需要进行url 解码
+        try {
+             tempId = URLDecoder.decode(tempId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.info("解码失败,"+tempId);
+            return Result.fail("领取异常");
         }
         if (tempId.contains("id=")) {
             int index = tempId.indexOf("id=");
