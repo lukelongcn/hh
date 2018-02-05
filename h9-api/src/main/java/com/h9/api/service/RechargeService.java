@@ -69,7 +69,7 @@ public class RechargeService {
         Map<String, Object> map = new HashMap<>();
         map.put("wxPayInfo", prepayResult.getData());
         map.put("orderId", data.getOrderId());
-        map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_MINUTE));
+        map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_SECOND));
         return Result.success(map);
     }
 
