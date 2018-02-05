@@ -802,9 +802,12 @@ public class UserService {
 
     public void tempRedirect(HttpServletResponse response, String tempId) {
         try {
-
-            String decode = URLDecoder.decode(tempId, "UTF-8");
-            response.sendRedirect(decode);
+            //https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1
+            String url = host+"/h9-weixin/#/account/hongbao/result?id="+tempId;
+            logger.info("tempId : "+tempId);
+            logger.info("url : "+url);
+//            String decode = URLDecoder.decode(tempId, "UTF-8");
+            response.sendRedirect(url);
 
         } catch (Exception e) {
             logger.info(e.getMessage(),e);
