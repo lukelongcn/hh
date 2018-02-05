@@ -722,10 +722,11 @@ public class UserService {
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
 //            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
-            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+//            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+            String link = host + "/user/temp/redirect?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
-//            link = URLEncoder.encode(link, "UTF-8");
+            link = URLEncoder.encode(link, "UTF-8");
             logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
@@ -759,12 +760,12 @@ public class UserService {
         }
 
         //tempId 存放的是url ,需要进行url 解码
-//        try {
-//             tempId = URLDecoder.decode(tempId, "UTF-8");
-//        } catch (UnsupportedEncodingException e) {
-//            logger.info("解码失败,"+tempId);
-//            return Result.fail("领取异常");
-//        }
+        try {
+             tempId = URLDecoder.decode(tempId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.info("解码失败,"+tempId);
+            return Result.fail("领取异常");
+        }
         if (tempId.contains("id=")) {
             int index = tempId.indexOf("id=");
             tempId = tempId.substring(index + 3, tempId.length());
@@ -797,5 +798,19 @@ public class UserService {
 
     public void addUserCount(Long userId){
         addUserCount(userId);
+    }
+
+    public void tempRedirect(HttpServletResponse response, String tempId) {
+        try {
+
+            String decode = URLDecoder.decode(tempId, "UTF-8");
+            response.sendRedirect(decode);
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            logger.info("解码失败");
+        }
+
+
     }
 }

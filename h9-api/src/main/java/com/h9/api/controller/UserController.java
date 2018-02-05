@@ -1,7 +1,6 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
-import com.h9.api.model.dto.ScanDTO;
 import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
@@ -23,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -182,14 +183,19 @@ public class UserController {
         userService.getOwnRedEnvelope(request, response, tempId);
     }
 
+    @GetMapping("/user/temp/redirect")
+    public void tempRedirect(HttpServletResponse response,@RequestParam String id){
+        userService.tempRedirect(response,id);
+
+    }
     /**
      * description: 扫描 推广红包
      */
     @Secured
-    @PostMapping("/user/redEnvelope/scan/qrcode")
-    public Result scanQRCode(@RequestBody@Valid ScanDTO scanDTO, @SessionAttribute("curUserId") Long userId,
+    @GetMapping("/user/redEnvelope/scan/qrcode")
+    public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId,
                              HttpServletRequest request) {
-        return userService.scanQRCode(scanDTO.getTempId(),userId);
+        return userService.scanQRCode(tempId,userId);
     }
 
     private Logger logger = Logger.getLogger(this.getClass());
