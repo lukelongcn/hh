@@ -30,6 +30,7 @@ public class DateUtil {
         GBK_MONTH("yyyy年MM月"),
         GBK_YEAR("yyyy年"),
         NON_SEPARATOR_DAY("yyyyMMdd"),
+        NON_SEPARATOR_MINUTE("yyyyMMddHHmm"),
         SECOND("yyyy-MM-dd HH:mm:ss"),
         SECOND2("yyyyMMddHHmmss"),
         MINUTE("yyyy-MM-dd HH:mm"),

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -127,6 +128,17 @@ public class GlobalExceptionHandler {
         logger.info("method: " + httpServletRequest.getMethod());
         logger.info("url: " + httpServletRequest.getRequestURL());
         logger.info("content-type: " + httpServletRequest.getHeader("Content-Type"));
+    }
+
+
+
+    public String getMailContent(HttpServletRequest request,Exception ex){
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("uri:" + request.getRequestURI()+"\n\r<BR>");
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        stringBuffer.append("param:" + JSONObject.toJSONString(parameterMap)+"\n\r<BR>");
+        stringBuffer.append(ExceptionUtils.getStackTrace(ex));
+        return stringBuffer.toString();
     }
 
 }
