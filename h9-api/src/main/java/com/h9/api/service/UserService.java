@@ -759,12 +759,12 @@ public class UserService {
         }
 
         //tempId 存放的是url ,需要进行url 解码
-        try {
-             tempId = URLDecoder.decode(tempId, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.info("解码失败,"+tempId);
-            return Result.fail("领取异常");
-        }
+//        try {
+//             tempId = URLDecoder.decode(tempId, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            logger.info("解码失败,"+tempId);
+//            return Result.fail("领取异常");
+//        }
         if (tempId.contains("id=")) {
             int index = tempId.indexOf("id=");
             tempId = tempId.substring(index + 3, tempId.length());

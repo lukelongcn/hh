@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 
@@ -67,5 +70,12 @@ public class TestController {
 
         String weChatAccessToken = weChatProvider.getWeChatAccessToken();
         return weChatAccessToken;
+    }
+
+    @GetMapping("/test/red")
+    public void geRed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        response.sendRedirect("https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1");
+
     }
 }

@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.dto.ScanDTO;
 import com.h9.api.model.dto.TransferDTO;
 import com.h9.api.model.dto.UserLoginDTO;
 import com.h9.api.model.dto.UserPersonInfoDTO;
@@ -185,10 +186,10 @@ public class UserController {
      * description: 扫描 推广红包
      */
     @Secured
-    @GetMapping("/user/redEnvelope/scan/qrcode")
-    public Result scanQRCode(@RequestParam String tempId,@SessionAttribute("curUserId") Long userId,
+    @PostMapping("/user/redEnvelope/scan/qrcode")
+    public Result scanQRCode(@RequestBody@Valid ScanDTO scanDTO, @SessionAttribute("curUserId") Long userId,
                              HttpServletRequest request) {
-        return userService.scanQRCode(tempId,userId);
+        return userService.scanQRCode(scanDTO.getTempId(),userId);
     }
 
     private Logger logger = Logger.getLogger(this.getClass());
