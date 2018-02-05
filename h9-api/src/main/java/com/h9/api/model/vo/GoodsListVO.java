@@ -12,6 +12,8 @@ public class GoodsListVO {
     private String img;
     private String name;
     private String price;
+    // 单位
+    private String unit;
     private Long id;
 
     public GoodsListVO(){}
@@ -21,5 +23,6 @@ public class GoodsListVO {
         this.name = goods.getName();
         this.price = MoneyUtils.formatMoney(goods.getRealPrice());
         this.id = goods.getId();
+        this.unit = goods.getUnit();
     }
 }

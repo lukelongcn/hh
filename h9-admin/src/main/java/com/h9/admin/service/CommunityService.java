@@ -72,7 +72,7 @@ public class CommunityService {
 
     public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO) {
         PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
-        Page<BannerType> bannerTypes = this.bannerTypeRepository.findAllByPage(pageDTO.getLocaltion(),pageRequest);
+        Page<BannerType> bannerTypes = this.bannerTypeRepository.findAll4Page(pageDTO.getLocaltion(),pageRequest);
         List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
         bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));
         PageResult<BannerType> pageResult = new PageResult<>(bannerTypes);
@@ -98,9 +98,9 @@ public class CommunityService {
         if (bannerType == null) {
             return Result.fail("功能类别不存在");
         }
-        if (this.bannerRepository.findByTitle(bannerAddDTO.getTitle()) != null) {
+        /*if (this.bannerRepository.findByTitle(bannerAddDTO.getTitle()) != null) {
             return Result.fail("名称已存在");
-        }
+        }*/
         Banner banner = bannerAddDTO.toBanner();
         banner.setBannerType(bannerType);
         return Result.success(this.bannerRepository.save(banner));
@@ -246,9 +246,9 @@ public class CommunityService {
         if (b == null) {
             return Result.fail("功能类型不存在");
         }
-        if (this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(), bannerType.getCode()) != null) {
-            return Result.fail("标识已存在");
-        }
+//        if (this.bannerTypeRepository.findByIdNotAndCode(bannerType.getId(), bannerType.getCode()) != null) {
+//            return Result.fail("标识已存在");
+//        }
         BeanUtils.copyProperties(bannerType, b);
         return Result.success(this.bannerTypeRepository.save(b));
     }
