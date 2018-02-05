@@ -9,16 +9,9 @@ import java.net.URLEncoder;
 
 public class Test2 {
 
-    public static void main(String[] args) {
-        String url = "https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=bdf36da128284557bf9dc8f79e1ba722";
-        try {
-            String encode = URLEncoder.encode(url, "UTF-8");
-            System.out.println(encode);
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        String decode = URLDecoder.decode("https%3A%2F%2Fweixin-dev-h9.thy360.com%2Fuser%2Ftemp%2Fredirect%3Fid%3D49ccadb1776c44f681cbf4350c967035", "UTF-8");
+        System.out.println(decode);
 
-            String decode = URLDecoder.decode(encode, "UTF-8");
-            System.out.println(decode);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
     }
 }
