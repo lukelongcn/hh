@@ -350,10 +350,10 @@ public class LotteryService {
     @Resource
     private Redisson redisson;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = {Exception.class,ServiceException.class})
     public Result lottery(Long curUserId, String code) {
         logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
-        Reward reward = rewardRepository.findByCode(code);
+        Reward reward = rewardRepository.findByCode4Update(code);
         logger.debugv("rewardId {0},status {1}",reward.getId(),reward.getStatus());
         if (reward == null) {
             return Result.fail("红包不存在");
