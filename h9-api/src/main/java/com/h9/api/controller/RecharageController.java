@@ -25,9 +25,15 @@ public class RecharageController {
     @Secured
     @GetMapping("/order")
     public Result recharge(@SessionAttribute("curUserId") Long userId, @RequestParam BigDecimal money){
-        return rechargeService.recharge(userId,money);
+        return rechargeService.recharge(userId,money,false);
     }
 
+
+    @Secured
+    @GetMapping("/app/order")
+    public Result appRecharge(@SessionAttribute("curUserId") Long userId, @RequestParam BigDecimal money){
+        return rechargeService.appRecharge(userId,money);
+    }
 
 
     @Secured

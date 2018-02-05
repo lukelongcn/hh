@@ -4,6 +4,7 @@ import com.h9.api.model.dto.OrderDTO;
 import com.h9.api.model.dto.PayNotifyVO;
 import com.h9.api.model.dto.RechargeOrderVO;
 import com.h9.api.model.vo.OrderVo;
+import com.h9.api.model.vo.PayResultVO;
 import com.h9.api.model.vo.PayVO;
 import com.h9.api.provider.PayProvider;
 import com.h9.api.service.handler.AbPayHandler;
@@ -24,6 +25,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.h9.api.model.dto.OrderDTO.PayMethodEnum.WX;
+import static com.h9.api.model.dto.OrderDTO.PayMethodEnum.WXJS;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,7 +54,22 @@ public class RechargeService {
     private UserRepository userRepository;
 
     @Transactional
-    public Result recharge(Long userId, BigDecimal money) {
+    public Result appRecharge(Long userId, BigDecimal money) {
+        Result<PayVO> recharge = recharge(userId, money,true);
+        if(!recharge.isSuccess()){
+            return recharge;
+        }
+        PayVO data = recharge.getData();
+        Long payOrderId = data.getPayOrderId();
+        //APP 支付
+        Result prepayResult = payProvider.getPrepayInfo(payOrderId);
+        return Result.success(prepayResult.getData());
+    }
+
+
+
+    @Transactional
+    public Result recharge(Long userId, BigDecimal money,boolean isApp) {
         if (money == null) {
             return Result.fail("请填入要充值的金额");
         }
@@ -76,6 +95,7 @@ public class RechargeService {
         orderDTO.setBusinessOrderId(payInfo.getId());
         orderDTO.setTotalAmount(money);
         orderDTO.setOpenId(user.getOpenId());
+        orderDTO.setPayMethod(isApp? WX.getKey():WXJS.getKey());
         logger.debugv("开始支付");
         Result<OrderVo> result = payProvider.initOrder(orderDTO);
         if (!result.isSuccess()) {
