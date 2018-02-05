@@ -90,7 +90,7 @@ public class LotteryTask {
 
         String formatDate = DateUtil.formatDate(new Date(), DateUtil.FormatType.NON_SEPARATOR_MINUTE);
 
-        String lockKey = "h9:lock:"+formatDate;
+        String lockKey = "h9:lottery:lock:"+formatDate;
 
         String value = redisBean.getStringValue(lockKey);
 
