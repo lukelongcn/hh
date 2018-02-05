@@ -754,7 +754,7 @@ public class UserService {
             return Result.fail("二维码超时");
         }
         if (tempId.contains("id=")) {
-            int index = tempId.indexOf("tempId=");
+            int index = tempId.indexOf("id=");
             tempId = tempId.substring(index + 3, tempId.length());
         }
 
