@@ -183,8 +183,8 @@ public class UserController {
         userService.getOwnRedEnvelope(request, response, tempId);
     }
 
-    @GetMapping("/user/temp/redirect")
-    public void tempRedirect(HttpServletResponse response,@RequestParam String id){
+    @GetMapping("/user/temp/redirect/{id}")
+    public void tempRedirect(HttpServletResponse response,@PathVariable String id){
         userService.tempRedirect(response,id);
 
     }
