@@ -803,6 +803,7 @@ public class UserService {
     public void tempRedirect(HttpServletResponse response, String tempId) {
         try {
 
+            logger.info("tempId : "+tempId);
             String decode = URLDecoder.decode(tempId, "UTF-8");
             response.sendRedirect(decode);
 

@@ -63,7 +63,7 @@ public class Test {
                 MultiFormatReader formatReader = new MultiFormatReader();
 
 //                File file = new File("E:/code/img.png");
-                String url = "https://api-dev-h9.thy360.com/h9/api/user/redEnvelope/qrcode?tempId=44c7084e6c7b4e82bfed43cc59444455";
+                String url = "https://api-dev-h9.thy360.com/h9/api/user/redEnvelope/qrcode?tempId=d4b66f82721d4a8baa31bab2df48c497";
                 BufferedImage image = ImageIO.read(new URL(url));
                 BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
 
