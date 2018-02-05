@@ -725,7 +725,7 @@ public class UserService {
             String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
-            link = URLEncoder.encode(link, "UTF-8");
+//            link = URLEncoder.encode(link, "UTF-8");
             logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
