@@ -131,6 +131,9 @@ public class LotteryContorller {
     }
 
 
+    /**
+     * description: 兼容 以前 数据
+     */
     @GetMapping("/forward//GRP/Index")
     public void forwardOld(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         String forward = lotteryService.forward(code);
