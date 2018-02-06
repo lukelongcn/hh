@@ -72,6 +72,7 @@ public class GoodService {
 
 
     private Logger logger = Logger.getLogger(this.getClass());
+
     /**
      * description: 减少商品库 -1
      */
@@ -96,10 +97,11 @@ public class GoodService {
 
     /**
      * description:
+     *
      * @param count 要减少的库存
      */
     @SuppressWarnings("Duplicates")
-    public Result changeStock(Long goodsId,int count) {
+    public Result changeStock(Long goodsId, int count) {
 
         Goods goods = goodsReposiroty.findOne(goodsId);
         if (goods == null) return Result.fail("商品不存在");
@@ -109,7 +111,7 @@ public class GoodService {
             return Result.fail("库存不足");
         }
 
-        stock -=count;
+        stock -= count;
         goods.setStock(stock);
         if (stock <= 0) {
             goods.setStatus(2);
@@ -122,8 +124,8 @@ public class GoodService {
         return changeStock(goods.getId());
     }
 
-    public Result changeStock(Goods goods,int count) {
-        return changeStock(goods.getId(),count);
+    public Result changeStock(Goods goods, int count) {
+        return changeStock(goods.getId(), count);
     }
 
 
@@ -132,21 +134,21 @@ public class GoodService {
      *
      * @see GoodsType.GoodsTypeEnum 商品类别
      * 商品类型 1今日新品 2日常家居 3食品饮料 4 所有商品
-     *
-     *          MOBILE_RECHARGE("mobile_recharge","手机卡"),
-                DIDI_CARD("didi_card", "滴滴卡"),
-                MATERIAL("material","实物"),
-                FOODS("foods", "食物，饮料"),
-                EVERYDAY_GOODS("everyday_goods", "日常家居"),
-                VB("vb", "V币");
+     * <p>
+     * MOBILE_RECHARGE("mobile_recharge","手机卡"),
+     * DIDI_CARD("didi_card", "滴滴卡"),
+     * MATERIAL("material","实物"),
+     * FOODS("foods", "食物，饮料"),
+     * EVERYDAY_GOODS("everyday_goods", "日常家居"),
+     * VB("vb", "V币");
      */
     public Result goodsList(String type, int page, int size) {
-        if(StringUtils.isEmpty(type)){
+        if (StringUtils.isEmpty(type)) {
             type = "o_all";
         }
         GoodsType byCode = goodsTypeReposiroty.findByCode(type);
-        if(byCode!=null){
-            return  goodsPageQuery(type, page, size);
+        if (byCode != null) {
+            return goodsPageQuery(type, page, size);
         }
         switch (type) {
             case "o_todayNew":
@@ -160,13 +162,12 @@ public class GoodService {
 
     /**
      * description: 分页查询指定goodsType的商品列表
-     *
      */
-    public Result goodsPageQuery(String code , Integer page, Integer size) {
+    public Result goodsPageQuery(String code, Integer page, Integer size) {
 
-        if(StringUtils.isBlank(code)) return Result.fail("不存在此类型商品");
+        if (StringUtils.isBlank(code)) return Result.fail("不存在此类型商品");
 
-        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, goodsReposiroty.pageRequest(page, size) );
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(code, goodsReposiroty.pageRequest(page, size));
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -177,7 +178,7 @@ public class GoodService {
      */
     public Result goodsPageQuery(int page, int size) {
 
-        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(goodsReposiroty.pageRequest(page, size) );
+        Page<Goods> pageObj = goodsReposiroty.findStoreGoods(goodsReposiroty.pageRequest(page, size));
         PageResult<Goods> pageResult = new PageResult(pageObj);
 
         return Result.success(pageResult.result2Result(GoodsListVO::new));
@@ -185,7 +186,6 @@ public class GoodService {
 
     /**
      * description: 今日新品,取更新时间最近5条的
-     *
      */
     public Result todayNewGoods() {
         PageRequest pageRequest = goodsReposiroty.pageRequest(0, 5);
@@ -197,10 +197,10 @@ public class GoodService {
     }
 
 
-    public Result goodsDetail( Long id,Long userId) {
+    public Result goodsDetail(Long id, Long userId) {
 
         Goods goods = goodsReposiroty.findOne(id);
-        if(goods == null){
+        if (goods == null) {
             return Result.fail("商品不存在");
         }
 
@@ -226,56 +226,62 @@ public class GoodService {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
 
-        if(address == null) return Result.fail("地址不存在");
-
+        if (address == null) return Result.fail("地址不存在");
 
 
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
-        if(goods == null) return Result.fail("商品不存在");
+        if (goods == null) return Result.fail("商品不存在");
         BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
 
         User user = userRepository.findOne(userId);
         Long addressUserId = address.getUserId();
 
-        if(!addressUserId.equals(userId)) return Result.fail("无效的地址");
+        if (!addressUserId.equals(userId)) return Result.fail("无效的地址");
 
-        Result result = changeStock(goods,count);
+        Result result = changeStock(goods, count);
 
-        if(result.getCode() == 1) return result;
+        if (result.getCode() == 1) return result;
 
         //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
-        if(balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0){
+        if (balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
             return Result.fail("余额不足");
         }
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goodsPrice, address.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"", "徽酒", user,code,address.getName());
+        Orders order = orderService.initOrder(goodsPrice, address.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + "", "徽酒", user, code, address.getName());
         order.setAddressId(addressId);
-        order.setUserAddres(address.getProvince()+address.getCity()+address.getDistict()+address.getAddress());
+        order.setUserAddres(address.getProvince() + address.getCity() + address.getDistict() + address.getAddress());
         order.setOrderFrom(1);
-        order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+        order.setStatus(Orders.statusEnum.CANCEL.getCode());
         ordersRepository.saveAndFlush(order);
         int payMethod = convertGoodsDTO.getPayMethod();
-        if(payMethod == Orders.PayMethodEnum.WX_PAY.getCode()){
-            //TODO 调用api 模块 获取 支付信息
-            return getPayInfo(order.getId(),order.getMoney(),userId,convertGoodsDTO.getPayPlatform());
-        }
-
-        String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
-        if(!payResult.isSuccess()){
-            throw new ServiceException(payResult);
-        }
-
-        order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-
-        OrderItems orderItems = new OrderItems(goods,count,order);
+        //订单项
+        OrderItems orderItems = new OrderItems(goods, count, order);
         ordersRepository.save(order);
         orderItems.setOrders(order);
         orderItemReposiroty.save(orderItems);
+
+        if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
+            // 微信支付
+            return getPayInfo(order.getId(), order.getMoney(), userId, convertGoodsDTO.getPayPlatform());
+        } else {
+            return balancePay(order, userId, goods, goodsPrice, count);
+        }
+
+
+    }
+
+    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
+        String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
+        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
+        if (!payResult.isSuccess()) {
+            throw new ServiceException(payResult);
+        }
+        order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+        order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
 
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
@@ -285,20 +291,21 @@ public class GoodService {
 
     @Value("${path.app.wechat_host}")
     private String wxHost;
-    private Result getPayInfo(Long orderId, BigDecimal money,Long userId,String payPlatform) {
+
+    private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform) {
         String url = wxHost + "/h9/api/pay/payInfo";
-        StorePayDTO payDTO = new StorePayDTO(orderId,money,userId,payPlatform);
+        StorePayDTO payDTO = new StorePayDTO(orderId, money, userId, payPlatform);
         try {
 //            HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.APPLICATION_JSON);
 
 //            HttpEntity<String> entity = new HttpEntity<String>(JSONObject.toJSONString(payDTO), headers);
-            logger.info("access url : "+url);
+            logger.info("access url : " + url);
             Result result = restTemplate.postForObject(url, payDTO, Result.class);
             return result;
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
             return Result.fail("获取支付信息失败，请稍后再试");
         }
     }

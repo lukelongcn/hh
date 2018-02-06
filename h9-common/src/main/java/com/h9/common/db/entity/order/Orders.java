@@ -70,6 +70,10 @@ public class Orders extends BaseEntity {
     @Column(name = "pay_money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付的金额'")
     private BigDecimal payMoney = new BigDecimal(0);
 
+    /**
+     * description:
+     * @see  PayStatusEnum
+     */
     @Column(name = "pay_status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '支付状态 1待支付 2 已支付'")
     private Integer payStatus = 1;
 
@@ -246,6 +250,7 @@ public class Orders extends BaseEntity {
     }
 
     public enum statusEnum{
+
 
         UNCONFIRMED(0,"未确认"),
         WAIT_SEND(1,"等待发货"),
