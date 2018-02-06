@@ -78,6 +78,10 @@ public class RechargeService {
             return Result.fail("请填入正确的充值金额");
         }
 
+        if (money.compareTo(new BigDecimal(99999999)) > 0) {
+            return Result.fail("充值金额太大暂不支持");
+        }
+
         RechargeOrder rechargeOrder = new RechargeOrder();
         rechargeOrder.setUser_id(userId);
         rechargeOrder.setMoney(money);
