@@ -16,13 +16,16 @@ import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.RechargeOrderRepository;
 import com.h9.common.db.repo.UserRepository;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +67,11 @@ public class RechargeService {
         Long payOrderId = data.getPayOrderId();
         //APP 支付
         Result prepayResult = payProvider.getPrepayInfo(payOrderId);
-        return Result.success(prepayResult.getData());
+        Map<String, Object> mapVO = new HashMap<>();
+        mapVO.put("orderId", payOrderId);
+        mapVO.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_SECOND));
+        mapVO.put("wxPayInfo", prepayResult.getData());
+        return Result.success(mapVO);
     }
 
 
