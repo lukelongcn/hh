@@ -314,12 +314,12 @@ public class HotelService {
             payVO.setPayUrl(pay);
             payVO.setOrderId(storePayDTO.getOrderId());
             //公众号
-            PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), payVO);
+            PayResultVO vo = new PayResultVO(null, payVO);
             return Result.success(vo);
         } else {
             //APP 支付
             Result prepayResult = payProvider.getPrepayInfo(orderVo.getPayOrderId());
-            PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), prepayResult.getData());
+            PayResultVO vo = new PayResultVO(null, prepayResult.getData());
             return Result.success(vo);
         }
     }
