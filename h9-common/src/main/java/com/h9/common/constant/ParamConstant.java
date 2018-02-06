@@ -69,10 +69,23 @@ public class ParamConstant {
     // 短信一天发送次数
     public static final String SMS_ONEDAY_COUNTCOUNT = "sms:OneDay:CountCount";
 
+    // 意见反馈类别
+    public static final String ADVICE_TYPE = "adviceType";
     // 短信一天发送次数
     public static final String CAN_Withdraw = "withdraw:enable";
 
+    // 打赏金额
+    public static final String REWARD_MONEY = "reward_money";
     public static final String CAN_TRANS= "trans:enable";
 
+    // 签到奖励概率
+    public static final String SIGN_REWARD_CHANCE = "sign_reward_chance";
 
+    // 签到奖励金额范围1
+    public static final String SIGN_REWARD1 = "sign_reward1";
+
+    // 签到奖励金额范围2
+    public static final String SIGN_REWARD2 = "sign_reward2";
+
+    public static final String STICK_REPORT = "stick_report";
 }

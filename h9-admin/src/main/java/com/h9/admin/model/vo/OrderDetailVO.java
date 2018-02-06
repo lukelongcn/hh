@@ -1,8 +1,8 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.OrderItems;
-import com.h9.common.db.entity.Orders;
-import com.h9.common.db.entity.RechargeRecord;
+import com.h9.common.db.entity.order.OrderItems;
+import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.account.RechargeRecord;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 

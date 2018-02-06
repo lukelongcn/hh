@@ -1,12 +1,9 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.order.Goods;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.jpa.criteria.expression.function.AggregationFunction;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
-import sun.nio.cs.ext.MacArabic;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
@@ -33,6 +30,10 @@ public class GoodsAddDTO {
     @ApiModelProperty(value = "商品类型id",required = true)
     @NotNull(message = "商品类型不能为空")
     private Long goodsTypeId;
+
+    @ApiModelProperty(value = "商品单位",required = true)
+    @NotNull(message = "商品单位不能为空")
+    private String unit;
 
     @ApiModelProperty(value = "图片",required = true)
     @NotBlank(message = "图片不能为空")
@@ -165,6 +166,14 @@ public class GoodsAddDTO {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public Goods toGoods(){

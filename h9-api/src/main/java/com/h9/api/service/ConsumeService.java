@@ -18,7 +18,19 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.BankType;
+import com.h9.common.db.entity.account.CardCoupons;
+import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.order.*;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserBank;
+import com.h9.common.db.entity.user.UserRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsFails;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRequest;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.CharacterFilter;
 import com.h9.common.utils.DateUtil;
@@ -36,7 +48,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.h9.common.db.entity.Orders.orderTypeEnum.VIRTUAL_GOODS;
+import static com.h9.common.db.entity.order.Orders.orderTypeEnum.VIRTUAL_GOODS;
 
 /**
  * Created by itservice on 2017/10/31.
@@ -85,7 +97,6 @@ public class ConsumeService {
     private RechargeRecordRepository rechargeRecordRepository;
     @Resource
     private SuNingProvider suNingProvider;
-
 
     @Resource
     private OfPayRecordReposiroty ofPayRecordReposiroty;
@@ -147,10 +158,11 @@ public class ConsumeService {
         orderItems.setName(goods.getName());
         orderItems.setGoods(goods);
 
-//        userAccountRepository.save(userAccount);
-        String rechargeId = UUID.randomUUID().toString().replace("-", "");
+        userAccountRepository.save(userAccount);
+        orderItemReposiroty.saveAndFlush(orderItems);
 
-        Result result ;
+        String rechargeId = UUID.randomUUID().toString().replace("-", "");
+        Result result = null;
         if (currentEnvironment.equals("product")) {
             logger.info("调用 recharge method");
             result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);

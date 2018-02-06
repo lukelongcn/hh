@@ -1,19 +1,13 @@
 package com.h9.common.modle.vo.admin.transaction;
 
-import com.h9.common.db.entity.CardCoupons;
+import com.h9.common.db.entity.account.CardCoupons;
 import com.h9.common.modle.vo.admin.BasisVO;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * @author: George

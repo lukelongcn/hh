@@ -1,6 +1,6 @@
 package com.h9.admin.model.dto.basis;
 
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.MD5Util;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;

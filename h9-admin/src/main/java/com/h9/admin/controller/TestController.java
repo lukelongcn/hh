@@ -22,6 +22,7 @@ public class TestController {
      */
     @GetMapping("/hello")
     public Result hello(){
+        int i = 1/0;
         return Result.success();
     }
 

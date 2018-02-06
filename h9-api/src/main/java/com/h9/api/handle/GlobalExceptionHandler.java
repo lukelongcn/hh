@@ -97,9 +97,9 @@ public class GlobalExceptionHandler {
 
         if (e instanceof HttpMessageNotReadableException) {
             logger.info(e.getMessage(), e);
-            return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
+//            return new Result(1, "请输入正确格的的数据类型," + e.getMessage());
+            return new Result(1, "请输入正确格的的数据类型," + ((HttpMessageNotReadableException) e).getRootCause().getMessage());
         }
-
 
 
         // 以上错误都不匹配
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
             time = System.currentTimeMillis();
         }
         logger.info("hanldeException 服务器繁忙，请稍后再试");
-        return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙，请稍后再试", ExceptionUtils.getStackTrace(e));
+        return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙，请稍后再试", getMailContent(request,e));
     }
 
     /**
@@ -131,7 +131,6 @@ public class GlobalExceptionHandler {
     }
 
 
-
     public String getMailContent(HttpServletRequest request,Exception ex){
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("uri:" + request.getRequestURI()+"\n\r<BR>");
@@ -140,5 +139,6 @@ public class GlobalExceptionHandler {
         stringBuffer.append(ExceptionUtils.getStackTrace(ex));
         return stringBuffer.toString();
     }
+
 
 }

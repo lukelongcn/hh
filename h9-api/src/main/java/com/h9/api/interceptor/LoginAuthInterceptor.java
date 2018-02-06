@@ -1,12 +1,18 @@
 package com.h9.api.interceptor;
 
 import com.h9.api.handle.UnAuthException;
+import com.h9.api.service.UserService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.slf4j.MDC;
 import org.springframework.core.MethodParameter;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -17,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +35,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger(this.getClass());
     @Resource
     private RedisBean redisBean;
+    @Resource
+    private UserService userService;
 
     @SuppressWarnings("Duplicates")
     @Override
@@ -45,7 +54,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 String userId4phone = redisBean.getStringValue(RedisKey.getTokenUserIdKey(token));
                 if (StringUtils.isBlank(token)) throw new UnAuthException(401, "登录超时，请重新登录");
                 String weChatUserIdKey = RedisKey.getWeChatUserId(token);
-                logger.info("weChatUserIdKey: "+weChatUserIdKey);
+                logger.info("weChatUserIdKey: " + weChatUserIdKey);
                 String userId4WeChat = redisBean.getStringValue(weChatUserIdKey);
                 if (StringUtils.isEmpty(userId4WeChat) && StringUtils.isEmpty(userId4phone)) {
                     throw new UnAuthException(401, "请重新登录");
@@ -63,6 +72,8 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                     userId = userId4WeChat;
                 }
                 MDC.put("userId", userId);
+                // 统计人数
+                userService.addUserCount(userId);
 
                 if (StringUtils.isEmpty(userId)) {
                     throw new UnAuthException(401, "请重新登录");

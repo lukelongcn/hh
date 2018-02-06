@@ -1,6 +1,6 @@
 package com.h9.store.modle.vo;
 
-import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.MoneyUtils;
 import lombok.Data;
 
@@ -14,6 +14,8 @@ public class GoodsListVO {
     private String price;
     private Long id;
 
+    private String unit ;
+
     public GoodsListVO(){}
 
     public GoodsListVO(Goods goods){
@@ -21,5 +23,6 @@ public class GoodsListVO {
         this.name = goods.getName();
         this.price = MoneyUtils.formatMoney(goods.getRealPrice());
         this.id = goods.getId();
+        this.unit = goods.getUnit();
     }
 }

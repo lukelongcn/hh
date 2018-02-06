@@ -1,6 +1,7 @@
 package com.h9.api.provider.model;
 
-import com.h9.common.db.entity.UserBank;
+
+import com.h9.common.db.entity.user.UserBank;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

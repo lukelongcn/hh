@@ -6,9 +6,9 @@ import com.h9.common.base.Result;
 import com.h9.common.common.ConfigHanler;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.SMSLog;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.config.SMSLog;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.SMSLogReposiroty;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -198,7 +197,7 @@ public class SmsService {
     public Result sendSMSCode(String phone) {
 
 
-        if(!MobileUtils.isMobileNO(phone)) return Result.fail("请填写正确的手机号");
+        if(!MobileUtils.isMobileNO(phone)){ return Result.fail("请填写正确的手机号"); }
         //短信限制 一分钟一次lastSendKey
         String lastSendKey = RedisKey.getSmsCodeCountDown(phone, SMSTypeEnum.REGISTER.getCode());
         String lastSendValue = redisBean.getStringValue(lastSendKey);

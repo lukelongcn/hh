@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Reward;
+import com.h9.common.db.entity.lottery.Reward;
 import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;

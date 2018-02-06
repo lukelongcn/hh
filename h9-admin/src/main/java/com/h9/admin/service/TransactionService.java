@@ -6,7 +6,10 @@ import com.h9.admin.model.dto.transaction.CardCouponsListAddDTO;
 import com.h9.admin.model.dto.transaction.TransferDTO;
 import com.h9.admin.model.vo.TransferVO;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.Transactions;
+import com.h9.common.db.entity.account.CardCoupons;
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.repo.CardCouponsRepository;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.TransactionsRepository;
@@ -16,6 +19,7 @@ import com.h9.common.modle.vo.admin.transaction.GoodsTypeVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.repo.GoodsTypeReposiroty;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.HttpUtil;
@@ -40,8 +44,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER;
+
 
 /**
  * @author: George

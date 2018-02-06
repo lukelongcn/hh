@@ -2,8 +2,12 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.finance.WithdrawRecordQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowFinanceVO;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.account.VB2Money;
+import com.h9.common.db.entity.lottery.LotteryFlow;
+import com.h9.common.db.entity.lottery.LotteryFlowRecord;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import com.h9.common.modle.vo.admin.finance.LotteryFlowRecordVO;
-import com.h9.common.db.entity.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.admin.finance.WithdrawRecordVO;
@@ -17,8 +21,6 @@ import com.h9.common.modle.dto.LotteryFLowRecordDTO;
 import com.h9.common.modle.dto.LotteryFlowFinanceDTO;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.HttpUtil;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.*;
 
 /**

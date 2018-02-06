@@ -8,7 +8,8 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.order.Address;
+import com.h9.common.db.entity.order.China;
 import com.h9.common.db.repo.*;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,6 @@ public class AddressService {
         }
         List<Areas> areasList = allProvices.stream().map(Areas::new).collect(Collectors.toList());
         Long end = System.currentTimeMillis();
-        logger.debugv("时间"+(end-startTime));
 //        存储到redis
         redisBean.setObject(RedisKey.addressKey,areasList);
         return areasList;

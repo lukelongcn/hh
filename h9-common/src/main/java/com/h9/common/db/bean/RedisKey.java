@@ -1,6 +1,10 @@
 package com.h9.common.db.bean;
 
+import com.h9.common.db.entity.config.GlobalProperty;
+import com.h9.common.utils.DateUtil;
+
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -11,6 +15,8 @@ import java.util.UUID;
  * Time: 9:31
  */
 public class RedisKey {
+
+
     /**
      * description: %s 占位符为手机号码
      */
@@ -25,6 +31,18 @@ public class RedisKey {
      */
     private static String errorCodeCountKey = "h9:sms:code:errorCount:userId:%s:type:%s";
 
+
+
+    /**
+     * description: 用户人数
+     */
+    public static String userCountKey ="h9:user:count:";
+
+    public static String getUserCountKey(Date date) {
+        if(date == null) return "";
+        return userCountKey+ DateUtil.formatDate(date, DateUtil.FormatType.DAY);
+    }
+
     public static String getTokenUserIdKey(String token){
         return String.format(tokenUserIdKey,token);
     }
@@ -32,6 +50,7 @@ public class RedisKey {
     public static String getWeChatUserId(String token){
         return String.format("h9:wechat:userId:%s",token);
     }
+
 
     public static String addressKey = "h9:address:areas";
 
@@ -50,7 +69,8 @@ public class RedisKey {
     public static String QR_CODE = "h9:qr:code:";
 
     /**
-     * description: 二维码对应的 临时 UUID，码和tempId 共存亡
+     * description: 二维码对应的 临时 UUID，码和 红包二维码 共存亡
+     * value 对应 userId
      */
     public static String  QR_CODE_TEMP_ID = "h9:qr:code:tempId:";
 
@@ -58,12 +78,12 @@ public class RedisKey {
         return QR_CODE_TEMP_ID+tempId;
     }
 
-    public static String getQrCode(Long userId) {
-        return QR_CODE+""+userId;
+    public static String getQrCode(Long sequenceId) {
+        return QR_CODE+""+sequenceId;
     }
 
-    public static String getQrCode(String userId) {
-        return QR_CODE+""+userId;
+    public static String getQrCode(String sequenceId) {
+        return QR_CODE+""+sequenceId;
     }
 
     public static String getTodayRechargeMoney(Long userId) {
@@ -84,13 +104,14 @@ public class RedisKey {
         System.out.println(smsCodeKey);
     }
 
+
     public static String getAdminTokenUserIdKey(String token){
         return String.format("h9:admin:userId:%s",token);
     }
 
     /***
      * 获取通用全局配置
-     * @see com.h9.common.db.entity.GlobalProperty
+     * @see com.h9.common.db.entity.config.GlobalProperty
      * @param code
      * @return
      */
@@ -126,6 +147,8 @@ public class RedisKey {
     public static String getLotteryBefore(Long userId,Long rewardId){
         return String.format("lottery:%d:%d:before",userId,rewardId);
     }
+
+
 }
 
 

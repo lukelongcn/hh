@@ -1,6 +1,5 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.Banner;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

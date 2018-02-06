@@ -1,14 +1,15 @@
 package com.h9.common.base;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,6 +51,8 @@ public interface BaseRepository<T> extends JpaRepository<T,Long>,JpaSpecificatio
     default PageResult<T> findAll(int page, int limit) {
         return findAll(page,limit,null);
     }
+
+
 
     default PageResult<T> findAll(int page, int limit, Sort sort) {
         Page<T> pageBean = findAll(pageRequest(page, limit, sort));

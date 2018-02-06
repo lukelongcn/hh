@@ -31,6 +31,8 @@ public class PayProvider {
     
     @Resource
     private RestTemplate restTemplate;
+    @Value("{path.admin.host}")
+    private String adminHost;
     
 
     private String initUrl(){
@@ -41,7 +43,7 @@ public class PayProvider {
         return payHost + "/h9/pay/initOrder";
     }
 
-    private String getPrepayURL(long orderId){
+    public String getPrepayURL(long orderId){
         return payHost + "/h9/pay/getPrepay?payOrderId="+orderId;
     }
 
@@ -63,7 +65,7 @@ public class PayProvider {
     }
 
 
-    public Result<OrderVo> initOrder(OrderDTO orderDTO){
+    public Result<OrderVo> initOrder( OrderDTO orderDTO){
         try {
             logger.debugv(initOrderURL());
             orderDTO.setBusinessAppId(payConfig.getBusinessAppId());
@@ -93,12 +95,30 @@ public class PayProvider {
     }
 
 
+    public Result getPrepayInfo(Long payOrderId) {
+        //app
+        String prepayURL = getPrepayURL(payOrderId);
+        try {
+            return restTemplate.getForObject(prepayURL, Result.class);
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            return Result.fail("获取预支付信息出错，请稍后再试");
+        }
+    }
 
-
-
-
-
-
-
+//    /**
+//     * description: 酒店 订单退款 ，调用后台管系统的退款 接口
+//     */
+//    public Result refundHotelOrder(Long orderId){
+//        String url = adminHost+"/h9/admin/hotel/order/refund";
+//        try {
+//            Result result = restTemplate.getForObject(adminHost, Result.class, orderId);
+//            return result;
+//        } catch (RestClientException e) {
+//            logger.info(e.getMessage(),e);
+//            logger.info("退款接口异常");
+//        }
+//        return Result.fail();
+//    }
 
 }

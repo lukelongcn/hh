@@ -10,6 +10,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -37,6 +42,7 @@ public class DateUtil {
         HOUR("yyyy-MM-dd HH"),
         DAY("yyyy-MM-dd"),
         MONTH("yyyy-MM"),
+        SINGLE_HOUR("HH:mm"),
         YEAR("yyyy");
 
 
@@ -109,7 +115,7 @@ public class DateUtil {
 
 
     public static Date formatDate(String date,FormatType formatType){
-        if(StringUtils.isNotBlank(date)) {
+        if (StringUtils.isNotBlank(date)) {
             try {
                 return new SimpleDateFormat(formatType.format).parse(date);
             } catch (ParseException e) {
@@ -118,14 +124,15 @@ public class DateUtil {
         }
         return null;
     }
-    public static boolean isValidDate(String str,FormatType formatType) {
-        boolean convertSuccess=true;
+
+    public static boolean isValidDate(String str, FormatType formatType) {
+        boolean convertSuccess = true;
         SimpleDateFormat format = new SimpleDateFormat(formatType.format);
         try {
             format.setLenient(false);
             format.parse(str);
         } catch (ParseException e) {
-            convertSuccess=false;
+            convertSuccess = false;
         }
         return convertSuccess;
     }
@@ -589,5 +596,23 @@ public class DateUtil {
         calendar.add(Calendar.DATE, days);
         return calendar.getTime();
     }
+
+
+
+    public static int nightSum(Date startDate, Date endDate) {
+
+        long nightSecond = endDate.getTime() - startDate.getTime();
+
+        double result = nightSecond / (1000 * 60 * 60 * 24D);
+
+        if (result < 1 && result > 0) {
+            return 1;
+        }
+
+//        return new BigDecimal(result).setScale(0, RoundingMode.CEILING).intValue();
+
+        return (int)Math.ceil(result);
+    }
+
 
 }

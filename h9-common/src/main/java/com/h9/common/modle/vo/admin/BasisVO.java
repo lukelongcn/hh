@@ -1,10 +1,6 @@
 package com.h9.common.modle.vo.admin;
 
-import com.h9.common.db.entity.CardCoupons;
-import com.h9.common.modle.vo.admin.transaction.CardCouponsVO;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
 
 import java.util.Date;
 

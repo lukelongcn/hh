@@ -2,7 +2,8 @@ package com.h9.lottery.task;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.entity.Reward;
+
+import com.h9.common.db.entity.lottery.Reward;
 import com.h9.common.db.repo.RewardRepository;
 import com.h9.common.utils.DateUtil;
 import com.h9.lottery.config.LotteryConfig;
@@ -11,13 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.redisson.Redisson;
 import org.redisson.core.RLock;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,7 +79,7 @@ public class LotteryTask {
 
     @Resource
     private RedisBean redisBean;
-    
+
 
     /**
      * description: 获取redis 定时任务锁

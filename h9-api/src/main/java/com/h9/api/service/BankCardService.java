@@ -2,12 +2,11 @@ package com.h9.api.service;
 
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.BankCardDTO;
-import com.h9.api.model.dto.BankVerifyDTO;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.BankBin;
-import com.h9.common.db.entity.BankType;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserBank;
+import com.h9.common.db.entity.account.BankBin;
+import com.h9.common.db.entity.account.BankType;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserBank;
 import com.h9.common.db.repo.BankBinRepository;
 import com.h9.common.db.repo.BankCardRepository;
 import com.h9.common.db.repo.BankTypeRepository;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by 李圆

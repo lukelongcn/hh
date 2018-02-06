@@ -2,17 +2,12 @@ package com.h9.lottery;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.Activity;
-import com.h9.common.db.entity.Product;
-import com.h9.common.db.entity.ProductType;
-import com.h9.common.db.entity.Reward;
+import com.h9.common.db.entity.lottery.Activity;
+import com.h9.common.db.entity.lottery.Product;
+import com.h9.common.db.entity.lottery.Reward;
 import com.h9.common.db.repo.*;
-import com.h9.common.modle.vo.Config;
-import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.lottery.provider.FactoryProvider;
-import com.h9.lottery.provider.model.LotteryModel;
-import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.CodeUtil;
 import org.jboss.logging.Logger;
 import org.junit.Test;
@@ -24,9 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.jboss.logging.Logger.getLogger;

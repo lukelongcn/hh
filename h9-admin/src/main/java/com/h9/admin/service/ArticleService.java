@@ -1,20 +1,18 @@
 package com.h9.admin.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.article.ArticleDTO;
 import com.h9.admin.model.dto.article.ArticleTypeDTO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
-import com.h9.common.db.entity.Article;
-import com.h9.common.db.entity.ArticleType;
+import com.h9.common.db.entity.config.Article;
+import com.h9.common.db.entity.config.ArticleType;
 import com.h9.common.db.repo.ArticleRepository;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.modle.dto.PageDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 

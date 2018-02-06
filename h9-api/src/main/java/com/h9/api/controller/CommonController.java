@@ -1,11 +1,10 @@
 package com.h9.api.controller;
 
-import com.h9.api.interceptor.Secured;
 import com.h9.api.model.vo.AgreementVO;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.common.annotations.PrintReqResLog;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.HtmlContent;
+import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.repo.AgreementRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,9 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.soap.Text;
 import java.io.IOException;
 
 /**
@@ -81,9 +78,9 @@ public class CommonController {
 
     /*****
      * @param appId 需要获取授权的appId
-     * @param  //url回调路径 需要base64编码
-     * @param response
-     * @throws IOException
+     * url回调路径 需要base64编码
+     * @param response 重定向
+     * @throws IOException 异常
      */
     @ApiOperation(value = "获取code")
     @GetMapping("/wechat/code")
@@ -96,8 +93,8 @@ public class CommonController {
      *
      * @param code 授权码
      * @param state 回调路径
-     * @param response
-     * @throws IOException
+     * @param response 重定向
+     * @throws IOException 异常
      */
     @ApiOperation(value = "微信回调")
     @GetMapping("/wechat/callback")

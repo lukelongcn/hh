@@ -2,11 +2,7 @@ package com.h9.lottery.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Activity;
-import com.h9.common.db.entity.Product;
-import com.h9.common.db.entity.Reward;
-import com.h9.common.db.repo.ActivityRepository;
-import com.h9.common.db.repo.ProductRepository;
+import com.h9.common.db.entity.lottery.Reward;
 import com.h9.common.db.repo.RewardRepository;
 import com.h9.common.utils.MD5Util;
 import com.h9.lottery.utils.CodeUtil;

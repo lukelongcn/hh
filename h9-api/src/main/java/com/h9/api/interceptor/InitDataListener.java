@@ -10,10 +10,7 @@ import com.h9.api.service.UserService;
 import com.h9.api.service.handler.PayHandler;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.Address;
-import com.h9.common.db.entity.GlobalProperty;
-
-import com.h9.common.db.entity.User;
+import org.jboss.logging.Logger;
 import com.h9.common.db.repo.UserRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
@@ -53,7 +50,11 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent)
     {
         this.initAddressCache();
-        payHandler.initPay();
+        try {
+            payHandler.initPay();
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+        }
         this.initWXMenu();
     }
 
@@ -69,19 +70,17 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
      * 初始化地址区域信息
      */
     private void initAddressCache() {
-        logger.info("初始化数据中0.0");
-        long start = System.currentTimeMillis();
-        addressService.allArea();
+logger.info("初始化数据中0.0");
+        long start = System.currentTimeMillis();       addressService.allArea();
         long end = System.currentTimeMillis();
         float initDateTime = (end - start) / 1000F;
         logger.info("初始化数据完成，消费时间: "+initDateTime +" 秒");
-
     }
 
     /*****
      * 初始化用户信息
      */
-    private void initTestUserService(){
+    private void initTestUserService() {
 //   12345678909
 
     }

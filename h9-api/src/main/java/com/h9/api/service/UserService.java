@@ -4,6 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.*;
 import com.h9.api.model.vo.*;
+import com.h9.api.model.dto.UserLoginDTO;
+import com.h9.api.model.dto.UserPersonInfoDTO;
+import com.h9.api.model.dto.WechatConfig;
+import com.h9.api.model.vo.LoginResultVO;
 import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.provider.model.OpenIdCode;
@@ -15,11 +19,23 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.bean.SequenceUtil;
+import com.h9.common.db.entity.Transactions;
+import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.config.Article;
+import com.h9.common.db.entity.config.ArticleType;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserExtends;
+import com.h9.common.db.entity.user.UserRecord;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
+import com.h9.common.utils.QRCodeUtil;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.filters.Watermark;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -28,19 +44,32 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
+import static com.h9.api.provider.WeChatProvider.EventEnum.SCAN;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
 
 
 /**
@@ -51,6 +80,11 @@ import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELO
 public class UserService {
     @Value("${h9.current.envir}")
     private String currentEnvironment;
+    @Value("${path.app.wechat_host}")
+    private String host;
+    @Value("${path.app.host}")
+    private String appHost;
+
     @Resource
     private RedisBean redisBean;
     @Resource
@@ -86,7 +120,7 @@ public class UserService {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    public Result loginFromPhone(UserLoginDTO userLoginDTO) {
+    public Result loginFromPhone(UserLoginDTO userLoginDTO, Integer client) {
         String phone = userLoginDTO.getPhone();
 
         if (phone.length() > 11) return Result.fail("请输入正确的手机号码");
@@ -114,6 +148,7 @@ public class UserService {
         if (user == null) {
             //第一登录 生成用户信息
             user = initUserInfo(phone);
+            user.setClient(client);
             int loginCount = user.getLoginCount();
             user.setLoginCount(++loginCount);
             user.setLastLoginTime(new Date());
@@ -129,6 +164,7 @@ public class UserService {
             userExtendsRepository.save(userExtends);
         } else {
             int loginCount = user.getLoginCount();
+            user.setClient(client);
             user.setLoginCount(++loginCount);
             user.setLastLoginTime(new Date());
             user = userRepository.saveAndFlush(user);
@@ -340,6 +376,7 @@ public class UserService {
             LoginResultVO loginResult = getLoginResult(user);
             user.setLoginCount(user.getLoginCount() + 1);
             user.setLastLoginTime(user.getLastLoginTime());
+            user.setClient(UserRecord.ClientEnum.WEIXIN.getId());
             userRepository.save(user);
             return Result.success(loginResult);
         } else {
@@ -348,6 +385,7 @@ public class UserService {
                 return Result.fail("微信登录失败，获取用户信息失败，请同意授权");
             }
             user = userInfo.convert();
+            user.setClient(UserRecord.ClientEnum.WEIXIN.getId());
             user.setLoginCount(1);
             user.setLastLoginTime(new Date());
             User userFromDb = userRepository.saveAndFlush(user);
@@ -468,6 +506,10 @@ public class UserService {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("账号不存在");
 
+        if (transferDTO.getTransferMoney().compareTo(new BigDecimal(0.01)) < 0) {
+            return Result.fail("最小金额为0.01");
+        }
+
         String targetUserPhone = transferDTO.getTargetUserPhone();
         User targetUser = userRepository.findByPhone(targetUserPhone);
         if (targetUser == null) return Result.fail("请输入正确的账号");
@@ -490,8 +532,8 @@ public class UserService {
 
         Transactions transactions = new Transactions(null, user.getId(), targetUser.getId(),
                 transferMoney, transferDTO.getRemarks(),
-                BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),"",
-                user.getPhone(), targetUser.getPhone(),user.getNickName(),targetUser.getNickName());
+                BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(), "",
+                user.getPhone(), targetUser.getPhone(), user.getNickName(), targetUser.getNickName());
         transactionsRepository.saveAndFlush(transactions);
 
         commonService.setBalance(user.getId(), transferMoney.abs().negate(), BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId(),
@@ -500,7 +542,7 @@ public class UserService {
                 transactions.getId(), "", transferDTO.getRemarks());
 
         String tips = targetUser.getNickName() + " (" + targetUser.getPhone() + ") 已收到您的转账";
-        return Result.success(new TransferResultVO(tips,1));
+        return Result.success(new TransferResultVO(tips, 1));
     }
 
     /**
@@ -511,8 +553,8 @@ public class UserService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = transactionsRepository.pageRequest(page, limit, sort);
 
-        Long findBalanceType = type == 1 ? BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId():RED_ENVELOPE.getId();
-        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId,findBalanceType, pageRequest);
+        Long findBalanceType = type == 1 ? BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER.getId() : RED_ENVELOPE.getId();
+        Page<Transactions> pageObj = transactionsRepository.findByUserIdOrTargetUserId(userId, userId, findBalanceType, pageRequest);
 
         if (CollectionUtils.isEmpty(pageObj.getContent())) {
             return Result.success(new PageResult<>(pageObj));
@@ -529,7 +571,7 @@ public class UserService {
             Long targetUserId = el.getTargetUserId();
             User targetUser = userRepository.findOne(targetUserId);
             String img = targetUser.getAvatar();
-            Object remarks = typeMap.get(balanceFlowType+"");
+            Object remarks = typeMap.get(balanceFlowType + "");
             BalanceFlowVO balanceFlowVO = new BalanceFlowVO(money,
                     DateUtil.formatDate(el.getCreateTime(),
                             DateUtil.FormatType.MONTH),
@@ -560,45 +602,56 @@ public class UserService {
         return Result.success(vo);
     }
 
+    @Resource
+    private SequenceUtil sequenceUtil;
+
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
+            if (money.compareTo(new BigDecimal(0.01)) < 0) {
+                return Result.fail("最小金额为0.01");
+            }
 
             UserAccount userAccount = userAccountRepository.findByUserId(userId);
             if (userAccount.getBalance().compareTo(money) < 0) {
-                return Result.fail("余额不足"+MoneyUtils.formatMoney(money));
+                return Result.fail("余额不足" + MoneyUtils.formatMoney(money));
+            }
+            String tempId = UUID.randomUUID().toString().replace("-", "");
+
+            //	client 整形类型 1 andoird 2 ios 3 公众号
+            String client = request.getHeader("client");
+            String url = "";
+            Long nextVal = sequenceUtil.getNextVal();
+
+            if ("3".equals(client)) {
+                String accessToken = weChatProvider.getWeChatAccessToken();
+                String ticket = weChatProvider.getCodeTicket(accessToken, nextVal);
+                url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
+                if (StringUtils.isEmpty(ticket)) {
+                    return Result.fail("获取二维码失败");
+                }
+            } else {
+                //https://localhost:6305/h9/api/user/redEnvelope/qrcode?tempId=1
+                url = appHost + "/h9/api/user/redEnvelope/qrcode?tempId=" + tempId;
             }
 
-            String accessToken = weChatProvider.getWeChatAccessToken();
-
-            String ticket = weChatProvider.getCodeTicket(accessToken, userId);
-            String url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
-
-            if (StringUtils.isEmpty(ticket)) {
-                return Result.fail("获取二维码失败");
-            }
             User user = userRepository.findOne(userId);
             //存放redis tempId;
-            String tempId = UUID.randomUUID().toString().replace("-", "");
             //在 redis 中记录 红包二维码信息
-            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId,user.getOpenId());
-            redisBean.setStringValue(RedisKey.getQrCode(userId), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), tempId, 1, TimeUnit.DAYS);
-
+            RedEnvelopeDTO redEnvelopeDTO = new RedEnvelopeDTO(url, money, userId, 1, tempId, user.getOpenId());
+            redisBean.setStringValue(RedisKey.getQrCode(nextVal), JSONObject.toJSONString(redEnvelopeDTO), 1, TimeUnit.DAYS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(tempId), nextVal + "", 1, TimeUnit.DAYS);
 
             RedEnvelopeCodeVO redEnvelopeCodeVO = new RedEnvelopeCodeVO()
                     .setCodeUrl(url)
                     .setTempId(tempId)
 //                    .setTransferRecord(transferList)
-                    .setMoney(MoneyUtils.formatMoney(money));
+                    .setMoney(money);
 
             return Result.success(redEnvelopeCodeVO);
         }
 
         return Result.fail("请填写正确的金额");
     }
-
-
-
 
 
     public User registUser(String openId) {
@@ -637,7 +690,7 @@ public class UserService {
                 mapVO.put("img", targetUser.getAvatar());
                 mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
 
-                return Result.fail("领取成功",mapVO);
+                return Result.fail("领取成功", mapVO);
             }
 
             return Result.success("");
@@ -664,5 +717,103 @@ public class UserService {
         });
 
         return Result.success(pageResult);
+    }
+
+    public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
+        try {
+//            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
+//            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+            tempId = URLEncoder.encode(tempId, "UTF-8");
+            String link = host + "/h9/api/user/temp/redirect?id=" + tempId;
+//            tempId = "hlzj://tempId="+tempId;
+            ServletOutputStream outputStream = response.getOutputStream();
+            logger.info("二维码内容："+link);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
+            Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
+            String url = configService.getStringConfig("hlzjIcon");
+            if (StringUtils.isBlank(url)) {
+                logger.info("二维码中间水印图片没有设置");
+            }
+            BufferedImage bufferedImageSY = ImageIO.read(new URL(url));
+            //Positions 实现了 Position 并提供九个坐标, 分别是 上左, 上中, 上右, 中左, 中中, 中右, 下左, 下中, 下右 我们使用正中的位置
+            Watermark watermark = new Watermark(Positions.CENTER, bufferedImageSY, 1F);
+            builder.watermark(watermark).scale(1F).outputFormat("png").toOutputStream(outputStream);
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        String url = "h9/api/user/redEnvelope/scan/qrcode?tempId=123";
+        int index = url.indexOf("tempId=");
+        String substring = url.substring(index + 7, url.length());
+        System.out.println(substring);
+    }
+
+    @Resource
+    private EventService eventService;
+
+    public Result scanQRCode(String tempId, Long userId) {
+        Map<String, String> map = new HashMap<>();
+        if (StringUtils.isBlank(tempId)) {
+            return Result.fail("二维码超时");
+        }
+
+        //tempId 存放的是url ,需要进行url 解码
+        try {
+             tempId = URLDecoder.decode(tempId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.info("解码失败,"+tempId);
+            return Result.fail("领取异常");
+        }
+        if (tempId.contains("id=")) {
+            int index = tempId.indexOf("id=");
+            tempId = tempId.substring(index + 3, tempId.length());
+        }
+
+        map.put("Event", SCAN.getValue());
+        map.put("tempId", tempId);
+        map.put("EventKey", "");
+        map.put("client", "app");
+        map.put("scanUserId", userId + "");
+        return eventService.handleSubscribeAndScan(map);
+    }
+
+
+    public void addUserCount(String userId){
+        try {
+            Long userIdLong = Long.valueOf(userId);
+            logger.info("userIdLong : "+userIdLong);
+            redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
+            Long userCount = redisBean.getStringTemplate()
+                    .execute((RedisCallback<Long>) connection ->
+                            connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
+                                    .getKeySerializer())
+                                    .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
+            logger.info("userCount: "+userCount);
+        } catch (NumberFormatException e) {
+            logger.info("解析UserId 出错: " + userId);
+        }
+    }
+
+    public void addUserCount(Long userId){
+        addUserCount(userId);
+    }
+
+    public void tempRedirect(HttpServletResponse response, String tempId) {
+        try {
+            //https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1
+            String url = host+"/h9-weixin/#/account/hongbao/result?id="+tempId;
+            logger.info("tempId : "+tempId);
+            logger.info("url : "+url);
+//            String decode = URLDecoder.decode(tempId, "UTF-8");
+            response.sendRedirect(url);
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            logger.info("解码失败");
+        }
+
+
     }
 }

@@ -2,6 +2,7 @@ package com.h9.common.modle.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -9,8 +10,10 @@ import org.springframework.data.domain.Sort;
  * @author: George
  * @date: 2017/11/2 17:55
  */
+@Data
 @ApiModel(value = "分页参数")
 public class PageDTO {
+
 
     @ApiModelProperty(value = "页码")
     private int pageNumber = 1;

@@ -1,6 +1,6 @@
 package com.h9.common.modle.vo.admin.basis;
 
-import com.h9.common.db.entity.Image;
+import com.h9.common.db.entity.config.Image;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;

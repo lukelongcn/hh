@@ -1,8 +1,10 @@
 package com.h9.common.modle.vo.admin.finance;
 
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
@@ -12,6 +14,7 @@ import java.util.Date;
  * 
  * Created by Gonyb on 2017/11/10.
  */
+@Data
 public class UserAccountVO {
     @ApiModelProperty(value = "用户id ")
     private Long userId;
@@ -19,7 +22,7 @@ public class UserAccountVO {
     @ApiModelProperty(value = "手机号")
     private String phone;
 
-    @ApiModelProperty(value ="呢你")
+    @ApiModelProperty(value ="昵称")
     private String nickName;
 
     @ApiModelProperty(value ="余额")
@@ -30,11 +33,7 @@ public class UserAccountVO {
     @ApiModelProperty(value ="注册时间")
     private Date createTime;
 
-    public static UserAccountVO toUserAccountVO( UserAccount userAccount){
-        UserAccountVO userAccountVO = new UserAccountVO();
-        //BeanUtils.copyProperties(user,userAccountVO);
-        BeanUtils.copyProperties(userAccount,userAccountVO);
-        return userAccountVO;
+    public UserAccountVO() {
     }
 
     public UserAccountVO(User user, UserAccount userAccount){
@@ -43,54 +42,14 @@ public class UserAccountVO {
         createTime = user.getCreateTime();
     }
 
-    public UserAccountVO() {
+    public static UserAccountVO toUserAccountVO(UserAccount userAccount){
+        UserAccountVO userAccountVO = new UserAccountVO();
+        //BeanUtils.copyProperties(user,userAccountVO);
+        BeanUtils.copyProperties(userAccount,userAccountVO);
+        return userAccountVO;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
-    public String getPhone() {
-        return phone;
-    }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getvCoins() {
-        return vCoins;
-    }
-
-    public void setvCoins(BigDecimal vCoins) {
-        this.vCoins = vCoins;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

@@ -5,7 +5,9 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.order.*;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
@@ -191,6 +193,7 @@ public class GoodService {
                 .desc(goods.getDescription())
                 .price(MoneyUtils.formatMoney(goods.getRealPrice()))
                 .name(goods.getName())
+                .unit(goods.getUnit())
                 .tip("*兑换商品和活动均与设备生产商Apple Inc无关。")
                 .stock(goods.getStock())
                 .balance(MoneyUtils.formatMoney(userAccount.getBalance()))

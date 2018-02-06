@@ -2,13 +2,10 @@ package com.h9.common.db.repo;
 
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Lottery;
-import com.h9.common.db.entity.LotteryFlow;
-import com.h9.common.db.entity.Reward;
-import com.h9.common.db.entity.User;
+import com.h9.common.db.entity.lottery.Lottery;
+import com.h9.common.db.entity.lottery.Reward;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;

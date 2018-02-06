@@ -1,6 +1,6 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.BannerType;
+import com.h9.common.db.entity.config.BannerType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

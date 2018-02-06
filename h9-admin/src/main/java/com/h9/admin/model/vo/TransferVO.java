@@ -1,6 +1,5 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.BalanceFlow;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -12,8 +11,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.USER_TRANSFER;
+
 
 /**
  * Created by itservice on 2018/1/27.

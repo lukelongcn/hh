@@ -62,6 +62,14 @@
             </resource>
 
             <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources/cert</directory>
+                <includes>
+                    <include>**/*.p12</include>
+                </includes>
+            </resource>
+
+            <resource>
                 <directory>src/main/resources/profiles/${package.environment}</directory>
             </resource>
 
@@ -85,6 +93,15 @@
             </activation>
         </profile>
 
+        <profile>
+            <id>host</id>
+            <properties>
+                <package.environment>host</package.environment>
+            </properties>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
 
         <profile>
             <id>product</id>

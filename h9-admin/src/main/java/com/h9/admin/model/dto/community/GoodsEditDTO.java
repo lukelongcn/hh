@@ -1,13 +1,10 @@
 package com.h9.admin.model.dto.community;
 
-import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.order.Goods;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
 
 
 /**

@@ -3,7 +3,7 @@ package com.h9.common.common;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.GlobalProperty;
+import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.repo.GlobalPropertyRepository;
 import com.h9.common.modle.vo.Config;
 import org.apache.commons.lang3.StringUtils;
@@ -39,11 +39,16 @@ public class ConfigService {
     @Resource
     private MailService mailService;
 
-
+    /****
+     * 获取code 对应的配置 ，
+     * @param code
+     * @return  @See List<Config> Map<String,String> String
+     */
     public Object getConfig(String code) {
         if (code == null) {
             return null;
         }
+        //从缓存里面读取
         Object valueRedis1 = getConfigFromCache(code);
         logger.info("getConfigFromCache : "+valueRedis1);
         if (valueRedis1 != null) return valueRedis1;
@@ -78,6 +83,14 @@ public class ConfigService {
         }
     }
 
+    public List<Double> getDoubleListConfig(String code) {
+        Object config = getConfig(code);
+        if (config instanceof List) {
+            return (List<Double>) config;
+        } else {
+            return null;
+        }
+    }
 
     public Map<String,String> getMapConfig(String code) {
         logger.info("getMapConfig code: "+code);

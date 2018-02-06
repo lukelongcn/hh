@@ -7,7 +7,11 @@ import com.h9.admin.model.dto.community.*;
 import com.h9.admin.service.CommunityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.config.Announcement;
+import com.h9.common.db.entity.config.Banner;
+import com.h9.common.db.entity.config.BannerType;
+import com.h9.common.db.entity.lottery.Activity;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.Config;
 import io.swagger.annotations.Api;
@@ -38,6 +42,13 @@ public class CommunityController {
         return this.communityService.listBannerTypeLocation();
     }
 
+    @Secured
+    @GetMapping(value="/banner_type/type")
+    @ApiOperation("获取功能类别所有位置")
+    public Result<List<Config>> listBannerType(){
+        return this.communityService.listBannerType();
+    }
+
     @Secured(accessCode = "banner_type:add")
     @PostMapping(value="/banner_type")
     @ApiOperation("增加功能类别")
@@ -55,7 +66,7 @@ public class CommunityController {
     @Secured(accessCode = "banner_type:list")
     @GetMapping(value="/banner_type/page")
     @ApiOperation("分页获取功能类别")
-    public Result<PageResult<BannerType>> getBannerTypes(PageDTO pageDTO){
+    public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO){
         return this.communityService.getBannerTypes(pageDTO);
     }
 

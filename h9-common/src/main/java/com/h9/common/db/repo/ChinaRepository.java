@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.China;
+import com.h9.common.db.entity.order.China;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.WhiteUserList;
+import com.h9.common.db.entity.config.WhiteUserList;
 import com.h9.common.modle.vo.admin.basis.WhiteListVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

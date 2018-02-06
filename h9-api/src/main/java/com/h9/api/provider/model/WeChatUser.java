@@ -1,8 +1,6 @@
 package com.h9.api.provider.model;
 
-import com.h9.common.db.entity.User;
-
-import javax.persistence.Convert;
+import com.h9.common.db.entity.user.User;
 
 /**
  * Created with IntelliJ IDEA.

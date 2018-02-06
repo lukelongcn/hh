@@ -1,15 +1,14 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
-import com.h9.common.db.entity.Lottery;
-import com.h9.common.db.entity.LotteryFlow;
+import com.h9.common.db.entity.lottery.Lottery;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.admin.model.vo.RewardVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.Reward;
+import com.h9.common.db.entity.lottery.Reward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

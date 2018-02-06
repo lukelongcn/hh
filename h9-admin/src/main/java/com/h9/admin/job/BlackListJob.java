@@ -2,7 +2,7 @@ package com.h9.admin.job;
 
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.entity.SystemBlackList;
+import com.h9.common.db.entity.config.SystemBlackList;
 import com.h9.common.db.repo.LotteryRepository;
 import com.h9.common.db.repo.SystemBlackListRepository;
 import com.h9.common.utils.DateUtil;

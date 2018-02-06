@@ -3,8 +3,8 @@ package com.h9.api.controller;
 
 import com.h9.api.provider.WeChatProvider;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import io.swagger.annotations.Api;
@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 
@@ -22,7 +25,6 @@ import java.math.BigDecimal;
  * TestController:刘敏华 shadow.liu@hey900.com
  * Date: 2017/10/31
  * Time: 10:26
- * @author
  */
 @RestController
 @Api(value = "测试相关接口",description = "测试相关接口")
@@ -47,7 +49,7 @@ public class TestController {
 
     @GetMapping("/test/addvb")
     public Result addvb(@RequestParam String tel,@RequestParam String money){
-        if (!envir.equals("test")) {
+        if (!envir.equals("product")) {
             return Result.fail("不支持");
         }
         try {
@@ -68,5 +70,12 @@ public class TestController {
 
         String weChatAccessToken = weChatProvider.getWeChatAccessToken();
         return weChatAccessToken;
+    }
+
+    @GetMapping("/test/red")
+    public void geRed(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        response.sendRedirect("https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1");
+
     }
 }

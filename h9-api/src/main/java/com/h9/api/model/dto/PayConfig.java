@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 /**
  * Created with IntelliJ IDEA.
  * PayConfig:刘敏华 shadow.liu@hey900.com
@@ -34,5 +36,7 @@ public class PayConfig {
     private String callbackUrl= "";
     @Value("${pay.businessAppId}")
     private String businessAppId= "";
+    @Resource
+    private ClientConfig clientConfig;
 
 }

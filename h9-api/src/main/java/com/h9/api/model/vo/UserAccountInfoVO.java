@@ -1,14 +1,8 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.User;
-import com.h9.common.db.entity.UserAccount;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.utils.MoneyUtils;
-
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by itservice on 2017/11/2.

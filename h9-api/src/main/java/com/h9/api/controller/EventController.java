@@ -4,6 +4,7 @@ import com.h9.api.model.dto.EventDTO;
 import com.h9.api.model.dto.VerifyTokenDTO;
 import com.h9.api.service.EventService;
 import com.h9.common.utils.CheckoutUtil;
+import com.h9.common.utils.XMLUtils;
 import org.jboss.logging.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
+import java.util.Map;
 
 /**
  * Created by itservice on 2018/1/25.
@@ -31,7 +33,13 @@ public class EventController {
 
     @PostMapping(value = "/wx/event",consumes = "text/xml")
     public String wxEventCallback(HttpServletRequest request) {
-        return eventService.wxEventCallBack(request);
+        Map<String, String> map = null;
+        try {
+            map = XMLUtils.parseXml(request);
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+        }
+        return eventService.wxEventCallBack(map);
     }
 
 }

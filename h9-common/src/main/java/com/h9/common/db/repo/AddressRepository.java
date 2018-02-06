@@ -2,7 +2,7 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
-import com.h9.common.db.entity.Address;
+import com.h9.common.db.entity.order.Address;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -5,7 +5,7 @@ import com.h9.api.model.vo.UpdateInfoVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
-import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.config.*;
 import com.h9.common.db.repo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;

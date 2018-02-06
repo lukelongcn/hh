@@ -1,13 +1,8 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.Goods;
-import com.h9.common.db.entity.OrderItems;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.h9.common.db.entity.order.OrderItems;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 /**
  * Created by itservice on 2017/10/31.

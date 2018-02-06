@@ -1,66 +1,17 @@
 package com.h9.api;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.BeanUtils;
 
-/**
- * Created by itservice on 2017/11/14.
- */
-class Person {
-    private String name;
-    private String age;
-
-    public static class PersonBuilder {
-
-        private String name;
-        private String age;
-
-        public PersonBuilder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public PersonBuilder setAge(String age) {
-            this.age = age;
-            return this;
-        }
-
-        public Person builder() {
-            Person person = new Person();
-            BeanUtils.copyProperties(PersonBuilder.this, person);
-            return person;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAge() {
-            return age;
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-}
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class Test2 {
 
-    public static void main(String[] args) {
-        Person person = new Person.PersonBuilder().setAge("1").setName("ldh").builder();
-        System.out.println(person.getName());
-        System.out.println(person.getAge());
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        String decode = URLEncoder.encode("https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1", "UTF-8");
+        System.out.println(decode);
+
     }
 }

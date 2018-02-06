@@ -3,7 +3,7 @@ package com.h9.common.db.repo;
 
 import com.h9.admin.model.vo.UserRecordVO;
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.LotteryLog;
+import com.h9.common.db.entity.lottery.LotteryLog;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

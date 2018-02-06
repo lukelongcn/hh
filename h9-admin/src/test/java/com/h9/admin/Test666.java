@@ -1,5 +1,6 @@
 package com.h9.admin;
 
+import com.h9.admin.job.HotelOrderJob;
 import com.h9.admin.service.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,4 +37,34 @@ public class Test666 {
             }
         }
     }*/
+    @Test
+    public void testRefund() throws IOException {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+        InputStream is2 = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+
+
+        File file = new File("/Users/ln/Documents/test.p12");
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        System.out.println("path :"+file.getAbsolutePath());
+        FileOutputStream fos = new FileOutputStream(file);
+        int len = 0;
+        byte[] bytes = new byte[1024];
+
+        while(( len = is.read(bytes)) != -1){
+            fos.write(bytes, 0, len);
+        }
+        System.out.println("read finish!");
+    }
+
+    @Resource
+    private HotelOrderJob job;
+
+    @Test
+    public void testTask(){
+        job.scan();
+    }
+
 }

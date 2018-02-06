@@ -12,6 +12,7 @@ import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.*;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -35,7 +36,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.h9.common.db.entity.BalanceFlow.BalanceFlowTypeEnum.BATCH_RECHARGE;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.BATCH_RECHARGE;
+
 
 /**
  * Created by itservice on 2018/1/11.

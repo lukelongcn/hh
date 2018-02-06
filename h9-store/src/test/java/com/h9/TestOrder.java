@@ -1,11 +1,10 @@
 package com.h9;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.deserializer.AbstractDateDeserializer;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ServiceException;
-import com.h9.common.db.entity.Goods;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsListVO;
@@ -13,21 +12,12 @@ import com.h9.store.service.GoodService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by itservice on 2017/11/30.
