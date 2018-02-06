@@ -1,23 +1,37 @@
 package com.h9.store.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.db.entity.PayInfo;
+import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.order.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
+import com.h9.common.modle.dto.StorePayDTO;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
+import com.h9.store.modle.dto.OrderDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
 import com.h9.store.modle.vo.GoodsListVO;
+import com.h9.store.modle.vo.OrderVo;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -51,8 +65,13 @@ public class GoodService {
     private AddressRepository addressRepository;
     @Resource
     private OrderItemReposiroty orderItemReposiroty;
+    @Resource
+    private PayInfoRepository payInfoRepository;
+    @Resource
+    private RestTemplate restTemplate;
 
 
+    private Logger logger = Logger.getLogger(this.getClass());
     /**
      * description: 减少商品库 -1
      */
@@ -209,6 +228,8 @@ public class GoodService {
 
         if(address == null) return Result.fail("地址不存在");
 
+
+
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
         if(goods == null) return Result.fail("商品不存在");
@@ -237,6 +258,11 @@ public class GoodService {
         order.setOrderFrom(1);
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         ordersRepository.saveAndFlush(order);
+        int payMethod = convertGoodsDTO.getPayMethod();
+        if(payMethod == Orders.PayMethodEnum.WX_PAY.getCode()){
+            //TODO 调用api 模块 获取 支付信息
+            return getPayInfo(order.getId(),order.getMoney(),userId,convertGoodsDTO.getPayPlatform());
+        }
 
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
@@ -255,6 +281,25 @@ public class GoodService {
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         return Result.success(mapVo);
+    }
+
+    @Value("${path.app.wechat_host}")
+    private String wxHost;
+    private Result getPayInfo(Long orderId, BigDecimal money,Long userId,String payPlatform) {
+        String url = wxHost + "/h9/api/pay/payInfo";
+        StorePayDTO payDTO = new StorePayDTO(orderId,money,userId,payPlatform);
+        try {
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_JSON);
+
+//            HttpEntity<String> entity = new HttpEntity<String>(JSONObject.toJSONString(payDTO), headers);
+            Result result = restTemplate.postForObject(url, payDTO, Result.class);
+            return result;
+        } catch (RestClientException e) {
+            logger.info("调用 出现异常");
+            logger.info(e.getMessage(),e);
+            return Result.fail("获取支付信息失败，请稍后再试");
+        }
     }
 
 }

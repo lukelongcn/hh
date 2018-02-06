@@ -16,9 +16,11 @@ import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
+import com.h9.common.modle.dto.StorePayDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -259,6 +261,71 @@ public class HotelService {
     @Resource
     private PayInfoRepository payInfoRepository;
 
+    @Resource
+    private OrdersRepository ordersRepository;
+
+    @SuppressWarnings("Duplicates")
+    public Result getStoreWXPayInfo(StorePayDTO storePayDTO) {
+//        Orders orders = ordersRepository.findOne(storePayDTO.getOrderId());
+//        if(orders == null) return Result.fail("订单不存在");
+        User user = userRepository.findOne(storePayDTO.getUserId());
+        if(user == null){
+            return Result.fail("用户不存在");
+        }
+        BigDecimal payMoney = storePayDTO.getPayMoney();
+        OrderDTO.PayMethodEnum findPayPlatformEnum = OrderDTO.PayMethodEnum.getByValue(storePayDTO.getPayPlatform());
+        if (findPayPlatformEnum == null) {return Result.fail("请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)");}
+
+        int payPlatform = findPayPlatformEnum.getKey();
+        PayInfo payInfo = new PayInfo(payMoney, storePayDTO.getOrderId(), PayInfo.OrderTypeEnum.STORE_ORDER.getId(), null, 1);
+        payInfo = payInfoRepository.saveAndFlush(payInfo);
+        String openId = user.getOpenId();
+
+        if (payPlatform == OrderDTO.PayMethodEnum.WXJS.getKey() && StringUtils.isBlank(openId)) {
+            logger.info("支付出错，账号" + user.getId() + " openId为空");
+            return Result.fail("支付出错，账号" + user.getId() + " openId为空");
+        }
+        logger.debugv("payPlatform:"+payPlatform);
+
+        OrderDTO orderDTO = new OrderDTO(openId, payMoney, payInfo.getId(), payPlatform);
+
+        Result<OrderVo> orderVoResult = null;
+        try {
+            orderVoResult = payProvider.initOrder(orderDTO);
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            return Result.fail("获取支付信息失败，请稍后再试");
+        }
+
+        if (!orderVoResult.isSuccess()) {
+            logger.info("获取支付信息失败，获取结果： " + JSONObject.toJSONString(orderVoResult));
+            return orderVoResult;
+        }
+
+        OrderVo orderVo = orderVoResult.getData();
+
+
+        boolean resumePay = false;
+
+        if (payPlatform == 3) {
+            String pay = payProvider.goPay(orderVo.getPayOrderId(), payInfo.getId());
+            PayVO payVO = new PayVO();
+            payVO.setPayOrderId(orderVo.getPayOrderId());
+            payVO.setPayUrl(pay);
+            payVO.setOrderId(storePayDTO.getOrderId());
+            //公众号
+            PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), payVO);
+            return Result.success(vo);
+        } else {
+            //APP 支付
+            Result prepayResult = payProvider.getPrepayInfo(orderVo.getPayOrderId());
+            PayResultVO vo = new PayResultVO(new PayResultVO.PayResult("1", resumePay), prepayResult.getData());
+            return Result.success(vo);
+        }
+    }
+
+
+    @SuppressWarnings("Duplicates")
     private Result getWXPayInfo(HotelOrder hotelOrder, BigDecimal payMoney, User user, int payPlatform) {
         PayInfo payInfo = new PayInfo(payMoney, hotelOrder.getId(), PayInfo.OrderTypeEnum.HOTEL.getId(), null, 1);
         payInfo = payInfoRepository.saveAndFlush(payInfo);

@@ -159,7 +159,8 @@ public class Orders extends BaseEntity {
     public enum PayMethodEnum {
 
         BALANCE_PAY(1, "余额支付"),
-        VBPAY(2, "vb支付");
+        VBPAY(2, "vb支付"),
+        WX_PAY(3,"微信支付");
 
         private int code;
         private String desc;

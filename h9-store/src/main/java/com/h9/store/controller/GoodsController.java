@@ -46,6 +46,8 @@ public class GoodsController {
 
     /**
      * description: 兑换商品
+     *     WX(2, "wx"), WXJS(3, "wxjs")
+     *     @see com.h9.common.db.entity.order.Orders.PayMethodEnum
      */
     @Secured
     @PostMapping("/goods/convert")
