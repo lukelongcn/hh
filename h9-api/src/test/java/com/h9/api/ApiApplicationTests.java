@@ -480,25 +480,11 @@ public class ApiApplicationTests {
     @Resource
     private HotelOrderRepository hotelOrderRepository;
     @Test
-    public void TestSpefiction(){
+    public void testGet(){
+        Object config = configService.getConfig("test1");
+        logger.info("value : "+config);
 
-        Long hotelOrderId = 1L;
-        String phone = "17673140753";
-        Date startDate = DateUtil.getDate(new Date(), -10, Calendar.DAY_OF_YEAR);
-        Date endDate = new Date();
-
-        Specification<HotelOrder> specification = new Specification<HotelOrder>() {
-            public Predicate toPredicate(Root<HotelOrder> root, CriteriaQuery<?> query,
-                                         CriteriaBuilder builder) {
-                Predicate pr1 = builder.equal(root.get("id"), hotelOrderId);
-                Predicate pr2 = builder.equal(root.get("phone"), phone);
-                Predicate pr3 = builder.between(root.get("createTime"), startDate, endDate);
-                return builder.and(pr1,pr2,pr3);
-            }
-        };
-
-        List<HotelOrder> all = hotelOrderRepository.findAll(specification);
-        logger.info(all);
+        logger.info("value2: "+config.toString());
     }
 }
 

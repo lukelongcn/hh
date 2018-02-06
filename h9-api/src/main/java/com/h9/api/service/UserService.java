@@ -730,7 +730,7 @@ public class UserService {
             logger.info("二维码内容："+link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
-            String url = configService.getStringConfig("hlzjIcon");
+            String url = configService.getConfig("hlzjIcon").toString();
             if (StringUtils.isBlank(url)) {
                 logger.info("二维码中间水印图片没有设置");
             }
