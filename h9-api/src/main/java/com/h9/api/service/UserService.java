@@ -605,9 +605,11 @@ public class UserService {
     @Resource
     private SequenceUtil sequenceUtil;
 
+
+
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
-            if (money.compareTo(new BigDecimal(0.01)) < 0) {
+            if (money.doubleValue() > 0.01D) {
                 return Result.fail("最小金额为0.01");
             }
 
@@ -744,10 +746,9 @@ public class UserService {
     }
 
     public static void main(String[] args) {
-        String url = "h9/api/user/redEnvelope/scan/qrcode?tempId=123";
-        int index = url.indexOf("tempId=");
-        String substring = url.substring(index + 7, url.length());
-        System.out.println(substring);
+        BigDecimal b1 = new BigDecimal("0.001");
+        BigDecimal b2 = new BigDecimal("0.01");
+        System.out.println(b1.compareTo(b2));
     }
 
     @Resource
