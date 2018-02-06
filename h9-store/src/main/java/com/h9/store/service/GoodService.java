@@ -293,6 +293,7 @@ public class GoodService {
 //            headers.setContentType(MediaType.APPLICATION_JSON);
 
 //            HttpEntity<String> entity = new HttpEntity<String>(JSONObject.toJSONString(payDTO), headers);
+            logger.info("access url : "+url);
             Result result = restTemplate.postForObject(url, payDTO, Result.class);
             return result;
         } catch (RestClientException e) {
