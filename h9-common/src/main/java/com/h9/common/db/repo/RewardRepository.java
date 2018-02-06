@@ -93,4 +93,9 @@ public interface RewardRepository extends BaseRepository<Reward> {
     @Query("SELECT r from Reward r where r.status = 3 and r.factoryStatus = -1 and r.createTime>'2018-01-15 00:00:00'")
     public List<Reward> findFactoryStatus();
 
+    @Transactional
+    @Modifying
+    @Query("update Reward r set r.status=?2 where r.status<>?2 and r.id=?1")
+    public int updateRewardStatus(long rewardId,int status);
+
 }

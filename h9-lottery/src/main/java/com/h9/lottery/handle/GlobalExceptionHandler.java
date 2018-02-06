@@ -1,5 +1,6 @@
 package com.h9.lottery.handle;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.Result;
 import com.h9.common.common.MailService;
 import com.h9.common.common.ServiceException;
@@ -20,6 +21,10 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -92,11 +97,72 @@ public class GlobalExceptionHandler {
         // 以上错误都不匹配
         logger.info(e.getMessage(), e);
         if (System.currentTimeMillis() - time > 5 * 60 * 1000) {
-            mailService.sendtMail("徽酒服务器错误" + currentEnvironment, "url: " + request.getRequestURL() + ExceptionUtils.getStackTrace(e));
+            mailService.sendtMail("徽酒服务器错误" + currentEnvironment, getMailContent(request,e));
             time = System.currentTimeMillis();
         }
 
         return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙，请稍后再试", ExceptionUtils.getStackTrace(e));
     }
+
+
+
+    public String getMailContent(HttpServletRequest request,Exception ex){
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("uri:" + request.getRequestURI()+"\n\r<BR>");
+        String param = "";
+        try {
+            param =  printReqParams(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stringBuffer.append( JSONObject.toJSONString(param)+"\n\r<BR>");
+        stringBuffer.append(ExceptionUtils.getStackTrace(ex));
+        return stringBuffer.toString();
+    }
+
+
+    /**
+     * description: 打印请求信息
+     */
+    private String printReqParams(HttpServletRequest httpServletRequest) throws IOException {
+
+        Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
+        String paramStr = JSONObject.toJSONString(parameterMap);
+
+        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        Map<String, String> headers = new HashMap<>();
+        while (headerNames.hasMoreElements()) {
+            String key = headerNames.nextElement();
+            String value = httpServletRequest.getHeader(key);
+            headers.put(key, value);
+        }
+
+        String param = new String(paramStr);
+        int contentLength = httpServletRequest.getContentLength();
+        if (contentLength != -1) {
+
+            byte buffer[] = new byte[contentLength];
+            for (int i = 0; i < contentLength; ) {
+
+                int readlen = httpServletRequest.getInputStream().read(buffer, i,
+                        contentLength - i);
+                if (readlen == -1) {
+                    break;
+                }
+                i += readlen;
+            }
+            param = new String(buffer);
+            logger.info("request param: " + new String(buffer));
+        } else {
+            logger.info("request param: " + new String(paramStr));
+        }
+        logger.info("---------------------------------------------");
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("request headers : " + JSONObject.toJSONString(headers)+"\n\r<BR>");
+        stringBuffer.append("request headers : " + param);
+        return stringBuffer.toString();
+    }
+
+
 
 }
