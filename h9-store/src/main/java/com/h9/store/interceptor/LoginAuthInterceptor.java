@@ -2,10 +2,13 @@ package com.h9.store.interceptor;
 
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
+import com.h9.common.utils.DateUtil;
 import com.h9.store.handle.UnAuthException;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.slf4j.MDC;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * description: 登录权限认证拦截器
@@ -56,6 +60,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
                 }
                 MDC.put("userId", userId);
 
+                addUserCount(userId);
                 if (StringUtils.isEmpty(userId)) {
                     throw new UnAuthException(401, "请重新登录");
                 }
@@ -66,6 +71,22 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             }
         }
         return true;
+    }
+
+    public void addUserCount(String userId){
+        try {
+            Long userIdLong = Long.valueOf(userId);
+            logger.info("userIdLong : "+userIdLong);
+            redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
+            Long userCount = redisBean.getStringTemplate()
+                    .execute((RedisCallback<Long>) connection ->
+                            connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
+                                    .getKeySerializer())
+                                    .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
+            logger.info("userCount: "+userCount);
+        } catch (NumberFormatException e) {
+            logger.info("解析UserId 出错: " + userId);
+        }
     }
 
     @Override

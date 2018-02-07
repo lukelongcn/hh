@@ -83,7 +83,9 @@ public class HotelOrderJob {
     private void calcUserCount() {
         //统计活跃人数
         Date date = DateUtil.getDate(new Date(), -1, Calendar.DAY_OF_YEAR);
-        String dateKey = DateUtil.formatDate(date, DateUtil.FormatType.DAY);
+        String dateKey = DateUtil.formatDate(date, DateUtil.FormatType.MONTH);
+        String redisKey = RedisKey.getUserCountKey(date);
+
         List<UserCount> dayKeyList = userCountRepository.findByDayKey(dateKey);
 
         UserCount userCountEntity = null;
@@ -97,12 +99,12 @@ public class HotelOrderJob {
                 .execute((RedisCallback<Long>) connection ->
                         connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
                                 .getKeySerializer())
-                                .serialize(dateKey)));
+                                .serialize(redisKey)));
 
 
-        Long peopleNumbers = userCountEntity.getPeopleNumbers();
-        peopleNumbers += userCount;
-        userCountEntity.setPeopleNumbers(peopleNumbers);
+//        Long peopleNumbers = userCountEntity.getPeopleNumbers();
+//        peopleNumbers = userCount;
+        userCountEntity.setPeopleNumbers(userCount);
         userCountEntity.setDayKey(dateKey);
         userCountRepository.save(userCountEntity);
         logger.info("userCount: " + userCount);
