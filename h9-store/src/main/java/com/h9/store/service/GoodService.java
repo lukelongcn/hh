@@ -240,9 +240,6 @@ public class GoodService {
 
         if (!addressUserId.equals(userId)) return Result.fail("无效的地址");
 
-        Result result = changeStock(goods, count);
-
-        if (result.getCode() == 1) return result;
 
         //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
@@ -269,6 +266,11 @@ public class GoodService {
             // 微信支付
             return getPayInfo(order.getId(), goodsPrice, userId, convertGoodsDTO.getPayPlatform(),count,goods);
         } else {
+            //余额支付
+            Result result = changeStock(goods, count);
+            if(result.getCode() == 1){
+                return result;
+            }
             return balancePay(order, userId, goods, goodsPrice, count);
         }
 
