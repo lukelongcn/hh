@@ -19,6 +19,7 @@ import com.h9.store.modle.dto.OrderDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
 import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.modle.vo.OrderVo;
+import com.h9.store.modle.vo.PayResultVO;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -266,7 +267,7 @@ public class GoodService {
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
-            return getPayInfo(order.getId(), order.getMoney(), userId, convertGoodsDTO.getPayPlatform());
+            return getPayInfo(order.getId(), order.getMoney(), userId, convertGoodsDTO.getPayPlatform(),count,goods);
         } else {
             return balancePay(order, userId, goods, goodsPrice, count);
         }
@@ -292,17 +293,20 @@ public class GoodService {
     @Value("${path.app.wechat_host}")
     private String wxHost;
 
-    private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform) {
+    private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform,Integer count,Goods goods) {
         String url = wxHost + "/h9/api/pay/payInfo";
         StorePayDTO payDTO = new StorePayDTO(orderId, money, userId, payPlatform);
         try {
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_JSON);
-
-//            HttpEntity<String> entity = new HttpEntity<String>(JSONObject.toJSONString(payDTO), headers);
             logger.info("access url : " + url);
             Result result = restTemplate.postForObject(url, payDTO, Result.class);
-            return result;
+            Object data = result.getData();
+            PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);
+
+            Map<String, Object> mapVO = new HashMap<>();
+            mapVO.put("price", MoneyUtils.formatMoney(money));
+            mapVO.put("goodsName", goods.getName() + "*" + count);
+            mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
+            return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
             logger.info(e.getMessage(), e);
