@@ -9,7 +9,7 @@ import javax.persistence.Column;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * StickTypeDetailVo:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/4
  * Time: 11:14

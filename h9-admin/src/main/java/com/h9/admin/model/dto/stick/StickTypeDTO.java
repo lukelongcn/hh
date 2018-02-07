@@ -12,7 +12,7 @@ import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * StickTypeDTO:刘敏华 shadow.liu@hey900.com
  * Date: 2017/12/29
  * Time: 17:29

@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * BannerTypeListDTO:刘敏华 shadow.liu@hey900.com
  * Date: 2018/2/1
  * Time: 14:54

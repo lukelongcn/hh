@@ -1,6 +1,8 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.account.BankType;
 import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.entity.config.Image;
@@ -63,6 +65,8 @@ public class BasisService {
     private WhiteUserListRepository whiteUserListRepository;
     @Resource
     private VB2MoneyRepository vb2MoneyRepository;
+    @Resource
+    private RedisBean redisBean;
 
     public static final String IMAGE_FOLDER = "imageFolder";
 
@@ -72,7 +76,15 @@ public class BasisService {
 
             return Result.fail("标识已存在");
         }
-        return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
+        GlobalProperty saveGLo = globalPropertyRepository.saveAndFlush(globalProperty);
+        gloToRedis(saveGLo);
+        return Result.success(GlobalPropertyVO.toGlobalPropertyVO(saveGLo));
+    }
+
+    public void gloToRedis(GlobalProperty globalProperty){
+        String code = globalProperty.getCode();
+        redisBean.setStringValue(RedisKey.getConfigValue(code),globalProperty.getVal());
+        redisBean.setStringValue(RedisKey.getConfigType(code),globalProperty.getType()+"");
     }
 
     public Result<GlobalPropertyVO> updateGlobalProperty(GlobalPropertyEditDTO globalPropertyEditDTO){
@@ -85,7 +97,9 @@ public class BasisService {
         }
         BeanUtils.copyProperties(globalPropertyEditDTO,globalProperty);
         this.configService.expireConfig(globalPropertyEditDTO.getCode());
-        return Result.success(GlobalPropertyVO.toGlobalPropertyVO(this.globalPropertyRepository.save(globalProperty)));
+        GlobalProperty saveGlo = this.globalPropertyRepository.save(globalProperty);
+        gloToRedis(saveGlo);
+        return Result.success(GlobalPropertyVO.toGlobalPropertyVO(saveGlo));
     }
 
     public Result<PageResult<GlobalPropertyVO>> getGlobalProperties(String key,PageDTO pageDTO){
