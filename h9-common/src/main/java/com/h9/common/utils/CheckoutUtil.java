@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class CheckoutUtil {
     // 与接口配置信息中的Token要一致
-    private static String token = "ldhdldhdldhdldhdl";
+    private static String token = "981b481303294b1bbb02c2d2938b3a5f";
 
     /**
      * 验证签名

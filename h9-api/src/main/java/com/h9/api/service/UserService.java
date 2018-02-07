@@ -60,8 +60,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -591,7 +594,7 @@ public class UserService {
             return Result.fail("用户不存在");
         }
 
-        if (user.getPhone().equals(phone)) {
+        if (phone.equals(user.getPhone())) {
             return Result.fail("不能给自己转账");
         }
 
@@ -719,7 +722,9 @@ public class UserService {
     public void getOwnRedEnvelope(HttpServletRequest request, HttpServletResponse response, String tempId) {
         try {
 //            String link = host + "/h9/api/user/redEnvelope/scan/redirect/qrcode?tempId=" + tempId;
-            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+//            String link = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+            tempId = URLEncoder.encode(tempId, "UTF-8");
+            String link = host + "/h9/api/user/temp/redirect?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
             logger.info("二维码内容："+link);
@@ -753,9 +758,17 @@ public class UserService {
         if (StringUtils.isBlank(tempId)) {
             return Result.fail("二维码超时");
         }
-        if (tempId.contains("tempId=")) {
-            int index = tempId.indexOf("tempId=");
-            tempId = tempId.substring(index + 7, tempId.length());
+
+        //tempId 存放的是url ,需要进行url 解码
+        try {
+             tempId = URLDecoder.decode(tempId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.info("解码失败,"+tempId);
+            return Result.fail("领取异常");
+        }
+        if (tempId.contains("id=")) {
+            int index = tempId.indexOf("id=");
+            tempId = tempId.substring(index + 3, tempId.length());
         }
 
         map.put("Event", SCAN.getValue());
@@ -785,5 +798,22 @@ public class UserService {
 
     public void addUserCount(Long userId){
         addUserCount(userId);
+    }
+
+    public void tempRedirect(HttpServletResponse response, String tempId) {
+        try {
+            //https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1
+            String url = host+"/h9-weixin/#/account/hongbao/result?id="+tempId;
+            logger.info("tempId : "+tempId);
+            logger.info("url : "+url);
+//            String decode = URLDecoder.decode(tempId, "UTF-8");
+            response.sendRedirect(url);
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            logger.info("解码失败");
+        }
+
+
     }
 }

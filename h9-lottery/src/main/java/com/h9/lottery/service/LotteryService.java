@@ -1,5 +1,6 @@
 package com.h9.lottery.service;
 
+
 import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -11,7 +12,6 @@ import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.config.SystemBlackList;
 import com.h9.common.db.entity.config.WhiteUserList;
-import com.h9.common.db.entity.lottery.Reward.StatusEnum;
 import com.h9.common.db.entity.lottery.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserRecord;
@@ -19,8 +19,8 @@ import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
-import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.config.LotteryConfig;
+import com.h9.lottery.config.LotteryConstantConfig;
 import com.h9.lottery.model.dto.LotteryFlowDTO;
 import com.h9.lottery.model.dto.LotteryResult;
 import com.h9.lottery.model.dto.LotteryUser;
@@ -30,29 +30,26 @@ import com.h9.lottery.provider.FactoryProvider;
 import com.h9.lottery.provider.model.LotteryModel;
 import com.h9.lottery.provider.model.ProductModel;
 import com.h9.lottery.utils.RandomDataUtil;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.redisson.Redisson;
-import org.redisson.core.RLock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
 import java.util.stream.Collectors;
 
-
-import static com.h9.common.db.entity.account.BalanceFlow.FlowType.LOTTERY;
 import static com.h9.common.db.entity.account.BalanceFlow.FlowType.LOTTERY;
 import static com.h9.common.db.entity.lottery.Reward.StatusEnum.END;
-
+import static com.h9.common.db.entity.lottery.Reward.StatusEnum.FAILD;
+import static com.h9.common.db.entity.lottery.Reward.StatusEnum;
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -113,7 +110,7 @@ public class LotteryService {
             return Result.fail("您扫的条码不存在");
         }
         Integer status = reward.getStatus();
-        if (status == StatusEnum.FAILD.getCode()) {
+        if (status == Reward.StatusEnum.FAILD.getCode()) {
             return Result.fail("奖励已经失效");
         }
         User user = userRepository.findOne(userId);
@@ -127,7 +124,7 @@ public class LotteryService {
 //          放回是否开奖
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
             lotteryResultDto.setRoomUser(lottery.getRoomUser() == LotteryFlow.UserEnum.ROOMUSER.getId());
-            lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
+            lotteryResultDto.setLottery(reward.getStatus() == END.getCode());
             return Result.success(lotteryResultDto);
         } else {
             //  s 第一次参数这个活动
@@ -139,7 +136,7 @@ public class LotteryService {
             LotteryResultDto lotteryResultDto = new LotteryResultDto();
             lotteryResultDto.setLottery(false);
             lotteryResultDto.setRoomUser(false);
-            lotteryResultDto.setLottery(reward.getStatus() == StatusEnum.END.getCode());
+            lotteryResultDto.setLottery(reward.getStatus() == Reward.StatusEnum.END.getCode());
             //是第一个用户
             lottery = new Lottery();
             int partakeCount = lotteryRepository.findCountByReward(rewardId);
@@ -264,7 +261,6 @@ public class LotteryService {
     @Transactional
     public Result<LotteryResult> getLotteryRoom(
             Long userId, String code) {
-        code = LotteryConstantConfig.path2Code(code);
         Reward reward = rewardRepository.findByCode(code);
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -295,9 +291,14 @@ public class LotteryService {
         lotteryResult.setEndTime(endTime);
         long differentDate = lastDate.getTime() - nowDate.getTime();
         lotteryResult.setDifferentDate(differentDate > 0 ? differentDate : 0);
-        if (differentDate <= 0) {
+        if (differentDate <= 0 && reward.getStatus()!=StatusEnum.END.getCode()) {
             logger.debugv("lottery start 中奖名单为：查询开奖 code:{0}" ,code);
-            lottery(null, code);
+            try{
+                lottery(null, code);
+            }catch (Exception ex){
+
+            }
+
         }
         Integer status = reward.getStatus();
         boolean islottery = status == StatusEnum.END.getCode();
@@ -352,10 +353,11 @@ public class LotteryService {
     @Resource
     private Redisson redisson;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public Result lottery(Long curUserId, String code) {
         logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
-        Reward reward = rewardRepository.findByCode4Update(code);
+        Reward reward = rewardRepository.findByCode(code);
+        logger.debugv("rewardId {0},status {1}",reward.getId(),reward.getStatus());
         if (reward == null) {
             return Result.fail("红包不存在");
         }
@@ -387,8 +389,7 @@ public class LotteryService {
         if (lotteryModel != null) {
             reward.setFactoryStatus(lotteryModel.getState());
         }
-        //变更奖励状态
-        reward.setStatus(END.getCode());
+
         if (curUserId != null) {
             //手动开启奖励的
             reward.setStartType(1);
@@ -396,7 +397,14 @@ public class LotteryService {
             //自动开启奖励的
             reward.setStartType(2);
         }
-        rewardRepository.save(reward);
+        rewardRepository.saveAndFlush(reward);
+
+        int updateRewardStatus = rewardRepository.updateRewardStatus(reward.getId(),StatusEnum.END.getCode());
+        if(updateRewardStatus==0){
+            throw new ServiceException("服务器处理中请稍后再试");
+        }
+
+
         //变更用余额
         for (int i = 0; i < lotteryFlows.size(); i++) {
             LotteryFlow lotteryFlow = lotteryFlows.get(i);

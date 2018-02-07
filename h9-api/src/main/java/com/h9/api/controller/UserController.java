@@ -22,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 
 /**
  * Created by itservice on 2017/10/26.
@@ -181,6 +183,11 @@ public class UserController {
         userService.getOwnRedEnvelope(request, response, tempId);
     }
 
+    @GetMapping("/user/temp/redirect")
+    public void tempRedirect(HttpServletResponse response,@RequestParam String id){
+        userService.tempRedirect(response,id);
+
+    }
     /**
      * description: 扫描 推广红包
      */
@@ -196,17 +203,17 @@ public class UserController {
     @Value("${path.app.wechat_host}")
     private String wxHost;
 
-    @GetMapping("/user/redEnvelope/scan/redirect")
-    public void redirect(@RequestParam String tempId,HttpServletResponse response) {
-
-        String url = wxHost+"/h9-weixin/#/account/hongbao/result?id="+tempId;
-        try {
-            logger.info("url: "+url);
-            response.sendRedirect(url);
-        } catch (IOException e) {
-            logger.info("重定向失败 url: "+url);
-        }
-    }
+//    @GetMapping("/user/redEnvelope/scan/redirect")
+//    public void redirect(@RequestParam String tempId,HttpServletResponse response) {
+//
+//        String url = wxHost+"/h9-weixin/#/account/hongbao/result?id="+tempId;
+//        try {
+//            logger.info("url: "+url);
+//            response.sendRedirect(url);
+//        } catch (IOException e) {
+//            logger.info("重定向失败 url: "+url);
+//        }
+//    }
 
 
     /**
