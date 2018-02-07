@@ -23,6 +23,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.h9.common.db.entity.order.Orders.PayMethodEnum.WX_PAY;
+
 /**
  * Created by itservice on 2018/1/17.
  */
@@ -58,6 +60,7 @@ public class StorePayHandler extends AbPayHandler{
 //        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
         orders.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         orders.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+        orders.setPayMethond(WX_PAY.getCode());
         ordersRepository.save(orders);
 
         //记录两条流水
