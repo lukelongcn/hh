@@ -68,7 +68,13 @@ public class OrderDetailVO {
             vo.setCouponsNumber(orderItems.get(0).getDidiCardNumber());
         }
         vo.setOrderId(order.getId() + "");
-        vo.setPayMethod("余额支付");
+        int payMethond = order.getPayMethond();
+        Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(payMethond);
+        if(byCode != null){
+            vo.setPayMethod(byCode.getDesc());
+        }else{
+            vo.setPayMethod("余额支付");
+        }
         vo.setPayMoney(order.getPayMoney() + "");
         vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         List<OrderItems> itemList = order.getOrderItems();
