@@ -506,7 +506,7 @@ public class UserService {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("账号不存在");
 
-        if (transferDTO.getTransferMoney().compareTo(new BigDecimal(0.01)) < 0) {
+        if(transferDTO.getTransferMoney().doubleValue() < 0.01D){
             return Result.fail("最小金额为0.01");
         }
 
@@ -609,7 +609,7 @@ public class UserService {
 
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
         if (money != null && money.compareTo(new BigDecimal(0)) > 0) {
-            if (money.doubleValue() > 0.01D) {
+            if (money.doubleValue() < 0.01D) {
                 return Result.fail("最小金额为0.01");
             }
 
