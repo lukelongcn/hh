@@ -267,7 +267,7 @@ public class GoodService {
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
-            return getPayInfo(order.getId(), order.getMoney(), userId, convertGoodsDTO.getPayPlatform(),count,goods);
+            return getPayInfo(order.getId(), goodsPrice, userId, convertGoodsDTO.getPayPlatform(),count,goods);
         } else {
             return balancePay(order, userId, goods, goodsPrice, count);
         }
