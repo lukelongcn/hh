@@ -51,7 +51,7 @@ public interface GoodsReposiroty extends BaseRepository<Goods>{
      * description: 查询最后兑换的商品
      */
     @Query(value = "select g.* from goods g, goods_type gtype where gtype.`code` <> 'mobile_recharge'" +
-            " and gtype.`code` <> 'didi_card' and g.goods_type_id =gtype.id AND g.status = 1 order by  g.sort desc limit 0,100",nativeQuery = true)
+            " and gtype.`code` <> 'didi_card' and g.goods_type_id =gtype.id AND g.status = 1 order by  g.sort asc limit 0,100",nativeQuery = true)
     List<Goods> findLastConvertGoods();
 
     @Query("select o from Goods o where id = ?1")
