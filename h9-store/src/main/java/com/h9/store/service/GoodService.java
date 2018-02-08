@@ -244,7 +244,7 @@ public class GoodService {
         //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
-        if (balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
+        if ( convertGoodsDTO.getPayMethod() == 1 && balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
             return Result.fail("余额不足");
         }
 
