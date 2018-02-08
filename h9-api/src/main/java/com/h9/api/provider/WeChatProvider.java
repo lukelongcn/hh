@@ -288,7 +288,7 @@ public class WeChatProvider {
                                 .setType("view")
                                 .setKey("12")
                                 .setUrl(host + "/h9-weixin/#/active/hongbao")
-                                .setName("扫瓶盖抢红包"),
+                                .setName("开扫盖红包"),
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("23")
@@ -297,8 +297,10 @@ public class WeChatProvider {
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("31")
-                                .setUrl(host + "/h9-weixin/#/account/personal")
-                                .setName("旅游健康基金"))
+                                .setUrl(host + "/h9-weixin/#/travel")
+                                .setName("旅游健康卡")
+                        )
+
                 ).build();
 
         String accessToken = getWeChatAccessToken();
