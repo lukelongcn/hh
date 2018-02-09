@@ -288,7 +288,7 @@ public class WeChatProvider {
                                 .setType("view")
                                 .setKey("12")
                                 .setUrl(host + "/h9-weixin/#/active/hongbao")
-                                .setName("开扫盖红包"),
+                                .setName("开盖扫红包"),
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("23")
