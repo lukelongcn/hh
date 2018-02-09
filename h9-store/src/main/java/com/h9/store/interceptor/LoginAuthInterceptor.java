@@ -77,6 +77,10 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
         try {
             Long userIdLong = Long.valueOf(userId);
             logger.info("userIdLong : "+userIdLong);
+
+
+            String day = DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY);
+            redisBean.getValueOps().setBit("h9:user:count:"+day,userIdLong,true);
             redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
             Long userCount = redisBean.getStringTemplate()
                     .execute((RedisCallback<Long>) connection ->
