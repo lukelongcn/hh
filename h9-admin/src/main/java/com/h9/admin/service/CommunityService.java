@@ -107,9 +107,9 @@ public class CommunityService {
     }
 
     public Result<Banner> updateBanner(BannerEditDTO bannerEditDTO) {
-        if (this.bannerRepository.findByIdNotAndTitle(bannerEditDTO.getId(), bannerEditDTO.getTitle()) != null) {
-            return Result.fail("名称已存在");
-        }
+//        if (this.bannerRepository.findByIdNotAndTitle(bannerEditDTO.getId(), bannerEditDTO.getTitle()) != null) {
+//            return Result.fail("名称已存在");
+//        }
         Banner b = this.bannerRepository.findOne(bannerEditDTO.getId());
         BeanUtils.copyProperties(bannerEditDTO, b);
         return Result.success(this.bannerRepository.save(b));
