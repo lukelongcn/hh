@@ -114,6 +114,10 @@ public class EventService {
             logger.info("codeJson 为空: " + codeJson);
             return Result.fail("谢谢惠顾");
         }
+        if (user == null) {
+            // 注册用户
+            user = userService.registUser(openId);
+        }
 
         RedEnvelopeDTO redEnvelopeDTO = JSONObject.parseObject(codeJson, RedEnvelopeDTO.class);
 
@@ -127,10 +131,7 @@ public class EventService {
         if (user.getId().equals(redEnvelopeDTO.getUserId())) {
             return Result.fail("自己不能扫自己的推广红包");
         }
-        if (user == null) {
-            // 注册用户
-            user = userService.registUser(openId);
-        }
+
         User originUser = userRepository.findOne(redEnvelopeDTO.getUserId());
 
         Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
