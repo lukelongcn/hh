@@ -44,6 +44,7 @@ public class BalanceFlowVO {
         money = MoneyUtils.formatMoney(balanceFlow.getMoney());
         this.createTime = DateUtil.formatDate(balanceFlow.getCreateTime(), DateUtil.FormatType.SECOND);
         imgUrl = iconMap.get(balanceFlow.getFlowType() + "");
+        System.out.println(imgUrl);
         remarks = nameMap.get(balanceFlow.getFlowType() + "");
     }
 

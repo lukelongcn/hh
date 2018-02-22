@@ -18,7 +18,6 @@ import com.h9.common.db.repo.RechargeOrderRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,11 +66,11 @@ public class RechargeService {
         Long payOrderId = data.getPayOrderId();
         //APP 支付
         Result prepayResult = payProvider.getPrepayInfo(payOrderId);
-        Map<String, Object> mapVO = new HashMap<>();
-        mapVO.put("orderId", payOrderId);
-        mapVO.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_SECOND));
-        mapVO.put("wxPayInfo", prepayResult.getData());
-        return Result.success(mapVO);
+        Map<String, Object> map = new HashMap<>();
+        map.put("wxPayInfo", prepayResult.getData());
+        map.put("orderId", data.getOrderId());
+        map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.GBK_SECOND));
+        return Result.success(map);
     }
 
 
@@ -83,10 +82,6 @@ public class RechargeService {
         }
         if (money.compareTo(new BigDecimal(0)) <= 0.001) {
             return Result.fail("请填入正确的充值金额");
-        }
-
-        if (money.compareTo(new BigDecimal(99999999)) > 0) {
-            return Result.fail("充值金额太大暂不支持");
         }
 
         RechargeOrder rechargeOrder = new RechargeOrder();
