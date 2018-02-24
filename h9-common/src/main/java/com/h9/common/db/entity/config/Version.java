@@ -1,12 +1,8 @@
 package com.h9.common.db.entity.config;
 
-import com.google.common.collect.ImmutableMap;
 import com.h9.common.base.BaseEntity;
-import org.apache.commons.lang3.EnumUtils;
 
 import javax.persistence.*;
-
-import java.util.*;
 
 import static java.util.Arrays.*;
 import static javax.persistence.GenerationType.IDENTITY;
