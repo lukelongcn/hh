@@ -5,6 +5,9 @@ import com.h9.api.model.dto.RedEnvelopeDTO;
 import com.h9.api.model.dto.VerifyTokenDTO;
 import com.h9.api.model.vo.ScanRedEnvelopeVO;
 import com.h9.api.provider.WeChatProvider;
+import com.h9.api.service.wxEvent.EventHandlerStrategy;
+import com.h9.api.service.wxEvent.EventHandlerStrategyFactory;
+import com.h9.api.service.wxEvent.model.Message4wxText;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
@@ -45,6 +48,7 @@ public class EventService {
     @Resource
     private WeChatProvider weChatProvider;
 
+
     public String handle(VerifyTokenDTO verifyTokenDTO) {
         String signature = verifyTokenDTO.getSignature();
         String timestamp = verifyTokenDTO.getTimestamp();
@@ -58,24 +62,20 @@ public class EventService {
             return "验证失败";
         }
     }
-
-    public String wxEventCallBack(Map<String, String> map ) {
-        try {
-            logger.info("wx request params:" + JSONObject.toJSONString(map));
-        } catch (Exception e) {
-            logger.info(e.getMessage(), e);
-            logger.info("解析微信请求出错");
-            return "";
-        }
-        String event = map.get("Event");
-        if (WeChatProvider.EventEnum.SUBSCRIBE.getValue().equals(event)) {
-            handleSubscribeAndScan(map);
-        } else if (WeChatProvider.EventEnum.SCAN.getValue().equals(event)) {
-            handleSubscribeAndScan(map);
-        }
-
-        return "";
-    }
+//
+//    public String wxEventCallBack(Map<String, String> map) {
+//
+////        String event = map.get("Event");
+////        if (WeChatProvider.EventEnum.SUBSCRIBE.getValue().equals(event)) {
+////            handleSubscribeAndScan(map);
+////        } else if (WeChatProvider.EventEnum.SCAN.getValue().equals(event)) {
+////            handleSubscribeAndScan(map);
+////        }
+////        eventContext.handler(map);
+//
+////        handler(map);
+//        return "";
+//    }
 
 
     @Transactional
@@ -105,7 +105,7 @@ public class EventService {
             String userIdStr = map.get("scanUserId");
             Long sacnUserId = Long.valueOf(userIdStr);
             user = userRepository.findOne(sacnUserId);
-        }else{
+        } else {
             user = userRepository.findByOpenId(openId);
             codeJson = redisBean.getStringValue(RedisKey.getQrCode(eventKey));
         }
@@ -137,8 +137,8 @@ public class EventService {
         Transactions transactions = new Transactions(null, redEnvelopeDTO.getUserId(), user.getId(),
                 redEnvelopeDTO.getMoney(), "红包推广",
                 BalanceFlow.BalanceFlowTypeEnum.RED_ENVELOPE.getId(),
-                redEnvelopeDTO.getTempId(),originUser.getPhone(),
-                user.getPhone(),originUser.getNickName(),user.getNickName());
+                redEnvelopeDTO.getTempId(), originUser.getPhone(),
+                user.getPhone(), originUser.getNickName(), user.getNickName());
 
         transactionsRepository.saveAndFlush(transactions);
         //展示码的人 扣钱
@@ -155,15 +155,39 @@ public class EventService {
             //让redis 二维码 消失
             redisBean.setStringValue(RedisKey.getQrCode(eventKey), "", 1, TimeUnit.SECONDS);
             //让 redis tempId 消失
-            redisBean.setStringValue(RedisKey.getQrCodeTempId(redEnvelopeDTO.getTempId()),"",1,TimeUnit.SECONDS);
+            redisBean.setStringValue(RedisKey.getQrCodeTempId(redEnvelopeDTO.getTempId()), "", 1, TimeUnit.SECONDS);
             //发送模块消息给两方用户
-            weChatProvider.sendTemplate(openId,redEnvelopeDTO.getMoney());
-            weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(),redEnvelopeDTO.getMoney().abs().negate());
+            weChatProvider.sendTemplate(openId, redEnvelopeDTO.getMoney());
+            weChatProvider.sendTemplate(redEnvelopeDTO.getOpenId(), redEnvelopeDTO.getMoney().abs().negate());
             ScanRedEnvelopeVO vo = new ScanRedEnvelopeVO(MoneyUtils.formatMoney(redEnvelopeDTO.getMoney()),
-                    originUser.getAvatar(),originUser.getNickName());
+                    originUser.getAvatar(), originUser.getNickName());
             return Result.success(vo);
         }
 
         return Result.fail();
+    }
+
+    /**
+     * 处理事件
+     *
+     * @param map 封装后的http 请求参数
+     */
+    public String handler(Map<String, String> map) {
+        try {
+            logger.info("wx request params:" + JSONObject.toJSONString(map));
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            logger.info("解析微信请求出错");
+            return "";
+        }
+
+        String strategyKey = map.get("Event");
+        EventHandlerStrategy eventHandlerStrategy = EventHandlerStrategyFactory.getInstance().getStrategy(strategyKey);
+        Object obj = eventHandlerStrategy.handler(map);
+        if (obj == null) {
+            return "";
+        }
+        //TODO 将对象转换成xml
+        return "";
     }
 }

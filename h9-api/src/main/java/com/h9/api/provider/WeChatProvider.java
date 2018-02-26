@@ -413,6 +413,7 @@ public class WeChatProvider {
 
     public enum EventEnum {
         SUBSCRIBE("subscribe"),
+        TEXT("TEXT"),
         SCAN("SCAN");
 
         private String value;
