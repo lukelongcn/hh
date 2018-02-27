@@ -3,9 +3,14 @@ package com.h9.common.utils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.jboss.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -13,6 +18,7 @@ import java.util.*;
  */
 public class XMLUtils {
 
+    private static Logger logger = Logger.getLogger(XMLUtils.class);
     /**
      * 解析微信发来的请求(xml)
      *
@@ -56,6 +62,33 @@ public class XMLUtils {
         return null;
     }
 
+    /**
+     * 将对象直接转换成String类型的 XML输出
+     *
+     * @param obj
+     * @return
+     */
+    public static String convertToXml(Object obj) {
+        // 创建输出流
+        StringWriter sw = new StringWriter();
+        try {
+            // 利用jdk中自带的转换类实现
+            JAXBContext context = JAXBContext.newInstance(obj.getClass());
+
+            Marshaller marshaller = context.createMarshaller();
+            // 格式化xml输出的格式
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+                    Boolean.TRUE);
+            // 将对象转换成输出流形式的xml
+            marshaller.marshal(obj, sw);
+        } catch (JAXBException e) {
+            logger.info("转换成xml 异常");
+            logger.info(e.getMessage(),e);
+        }
+        return sw.toString();
+    }
+
+
     private static void mapToXML2(Map map, StringBuffer sb) {
         Set set = map.keySet();
         for (Iterator it = set.iterator(); it.hasNext();) {
@@ -85,4 +118,6 @@ public class XMLUtils {
 
         }
     }
+
+
 }

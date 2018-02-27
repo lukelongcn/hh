@@ -1,14 +1,12 @@
 package com.h9.api.service.wxEvent;
 
 
-import com.h9.api.service.wxEvent.impl.MediaEventHandlerStrategy;
-import com.h9.api.service.wxEvent.impl.SubscribeScanHandlerStrategy;
-import com.h9.api.service.wxEvent.impl.TextEventHandlerStrategy;
+import com.h9.api.service.wxEvent.impl.*;
 import org.jboss.logging.Logger;
 
 import java.util.Map;
 
-import static com.h9.api.provider.WeChatProvider.EventEnum.TEXT;
+import static com.h9.api.provider.WeChatProvider.EventEnum.*;
 
 
 /**
@@ -19,11 +17,17 @@ public class EventHandlerStrategyFactory {
     private Logger logger = Logger.getLogger(this.getClass());
     private static EventHandlerStrategyFactory eventHandlerStrategyFactory = null;
 
-    private static Map<String,EventHandlerStrategy> strategyMap;
+    private static Map<String,EventHandlerStrategy> strategyMap = null;
     static {
         strategyMap.put(TEXT.getValue(), new TextEventHandlerStrategy());
-        strategyMap.put(TEXT.getValue(), new SubscribeScanHandlerStrategy());
-        strategyMap.put(TEXT.getValue(), new MediaEventHandlerStrategy());
+        strategyMap.put(SCAN.getValue(), new SubscribeScanHandlerStrategy());
+        strategyMap.put(SUBSCRIBE.getValue(), new SubscribeScanHandlerStrategy());
+        strategyMap.put(IMAGE.getValue(), new ImageEventHandlerStrategy());
+        strategyMap.put(VOICE.getValue(), new VoiceEventHandlerStrategy());
+        strategyMap.put(VIDEO.getValue(), new VideoEventHandlerStrategy());
+        strategyMap.put(SHORTVIDEO.getValue(), new ShortVideoEventHandlerStrategy());
+        strategyMap.put(LOCATION.getValue(), new LocationEventHandlerStrategy());
+        strategyMap.put(LINK.getValue(), new LinkEventHandlerStrategy());
     }
     private EventHandlerStrategyFactory(){}
 

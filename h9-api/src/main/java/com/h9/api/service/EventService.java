@@ -19,6 +19,7 @@ import com.h9.common.db.repo.TransactionsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.CheckoutUtil;
 import com.h9.common.utils.MoneyUtils;
+import com.h9.common.utils.XMLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
@@ -183,11 +184,15 @@ public class EventService {
 
         String strategyKey = map.get("Event");
         EventHandlerStrategy eventHandlerStrategy = EventHandlerStrategyFactory.getInstance().getStrategy(strategyKey);
+        if(eventHandlerStrategy == null){
+            return "";
+        }
         Object obj = eventHandlerStrategy.handler(map);
         if (obj == null) {
             return "";
         }
-        //TODO 将对象转换成xml
-        return "";
+        String xml = XMLUtils.convertToXml(obj);
+        logger.info("回复的消息: "+xml);
+        return xml;
     }
 }

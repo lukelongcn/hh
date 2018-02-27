@@ -411,9 +411,16 @@ public class WeChatProvider {
     }
 
 
+    @SuppressWarnings("SpellCheckingInspection")
     public enum EventEnum {
         SUBSCRIBE("subscribe"),
-        TEXT("TEXT"),
+        TEXT("text"),
+        IMAGE("image"),
+        VOICE("voice"),
+        VIDEO("video"),
+        SHORTVIDEO("shortvideo"),
+        LOCATION("location"),
+        LINK("link"),
         SCAN("SCAN");
 
         private String value;
