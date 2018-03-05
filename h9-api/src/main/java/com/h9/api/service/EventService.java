@@ -15,17 +15,21 @@ import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.wxEvent.ReplyMessage;
+import com.h9.common.db.repo.ReplyMessageRepository;
 import com.h9.common.db.repo.TransactionsRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.CheckoutUtil;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.common.utils.XMLUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +52,8 @@ public class EventService {
     private TransactionsRepository transactionsRepository;
     @Resource
     private WeChatProvider weChatProvider;
+    @Resource
+    private ReplyMessageRepository replyMessageRepository;
 
 
     public String handle(VerifyTokenDTO verifyTokenDTO) {
@@ -182,12 +188,16 @@ public class EventService {
             return "";
         }
 
-        String strategyKey = map.get("Event");
-        EventHandlerStrategy eventHandlerStrategy = EventHandlerStrategyFactory.getInstance().getStrategy(strategyKey);
+        String event = map.get("Event");
+        EventHandlerStrategy eventHandlerStrategy = EventHandlerStrategyFactory.getInstance().getStrategy(event);
         if(eventHandlerStrategy == null){
             return "";
         }
-        Object obj = eventHandlerStrategy.handler(map);
+        List<ReplyMessage> replyMessageList = replyMessageRepository.findByEventType(event);
+        if (CollectionUtils.isEmpty(replyMessageList)) {
+            return "";
+        }
+        Object obj = eventHandlerStrategy.handler(map,replyMessageList);
         if (obj == null) {
             return "";
         }
