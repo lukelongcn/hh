@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
 
-    List<ReplyMessage> findByKeyWordRegex(String regex);
+//    List<ReplyMessage> findByKeyWordRegex(String regex);
 
     List<ReplyMessage> findByEventType(String eventType);
 }

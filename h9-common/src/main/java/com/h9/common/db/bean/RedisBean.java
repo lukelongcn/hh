@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
  * Date: 2017-08-09
  * Time: 14:35
  */
+@SuppressWarnings("SpringJavaAutowiringInspection")
 @Component
 public class RedisBean {
     private static final Logger logger = Logger.getLogger(RedisBean.class);
