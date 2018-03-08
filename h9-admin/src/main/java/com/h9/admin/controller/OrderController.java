@@ -72,10 +72,12 @@ public class OrderController {
      */
     @Secured
     @GetMapping("/wx/list")
+    @ApiOperation("微信支付对账列表")
     public Result wxOrderDetail(@RequestParam(required = false) String wxOrderNo,
                                 @RequestParam(required = false,defaultValue = "-1") Integer orderType,
-                                @RequestParam(required = false) Long createTime,
+                                @RequestParam(required = false) Long startTime,
+                                @RequestParam(required = false) Long endTime,
                                 @RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit){
-        return orderService.wxOrderList(page,limit,wxOrderNo,orderType,createTime);
+        return orderService.wxOrderList(page,limit,wxOrderNo,orderType,startTime,endTime);
     }
 }

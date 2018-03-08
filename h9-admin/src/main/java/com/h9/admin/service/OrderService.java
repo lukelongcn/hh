@@ -36,10 +36,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -154,7 +151,7 @@ public class OrderService {
     @Resource
     private PayInfoRepository payInfoRepository;
 
-    public Result wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime) {
+    public Result wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime, Long endTime) {
         if (StringUtils.isNotBlank(wxOrderNo)) {
             String url = payHost + "/h9/pay/order/info?no=" + wxOrderNo;
             Result result = restTemplate.getForObject(url, Result.class);
@@ -173,11 +170,18 @@ public class OrderService {
             WxOrderListInfo wxOrderListInfo = new WxOrderListInfo(wxNo.toString(), type == 0 ? "微信充值" : "购买商品"
                     , payInfo.getOrderId() + "", MoneyUtils.formatMoney(payInfo.getMoney()), date, date);
 
-            return Result.success(wxOrderListInfo);
+            PageResult<WxOrderListInfo> pageResult = new PageResult();
+            pageResult.setHasNext(false);
+            pageResult.setCurrPage(1);
+            pageResult.setTotal(1);
+            pageResult.setTotalPage(1);
+            pageResult.setCount(limit);
+            pageResult.setData(Arrays.asList(wxOrderListInfo));
+            return Result.success(pageResult);
         } else {
             //WxOrderListInfo
-            Specification<PayInfo> specification = getWxOrderList(createTime, orderType);
-            PageRequest pageRequest = payInfoRepository.pageRequest(page, limit);
+            Specification<PayInfo> specification = getWxOrderList(createTime, orderType, endTime);
+            PageRequest pageRequest = payInfoRepository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
             Page<PayInfo> pageInfoList = payInfoRepository.findAll(specification, pageRequest);
             PageResult<PayInfo> pageResult = new PageResult(pageInfoList);
             List<PayInfo> payInfoList = pageInfoList.getContent();
@@ -195,23 +199,28 @@ public class OrderService {
             }
             Map<String, String> map = (Map<String, String>) result.getData();
 
-            PageResult<WxOrderListInfo> pageVo = pageResult.map(payInfo -> new WxOrderListInfo(payInfo, map.get(payInfo.getId())));
+            PageResult<WxOrderListInfo> pageVo = pageResult.map(payInfo -> new WxOrderListInfo(payInfo, map));
 
             return Result.success(pageVo);
         }
 
     }
 
-    private Specification<PayInfo> getWxOrderList(Long createTime, int orderType) {
+    /**
+     * description: 微信 支付订单
+     *
+     * @param orderType -1 全部 ，1 充值 ，2购买
+     */
+    private Specification<PayInfo> getWxOrderList(Long startTimeL, int orderType, Long endTimeL) {
 
         return (root, query, builder) -> {
 
             List<Predicate> predicateList = new ArrayList<>();
 
-             if(orderType == 0){
-                predicateList.add(builder.equal(root.get("orderType"), 0));
-            }else if(orderType == 2){
-                predicateList.add(builder.equal(root.get("orderType"), 2));
+            if (orderType == 2) {
+                predicateList.add(builder.equal(root.get("orderType"), PayInfo.OrderTypeEnum.STORE_ORDER.getId()));
+            } else if (orderType == 1) {
+                predicateList.add(builder.equal(root.get("orderType"), PayInfo.OrderTypeEnum.Recharge.getId()));
             }
 //            else{
 //                Predicate predicate = builder.equal(root.get("orderType"), 2);
@@ -219,11 +228,12 @@ public class OrderService {
 //            }
 
             predicateList.add(builder.equal(root.get("status"), 2));
-//            Date startTime = transferDTO.getStartTime();
-//            Date endTime = transferDTO.getEndTime();
-//            if (startTime != null && endTime != null) {
-//                predicateList.add(builder.between(root.get("createTime"), startTime, endTime));
-//            }
+            if (startTimeL != null && endTimeL != null) {
+                Date startTime = new Date(startTimeL);
+                Date endTime = new Date(endTimeL);
+
+                predicateList.add(builder.between(root.get("createTime"), startTime, endTime));
+            }
 
             return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
         };
