@@ -64,4 +64,18 @@ public class OrderController {
     public Result<List<String>> getSupportExpress(){
         return orderService.getSupportExpress();
     }
+
+
+    /**
+     * description: 微信 支付订单
+     * @param  orderType -1 全部 ，1 充值 ，2购买
+     */
+    @Secured
+    @GetMapping("/wx/list")
+    public Result wxOrderDetail(@RequestParam(required = false) String wxOrderNo,
+                                @RequestParam(required = false,defaultValue = "-1") Integer orderType,
+                                @RequestParam(required = false) Long createTime,
+                                @RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit){
+        return orderService.wxOrderList(page,limit,wxOrderNo,orderType,createTime);
+    }
 }

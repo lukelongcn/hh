@@ -61,7 +61,7 @@ public class WeChatProvider {
         try {
             realUrl = URLEncoder.encode(redirectUrl, "utf-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+           logger.info(e.getMessage(),e);
         }
         return MessageFormat.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=" +
                 "code&scope={2}&state={3}#wechat_redirect", appId, realUrl, "snsapi_userinfo", state);  //snsapi_base
@@ -71,6 +71,8 @@ public class WeChatProvider {
         if (appId == null) {
             appId = jsAppId;
         }
+        //url eg : https://h9shop-dev.thy360.com/v2/wx/response
+        //state eg : aHR0cHM6Ly93ZWl4aW4tZGV2LWg5LnRoeTM2MC5jb20vaDktd2VpeGluLyMvaW5kZXg=
         String jsCode = getJSCode(appId, url, state);
         logger.debugv(jsCode);
         return jsCode;

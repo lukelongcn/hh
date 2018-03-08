@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.WxOrderListInfo;
 import com.h9.admin.model.dto.order.ExpressDTO;
 import com.h9.admin.model.vo.OrderDetailVO;
 import com.h9.admin.model.vo.OrderItemVO;
@@ -8,6 +9,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
+import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
 import com.h9.common.db.entity.order.Goods;
@@ -15,31 +17,39 @@ import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.OrdersRepository;
+import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.RechargeRecordRepository;
 import com.h9.common.modle.dto.transaction.OrderDTO;
+import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * 
  * Created by Gonyb on 2017/11/10.
  */
 @Service
 public class OrderService {
 
     Logger logger = Logger.getLogger(OrderService.class);
-    
+
     @Resource
     private OrdersRepository ordersRepository;
     @Resource
@@ -50,20 +60,20 @@ public class OrderService {
     private CommonService commonService;
     @Resource
     private GoodsReposiroty goodsReposiroty;
-    
+
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         long startTime = System.currentTimeMillis();
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
         long sortEndTime = System.currentTimeMillis();
-        logger.debugv("排序时间"+(sortEndTime -startTime));
+        logger.debugv("排序时间" + (sortEndTime - startTime));
         Specification<Orders> ordersSpecification = this.ordersRepository.buildSpecification(orderDTO);
         long 查询参数构建时间 = System.currentTimeMillis();
-        logger.debugv("查询参数构建时间"+(查询参数构建时间 -sortEndTime));
+        logger.debugv("查询参数构建时间" + (查询参数构建时间 - sortEndTime));
         PageRequest pageRequest = orderDTO.toPageRequest(sort);
         Page<Orders> all = ordersRepository.findAll(ordersSpecification
                 , pageRequest);
         long 查询真正使用时间 = System.currentTimeMillis();
-        logger.debugv("查询时间"+(查询真正使用时间 - 查询参数构建时间));
+        logger.debugv("查询时间" + (查询真正使用时间 - 查询参数构建时间));
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
@@ -73,16 +83,16 @@ public class OrderService {
             return Result.fail("订单不存在");
         }
         RechargeRecord rechargeRecord = this.rechargeRecordRepository.findByOrderId(id);
-        return Result.success(OrderDetailVO.toOrderDetailVO(orders,rechargeRecord));
+        return Result.success(OrderDetailVO.toOrderDetailVO(orders, rechargeRecord));
     }
 
     public Result<OrderItemVO> editExpress(ExpressDTO expressDTO) {
         Orders one = ordersRepository.findOne(expressDTO.getId());
-        if(one==null){
+        if (one == null) {
             return Result.fail("订单号不存在");
         }
         //只有实物订单才能修改
-        if (one.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode()+"")) {
+        if (one.getOrderType().equals(Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + "")) {
             BeanUtils.copyProperties(expressDTO, one);
             if (one.getStatus() == Orders.statusEnum.WAIT_SEND.getCode()) {
                 if (StringUtils.isNotBlank(expressDTO.getExpressNum())) {
@@ -94,7 +104,7 @@ public class OrderService {
         } else {
             //GoodsType.GoodsTypeEnum byCode = GoodsType.GoodsTypeEnum.findByCode(one.getOrderType());
             return Result.fail("此订单不为实体商品,无法添加物流信息");
-        } 
+        }
     }
 
     public Result<List<String>> getSupportExpress() {
@@ -102,7 +112,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Result updateOrderStatus(Long id,Integer status) {
+    public Result updateOrderStatus(Long id, Integer status) {
         Orders orders = this.ordersRepository.findOne(id);
         if (orders == null) {
             return Result.fail("订单不存在");
@@ -112,26 +122,112 @@ public class OrderService {
                 return Result.fail("不是未确认的订单不能发货");
             }
             orders.setStatus(status);
-        }else if (status == Orders.statusEnum.CANCEL.getCode()) {
+        } else if (status == Orders.statusEnum.CANCEL.getCode()) {
             if (orders.getStatus() != Orders.statusEnum.UNCONFIRMED.getCode()) {
                 return Result.fail("不是未确认的订单不能取消");
             }
             orders.setStatus(status);
-        }else {
+        } else {
             return Result.fail("不支持修改订单为当前状态");
         }
         this.ordersRepository.save(orders);
         if (status == Orders.statusEnum.CANCEL.getCode()) {
-           this.commonService.setBalance(orders.getUser().getId(),orders.getPayMoney().abs(), BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
-                   orders.getId(),orders.getNo(),"订单取消退回");
-           List<Goods> goodsList = new ArrayList<>();
-           for (OrderItems orderItems : orders.getOrderItems()) {
-               Goods goods = this.goodsReposiroty.findByLockId(orderItems.getGoods().getId());
-               goods.setStock(goods.getStock() + orderItems.getCount());
-               goodsList.add(goods);
-           }
+            this.commonService.setBalance(orders.getUser().getId(), orders.getPayMoney().abs(), BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
+                    orders.getId(), orders.getNo(), "订单取消退回");
+            List<Goods> goodsList = new ArrayList<>();
+            for (OrderItems orderItems : orders.getOrderItems()) {
+                Goods goods = this.goodsReposiroty.findByLockId(orderItems.getGoods().getId());
+                goods.setStock(goods.getStock() + orderItems.getCount());
+                goodsList.add(goods);
+            }
             this.goodsReposiroty.save(goodsList);
         }
         return Result.success();
     }
+
+    @Value("${pay.host}")
+    private String payHost;
+    @Value("${pay.businessAppId}")
+    private String bid;
+    @Resource
+    private RestTemplate restTemplate;
+    @Resource
+    private PayInfoRepository payInfoRepository;
+
+    public Result wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime) {
+        if (StringUtils.isNotBlank(wxOrderNo)) {
+            String url = payHost + "/h9/pay/order/info?no=" + wxOrderNo;
+            Result result = restTemplate.getForObject(url, Result.class);
+            if (result.getCode() == 1) {
+                return result;
+            }
+            Map<String, Object> map = (Map<String, Object>) result.getData();
+            String payInfoIdStr = map.get("payInfoId").toString();
+            Long payInfId = Long.valueOf(payInfoIdStr);
+            Object wxNo = map.get("wxId");
+            PayInfo payInfo = payInfoRepository.findOne(payInfId);
+
+            String date = DateUtil.formatDate(payInfo.getCreateTime(), DateUtil.FormatType.SECOND);
+            int type = payInfo.getOrderType();
+
+            WxOrderListInfo wxOrderListInfo = new WxOrderListInfo(wxNo.toString(), type == 0 ? "微信充值" : "购买商品"
+                    , payInfo.getOrderId() + "", MoneyUtils.formatMoney(payInfo.getMoney()), date, date);
+
+            return Result.success(wxOrderListInfo);
+        } else {
+            //WxOrderListInfo
+            Specification<PayInfo> specification = getWxOrderList(createTime, orderType);
+            PageRequest pageRequest = payInfoRepository.pageRequest(page, limit);
+            Page<PayInfo> pageInfoList = payInfoRepository.findAll(specification, pageRequest);
+            PageResult<PayInfo> pageResult = new PageResult(pageInfoList);
+            List<PayInfo> payInfoList = pageInfoList.getContent();
+            String ids = payInfoList.stream()
+                    .map(payInfo -> payInfo.getId() + "")
+                    .reduce("", (e1, e2) -> e1 + "-" + e2);
+
+            if (ids.startsWith("-")) {
+                ids = ids.substring(1, ids.length());
+            }
+            String url = payHost + "/h9/pay/order/info/batch?ids=" + ids + "&bid=" + bid;
+            Result result = restTemplate.getForObject(url, Result.class);
+            if (result.getCode() != 0) {
+                return result;
+            }
+            Map<String, String> map = (Map<String, String>) result.getData();
+
+            PageResult<WxOrderListInfo> pageVo = pageResult.map(payInfo -> new WxOrderListInfo(payInfo, map.get(payInfo.getId())));
+
+            return Result.success(pageVo);
+        }
+
+    }
+
+    private Specification<PayInfo> getWxOrderList(Long createTime, int orderType) {
+
+        return (root, query, builder) -> {
+
+            List<Predicate> predicateList = new ArrayList<>();
+
+             if(orderType == 0){
+                predicateList.add(builder.equal(root.get("orderType"), 0));
+            }else if(orderType == 2){
+                predicateList.add(builder.equal(root.get("orderType"), 2));
+            }
+//            else{
+//                Predicate predicate = builder.equal(root.get("orderType"), 2);
+//                predicateList.add(builder.or(root.get("orderType"),predicate));
+//            }
+
+            predicateList.add(builder.equal(root.get("status"), 2));
+//            Date startTime = transferDTO.getStartTime();
+//            Date endTime = transferDTO.getEndTime();
+//            if (startTime != null && endTime != null) {
+//                predicateList.add(builder.between(root.get("createTime"), startTime, endTime));
+//            }
+
+            return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+        };
+
+    }
+
 }
