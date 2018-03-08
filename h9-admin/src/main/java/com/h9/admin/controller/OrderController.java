@@ -1,6 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.WxOrderListInfo;
 import com.h9.admin.model.dto.order.ExpressDTO;
 import com.h9.admin.model.dto.order.OrderStatusDTO;
 import com.h9.admin.model.vo.OrderDetailVO;
@@ -73,11 +74,11 @@ public class OrderController {
     @Secured
     @GetMapping("/wx/list")
     @ApiOperation("微信支付对账列表")
-    public Result wxOrderDetail(@RequestParam(required = false) String wxOrderNo,
-                                @RequestParam(required = false,defaultValue = "-1") Integer orderType,
-                                @RequestParam(required = false) Long startTime,
-                                @RequestParam(required = false) Long endTime,
-                                @RequestParam(defaultValue = "1") Integer page,@RequestParam(defaultValue = "10") Integer limit){
+    public Result<PageResult<WxOrderListInfo> > wxOrderDetail(@RequestParam(required = false) String wxOrderNo,
+                                                       @RequestParam(required = false,defaultValue = "-1") Integer orderType,
+                                                       @RequestParam(required = false) Long startTime,
+                                                       @RequestParam(required = false) Long endTime,
+                                                       @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
         return orderService.wxOrderList(page,limit,wxOrderNo,orderType,startTime,endTime);
     }
 }

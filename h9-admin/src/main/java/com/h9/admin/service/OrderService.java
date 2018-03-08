@@ -151,7 +151,7 @@ public class OrderService {
     @Resource
     private PayInfoRepository payInfoRepository;
 
-    public Result wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime, Long endTime) {
+    public Result<PageResult<WxOrderListInfo> > wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime, Long endTime) {
         if (StringUtils.isNotBlank(wxOrderNo)) {
             String url = payHost + "/h9/pay/order/info?no=" + wxOrderNo;
             Result result = restTemplate.getForObject(url, Result.class);
@@ -168,7 +168,7 @@ public class OrderService {
             int type = payInfo.getOrderType();
 
             WxOrderListInfo wxOrderListInfo = new WxOrderListInfo(wxNo.toString(), type == 0 ? "微信充值" : "购买商品"
-                    , payInfo.getOrderId() + "", MoneyUtils.formatMoney(payInfo.getMoney()), date, date);
+                    , payInfo.getOrderId() + "", MoneyUtils.formatMoney(payInfo.getMoney()), date, date,"");
 
             PageResult<WxOrderListInfo> pageResult = new PageResult();
             pageResult.setHasNext(false);

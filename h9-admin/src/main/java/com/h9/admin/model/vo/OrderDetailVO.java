@@ -84,6 +84,26 @@ public class OrderDetailVO {
     @ApiModelProperty(value ="充值手机号")
     private String tel;
 
+    @ApiModelProperty(value = "供应商")
+    private String supplier = "徽酒";
+//    @ApiModelProperty("订单类型")
+//    private String orderType;
+
+    @ApiModelProperty("订单来源")
+    private String orderFrom;
+
+    @ApiModelProperty("商品图片")
+    private String goodsImg;
+
+    @ApiModelProperty("商品名称")
+    private String goodsName;
+
+    @ApiModelProperty("数量")
+    private String goodsCount;
+
+    @ApiModelProperty("价格")
+    private String goodsPrice;
+
     public static OrderDetailVO toOrderDetailVO(Orders orders, RechargeRecord rechargeRecord){
         OrderDetailVO orderDetailVO = new OrderDetailVO();
         BeanUtils.copyProperties(orders,orderDetailVO);
