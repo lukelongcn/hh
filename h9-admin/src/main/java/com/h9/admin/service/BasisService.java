@@ -367,7 +367,7 @@ public class BasisService {
         return Result.success();
     }
 
-    public Result fundsInfo(Long startTime, Long endTime) {
+    public Result<FundsInfo> fundsInfo(Long startTime, Long endTime) {
 
         BigDecimal balanceSum = null;
         BigDecimal withdrawalsCount = null;
