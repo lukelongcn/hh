@@ -6,6 +6,7 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
+import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.order.*;
@@ -294,6 +295,8 @@ public class GoodService {
 
     @Value("${path.app.wechat_host}")
     private String wxHost;
+    @Resource
+    private RedisBean redisBean;
 
     private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform,Integer count,Goods goods) {
         String url = wxHost + "/h9/api/pay/payInfo";
@@ -304,9 +307,9 @@ public class GoodService {
             if(result.getCode() ==1){
                 return Result.fail("支付异常");
             }
-            PayInfo payInfo = payInfoRepository.findByOrderIdAndOrderType(orderId, PayInfo.OrderTypeEnum.STORE_ORDER.getId());
             Orders order = ordersRepository.findOne(orderId);
-            order.setPayInfoId(payInfo.getId());
+            String payInfoId = redisBean.getStringValue("orderId:" + orderId);
+            order.setPayInfoId(Long.valueOf(payInfoId));
             ordersRepository.save(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);

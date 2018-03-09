@@ -12,6 +12,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
+import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
@@ -34,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.BALANCE_PAY;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.NOT_PAID;
@@ -263,6 +265,8 @@ public class HotelService {
 
     @Resource
     private OrdersRepository ordersRepository;
+    @Resource
+    private RedisBean redisBean;
 
     @SuppressWarnings("Duplicates")
     public Result getStoreWXPayInfo(StorePayDTO storePayDTO) {
@@ -279,6 +283,8 @@ public class HotelService {
         int payPlatform = findPayPlatformEnum.getKey();
         PayInfo payInfo = new PayInfo(payMoney, storePayDTO.getOrderId(), PayInfo.OrderTypeEnum.STORE_ORDER.getId(), null, 1);
         payInfo = payInfoRepository.saveAndFlush(payInfo);
+
+        redisBean.setStringValue("orderId:" + storePayDTO.getOrderId(), payInfo.getId() + "", 1, TimeUnit.HOURS);
         String openId = user.getOpenId();
 
         if (payPlatform == OrderDTO.PayMethodEnum.WXJS.getKey() && StringUtils.isBlank(openId)) {
