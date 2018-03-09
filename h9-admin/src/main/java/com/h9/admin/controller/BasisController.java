@@ -2,6 +2,7 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.basis.*;
+import com.h9.admin.model.vo.FundsInfo;
 import com.h9.admin.service.UserService;
 import com.h9.common.modle.vo.admin.basis.ImageVO;
 import com.h9.common.modle.vo.admin.basis.SystemUserVO;
@@ -104,7 +105,7 @@ public class BasisController {
 
     @GetMapping(value="/sys/funds/info")
     @ApiOperation("资金数据")
-    public Result fundsInfo(@RequestParam(required = false) Long startTime,@RequestParam(required = false) Long endTime){
+    public Result<FundsInfo> fundsInfo(@RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime){
         return basisService.fundsInfo(startTime,endTime);
     }
 
