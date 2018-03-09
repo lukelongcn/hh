@@ -44,6 +44,7 @@ public class EventHandlerStrategyFactory {
      * @return
      */
     public EventHandlerStrategy getStrategy(String key){
+        if(key == null)return null;
         EventHandlerStrategy eventHandlerStrategy = strategyMap.get(key);
         if(eventHandlerStrategy == null){
             logger.error("所匹配到的策略为空,key : "+key);
