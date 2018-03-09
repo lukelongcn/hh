@@ -25,9 +25,9 @@ public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx
      * @return
      */
     @Override
-    public Message4wxText handler(Map<String,String> map, List<ReplyMessage> replyMessageList) {
+    public Message4wxText handler(Map map, List<ReplyMessage> replyMessageList) {
         //TODO 处理关键字回复和自动回复
-        String event = map.get("Event");
+        String event = map.get("Event").toString();
         return null;
     }
 }

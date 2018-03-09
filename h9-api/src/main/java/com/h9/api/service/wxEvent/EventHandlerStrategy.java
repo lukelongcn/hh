@@ -15,5 +15,5 @@ public interface EventHandlerStrategy<T> {
       * 处理方法
       * @param map httpRequest中的请求参数转换成map
       */
-     T handler(Map<String,String> map, List<ReplyMessage> replyMessageList);
+     T handler(Map map, List<ReplyMessage> replyMessageList);
 }
