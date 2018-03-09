@@ -102,6 +102,12 @@ public class BasisController {
         return basisService.statistics();
     }
 
+    @GetMapping(value="/sys/funds/info")
+    @ApiOperation("资金数据")
+    public Result fundsInfo(@RequestParam(required = false) Long startTime,@RequestParam(required = false) Long endTime){
+        return basisService.fundsInfo(startTime,endTime);
+    }
+
     @Secured(accessCode = "user:add")
     @PostMapping(value="/user")
     @ApiOperation("增加管理员")

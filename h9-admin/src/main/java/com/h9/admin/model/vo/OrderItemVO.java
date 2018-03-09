@@ -2,9 +2,11 @@ package com.h9.admin.model.vo;
 
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.utils.MoneyUtils;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,12 @@ public class OrderItemVO {
     @ApiModelProperty(value = "创建时间")
     private Date createTime ;
 
+    @ApiModelProperty(value = "微信支付金额")
+    private String payMoney4wx;
+
+    @ApiModelProperty(value = "酒元支付金额")
+    private String payMoney4balance;
+
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
@@ -66,9 +74,37 @@ public class OrderItemVO {
         orderItemVO.setCount(sum);
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
         orderItemVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
+        BigDecimal payMoney = orders.getPayMoney();
+        int payMethond = orders.getPayMethond();
+        if(payMethond == Orders.PayMethodEnum.WX_PAY.getCode()){
+            orderItemVO.setPayMoney4wx(MoneyUtils.formatMoney(payMoney));
+        }else{
+            orderItemVO.setPayMoney4balance(MoneyUtils.formatMoney(payMoney));
+        }
+
         return orderItemVO;
     }
 
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
+
+    public String getPayMoney4wx() {
+        return payMoney4wx;
+    }
+
+    public void setPayMoney4wx(String payMoney4wx) {
+        this.payMoney4wx = payMoney4wx;
+    }
+
+    public String getPayMoney4balance() {
+        return payMoney4balance;
+    }
+
+    public void setPayMoney4balance(String payMoney4balance) {
+        this.payMoney4balance = payMoney4balance;
+    }
 
     public Date getCreateTime() {
         return createTime;

@@ -31,4 +31,7 @@ public interface UserAccountRepository extends BaseRepository<UserAccount> {
 
     @Query("select new com.h9.common.modle.vo.admin.finance.UserAccountVO(u,ua) from User u,UserAccount ua where u.id = ua.userId order by u.id desc ")
     Page<UserAccountVO> findUserAccountVO(Pageable pageable);
+
+    @Query("select sum(o.balance) from UserAccount o")
+    BigDecimal findBalanceSum();
 }
