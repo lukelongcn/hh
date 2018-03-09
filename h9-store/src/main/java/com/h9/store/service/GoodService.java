@@ -250,7 +250,14 @@ public class GoodService {
         }
 
         String code = goods.getGoodsType().getCode();
-        Orders order = orderService.initOrder(goodsPrice, address.getPhone(), Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + "", "徽酒", user, code, address.getName());
+
+        Orders order = orderService.initOrder(goodsPrice, address.getPhone()
+                , Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + ""
+                , "徽酒"
+                , user
+                , code
+                , address.getName());
+
         order.setAddressId(addressId);
         order.setUserAddres(address.getProvince() + address.getCity() + address.getDistict() + address.getAddress());
         order.setOrderFrom(1);

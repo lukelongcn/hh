@@ -77,13 +77,13 @@ public class OrderService {
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
-    public Result<OrderDetailVO> getOrder(long id, int type) {
+    public Result<OrderDetailVO> getOrder(long id ) {
 
-        if (type == -1) {
+//        if (type == -1) {
             return getOrderDetail(id);
-        } else {
-            return getOrder4wx(id);
-        }
+//        } else {
+//            return getOrder4wx(id);
+//        }
 
     }
 

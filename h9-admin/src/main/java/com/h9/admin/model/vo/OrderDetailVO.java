@@ -184,12 +184,12 @@ public class OrderDetailVO {
         orderDetailVO.setOrderMoney(MoneyUtils.formatMoney(orders.getMoney()));
         int payMethod = orders.getPayMethond();
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
-            orderDetailVO.setPayMoney4wx(MoneyUtils.formatMoney(orders.getMoney()));
+            orderDetailVO.setPayMoney4wx(MoneyUtils.formatMoney(orders.getPayMoney()));
             orderDetailVO.setPayMoney4Balance(MoneyUtils.formatMoney(new BigDecimal(0)));
             orderDetailVO.setWxOrderId(wxOrderId);
         }else{
             orderDetailVO.setPayMoney4wx(MoneyUtils.formatMoney(new BigDecimal(0)));
-            orderDetailVO.setPayMoney4Balance(MoneyUtils.formatMoney(orders.getMoney()));
+            orderDetailVO.setPayMoney4Balance(MoneyUtils.formatMoney(orders.getPayMoney()));
         }
 
         return orderDetailVO;
