@@ -278,15 +278,7 @@ public class HotelService {
 
         int payPlatform = findPayPlatformEnum.getKey();
         PayInfo payInfo = new PayInfo(payMoney, storePayDTO.getOrderId(), PayInfo.OrderTypeEnum.STORE_ORDER.getId(), null, 1);
-        Long orderId = storePayDTO.getOrderId();
-        Orders order = ordersRepository.findOne(orderId);
-        if(order == null){
-            logger.info("订单号" + orderId + "不存在");
-            return Result.fail("订单不存在");
-        }
         payInfo = payInfoRepository.saveAndFlush(payInfo);
-        order.setPayInfoId(payInfo.getId());
-        ordersRepository.save(order);
         String openId = user.getOpenId();
 
         if (payPlatform == OrderDTO.PayMethodEnum.WXJS.getKey() && StringUtils.isBlank(openId)) {

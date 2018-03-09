@@ -301,9 +301,15 @@ public class GoodService {
         try {
             logger.info("access url : " + url);
             Result result = restTemplate.postForObject(url, payDTO, Result.class);
+            if(result.getCode() ==1){
+                return Result.fail("支付异常");
+            }
+            PayInfo payInfo = payInfoRepository.findByOrderIdAndOrderType(orderId, PayInfo.OrderTypeEnum.STORE_ORDER.getId());
+            Orders order = ordersRepository.findOne(orderId);
+            order.setPayInfoId(payInfo.getId());
+            ordersRepository.save(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);
-
             Map<String, Object> mapVO = new HashMap<>();
             mapVO.put("price", MoneyUtils.formatMoney(money));
             mapVO.put("goodsName", goods.getName() + "*" + count);

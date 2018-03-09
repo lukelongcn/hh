@@ -94,13 +94,16 @@ public class OrderService {
         }
         RechargeRecord rechargeRecord = this.rechargeRecordRepository.findByOrderId(id);
         Long payInfoId = orders.getPayInfoId();
-        PayInfo payInfo = payInfoRepository.findOne(payInfoId);
-        if(payInfo == null){
-            logger.info("payInfo 为 null");
-            return Result.fail("查询错误 getOrderDetail");
+        String wxOrderId = "";
+        if(payInfoId != null){
+            PayInfo payInfo = payInfoRepository.findOne(payInfoId);
+            if(payInfo == null){
+                logger.info("payInfo 为 null");
+            }else{
+                wxOrderId= getWxOrderId(payInfo.getId());
+            }
         }
 
-        String wxOrderId = getWxOrderId(payInfo.getId());
         return Result.success(OrderDetailVO.toOrderDetailVO(orders, rechargeRecord, wxOrderId));
     }
 
