@@ -79,7 +79,7 @@ public class OrderService {
 
     public Result<OrderDetailVO> getOrder(long id, int type) {
 
-        if (type == 1) {
+        if (type == -1) {
             return getOrderDetail(id);
         } else {
             return getOrder4wx(id);
@@ -93,10 +93,12 @@ public class OrderService {
             return Result.fail("订单不存在");
         }
         RechargeRecord rechargeRecord = this.rechargeRecordRepository.findByOrderId(id);
-        int payMethond = orders.getPayMethond();
-        PayInfo payInfo = null;
-
-        payInfo = payInfoRepository.findByOrderIdAndOrderType(orders.getId(), STORE_ORDER.getId());
+        Long payInfoId = orders.getPayInfoId();
+        PayInfo payInfo = payInfoRepository.findOne(payInfoId);
+        if(payInfo == null){
+            logger.info("payInfo 为 null");
+            return Result.fail("查询错误 getOrderDetail");
+        }
 
         String wxOrderId = getWxOrderId(payInfo.getId());
         return Result.success(OrderDetailVO.toOrderDetailVO(orders, rechargeRecord, wxOrderId));

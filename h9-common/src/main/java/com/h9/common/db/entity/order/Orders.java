@@ -126,6 +126,16 @@ public class Orders extends BaseEntity {
     private String city;
 
 
+    @Column(name="pay_info_id")
+    private Long payInfoId;
+
+    public Long getPayInfoId() {
+        return payInfoId;
+    }
+
+    public void setPayInfoId(Long payInfoId) {
+        this.payInfoId = payInfoId;
+    }
 
     public String getProvince() {
         return province;
@@ -442,6 +452,8 @@ public class Orders extends BaseEntity {
     public void setDeliveryId(Long deliveryId) {
         this.deliveryId = deliveryId;
     }
+
+
 
     public enum PayStatusEnum {
 
