@@ -10,15 +10,13 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.entity.PayInfo;
+import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
-import com.h9.common.db.repo.GoodsReposiroty;
-import com.h9.common.db.repo.OrdersRepository;
-import com.h9.common.db.repo.PayInfoRepository;
-import com.h9.common.db.repo.RechargeRecordRepository;
+import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -39,6 +37,8 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.h9.common.db.entity.PayInfo.OrderTypeEnum.STORE_ORDER;
+
 /**
  * Created by Gonyb on 2017/11/10.
  */
@@ -58,6 +58,9 @@ public class OrderService {
     @Resource
     private GoodsReposiroty goodsReposiroty;
 
+    @Resource
+    private RechargeOrderRepository rechargeOrderRepository;
+
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         long startTime = System.currentTimeMillis();
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -74,13 +77,53 @@ public class OrderService {
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
-    public Result<OrderDetailVO> getOrder(long id) {
+    public Result<OrderDetailVO> getOrder(long id, int type) {
+
+        if (type == 1) {
+            return getOrderDetail(id);
+        } else {
+            return getOrder4wx(id);
+        }
+
+    }
+
+    public Result<OrderDetailVO> getOrderDetail(long id) {
         Orders orders = this.ordersRepository.findOne(id);
         if (orders == null) {
             return Result.fail("订单不存在");
         }
         RechargeRecord rechargeRecord = this.rechargeRecordRepository.findByOrderId(id);
-        return Result.success(OrderDetailVO.toOrderDetailVO(orders, rechargeRecord));
+        int payMethond = orders.getPayMethond();
+        PayInfo payInfo = null;
+
+        payInfo = payInfoRepository.findByOrderIdAndOrderType(orders.getId(), STORE_ORDER.getId());
+
+        String wxOrderId = getWxOrderId(payInfo.getId());
+        return Result.success(OrderDetailVO.toOrderDetailVO(orders, rechargeRecord, wxOrderId));
+    }
+
+    /**
+     * 处理微信支付的订单
+     *
+     * @param payInfoId
+     * @return
+     */
+    public Result<OrderDetailVO> getOrder4wx(Long payInfoId) {
+        PayInfo payInfo = payInfoRepository.findOne(payInfoId);
+        if (payInfo == null) {
+            return Result.fail("没有找到此订单");
+        }
+        Long orderId = payInfo.getOrderId();
+        int orderType = payInfo.getOrderType();
+
+        if (orderType == PayInfo.OrderTypeEnum.Recharge.getId()) {
+            RechargeOrder rechargeOrder = rechargeOrderRepository.findOne(orderId);
+            String wxOrderId = getWxOrderId(payInfoId);
+            OrderDetailVO orderDetailVO = OrderDetailVO.toOrderDetailVO(rechargeOrder, wxOrderId);
+            return Result.success(orderDetailVO);
+        } else {
+            return getOrderDetail(payInfo.getOrderId());
+        }
     }
 
     public Result<OrderItemVO> editExpress(ExpressDTO expressDTO) {
@@ -151,7 +194,20 @@ public class OrderService {
     @Resource
     private PayInfoRepository payInfoRepository;
 
-    public Result<PageResult<WxOrderListInfo> > wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime, Long endTime) {
+
+    public String getWxOrderId(Long payInfoId) {
+        String url = payHost + "/h9/pay/order/info/batch?ids=" + payInfoId + "&bid=" + bid;
+        Result result = restTemplate.getForObject(url, Result.class);
+        if (result.getCode() != 0) {
+            return null;
+        }
+        Map<String, String> map = (Map<String, String>) result.getData();
+        String wxOrderId = map.get(payInfoId + "");
+        return wxOrderId;
+
+    }
+
+    public Result<PageResult<WxOrderListInfo>> wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime, Long endTime) {
         if (StringUtils.isNotBlank(wxOrderNo)) {
             String url = payHost + "/h9/pay/order/info?no=" + wxOrderNo;
             Result result = restTemplate.getForObject(url, Result.class);
@@ -168,7 +224,7 @@ public class OrderService {
             int type = payInfo.getOrderType();
 
             WxOrderListInfo wxOrderListInfo = new WxOrderListInfo(wxNo.toString(), type == 0 ? "微信充值" : "购买商品"
-                    , payInfo.getOrderId() + "", MoneyUtils.formatMoney(payInfo.getMoney()), date, date,"");
+                    , payInfo.getOrderId() + "", MoneyUtils.formatMoney(payInfo.getMoney()), date, date, "", payInfo.getId() + "");
 
             PageResult<WxOrderListInfo> pageResult = new PageResult();
             pageResult.setHasNext(false);
@@ -218,7 +274,7 @@ public class OrderService {
             List<Predicate> predicateList = new ArrayList<>();
 
             if (orderType == 2) {
-                predicateList.add(builder.equal(root.get("orderType"), PayInfo.OrderTypeEnum.STORE_ORDER.getId()));
+                predicateList.add(builder.equal(root.get("orderType"), STORE_ORDER.getId()));
             } else if (orderType == 1) {
                 predicateList.add(builder.equal(root.get("orderType"), PayInfo.OrderTypeEnum.Recharge.getId()));
             }

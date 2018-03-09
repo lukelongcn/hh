@@ -18,4 +18,6 @@ public interface PayInfoRepository extends BaseRepository<PayInfo> {
 
 
     List<PayInfo> findByOrderIdOrderByIdDesc(Long orderId);
+
+    PayInfo findByOrderIdAndOrderType(Long orderId, Integer orderType);
 }

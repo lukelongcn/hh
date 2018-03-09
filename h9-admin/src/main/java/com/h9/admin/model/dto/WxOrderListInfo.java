@@ -35,6 +35,8 @@ public class WxOrderListInfo {
     private String payDate;
     @ApiModelProperty(value = "订单详情")
     private String detailUrl;
+    @ApiModelProperty(value = "payInfoId")
+    private String payInfoId;
 
     public WxOrderListInfo(PayInfo payInfo, Map<String, String> map) {
         Long id = payInfo.getId();
@@ -49,5 +51,6 @@ public class WxOrderListInfo {
         this.orderId = payInfo.getOrderId()+"";
         this.wxOrderNo = map.get(id+"");
         this.payDate = DateUtil.formatDate(payInfo.getCreateTime(), DateUtil.FormatType.SECOND);
+        this.payInfoId = id+"";
     }
 }

@@ -13,6 +13,7 @@ import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,20 @@ public class OrderController {
         return orderService.orderList(orderDTO);
     }
 
+    /**
+     *
+     * @param id
+     * @param
+     * @see com.h9.common.db.entity.PayInfo.OrderTypeEnum
+     *
+     * @return
+     */
     @Secured(accessCode = "order:detail")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取订单详情")
-    public Result<OrderDetailVO> orderList(@PathVariable long id){
-        return orderService.getOrder(id);
+    public Result<OrderDetailVO> orderList(@PathVariable long id
+            ,@ApiParam(value = "1 为其他 ，2 为微信支付订单详情，") @RequestParam(required = false,defaultValue = "-1") Integer type){
+        return orderService.getOrder(id,type);
     }
 
     @Secured(accessCode = "order:express:update")
