@@ -50,8 +50,7 @@ public class OrderController {
     @Secured(accessCode = "order:detail")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取订单详情")
-    public Result<OrderDetailVO> orderList(@PathVariable long id
-            ,@ApiParam(value = "-1 兼容以前数据 ，2 为微信支付订单详情，") @RequestParam(required = false,defaultValue = "-1") Integer type){
+    public Result<OrderDetailVO> orderList(@PathVariable long id){
         return orderService.getOrder(id);
     }
 
