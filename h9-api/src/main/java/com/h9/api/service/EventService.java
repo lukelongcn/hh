@@ -188,7 +188,7 @@ public class EventService {
             return "";
         }
 
-        String event = map.get("MsgType");
+        String event = map.get("Event");
         EventHandlerStrategy eventHandlerStrategy = EventHandlerStrategyFactory.getInstance().getStrategy(event);
         if(eventHandlerStrategy == null){
             return "";
@@ -197,6 +197,12 @@ public class EventService {
         if (CollectionUtils.isEmpty(replyMessageList)) {
             return "";
         }
+        // 关注事件发生
+        if (event.equals(WeChatProvider.EventEnum.SUBSCRIBE)||event.equals(WeChatProvider.EventEnum.SCAN
+        )){
+            handleSubscribeAndScan(map);
+        }
+        // 处理事件
         Object obj = eventHandlerStrategy.handler(map,replyMessageList);
         if (obj == null) {
             return "";

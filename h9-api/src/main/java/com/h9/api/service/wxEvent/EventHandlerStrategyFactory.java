@@ -1,12 +1,16 @@
 package com.h9.api.service.wxEvent;
 
 
+import com.h9.api.service.EventService;
 import com.h9.api.service.wxEvent.impl.*;
 import com.h9.api.service.wxEvent.model.Message4wxText;
+import com.h9.common.base.Result;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
