@@ -63,6 +63,7 @@ public class OrderItemVO {
     @ApiModelProperty(value = "能否退款")
     private boolean canRefund = false;
 
+
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);

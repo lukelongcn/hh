@@ -54,6 +54,8 @@ public class EventService {
     private WeChatProvider weChatProvider;
     @Resource
     private ReplyMessageRepository replyMessageRepository;
+    @Resource
+    private EventHandlerStrategyFactory eventHandlerStrategyFactory;
 
 
     public String handle(VerifyTokenDTO verifyTokenDTO) {
@@ -189,7 +191,7 @@ public class EventService {
         }
 
         String event = map.get("MsgType");
-        EventHandlerStrategy eventHandlerStrategy = EventHandlerStrategyFactory.getInstance().getStrategy(event);
+        EventHandlerStrategy eventHandlerStrategy = eventHandlerStrategyFactory.getStrategy(event);
         if(eventHandlerStrategy == null){
             return "";
         }
