@@ -34,10 +34,12 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.PayInfo.OrderTypeEnum.STORE_ORDER;
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.REFUND;
 
 /**
  * Created by Gonyb on 2017/11/10.
@@ -77,10 +79,10 @@ public class OrderService {
         return Result.success(new PageResult<>(all.map(OrderItemVO::toOrderItemVO)));
     }
 
-    public Result<OrderDetailVO> getOrder(long id ) {
+    public Result<OrderDetailVO> getOrder(long id) {
 
 //        if (type == -1) {
-            return getOrderDetail(id);
+        return getOrderDetail(id);
 //        } else {
 //            return getOrder4wx(id);
 //        }
@@ -95,12 +97,12 @@ public class OrderService {
         RechargeRecord rechargeRecord = this.rechargeRecordRepository.findByOrderId(id);
         Long payInfoId = orders.getPayInfoId();
         String wxOrderId = "";
-        if(payInfoId != null){
+        if (payInfoId != null) {
             PayInfo payInfo = payInfoRepository.findOne(payInfoId);
-            if(payInfo == null){
+            if (payInfo == null) {
                 logger.info("payInfo 为 null");
-            }else{
-                wxOrderId= getWxOrderId(payInfo.getId());
+            } else {
+                wxOrderId = getWxOrderId(payInfo.getId());
             }
         }
 
@@ -301,4 +303,42 @@ public class OrderService {
 
     }
 
+    @Resource
+    private PayProvider payProvider;
+
+    public Result refund(Long orderId) {
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null) {
+            return Result.fail("订单不存在");
+        }
+        if (!order.getPayStatus().equals(Orders.PayStatusEnum.PAID.getCode())) {
+            return Result.fail("退款失败，此订单未支付");
+        }
+
+        int payMethond = order.getPayMethond();
+
+        if (Orders.PayMethodEnum.BALANCE_PAY.getCode() == payMethond) {
+            BigDecimal payMoney = order.getPayMoney();
+            commonService.setBalance(order.getUser().getId(), payMoney, REFUND.getId(), order.getId(), "", REFUND.getName());
+            order = ordersRepository.findOne(orderId);
+            order.setStatus(Orders.statusEnum.CANCEL.getCode());
+            ordersRepository.save(order);
+        } else if (Orders.PayMethodEnum.WX_PAY.getCode() == payMethond) {
+            Long payInfoId = order.getPayInfoId();
+            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney());
+            if (result.getCode() == 1) {
+                return Result.fail(result.getMsg());
+            } else {
+                order = ordersRepository.findOne(orderId);
+                order.setStatus(Orders.statusEnum.CANCEL.getCode());
+                ordersRepository.save(order);
+                return Result.success("退款成功");
+            }
+        }else{
+            logger.info("退款异常，没有匹配到支付方式");
+            return Result.fail("退款异常");
+        }
+        return Result.success("退款成功");
+
+    }
 }

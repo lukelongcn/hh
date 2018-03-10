@@ -62,11 +62,10 @@
             </resource>
 
             <resource>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
                 <directory>src/main/resources/cert</directory>
                 <includes>
                     <include>**/*.p12</include>
-                    <include>**/*.txt</include>
                 </includes>
             </resource>
 

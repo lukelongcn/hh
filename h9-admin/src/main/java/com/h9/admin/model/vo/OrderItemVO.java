@@ -1,5 +1,7 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.utils.MoneyUtils;
@@ -8,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -52,10 +55,13 @@ public class OrderItemVO {
     private Date createTime ;
 
     @ApiModelProperty(value = "微信支付金额")
-    private String payMoney4wx;
+    private String payMoney4wx = "0.00";
 
     @ApiModelProperty(value = "酒元支付金额")
     private String payMoney4balance;
+
+    @ApiModelProperty(value = "能否退款")
+    private boolean canRefund = false;
 
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
@@ -82,9 +88,28 @@ public class OrderItemVO {
             orderItemVO.setPayMoney4balance(MoneyUtils.formatMoney(payMoney));
         }
 
+        List<OrderItems> orderItems = orders.getOrderItems();
+        boolean find = orderItems.stream().anyMatch(item -> {
+            Goods goods = item.getGoods();
+            GoodsType goodsType = goods.getGoodsType();
+            if (goodsType.getCode().equals(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode())) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        orderItemVO.setCanRefund(!find);
         return orderItemVO;
     }
 
+
+    public boolean isCanRefund() {
+        return canRefund;
+    }
+
+    public void setCanRefund(boolean canRefund) {
+        this.canRefund = canRefund;
+    }
 
     public void setCount(Long count) {
         this.count = count;
