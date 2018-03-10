@@ -14,6 +14,7 @@ import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
 import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.*;
@@ -315,6 +316,9 @@ public class OrderService {
             return Result.fail("退款失败，此订单未支付");
         }
 
+        if (!canRefund(order)) {
+            return Result.fail("此订单不能退款");
+        }
         int payMethond = order.getPayMethond();
 
         if (Orders.PayMethodEnum.BALANCE_PAY.getCode() == payMethond) {
@@ -334,11 +338,31 @@ public class OrderService {
                 ordersRepository.save(order);
                 return Result.success("退款成功");
             }
-        }else{
+        } else {
             logger.info("退款异常，没有匹配到支付方式");
             return Result.fail("退款异常");
         }
         return Result.success("退款成功");
 
+    }
+
+    /**
+     * 判断订单是否能退款
+     * @param orders
+     * @return
+     */
+    @SuppressWarnings("Duplicates")
+    public boolean canRefund(Orders orders) {
+        List<OrderItems> orderItems = orders.getOrderItems();
+        boolean find = orderItems.stream().anyMatch(item -> {
+            Goods goods = item.getGoods();
+            GoodsType goodsType = goods.getGoodsType();
+            if (goodsType.getCode().equals(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode())) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return false;
     }
 }
