@@ -3,7 +3,9 @@ package com.h9.api.service.wxEvent;
 
 import com.h9.api.service.wxEvent.impl.*;
 import org.jboss.logging.Logger;
+import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.h9.api.provider.WeChatProvider.EventEnum.*;
@@ -17,7 +19,7 @@ public class EventHandlerStrategyFactory {
     private Logger logger = Logger.getLogger(this.getClass());
     private static EventHandlerStrategyFactory eventHandlerStrategyFactory = null;
 
-    private static Map<String,EventHandlerStrategy> strategyMap = null;
+    private static Map<String, EventHandlerStrategy> strategyMap = new HashMap<>();
     static {
         strategyMap.put(TEXT.getValue(), new TextEventHandlerStrategy());
         strategyMap.put(SCAN.getValue(), new SubscribeScanHandlerStrategy());

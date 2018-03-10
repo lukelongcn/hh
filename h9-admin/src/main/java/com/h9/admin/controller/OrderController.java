@@ -90,4 +90,11 @@ public class OrderController {
                                                        @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
         return orderService.wxOrderList(page,limit,wxOrderNo,orderType,startTime,endTime);
     }
+
+    @Secured
+    @PutMapping(value = "/refund/{orderId}")
+    @ApiOperation("退款")
+    public Result refundOrder(@PathVariable Long orderId) {
+        return orderService.refund(orderId);
+    }
 }

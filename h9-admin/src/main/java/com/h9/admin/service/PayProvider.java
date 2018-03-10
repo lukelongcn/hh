@@ -57,6 +57,12 @@ public class PayProvider {
     }
 
 
+    /**
+     *
+     * @param id payInfo Id
+     * @param payMoney4Wechat
+     * @return
+     */
     public Result refundOrder(Long id, BigDecimal payMoney4Wechat) {
 
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
