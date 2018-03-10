@@ -1,5 +1,6 @@
 package com.h9.api.service.wxEvent.impl;
 
+import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.wxEvent.EventHandlerStrategy;
 import com.h9.api.service.wxEvent.model.Message4wxText;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
@@ -26,8 +27,11 @@ public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx
      */
     @Override
     public Message4wxText handler(Map map, List<ReplyMessage> replyMessageList) {
-        //TODO 处理关键字回复和自动回复
-        String event = map.get("Event").toString();
+
+        String event = map.get("MsgType").toString();
+        if (event.equals(WeChatProvider.EventEnum.SUBSCRIBE.getValue())){
+
+        }
         return null;
     }
 }

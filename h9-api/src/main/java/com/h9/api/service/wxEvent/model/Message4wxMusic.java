@@ -21,7 +21,7 @@ public class Message4wxMusic extends Message4wxText {
 
     public static void main(String[] args) {
         Message4wxMusic message4wxText = new Message4wxMusic();
-        message4wxText.setToUserName("ldh").setFromUserName("ll").setCreateTime("2017");
+        message4wxText.setToUserName("ldh").setFromUserName("ll").setCreateTime(2017);
         String s = XMLUtils.convertToXml(message4wxText);
         System.out.println(s);
     }

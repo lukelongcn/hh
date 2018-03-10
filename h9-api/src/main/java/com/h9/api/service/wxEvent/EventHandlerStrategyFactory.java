@@ -2,8 +2,12 @@ package com.h9.api.service.wxEvent;
 
 
 import com.h9.api.service.wxEvent.impl.*;
+import com.h9.api.service.wxEvent.model.Message4wxText;
+import com.h9.common.db.entity.wxEvent.ReplyMessage;
+import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +23,7 @@ public class EventHandlerStrategyFactory {
     private static EventHandlerStrategyFactory eventHandlerStrategyFactory = null;
 
     private static Map<String,EventHandlerStrategy> strategyMap = new HashMap<>();
-    static {
+    static{
         strategyMap.put(TEXT.getValue(), new TextEventHandlerStrategy());
         strategyMap.put(SCAN.getValue(), new SubscribeScanHandlerStrategy());
         strategyMap.put(SUBSCRIBE.getValue(), new SubscribeScanHandlerStrategy());
@@ -51,5 +55,19 @@ public class EventHandlerStrategyFactory {
             logger.error("所匹配到的策略为空,key : "+key);
         }
         return eventHandlerStrategy;
+    }
+
+    public static Message4wxText getXml(Map map,ReplyMessage replyMessage){
+        // 返回xml
+        Message4wxText message4wxText = new Message4wxText();
+        String dateS = DateUtil.formatDate(new Date(), DateUtil.FormatType.NON_SEPARATOR_DAY);
+        message4wxText
+                .setToUserName(map.get("ToUserName").toString())
+                .setFromUserName(map.get("FromUserName").toString())
+                .setCreateTime(Integer.valueOf(dateS))
+                .setMsgType(map.get("MsgType").toString())
+                .setFromUserName(map.get("FromUserName").toString())
+                .setContent(replyMessage.getContent());
+        return message4wxText;
     }
 }

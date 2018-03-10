@@ -1,7 +1,7 @@
 package com.h9.common.db.entity.wxEvent;
 
 import com.h9.common.base.BaseEntity;
-import com.h9.common.db.entity.community.StickType;
+import lombok.Data;
 
 import javax.persistence.*;
 
@@ -13,13 +13,14 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Table(name = "reply_message")
 @Entity
+@Data
 public class ReplyMessage extends BaseEntity{
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(name = "order_type",columnDefinition = "varchar(200) COMMENT '规则名'")
-    private String orderType;
+    @Column(name = "order_name",columnDefinition = "varchar(200) COMMENT '规则名'")
+    private String orderName;
 
     @Column(name = "event_type",columnDefinition = "varchar(200) COMMENT '事件类型'")
     private String eventType;
@@ -33,12 +34,17 @@ public class ReplyMessage extends BaseEntity{
     @Column(name = "match_regex",columnDefinition = "varchar(200) COMMENT '匹配正则'")
     private String matchRegex;
 
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用， 2 禁用 '")
+    private Integer status = 1;
 
+    @Column(name = "sort",nullable = false,columnDefinition = "tinyint default 1 COMMENT '排序 '")
+    private Integer sort = 1;
     /**
      * 匹配策略
      * @see matchStrategyEnum
      */
-    @Column(name = "match_strategy",columnDefinition = "varchar(200) COMMENT '匹配策略 1 为完全匹配 ，2为半匹配 ，3正则匹配'")
+    @Column(name = "match_strategy",columnDefinition = "varchar(200) COMMENT '匹配策略 1 为完全匹配 ，2为半匹配 ，3正则匹配 ," +
+            " 4,自动回复 , 5,关注回复'")
     private String matchStrategy;
 
     @Column(name = "key_word",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
@@ -85,10 +91,6 @@ public class ReplyMessage extends BaseEntity{
             this.code = code;
             this.desc = desc;
         }
-        public static String getDescByCode(int code){
-            ReplyMessage.orderTypeEnum orderTypeEnum = stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
-            return orderTypeEnum==null?null:orderTypeEnum.getDesc();
-        }
         public int getCode() {
             return code;
         }
@@ -97,9 +99,9 @@ public class ReplyMessage extends BaseEntity{
             return desc;
         }
     }
-
     public static void main(String[] args) {
-        String s = matchStrategyEnum.getDescByCode(matchStrategyEnum.ALL_MATCH.getCode());
-        System.out.println(s);
+        System.out.printf(ReplyMessage.orderTypeEnum.FOLLOW_REPLY.getDesc());
     }
+
+
 }
