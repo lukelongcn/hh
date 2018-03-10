@@ -10,6 +10,7 @@ import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.UserBank;
+import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import org.apache.commons.net.util.Base64;
 
 import com.h9.api.provider.SMSProvide;
@@ -83,7 +84,6 @@ import java.util.stream.Collectors;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApiApplicationTests {
-
 
 
     @Test
@@ -184,7 +184,7 @@ public class ApiApplicationTests {
     @Resource
     private LoginAuthInterceptor loginAuthInterceptor;
 
-        @Test
+    @Test
     public void test() {
 
         redisBean.getValueOps().setBit(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY), 10, true);
@@ -435,15 +435,16 @@ public class ApiApplicationTests {
 
     @Resource
     private UserService userService;
+
     @Test
-    public void testRecharge(){
+    public void testRecharge() {
 //        String ticket = userService.getTicket("6_mjk2qXu_N7I4VNHR4lS1sPzjwcHTzaDATP2hQfXv-KeBklcEJvzrbbj5i" +
 //                "d9ZmwI5zUpKajPgmmrE4EmrvSo-kYaXi3jMmlAiLUt0MCyedbJGqs6vbjtoVU2DVmwLJPfAIAPNT", userId);
 //        System.out.println(ticket);
     }
 
     @Test
-    public  void testCreateMenu(){
+    public void testCreateMenu() {
         weChatProvider.createMenu();
     }
 
@@ -455,36 +456,52 @@ public class ApiApplicationTests {
 
 
     @Test
-    public void  testWithdraw(){
+    public void testWithdraw() {
         UserBank userBank = bankRepository.findOne(231L);
-        if(userBank==null){
+        if (userBank == null) {
             logger.debugv("用户银行卡");
         }
-        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank,new BigDecimal(0.01),1l,"1");
+        WithdrawDTO withdrawDTO = new WithdrawDTO(userBank, new BigDecimal(0.01), 1l, "1");
         Result withdraw = suNingProvider.withdraw(withdrawDTO);
         logger.debugv(JSONObject.toJSONString(withdraw));
     }
 
     @Test
-    public void testGetTemplate(){
+    public void testGetTemplate() {
 
         String accessToken = weChatProvider.getWeChatAccessToken();
-        Result result = weChatProvider.sendTemplate("oXW4Mw2JMAlYYrH9R6X2VLbqFAGQ",new BigDecimal(100000));
+        Result result = weChatProvider.sendTemplate("oXW4Mw2JMAlYYrH9R6X2VLbqFAGQ", new BigDecimal(100000));
         System.out.println(JSONObject.toJSONString(result));
     }
-
 
 
     @Resource
     private HotelRepository hotelRepository;
     @Resource
     private HotelOrderRepository hotelOrderRepository;
-    @Test
-    public void testGet(){
-        Object config = configService.getConfig("test1");
-        logger.info("value : "+config);
 
-        logger.info("value2: "+config.toString());
+    @Test
+    public void testGet() {
+        Object config = configService.getConfig("test1");
+        logger.info("value : " + config);
+
+        logger.info("value2: " + config.toString());
+    }
+
+    @Resource
+    private ReplyMessageRepository replyMessageRepository;
+    @org.junit.jupiter.api.Test
+    public void  test111(){
+        String s = ReplyMessage.matchStrategyEnum.getDescByCode(ReplyMessage.matchStrategyEnum.ALL_MATCH.getCode());
+        System.out.println(s);
+        ReplyMessage replyMessage = new ReplyMessage();
+        replyMessage.setOrderName("关注回复");
+        replyMessage.setMatchRegex("关注回复");
+        replyMessage.setEventType("subscribe");
+        replyMessage.setKeyWord("");
+        replyMessage.setContent("谢谢关注欢乐之家");
+        replyMessage.setContentType("text");
+        replyMessageRepository.save(replyMessage);
     }
 }
 

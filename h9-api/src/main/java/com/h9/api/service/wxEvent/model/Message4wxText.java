@@ -15,12 +15,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Message4wxText {
     private String ToUserName;
     private String FromUserName;
-    private String CreateTime;
-    private String MediaId;
+    private int CreateTime;
+    private String MsgType;
+    private String Content;
+
 
     public static void main(String[] args) {
         Message4wxText message4wxText = new Message4wxText();
-        message4wxText.setToUserName("ldh").setFromUserName("ll").setCreateTime("2017");
+        message4wxText.setToUserName("ldh").setFromUserName("ll").setCreateTime(2017);
         String s = XMLUtils.convertToXml(message4wxText);
         System.out.println(s);
     }
