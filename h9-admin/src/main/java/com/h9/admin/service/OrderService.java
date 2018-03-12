@@ -417,7 +417,7 @@ public class OrderService {
         try {
             InputStream is = POIUtils.export("订单列表", rowsName, dataList);
             //上传文件
-            String fileName = DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY) + "订单列表.xls";
+            String fileName = DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND) + "订单列表.xls";
             Result upload = fileService.upload(is, fileName);
             return upload;
         } catch (Exception e) {
