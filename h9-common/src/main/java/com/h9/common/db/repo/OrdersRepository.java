@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +48,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
         Page<Orders> byUser = findByUser(userId,status, pageRequest(page, limit));
         return new PageResult(byUser);
     }
+
 
 
     @Async
@@ -84,4 +86,16 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     }
 
 
+//    @Query("select sum(o.payMoney) from Orders o where (o.createTime > ?1 and o.createTime < ?2 and ?1 <> null and ?2 <> null) or 1=1")
+    @Query(value = "select sum(o.pay_money) from orders o ",nativeQuery = true)
+    BigDecimal findPayMoneySum();
+
+    @Query(value = "select sum(o.pay_money) from orders o where o.create_time > ?1 and o.create_time < ?2",nativeQuery = true)
+    BigDecimal findPayMoneySumAndDate(Date startTime,Date endTime);
+
+    @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1")
+    BigDecimal findWXPayMoneySum(Integer payMethod);
+
+    @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1 and o.createTime > ?2 and o.createTime < ?3")
+    BigDecimal findWXPayMoneySumAndDate(Integer payMethod,Date startTime,Date endTime);
 }

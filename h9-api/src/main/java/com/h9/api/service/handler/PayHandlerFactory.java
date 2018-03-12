@@ -1,5 +1,6 @@
 package com.h9.api.service.handler;
 
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,8 +19,12 @@ public class PayHandlerFactory {
     private RechargePayHandler rechargePayHandler;
     @Resource
     private HotelPayHandler hotelPayHandler;
-    
+    @Resource
+    private StorePayHandler storePayHandler;
+
+    private Logger logger = Logger.getLogger(this.getClass());
     public AbPayHandler getPayHandler(int type){
+        logger.info("type : "+type);
         AbPayHandler abPayHandler;
         switch (type){
             case 0:{
@@ -30,7 +35,9 @@ public class PayHandlerFactory {
                 abPayHandler = hotelPayHandler;
                 break;
             }
-
+            case 2:
+                abPayHandler = storePayHandler;
+                break;
             default:{
                 abPayHandler = rechargePayHandler;
             }

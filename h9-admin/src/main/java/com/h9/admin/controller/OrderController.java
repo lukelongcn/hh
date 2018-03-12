@@ -1,6 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.WxOrderListInfo;
 import com.h9.admin.model.dto.order.ExpressDTO;
 import com.h9.admin.model.dto.order.OrderStatusDTO;
 import com.h9.admin.model.vo.OrderDetailVO;
@@ -12,6 +13,7 @@ import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,14 @@ public class OrderController {
         return orderService.orderList(orderDTO);
     }
 
+    /**
+     *
+     * @param id
+     * @param
+     * @see com.h9.common.db.entity.PayInfo.OrderTypeEnum
+     *
+     * @return
+     */
     @Secured(accessCode = "order:detail")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取订单详情")
@@ -63,5 +73,35 @@ public class OrderController {
     @ApiOperation("获取支持配送的物流公司")
     public Result<List<String>> getSupportExpress(){
         return orderService.getSupportExpress();
+    }
+
+
+    /**
+     * description: 微信 支付订单
+     * @param  orderType -1 全部 ，1 充值 ，2购买
+     */
+    @Secured
+    @GetMapping("/wx/list")
+    @ApiOperation("微信支付对账列表")
+    public Result<PageResult<WxOrderListInfo> > wxOrderDetail(@RequestParam(required = false) String wxOrderNo,
+                                                       @RequestParam(required = false,defaultValue = "-1") Integer orderType,
+                                                       @RequestParam(required = false) Long startTime,
+                                                       @RequestParam(required = false) Long endTime,
+                                                       @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
+        return orderService.wxOrderList(page,limit,wxOrderNo,orderType,startTime,endTime);
+    }
+
+    @Secured
+    @PutMapping(value = "/wx/export")
+    @ApiOperation("导出wx订单表格")
+    public Result exportExcel() {
+        return orderService.exportExcel();
+    }
+
+    @Secured
+    @PutMapping(value = "/refund/{orderId}")
+    @ApiOperation("退款")
+    public Result refundOrder(@PathVariable Long orderId) {
+        return orderService.refund(orderId);
     }
 }

@@ -70,6 +70,10 @@ public class Orders extends BaseEntity {
     @Column(name = "pay_money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '需要支付的金额'")
     private BigDecimal payMoney = new BigDecimal(0);
 
+    /**
+     * description:
+     * @see  PayStatusEnum
+     */
     @Column(name = "pay_status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '支付状态 1待支付 2 已支付'")
     private Integer payStatus = 1;
 
@@ -122,6 +126,16 @@ public class Orders extends BaseEntity {
     private String city;
 
 
+    @Column(name="pay_info_id")
+    private Long payInfoId;
+
+    public Long getPayInfoId() {
+        return payInfoId;
+    }
+
+    public void setPayInfoId(Long payInfoId) {
+        this.payInfoId = payInfoId;
+    }
 
     public String getProvince() {
         return province;
@@ -159,7 +173,8 @@ public class Orders extends BaseEntity {
     public enum PayMethodEnum {
 
         BALANCE_PAY(1, "余额支付"),
-        VBPAY(2, "vb支付");
+        VBPAY(2, "vb支付"),
+        WX_PAY(3,"微信支付");
 
         private int code;
         private String desc;
@@ -245,6 +260,7 @@ public class Orders extends BaseEntity {
     }
 
     public enum statusEnum{
+
 
         UNCONFIRMED(0,"未确认"),
         WAIT_SEND(1,"等待发货"),
@@ -436,6 +452,8 @@ public class Orders extends BaseEntity {
     public void setDeliveryId(Long deliveryId) {
         this.deliveryId = deliveryId;
     }
+
+
 
     public enum PayStatusEnum {
 

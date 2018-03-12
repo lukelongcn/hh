@@ -31,6 +31,9 @@ public class PayResultVO {
         private boolean resumePay = false;
     }
 
+
+
+
     public PayResultVO(PayResult payResult) {
         this.payResult = payResult;
     }

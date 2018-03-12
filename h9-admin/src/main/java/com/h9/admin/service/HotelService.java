@@ -19,6 +19,7 @@ import com.h9.common.db.entity.config.HtmlContent;
 import com.h9.common.db.entity.hotel.Hotel;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.REFUND;
 import static com.h9.common.db.entity.hotel.HotelOrder.OrderStatusEnum.REFUND_MONEY;
 
 /**
@@ -308,6 +310,8 @@ public class HotelService {
 
     @Resource
     private PayInfoRepository payInfoRepository;
+
+
     @Transactional
     public Result refundOrder(Long id) {
         HotelOrder hotelOrder = hotelOrderRepository.findOne(id);
@@ -326,7 +330,7 @@ public class HotelService {
         if (payMoney4Wechat.compareTo(new BigDecimal(0)) > 0) {
 
             List<PayInfo> payInfoList = payInfoRepository.findByOrderIdOrderByIdDesc(id);
-            if(CollectionUtils.isEmpty(payInfoList)){
+            if (CollectionUtils.isEmpty(payInfoList)) {
                 return Result.fail("预支付记录不存在");
             }
             PayInfo payInfo = payInfoList.get(0);
@@ -339,12 +343,16 @@ public class HotelService {
         BigDecimal payMoney4JiuYuan = hotelOrder.getPayMoney4JiuYuan();
         if (payMoney4JiuYuan.compareTo(new BigDecimal(0)) > 0) {
             commonService.setBalance(hotelOrder.getUserId(), payMoney4JiuYuan,
-                    BalanceFlow.BalanceFlowTypeEnum.REFUND.getId(),
-                    hotelOrder.getId(), "", BalanceFlow.BalanceFlowTypeEnum.REFUND.getName());
+                    REFUND.getId(),
+                    hotelOrder.getId(), "", REFUND.getName());
         }
 
         hotelOrder.setOrderStatus(HotelOrder.OrderStatusEnum.REFUND_MONEY.getCode());
         hotelOrderRepository.save(hotelOrder);
         return Result.success("退款成功");
     }
+
+    private OrdersRepository ordersRepository;
+
+
 }

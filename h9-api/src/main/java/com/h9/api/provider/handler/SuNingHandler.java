@@ -1,5 +1,6 @@
 package com.h9.api.provider.handler;
 
+import org.jboss.logging.Logger;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -13,8 +14,9 @@ import org.springframework.web.client.RestTemplate;
  */
 @Component
 public class SuNingHandler {
+    private Logger logger = Logger.getLogger(this.getClass());
 
-    public String post(String url,MultiValueMap<String, String> params){
+    public String post(String url, MultiValueMap<String, String> params) {
         RestTemplate client = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 //  请勿轻易改变此提交方式，大部分的情况下，提交方式都是表单提交
@@ -24,7 +26,7 @@ public class SuNingHandler {
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
 //  输出结果
-        System.out.println(response.getBody());
+        logger.info(response.getBody());
         return response.getBody();
     }
 

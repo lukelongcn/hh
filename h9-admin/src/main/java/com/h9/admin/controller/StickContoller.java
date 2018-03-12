@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * CommunityContoller:刘敏华 shadow.liu@hey900.com
  * Date: 2017/12/29
  * Time: 17:13

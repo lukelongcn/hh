@@ -107,9 +107,9 @@ public class CommunityService {
     }
 
     public Result<Banner> updateBanner(BannerEditDTO bannerEditDTO) {
-        if (this.bannerRepository.findByIdNotAndTitle(bannerEditDTO.getId(), bannerEditDTO.getTitle()) != null) {
-            return Result.fail("名称已存在");
-        }
+//        if (this.bannerRepository.findByIdNotAndTitle(bannerEditDTO.getId(), bannerEditDTO.getTitle()) != null) {
+//            return Result.fail("名称已存在");
+//        }
         Banner b = this.bannerRepository.findOne(bannerEditDTO.getId());
         BeanUtils.copyProperties(bannerEditDTO, b);
         return Result.success(this.bannerRepository.save(b));
@@ -227,7 +227,6 @@ public class CommunityService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-// TODO: 2017/11/22 与获取文章列表实现一样，但是这边有事务的时候set的变化会被提交
     //因为这边类上有@Transactional注解，而articleService那边没有
     public Result<PageResult<Announcement>> getAnnouncements(PageDTO pageDTO) {
         Page<Announcement> announcements = this.announcementReposiroty.findAllByPage(pageDTO.toPageRequest());

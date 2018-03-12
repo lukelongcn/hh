@@ -12,6 +12,7 @@ public class MoneyUtils {
     private MoneyUtils(){}
 
     public static  String formatMoney(BigDecimal money){
+        if(money == null) return "0.00";
         DecimalFormat df = new DecimalFormat("0.00");
         return df.format(money);
     }

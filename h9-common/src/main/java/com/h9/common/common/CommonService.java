@@ -110,7 +110,6 @@ public class CommonService {
         return Result.fail();
     }
 
-    @Transactional
     public UserRecord newUserRecord(Long userId, double latitude, double longitude, HttpServletRequest request) {
         UserRecord userRecord = new UserRecord();
         userRecord.setUserId(userId);
@@ -165,7 +164,6 @@ public class CommonService {
         } catch (Exception ex) {
             logger.debugv(ex.getMessage(), ex);
         }
-
 
         return userRecordRepository.saveAndFlush(userRecord);
     }

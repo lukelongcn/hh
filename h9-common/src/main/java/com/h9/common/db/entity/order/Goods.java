@@ -77,7 +77,16 @@ public class Goods extends BaseEntity {
     @Column(name = "end_time", columnDefinition = "datetime COMMENT '上架结束时间'")
     private Date endTime;
 
+    @Column(name = "sort",nullable = false,columnDefinition = "int default 0 COMMENT '顺序'")
+    private Integer sort;
 
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
 
     public Integer getStock() {
         return stock;

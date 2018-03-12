@@ -55,7 +55,7 @@ public class ProductService {
     @Resource
     private LotteryConfig lotteryConfig;
 
-    @Transactional
+
     public Result<AuthenticityVO> getAuthenticity(String token, LotteryDto lotteryVo, HttpServletRequest request) {
         Long userId = token2userId(token);
 

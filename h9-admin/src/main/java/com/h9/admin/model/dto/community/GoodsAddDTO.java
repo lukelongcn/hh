@@ -72,6 +72,17 @@ public class GoodsAddDTO {
     @NotNull(message = "状态不能为空")
     private Integer status = 1;
 
+    @ApiModelProperty(value = "顺序",required = true)
+    private Integer sort;
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
     public String getName() {
         return name;
     }

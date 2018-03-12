@@ -1,8 +1,10 @@
 package com.h9.api.controller;
 
 import com.h9.api.model.dto.PayNotifyVO;
+import com.h9.api.service.HotelService;
 import com.h9.api.service.RechargeService;
 import com.h9.common.base.Result;
+import com.h9.common.modle.dto.StorePayDTO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,8 @@ public class PayController {
 
     @Resource
     private RechargeService rechargeService;
+    @Resource
+    private HotelService hotelService;
 
 
     @PostMapping("/callback")
@@ -30,6 +34,10 @@ public class PayController {
         return rechargeService.callback(payNotifyVO);
     }
 
+    @PostMapping("/payInfo")
+    public Result payInfo(@RequestBody StorePayDTO storePayDTO){
+        return hotelService.getStoreWXPayInfo(storePayDTO);
+    }
 
 
 

@@ -1,8 +1,6 @@
 package com.h9.api.model.dto;
 
-import com.h9.common.db.entity.community.Stick;
-import com.h9.common.db.entity.community.StickComment;
-import com.h9.common.db.entity.user.User;
+
 
 import org.hibernate.validator.constraints.NotBlank;
 

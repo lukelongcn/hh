@@ -67,6 +67,8 @@ public class SmsService {
      */
     public Result sendSMSCode(Long userId, String phone, int smsType) {
 
+        if(!MobileUtils.isMobileNO(phone)){ return Result.fail("请填写正确的手机号"); }
+
         String tempPhone = userRepository.findOne(userId).getPhone();
         if (StringUtils.isNotBlank(tempPhone)) {
             phone = tempPhone;

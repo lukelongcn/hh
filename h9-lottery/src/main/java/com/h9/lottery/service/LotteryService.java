@@ -353,10 +353,10 @@ public class LotteryService {
     @Resource
     private Redisson redisson;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = {Exception.class,ServiceException.class})
     public Result lottery(Long curUserId, String code) {
         logger.debugv("lottery start 中奖名单为：userid:{0},code:{1}", curUserId,code);
-        Reward reward = rewardRepository.findByCode(code);
+        Reward reward = rewardRepository.findByCode4Update(code);
         logger.debugv("rewardId {0},status {1}",reward.getId(),reward.getStatus());
         if (reward == null) {
             return Result.fail("红包不存在");
@@ -499,7 +499,7 @@ public class LotteryService {
             if (state == 2) {
                 return Result.fail("兑奖码已兑奖完毕");
             } else if (state == 3) {
-                return Result.fail("兑奖码不正确，请确认");
+                return Result.fail("谢谢惠顾");
             } else if (state == 4) {
                 return Result.fail("服务繁忙，请稍后再试");
             }

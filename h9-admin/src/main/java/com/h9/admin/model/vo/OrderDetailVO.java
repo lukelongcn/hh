@@ -1,13 +1,26 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.PayInfo;
+import com.h9.common.db.entity.RechargeOrder;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -21,72 +34,119 @@ public class OrderDetailVO {
     @ApiModelProperty(value = "订单编号")
     private String no;
 
-    @ApiModelProperty(value ="收货人姓名")
+    @ApiModelProperty(value = "收货人姓名")
     private String userName;
 
-    @ApiModelProperty(value ="收货人号码")
+    @ApiModelProperty(value = "收货人号码")
     private String userPhone;
 
-    @ApiModelProperty(value ="用户收货地址")
+    @ApiModelProperty(value = "用户收货地址")
     private String userAddres;
 
-    @ApiModelProperty(value ="支付方式描述")
+    @ApiModelProperty(value = "支付方式描述")
     private Integer payMethond;
 
-    @ApiModelProperty(value ="支付方式描述")
+    @ApiModelProperty(value = "支付方式描述")
     private String payMethodDesc;
 
-    @ApiModelProperty(value ="订单金额")
+    @ApiModelProperty(value = "订单金额")
     private BigDecimal money = new BigDecimal(0);
 
-    @ApiModelProperty(value ="需要支付的金额")
+    @ApiModelProperty(value = "需要支付的金额")
     private BigDecimal payMoney = new BigDecimal(0);
 
-    @ApiModelProperty(value ="支付状态描述")
-    private String payStatusDesc ;
+    @ApiModelProperty(value = "支付状态描述")
+    private String payStatusDesc;
 
-    @ApiModelProperty(value ="支付状态 1待支付 2 已支付")
+    @ApiModelProperty(value = "支付状态 1待支付 2 已支付")
     private Integer payStatus = 1;
 
-    @ApiModelProperty(value ="订单状态")
+    @ApiModelProperty(value = "订单状态")
     private Integer status = 1;
 
-    @ApiModelProperty(value ="订单状态描述")
+    @ApiModelProperty(value = "订单状态描述")
     private String statusDesc;
 
-    @ApiModelProperty(value ="用户id")
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    @ApiModelProperty(value ="商品")
+    @ApiModelProperty(value = "商品")
     private String goods;
 
-    @ApiModelProperty(value ="订单类别 1手机卡 2滴滴卡 3实物")
-    private String orderType ;
+    @ApiModelProperty(value = "订单类别 1手机卡 2滴滴卡 3实物")
+    private String orderType;
 
-    @ApiModelProperty(value ="物流单号")
+
+    /**
+     * 1 微信充值订单，2为其他
+     */
+    @ApiModelProperty(value = "订单类别")
+    private String orderTypeCode;
+
+    @ApiModelProperty(value = "物流单号")
     private String expressNum;
 
-    @ApiModelProperty(value ="滴滴券号")
+    @ApiModelProperty(value = "滴滴券号")
     private String didiCardNumber;
 
-    @ApiModelProperty(value ="快递公司名")
+    @ApiModelProperty(value = "快递公司名")
     private String expressName;
 
     @ApiModelProperty(value = "商品数量")
     private Long count;
 
     @ApiModelProperty(value = "创建时间")
-    private Date createTime ;
+    private Date createTime;
 
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
-    @ApiModelProperty(value ="充值手机号")
+    @ApiModelProperty(value = "充值手机号")
     private String tel;
 
-    public static OrderDetailVO toOrderDetailVO(Orders orders, RechargeRecord rechargeRecord){
+    @ApiModelProperty(value = "供应商")
+    private String supplier = "徽酒";
+
+    @ApiModelProperty("订单来源")
+    private String orderFrom;
+
+    List<Goods> goodsList = new ArrayList<>();
+
+    @ApiModelProperty("订单总金额")
+    private String orderMoney;
+
+    @ApiModelProperty("微信支付金额")
+    private String payMoney4wx;
+
+    @ApiModelProperty("余额支付")
+    private String payMoney4Balance;
+
+    @ApiModelProperty("微信订单流水号")
+    private String wxOrderId;
+
+    @ApiModel
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Goods{
+        @ApiModelProperty("商品图片")
+        private String goodsImg;
+
+        @ApiModelProperty("商品名称")
+        private String goodsName;
+
+        @ApiModelProperty("数量")
+        private String goodsCount;
+
+        @ApiModelProperty("价格")
+        private String goodsPrice;
+
+    }
+
+    public static OrderDetailVO toOrderDetailVO(Orders orders, RechargeRecord rechargeRecord, String wxOrderId) {
         OrderDetailVO orderDetailVO = new OrderDetailVO();
-        BeanUtils.copyProperties(orders,orderDetailVO);
+        BeanUtils.copyProperties(orders, orderDetailVO);
         orderDetailVO.setPayStatusDesc(orders.getPayStatus());
         orderDetailVO.setUserId(orders.getUser().getId());
         String collect = orders.getOrderItems().stream()
@@ -98,16 +158,131 @@ public class OrderDetailVO {
                 .collect(Collectors.joining(","));
         orderDetailVO.setDidiCardNumber(didi);
         Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());
-        orderDetailVO.setPayMethodDesc(byCode==null?"未知的支付方式":byCode.getDesc());
+        orderDetailVO.setPayMethodDesc(byCode == null ? "未知的支付方式" : byCode.getDesc());
         //统计订单商品数量
         long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderDetailVO.setCount(sum);
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
-        orderDetailVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
+        orderDetailVO.setStatusDesc(statusEnum == null ? null : statusEnum.getDesc());
         orderDetailVO.setTel(rechargeRecord == null ? null : orders.getUserPhone());
+
+        orderDetailVO.setOrderTypeCode("2");
+        orderDetailVO.orderFrom = "酒元商城";
+
+        List<OrderItems> orderItems = orders.getOrderItems();
+
+        List<Goods> goodsList = orderItems.stream().map(items -> {
+            com.h9.common.db.entity.order.Goods goods = items.getGoods();
+            Goods tempGoods = new Goods(goods.getImg(), goods.getName(), items.getCount() + "",
+                    MoneyUtils.formatMoney(goods.getPrice()));
+            return tempGoods;
+        }).collect(Collectors.toList());
+
+
+        orderDetailVO.setGoodsList(goodsList);
+
+        orderDetailVO.setOrderMoney(MoneyUtils.formatMoney(orders.getMoney()));
+        int payMethod = orders.getPayMethond();
+        if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
+            orderDetailVO.setPayMoney4wx(MoneyUtils.formatMoney(orders.getPayMoney()));
+            orderDetailVO.setPayMoney4Balance(MoneyUtils.formatMoney(new BigDecimal(0)));
+            orderDetailVO.setWxOrderId(wxOrderId);
+        }else{
+            orderDetailVO.setPayMoney4wx(MoneyUtils.formatMoney(new BigDecimal(0)));
+            orderDetailVO.setPayMoney4Balance(MoneyUtils.formatMoney(orders.getPayMoney()));
+        }
+
         return orderDetailVO;
     }
 
+    public static OrderDetailVO toOrderDetailVO(RechargeOrder rechargeOrder,String wxOrderId) {
+        OrderDetailVO orderDetailVO = new OrderDetailVO();
+        orderDetailVO.setId(rechargeOrder.getId());
+        orderDetailVO.setOrderType(PayInfo.OrderTypeEnum.Recharge.getName());
+        orderDetailVO.setOrderFrom(PayInfo.OrderTypeEnum.Recharge.getName());
+        orderDetailVO.setCreateTime(rechargeOrder.getCreateTime());
+        orderDetailVO.setMoney(rechargeOrder.getMoney());
+        orderDetailVO.setPayMethodDesc("微信支付");
+        orderDetailVO.setPayMoney4wx(MoneyUtils.formatMoney(rechargeOrder.getMoney()));
+        orderDetailVO.setWxOrderId(wxOrderId);
+        orderDetailVO.setPayMoney4Balance("0.00元");
+        orderDetailVO.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+        orderDetailVO.setOrderTypeCode("1");
+        return orderDetailVO;
+    }
+
+    public String getOrderTypeCode() {
+        return orderTypeCode;
+    }
+
+    public void setOrderTypeCode(String orderTypeCode) {
+        this.orderTypeCode = orderTypeCode;
+    }
+
+    public void setPayStatusDesc(String payStatusDesc) {
+        this.payStatusDesc = payStatusDesc;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
+
+    public String getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
+    }
+
+    public String getOrderFrom() {
+        return orderFrom;
+    }
+
+    public void setOrderFrom(String orderFrom) {
+        this.orderFrom = orderFrom;
+    }
+
+
+    public List<Goods> getGoodsList() {
+        return goodsList;
+    }
+
+    public void setGoodsList(List<Goods> goodsList) {
+        this.goodsList = goodsList;
+    }
+
+    public String getOrderMoney() {
+        return orderMoney;
+    }
+
+    public void setOrderMoney(String orderMoney) {
+        this.orderMoney = orderMoney;
+    }
+
+    public String getPayMoney4wx() {
+        return payMoney4wx;
+    }
+
+    public void setPayMoney4wx(String payMoney4wx) {
+        this.payMoney4wx = payMoney4wx;
+    }
+
+    public String getPayMoney4Balance() {
+        return payMoney4Balance;
+    }
+
+    public void setPayMoney4Balance(String payMoney4Balance) {
+        this.payMoney4Balance = payMoney4Balance;
+    }
+
+    public String getWxOrderId() {
+        return wxOrderId;
+    }
+
+    public void setWxOrderId(String wxOrderId) {
+        this.wxOrderId = wxOrderId;
+    }
 
     public Date getCreateTime() {
         return createTime;

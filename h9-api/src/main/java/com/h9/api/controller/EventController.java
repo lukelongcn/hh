@@ -39,7 +39,7 @@ public class EventController {
         } catch (Exception e) {
             logger.info(e.getMessage(),e);
         }
-        return eventService.wxEventCallBack(map);
+        return eventService.handler(map);
     }
 
 }

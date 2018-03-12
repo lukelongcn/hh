@@ -21,4 +21,15 @@ public class ConvertGoodsDTO {
     @NotNull(message = "请选择您要兑换的商品")
     private Long goodsId;
 
+    //WX(2, "wx"), WXJS(3, "wxjs")
+    @NotNull(message = "请传入支付平台类型，如，'wx'(微信APP）'wxjs'(公众号)")
+    private String payPlatform;
+
+
+    /**
+     * description:
+     *   @see com.h9.common.db.entity.order.Orders.PayMethodEnum
+     */
+    @NotNull(message = "请选择支付方式")
+    private Integer payMethod;
 }

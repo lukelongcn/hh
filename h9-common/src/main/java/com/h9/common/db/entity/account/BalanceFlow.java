@@ -42,12 +42,12 @@ public class BalanceFlow extends BaseEntity {
     private Long flowType;
 
     public static class FlowType{
-        public static final long WITHDRAW = 1;
-        public static final long REFUND = 2;
-        public static final long XIAPPINHUI = 3;
-        public static final long DIDI_CONVERT = 5;
-        public static final long MOBILE_RECHAGE = 6;
-        public static final long DA_ZHUAN_PAN = 8;
+//        public static final long WITHDRAW = 1;
+//        public static final long REFUND = 2;
+//        public static final long XIAPPINHUI = 3;
+//        public static final long DIDI_CONVERT = 5;
+//        public static final long MOBILE_RECHAGE = 6;
+//        public static final long DA_ZHUAN_PAN = 8;
         public static final long ACCOUNT_TRANSFER = 9;
         /**
          * description: 抢红包

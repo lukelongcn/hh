@@ -1,11 +1,16 @@
 package com.h9.admin.model.vo;
 
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.utils.MoneyUtils;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +54,17 @@ public class OrderItemVO {
     @ApiModelProperty(value = "创建时间")
     private Date createTime ;
 
+    @ApiModelProperty(value = "微信支付金额")
+    private String payMoney4wx = "0.00";
+
+    @ApiModelProperty(value = "酒元支付金额")
+    private String payMoney4balance;
+
+    @ApiModelProperty(value = "能否退款")
+    private boolean canRefund = false;
+
+
+    @SuppressWarnings("Duplicates")
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
@@ -66,9 +82,60 @@ public class OrderItemVO {
         orderItemVO.setCount(sum);
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
         orderItemVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
+        BigDecimal payMoney = orders.getPayMoney();
+        int payMethond = orders.getPayMethond();
+        if(payMethond == Orders.PayMethodEnum.WX_PAY.getCode()){
+            orderItemVO.setPayMoney4wx(MoneyUtils.formatMoney(payMoney));
+        }else{
+            orderItemVO.setPayMoney4balance(MoneyUtils.formatMoney(payMoney));
+        }
+
+        List<OrderItems> orderItems = orders.getOrderItems();
+        boolean find = orderItems.stream().anyMatch(item -> {
+            Goods goods = item.getGoods();
+            GoodsType goodsType = goods.getGoodsType();
+            if (goodsType.getCode().equals(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode())) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        int status = orders.getStatus();
+        if(status == Orders.statusEnum.WAIT_SEND.getCode()  ){
+            orderItemVO.setCanRefund(!find);
+        }
         return orderItemVO;
     }
 
+
+    public boolean isCanRefund() {
+        return canRefund;
+    }
+
+    public void setCanRefund(boolean canRefund) {
+        this.canRefund = canRefund;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
+
+    public String getPayMoney4wx() {
+        return payMoney4wx;
+    }
+
+    public void setPayMoney4wx(String payMoney4wx) {
+        this.payMoney4wx = payMoney4wx;
+    }
+
+    public String getPayMoney4balance() {
+        return payMoney4balance;
+    }
+
+    public void setPayMoney4balance(String payMoney4balance) {
+        this.payMoney4balance = payMoney4balance;
+    }
 
     public Date getCreateTime() {
         return createTime;

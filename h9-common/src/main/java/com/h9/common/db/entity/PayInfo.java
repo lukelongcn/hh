@@ -55,7 +55,8 @@ public class PayInfo extends BaseEntity {
 
     public enum OrderTypeEnum{
         Recharge(0,"充值"),
-        HOTEL(1,"酒店");
+        HOTEL(1,"酒店"),
+        STORE_ORDER(2,"商城订单");
 
         OrderTypeEnum(int id,String name){
             this.id = id;

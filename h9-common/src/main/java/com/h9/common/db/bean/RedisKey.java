@@ -40,7 +40,7 @@ public class RedisKey {
 
     public static String getUserCountKey(Date date) {
         if(date == null) return "";
-        return userCountKey+ DateUtil.formatDate(date, DateUtil.FormatType.DAY);
+        return userCountKey+ DateUtil.formatDate(date, DateUtil.FormatType.MONTH);
     }
 
     public static String getTokenUserIdKey(String token){

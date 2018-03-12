@@ -39,11 +39,11 @@ public class Test666 {
     }*/
     @Test
     public void testRefund() throws IOException {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
-        InputStream is2 = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("test.txt");
 
-
-        File file = new File("/Users/ln/Documents/test.p12");
+//        File file = new File("d://test/test.p12");
+        File file = new File("d://test/test.txt");
 
         if (!file.exists()) {
             file.createNewFile();

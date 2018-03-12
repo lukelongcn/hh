@@ -6,7 +6,9 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.OrdersRepository;
+import com.h9.common.db.repo.PayInfoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -25,7 +27,11 @@ public class OrderService {
     @Resource
     private OrdersRepository ordersReposiroty;
     @Resource
+    private PayInfoRepository payInfoRepository;
+    @Resource
     private UserService userService;
+    @Resource
+    private RestTemplate restTemplate;
 
     public Orders initOrder(String nickName, BigDecimal money, String tel, String type, String supplierName) {
         Orders order = new Orders();
@@ -68,6 +74,8 @@ public class OrderService {
         OrderDetailVO vo = OrderDetailVO.convert(orders);
         return Result.success(vo);
     }
+
+
 
 
 }

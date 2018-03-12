@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * PayProvider:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/11
  * Time: 16:51
@@ -57,6 +57,12 @@ public class PayProvider {
     }
 
 
+    /**
+     *
+     * @param id payInfo Id
+     * @param payMoney4Wechat
+     * @return
+     */
     public Result refundOrder(Long id, BigDecimal payMoney4Wechat) {
 
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");

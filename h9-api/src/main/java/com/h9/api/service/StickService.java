@@ -79,7 +79,7 @@ import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.STICK_HOME
 
 /**
  * Created with IntelliJ IDEA.
- * Description:TODO
+ *
  * StickService:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/2
  * Time: 14:49

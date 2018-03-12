@@ -57,7 +57,38 @@ public class GoodService {
         return Result.success();
     }
 
+
+    /**
+     * description:
+     *
+     * @param count 要减少的库存
+     */
+    @SuppressWarnings("Duplicates")
+    public Result changeStock(Long goodsId, int count) {
+
+        Goods goods = goodsReposiroty.findOne(goodsId);
+        if (goods == null) return Result.fail("商品不存在");
+
+        int stock = goods.getStock();
+        if (stock < count) {
+            return Result.fail("库存不足");
+        }
+
+        stock -= count;
+        goods.setStock(stock);
+        if (stock <= 0) {
+            goods.setStatus(2);
+        }
+        goodsReposiroty.save(goods);
+        return Result.success();
+    }
+
+
     public Result changeStock(Goods goods) {
+        return changeStock(goods.getId());
+    }
+
+    public Result changeStock(Goods goods,int count) {
         return changeStock(goods.getId());
     }
 
