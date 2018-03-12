@@ -224,7 +224,8 @@ public class OrderService {
 
     }
 
-    public Result<PageResult<WxOrderListInfo>> wxOrderList(Integer page, Integer limit, String wxOrderNo, Integer orderType, Long createTime, Long endTime) {
+    public Result<PageResult<WxOrderListInfo>> wxOrderList(Integer page, Integer limit, String wxOrderNo,
+                                                           Integer orderType, Long createTime, Long endTime) {
         if (StringUtils.isNotBlank(wxOrderNo)) {
             String url = payHost + "/h9/pay/order/info?no=" + wxOrderNo;
             Result result = restTemplate.getForObject(url, Result.class);
@@ -254,10 +255,19 @@ public class OrderService {
         } else {
             //WxOrderListInfo
             Specification<PayInfo> specification = getWxOrderList(createTime, orderType, endTime);
-            PageRequest pageRequest = payInfoRepository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
-            Page<PayInfo> pageInfoList = payInfoRepository.findAll(specification, pageRequest);
-            PageResult<PayInfo> pageResult = new PageResult(pageInfoList);
-            List<PayInfo> payInfoList = pageInfoList.getContent();
+            List<PayInfo> payInfoList = null;
+            PageResult<PayInfo> pageResult = null;
+            if (page == null && limit == null) {
+                payInfoList = payInfoRepository.findAll(specification);
+                pageResult = new PageResult<>();
+                pageResult.setData(payInfoList);
+            } else {
+                PageRequest pageRequest = payInfoRepository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
+                Page<PayInfo> pageInfoList = payInfoRepository.findAll(specification, pageRequest);
+                pageResult = new PageResult(pageInfoList);
+                payInfoList = pageInfoList.getContent();
+            }
+
             String ids = payInfoList.stream()
                     .map(payInfo -> payInfo.getId() + "")
                     .reduce("", (e1, e2) -> e1 + "-" + e2);
@@ -378,27 +388,16 @@ public class OrderService {
     }
 
 
-    public Result exportExcel()  {
+    public Result exportExcel(String wxOrderNo, Integer orderType, Long startTime, Long endTime) {
 
-        List<PayInfo> payInfoList = payInfoRepository.findAll();
-        String ids = payInfoList.stream()
-                .map(payInfo -> payInfo.getId() + "")
-                .reduce("", (e1, e2) -> e1 + "-" + e2);
-        if (ids.startsWith("-")) {
-            ids = ids.substring(1, ids.length());
+        Result<PageResult<WxOrderListInfo>> pageResultResult = wxOrderList(null, null, wxOrderNo, orderType, startTime, endTime);
+        PageResult<WxOrderListInfo> pageResult = pageResultResult.getData();
+        List<WxOrderListInfo> wxOrderListInfoList = pageResult.getData();
+        if(wxOrderListInfoList.size() > 5000){
+            return Result.fail("数据量过大，请增加筛选条件再导出");
         }
-        String url = payHost + "/h9/pay/order/info/batch?ids=" + ids + "&bid=" + bid;
-        Result result = restTemplate.getForObject(url, Result.class);
-        if (result.getCode() != 0) {
-            return result;
-        }
-        Map<String, String> map = (Map<String, String>) result.getData();
-
-        List<WxOrderListInfo> wxOrderListInfoList = payInfoList.stream()
-                .map(payInfo -> new WxOrderListInfo(payInfo, map))
-                .collect(Collectors.toList());
         //定义表的列名
-        String[] rowsName = new String[]{"微信订单编号","订单类型","商品订单","金额","创建时间","支付时间"};
+        String[] rowsName = new String[]{"微信订单编号", "订单类型", "商品订单", "金额", "创建时间", "支付时间"};
         //定义表的内容
         List<Object[]> dataList = new ArrayList<Object[]>();
         Object[] objs = null;
@@ -421,7 +420,7 @@ public class OrderService {
             Result upload = fileService.upload(is, fileName);
             return upload;
         } catch (Exception e) {
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
             return Result.fail();
         }
 

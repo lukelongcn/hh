@@ -78,6 +78,10 @@ public class DateUtil {
     }
 
 
+    public static void main(String[] args) {
+        long time = DateUtil.getDate(new Date(), -10, Calendar.DAY_OF_YEAR).getTime();
+        System.out.println("startTime:"+time+",endTime:"+new Date().getTime());
+    }
     public static String getSpaceTime(Date begin, Date end) {
         long between = 0;
         try {
