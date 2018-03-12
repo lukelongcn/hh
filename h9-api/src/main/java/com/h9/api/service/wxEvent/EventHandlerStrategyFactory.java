@@ -81,13 +81,12 @@ public class EventHandlerStrategyFactory {
         // 返回xml
         Message4wx message4Wx = new Message4wx();
         String dateS = DateUtil.formatDate(new Date(), DateUtil.FormatType.NON_SEPARATOR_DAY);
-       /* message4Wx
+        message4Wx
                 .setToUserName(map.get("ToUserName").toString())
                 .setFromUserName(map.get("FromUserName").toString())
                 .setCreateTime(Integer.valueOf(dateS))
                 .setMsgType(map.get("MsgType").toString())
                 .setFromUserName(map.get("FromUserName").toString());
-        return message4Wx;*/
-       return null;
+        return message4Wx;
     }
 }
