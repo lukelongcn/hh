@@ -15,6 +15,6 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
 
     List<ReplyMessage> findByEventType(String eventType);
 
-    @Query("select r from ReplyMessage r where r.orderName = 1")
+    @Query("select r from ReplyMessage r where r.orderName = ?1")
     ReplyMessage fingByOrderName(String orderName);
 }

@@ -190,7 +190,7 @@ public class EventService {
             return "";
         }
 
-        String event = map.get("MsgType");
+        String event = map.get("Event");
         EventHandlerStrategy eventHandlerStrategy = eventHandlerStrategyFactory.getStrategy(event);
         if(eventHandlerStrategy == null){
             return "";
