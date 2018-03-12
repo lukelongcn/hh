@@ -1,18 +1,18 @@
 package com.h9.common.utils;
 
+import com.h9.common.db.entity.order.Orders;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jboss.logging.Logger;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -154,4 +154,104 @@ public class POIUtils {
         return cellValue;
     }
 
+
+    /*
+     * 列数据信息单元格样式
+     */
+    public  static HSSFCellStyle getStyle(HSSFWorkbook workbook) {
+        // 设置字体
+        HSSFFont font = workbook.createFont();
+        //设置字体大小
+        //font.setFontHeightInPoints((short)10);
+        //字体加粗
+        //font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        //设置字体名字
+        font.setFontName("Courier New");
+        //设置样式;
+        HSSFCellStyle style = workbook.createCellStyle();
+        //设置底边框;
+        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        //设置底边框颜色;
+        style.setBottomBorderColor(HSSFColor.BLACK.index);
+        //设置左边框;
+        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        //设置左边框颜色;
+        style.setLeftBorderColor(HSSFColor.BLACK.index);
+        //设置右边框;
+        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        //设置右边框颜色;
+        style.setRightBorderColor(HSSFColor.BLACK.index);
+        //设置顶边框;
+        style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        //设置顶边框颜色;
+        style.setTopBorderColor(HSSFColor.BLACK.index);
+        //在样式用应用设置的字体;
+        style.setFont(font);
+        //设置自动换行;
+        style.setWrapText(false);
+        //设置水平对齐的样式为居中对齐;
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        //设置垂直对齐的样式为居中对齐;
+        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+
+        return style;
+
+    }
+
+    /*
+   * 列头单元格样式
+   */
+    public  static HSSFCellStyle getColumnTopStyle(HSSFWorkbook workbook) {
+
+        // 设置字体
+        HSSFFont font = workbook.createFont();
+        //设置字体大小
+        font.setFontHeightInPoints((short)11);
+        //字体加粗
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        //设置字体名字
+        font.setFontName("Courier New");
+        //设置样式;
+        HSSFCellStyle style = workbook.createCellStyle();
+        //设置底边框;
+        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        //设置底边框颜色;
+        style.setBottomBorderColor(HSSFColor.BLACK.index);
+        //设置左边框;
+        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        //设置左边框颜色;
+        style.setLeftBorderColor(HSSFColor.BLACK.index);
+        //设置右边框;
+        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        //设置右边框颜色;
+        style.setRightBorderColor(HSSFColor.BLACK.index);
+        //设置顶边框;
+        style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        //设置顶边框颜色;
+        style.setTopBorderColor(HSSFColor.BLACK.index);
+        //在样式用应用设置的字体;
+        style.setFont(font);
+        //设置自动换行;
+        style.setWrapText(false);
+        //设置水平对齐的样式为居中对齐;
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        //设置垂直对齐的样式为居中对齐;
+        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+
+        return style;
+
+    }
+
+
+    public interface CallBack{
+        void callBack(HSSFSheet sheet,HSSFCellStyle columnTopStyle,HSSFCellStyle style);
+    }
+
+    /*
+    * 导出数据
+    * */
+    public static  <T> void export(List<T> dataList,CallBack callBack) throws Exception{
+
+
+    }
 }

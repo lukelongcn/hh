@@ -92,6 +92,13 @@ public class OrderController {
     }
 
     @Secured
+    @PutMapping(value = "/wx/export")
+    @ApiOperation("导出wx订单表格")
+    public Result exportExcel() {
+        return orderService.exportExcel();
+    }
+
+    @Secured
     @PutMapping(value = "/refund/{orderId}")
     @ApiOperation("退款")
     public Result refundOrder(@PathVariable Long orderId) {

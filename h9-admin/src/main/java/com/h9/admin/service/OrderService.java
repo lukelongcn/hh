@@ -21,7 +21,9 @@ import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
+import com.h9.common.utils.POIUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -348,6 +350,7 @@ public class OrderService {
 
     /**
      * 判断订单是否能退款
+     *
      * @param orders
      * @return
      */
@@ -363,6 +366,17 @@ public class OrderService {
                 return false;
             }
         });
-        return false;
+        return !find;
+    }
+
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+        orderService.exportExcel();
+    }
+    public Result exportExcel() {
+        WxOrderListInfo info = new WxOrderListInfo("123", "1", "123", "100", "", "", "", "");
+        List<WxOrderListInfo> dataList = Arrays.asList(info);
+
+        return null;
     }
 }

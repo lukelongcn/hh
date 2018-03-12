@@ -64,6 +64,7 @@ public class OrderItemVO {
     private boolean canRefund = false;
 
 
+    @SuppressWarnings("Duplicates")
     public static OrderItemVO toOrderItemVO(Orders orders){
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
@@ -99,7 +100,11 @@ public class OrderItemVO {
                 return false;
             }
         });
-        orderItemVO.setCanRefund(!find);
+
+        int status = orders.getStatus();
+        if(status == Orders.statusEnum.DELIVER.getCode()  ){
+            orderItemVO.setCanRefund(!find);
+        }
         return orderItemVO;
     }
 
