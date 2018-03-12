@@ -30,6 +30,7 @@ public class SubscribeScanHandlerStrategy implements EventHandlerStrategy<Messag
         ReplyMessage replyMessage = replyMessageRepository.fingByOrderName(orderName);
         Message4wx message4wx = EventHandlerStrategyFactory.getXml(map,replyMessage);
         message4wx.setContent(replyMessage.getContent());
+        message4wx.setMsgType("text");
         return message4wx;
     }
 

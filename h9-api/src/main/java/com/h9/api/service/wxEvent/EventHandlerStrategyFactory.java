@@ -84,8 +84,7 @@ public class EventHandlerStrategyFactory {
         message4Wx
                 .setToUserName(map.get("FromUserName").toString())
                 .setFromUserName(map.get("ToUserName").toString())
-                .setCreateTime(Integer.valueOf(dateS))
-                .setMsgType(map.get("MsgType").toString());
+                .setCreateTime(Integer.valueOf(dateS));
         return message4Wx;
     }
 }
