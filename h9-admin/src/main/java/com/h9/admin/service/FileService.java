@@ -151,15 +151,7 @@ public class FileService {
             System.out.println(putRet.key);
             System.out.println(putRet.hash);
             return Result.success("上传成功",imgPath+"/"+key);
-        } catch (QiniuException ex) {
-            Response r = ex.response;
-            System.err.println(r.toString());
-            try {
-                System.err.println(r.bodyString());
-            } catch (QiniuException ex2) {
-                //ignore
-            }
-        } catch (IOException e) {
+        }  catch (Exception e) {
             logger.info(e.getMessage(),e);
         }
 
