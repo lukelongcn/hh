@@ -2,7 +2,7 @@ package com.h9.api.service.wxEvent.impl;
 
 import com.h9.api.provider.WeChatProvider;
 import com.h9.api.service.wxEvent.EventHandlerStrategy;
-import com.h9.api.service.wxEvent.model.Message4wxText;
+import com.h9.api.service.wxEvent.model.Message4wx;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.db.repo.ReplyMessageRepository;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.Map;
  * 文本消息处理
  */
 @Component
-public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wxText> {
+public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx> {
 
     @Resource
     private ReplyMessageRepository replyMessageRepository;
@@ -26,7 +26,7 @@ public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx
      * @return
      */
     @Override
-    public Message4wxText handler(Map map, List<ReplyMessage> replyMessageList) {
+    public Message4wx handler(Map map, List<ReplyMessage> replyMessageList) {
 
         String event = map.get("MsgType").toString();
         if (event.equals(WeChatProvider.EventEnum.SUBSCRIBE.getValue())){

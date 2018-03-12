@@ -5,9 +5,10 @@ import com.h9.api.model.dto.RedEnvelopeDTO;
 import com.h9.api.model.dto.VerifyTokenDTO;
 import com.h9.api.model.vo.ScanRedEnvelopeVO;
 import com.h9.api.provider.WeChatProvider;
+import com.h9.api.provider.handler.CDataContentHandler;
 import com.h9.api.service.wxEvent.EventHandlerStrategy;
 import com.h9.api.service.wxEvent.EventHandlerStrategyFactory;
-import com.h9.api.service.wxEvent.model.Message4wxText;
+import com.h9.api.service.wxEvent.model.Message4wx;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
@@ -181,7 +182,7 @@ public class EventService {
      *
      * @param map 封装后的http 请求参数
      */
-    public String handler(Map<String, String> map) {
+    public String handler(Map<String, String> map) throws Exception{
         try {
             logger.info("wx request params:" + JSONObject.toJSONString(map));
         } catch (Exception e) {
@@ -203,7 +204,7 @@ public class EventService {
         if (obj == null) {
             return "";
         }
-        String xml = XMLUtils.convertToXml(obj);
+        String xml = CDataContentHandler.ojbectToXmlWithCDATA(Message4wx.class,obj);
         logger.info("回复的消息: "+xml);
         return xml;
     }

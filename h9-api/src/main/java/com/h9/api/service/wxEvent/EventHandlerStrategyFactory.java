@@ -2,10 +2,9 @@ package com.h9.api.service.wxEvent;
 
 
 import com.h9.api.service.wxEvent.impl.*;
-import com.h9.api.service.wxEvent.model.Message4wxText;
+import com.h9.api.service.wxEvent.model.Message4wx;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.utils.DateUtil;
-import io.swagger.annotations.Scope;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
 
@@ -78,17 +77,16 @@ public class EventHandlerStrategyFactory {
         return eventHandlerStrategy;
     }
 
-    public static Message4wxText getXml(Map map, ReplyMessage replyMessage){
+    public static Message4wx getXml(Map map, ReplyMessage replyMessage){
         // 返回xml
-        Message4wxText message4wxText = new Message4wxText();
+        Message4wx message4Wx = new Message4wx();
         String dateS = DateUtil.formatDate(new Date(), DateUtil.FormatType.NON_SEPARATOR_DAY);
-        message4wxText
+        message4Wx
                 .setToUserName(map.get("ToUserName").toString())
                 .setFromUserName(map.get("FromUserName").toString())
                 .setCreateTime(Integer.valueOf(dateS))
                 .setMsgType(map.get("MsgType").toString())
-                .setFromUserName(map.get("FromUserName").toString())
-                .setContent(replyMessage.getContent());
-        return message4wxText;
+                .setFromUserName(map.get("FromUserName").toString());
+        return message4Wx;
     }
 }

@@ -32,7 +32,7 @@ public class EventController {
     }
 
     @PostMapping(value = "/wx/event",consumes = "text/xml")
-    public String wxEventCallback(HttpServletRequest request) {
+    public String wxEventCallback(HttpServletRequest request) throws Exception{
         Map<String, String> map = null;
         try {
             map = XMLUtils.parseXml(request);
