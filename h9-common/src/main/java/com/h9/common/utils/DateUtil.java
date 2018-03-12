@@ -69,7 +69,12 @@ public class DateUtil {
         if (date == null)
             return StringUtils.EMPTY;
         return new SimpleDateFormat(formatType.format).format(date);
+    }
 
+    public static final String formatDate(Date date, String formatType) {
+        if (date == null)
+            return StringUtils.EMPTY;
+        return new SimpleDateFormat(formatType).format(date);
     }
 
 
