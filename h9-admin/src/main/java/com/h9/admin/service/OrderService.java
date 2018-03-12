@@ -20,6 +20,7 @@ import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.ExportExcel;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.common.utils.POIUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,9 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +69,9 @@ public class OrderService {
 
     @Resource
     private RechargeOrderRepository rechargeOrderRepository;
+
+    @Resource
+    private FileService fileService;
 
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         long startTime = System.currentTimeMillis();
@@ -272,6 +279,7 @@ public class OrderService {
 
     }
 
+
     /**
      * description: 微信 支付订单
      *
@@ -369,14 +377,54 @@ public class OrderService {
         return !find;
     }
 
-    public static void main(String[] args) {
-        OrderService orderService = new OrderService();
-        orderService.exportExcel();
-    }
-    public Result exportExcel() {
-        WxOrderListInfo info = new WxOrderListInfo("123", "1", "123", "100", "", "", "", "");
-        List<WxOrderListInfo> dataList = Arrays.asList(info);
 
-        return null;
+    public Result exportExcel()  {
+
+        List<PayInfo> payInfoList = payInfoRepository.findAll();
+        String ids = payInfoList.stream()
+                .map(payInfo -> payInfo.getId() + "")
+                .reduce("", (e1, e2) -> e1 + "-" + e2);
+        if (ids.startsWith("-")) {
+            ids = ids.substring(1, ids.length());
+        }
+        String url = payHost + "/h9/pay/order/info/batch?ids=" + ids + "&bid=" + bid;
+        Result result = restTemplate.getForObject(url, Result.class);
+        if (result.getCode() != 0) {
+            return result;
+        }
+        Map<String, String> map = (Map<String, String>) result.getData();
+
+        List<WxOrderListInfo> wxOrderListInfoList = payInfoList.stream()
+                .map(payInfo -> new WxOrderListInfo(payInfo, map))
+                .collect(Collectors.toList());
+        //定义表的列名
+        String[] rowsName = new String[]{"微信订单编号","订单类型","商品订单","金额","创建时间","支付时间"};
+        //定义表的内容
+        List<Object[]> dataList = new ArrayList<Object[]>();
+        Object[] objs = null;
+        for (int i = 0; i < wxOrderListInfoList.size(); i++) {
+            WxOrderListInfo wxOrderListInfo = wxOrderListInfoList.get(i);
+            objs = new Object[rowsName.length];
+            objs[0] = wxOrderListInfo.getWxOrderNo();
+            objs[1] = wxOrderListInfo.getOrderType();
+            objs[2] = wxOrderListInfo.getOrderId();
+            objs[3] = wxOrderListInfo.getMoney();
+            objs[4] = wxOrderListInfo.getCreateTime();
+            objs[5] = wxOrderListInfo.getCreateTime();
+            dataList.add(objs);
+        }
+//        ExportExcel ex = new ExportExcel("订单", rowsName, dataList);
+        try {
+            InputStream is = POIUtils.export("订单列表", rowsName, dataList);
+            //上传文件
+            String fileName = DateUtil.formatDate(new Date(), "yyyy-MM-dd:HH:mm:ss") + "订单列表.xls";
+            Result upload = fileService.upload(is, fileName);
+            return upload;
+        } catch (Exception e) {
+            logger.info(e.getMessage(),e);
+            return Result.fail();
+        }
+
     }
+
 }

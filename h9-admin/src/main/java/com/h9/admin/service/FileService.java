@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -100,7 +101,8 @@ public class FileService {
     }
 
 
-    public Result upload(MultipartFile file,String key) {
+    @SuppressWarnings("Duplicates")
+    public Result upload(MultipartFile file, String key) {
         //构造一个带指定Zone对象的配置类,华南zone1,华东zone0
         Configuration cfg = new Configuration(Zone.zone0());
         //...其他参数参考类注释
@@ -127,6 +129,30 @@ public class FileService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        return Result.fail("上传失败");
+    }
+
+    public Result upload(InputStream is, String key) {
+        //构造一个带指定Zone对象的配置类,华南zone1,华东zone0
+        Configuration cfg = new Configuration(Zone.zone0());
+        //...其他参数参考类注释
+        UploadManager uploadManager = new UploadManager(cfg);
+        //...生成上传凭证，然后准备上传
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        // String key = null;
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket,key.toString(), 3600, new StringMap().put("insertOnly", 1 ));
+        try {
+            Response response = uploadManager.put(is, key.toString(), upToken, null, null);
+            //解析上传成功的结果
+            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            System.out.println(putRet.key);
+            System.out.println(putRet.hash);
+            return Result.success("上传成功",imgPath+"/"+key);
+        }  catch (Exception e) {
+            logger.info(e.getMessage(),e);
         }
 
         return Result.fail("上传失败");
