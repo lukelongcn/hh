@@ -94,8 +94,11 @@ public class OrderController {
     @Secured
     @PutMapping(value = "/wx/export")
     @ApiOperation("导出wx订单表格")
-    public Result exportExcel() {
-        return orderService.exportExcel();
+    public Result exportExcel(@RequestParam(required = false) String wxOrderNo,
+                              @RequestParam(required = false,defaultValue = "-1") Integer orderType,
+                              @RequestParam(required = false) Long startTime,
+                              @RequestParam(required = false) Long endTime) {
+        return orderService.exportExcel(wxOrderNo,orderType,startTime,endTime);
     }
 
     @Secured
