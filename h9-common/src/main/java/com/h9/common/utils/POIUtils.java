@@ -234,8 +234,8 @@ public class POIUtils {
             }
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             workbook.write(os);
-            FileOutputStream fos = new FileOutputStream(new File("d://img/test.xls"));
-            workbook.write(fos);
+//            FileOutputStream fos = new FileOutputStream(new File("d://img/test.xls"));
+//            workbook.write(fos);
             byte[] bytes = os.toByteArray();
             InputStream inputStream = new ByteArrayInputStream(bytes);
             return inputStream;
