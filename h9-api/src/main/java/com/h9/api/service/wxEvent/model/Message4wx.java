@@ -39,6 +39,7 @@ public class Message4wx {
         message4Wx.setMediaId(121323L);
         String s = CDataContentHandler.ojbectToXmlWithCDATA(Message4wx.class,message4Wx);
         System.out.println(s);
+
     }
 
     @XmlElement(name = "ToUserName")
