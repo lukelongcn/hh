@@ -102,7 +102,7 @@ public class OrderItemVO {
         });
 
         int status = orders.getStatus();
-        if(status == Orders.statusEnum.DELIVER.getCode()  ){
+        if(status == Orders.statusEnum.WAIT_SEND.getCode()  ){
             orderItemVO.setCanRefund(!find);
         }
         return orderItemVO;
