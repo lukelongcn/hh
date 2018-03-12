@@ -28,14 +28,22 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.h9.common.db.entity.order.Orders.PayMethodEnum.*;
+import static com.h9.common.db.entity.withdrawals.WithdrawalsRecord.statusEnum.FINISH;
 
 /**
  * @author: George
@@ -168,7 +176,7 @@ public class BasisService {
 
     public Result statistics() {
         BigDecimal lotteryCount = lotteryFlowRepository.getLotteryCount();
-        BigDecimal withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode());
+        BigDecimal withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(FINISH.getCode());
         BigDecimal userVCoins = userAccountRepository.getUserVCoins();
         BigDecimal totalVCoins = vCoinsFlowRepository.getGrantVCoins();
         BigDecimal totalExchangeVB = this.vb2MoneyRepository.sumVB();
@@ -379,19 +387,24 @@ public class BasisService {
         Date startTimeDate = null;
         Date endTimeDate = null;
 
-        if(startTime != null && endTime != null){
+        if (startTime != null && endTime != null) {
             startTimeDate = new Date(startTime);
             endTimeDate = new Date(endTime);
+            withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCountAndDate(FINISH.getCode(),startTimeDate,endTimeDate);
+            payOrderMoneySum = ordersRepository.findPayMoneySumAndDate(startTimeDate,endTimeDate);
+            wxPayMoneySum = ordersRepository.findWXPayMoneySumAndDate(WX_PAY.getCode(),startTimeDate,endTimeDate);
+            PayMoneyBalance = ordersRepository.findWXPayMoneySumAndDate(BALANCE_PAY.getCode(),startTimeDate,endTimeDate);
+            rechargeMoneySum = rechargeRecordRepository.findRecharMoneySumAndDate(startTimeDate,endTimeDate);
+        } else {
+            withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(FINISH.getCode());
+            payOrderMoneySum = ordersRepository.findPayMoneySum();
+            wxPayMoneySum = ordersRepository.findWXPayMoneySum(WX_PAY.getCode());
+            PayMoneyBalance = ordersRepository.findWXPayMoneySum(Orders.PayMethodEnum.BALANCE_PAY.getCode());
+            rechargeMoneySum = rechargeRecordRepository.findRecharMoneySum();
         }
 
         balanceSum = userAccountRepository.findBalanceSum();
 
-        withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode(),
-                startTimeDate,endTimeDate);
-        payOrderMoneySum = ordersRepository.findPayMoneySum(startTimeDate,endTimeDate,1);
-        wxPayMoneySum = ordersRepository.findWXPayMoneySum(startTimeDate,endTimeDate,Orders.PayMethodEnum.WX_PAY.getCode());
-        PayMoneyBalance = ordersRepository.findWXPayMoneySum(startTimeDate,endTimeDate,Orders.PayMethodEnum.BALANCE_PAY.getCode());
-        rechargeMoneySum = rechargeRecordRepository.findRecharMoneySum(startTimeDate,endTimeDate,1);
 
         FundsInfo fundsInfo = new FundsInfo(MoneyUtils.formatMoney(withdrawalsCount)
                 , MoneyUtils.formatMoney(rechargeMoneySum), MoneyUtils.formatMoney(payOrderMoneySum)
@@ -399,6 +412,6 @@ public class BasisService {
                 , MoneyUtils.formatMoney(balanceSum));
 
         return Result.success(fundsInfo);
-
     }
+
 }

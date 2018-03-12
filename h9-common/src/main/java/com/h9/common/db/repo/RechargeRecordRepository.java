@@ -10,10 +10,13 @@ import java.util.Date;
 /**
  * Created by itservice on 2017/12/5.
  */
-public interface RechargeRecordRepository extends BaseRepository<RechargeRecord>{
+public interface RechargeRecordRepository extends BaseRepository<RechargeRecord> {
 
     RechargeRecord findByOrderId(long id);
 
-    @Query("select sum(o.money) from RechargeRecord  o where 1 = ?3 or (o.createTime > ?1 and o.createTime < ?2 and null <>?1 and null <> ?2)")
-    BigDecimal findRecharMoneySum(Date startDate,Date endDate,Integer temp);
+    @Query("select sum(o.money) from RechargeRecord  o  ")
+    BigDecimal findRecharMoneySum();
+
+    @Query("select sum(o.money) from RechargeRecord  o where o.createTime > ?1 and o.createTime < ?2")
+    BigDecimal findRecharMoneySumAndDate(Date startTime, Date endTime);
 }

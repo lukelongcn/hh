@@ -10,6 +10,7 @@ import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.UserBank;
+import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import org.apache.commons.net.util.Base64;
 
@@ -490,7 +491,6 @@ public class ApiApplicationTests {
 
     @Resource
     private ReplyMessageRepository replyMessageRepository;
-    @org.junit.jupiter.api.Test
     public void  test111(){
         String s = ReplyMessage.matchStrategyEnum.getDescByCode(ReplyMessage.matchStrategyEnum.ALL_MATCH.getCode());
         System.out.println(s);
@@ -502,6 +502,17 @@ public class ApiApplicationTests {
         replyMessage.setContent("谢谢关注欢乐之家");
         replyMessage.setContentType("text");
         replyMessageRepository.save(replyMessage);
+    }
+
+    @Resource
+    private WithdrawalsRecordRepository withdrawalsRecordRepository;
+    @Test
+    public void test2(){
+
+//        Date startTime = DateUtil.getDate(new Date(), -10, Calendar.DAY_OF_YEAR);
+//        BigDecimal withdrawalsCount = withdrawalsRecordRepository
+//                .getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode(), startTime, new Date());
+//        System.out.println(withdrawalsCount);
     }
 }
 

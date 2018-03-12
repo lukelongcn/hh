@@ -87,9 +87,15 @@ public interface OrdersRepository extends BaseRepository<Orders> {
 
 
 //    @Query("select sum(o.payMoney) from Orders o where (o.createTime > ?1 and o.createTime < ?2 and ?1 <> null and ?2 <> null) or 1=1")
-    @Query(value = "select sum(o.pay_money) from orders o where (o.create_time > ?1 and o.create_time < ?2 and ?1 <> null and ?2 <> null) or 1=?3",nativeQuery = true)
-    BigDecimal findPayMoneySum(Date startTime,Date endTime,Integer temp);
+    @Query(value = "select sum(o.pay_money) from orders o ",nativeQuery = true)
+    BigDecimal findPayMoneySum();
 
-    @Query("select sum(o.payMoney) from Orders o where o.payMethond =?3 or (o.createTime > ?1 and o.createTime < ?2 and ?1 <> null and ?2 <> null)")
-    BigDecimal findWXPayMoneySum(Date startTime,Date endTime,Integer payMethod);
+    @Query(value = "select sum(o.pay_money) from orders o where o.create_time > ?1 and o.create_time < ?2",nativeQuery = true)
+    BigDecimal findPayMoneySumAndDate(Date startTime,Date endTime);
+
+    @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1")
+    BigDecimal findWXPayMoneySum(Integer payMethod);
+
+    @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1 and o.createTime > ?2 and o.createTime < ?3")
+    BigDecimal findWXPayMoneySumAndDate(Integer payMethod,Date startTime,Date endTime);
 }

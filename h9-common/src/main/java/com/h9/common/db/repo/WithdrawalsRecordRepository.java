@@ -28,8 +28,8 @@ public interface WithdrawalsRecordRepository extends BaseRepository<WithdrawalsR
     @Query("select sum(w.money) from WithdrawalsRecord w where w.status=?1")
     BigDecimal getWithdrawalsCount(int status);
 
-    @Query("select sum(w.money) from WithdrawalsRecord w where w.status=?1 or (w.createTime > ?2 and w.createTime < ?3 and ?2 <> null and ?3 <> null)")
-    BigDecimal getWithdrawalsCount(int status, Date startTime,Date endTime);
+    @Query("select sum(w.money) from WithdrawalsRecord w where w.status=?1 and w.createTime > ?2 and w.createTime < ?3")
+    BigDecimal getWithdrawalsCountAndDate(int status,Date startTime,Date endTime);
 
     @Transactional
     @Lock(LockModeType.PESSIMISTIC_WRITE)
