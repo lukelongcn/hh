@@ -17,17 +17,25 @@ public class MailService {
     private String fromMail;
     @Autowired
     private JavaMailSender mailSender;
+    private static final String DEFAULT_EMAIL = "hjsqserver@hey900.com";
     private Logger logger = Logger.getLogger(this.getClass());
     public boolean sendtMail(String subject,String content) {
+
+        sendtMail(subject, content, DEFAULT_EMAIL);
+
+        return true;
+    }
+
+    public boolean sendtMail(String subject,String content,String email) {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromMail);
-            message.setTo("hjsqserver@hey900.com");
+            message.setTo(email);
             message.setSubject(subject);
             message.setText(content);
             mailSender.send(message);
-        } catch (MailException e) {
+        } catch (Exception e) {
             logger.info("------------------------------");
             logger.info("邮件发送失败..........",e);
             logger.info("------------------------------");
