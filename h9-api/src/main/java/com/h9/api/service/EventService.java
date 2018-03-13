@@ -192,6 +192,9 @@ public class EventService {
         }
 
         String event = map.get("Event");
+        if (event == null){
+            event = map.get("MsgType");
+        }
         EventHandlerStrategy eventHandlerStrategy = eventHandlerStrategyFactory.getStrategy(event);
         if(eventHandlerStrategy == null){
             return "";
