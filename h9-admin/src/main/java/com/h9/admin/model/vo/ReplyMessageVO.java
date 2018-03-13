@@ -1,9 +1,9 @@
 package com.h9.admin.model.vo;
 
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
-import javax.swing.plaf.PanelUI;
 
 /**
  * <p>Title:$file.className</p>
@@ -12,6 +12,7 @@ import javax.swing.plaf.PanelUI;
  * @author LiYuan
  * @date $date
  */
+@Data
 public class ReplyMessageVO {
     private Long id;
 
@@ -34,7 +35,7 @@ public class ReplyMessageVO {
     private String keyWord;
 
     public ReplyMessageVO(ReplyMessage replyMessage){
-        BeanUtils.copyProperties(this,replyMessage);
+        BeanUtils.copyProperties(replyMessage,this);
     }
 
 }

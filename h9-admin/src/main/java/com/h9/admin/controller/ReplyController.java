@@ -40,7 +40,7 @@ public class ReplyController {
     /**
      * 获取单个详情
      */
-    @PostMapping("/detail/{id}")
+    @GetMapping("/detail/{id}")
     public Result detail(@PathVariable long id){
         return replyService.detail(id);
     }

@@ -98,7 +98,7 @@ public class ReplyService {
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        BeanUtils.copyProperties(replyMessage,replyDTO);
+        BeanUtils.copyProperties(replyDTO,replyMessage);
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("编辑成功");
     }
