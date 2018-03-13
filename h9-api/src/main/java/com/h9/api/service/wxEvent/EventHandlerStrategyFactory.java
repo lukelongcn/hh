@@ -85,6 +85,26 @@ public class EventHandlerStrategyFactory {
                 .setToUserName(map.get("FromUserName").toString())
                 .setFromUserName(map.get("ToUserName").toString())
                 .setCreateTime(Integer.valueOf(dateS));
+        // 回复文本
+        if (replyMessage.getContentType().equals(TEXT.getValue())){
+            message4Wx.setContent(replyMessage.getContent());
+            message4Wx.setMsgType(TEXT.getValue());
+        }
+        // 回复图片
+        else if (replyMessage.getContentType().equals(IMAGE.getValue())){
+            message4Wx.setMediaId(replyMessage.getContent());
+            message4Wx.setMsgType(IMAGE.getValue());
+        }
+        // 回复语音
+        else if (replyMessage.getContentType().equals(VOICE.getValue())){
+            message4Wx.setMediaId(replyMessage.getContent());
+            message4Wx.setMsgType(VOICE.getValue());
+        }
+        // 回复视频
+        else if (replyMessage.getContentType().equals(VIDEO.getValue())){
+            message4Wx.setMediaId(replyMessage.getContent());
+            message4Wx.setMsgType(VIDEO.getValue());
+        }
         return message4Wx;
     }
 }
