@@ -28,7 +28,7 @@ public class Message4wx {
     // 视频消息的描述
     private String Description;
     // 通过素材管理中的接口上传多媒体文件，得到的id
-    private Long MediaId;
+    private String MediaId;
 
 
     public static void main(String[] args) throws Exception{
@@ -36,7 +36,7 @@ public class Message4wx {
         message4Wx.setToUserName("kk");
         message4Wx.setFromUserName("ll");
         message4Wx.setCreateTime(2017);
-        message4Wx.setMediaId(121323L);
+        message4Wx.setMediaId("edfsdfs");
         String s = CDataContentHandler.ojbectToXmlWithCDATA(Message4wx.class,message4Wx);
         System.out.println(s);
 
@@ -78,7 +78,7 @@ public class Message4wx {
     }
 
     @XmlElement(name = "MediaId")
-    public Long getMediaId() {
+    public String getMediaId() {
         return MediaId;
     }
 }

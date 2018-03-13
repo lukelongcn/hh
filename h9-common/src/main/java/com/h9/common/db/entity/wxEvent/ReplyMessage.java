@@ -28,7 +28,7 @@ public class ReplyMessage extends BaseEntity{
     @Column(name = "content_type",columnDefinition = "varchar(200) COMMENT '回复内容类型'")
     private String contentType;
 
-    @Column(name = "content",columnDefinition = "text COMMENT '回复内容'")
+    @Column(name = "content",columnDefinition = "text COMMENT '回复内容或素材id'")
     private String content;
 
     @Column(name = "match_regex",columnDefinition = "varchar(200) COMMENT '匹配正则'")
@@ -49,6 +49,12 @@ public class ReplyMessage extends BaseEntity{
 
     @Column(name = "key_word",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
     private String keyWord;
+
+    @Column(name = "Title",columnDefinition = "varchar(200) COMMENT '视频消息的标题'")
+    private String Title;
+
+    @Column(name = "Description",columnDefinition = "varchar(200) COMMENT '视频消息的描述'")
+    private String Description;
 
     public enum matchStrategyEnum{
         ALL_MATCH(1,"完全匹配"),
