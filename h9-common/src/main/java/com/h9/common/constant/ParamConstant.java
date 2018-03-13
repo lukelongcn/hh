@@ -88,4 +88,9 @@ public class ParamConstant {
     public static final String SIGN_REWARD2 = "sign_reward2";
 
     public static final String STICK_REPORT = "stick_report";
+
+    // 微信回复规则类型
+    public static final String REPLY_RULE_TYPE = "reply_rule_type";
+    // 微信回复类型
+    public static final String REPLY_TYPE = "reply_type";
 }

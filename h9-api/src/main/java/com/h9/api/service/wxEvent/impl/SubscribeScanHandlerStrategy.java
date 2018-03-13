@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import static com.h9.api.provider.WeChatProvider.EventEnum.TEXT;
+
 /**
  * 关注，描述事件处理
  */
@@ -30,7 +32,7 @@ public class SubscribeScanHandlerStrategy implements EventHandlerStrategy<Messag
         ReplyMessage replyMessage = replyMessageRepository.fingByOrderName(orderName);
         Message4wx message4wx = EventHandlerStrategyFactory.getXml(map,replyMessage);
         message4wx.setContent(replyMessage.getContent());
-        message4wx.setMsgType("text");
+        message4wx.setMsgType(TEXT.getValue());
         return message4wx;
     }
 

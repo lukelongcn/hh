@@ -1,22 +1,14 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.common.ConfigService;
-import com.h9.common.constant.ParamConstant;
-import com.h9.common.db.entity.order.Address;
-import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAdvice;
 import com.h9.common.utils.DateUtil;
 
-import net.bytebuddy.asm.Advice;
 
 import org.springframework.beans.BeanUtils;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.validation.constraints.Size;
 
 /**
  * Created by 李圆 on 2018/1/4
