@@ -192,16 +192,14 @@ public class POIUtils {
 
                 for (int j = 0; j < obj.length; j++) {
                     HSSFCell cell = null; // 设置单元格的数据类型
-                    if (j == 0) {
-                        cell = row.createCell(j, HSSFCell.CELL_TYPE_NUMERIC);
-                        cell.setCellValue(i + 1);
-                    } else {
-                        cell = row.createCell(j, HSSFCell.CELL_TYPE_STRING);
-                        if (!"".equals(obj[j]) && obj[j] != null) {
-                            cell.setCellValue(obj[j].toString()); // 设置单元格的值
-                        }
+                    HSSFDataFormat dataFormat = workbook.createDataFormat();
+                    style.setDataFormat(dataFormat.getFormat("@"));
+                    cell = row.createCell(j, HSSFCell.CELL_TYPE_STRING);
+                    if (!"".equals(obj[j]) && obj[j] != null) {
+                        cell.setCellValue(obj[j].toString()); // 设置单元格的值
                     }
                     cell.setCellStyle(style); // 设置单元格样式
+                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                 }
             }
             // 让列宽随着导出的列长自动适应
@@ -328,13 +326,14 @@ public class POIUtils {
         // 设置垂直对齐的样式为居中对齐;
         style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
 
+
         return style;
 
     }
 
     public static void main(String[] args) throws Exception {
         //定义表的列名
-        String[] rowsName = new String[] { "员工编号" };
+        String[] rowsName = new String[]{"员工编号"};
 
         //定义表的内容
         List<Object[]> dataList = new ArrayList<Object[]>();
@@ -351,14 +350,6 @@ public class POIUtils {
 //        FileOutputStream fos = new FileOutputStream(new File("d://img/test.xls"));
 //        ex.export();
     }
-
-
-
-
-
-
-
-
 
 
 }
