@@ -34,7 +34,6 @@ public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx
         if (key != null){
             // 全匹配关键字回复
             ReplyMessage replyMessage = replyMessageRepository.fingByAllKey(key);
-            System.out.print(replyMessage);
             // 半匹配关键字回复
             if (replyMessage == null){
                replyMessage = replyMessageRepository.fingByHalfKey("%"+key+"%");
