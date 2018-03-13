@@ -2,7 +2,9 @@ package com.h9.admin.controller;
 
 
 import com.h9.admin.model.dto.ReplyDTO;
+import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.admin.service.ReplyService;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,5 +87,14 @@ public class ReplyController {
     @GetMapping("/replyType")
     public Result getReplyType(){
         return replyService.getReplyType();
+    }
+
+    @GetMapping("/wx/list")
+    @ApiOperation("搜索微信回复规则")
+    public Result<PageResult<ReplyMessageVO>> wxOrderDetail(@RequestParam(required = false) String orderName,
+                                                            @RequestParam(required = false) String contentType,
+                                                            @RequestParam(required = false) Integer status,
+                                                            @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
+        return replyService.replyMessageList(page,limit,orderName,contentType,status);
     }
 }
