@@ -28,7 +28,6 @@ public class ReplyDTO {
 
     @ApiModelProperty(value = "关键词")
     @Size(max = 120)
-    @NotBlank(message = "关键词必填")
     private String keyWord;
 
     // 回复类型
