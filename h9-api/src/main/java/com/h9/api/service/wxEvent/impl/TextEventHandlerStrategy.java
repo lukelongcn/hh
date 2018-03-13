@@ -70,8 +70,6 @@ public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx
         // 回复视频
         else if (replyMessage.getContentType().equals(VIDEO.getValue())){
             message4wx.setMediaId(replyMessage.getContent());
-            message4wx.setTitle(replyMessage.getTitle());
-            message4wx.setDescription(replyMessage.getDescription());
         }
         return message4wx;
     }
