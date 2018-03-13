@@ -50,12 +50,6 @@ public class ReplyMessage extends BaseEntity{
     @Column(name = "key_word",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
     private String keyWord;
 
-    @Column(name = "Title",columnDefinition = "varchar(200) COMMENT '视频消息的标题'")
-    private String Title;
-
-    @Column(name = "Description",columnDefinition = "varchar(200) COMMENT '视频消息的描述'")
-    private String Description;
-
     public enum matchStrategyEnum{
         ALL_MATCH(1,"完全匹配"),
         SECTION_MATCH(2,"半匹配"),
