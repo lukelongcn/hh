@@ -160,8 +160,7 @@ public class MobileRechargeService {
                 logger.info("充值成功");
                 return Result.success("充值成功",rechargeResult);
             } else {
-                logger.info("充值失败");
-                mailService.sendtMail("手机话费充值失败", JSONObject.toJSONString(rechargeResult));
+                handlerRechargeFail(rechargeResult);
                 return Result.fail("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
@@ -169,6 +168,21 @@ public class MobileRechargeService {
         }
 
         return Result.fail("充值失败");
+    }
+
+    /**
+     * 处理充值话费失败
+     * @param rechargeResult 欧飞充值结果
+     */
+    private void handlerRechargeFail(Orderinfo rechargeResult) {
+        logger.info("充值失败");
+        mailService.sendtMail("手机话费充值失败",
+                "<h1>充值结果</h1><hr><br>"+JSONObject.toJSONString(rechargeResult));
+        if(rechargeResult.retcode.equals("1007")){
+            mailService.sendtMail("手机话费充值失败"
+                    , "<h1>原因: </h1>"+rechargeResult.getErr_msg()
+                    ,"724077033@qq.com");
+        }
     }
 
 
