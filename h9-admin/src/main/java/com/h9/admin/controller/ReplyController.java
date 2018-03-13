@@ -28,6 +28,39 @@ public class ReplyController {
         return replyService.addRule(replyDTO);
     }
 
+
+    /**
+     * 禁用
+     */
+    @PostMapping("/disable/{id}")
+    public Result disable(@PathVariable long id){
+        return replyService.disable(id);
+    }
+
+    /**
+     * 获取单个详情
+     */
+    @PostMapping("/detail/{id}")
+    public Result detail(@PathVariable long id){
+        return replyService.detail(id);
+    }
+
+    /**
+     * 获取规则列表
+     */
+    @GetMapping("/all")
+    public Result all(){
+        return replyService.all();
+    }
+
+    /**
+     * 编辑
+     */
+    @PostMapping("update/{id}")
+    public Result update(@PathVariable long id,@Valid@RequestBody ReplyDTO replyDTO){
+        return replyService.update(id,replyDTO);
+    }
+
     /**
      * 微信回复规则类型
      */
