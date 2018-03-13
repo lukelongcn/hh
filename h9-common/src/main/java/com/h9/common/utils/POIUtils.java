@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.common.db.entity.order.Orders;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -195,7 +196,9 @@ public class POIUtils {
                     HSSFDataFormat dataFormat = workbook.createDataFormat();
                     style.setDataFormat(dataFormat.getFormat("@"));
                     cell = row.createCell(j, HSSFCell.CELL_TYPE_STRING);
-                    if (!"".equals(obj[j]) && obj[j] != null) {
+                    if(obj[j] == null || StringUtils.isEmpty(obj[j].toString())){
+                        cell.setCellValue("无"); // 设置单元格的值
+                    }else{
                         cell.setCellValue(obj[j].toString()); // 设置单元格的值
                     }
                     cell.setCellStyle(style); // 设置单元格样式
