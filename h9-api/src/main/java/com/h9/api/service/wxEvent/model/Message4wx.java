@@ -23,10 +23,7 @@ public class Message4wx {
     private String MsgType;
     // 文本消息
     private String Content;
-    // 视频消息的标题
-    private String Title;
-    // 视频消息的描述
-    private String Description;
+
     // 通过素材管理中的接口上传多媒体文件，得到的id
     private String MediaId;
 
@@ -65,16 +62,6 @@ public class Message4wx {
     @XmlElement(name = "Content")
     public String getContent() {
         return Content;
-    }
-
-    @XmlElement(name = "Title")
-    public String getTitle() {
-        return Title;
-    }
-
-    @XmlElement(name = "Description")
-    public String getDescription() {
-        return Description;
     }
 
     @XmlElement(name = "MediaId")
