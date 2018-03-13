@@ -48,6 +48,7 @@ public class ReplyDTO {
     @NotNull(message = "排序必填,只能是整数")
     private Integer sort;
 
+    @ApiModelProperty(value = "状态 1使用 2 禁用")
     @NotNull(message = "状态 1使用 2 禁用")
     private Integer status;
 
