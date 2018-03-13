@@ -1,6 +1,7 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.ReplyDTO;
+import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
@@ -51,5 +52,54 @@ public class ReplyService {
             mapListConfig = new ArrayList<>();
         }
         return Result.success(mapListConfig);
+    }
+
+    /**
+     * 禁用
+     */
+    public Result disable(long id) {
+        ReplyMessage replyMessage = replyMessageRepository.findOne(id);
+        if (replyMessage == null){
+            return Result.fail("该规则不存在");
+        }
+        replyMessage.setStatus(2);
+        return Result.success("禁用成功");
+    }
+
+
+    /**
+     * 详情
+     * */
+    public Result detail(long id) {
+        ReplyMessage replyMessage = replyMessageRepository.findOne(id);
+        if (replyMessage == null){
+            return Result.fail("该规则不存在");
+        }
+        ReplyMessageVO messageVO = new ReplyMessageVO(replyMessage);
+        return Result.success(messageVO);
+    }
+
+    /**
+     * 所有规则详情
+     */
+    public Result all() {
+        List<ReplyMessage> replyMessages = replyMessageRepository.findAllDetail();
+        if (CollectionUtils.isEmpty(replyMessages)){
+            return Result.fail("暂无规则");
+        }
+        return Result.success(replyMessages);
+    }
+
+    /**
+     * 编辑
+     */
+    public Result update(long id, ReplyDTO replyDTO) {
+        ReplyMessage replyMessage = replyMessageRepository.findOne(id);
+        if (replyMessage == null){
+            return Result.fail("该规则不存在");
+        }
+        BeanUtils.copyProperties(replyMessage,replyDTO);
+        replyMessageRepository.saveAndFlush(replyMessage);
+        return Result.success("编辑成功");
     }
 }
