@@ -3,6 +3,7 @@ package com.h9.api.provider;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.common.base.Result;
+import com.h9.common.common.MailService;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
 import org.jboss.logging.Logger;
@@ -13,6 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -28,6 +30,8 @@ import java.util.Date;
 @Component
 public class MobileRechargeService {
 
+    @Resource
+    private MailService mailService;
     private Logger logger = Logger.getLogger(this.getClass());
     private static final String url = "http://apitest.ofpay.com/onlineorder.do";
     private static final String onlineUrl = "http://api2.ofpay.com/onlineorder.do";
@@ -157,6 +161,7 @@ public class MobileRechargeService {
                 return Result.success("充值成功",rechargeResult);
             } else {
                 logger.info("充值失败");
+                mailService.sendtMail("手机话费充值失败", JSONObject.toJSONString(rechargeResult));
                 return Result.fail("充值失败",rechargeResult);
             }
         } catch (JAXBException e) {
