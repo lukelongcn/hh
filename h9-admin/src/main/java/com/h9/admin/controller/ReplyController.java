@@ -131,7 +131,6 @@ public class ReplyController {
         String wXmatterVO =  restTemplate.postForObject("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token="
                +access_token,wxMatterDTO,String.class);
         JSONObject jsonObject = JSON.parseObject(wXmatterVO);
-        logger.debug(wXmatterVO);
         return Result.success(jsonObject);
     }
 
