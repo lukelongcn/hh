@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
 import com.h9.api.model.dto.Areas;
+import com.h9.api.provider.MobileRechargeService;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.UserBank;
 import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
@@ -506,13 +507,15 @@ public class ApiApplicationTests {
 
     @Resource
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
+    @Resource
+    private MobileRechargeService mobileRechargeService;
     @Test
     public void test2(){
 
-//        Date startTime = DateUtil.getDate(new Date(), -10, Calendar.DAY_OF_YEAR);
-//        BigDecimal withdrawalsCount = withdrawalsRecordRepository
-//                .getWithdrawalsCount(WithdrawalsRecord.statusEnum.FINISH.getCode(), startTime, new Date());
-//        System.out.println(withdrawalsCount);
+        mailService.sendtMail("手机话费充值失败"
+                , "<h1>原因: </h1>"
+                ,"756034624@qq.com");
+
     }
 }
 
