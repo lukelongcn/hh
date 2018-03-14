@@ -1,7 +1,9 @@
 package com.h9.admin.service;
 
 import com.h9.admin.model.dto.ReplyDTO;
+import com.h9.admin.model.dto.WxOrderListInfo;
 import com.h9.admin.model.vo.ReplyMessageVO;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
@@ -9,6 +11,7 @@ import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.db.repo.ReplyMessageRepository;
 import com.h9.common.modle.vo.Config;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -98,8 +102,29 @@ public class ReplyService {
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        BeanUtils.copyProperties(replyMessage,replyDTO);
+        BeanUtils.copyProperties(replyDTO,replyMessage);
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("编辑成功");
+    }
+
+    public Result<PageResult<ReplyMessageVO>> replyMessageList(Integer page, Integer limit, String orderName, String contentType, Integer status) {
+        PageResult<ReplyMessage> replyMessage = replyMessageRepository.findAllList(page,limit);
+        if (StringUtils.isNotBlank(orderName)){
+            if (contentType != null){
+                replyMessage = replyMessageRepository.findOrderNameAndContentType(orderName,contentType,page,limit);
+                if (status != null){
+                    replyMessage = replyMessageRepository.findOrderNameAndContentTypeAndStatus(orderName,contentType,status,page,limit);
+                    return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+                }
+                return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+            }
+            if (status != null){
+                replyMessage = replyMessageRepository.findOrderNameAndStatus(orderName,status,page,limit);
+                return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+            }
+            replyMessage = replyMessageRepository.findOrderName(orderName,page,limit);
+            return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+        }
+        return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
     }
 }
