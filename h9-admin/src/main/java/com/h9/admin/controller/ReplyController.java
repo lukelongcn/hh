@@ -2,6 +2,7 @@ package com.h9.admin.controller;
 
 
 import com.h9.admin.model.dto.ReplyDTO;
+import com.h9.admin.model.dto.WXMatterDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.admin.service.ReplyService;
 import com.h9.common.base.PageResult;
@@ -11,7 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.text.MessageFormat;
 
 
 /**
@@ -97,4 +101,19 @@ public class ReplyController {
                                                             @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
         return replyService.replyMessageList(page,limit,orderName,contentType,status);
     }
+
+
+    @ApiOperation("拿到对应类型素材")
+    @PostMapping("/matter")
+    public void getMatter(@RequestBody WXMatterDTO wxMatterDTO, HttpServletResponse response) throws IOException{
+        String type = wxMatterDTO.getType();
+        Integer offset = wxMatterDTO.getOffset();
+        Integer count = wxMatterDTO.getCount();
+        String access_token = replyService.getWeChatAccessToken();
+        response.sendRedirect("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token="
+                +access_token+"&type="+type+"&offset="+offset+"&count="+count);
+    }
+
+
+
 }

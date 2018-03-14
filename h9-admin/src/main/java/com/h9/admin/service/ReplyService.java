@@ -1,32 +1,46 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.ReplyDTO;
-import com.h9.admin.model.dto.WxOrderListInfo;
 import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.db.repo.ReplyMessageRepository;
 import com.h9.common.modle.vo.Config;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by 李圆 on 2018/1/15
  */
 @Service
 public class ReplyService {
+
+
+    Logger logger = Logger.getLogger(ReplyService.class);
+
+    @Value("${wechat.js.appid}")
+    private String jsAppId;
+    @Value("${wechat.js.secret}")
+    private String jsSecret;
+
     @Resource
     ReplyMessageRepository replyMessageRepository;
     @Resource
@@ -107,13 +121,15 @@ public class ReplyService {
         return Result.success("编辑成功");
     }
 
-    public Result<PageResult<ReplyMessageVO>> replyMessageList(Integer page, Integer limit, String orderName, String contentType, Integer status) {
+    public Result<PageResult<ReplyMessageVO>> replyMessageList(Integer page, Integer limit, String orderName
+            , String contentType, Integer status) {
         PageResult<ReplyMessage> replyMessage = replyMessageRepository.findAllList(page,limit);
         if (StringUtils.isNotBlank(orderName)){
             if (contentType != null){
                 replyMessage = replyMessageRepository.findOrderNameAndContentType(orderName,contentType,page,limit);
                 if (status != null){
-                    replyMessage = replyMessageRepository.findOrderNameAndContentTypeAndStatus(orderName,contentType,status,page,limit);
+                    replyMessage = replyMessageRepository.findOrderNameAndContentTypeAndStatus(orderName,contentType
+                            ,status,page,limit);
                     return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
                 }
                 return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
@@ -126,5 +142,36 @@ public class ReplyService {
             return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
         }
         return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+    }
+
+
+    @Resource
+    private RedisBean redisBean;
+
+    public String getWeChatAccessToken() {
+        String access_token = redisBean.getStringValue(RedisKey.wechatAccessToken);
+        if (!StringUtils.isEmpty(access_token)) {
+            return access_token;
+        }
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String accessTokenReponse = restTemplate.getForObject(getTicketTokenUrl(), String.class);
+            Map<String, Object> map = JSONObject.parseObject(accessTokenReponse, Map.class);
+            access_token = (String) map.get("access_token");
+            Integer expires_in = (Integer) map.get("expires_in");
+            if (!StringUtils.isEmpty(access_token)) {
+                redisBean.setStringValue(RedisKey.wechatAccessToken, access_token, expires_in - 60, TimeUnit.SECONDS);
+                return access_token;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.debug("微信获取access_token失败", ex);
+        }
+        return null;
+    }
+
+
+    public String getTicketTokenUrl() {
+        return MessageFormat.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", jsAppId, jsSecret);
     }
 }
