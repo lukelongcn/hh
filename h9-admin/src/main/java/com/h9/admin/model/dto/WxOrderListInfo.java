@@ -45,9 +45,9 @@ public class WxOrderListInfo {
          String typeStr = "";
          if(type == PayInfo.OrderTypeEnum.Recharge.getId()){
              typeStr = "微信充值";
-         }else if(type == PayInfo.OrderTypeEnum.HOTEL.getId()){
+         }else if(type == PayInfo.OrderTypeEnum.STORE_ORDER.getId()){
              typeStr = "购买商品";
-         } else if (type == PayInfo.OrderTypeEnum.STORE_ORDER.getId()) {
+         } else if (type == PayInfo.OrderTypeEnum.HOTEL.getId()) {
              typeStr = "酒店订单";
          }else{
              typeStr = "未知";
