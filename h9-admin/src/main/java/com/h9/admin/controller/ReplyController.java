@@ -125,8 +125,9 @@ public class ReplyController {
     @ApiOperation("拿到对应类型素材列表")
     @PostMapping("/matter")
     public Result getMatter(@RequestBody WXMatterDTO wxMatterDTO){
-
+        System.out.printf("asdfasdfasdfasfsdfsadgfasdffsdgfasdgasdfga");
         String access_token = replyService.getWeChatAccessToken();
+        System.out.printf(access_token);
         logger.debug(access_token);
         RestTemplate restTemplate = new RestTemplate();
         String wXmatterVO =  restTemplate.postForObject("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token="
