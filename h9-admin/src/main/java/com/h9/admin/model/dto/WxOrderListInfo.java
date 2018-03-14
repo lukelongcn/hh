@@ -41,7 +41,18 @@ public class WxOrderListInfo {
     public WxOrderListInfo(PayInfo payInfo, Map<String, String> map) {
         Long id = payInfo.getId();
         int type = payInfo.getOrderType();
-        this.orderType = type == 0 ? "微信充值" : "购买商品";
+//         type == 0 ? "" : "购买商品";
+         String typeStr = "";
+         if(type == PayInfo.OrderTypeEnum.Recharge.getId()){
+             typeStr = "微信充值";
+         }else if(type == PayInfo.OrderTypeEnum.HOTEL.getId()){
+             typeStr = "购买商品";
+         } else if (type == PayInfo.OrderTypeEnum.STORE_ORDER.getId()) {
+             typeStr = "酒店订单";
+         }else{
+             typeStr = "未知";
+         }
+        this.orderType = typeStr;
         this.money = MoneyUtils.formatMoney(payInfo.getMoney());
         this.createTime = DateUtil.formatDate(payInfo.getCreateTime(), DateUtil.FormatType.SECOND);
         int orderType = payInfo.getOrderType();
