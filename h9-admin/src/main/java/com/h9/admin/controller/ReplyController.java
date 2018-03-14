@@ -127,6 +127,7 @@ public class ReplyController {
     public Result getMatter(@RequestBody WXMatterDTO wxMatterDTO){
 
         String access_token = replyService.getWeChatAccessToken();
+        logger.debug(access_token);
         RestTemplate restTemplate = new RestTemplate();
         String wXmatterVO =  restTemplate.postForObject("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token="
                +access_token,wxMatterDTO,String.class);
