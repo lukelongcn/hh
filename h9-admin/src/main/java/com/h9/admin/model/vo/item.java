@@ -27,11 +27,11 @@ public class item {
         @ApiModelProperty("图文页的URL，或者，当获取的列表是图片素材列表时，该字段是图片的URL")
         private String url;
 
-       /* public item(){
+       public item(){
                 this.media_id = media_id;
                 this.name = name;
                 this.update_time = update_time;
                 this.url = url;
-        }*/
+        }
 
 }

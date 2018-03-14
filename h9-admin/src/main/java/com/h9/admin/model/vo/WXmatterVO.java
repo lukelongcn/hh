@@ -30,15 +30,6 @@ public class WXmatterVO {
 
     private List<item> item;
 
-    /*public List<item> getItem() {
-        JSONObject args=null;
-        try {
-            return JSONArray.parseArray(args.getString("item"),item.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }*/
 
     public List<com.h9.admin.model.vo.item> getItem() {
         return item;
