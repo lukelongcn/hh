@@ -21,7 +21,7 @@ import javax.validation.Valid;
  * Created by 李圆 on 2018/1/15
  */
 @RestController
-@Api("微信回复规则操作")
+@Api(description="微信回复规则操作")
 @RequestMapping("/wx/reply")
 public class ReplyController {
 
