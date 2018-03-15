@@ -106,7 +106,13 @@ public class ReplyController {
 
     @ApiOperation("拿到对应类型素材列表")
     @PostMapping("/matter")
-    public Result getMatter(@RequestBody WXMatterDTO wxMatterDTO){
+    public Result getMatter(@RequestBody WXMatterDTO wxMatterDTO,
+                            @RequestParam(defaultValue = "0") Integer page){
+        if (page != 0 ){
+            wxMatterDTO.setOffset(page*wxMatterDTO.getCount()+1);
+        } else if (page<0){
+            wxMatterDTO.setOffset(0);
+        }
         String access_token = replyService.getWeChatAccessToken();
         logger.debug(access_token);
         RestTemplate restTemplate = new RestTemplate();

@@ -168,14 +168,13 @@ public class ReplyService {
                 predicateList.add(builder.equal(root.get("orderName"), orderName));
             }
 
-            /*String contentType = wxReplySearchDTO.getContentType();
-            if (StringUtils.isNotBlank(contentType)) {
+            Integer contentType = wxReplySearchDTO.getContentType();
+            if (contentType != null) {
                 predicateList.add(builder.equal(root.get("contentType"), contentType));
             } else {
                 predicateList.add(builder.
-                        equal(root.get("contentType")).getExpressions().iterator(ALL_MATCH.getDesc(), SECTION_MATCH.getDesc()
-                        , REGEX_MATCH.getDesc(), AUTOMATIC_REPLY.getDesc(),FOLLOW_REPLY.getDesc()));
-            }*/
+                        between(root.get("contentType"),1,5));
+            }
 
             Integer status = wxReplySearchDTO.getStatus();
 
@@ -185,7 +184,6 @@ public class ReplyService {
                 predicateList.add(builder.
                         between(root.get("status"), 1, 2));
             }
-
 
             return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
         };

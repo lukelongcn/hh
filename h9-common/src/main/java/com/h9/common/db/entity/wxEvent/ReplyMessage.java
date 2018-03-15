@@ -22,17 +22,11 @@ public class ReplyMessage extends BaseEntity{
     @Column(name = "order_name",columnDefinition = "varchar(200) COMMENT '规则名'")
     private String orderName;
 
-    @Column(name = "event_type",columnDefinition = "varchar(200) COMMENT '事件类型'")
-    private String eventType;
-
     @Column(name = "content_type",columnDefinition = "varchar(200) COMMENT '回复内容类型'")
     private String contentType;
 
     @Column(name = "content",columnDefinition = "text COMMENT '回复内容或素材id'")
     private String content;
-
-    @Column(name = "match_regex",columnDefinition = "varchar(200) COMMENT '匹配正则'")
-    private String matchRegex;
 
     @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '1 启用， 2 禁用 '")
     private Integer status = 1;
@@ -43,12 +37,15 @@ public class ReplyMessage extends BaseEntity{
      * 匹配策略
      * @see matchStrategyEnum
      */
-    @Column(name = "match_strategy",columnDefinition = "varchar(200) COMMENT '匹配策略 1 为完全匹配 ，2为半匹配 ，3正则匹配 ," +
+    @Column(name = "match_strategy",columnDefinition = "tinyint default 1 COMMENT '匹配策略 1 为完全匹配 ，2为半匹配 ，3正则匹配 ," +
             " 4,自动回复 , 5,关注回复'")
-    private String matchStrategy;
+    private Integer matchStrategy;
 
     @Column(name = "key_word",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
     private String keyWord;
+
+    @Column(name = "event_type",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
+    private String eventType;
 
     public enum matchStrategyEnum{
         ALL_MATCH(1,"完全匹配"),
@@ -62,10 +59,6 @@ public class ReplyMessage extends BaseEntity{
         matchStrategyEnum(int code, String desc) {
             this.code = code;
             this.desc = desc;
-        }
-        public static String getDescByCode(int code){
-            ReplyMessage.matchStrategyEnum matchStrategyEnum = stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
-            return matchStrategyEnum==null?null:matchStrategyEnum.getDesc();
         }
 
         public int getCode() {
