@@ -162,32 +162,25 @@ public class ReplyService {
 
     private Specification<ReplyMessage> getReplyMessageSpecification(WXReplySearchDTO wxReplySearchDTO){
         return (root, query, builder) -> {
-            String orderName = wxReplySearchDTO.getOrderName();
-
             List<Predicate> predicateList = new ArrayList<>();
 
-            if (orderName != null) {
+            String orderName = wxReplySearchDTO.getOrderName();
+            if (StringUtils.isNotBlank(orderName)) {
                 predicateList.add(builder.equal(root.get("orderName"), orderName));
             }
 
             Integer contentType = wxReplySearchDTO.getContentType();
             if (contentType != null) {
                 predicateList.add(builder.equal(root.get("contentType"), contentType));
-            } else {
-                predicateList.add(builder.
-                        between(root.get("contentType"),1,5));
             }
 
             Integer status = wxReplySearchDTO.getStatus();
 
-            if (status == 1 || status == 2) {
+            if (status != null) {
                 predicateList.add(builder.equal(root.get("status"), status));
-            } else{
-                predicateList.add(builder.
-                        between(root.get("status"), 1, 2));
             }
 
-            return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+            return query.where(predicateList.toArray(new Predicate[predicateList.size()])).getRestriction();
         };
 
     }
