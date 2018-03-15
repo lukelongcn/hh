@@ -19,14 +19,10 @@ public class ReplyMessageVO {
     private Long id;
     @ApiModelProperty(value = "规则名" )
     private String orderName;
-    @ApiModelProperty(value = "微信事件类型" )
-    private String eventType;
     @ApiModelProperty(value = "回复内容类型" )
     private String contentType;
     @ApiModelProperty(value = "回复内容" )
     private String content;
-    @ApiModelProperty(value = "匹配正则" )
-    private String matchRegex;
     @ApiModelProperty(value = "使用状态 1 使用 2 禁用" )
     private Integer status;
     @ApiModelProperty(value = "排序" )
