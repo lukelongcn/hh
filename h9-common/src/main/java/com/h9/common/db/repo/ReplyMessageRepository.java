@@ -37,7 +37,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
             ,nativeQuery = true)
     ReplyMessage findOneKey();
 
-    @Query("select r from ReplyMessage r where  r.status = 1 order by r.id")
+    @Query("select r from ReplyMessage r order by r.id")
     Page<ReplyMessage> findAllDetail(Pageable pageRequest);
     default PageResult<ReplyMessage> findAllDetail(Integer page, Integer limit){
         Page<ReplyMessage> List =  findAllDetail(pageRequest(page,limit));
