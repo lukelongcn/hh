@@ -38,8 +38,11 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
     ReplyMessage findOneKey();
 
     @Query("select r from ReplyMessage r where  r.status = 1 order by r.id")
-    List<ReplyMessage> findAllDetail();
-
+    Page<ReplyMessage> findAllDetail(Pageable pageRequest);
+    default PageResult<ReplyMessage> findAllDetail(Integer page, Integer limit){
+        Page<ReplyMessage> List =  findAllDetail(pageRequest(page,limit));
+        return new PageResult(List);
+    }
 
     @Query("select r from ReplyMessage r where r.orderName =?1")
     Page<ReplyMessage> findOrderName(String orderName, Pageable pageRequest);
@@ -66,7 +69,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
         return new PageResult(messageList);
     }
 
-    @Query("select r from ReplyMessage r where r.orderName =?1 and r.contentType =?2")
+    @Query("select r from ReplyMessage r where r.orderName =?1 and r.contentType =?2 and r.status = ?3")
     Page<ReplyMessage> findOrderNameAndContentTypeAndStatus(String orderName,String contentType,Integer status
             , Pageable pageRequest);
 

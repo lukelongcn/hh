@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 /**
  * Created by 李圆 on 2018/1/15
  */
-@ApiModel("回复规则信息")
+@ApiModel(description = "回复规则信息")
 @Data
 public class ReplyDTO {
 

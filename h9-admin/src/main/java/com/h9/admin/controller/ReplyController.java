@@ -1,7 +1,11 @@
 package com.h9.admin.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.ReplyDTO;
+import com.h9.admin.model.dto.WXMatterDTO;
+import com.h9.admin.model.dto.WXReplySearchDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.admin.service.ReplyService;
 import com.h9.common.base.PageResult;
@@ -9,19 +13,21 @@ import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-
 
 /**
  * Created by 李圆 on 2018/1/15
  */
 @RestController
-@Api("微信回复规则操作")
+@Api(description="微信回复规则操作")
 @RequestMapping("/wx/reply")
 public class ReplyController {
 
+
+     org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger(ReplyController.class);
     @Resource
     private ReplyService replyService;
 
@@ -58,8 +64,9 @@ public class ReplyController {
      */
     @ApiOperation("获取微信回复规则列表")
     @GetMapping("/all")
-    public Result all(){
-        return replyService.all();
+    public Result all(@RequestParam(defaultValue = "1") Integer page,
+                      @RequestParam(defaultValue = "10") Integer limit){
+        return replyService.all(page,limit);
     }
 
     /**
@@ -89,12 +96,26 @@ public class ReplyController {
         return replyService.getReplyType();
     }
 
-    @GetMapping("/wx/list")
+    @PostMapping("/list")
     @ApiOperation("搜索微信回复规则")
-    public Result<PageResult<ReplyMessageVO>> wxOrderDetail(@RequestParam(required = false) String orderName,
-                                                            @RequestParam(required = false) String contentType,
-                                                            @RequestParam(required = false) Integer status,
-                                                            @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
-        return replyService.replyMessageList(page,limit,orderName,contentType,status);
+    public Result<PageResult<ReplyMessageVO>> wxOrderDetail(@RequestBody WXReplySearchDTO wxReplySearchDTO){
+        return replyService.replyMessageList(wxReplySearchDTO);
     }
+
+
+
+    @ApiOperation("拿到对应类型素材列表")
+    @PostMapping("/matter")
+    public Result getMatter(@RequestBody WXMatterDTO wxMatterDTO){
+        String access_token = replyService.getWeChatAccessToken();
+        logger.debug(access_token);
+        RestTemplate restTemplate = new RestTemplate();
+        String wXmatterVO =  restTemplate.postForObject("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token="
+               +access_token,wxMatterDTO,String.class);
+        JSONObject jsonObject = JSON.parseObject(wXmatterVO);
+        return Result.success(jsonObject);
+    }
+
+
+
 }

@@ -1,32 +1,53 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.ReplyDTO;
-import com.h9.admin.model.dto.WxOrderListInfo;
+import com.h9.admin.model.dto.WXReplySearchDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.constant.ParamConstant;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.db.repo.ReplyMessageRepository;
 import com.h9.common.modle.vo.Config;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
+import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static com.h9.common.db.entity.wxEvent.ReplyMessage.matchStrategyEnum.*;
 
 /**
  * Created by 李圆 on 2018/1/15
  */
 @Service
 public class ReplyService {
+
+
+    Logger logger = Logger.getLogger(ReplyService.class);
+
+    @Value("${wechat.js.appid}")
+    private String jsAppId;
+    @Value("${wechat.js.secret}")
+    private String jsSecret;
+
     @Resource
     ReplyMessageRepository replyMessageRepository;
     @Resource
@@ -34,10 +55,15 @@ public class ReplyService {
 
     public Result addRule(ReplyDTO replyDTO){
         ReplyMessage replyMessage = new ReplyMessage();
-        BeanUtils.copyProperties(replyDTO,replyMessage);
         replyMessage.setStatus(1);
-        replyMessageRepository.save(replyMessage);
-        return Result.success();
+        replyMessage.setKeyWord(replyDTO.getKeyWord());
+        replyMessage.setContentType(replyDTO.getContentType());
+        replyMessage.setOrderName(replyDTO.getOrderName());
+        replyMessage.setContent(replyDTO.getContent());
+        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
+        replyMessage.setSort(replyDTO.getSort());
+        replyMessageRepository.saveAndFlush(replyMessage);
+        return Result.success("添加成功");
     }
 
     public Result getRuleType() {
@@ -67,6 +93,7 @@ public class ReplyService {
             return Result.fail("该规则不存在");
         }
         replyMessage.setStatus(2);
+        replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("禁用成功");
     }
 
@@ -85,13 +112,15 @@ public class ReplyService {
 
     /**
      * 所有规则详情
+     * @param page
+     * @param limit
      */
-    public Result all() {
-        List<ReplyMessage> replyMessages = replyMessageRepository.findAllDetail();
-        if (CollectionUtils.isEmpty(replyMessages)){
+    public Result all(Integer page, Integer limit) {
+        PageResult<ReplyMessage> replyMessages = replyMessageRepository.findAllDetail(page,limit);
+        if (replyMessages == null){
             return Result.fail("暂无规则");
         }
-        return Result.success(replyMessages);
+        return Result.success(replyMessages.result2Result(ReplyMessageVO::new));
     }
 
     /**
@@ -102,29 +131,90 @@ public class ReplyService {
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        BeanUtils.copyProperties(replyDTO,replyMessage);
+        replyMessage.setStatus(replyDTO.getStatus());
+        replyMessage.setKeyWord(replyDTO.getKeyWord());
+        replyMessage.setContentType(replyDTO.getContentType());
+        replyMessage.setOrderName(replyDTO.getOrderName());
+        replyMessage.setContent(replyDTO.getContent());
+        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
+        replyMessage.setSort(replyDTO.getSort());
+
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("编辑成功");
     }
 
-    public Result<PageResult<ReplyMessageVO>> replyMessageList(Integer page, Integer limit, String orderName, String contentType, Integer status) {
-        PageResult<ReplyMessage> replyMessage = replyMessageRepository.findAllList(page,limit);
-        if (StringUtils.isNotBlank(orderName)){
-            if (contentType != null){
-                replyMessage = replyMessageRepository.findOrderNameAndContentType(orderName,contentType,page,limit);
-                if (status != null){
-                    replyMessage = replyMessageRepository.findOrderNameAndContentTypeAndStatus(orderName,contentType,status,page,limit);
-                    return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
-                }
-                return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+    public Result<PageResult<ReplyMessageVO>> replyMessageList(WXReplySearchDTO wxReplySearchDTO) {
+
+        Specification<ReplyMessage> specification = getReplyMessageSpecification(wxReplySearchDTO);
+        Sort sort = new Sort( Sort.Direction.DESC,"id");
+        PageRequest pageRequest = replyMessageRepository.pageRequest(wxReplySearchDTO.getPage(), wxReplySearchDTO.getLimit(),sort);
+        Page<ReplyMessage> replyMessagesPage = replyMessageRepository.findAll(specification, pageRequest);
+        PageResult<ReplyMessageVO> pageResult = new PageResult<>(replyMessagesPage).result2Result(el -> new ReplyMessageVO(el));
+
+        return Result.success(pageResult);
+    }
+
+    private Specification<ReplyMessage> getReplyMessageSpecification(WXReplySearchDTO wxReplySearchDTO){
+        return (root, query, builder) -> {
+            String orderName = wxReplySearchDTO.getOrderName();
+
+            List<Predicate> predicateList = new ArrayList<>();
+
+            if (orderName != null) {
+                predicateList.add(builder.equal(root.get("orderName"), orderName));
             }
-            if (status != null){
-                replyMessage = replyMessageRepository.findOrderNameAndStatus(orderName,status,page,limit);
-                return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+
+            /*String contentType = wxReplySearchDTO.getContentType();
+            if (StringUtils.isNotBlank(contentType)) {
+                predicateList.add(builder.equal(root.get("contentType"), contentType));
+            } else {
+                predicateList.add(builder.
+                        equal(root.get("contentType")).getExpressions().iterator(ALL_MATCH.getDesc(), SECTION_MATCH.getDesc()
+                        , REGEX_MATCH.getDesc(), AUTOMATIC_REPLY.getDesc(),FOLLOW_REPLY.getDesc()));
+            }*/
+
+            Integer status = wxReplySearchDTO.getStatus();
+
+            if (status == 1 || status == 2) {
+                predicateList.add(builder.equal(root.get("status"), status));
+            } else{
+                predicateList.add(builder.
+                        between(root.get("status"), 1, 2));
             }
-            replyMessage = replyMessageRepository.findOrderName(orderName,page,limit);
-            return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+
+
+            return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+        };
+
+    }
+
+    @Resource
+    private RedisBean redisBean;
+
+    public String getWeChatAccessToken() {
+        String access_token = redisBean.getStringValue(RedisKey.wechatAccessToken);
+        if (!StringUtils.isEmpty(access_token)) {
+            return access_token;
         }
-        return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String accessTokenReponse = restTemplate.getForObject(getTicketTokenUrl(), String.class);
+            Map<String, Object> map = JSONObject.parseObject(accessTokenReponse, Map.class);
+            access_token = (String) map.get("access_token");
+            Integer expires_in = (Integer) map.get("expires_in");
+            if (!StringUtils.isEmpty(access_token)) {
+                redisBean.setStringValue(RedisKey.wechatAccessToken, access_token, expires_in - 60, TimeUnit.SECONDS);
+                return access_token;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.debug("微信获取access_token失败", ex);
+        }
+        return null;
+    }
+
+
+    public String getTicketTokenUrl() {
+        return MessageFormat.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", jsAppId, jsSecret);
     }
 }

@@ -1,7 +1,6 @@
 package com.h9.admin;
 
 import com.h9.admin.job.HotelOrderJob;
-import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.utils.DateUtil;
 import org.junit.Test;
