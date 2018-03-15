@@ -94,11 +94,13 @@ public class ReplyService {
         }
         if (replyMessage.getStatus() == 1){
             replyMessage.setStatus(2);
+            replyMessageRepository.saveAndFlush(replyMessage);
+            return Result.success("禁用成功");
         } else {
             replyMessage.setStatus(1);
+            replyMessageRepository.saveAndFlush(replyMessage);
+            return Result.success("启用成功");
         }
-        replyMessageRepository.saveAndFlush(replyMessage);
-        return Result.success("状态改变成功");
     }
 
 
