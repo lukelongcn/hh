@@ -94,7 +94,7 @@ public class ReplyController {
         return replyService.getReplyType();
     }
 
-    @GetMapping("/wx/list")
+    @GetMapping("/list")
     @ApiOperation("搜索微信回复规则")
     public Result<PageResult<ReplyMessageVO>> wxOrderDetail(@RequestParam(required = false) String orderName,
                                                             @RequestParam(required = false) String contentType,
