@@ -63,8 +63,9 @@ public class ReplyController {
      */
     @ApiOperation("获取微信回复规则列表")
     @GetMapping("/all")
-    public Result all(){
-        return replyService.all();
+    public Result all(@RequestParam(defaultValue = "1") Integer page,
+                      @RequestParam(defaultValue = "10") Integer limit){
+        return replyService.all(page,limit);
     }
 
     /**

@@ -51,7 +51,7 @@ public class ReplyService {
         BeanUtils.copyProperties(replyDTO,replyMessage);
         replyMessage.setStatus(1);
         replyMessageRepository.save(replyMessage);
-        return Result.success();
+        return Result.success("添加成功");
     }
 
     public Result getRuleType() {
@@ -99,18 +99,15 @@ public class ReplyService {
 
     /**
      * 所有规则详情
+     * @param page
+     * @param limit
      */
-    public Result all() {
-        List<ReplyMessage> replyMessages = replyMessageRepository.findAllDetail();
-        if (CollectionUtils.isEmpty(replyMessages)){
+    public Result all(Integer page, Integer limit) {
+        PageResult<ReplyMessage> replyMessages = replyMessageRepository.findAllDetail(page,limit);
+        if (replyMessages == null){
             return Result.fail("暂无规则");
         }
-        List<ReplyMessageVO> replyMessageVOS = new ArrayList<>();
-        replyMessages.forEach(replyMessage -> {
-            ReplyMessageVO replyMessageVO = new ReplyMessageVO(replyMessage);
-            replyMessageVOS.add(replyMessageVO);
-        });
-        return Result.success(replyMessageVOS);
+        return Result.success(replyMessages.result2Result(ReplyMessageVO::new));
     }
 
     /**
