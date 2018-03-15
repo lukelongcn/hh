@@ -48,9 +48,14 @@ public class ReplyService {
 
     public Result addRule(ReplyDTO replyDTO){
         ReplyMessage replyMessage = new ReplyMessage();
-        BeanUtils.copyProperties(replyDTO,replyMessage);
         replyMessage.setStatus(1);
-        replyMessageRepository.save(replyMessage);
+        replyMessage.setKeyWord(replyDTO.getKeyWord());
+        replyMessage.setContentType(replyDTO.getContentType());
+        replyMessage.setOrderName(replyDTO.getOrderName());
+        replyMessage.setContent(replyDTO.getContent());
+        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
+        replyMessage.setSort(replyDTO.getSort());
+        replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("添加成功");
     }
 
@@ -118,7 +123,14 @@ public class ReplyService {
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        BeanUtils.copyProperties(replyDTO,replyMessage);
+        replyMessage.setStatus(replyDTO.getStatus());
+        replyMessage.setKeyWord(replyDTO.getKeyWord());
+        replyMessage.setContentType(replyDTO.getContentType());
+        replyMessage.setOrderName(replyDTO.getOrderName());
+        replyMessage.setContent(replyDTO.getContent());
+        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
+        replyMessage.setSort(replyDTO.getSort());
+
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("编辑成功");
     }
