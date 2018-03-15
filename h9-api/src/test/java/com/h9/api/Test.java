@@ -37,10 +37,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,26 +56,8 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-            try {
-                MultiFormatReader formatReader = new MultiFormatReader();
-
-//                File file = new File("E:/code/img.png");
-                String url = "https://api-dev-h9.thy360.com/h9/api/user/redEnvelope/qrcode?tempId=d4b66f82721d4a8baa31bab2df48c497";
-                BufferedImage image = ImageIO.read(new URL(url));
-                BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
-
-                //定义二维码参数
-                HashMap hints = new HashMap();
-                hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-                Result result =  formatReader.decode(binaryBitmap,hints);
-
-                System.out.println("解析结果"+result.toString());
-                System.out.println("二维码类型"+result.getBarcodeFormat());
-                System.out.println("二维码内容"+result.getText());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+        String replace = UUID.randomUUID().toString().replace("-", "");
+        System.out.println(replace);
     }
 
 

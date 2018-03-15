@@ -173,8 +173,8 @@ public class OrderDetailVO {
 
         List<Goods> goodsList = orderItems.stream().map(items -> {
             com.h9.common.db.entity.order.Goods goods = items.getGoods();
-            Goods tempGoods = new Goods(goods.getImg(), goods.getName(), items.getCount() + "",
-                    MoneyUtils.formatMoney(goods.getPrice()));
+            Goods tempGoods = new Goods(goods.getImg(), goods.getName(), items.getCount() + " "+goods.getUnit(),
+                    MoneyUtils.formatMoney(goods.getRealPrice().multiply(new BigDecimal(items.getCount()))));
             return tempGoods;
         }).collect(Collectors.toList());
 
