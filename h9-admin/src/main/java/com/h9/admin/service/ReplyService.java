@@ -105,7 +105,12 @@ public class ReplyService {
         if (CollectionUtils.isEmpty(replyMessages)){
             return Result.fail("暂无规则");
         }
-        return Result.success(replyMessages);
+        List<ReplyMessageVO> replyMessageVOS = new ArrayList<>();
+        replyMessages.forEach(replyMessage -> {
+            ReplyMessageVO replyMessageVO = new ReplyMessageVO(replyMessage);
+            replyMessageVOS.add(replyMessageVO);
+        });
+        return Result.success(replyMessageVOS);
     }
 
     /**

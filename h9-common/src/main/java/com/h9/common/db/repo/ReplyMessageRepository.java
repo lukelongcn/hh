@@ -66,7 +66,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
         return new PageResult(messageList);
     }
 
-    @Query("select r from ReplyMessage r where r.orderName =?1 and r.contentType =?2")
+    @Query("select r from ReplyMessage r where r.orderName =?1 and r.contentType =?2 and r.status = ?3")
     Page<ReplyMessage> findOrderNameAndContentTypeAndStatus(String orderName,String contentType,Integer status
             , Pageable pageRequest);
 
