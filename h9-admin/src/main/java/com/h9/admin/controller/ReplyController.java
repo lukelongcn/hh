@@ -2,35 +2,20 @@ package com.h9.admin.controller;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.h9.admin.model.dto.ReplyDTO;
 import com.h9.admin.model.dto.WXMatterDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
-import com.h9.admin.model.vo.WXmatterVO;
-import com.h9.admin.model.vo.item;
 import com.h9.admin.service.ReplyService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.sun.mail.imap.protocol.Item;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import javassist.compiler.ast.Keyword;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 /**
  * Created by 李圆 on 2018/1/15
@@ -119,8 +104,6 @@ public class ReplyController {
     }
 
 
-    @Resource
-    private RestTemplate restTemplate;
 
     @ApiOperation("拿到对应类型素材列表")
     @PostMapping("/matter")
