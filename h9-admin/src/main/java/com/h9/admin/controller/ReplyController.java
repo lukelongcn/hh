@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.ReplyDTO;
 import com.h9.admin.model.dto.WXMatterDTO;
+import com.h9.admin.model.dto.WXReplySearchDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.admin.service.ReplyService;
 import com.h9.common.base.PageResult;
@@ -95,13 +96,10 @@ public class ReplyController {
         return replyService.getReplyType();
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @ApiOperation("搜索微信回复规则")
-    public Result<PageResult<ReplyMessageVO>> wxOrderDetail(@RequestParam(required = false) String orderName,
-                                                            @RequestParam(required = false) String contentType,
-                                                            @RequestParam(required = false) Integer status,
-                                                            @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer limit){
-        return replyService.replyMessageList(page,limit,orderName,contentType,status);
+    public Result<PageResult<ReplyMessageVO>> wxOrderDetail(@RequestBody WXReplySearchDTO wxReplySearchDTO){
+        return replyService.replyMessageList(wxReplySearchDTO);
     }
 
 

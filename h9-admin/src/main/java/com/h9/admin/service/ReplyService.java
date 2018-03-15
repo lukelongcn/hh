@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.ReplyDTO;
+import com.h9.admin.model.dto.WXReplySearchDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -15,17 +16,23 @@ import com.h9.common.modle.vo.Config;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.h9.common.db.entity.wxEvent.ReplyMessage.matchStrategyEnum.*;
 
 /**
  * Created by 李圆 on 2018/1/15
@@ -86,6 +93,7 @@ public class ReplyService {
             return Result.fail("该规则不存在");
         }
         replyMessage.setStatus(2);
+        replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("禁用成功");
     }
 
@@ -135,29 +143,50 @@ public class ReplyService {
         return Result.success("编辑成功");
     }
 
-    public Result<PageResult<ReplyMessageVO>> replyMessageList(Integer page, Integer limit, String orderName
-            , String contentType, Integer status) {
-        PageResult<ReplyMessage> replyMessage = replyMessageRepository.findAllList(page,limit);
-        if (StringUtils.isNotBlank(orderName)){
-            if (contentType != null){
-                replyMessage = replyMessageRepository.findOrderNameAndContentType(orderName,contentType,page,limit);
-                if (status != null){
-                    replyMessage = replyMessageRepository.findOrderNameAndContentTypeAndStatus(orderName,contentType
-                            ,status,page,limit);
-                    return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
-                }
-                return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
-            }
-            if (status != null){
-                replyMessage = replyMessageRepository.findOrderNameAndStatus(orderName,status,page,limit);
-                return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
-            }
-            replyMessage = replyMessageRepository.findOrderName(orderName,page,limit);
-            return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
-        }
-        return Result.success(replyMessage.result2Result(ReplyMessageVO::new));
+    public Result<PageResult<ReplyMessageVO>> replyMessageList(WXReplySearchDTO wxReplySearchDTO) {
+
+        Specification<ReplyMessage> specification = getReplyMessageSpecification(wxReplySearchDTO);
+        Sort sort = new Sort( Sort.Direction.DESC,"id");
+        PageRequest pageRequest = replyMessageRepository.pageRequest(wxReplySearchDTO.getPage(), wxReplySearchDTO.getLimit(),sort);
+        Page<ReplyMessage> replyMessagesPage = replyMessageRepository.findAll(specification, pageRequest);
+        PageResult<ReplyMessageVO> pageResult = new PageResult<>(replyMessagesPage).result2Result(el -> new ReplyMessageVO(el));
+
+        return Result.success(pageResult);
     }
 
+    private Specification<ReplyMessage> getReplyMessageSpecification(WXReplySearchDTO wxReplySearchDTO){
+        return (root, query, builder) -> {
+            String orderName = wxReplySearchDTO.getOrderName();
+
+            List<Predicate> predicateList = new ArrayList<>();
+
+            if (orderName != null) {
+                predicateList.add(builder.equal(root.get("orderName"), orderName));
+            }
+
+            /*String contentType = wxReplySearchDTO.getContentType();
+            if (StringUtils.isNotBlank(contentType)) {
+                predicateList.add(builder.equal(root.get("contentType"), contentType));
+            } else {
+                predicateList.add(builder.
+                        equal(root.get("contentType")).getExpressions().iterator(ALL_MATCH.getDesc(), SECTION_MATCH.getDesc()
+                        , REGEX_MATCH.getDesc(), AUTOMATIC_REPLY.getDesc(),FOLLOW_REPLY.getDesc()));
+            }*/
+
+            Integer status = wxReplySearchDTO.getStatus();
+
+            if (status == 1 || status == 2) {
+                predicateList.add(builder.equal(root.get("status"), status));
+            } else{
+                predicateList.add(builder.
+                        between(root.get("status"), 1, 2));
+            }
+
+
+            return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+        };
+
+    }
 
     @Resource
     private RedisBean redisBean;
