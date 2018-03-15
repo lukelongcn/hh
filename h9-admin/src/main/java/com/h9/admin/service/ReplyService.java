@@ -85,16 +85,20 @@ public class ReplyService {
     }
 
     /**
-     * 禁用
+     * 禁用或启用
      */
     public Result disable(long id) {
         ReplyMessage replyMessage = replyMessageRepository.findOne(id);
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        replyMessage.setStatus(2);
+        if (replyMessage.getStatus() == 1){
+            replyMessage.setStatus(2);
+        } else {
+            replyMessage.setStatus(1);
+        }
         replyMessageRepository.saveAndFlush(replyMessage);
-        return Result.success("禁用成功");
+        return Result.success("状态改变成功");
     }
 
 

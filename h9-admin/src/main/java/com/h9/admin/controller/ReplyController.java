@@ -42,7 +42,7 @@ public class ReplyController {
 
 
     /**
-     * 禁用
+     * 禁用或启用
      */
     @ApiOperation("禁用微信回复规则")
     @PostMapping("/disable/{id}")
