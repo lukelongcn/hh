@@ -249,7 +249,7 @@ public class OrderService {
             pageResult.setCurrPage(1);
             pageResult.setTotal(1);
             pageResult.setTotalPage(1);
-            pageResult.setCount(limit);
+            pageResult.setCount(1);
             pageResult.setData(Arrays.asList(wxOrderListInfo));
             return Result.success(pageResult);
         } else {
