@@ -28,12 +28,13 @@ public class ReplyMessageVO {
     @ApiModelProperty(value = "排序" )
     private Integer sort;
     @ApiModelProperty(value = "规则类型" )
-    private Integer matchStrategy;
+    private String matchStrategy;
     @ApiModelProperty(value = "关键字" )
     private String keyWord;
 
     public ReplyMessageVO(ReplyMessage replyMessage){
         BeanUtils.copyProperties(replyMessage,this);
+        this.matchStrategy = ReplyMessage.orderTypeEnum.getDescByCode(replyMessage.getMatchStrategy());
     }
 
 }

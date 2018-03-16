@@ -169,7 +169,7 @@ public class ReplyService {
                 predicateList.add(builder.equal(root.get("orderName"), orderName));
             }
 
-            Integer contentType = wxReplySearchDTO.getContentType();
+            String contentType = wxReplySearchDTO.getContentType();
             if (contentType != null) {
                 predicateList.add(builder.equal(root.get("contentType"), contentType));
             }

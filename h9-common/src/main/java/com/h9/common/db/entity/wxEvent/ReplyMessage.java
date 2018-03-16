@@ -91,6 +91,11 @@ public class ReplyMessage extends BaseEntity{
         public String getDesc() {
             return desc;
         }
+
+        public static String getDescByCode(int code){
+            ReplyMessage.orderTypeEnum orderTypeEnum = stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
+            return orderTypeEnum==null?null:orderTypeEnum.getDesc();
+        }
     }
     public static void main(String[] args) {
         System.out.printf(ReplyMessage.orderTypeEnum.FOLLOW_REPLY.getDesc());
