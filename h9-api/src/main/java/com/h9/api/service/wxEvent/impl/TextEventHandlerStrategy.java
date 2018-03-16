@@ -50,6 +50,9 @@ public class TextEventHandlerStrategy implements EventHandlerStrategy<Message4wx
         }
         // 自动回复
         ReplyMessage replyMessage = replyMessageRepository.findOneKey();
+        if (replyMessage == null){
+            return null;
+        }
         return EventHandlerStrategyFactory.getXml(map,replyMessage);
     }
 }
