@@ -37,55 +37,12 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
             ,nativeQuery = true)
     ReplyMessage findOneKey();
 
-    @Query("select r from ReplyMessage r where  r.status = 1 order by r.id")
+    @Query("select r from ReplyMessage r order by r.id")
     Page<ReplyMessage> findAllDetail(Pageable pageRequest);
     default PageResult<ReplyMessage> findAllDetail(Integer page, Integer limit){
         Page<ReplyMessage> List =  findAllDetail(pageRequest(page,limit));
         return new PageResult(List);
     }
 
-    @Query("select r from ReplyMessage r where r.orderName =?1")
-    Page<ReplyMessage> findOrderName(String orderName, Pageable pageRequest);
 
-    default PageResult<ReplyMessage> findOrderName(String orderName, Integer page, Integer limit){
-        Page<ReplyMessage> orderNameList =  findOrderName(orderName, pageRequest(page,limit));
-        return new PageResult(orderNameList);
-    }
-
-    @Query("select r from ReplyMessage r")
-    Page<ReplyMessage> findAllList(Pageable pageRequest);
-
-    default PageResult<ReplyMessage> findAllList(Integer page, Integer limit){
-        Page<ReplyMessage> allList =  findAllList(pageRequest(page,limit));
-        return new PageResult(allList);
-    }
-
-    @Query("select r from ReplyMessage r where r.orderName =?1 and r.contentType =?2")
-    Page<ReplyMessage> findOrderNameAndContentType(String orderName,String contentType, Pageable pageRequest);
-
-    default PageResult<ReplyMessage> findOrderNameAndContentType(String orderName,String contentType, Integer page
-            , Integer limit){
-        Page<ReplyMessage> messageList =  findOrderNameAndContentType(orderName, contentType,pageRequest(page,limit));
-        return new PageResult(messageList);
-    }
-
-    @Query("select r from ReplyMessage r where r.orderName =?1 and r.contentType =?2 and r.status = ?3")
-    Page<ReplyMessage> findOrderNameAndContentTypeAndStatus(String orderName,String contentType,Integer status
-            , Pageable pageRequest);
-
-    default PageResult<ReplyMessage> findOrderNameAndContentTypeAndStatus(String orderName,String contentType
-            , Integer status, Integer page, Integer limit){
-        Page<ReplyMessage> messageList =  findOrderNameAndContentTypeAndStatus(orderName, contentType, status
-                , pageRequest(page,limit));
-        return new PageResult(messageList);
-    }
-
-    @Query("select r from ReplyMessage r where r.orderName =?1 and r.status =?2")
-    Page<ReplyMessage> findOrderNameAndStatus(String orderName,Integer status, Pageable pageRequest);
-
-    default PageResult<ReplyMessage> findOrderNameAndStatus(String orderName,Integer status, Integer page
-            , Integer limit){
-        Page<ReplyMessage> messageList =  findOrderNameAndStatus(orderName,status,pageRequest(page,limit));
-        return new PageResult(messageList);
-    }
 }

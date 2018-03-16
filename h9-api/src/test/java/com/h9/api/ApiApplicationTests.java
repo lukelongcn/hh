@@ -491,21 +491,6 @@ public class ApiApplicationTests {
     }
 
     @Resource
-    private ReplyMessageRepository replyMessageRepository;
-    public void  test111(){
-        String s = ReplyMessage.matchStrategyEnum.getDescByCode(ReplyMessage.matchStrategyEnum.ALL_MATCH.getCode());
-        System.out.println(s);
-        ReplyMessage replyMessage = new ReplyMessage();
-        replyMessage.setOrderName("关注回复");
-        replyMessage.setMatchRegex("关注回复");
-        replyMessage.setEventType("subscribe");
-        replyMessage.setKeyWord("");
-        replyMessage.setContent("谢谢关注欢乐之家");
-        replyMessage.setContentType("text");
-        replyMessageRepository.save(replyMessage);
-    }
-
-    @Resource
     private WithdrawalsRecordRepository withdrawalsRecordRepository;
     @Resource
     private MobileRechargeService mobileRechargeService;

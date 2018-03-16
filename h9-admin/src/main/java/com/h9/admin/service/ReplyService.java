@@ -85,16 +85,22 @@ public class ReplyService {
     }
 
     /**
-     * 禁用
+     * 禁用或启用
      */
     public Result disable(long id) {
         ReplyMessage replyMessage = replyMessageRepository.findOne(id);
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        replyMessage.setStatus(2);
-        replyMessageRepository.saveAndFlush(replyMessage);
-        return Result.success("禁用成功");
+        if (replyMessage.getStatus() == 1){
+            replyMessage.setStatus(2);
+            replyMessageRepository.saveAndFlush(replyMessage);
+            return Result.success("禁用成功");
+        } else {
+            replyMessage.setStatus(1);
+            replyMessageRepository.saveAndFlush(replyMessage);
+            return Result.success("启用成功");
+        }
     }
 
 
@@ -156,34 +162,25 @@ public class ReplyService {
 
     private Specification<ReplyMessage> getReplyMessageSpecification(WXReplySearchDTO wxReplySearchDTO){
         return (root, query, builder) -> {
-            String orderName = wxReplySearchDTO.getOrderName();
-
             List<Predicate> predicateList = new ArrayList<>();
 
-            if (orderName != null) {
+            String orderName = wxReplySearchDTO.getOrderName();
+            if (StringUtils.isNotBlank(orderName)) {
                 predicateList.add(builder.equal(root.get("orderName"), orderName));
             }
 
-            /*String contentType = wxReplySearchDTO.getContentType();
-            if (StringUtils.isNotBlank(contentType)) {
+            Integer contentType = wxReplySearchDTO.getContentType();
+            if (contentType != null) {
                 predicateList.add(builder.equal(root.get("contentType"), contentType));
-            } else {
-                predicateList.add(builder.
-                        equal(root.get("contentType")).getExpressions().iterator(ALL_MATCH.getDesc(), SECTION_MATCH.getDesc()
-                        , REGEX_MATCH.getDesc(), AUTOMATIC_REPLY.getDesc(),FOLLOW_REPLY.getDesc()));
-            }*/
+            }
 
             Integer status = wxReplySearchDTO.getStatus();
 
-            if (status == 1 || status == 2) {
+            if (status != null) {
                 predicateList.add(builder.equal(root.get("status"), status));
-            } else{
-                predicateList.add(builder.
-                        between(root.get("status"), 1, 2));
             }
 
-
-            return builder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+            return query.where(predicateList.toArray(new Predicate[predicateList.size()])).getRestriction();
         };
 
     }
