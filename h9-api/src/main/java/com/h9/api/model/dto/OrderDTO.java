@@ -1,6 +1,7 @@
 package com.h9.api.model.dto;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -33,7 +34,9 @@ public class OrderDTO {
 
 
     public OrderDTO(String openId, BigDecimal totalAmount, Long businessOrderId,int payMethod) {
-        this.openId = openId;
+        if(StringUtils.isNotBlank(openId)){
+            this.openId = openId;
+        }
         this.totalAmount = totalAmount;
         this.businessOrderId = businessOrderId;
         this.payMethod = payMethod;
