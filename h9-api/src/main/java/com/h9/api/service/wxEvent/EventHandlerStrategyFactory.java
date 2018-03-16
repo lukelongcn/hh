@@ -85,6 +85,8 @@ public class EventHandlerStrategyFactory {
                 .setToUserName(map.get("FromUserName").toString())
                 .setFromUserName(map.get("ToUserName").toString())
                 .setCreateTime(Integer.valueOf(dateS));
+        System.out.println(replyMessage.getContentType());
+        System.out.println(TEXT.getValue());
         // 回复文本
         if (replyMessage.getContentType().equals(TEXT.getValue())){
             message4Wx.setContent(replyMessage.getContent());

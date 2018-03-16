@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.h9.api.provider.WeChatProvider.EventEnum.TEXT;
+import static com.h9.common.db.entity.wxEvent.ReplyMessage.matchStrategyEnum.FOLLOW_REPLY;
 
 /**
  * 关注，描述事件处理
@@ -28,8 +29,11 @@ public class SubscribeScanHandlerStrategy implements EventHandlerStrategy<Messag
     @Override
     public Message4wx handler(Map map, List<ReplyMessage> replyMessageList) {
         // 取得数据库回复对象
-        String orderName = ReplyMessage.orderTypeEnum.FOLLOW_REPLY.getDesc();
+        String orderName = FOLLOW_REPLY.getDesc();
         ReplyMessage replyMessage = replyMessageRepository.fingByOrderName(orderName);
+        if (replyMessage == null){
+            return null ;
+        }
         Message4wx message4wx = EventHandlerStrategyFactory.getXml(map,replyMessage);
         return message4wx;
     }

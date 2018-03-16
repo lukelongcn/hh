@@ -25,6 +25,9 @@ public class LocationEventHandlerStrategy implements EventHandlerStrategy<Messag
     public Message4wx handler(Map map, List<ReplyMessage> replyMessageList) {
         // 自动回复
         ReplyMessage replyMessage = replyMessageRepository.findOneKey();
+        if (replyMessage == null){
+            return null;
+        }
         return EventHandlerStrategyFactory.getXml(map,replyMessage);
     }
 }

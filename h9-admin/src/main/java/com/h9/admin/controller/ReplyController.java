@@ -12,6 +12,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,7 +28,7 @@ import javax.validation.Valid;
 public class ReplyController {
 
 
-     org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger(ReplyController.class);
+    Logger logger = org.jboss.logging.Logger.getLogger(ReplyController.class);
     @Resource
     private ReplyService replyService;
 
