@@ -163,9 +163,9 @@ public class BannerType extends BaseEntity {
     }
 
 
-
     public enum TypeEnum {
         Roll("Roll","滚动广告位"),
+        NavigationBtn("NavigationBtn","导航按纽"),
         TWO("TWO","双联banner"),;
 
 
