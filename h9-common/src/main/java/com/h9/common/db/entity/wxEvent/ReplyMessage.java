@@ -73,6 +73,12 @@ public class ReplyMessage extends BaseEntity{
             ReplyMessage.matchStrategyEnum matchStrategyEnum = stream(values()).filter(o -> o.getCode()==matchStrategy).limit(1).findAny().orElse(null);
             return matchStrategyEnum==null?null:matchStrategyEnum.getDesc();
         }
+
+        public static Integer getCodeByDesc(String desc) {
+            ReplyMessage.matchStrategyEnum matchStrategyEnum = stream(values()).filter(o -> o.getDesc()==desc).limit(1).findAny().orElse(null);
+            return matchStrategyEnum==null?null:matchStrategyEnum.getCode();
+        }
+
     }
 
     public enum  orderTypeEnum{
