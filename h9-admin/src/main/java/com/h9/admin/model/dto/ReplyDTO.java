@@ -23,7 +23,7 @@ public class ReplyDTO {
      */
     @ApiModelProperty(value = "规则类型")
     @NotBlank(message = "规则类型必填")
-    private String matchStrategy;
+    private Integer matchStrategy;
 
     @ApiModelProperty(value = "关键词")
     @Size(max = 120)
