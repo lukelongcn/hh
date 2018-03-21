@@ -169,9 +169,9 @@ public class ReplyService {
                 predicateList.add(builder.equal(root.get("orderName"), orderName));
             }
 
-            String contentType = wxReplySearchDTO.getContentType();
-            if (contentType != null) {
-                predicateList.add(builder.equal(root.get("contentType"), contentType));
+            Integer matchStrategy = wxReplySearchDTO.getMatchStrategy();
+            if (matchStrategy != null) {
+                predicateList.add(builder.equal(root.get("matchStrategy"), matchStrategy));
             }
 
             Integer status = wxReplySearchDTO.getStatus();
