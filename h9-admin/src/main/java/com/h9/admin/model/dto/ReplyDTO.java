@@ -16,8 +16,7 @@ import javax.validation.constraints.Size;
 public class ReplyDTO {
 
     @ApiModelProperty(value = "规则名")
-    @Size(min = 2 ,max = 120)
-    @NotBlank(message = "规则名必须在2到120个字符之间")
+    @Size(min = 2 ,max = 120,message = "规则名必须在2到120个字符之间")
     private String orderName;
     /**
      * 匹配策略  规则类型

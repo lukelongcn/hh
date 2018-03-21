@@ -16,6 +16,6 @@ public class WXReplySearchDTO {
     private Integer page = 1;
     private Integer limit = 10;
     private String orderName;
-    private Integer contentType;
+    private Integer matchStrategy;
     private Integer status;
 }

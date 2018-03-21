@@ -68,6 +68,11 @@ public class ReplyMessage extends BaseEntity{
         public String getDesc() {
             return desc;
         }
+
+        public static String getDescByCode(Integer matchStrategy) {
+            ReplyMessage.matchStrategyEnum matchStrategyEnum = stream(values()).filter(o -> o.getCode()==matchStrategy).limit(1).findAny().orElse(null);
+            return matchStrategyEnum==null?null:matchStrategyEnum.getDesc();
+        }
     }
 
     public enum  orderTypeEnum{
@@ -90,6 +95,11 @@ public class ReplyMessage extends BaseEntity{
 
         public String getDesc() {
             return desc;
+        }
+
+        public static String getDescByCode(int code){
+            ReplyMessage.orderTypeEnum orderTypeEnum = stream(values()).filter(o -> o.getCode()==code).limit(1).findAny().orElse(null);
+            return orderTypeEnum==null?null:orderTypeEnum.getDesc();
         }
     }
     public static void main(String[] args) {

@@ -33,7 +33,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
             "ORDER BY sort LIMIT 1 ",nativeQuery = true)
     ReplyMessage fingByRegexp(String key);
 
-    @Query(value = "select * from reply_message  where order_name = '自动回复' and status = 1 order by sort DESC limit 1"
+    @Query(value = "select * from reply_message  where order_name LIKE '%自动回复%' and status = 1 order by sort DESC limit 1"
             ,nativeQuery = true)
     ReplyMessage findOneKey();
 

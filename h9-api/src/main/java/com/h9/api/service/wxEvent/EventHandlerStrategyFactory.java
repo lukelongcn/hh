@@ -3,6 +3,7 @@ package com.h9.api.service.wxEvent;
 
 import com.h9.api.service.wxEvent.impl.*;
 import com.h9.api.service.wxEvent.model.Message4wx;
+import com.h9.api.service.wxEvent.model.WXImage;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
@@ -94,13 +95,14 @@ public class EventHandlerStrategyFactory {
         }
         // 回复图片
         else if (replyMessage.getContentType().equals(IMAGE.getValue())){
-            message4Wx.setMediaId(replyMessage.getContent());
             message4Wx.setMsgType(IMAGE.getValue());
+            WXImage wxImage = new WXImage().setMediaId(replyMessage.getContent());
+            message4Wx.setImage(wxImage);
         }
         // 回复语音
         else if (replyMessage.getContentType().equals(VOICE.getValue())){
-            message4Wx.setMediaId(replyMessage.getContent());
             message4Wx.setMsgType(VOICE.getValue());
+
         }
         // 回复视频
         else if (replyMessage.getContentType().equals(VIDEO.getValue())){
