@@ -1,5 +1,6 @@
 package com.h9.api.service.wxEvent.impl;
 
+import com.h9.api.service.EventService;
 import com.h9.api.service.wxEvent.EventHandlerStrategy;
 import com.h9.api.service.wxEvent.EventHandlerStrategyFactory;
 import com.h9.api.service.wxEvent.model.Message4wx;
@@ -8,6 +9,7 @@ import com.h9.common.db.repo.ReplyMessageRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +26,14 @@ public class SubscribeScanHandlerStrategy implements EventHandlerStrategy<Messag
 
     @Resource
     ReplyMessageRepository replyMessageRepository;
+    @Resource
+    private EventService eventService;
 
     @Transactional
     @Override
     public Message4wx handler(Map map, List<ReplyMessage> replyMessageList) {
+        //处理转账红包
+        eventService.handleSubscribeAndScan(map);
         // 取得数据库回复对象
         String orderName = FOLLOW_REPLY.getDesc();
         ReplyMessage replyMessage = replyMessageRepository.fingByOrderName(orderName);
