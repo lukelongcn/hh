@@ -38,6 +38,7 @@ public class EventController {
             map = XMLUtils.parseXml(request);
         } catch (Exception e) {
             logger.info(e.getMessage(),e);
+            return  "";
         }
         return eventService.handler(map);
     }

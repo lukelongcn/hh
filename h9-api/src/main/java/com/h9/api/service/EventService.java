@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.h9.api.provider.WeChatProvider.EventEnum.SCAN;
+import static com.h9.api.provider.WeChatProvider.EventEnum.SUBSCRIBE;
+
 /**
  * Created by itservice on 2018/1/25.
  */
@@ -96,7 +99,6 @@ public class EventService {
         if (eventKey.contains("qrscene_")) {
             eventKey = eventKey.replace("qrscene_", "");
         }
-
 
         //发送方帐号（一个OpenID）
         String openId = map.get("FromUserName");
@@ -200,11 +202,11 @@ public class EventService {
             return "";
         }
         List<ReplyMessage> replyMessageList = replyMessageRepository.findByEventType(event);
-        if (CollectionUtils.isEmpty(replyMessageList)) {
+        if (CollectionUtils.isEmpty(replyMessageList) && !event.equals(SCAN.getValue()) && !event.equals(SUBSCRIBE.getValue())) {
             return "";
         }
         Object obj = eventHandlerStrategy.handler(map,replyMessageList);
-        if (obj == null) {
+        if (obj == null ) {
             return "";
         }
         String xml = CDataContentHandler.ojbectToXmlWithCDATA(Message4wx.class,obj);
