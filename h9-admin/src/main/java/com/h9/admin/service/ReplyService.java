@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.ReplyDTO;
 import com.h9.admin.model.dto.WXReplySearchDTO;
 import com.h9.admin.model.vo.ReplyMessageVO;
+import com.h9.admin.model.vo.SingleReplyMessageVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -60,8 +61,7 @@ public class ReplyService {
         replyMessage.setContentType(replyDTO.getContentType());
         replyMessage.setOrderName(replyDTO.getOrderName());
         replyMessage.setContent(replyDTO.getContent());
-        Integer matchStrategy = ReplyMessage.matchStrategyEnum.getCodeByDesc(replyDTO.getMatchStrategy());
-        replyMessage.setMatchStrategy(matchStrategy);
+        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
         replyMessage.setSort(replyDTO.getSort());
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("添加成功");
@@ -113,8 +113,8 @@ public class ReplyService {
         if (replyMessage == null){
             return Result.fail("该规则不存在");
         }
-        ReplyMessageVO messageVO = new ReplyMessageVO(replyMessage);
-        return Result.success(messageVO);
+        SingleReplyMessageVO singleReplyMessageVO = new SingleReplyMessageVO(replyMessage);
+        return Result.success(singleReplyMessageVO);
     }
 
     /**
@@ -143,8 +143,7 @@ public class ReplyService {
         replyMessage.setContentType(replyDTO.getContentType());
         replyMessage.setOrderName(replyDTO.getOrderName());
         replyMessage.setContent(replyDTO.getContent());
-        Integer matchStrategy = ReplyMessage.matchStrategyEnum.getCodeByDesc(replyDTO.getMatchStrategy());
-        replyMessage.setMatchStrategy(matchStrategy);
+        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
         replyMessage.setSort(replyDTO.getSort());
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("编辑成功");
