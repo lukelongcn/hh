@@ -22,7 +22,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
             ,nativeQuery = true)
     ReplyMessage fingByOrderName(String orderName);
 
-    @Query("select r from ReplyMessage r where r.keyWord = ?1 and r.status = 1")
+    @Query("select r from ReplyMessage r where r.keyWord = ?1  and r.status = 1 order by sort DESC ")
     ReplyMessage fingByAllKey(String key);
 
     @Query(value = "select * from reply_message where key_word like ?1  and status = 1 order by sort DESC limit 1"
@@ -30,14 +30,14 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
     ReplyMessage fingByHalfKey(String key);
 
     @Query(value = "SELECT * FROM `reply_message` WHERE content = ?1 REGEXP '[:alnum:]' and status = 1 " +
-            "ORDER BY sort LIMIT 1 ",nativeQuery = true)
+            "order by sort DESC LIMIT 1 ",nativeQuery = true)
     ReplyMessage fingByRegexp(String key);
 
     @Query(value = "select * from reply_message  where order_name LIKE '%自动回复%' and status = 1 order by sort DESC limit 1"
             ,nativeQuery = true)
     ReplyMessage findOneKey();
 
-    @Query("select r from ReplyMessage r order by r.id")
+    @Query("select r from ReplyMessage r order by sort DESC")
     Page<ReplyMessage> findAllDetail(Pageable pageRequest);
     default PageResult<ReplyMessage> findAllDetail(Integer page, Integer limit){
         Page<ReplyMessage> List =  findAllDetail(pageRequest(page,limit));
