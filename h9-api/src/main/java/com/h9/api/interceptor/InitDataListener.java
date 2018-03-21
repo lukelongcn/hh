@@ -63,7 +63,12 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
      *
      */
     private void initWXMenu() {
-        weChatProvider.createMenu();
+        try {
+            weChatProvider.createMenu();
+        } catch (Exception e) {
+            logger.info("初始化公众号菜单失败");
+            logger.info(e.getMessage(),e);
+        }
     }
 
     /****
