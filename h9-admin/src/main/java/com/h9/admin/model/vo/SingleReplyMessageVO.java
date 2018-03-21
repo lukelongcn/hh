@@ -28,7 +28,7 @@ public class SingleReplyMessageVO {
     @ApiModelProperty(value = "排序" )
     private Integer sort;
     @ApiModelProperty(value = "规则类型" )
-    private String matchStrategy;
+    private Integer matchStrategy;
     @ApiModelProperty(value = "关键字" )
     private String keyWord;
 
