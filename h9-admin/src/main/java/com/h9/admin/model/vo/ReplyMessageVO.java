@@ -34,7 +34,7 @@ public class ReplyMessageVO {
 
     public ReplyMessageVO(ReplyMessage replyMessage){
         BeanUtils.copyProperties(replyMessage,this);
-        this.matchStrategy = ReplyMessage.orderTypeEnum.getDescByCode(replyMessage.getMatchStrategy());
+        this.matchStrategy = ReplyMessage.matchStrategyEnum.getDescByCode(replyMessage.getMatchStrategy());
     }
 
 }
