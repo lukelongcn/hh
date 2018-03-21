@@ -60,7 +60,8 @@ public class ReplyService {
         replyMessage.setContentType(replyDTO.getContentType());
         replyMessage.setOrderName(replyDTO.getOrderName());
         replyMessage.setContent(replyDTO.getContent());
-        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
+        Integer matchStrategy = ReplyMessage.matchStrategyEnum.getCodeByDesc(replyDTO.getMatchStrategy());
+        replyMessage.setMatchStrategy(matchStrategy);
         replyMessage.setSort(replyDTO.getSort());
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("添加成功");
@@ -142,9 +143,9 @@ public class ReplyService {
         replyMessage.setContentType(replyDTO.getContentType());
         replyMessage.setOrderName(replyDTO.getOrderName());
         replyMessage.setContent(replyDTO.getContent());
-        replyMessage.setMatchStrategy(replyDTO.getMatchStrategy());
+        Integer matchStrategy = ReplyMessage.matchStrategyEnum.getCodeByDesc(replyDTO.getMatchStrategy());
+        replyMessage.setMatchStrategy(matchStrategy);
         replyMessage.setSort(replyDTO.getSort());
-
         replyMessageRepository.saveAndFlush(replyMessage);
         return Result.success("编辑成功");
     }
