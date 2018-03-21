@@ -4,6 +4,8 @@ package com.h9.api.service.wxEvent;
 import com.h9.api.service.wxEvent.impl.*;
 import com.h9.api.service.wxEvent.model.Message4wx;
 import com.h9.api.service.wxEvent.model.WXImage;
+import com.h9.api.service.wxEvent.model.WXVideo;
+import com.h9.api.service.wxEvent.model.WXVoice;
 import com.h9.common.db.entity.wxEvent.ReplyMessage;
 import com.h9.common.utils.DateUtil;
 import org.jboss.logging.Logger;
@@ -86,8 +88,6 @@ public class EventHandlerStrategyFactory {
                 .setToUserName(map.get("FromUserName").toString())
                 .setFromUserName(map.get("ToUserName").toString())
                 .setCreateTime(Integer.valueOf(dateS));
-        System.out.println(replyMessage.getContentType());
-        System.out.println(TEXT.getValue());
         // 回复文本
         if (replyMessage.getContentType().equals(TEXT.getValue())){
             message4Wx.setContent(replyMessage.getContent());
@@ -102,12 +102,14 @@ public class EventHandlerStrategyFactory {
         // 回复语音
         else if (replyMessage.getContentType().equals(VOICE.getValue())){
             message4Wx.setMsgType(VOICE.getValue());
-
+            WXVoice wxVoice = new WXVoice().setMediaId(replyMessage.getContent());
+            message4Wx.setVoice(wxVoice);
         }
         // 回复视频
         else if (replyMessage.getContentType().equals(VIDEO.getValue())){
-            message4Wx.setMediaId(replyMessage.getContent());
             message4Wx.setMsgType(VIDEO.getValue());
+            WXVideo wxVideo = new WXVideo().setMediaId(replyMessage.getContent());
+            message4Wx.setVideo(wxVideo);
         }
         return message4Wx;
     }
