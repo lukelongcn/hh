@@ -18,26 +18,26 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
 
     List<ReplyMessage> findByEventType(String eventType);
 
-    @Query(value = "select * from reply_message  where order_name = ?1 and status = 1 order by sort DESC,create_time DESC limit 1"
+    @Query(value = "select * from reply_message  where order_name = ?1 and status = 1 order by sort asc,create_time DESC limit 1"
             ,nativeQuery = true)
     ReplyMessage fingByOrderName(String orderName);
 
-    @Query("select r from ReplyMessage r where r.keyWord = ?1  and r.status = 1 order by r.sort DESC,r.create_time DESC ")
+    @Query("select r from ReplyMessage r where r.keyWord = ?1  and r.status = 1 order by r.sort asc ,r.create_time DESC ")
     ReplyMessage fingByAllKey(String key);
 
-    @Query(value = "select * from reply_message where key_word like ?1  and status = 1 order by sort DESC,create_time DESC limit 1"
+    @Query(value = "select * from reply_message where key_word like ?1  and status = 1 order by sort asc,create_time DESC limit 1"
             ,nativeQuery = true)
     ReplyMessage fingByHalfKey(String key);
 
     @Query(value = "SELECT * FROM `reply_message` WHERE content = ?1 REGEXP '[:alnum:]' and status = 1 " +
-            "order by sort DESC ,create_time DESC LIMIT 1 ",nativeQuery = true)
+            "order by sort asc ,create_time DESC LIMIT 1 ",nativeQuery = true)
     ReplyMessage fingByRegexp(String key);
 
-    @Query(value = "select * from reply_message  where order_name LIKE '%自动回复%' and status = 1 order by sort DESC,create_time DESC limit 1"
+    @Query(value = "select * from reply_message  where order_name LIKE '%自动回复%' and status = 1 order by sort asc,create_time DESC limit 1"
             ,nativeQuery = true)
     ReplyMessage findOneKey();
 
-    @Query("select r from ReplyMessage r order by sort DESC,create_time DESC")
+    @Query("select r from ReplyMessage r order by sort asc,create_time DESC")
     Page<ReplyMessage> findAllDetail(Pageable pageRequest);
     default PageResult<ReplyMessage> findAllDetail(Integer page, Integer limit){
         Page<ReplyMessage> List =  findAllDetail(pageRequest(page,limit));
