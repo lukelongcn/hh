@@ -35,8 +35,7 @@ public class SubscribeScanHandlerStrategy implements EventHandlerStrategy<Messag
         //处理转账红包
         eventService.handleSubscribeAndScan(map);
         // 取得数据库回复对象
-        String orderName = FOLLOW_REPLY.getDesc();
-        ReplyMessage replyMessage = replyMessageRepository.fingByOrderName(orderName);
+        ReplyMessage replyMessage = replyMessageRepository.fingByOrderName();
         if (replyMessage == null){
             return null ;
         }
