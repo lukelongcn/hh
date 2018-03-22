@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @ClassName: StickTypeRepository
  * @Description: StickType 的查询
- * @author: shadow.liu
+ * @author: liyuan
  * @date: 2016年6月27日 下午3:18:36
  */
 @Repository
