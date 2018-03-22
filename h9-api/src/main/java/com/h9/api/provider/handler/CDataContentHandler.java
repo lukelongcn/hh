@@ -23,6 +23,9 @@ public class CDataContentHandler extends XMLSerializer {
         if(useCData) super.endCDATA();
     }
     public static String ojbectToXmlWithCDATA(Class clazz, Object obj) throws Exception {
+        if(obj == null){
+            return "";
+        }
         JAXBContext context = JAXBContext.newInstance(clazz);
         OutputFormat of = new OutputFormat();
         of.setOmitXMLDeclaration(true);

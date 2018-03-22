@@ -3,7 +3,6 @@ package com.h9.api;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.gson.Gson;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.interceptor.LoginAuthInterceptor;
@@ -11,9 +10,6 @@ import com.h9.api.model.dto.Areas;
 import com.h9.api.provider.MobileRechargeService;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.user.UserBank;
-import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
-import com.h9.common.db.entity.wxEvent.ReplyMessage;
-import org.apache.commons.net.util.Base64;
 
 import com.h9.api.provider.SMSProvide;
 import com.h9.api.provider.SuNingProvider;
@@ -28,11 +24,8 @@ import com.h9.common.common.MailService;
 import com.h9.common.constant.ParamConstant;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
-import com.h9.common.db.entity.hotel.Hotel;
-import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.hotel.HotelRoomType;
 import com.h9.common.db.entity.account.CardCoupons;
-import com.h9.common.db.entity.order.Address;
 import com.h9.common.db.entity.order.China;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.Orders;
@@ -49,8 +42,6 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
 import org.jboss.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,24 +50,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -496,10 +478,11 @@ public class ApiApplicationTests {
     private MobileRechargeService mobileRechargeService;
     @Test
     public void test2(){
-
-        mailService.sendtMail("手机话费充值失败"
-                , "<h1>原因: </h1>"
-                ,"756034624@qq.com");
+//724077033@qq.com
+        List<String> emailGroup = configService.getStringListConfig("MobileRechargeFailEmailGroup");
+        mailService.sendEmail("测试邮件"
+                , "原因: "+"测试邮件"
+                ,emailGroup);
 
     }
 }
