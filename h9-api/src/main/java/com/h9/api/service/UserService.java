@@ -688,7 +688,7 @@ public class UserService {
                 Long targetUserId = transactions.getTargetUserId();
                 User targetUser = userRepository.findOne(targetUserId);
                 mapVO.put("nickName", targetUser.getNickName());
-                mapVO.put("time", DateUtil.getSpaceTime(transactions.getCreateTime(), new Date()));
+                mapVO.put("time", new Date().getTime()+"");
                 mapVO.put("img", targetUser.getAvatar());
                 mapVO.put("money", MoneyUtils.formatMoney(transactions.getTransferMoney()));
 
