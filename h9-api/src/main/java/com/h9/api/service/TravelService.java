@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.config.BannerType.LocaltionEnum.*;
+import static com.h9.common.db.entity.config.BannerType.TypeEnum.NavigationBtn;
+import static com.h9.common.db.entity.config.BannerType.TypeEnum.Roll;
+import static com.h9.common.db.entity.config.BannerType.TypeEnum.TWO;
 
 /**
  * Created by itservice on 2018/2/1.

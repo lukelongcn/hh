@@ -51,7 +51,9 @@ public class LotteryContorller {
     public Result appCode(@ApiParam(value = "用户token" ,name = "token",required = true,type="header")
                               @SessionAttribute("curUserId") long userId,
                           @ModelAttribute LotteryDto lotteryVo, HttpServletRequest request) throws ServiceException {
-        RLock lock = redisson.getLock("lock:" + lotteryVo.getCode());
+        String code = LotteryConstantConfig.path2Code(lotteryVo.getCode());
+
+        RLock lock = redisson.getLock("lock:" + code);
         Result result;
         try {
             logger.debugv("lock start" + userId);
