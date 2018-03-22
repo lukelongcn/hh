@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import static com.h9.api.provider.WeChatProvider.EventEnum.SUBSCRIBE;
 import static com.h9.api.provider.WeChatProvider.EventEnum.TEXT;
 import static com.h9.common.db.entity.wxEvent.ReplyMessage.matchStrategyEnum.FOLLOW_REPLY;
 
@@ -35,13 +36,17 @@ public class SubscribeScanHandlerStrategy implements EventHandlerStrategy<Messag
         //处理转账红包
         eventService.handleSubscribeAndScan(map);
         // 取得数据库回复对象
-        String orderName = FOLLOW_REPLY.getDesc();
-        ReplyMessage replyMessage = replyMessageRepository.fingByOrderName(orderName);
-        if (replyMessage == null){
-            return null ;
+        String event = map.get("Event").toString();
+        if (event.equals(SUBSCRIBE.getValue())){
+            ReplyMessage replyMessage = replyMessageRepository.fingByOrderName();
+            if (replyMessage == null){
+                return null ;
+            }
+            Message4wx message4wx = EventHandlerStrategyFactory.getXml(map,replyMessage);
+            return message4wx;
+        }else {
+            return null;
         }
-        Message4wx message4wx = EventHandlerStrategyFactory.getXml(map,replyMessage);
-        return message4wx;
     }
 
 }
