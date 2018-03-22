@@ -72,8 +72,7 @@ public class CommunityService {
     }
 
     public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO) {
-        Sort sort = new Sort(Sort.Direction.ASC, "sort");
-        PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize(),sort);
+        PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
         Page<BannerType> bannerTypes = this.bannerTypeRepository.findAll4Page(pageDTO.getLocaltion(),pageRequest);
         List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
         bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));
