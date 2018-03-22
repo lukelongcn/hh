@@ -46,6 +46,6 @@ public interface BannerRepository extends BaseRepository<Banner> {
     @Query("select o from Banner o where o.bannerType.id = ?1 order by o.sort")
     List<Banner> findAllByBannerTypeIdOrder(long banner_type_id);
 
-    @Query("select o from Banner o where o.bannerType.id = ?1 and o.enable = 1 order by o.sort asc ,o.id desc")
+    @Query("select o from Banner o where o.bannerType.id = ?1 and o.enable = 1 order by o.sort desc ,o.id desc")
     List<Banner> findAllByBanner(long banner_type_id);
 }

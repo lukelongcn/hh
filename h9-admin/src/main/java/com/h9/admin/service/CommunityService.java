@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +72,8 @@ public class CommunityService {
     }
 
     public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO) {
-        PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
+        Sort sort = new Sort(Sort.Direction.ASC, "sort");
+        PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize(),sort);
         Page<BannerType> bannerTypes = this.bannerTypeRepository.findAll4Page(pageDTO.getLocaltion(),pageRequest);
         List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
         bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));

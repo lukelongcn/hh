@@ -3,6 +3,7 @@ package com.h9.api.provider;
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.MobileRechargeDTO;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.common.MailService;
 import com.h9.common.utils.MD5Util;
 import com.h9.common.utils.MoneyUtils;
@@ -23,6 +24,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * description: 手机充值
@@ -30,6 +32,8 @@ import java.util.Date;
 @Component
 public class MobileRechargeService {
 
+    @Resource
+    private ConfigService configService;
     @Resource
     private MailService mailService;
     private Logger logger = Logger.getLogger(this.getClass());
@@ -180,9 +184,12 @@ public class MobileRechargeService {
         mailService.sendtMail("手机话费充值失败",
                 "充值结果: "+JSONObject.toJSONString(rechargeResult));
         if(rechargeResult.retcode.equals("1007")){
-            mailService.sendtMail("手机话费充值失败"
+
+            List<String> emailGroup = configService.getStringListConfig("MobileRechargeFailEmailGroup");
+            mailService.sendEmail("手机话费充值失败"
                     , "原因: "+rechargeResult.getErr_msg()
-                    ,"724077033@qq.com");
+                    ,emailGroup);
+
         }
     }
 

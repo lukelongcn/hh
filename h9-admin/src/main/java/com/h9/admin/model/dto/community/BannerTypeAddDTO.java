@@ -17,33 +17,35 @@ import java.util.Date;
 @ApiModel("功能分类-增加-参数")
 public class BannerTypeAddDTO {
 
-    @ApiModelProperty(value = "名称",required = true)
+    @ApiModelProperty(value = "名称", required = true)
     @NotBlank(message = "名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "标识",required = true)
+    @ApiModelProperty(value = "标识", required = true)
     @NotBlank(message = "标识不能为空")
     private String code;
 
-    @ApiModelProperty(value = "功能位置",required = true)
+    @ApiModelProperty(value = "功能位置", required = true)
     @NotNull(message = "功能位置不能为空")
     private Integer location;
 
-    @ApiModelProperty(value = "状态",required = true)
+    @ApiModelProperty(value = "状态", required = true)
     @NotNull(message = "状态不能为空")
     private Integer enable;
 
-   // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-   @ApiModelProperty(value = "上线开始时间")
-   @NotNull(message = "上线开始时间不能为空")
+    // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "上线开始时间")
+    @NotNull(message = "上线开始时间不能为空")
     private Date startTime;
 
-   // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-   @ApiModelProperty(value = "上线结束时间")
-   @NotNull(message = "上线结束时间不能为空")
+    // @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "上线结束时间")
+    @NotNull(message = "上线结束时间不能为空")
     private Date endTime;
 
-   private int sort = 1;
+    @ApiModelProperty(value = "排序,默认为1")
+    private int sort = 1;
+
 
     public String getName() {
         return name;
@@ -93,15 +95,15 @@ public class BannerTypeAddDTO {
         this.endTime = endTime;
     }
 
-    public BannerType toBannerType(){
+    public BannerType toBannerType() {
         BannerType bannerType = new BannerType();
-        BeanUtils.copyProperties(this,bannerType);
-        return  bannerType;
+        BeanUtils.copyProperties(this, bannerType);
+        return bannerType;
     }
 
-    public BannerType toBannerType(BannerType bannerType){
-        BeanUtils.copyProperties(this,bannerType);
-        return  bannerType;
+    public BannerType toBannerType(BannerType bannerType) {
+        BeanUtils.copyProperties(this, bannerType);
+        return bannerType;
     }
 
     public int getSort() {
