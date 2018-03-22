@@ -22,7 +22,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
             ,nativeQuery = true)
     ReplyMessage fingByOrderName(String orderName);
 
-    @Query("select r from ReplyMessage r where r.keyWord = ?1  and r.status = 1 order by r.sort asc ")
+    @Query(value ="select * from reply_message  where key_word = ?1  and status = 1 order by sort asc ,create_time DESC limit 1",nativeQuery = true)
     ReplyMessage fingByAllKey(String key);
 
     @Query(value = "select * from reply_message where key_word like ?1  and status = 1 order by sort asc,create_time DESC limit 1"
