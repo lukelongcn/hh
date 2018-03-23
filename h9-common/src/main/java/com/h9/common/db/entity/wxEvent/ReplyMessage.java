@@ -44,8 +44,8 @@ public class ReplyMessage extends BaseEntity{
     @Column(name = "key_word",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
     private String keyWord;
 
-    @Column(name = "event_type",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
-    private String eventType;
+//    @Column(name = "event_type",columnDefinition = "varchar(200) COMMENT '匹配关键词'")
+//    private String eventType;
 
     public enum matchStrategyEnum{
         ALL_MATCH(1,"完全匹配"),

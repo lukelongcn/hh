@@ -16,7 +16,7 @@ public interface ReplyMessageRepository extends BaseRepository<ReplyMessage> {
 
 //    List<ReplyMessage> findByKeyWordRegex(String regex);
 
-    List<ReplyMessage> findByEventType(String eventType);
+//    List<ReplyMessage> findByEventType(String eventType);
 
     @Query(value = "select * from reply_message  where status = 1 and match_strategy=5 order by sort DESC,update_time DESC limit 1"
             ,nativeQuery = true)
