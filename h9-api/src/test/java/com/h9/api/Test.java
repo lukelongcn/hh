@@ -11,6 +11,7 @@ import com.google.zxing.MultiFormatReader;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+import com.h9.common.utils.DateUtil;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -56,8 +57,9 @@ public class Test {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String replace = UUID.randomUUID().toString().replace("-", "");
-        System.out.println(replace);
+        Date date = new Date(1523721600000L);
+        String s = DateUtil.formatDate(date, DateUtil.FormatType.GBK_MINUTE);
+        System.out.println(s);
     }
 
 
