@@ -108,8 +108,34 @@ public class ReplyMessage extends BaseEntity{
             return orderTypeEnum==null?null:orderTypeEnum.getDesc();
         }
     }
+
+    public enum  contentTypeEnum{
+        TEXT("text","文本"),
+        VOICE("voice","语音"),
+        IMAGE("image","图片"),
+        VIDEO("video","视频");
+
+        private String code;
+        private String desc;
+        contentTypeEnum(String code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+        public String getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static String getDescByCode(String code){
+            ReplyMessage.contentTypeEnum contentTypeEnum = stream(values()).filter(o -> o.getCode().equals(code)).limit(1).findAny().orElse(null);
+            return contentTypeEnum==null?null:contentTypeEnum.getDesc();
+        }
+    }
     public static void main(String[] args) {
-        System.out.printf(ReplyMessage.orderTypeEnum.FOLLOW_REPLY.getDesc());
+        System.out.printf(ReplyMessage.contentTypeEnum.getDescByCode("video"));
     }
 
 
