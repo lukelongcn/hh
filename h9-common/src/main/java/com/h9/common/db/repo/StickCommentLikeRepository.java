@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @ClassName: StickCommentLikeRepository
  * @Description: StickCommentLike 的查询
- * @author: shadow.liu
+ * @author: liyuan
  * @date: 2016年6月27日 下午3:18:36
  */
 @Repository
