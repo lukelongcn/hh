@@ -35,6 +35,7 @@ public class ReplyMessageVO {
     public ReplyMessageVO(ReplyMessage replyMessage){
         BeanUtils.copyProperties(replyMessage,this);
         this.matchStrategy = ReplyMessage.matchStrategyEnum.getDescByCode(replyMessage.getMatchStrategy());
+        this.contentType = ReplyMessage.contentTypeEnum.getDescByCode(replyMessage.getContentType());
     }
 
 }
