@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
 /**
  * Created with IntelliJ IDEA.
  *
- * StickContoller:liyuan shadow.liu@hey900.com
+ * StickContoller:liyuan
  * Date: 2018/1/2
  * Time: 14:58
  */
