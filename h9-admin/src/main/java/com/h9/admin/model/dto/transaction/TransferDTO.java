@@ -34,7 +34,7 @@ public class TransferDTO {
     }
 
     public void setStartTime(Long startTime) {
-        if(startTime != null){
+        if (startTime != null) {
             this.startTime = new Date(startTime);
         }
     }
@@ -44,8 +44,8 @@ public class TransferDTO {
     }
 
     public void setEndTime(Long endTime) {
-        if(endTime != null){
-            this.endTime = new Date(endTime);
+        if (endTime != null) {
+            this.endTime = new Date(endTime + (1000 * 60 * 60 * 24));
         }
     }
 
