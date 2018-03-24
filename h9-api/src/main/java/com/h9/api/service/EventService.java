@@ -201,11 +201,11 @@ public class EventService {
         if(eventHandlerStrategy == null){
             return "";
         }
-        List<ReplyMessage> replyMessageList = replyMessageRepository.findByEventType(event);
-        if (CollectionUtils.isEmpty(replyMessageList) && !event.equals(SCAN.getValue()) && !event.equals(SUBSCRIBE.getValue())) {
-            return "";
-        }
-        Object obj = eventHandlerStrategy.handler(map,replyMessageList);
+//        List<ReplyMessage> replyMessageList = replyMessageRepository.findByEventType(event);
+//        if (CollectionUtils.isEmpty(replyMessageList) && !event.equals(SCAN.getValue()) && !event.equals(SUBSCRIBE.getValue())) {
+//            return "";
+//        }
+        Object obj = eventHandlerStrategy.handler(map,null);
 
         String xml = CDataContentHandler.ojbectToXmlWithCDATA(Message4wx.class,obj);
         logger.info("回复的消息: "+xml);

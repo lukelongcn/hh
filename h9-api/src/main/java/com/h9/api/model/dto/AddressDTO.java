@@ -1,5 +1,6 @@
 package com.h9.api.model.dto;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public class AddressDTO {
     private String name;
 
     // 收货人手机号码
-    @Size(min = 7,max = 16,message = "请填写正确的手机号")
+    @Length(min = 7,max = 11,message = "请填写正确的手机号")
     @NotBlank(message = "请输入合法的手机号码")
     private String phone;
 

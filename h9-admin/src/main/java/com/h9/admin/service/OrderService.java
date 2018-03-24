@@ -313,8 +313,10 @@ public class OrderService {
 
             predicateList.add(builder.equal(root.get("status"), 2));
             if (startTimeL != null && endTimeL != null) {
+
                 Date startTime = new Date(startTimeL);
-                Date endTime = new Date(endTimeL);
+                int dayMi = 1000 * 60 * 60 * 24;
+                Date endTime = new Date(endTimeL+dayMi);
 
                 predicateList.add(builder.between(root.get("createTime"), startTime, endTime));
             }
