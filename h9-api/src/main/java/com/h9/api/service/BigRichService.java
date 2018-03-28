@@ -10,6 +10,7 @@ import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.OrdersLotteryActivityRepository;
+import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
@@ -42,6 +43,8 @@ public class BigRichService {
     private UserRepository userRepository;
     @Resource
     private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
+    @Resource
+    private OrdersRepository ordersRepository;
 
     public Result getRecord(long userId,Integer page, Integer limit) {
         BigRichVO bigRichVO = new BigRichVO();
