@@ -3,10 +3,12 @@ package com.h9.admin.service;
 import com.h9.admin.model.dto.AddBigRichDTO;
 import com.h9.admin.model.dto.AddWinnerUserDTO;
 import com.h9.admin.model.vo.BigRichListVO;
+import com.h9.admin.model.vo.JoinBigRichUser;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.common.db.entity.lottery.Lottery;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.lottery.WinnerOptRecord;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
@@ -17,6 +19,7 @@ import com.h9.common.base.Result;
 import com.h9.common.db.entity.lottery.Reward;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
+import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,8 @@ public class ActivityService {
     private UserService userService;
     @Resource
     private WinnerOptRecordRep winnerOptRecordRep;
+    @Resource
+    private OrdersRepository ordersRepository;
 
 
     public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO) {
@@ -139,8 +144,10 @@ public class ActivityService {
         Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findByStatus(1, pageRequest);
 
         PageResult<BigRichListVO> mapVO = new PageResult<>(page).map(activity -> {
-            Map<Long, BigDecimal> userMap = activity.getWinnerUser();
-            return new BigRichListVO(activity, getFromMap(userMap));
+            Long winnerUserId = activity.getWinnerUserId();
+            User user = userRepository.findOne(winnerUserId);
+            int joinCount = (int) ordersRepository.findByCount(activity.getId());
+            return new BigRichListVO(activity, user, joinCount);
         });
 
         return Result.success(mapVO);
@@ -199,4 +206,27 @@ public class ActivityService {
         return Result.success();
     }
 
+    public Result bigRichUsers(Long id, int pageSize, int pageNumber) {
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(id);
+        if (ordersLotteryActivity == null) {
+            return Result.fail("期数不存在");
+        }
+
+        Sort sort = new Sort(Sort.Direction.DESC);
+        PageRequest pageRequest = ordersRepository.pageRequest(pageSize, pageNumber, sort);
+        Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
+        PageResult<JoinBigRichUser> mapVo = new PageResult<>(page).map(orders -> {
+            User user = orders.getUser();
+            String money = null;
+            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+            if (user.getId().equals(winnerUserId)) {
+                money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
+            }
+            JoinBigRichUser joinBigRichUser = new JoinBigRichUser(orders.getOrdersLotteryId(),
+                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber());
+
+            return joinBigRichUser;
+        });
+        return Result.success(mapVo);
+    }
 }

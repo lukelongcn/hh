@@ -55,18 +55,10 @@ public class BigRichListVO {
     private int status;
 
 
-    public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser) {
+    public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser,int joinCount) {
         this.setId(ordersLotteryActivity.getId());
         this.setNumber(ordersLotteryActivity.getNumber());
-        Map<Long, BigDecimal> winnerMap = ordersLotteryActivity.getWinnerUser();
-        if (winnerMap != null) {
-
-            Set<Long> set = winnerMap.keySet();
-            set.forEach(id -> {
-                this.setJoinCount(id + "");
-            });
-        }
-
+        this.setJoinCount(joinCount+"");
         if (winnerUser != null) {
 
             this.setWinnerUser(winnerUser.getPhone());

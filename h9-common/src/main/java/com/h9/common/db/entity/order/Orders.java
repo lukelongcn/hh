@@ -125,9 +125,19 @@ public class Orders extends BaseEntity {
     @Column(name = "city",columnDefinition = "varchar(50) default '' COMMENT ''")
     private String city;
 
-
     @Column(name="pay_info_id")
     private Long payInfoId;
+
+    @Column(name = "orders_lottery_id",columnDefinition = "bigint COMMENT '大富贵Id'")
+    private Long ordersLotteryId;
+
+    public Long getOrdersLotteryId() {
+        return ordersLotteryId;
+    }
+
+    public void setOrdersLotteryId(Long ordersLotteryId) {
+        this.ordersLotteryId = ordersLotteryId;
+    }
 
     public Long getPayInfoId() {
         return payInfoId;

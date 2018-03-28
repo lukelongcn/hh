@@ -41,8 +41,8 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 启用 0禁用 2结束'")
     private int status;
 
-    @Column(name = "winner_user", columnDefinition = "varchar(200)  COMMENT '中奖名单 json 对象 {id:money} 表示'")
-    private String winnerUser;
+//    @Column(name = "winner_user", columnDefinition = "varchar(200)  COMMENT '中奖名单 json 对象 {id:money} 表示'")
+//    private String winnerUser;
 
     @Column(name = "start_lottery_time", nullable = false, columnDefinition = "datetime COMMENT '开始抽奖时间'")
     private Date startLotteryTime;

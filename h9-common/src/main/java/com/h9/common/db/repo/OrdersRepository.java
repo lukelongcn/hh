@@ -30,25 +30,24 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     Page<Orders> findByUser(Long userId, Pageable pageable);
 
     @Query("SELECT o from Orders o where o.user.id=?1 and o.orderFrom = ?2 order by o.id desc")
-    Page<Orders> findByUser(Long userId,Integer orderFrom , Pageable pageable);
+    Page<Orders> findByUser(Long userId, Integer orderFrom, Pageable pageable);
 
 
     @Query("SELECT o from Orders o where o.user.id=?1 and o.goodsType = ?2 order by o.id desc")
-    Page<Orders> findDiDiCardByUser(Long userId,String goodsTypeCode, Pageable pageable);
+    Page<Orders> findDiDiCardByUser(Long userId, String goodsTypeCode, Pageable pageable);
 
-    default PageResult<Orders> findByUser(Long userId, int page, int limit){
+    default PageResult<Orders> findByUser(Long userId, int page, int limit) {
         Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));
         return new PageResult(byUser);
     }
 
     @Query("SELECT o from Orders o where o.user.id=?1 and status = ?2 order by o.id desc")
-    Page<Orders> findByUser(Long userId, int status,Pageable pageable);
+    Page<Orders> findByUser(Long userId, int status, Pageable pageable);
 
-    default PageResult<Orders> findByUser(Long userId, int status ,int page, int limit){
-        Page<Orders> byUser = findByUser(userId,status, pageRequest(page, limit));
+    default PageResult<Orders> findByUser(Long userId, int status, int page, int limit) {
+        Page<Orders> byUser = findByUser(userId, status, pageRequest(page, limit));
         return new PageResult(byUser);
     }
-
 
 
     @Async
@@ -61,24 +60,24 @@ public interface OrdersRepository extends BaseRepository<Orders> {
             public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (orderDTO.getNo() != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class),orderDTO.getNo()));
+                    predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class), orderDTO.getNo()));
                 }
                 if (StringUtils.isNotBlank(orderDTO.getPhone())) {
-                    predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class),orderDTO.getPhone()));
+                    predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class), orderDTO.getPhone()));
                 }
                 if (orderDTO.getStartTime() != null) {
-                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class),orderDTO.getStartTime()));
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class), orderDTO.getStartTime()));
                 }
                 if (orderDTO.getEndTime() != null) {
-                    predicateList.add(criteriaBuilder.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(orderDTO.getEndTime(),1)));
+                    predicateList.add(criteriaBuilder.lessThan(root.get("createTime").as(Date.class), DateUtil.addDays(orderDTO.getEndTime(), 1)));
                 }
-                if (orderDTO.getStatus() != null && orderDTO.getStatus() != -1){
-                    predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class),orderDTO.getStatus()));
+                if (orderDTO.getStatus() != null && orderDTO.getStatus() != -1) {
+                    predicateList.add(criteriaBuilder.equal(root.get("status").as(Integer.class), orderDTO.getStatus()));
                 }
                 Predicate[] pre = new Predicate[predicateList.size()];
-                if(pre!=null&&pre.length>=0){
-                     return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
-                }else{
+                if (pre != null && pre.length >= 0) {
+                    return criteriaQuery.where(predicateList.toArray(pre)).getRestriction();
+                } else {
                     return criteriaQuery.getRestriction();
                 }
             }
@@ -86,16 +85,23 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     }
 
 
-//    @Query("select sum(o.payMoney) from Orders o where (o.createTime > ?1 and o.createTime < ?2 and ?1 <> null and ?2 <> null) or 1=1")
-    @Query(value = "select sum(o.pay_money) from orders o ",nativeQuery = true)
+    //    @Query("select sum(o.payMoney) from Orders o where (o.createTime > ?1 and o.createTime < ?2 and ?1 <> null and ?2 <> null) or 1=1")
+    @Query(value = "SELECT sum(o.pay_money) FROM orders o ", nativeQuery = true)
     BigDecimal findPayMoneySum();
 
-    @Query(value = "select sum(o.pay_money) from orders o where o.create_time > ?1 and o.create_time < ?2",nativeQuery = true)
-    BigDecimal findPayMoneySumAndDate(Date startTime,Date endTime);
+    @Query(value = "SELECT sum(o.pay_money) FROM orders o WHERE o.create_time > ?1 AND o.create_time < ?2", nativeQuery = true)
+    BigDecimal findPayMoneySumAndDate(Date startTime, Date endTime);
 
     @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1")
     BigDecimal findWXPayMoneySum(Integer payMethod);
 
     @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1 and o.createTime > ?2 and o.createTime < ?3")
-    BigDecimal findWXPayMoneySumAndDate(Integer payMethod,Date startTime,Date endTime);
+    BigDecimal findWXPayMoneySumAndDate(Integer payMethod, Date startTime, Date endTime);
+
+    @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1")
+    Object findByCount(Long id);
+
+    @Query("select o from Orders o where o.ordersLotteryId = ?1")
+    Page<Orders> findByordersLotteryId(Long ordersLotteryId,Pageable pageable);
+
 }

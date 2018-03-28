@@ -4,6 +4,7 @@ import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.AddBigRichDTO;
 import com.h9.admin.model.dto.AddWinnerUserDTO;
 import com.h9.admin.model.vo.BigRichListVO;
+import com.h9.admin.model.vo.JoinBigRichUser;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
@@ -13,6 +14,7 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,15 +66,24 @@ public class ActivityController {
     @ApiOperation("大富贵期数列表")
     public Result<BigRichListVO> bigRichList(@RequestParam(defaultValue = "10") Integer pageSize,
                                              @RequestParam Integer pageNumber) {
-        return activityService.bigRichList(pageNumber,pageSize);
+        return activityService.bigRichList(pageNumber, pageSize);
     }
 
     @Secured
     @PostMapping(value = "/bigRich/user")
     @ApiOperation("添加中奖用户")
-    public Result addWinnerUser(@RequestBody@Valid AddWinnerUserDTO addWinnerUserDTO,
-                                @SessionAttribute("curUserId")Long userId) {
-        return activityService.addWinnerUser(addWinnerUserDTO,userId);
+    public Result addWinnerUser(@RequestBody @Valid AddWinnerUserDTO addWinnerUserDTO,
+                                @SessionAttribute("curUserId") Long userId) {
+        return activityService.addWinnerUser(addWinnerUserDTO, userId);
     }
 
+
+    @Secured
+    @GetMapping(value = "/bigRich/users/{id}")
+    @ApiOperation("参与用户列表")
+    public Result<JoinBigRichUser> bigRichUsers(@ApiParam("期数Id") @PathVariable Long id,
+                                                @RequestParam(defaultValue = "10") Integer pageSize,
+                                                @RequestParam Integer pageNumber) {
+        return activityService.bigRichUsers(id,pageSize,pageNumber);
+    }
 }
