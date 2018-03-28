@@ -1,6 +1,7 @@
 package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
+import com.h9.admin.model.dto.AddBigRichDTO;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
@@ -12,6 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author: George
@@ -46,4 +49,11 @@ public class ActivityController {
         return Result.success(new LotteryFlowDetailVO());
         //return this.activityService.getRewards(rewardQueryDTO);
     }*/
+
+
+    @PostMapping(value = "/bigRich")
+    @ApiOperation("新增大富贵期数")
+    public Result addBigRichActivity(@Valid@RequestBody AddBigRichDTO addBigRichDTO){
+        return activityService.addBigRichActivity(addBigRichDTO);
+    }
 }
