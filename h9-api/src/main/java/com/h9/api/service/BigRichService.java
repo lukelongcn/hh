@@ -61,31 +61,11 @@ public class BigRichService {
     public BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
-        OrdersLotteryActivity ordersLotteryActivity = new OrdersLotteryActivity();
-        ordersLotteryActivity.setWinnerUser(ordersLotteryActivity.getWinnerUser());
-        ordersLotteryActivity.setJoinCount(1);
-        ordersLotteryActivity.setStatus(1);
-        ordersLotteryActivity.setEndTime(new Date());
-        ordersLotteryActivity.setStartTime(new Date());
-        ordersLotteryActivity.setNumber("23423");
-        ordersLotteryActivity.setStartLotteryTime(new Date());
-        ordersLotteryActivityRepository.save(ordersLotteryActivity);
+        User user = userRepository.findOne(e.getWinnerUserId());
+        bigRichRecordVO.setUserName(user.getNickName());
+        bigRichRecordVO.setLotteryMoney(e.getMoney());
+        bigRichRecordVO.setEndTime(DateUtil.formatDate(e.getEndTime(), DateUtil.FormatType.MINUTE));
 
-        Map<Long,BigDecimal> map = e.getWinnerUser();
-        if (map == null){
-            return bigRichRecordVO;
-        }
-        Iterator iterator = map.entrySet().iterator();
-        while (iterator.hasNext()){
-            Map.Entry entry = (Map.Entry) iterator.next();
-            Object key = entry.getKey();
-            Object value = entry.getValue();
-
-             User user = userRepository.findOne((Long) key);
-             bigRichRecordVO.setUserName(user.getNickName());
-             bigRichRecordVO.setLotteryMoney((BigDecimal) value);
-             bigRichRecordVO.setEndTime(DateUtil.formatDate(e.getEndTime(), DateUtil.FormatType.MINUTE));
-        }
 
         return bigRichRecordVO;
     }
