@@ -161,7 +161,8 @@ public class BalanceFlow extends BaseEntity {
         SIGN(16,"签到"),
         STICK_REWARD(17,"打赏"),
         USER_TRANSFER(20,"转账"),
-        RED_ENVELOPE(21,"红包推广");
+        RED_ENVELOPE(21,"红包推广"),
+        EXCHANGE(22,"兑换商品");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;

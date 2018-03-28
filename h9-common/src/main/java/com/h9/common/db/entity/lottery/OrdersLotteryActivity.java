@@ -71,7 +71,4 @@ public class OrdersLotteryActivity extends BaseEntity {
 //    }
 
 
-    public static void main(String[] args) {
-
-    }
 }
