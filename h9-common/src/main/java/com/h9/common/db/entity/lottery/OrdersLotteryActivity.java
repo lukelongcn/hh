@@ -2,6 +2,7 @@ package com.h9.common.db.entity.lottery;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.h9.common.base.BaseEntity;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
@@ -10,10 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -50,6 +48,8 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "winner_user", columnDefinition = "varchar(200)  COMMENT '中奖名单 json 对象 {id:money} 表示'")
     private String winnerUser;
 
+
+
     @Column(name = "start_lottery_time", nullable = false, columnDefinition = "datetime COMMENT '开始抽奖时间'")
     private Date startLotteryTime;
 
@@ -74,5 +74,24 @@ public class OrdersLotteryActivity extends BaseEntity {
         String json = JSONObject.toJSONString(winnerUserMap);
         this.winnerUser = json;
 
+    }
+
+
+    public static void main(String[] args) {
+        OrdersLotteryActivity ordersLotteryActivity = new OrdersLotteryActivity();
+        Map map = new HashMap();
+        map.put("1","11");
+        ordersLotteryActivity.setWinnerUser(map);
+       /* Set key = ordersLotteryActivity.getWinnerUser().keySet();
+        System.out.println(key);*/
+
+        Iterator iterator = ordersLotteryActivity.getWinnerUser().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            System.out.println(key);
+            System.out.println(value);
+        }
     }
 }

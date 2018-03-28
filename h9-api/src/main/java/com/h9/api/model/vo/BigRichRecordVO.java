@@ -16,5 +16,5 @@ import java.util.Date;
 public class BigRichRecordVO {
     private String userName;
     private BigDecimal lotteryMoney;
-    private Date endTime;
+    private String endTime;
 }
