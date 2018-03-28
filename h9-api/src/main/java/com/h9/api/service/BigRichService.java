@@ -37,8 +37,12 @@ public class BigRichService {
         User user  = userRepository.findOne(userId);
         PageResult<OrdersLotteryActivity> pageResult = ordersLotteryActivityRepository.findAllDetail(page,limit);
         if (pageResult != null){
-            return null;
+            PageResult<BigRichRecordVO> pageResultRecord = pageResult.result2Result(e->activityToRecord(e));
         }
+        return null;
+    }
+
+    private BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         return null;
     }
 }

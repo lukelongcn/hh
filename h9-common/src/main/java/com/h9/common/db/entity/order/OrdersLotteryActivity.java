@@ -26,7 +26,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class OrdersLotteryActivity extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(name = "activity_number", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '期数'")
@@ -34,8 +34,6 @@ public class OrdersLotteryActivity extends BaseEntity {
 
     @Column(name = "join_count", columnDefinition = "int default 0 COMMENT '参与人数'")
     private int joinCount;
-
-
 
     @Column(name = "start_time", nullable = false, columnDefinition = "datetime COMMENT '开始时间'")
     private Date startTime;
@@ -53,7 +51,7 @@ public class OrdersLotteryActivity extends BaseEntity {
     private String winnerUser;
 
     @Column(name = "start_lottery_time", nullable = false, columnDefinition = "datetime COMMENT '开始抽奖时间'")
-    private Data startLotteryTime;
+    private Date startLotteryTime;
 
     public Map<Long,BigDecimal> getWinnerUser() {
         if (StringUtils.isNotBlank(winnerUser)) {
