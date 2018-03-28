@@ -4,7 +4,7 @@ import com.h9.api.model.vo.BigRichRecordVO;
 import com.h9.api.model.vo.BigRichVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.order.OrdersLotteryActivity;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.OrdersLotteryActivityRepository;
@@ -62,9 +62,7 @@ public class BigRichService {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
         OrdersLotteryActivity ordersLotteryActivity = new OrdersLotteryActivity();
-        Map map1 = new HashMap();
-        map1.put("1","11");
-        ordersLotteryActivity.setWinnerUser(map1);
+        ordersLotteryActivity.setWinnerUser(ordersLotteryActivity.getWinnerUser());
         ordersLotteryActivity.setJoinCount(1);
         ordersLotteryActivity.setStatus(1);
         ordersLotteryActivity.setEndTime(new Date());

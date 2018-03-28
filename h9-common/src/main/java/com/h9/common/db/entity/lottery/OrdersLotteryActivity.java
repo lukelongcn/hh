@@ -1,12 +1,8 @@
 package com.h9.common.db.entity.lottery;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.h9.common.base.BaseEntity;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 
@@ -59,39 +55,25 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "winner_user_id",columnDefinition = "bigint COMMENT '中奖人Id'")
     private Long winnerUserId;
 
-    public Map<Long,BigDecimal> getWinnerUser() {
-        if (StringUtils.isNotBlank(winnerUser)) {
-            Map<Long,BigDecimal> map = JSONObject.parseObject(winnerUser, Map.class);
-            return map;
-        }
-        return null;
-    }
+//    public Map<Long,BigDecimal> getWinnerUser() {
+//        if (StringUtils.isNotBlank(winnerUser)) {
+//            Map<Long,BigDecimal> map = JSONObject.parseObject(winnerUser, Map.class);
+//            return map;
+//        }
+//        return null;
+//    }
 
-    public void setWinnerUser(Map<Long,BigDecimal> winnerUserMap) {
-        if (winnerUserMap == null) {
-            return;
-        }
-        String json = JSONObject.toJSONString(winnerUserMap);
-        this.winnerUser = json;
-
-    }
+//    public void setWinnerUser(Map<Long,BigDecimal> winnerUserMap) {
+//        if (winnerUserMap == null) {
+//            return;
+//        }
+//        String json = JSONObject.toJSONString(winnerUserMap);
+//        this.winnerUser = json;
+//
+//    }
 
 
     public static void main(String[] args) {
-        OrdersLotteryActivity ordersLotteryActivity = new OrdersLotteryActivity();
-        Map map = new HashMap();
-        map.put("1","11");
-        ordersLotteryActivity.setWinnerUser(map);
-       /* Set key = ordersLotteryActivity.getWinnerUser().keySet();
-        System.out.println(key);*/
 
-        Iterator iterator = ordersLotteryActivity.getWinnerUser().entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            Object key = entry.getKey();
-            Object value = entry.getValue();
-            System.out.println(key);
-            System.out.println(value);
-        }
     }
 }
