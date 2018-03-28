@@ -26,7 +26,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class OrdersLotteryActivity extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(name = "activity_number", nullable = false, columnDefinition = "varchar(64) default '' COMMENT '期数'")
@@ -35,15 +35,13 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "join_count", columnDefinition = "int default 0 COMMENT '参与人数'")
     private int joinCount;
 
-
-
     @Column(name = "start_time", nullable = false, columnDefinition = "datetime COMMENT '开始时间'")
     private Date startTime;
 
     @Column(name = "end_time", nullable = false, columnDefinition = "datetime  COMMENT '结束时间'")
     private Date endTime;
 
-    @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态'")
+    @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 已开奖 0 未开奖 3 已失效'")
     private int status;
 
     @Column(name = "winner_user", columnDefinition = "varchar(200)  COMMENT '中奖名单 json 对象 {id:money} 表示'")
@@ -63,6 +61,5 @@ public class OrdersLotteryActivity extends BaseEntity {
         }
         String json = JSONObject.toJSONString(winnerUserMap);
         this.winnerUser = json;
-
     }
 }
