@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class BigRichService {
 
 
-    public Result getRecord(long userId) {
+    public Result getRecord(long id, Integer page, long userId) {
         return null;
     }
 }
