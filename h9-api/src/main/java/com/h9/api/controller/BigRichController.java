@@ -24,12 +24,12 @@ public class BigRichController {
     private BigRichService bigRichServicel;
 
     /** TODO */
-    @Secured
+
     @GetMapping("/bigrich/record")
-    public Result getRecord(@SessionAttribute("curUserId")long userId,
+    public Result getRecord(/*@SessionAttribute("curUserId")long userId,*/
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "20") Integer limit){
-        return bigRichServicel.getRecord(userId,page,limit);
+        return bigRichServicel.getRecord(1,page,limit);
     }
 
 }
