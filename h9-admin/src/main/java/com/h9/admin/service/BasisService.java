@@ -389,7 +389,7 @@ public class BasisService {
 
         if (startTime != null && endTime != null) {
             startTimeDate = new Date(startTime);
-            endTimeDate = new Date(endTime);
+            endTimeDate = new Date(endTime + 1000 * 60 * 60 * 24);
             withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCountAndDate(FINISH.getCode(),startTimeDate,endTimeDate);
             payOrderMoneySum = ordersRepository.findPayMoneySumAndDate(startTimeDate,endTimeDate);
             wxPayMoneySum = ordersRepository.findWXPayMoneySumAndDate(WX_PAY.getCode(),startTimeDate,endTimeDate);
