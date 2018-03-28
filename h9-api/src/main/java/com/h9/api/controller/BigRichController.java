@@ -29,7 +29,7 @@ public class BigRichController {
     public Result getRecord(@SessionAttribute("curUserId")long userId,
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "20") Integer limit){
-        return bigRichService.getRecord(1,page,limit);
+        return bigRichService.getRecord(userId,page,limit);
     }
 
     @GetMapping("/bigrich/userRecord")
