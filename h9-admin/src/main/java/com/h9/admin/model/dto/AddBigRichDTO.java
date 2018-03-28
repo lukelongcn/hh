@@ -7,13 +7,14 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * Created by Ln on 2018/3/28.
  */
-@Data
 @Accessors(chain = true)
 @ApiModel(value = "新增参数")
+@Data
 public class AddBigRichDTO {
     @NotNull(message = "开始时间不能为空")
     @ApiModelProperty("开始时间")
@@ -30,4 +31,5 @@ public class AddBigRichDTO {
 
     @NotNull(message = "开奖时间不能为空")
     private Long startLotteryTime;
+
 }

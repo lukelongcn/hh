@@ -1,7 +1,9 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.order.OrdersLotteryActivity;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
@@ -14,4 +16,7 @@ public interface OrdersLotteryActivityRep extends BaseRepository<OrdersLotteryAc
 
     @Query("select o from OrdersLotteryActivity o where ?1>= o.startTime and ?1 < o.endTime and o.status = 1")
     List<OrdersLotteryActivity> findByDate(Date date);
+
+    @Query("select o from OrdersLotteryActivity o where o.status =?1")
+    Page<OrdersLotteryActivity> findByStatus(int status, Pageable pageable);
 }

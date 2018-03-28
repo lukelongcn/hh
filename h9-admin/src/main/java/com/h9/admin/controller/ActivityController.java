@@ -2,6 +2,8 @@ package com.h9.admin.controller;
 
 import com.h9.admin.interceptor.Secured;
 import com.h9.admin.model.dto.AddBigRichDTO;
+import com.h9.admin.model.dto.AddWinnerUserDTO;
+import com.h9.admin.model.vo.BigRichListVO;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
@@ -31,14 +33,14 @@ public class ActivityController {
     @Secured(accessCode = "activity:lottery:list")
     @GetMapping(value = "/lottery/page")
     @ApiOperation("分页获取抢红包")
-    public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO){
+    public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO) {
         return this.activityService.getRewards(rewardQueryDTO);
     }
 
     @Secured(accessCode = "activity:lottery:flow:list")
     @GetMapping(value = "/lottery/flow/page")
     @ApiOperation("分页获取抢红包参与列表")
-    public Result<PageResult<LotteryFlowActivityVO>> getLotteryFlows(LotteryFlowActivityDTO lotteryFlowActivityDTO){
+    public Result<PageResult<LotteryFlowActivityVO>> getLotteryFlows(LotteryFlowActivityDTO lotteryFlowActivityDTO) {
         return this.activityService.getLotteryFlows(lotteryFlowActivityDTO);
     }
 
@@ -50,10 +52,27 @@ public class ActivityController {
         //return this.activityService.getRewards(rewardQueryDTO);
     }*/
 
-
+    @Secured
     @PostMapping(value = "/bigRich")
     @ApiOperation("新增大富贵期数")
-    public Result addBigRichActivity(@Valid@RequestBody AddBigRichDTO addBigRichDTO){
+    public Result addBigRichActivity(@Valid @RequestBody AddBigRichDTO addBigRichDTO) {
         return activityService.addBigRichActivity(addBigRichDTO);
     }
+
+    @Secured
+    @GetMapping(value = "/bigRiches")
+    @ApiOperation("大富贵期数列表")
+    public Result<BigRichListVO> bigRichList(@RequestParam(defaultValue = "10") Integer pageSize,
+                                             @RequestParam Integer pageNumber) {
+        return activityService.bigRichList(pageNumber,pageSize);
+    }
+
+    @Secured
+    @PostMapping(value = "/bigRich/user")
+    @ApiOperation("添加中奖用户")
+    public Result addWinnerUser(@RequestBody@Valid AddWinnerUserDTO addWinnerUserDTO,
+                                @SessionAttribute("curUserId")Long userId) {
+        return activityService.addWinnerUser(addWinnerUserDTO,userId);
+    }
+
 }

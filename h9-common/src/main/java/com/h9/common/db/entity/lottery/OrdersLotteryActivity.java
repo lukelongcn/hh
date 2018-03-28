@@ -1,4 +1,4 @@
-package com.h9.common.db.entity.order;
+package com.h9.common.db.entity.lottery;
 
 
 import com.alibaba.fastjson.JSONObject;
@@ -42,16 +42,22 @@ public class OrdersLotteryActivity extends BaseEntity {
     private Date endTime;
 
     /**
-     * 状态 1 启用 0禁用
+     * 状态 1 启用 0禁用 2结束
      */
-    @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 启用 0禁用'")
+    @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 启用 0禁用 2结束'")
     private int status;
 
     @Column(name = "winner_user", columnDefinition = "varchar(200)  COMMENT '中奖名单 json 对象 {id:money} 表示'")
     private String winnerUser;
 
     @Column(name = "start_lottery_time", nullable = false, columnDefinition = "datetime COMMENT '开始抽奖时间'")
-    private Data startLotteryTime;
+    private Date startLotteryTime;
+
+    @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '金额'")
+    private BigDecimal money = new BigDecimal(0);
+
+    @Column(name = "winner_user_id",columnDefinition = "bigint COMMENT '中奖人Id'")
+    private Long winnerUserId;
 
     public Map<Long,BigDecimal> getWinnerUser() {
         if (StringUtils.isNotBlank(winnerUser)) {
