@@ -1,6 +1,7 @@
 package com.h9.api.controller;
 
 import com.h9.api.interceptor.Secured;
+import com.h9.api.model.vo.BigRichVO;
 import com.h9.api.service.BigRichService;
 import com.h9.common.base.Result;
 import org.hibernate.annotations.GeneratorType;
@@ -21,15 +22,21 @@ public class BigRichController {
 
 
     @Resource
-    private BigRichService bigRichServicel;
+    private BigRichService bigRichService;
 
-    /** TODO */
-
+    @Secured
     @GetMapping("/bigrich/record")
-    public Result getRecord(/*@SessionAttribute("curUserId")long userId,*/
+    public Result getRecord(@SessionAttribute("curUserId")long userId,
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "20") Integer limit){
-        return bigRichServicel.getRecord(1,page,limit);
+        return bigRichService.getRecord(1,page,limit);
+    }
+
+    @GetMapping("/bigrich/userRecord")
+    public  Result getUserRecord(@SessionAttribute("curUserId")long userId,
+                                 @RequestParam(defaultValue = "1") Integer page,
+                                 @RequestParam(defaultValue = "10") Integer limit){
+        return bigRichService.getUserRecord(userId,page,limit);
     }
 
 }

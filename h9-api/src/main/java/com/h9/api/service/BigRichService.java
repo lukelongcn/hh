@@ -2,8 +2,10 @@ package com.h9.api.service;
 
 import com.h9.api.model.vo.BigRichRecordVO;
 import com.h9.api.model.vo.BigRichVO;
+import com.h9.api.model.vo.UserBigRichRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -62,13 +64,33 @@ public class BigRichService {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
         User user = userRepository.findOne(e.getWinnerUserId());
+        if (user == null || e.getMoney() == null){
+            return bigRichRecordVO;
+        }
         bigRichRecordVO.setUserName(user.getNickName());
         bigRichRecordVO.setLotteryMoney(e.getMoney());
         bigRichRecordVO.setEndTime(DateUtil.formatDate(e.getEndTime(), DateUtil.FormatType.MINUTE));
-
-
         return bigRichRecordVO;
     }
 
+
+    public Result getUserRecord(long userId, Integer page, Integer limit) {
+        PageResult<OrdersLotteryActivity> pageResult = ordersLotteryActivityRepository.findByUserId(userId,page,limit);
+        if (pageResult == null){
+            return Result.fail("暂无记录");
+        }
+        return Result.success(pageResult.result2Result(e->activityToUserRecord(e)));
+    }
+    @Transactional
+    public UserBigRichRecordVO activityToUserRecord(OrdersLotteryActivity e) {
+        UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
+        userBigRichRecordVO.setEndTime(DateUtil.formatDate(e.getEndTime(), DateUtil.FormatType.MINUTE));
+        userBigRichRecordVO.setNumber(e.getNumber());
+        userBigRichRecordVO.setStatus(e.getStatus());
+        userBigRichRecordVO.setWay(BalanceFlow.BalanceFlowTypeEnum.EXCHANGE.getName());
+        BigDecimal bigDecimal = e.getMoney().setScale(2,BigDecimal.ROUND_DOWN);
+        userBigRichRecordVO.setMoney(bigDecimal);
+        return userBigRichRecordVO;
+    }
 
 }

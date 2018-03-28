@@ -91,5 +91,8 @@ public class OrdersLotteryActivity extends BaseEntity {
             System.out.println(key);
             System.out.println(value);
         }
+        BigDecimal bigDecimal1 = new BigDecimal(3568888889.9980);
+        BigDecimal bigDecimal = bigDecimal1.setScale(2,BigDecimal.ROUND_DOWN);
+        System.out.println(bigDecimal);
     }
 }
