@@ -84,6 +84,9 @@ public class User extends BaseEntity {
     @Column(name = "sign_days", nullable = false, columnDefinition = "tinyint default 0 COMMENT '连续签到天数'")
     private Integer signDays = 0;
 
+    @Column(name = "lottery_chance", nullable = false, columnDefinition = "tinyint default 0 COMMENT '抽奖机会'")
+    private Integer lotteryChance = 0;
+
     @Column(name = "client",columnDefinition = "int default 0 COMMENT '客户端'")
     private Integer client;
 
@@ -105,6 +108,7 @@ public class User extends BaseEntity {
 
     @Column(name="street_number",columnDefinition = "varchar(50) COMMENT '街道号'")
     private String streetNumber;
+
 
     public User() {
     }
