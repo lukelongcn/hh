@@ -260,7 +260,7 @@ public class ActivityService {
     public void startBigRichLottery() {
         Date now = new Date();
         Date willDate = DateUtil.getDate(now, 5, Calendar.MINUTE);
-        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate);
+        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate,now);
         if (CollectionUtils.isEmpty(lotteryActivityList)) {
             return;
         }
@@ -280,7 +280,8 @@ public class ActivityService {
             // 开奖
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (winnerUserId == null) {
-                ordersLotteryActivity.setStatus(2);
+                logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: "+winnerUserId);
+                return;
             }
             User user = userRepository.findOne(winnerUserId);
             BigDecimal money = ordersLotteryActivity.getMoney();
@@ -291,7 +292,7 @@ public class ActivityService {
                         BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getName());
             } else {
                 logger.info("用户不存在 id: " + winnerUserId);
-            }
+            }ordersLotteryActivity.setStatus(2);
             ordersLotteryActivityRep.save(ordersLotteryActivity);
 
         } catch (InterruptedException e) {

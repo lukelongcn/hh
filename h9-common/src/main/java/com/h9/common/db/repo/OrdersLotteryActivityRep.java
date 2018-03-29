@@ -20,7 +20,8 @@ public interface OrdersLotteryActivityRep extends BaseRepository<OrdersLotteryAc
     @Query("select o from OrdersLotteryActivity o where o.status =?1")
     Page<OrdersLotteryActivity> findByStatus(int status, Pageable pageable);
 
-    @Query("select o from OrdersLotteryActivity o where  o.status = 1 and o.startLotteryTime > ?1")
-    List<OrdersLotteryActivity> findByLotteryDate(Date date);
+    @Query("select o from OrdersLotteryActivity o where  o.status = 1 and o.startLotteryTime < ?1 " +
+            "and o.startLotteryTime >?2")
+    List<OrdersLotteryActivity> findByLotteryDate(Date date,Date now);
 
 }
