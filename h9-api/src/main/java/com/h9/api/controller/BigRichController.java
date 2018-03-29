@@ -32,6 +32,7 @@ public class BigRichController {
         return bigRichService.getRecord(userId,page,limit);
     }
 
+    @Secured
     @GetMapping("/bigrich/userRecord")
     public  Result getUserRecord(@SessionAttribute("curUserId")long userId,
                                  @RequestParam(defaultValue = "1") Integer page,
