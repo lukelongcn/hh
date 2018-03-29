@@ -29,4 +29,8 @@ public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersL
         Page<OrdersLotteryActivity> list = findByUserId(userId, pageRequest(page,limit));
         return new PageResult<>(list);
     }
+
+
+    @Query("select o from OrdersLotteryActivity o where o.id = ?1 and o.status <> 0")
+    OrdersLotteryActivity findOneById(Long Id);
 }
