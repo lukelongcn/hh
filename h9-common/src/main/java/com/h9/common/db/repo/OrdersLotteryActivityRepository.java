@@ -23,13 +23,6 @@ public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersL
         return new PageResult(List);
     }
 
-    @Query("select o from OrdersLotteryActivity o where o.winnerUserId = ?1 and o.status <> 0 order by o.endTime ")
-    Page<OrdersLotteryActivity> findByUserId(long userId, Pageable pageable);
-    default PageResult<OrdersLotteryActivity> findByUserId(long userId, Integer page, Integer limit){
-        Page<OrdersLotteryActivity> list = findByUserId(userId, pageRequest(page,limit));
-        return new PageResult<>(list);
-    }
-
 
     @Query("select o from OrdersLotteryActivity o where o.id = ?1 and o.status <> 0")
     OrdersLotteryActivity findOneById(Long id);

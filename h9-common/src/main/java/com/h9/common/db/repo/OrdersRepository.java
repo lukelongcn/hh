@@ -106,11 +106,10 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select o from Orders o where o.ordersLotteryId = ?1")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId,Pageable pageable);
 
-    @Query("select o from Orders o where o.user.id = ?1 and o.ordersLotteryId is not null ")
-    Page<Orders> findByUserId(long userId,Pageable pageable);
-
+    @Query("select o from Orders o where o.user.id = ?1 and o.ordersLotteryId is not null order by o.createTime ")
+    Page<Orders> findByUserId(long userId, Pageable pageable);
     default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit){
-        Page<Orders> pageResult = findByUserId(userId,pageRequest(page,limit));
-        return new PageResult<>(pageResult);
+        Page<Orders> list = findByUserId(userId, pageRequest(page,limit));
+        return new PageResult<>(list);
     }
 }

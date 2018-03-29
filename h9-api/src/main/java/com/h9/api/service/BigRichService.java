@@ -94,9 +94,11 @@ public class BigRichService {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
-        if (ordersLotteryActivity == null){
+            if (ordersLotteryActivity == null){
             return null;
         }
+        // 订单id
+        userBigRichRecordVO.setOrdersId(e.getId());
         // 抽奖时间
         userBigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(ordersLotteryActivity.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
         // 期数
