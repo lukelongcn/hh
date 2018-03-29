@@ -119,7 +119,7 @@ public class BigRichService {
         }
 
         // 获得方式
-        userBigRichRecordVO.setWay(BalanceFlow.BalanceFlowTypeEnum.EXCHANGE.getName());
+        userBigRichRecordVO.setWay("兑换商品");
         // 金额
         BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2,BigDecimal.ROUND_DOWN);
         userBigRichRecordVO.setMoney(bigDecimal);
