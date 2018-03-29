@@ -53,7 +53,7 @@ public class BigRichService {
         User user  = userRepository.findOne(userId);
         PageResult<OrdersLotteryActivity> pageResult = ordersLotteryActivityRepository.findAllDetail(page,limit);
         if (pageResult != null){
-            PageResult<BigRichRecordVO> pageResultRecord = pageResult.result2Result(e->activityToRecord(e));
+            PageResult<BigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToRecord);
             bigRichVO.setRecordList(pageResultRecord);
         }
         bigRichVO.setBigRichMoney(userAccount.getBigRichMoney());
@@ -67,13 +67,16 @@ public class BigRichService {
     public BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
+        if (e.getWinnerUserId() == null){
+            return null;
+        }
         User user = userRepository.findOne(e.getWinnerUserId());
         if (user == null || e.getMoney() == null){
             return bigRichRecordVO;
         }
         bigRichRecordVO.setUserName(user.getNickName());
         bigRichRecordVO.setLotteryMoney(e.getMoney());
-        bigRichRecordVO.setEndTime(DateUtil.formatDate(e.getEndTime(), DateUtil.FormatType.MINUTE));
+        bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
         return bigRichRecordVO;
     }
 
@@ -83,16 +86,17 @@ public class BigRichService {
         if (pageResult == null){
             return Result.fail("暂无记录");
         }
-        return Result.success(pageResult.result2Result(e->activityToUserRecord(e)));
+        PageResult<UserBigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToUserRecord);
+        return Result.success(pageResultRecord);
     }
     @Transactional
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
+        UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
         if (ordersLotteryActivity == null){
             return null;
         }
-        UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
         // 抽奖时间
         userBigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(ordersLotteryActivity.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
         // 期数

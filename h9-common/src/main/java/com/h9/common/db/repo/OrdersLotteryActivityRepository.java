@@ -32,5 +32,5 @@ public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersL
 
 
     @Query("select o from OrdersLotteryActivity o where o.id = ?1 and o.status <> 0")
-    OrdersLotteryActivity findOneById(Long Id);
+    OrdersLotteryActivity findOneById(Long id);
 }
