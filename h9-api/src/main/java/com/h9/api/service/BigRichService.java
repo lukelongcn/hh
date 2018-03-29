@@ -63,7 +63,8 @@ public class BigRichService {
         return Result.success(bigRichVO);
     }
 
-    @Transactional
+
+    @Transactional(rollbackFor = Exception.class)
     public BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
@@ -89,7 +90,7 @@ public class BigRichService {
         PageResult<UserBigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToUserRecord);
         return Result.success(pageResultRecord);
     }
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
