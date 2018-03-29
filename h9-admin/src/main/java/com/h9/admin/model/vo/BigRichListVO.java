@@ -55,7 +55,7 @@ public class BigRichListVO {
     private int status;
 
 
-    public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser,int joinCount) {
+    public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser,long joinCount) {
         this.setId(ordersLotteryActivity.getId());
         this.setNumber(ordersLotteryActivity.getNumber());
         this.setJoinCount(joinCount+"");

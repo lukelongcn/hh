@@ -24,12 +24,23 @@ public class Lock {
      */
     public boolean getLock(String lockKey){
 
-
-
         String value = redisBean.getStringValue(lockKey);
 
         if (StringUtils.isBlank(value)) {
             redisBean.setStringValue(lockKey,"LOCK",5, TimeUnit.MINUTES);
+            logger.info("获取定时任务锁成功, key: "+lockKey);
+            return true;
+        }
+        logger.info("获取定时任务锁失败,key: "+lockKey);
+        return false;
+    }
+
+    public boolean getLock(String lockKey,int timeOut,TimeUnit timeUnit){
+
+        String value = redisBean.getStringValue(lockKey);
+
+        if (StringUtils.isBlank(value)) {
+            redisBean.setStringValue(lockKey,"LOCK",timeOut, timeUnit);
             logger.info("获取定时任务锁成功, key: "+lockKey);
             return true;
         }

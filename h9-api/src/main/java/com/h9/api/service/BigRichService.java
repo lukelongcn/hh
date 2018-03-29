@@ -14,18 +14,11 @@ import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
-import lombok.Data;
-import lombok.Setter;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * <p>Title:h9-parent</p>
@@ -90,7 +83,7 @@ public class BigRichService {
         userBigRichRecordVO.setEndTime(DateUtil.formatDate(e.getEndTime(), DateUtil.FormatType.MINUTE));
         userBigRichRecordVO.setNumber(e.getNumber());
         userBigRichRecordVO.setStatus(e.getStatus());
-        userBigRichRecordVO.setWay(BalanceFlow.BalanceFlowTypeEnum.EXCHANGE.getName());
+        userBigRichRecordVO.setWay(BalanceFlow.BalanceFlowTypeEnum.BIGRICH_BOUNS.getName());
         BigDecimal bigDecimal = e.getMoney().setScale(2,BigDecimal.ROUND_DOWN);
         userBigRichRecordVO.setMoney(bigDecimal);
         return userBigRichRecordVO;
