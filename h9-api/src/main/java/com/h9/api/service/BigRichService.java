@@ -104,7 +104,20 @@ public class BigRichService {
         // 期数
         userBigRichRecordVO.setNumber(ordersLotteryActivity.getNumber());
         // 状态
-        userBigRichRecordVO.setStatus(ordersLotteryActivity.getStatus());
+        if (e.getUser().getId() .equals(ordersLotteryActivity.getWinnerUserId())
+                && ordersLotteryActivity.getStartLotteryTime().before(new Date())){
+            // 已中奖
+            userBigRichRecordVO.setStatus(1);
+        }
+        // 待开奖
+        else if (ordersLotteryActivity.getStartLotteryTime().after(new Date())) {
+            userBigRichRecordVO.setStatus(2);
+        }
+        // 未中奖
+        else {
+            userBigRichRecordVO.setStatus(3);
+        }
+
         // 获得方式
         userBigRichRecordVO.setWay(BalanceFlow.BalanceFlowTypeEnum.EXCHANGE.getName());
         // 金额
