@@ -236,8 +236,8 @@ public class ActivityService {
             return Result.fail("期数不存在");
         }
 
-        Sort sort = new Sort(Sort.Direction.DESC);
-        PageRequest pageRequest = ordersRepository.pageRequest(pageSize, pageNumber, sort);
+        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        PageRequest pageRequest = ordersRepository.pageRequest(pageNumber,pageSize,  sort);
         Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
         PageResult<JoinBigRichUser> mapVo = new PageResult<>(page).map(orders -> {
             User user = orders.getUser();

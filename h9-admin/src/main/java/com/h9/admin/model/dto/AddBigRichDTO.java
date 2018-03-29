@@ -19,8 +19,8 @@ public class AddBigRichDTO {
     @NotNull(message = "开始时间不能为空")
     @ApiModelProperty("开始时间")
     private Long startTime;
-    @ApiModelProperty("结束时间")
 
+    @ApiModelProperty("结束时间")
     @NotNull(message = "结束时间不能为空")
     private Long endTime;
 
@@ -30,6 +30,7 @@ public class AddBigRichDTO {
     private Integer status;
 
     @NotNull(message = "开奖时间不能为空")
+    @ApiModelProperty("开奖时间")
     private Long startLotteryTime;
 
 }

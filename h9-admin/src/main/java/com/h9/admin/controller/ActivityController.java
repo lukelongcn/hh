@@ -13,6 +13,7 @@ import com.h9.admin.service.ActivityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class ActivityController {
     @Secured
     @PostMapping(value = "/bigRich")
     @ApiOperation("新增大富贵期数")
-    public Result addBigRichActivity(@Valid @RequestBody AddBigRichDTO addBigRichDTO) {
+    public Result addBigRichActivity(@Valid @RequestBody @ApiParam AddBigRichDTO addBigRichDTO) {
         return activityService.addBigRichActivity(addBigRichDTO);
     }
 
@@ -72,7 +73,7 @@ public class ActivityController {
     @Secured
     @PostMapping(value = "/bigRich/user")
     @ApiOperation("添加中奖用户")
-    public Result addWinnerUser(@RequestBody @Valid AddWinnerUserDTO addWinnerUserDTO,
+    public Result addWinnerUser(@RequestBody @Valid@ApiParam AddWinnerUserDTO addWinnerUserDTO,
                                 @SessionAttribute("curUserId") Long userId) {
         return activityService.addWinnerUser(addWinnerUserDTO, userId);
     }
@@ -83,7 +84,7 @@ public class ActivityController {
     @ApiOperation("参与用户列表")
     public Result<JoinBigRichUser> bigRichUsers(@ApiParam("期数Id") @PathVariable Long id,
                                                 @RequestParam(defaultValue = "10") Integer pageSize,
-                                                @RequestParam Integer pageNumber) {
+                                                @RequestParam(defaultValue = "1") Integer pageNumber) {
         return activityService.bigRichUsers(id,pageSize,pageNumber);
     }
 }

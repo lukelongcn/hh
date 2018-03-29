@@ -37,6 +37,7 @@ public class OrdersLotteryActivity extends BaseEntity {
 
     /**
      * 状态 1 启用 0禁用 2结束
+     * @see statusEnum
      */
     @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 启用 0禁用 2结束'")
     private int status;
@@ -53,22 +54,49 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "winner_user_id",columnDefinition = "bigint COMMENT '中奖人Id'")
     private Long winnerUserId;
 
-//    public Map<Long,BigDecimal> getWinnerUser() {
-//        if (StringUtils.isNotBlank(winnerUser)) {
-//            Map<Long,BigDecimal> map = JSONObject.parseObject(winnerUser, Map.class);
-//            return map;
-//        }
-//        return null;
-//    }
 
-//    public void setWinnerUser(Map<Long,BigDecimal> winnerUserMap) {
-//        if (winnerUserMap == null) {
-//            return;
-//        }
-//        String json = JSONObject.toJSONString(winnerUserMap);
-//        this.winnerUser = json;
-//
-//    }
 
+
+    public enum statusEnum{
+
+        ENABLE(1,"启用"),
+        BAN(0,"禁用"),
+        FINISH(2,"结束");
+
+        private int code;
+        private String desc;
+
+        statusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public static statusEnum findByCode(int code){
+            statusEnum[] values = values();
+            for(statusEnum enumEl : values){
+                if(enumEl.code == code){
+
+                    return enumEl;
+                }
+            }
+            return null;
+        }
+    }
 
 }

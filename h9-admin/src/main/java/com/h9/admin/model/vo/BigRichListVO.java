@@ -47,23 +47,28 @@ public class BigRichListVO {
     @ApiModelProperty("开奖时间")
     private String startLotteryTime;
 
-
     /**
      * 状态 1 启用 0禁用 2结束
      */
-    @ApiModelProperty("状态 1 启用 0禁用 2结束")
-    private int status;
+    @ApiModelProperty("状态 ")
+    private String status;
 
+    @ApiModelProperty("能否能禁用 true 为可以，false 为不可以")
+    private Boolean canBan = false;
 
-    public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser,long joinCount) {
+    @ApiModelProperty("能否可以编辑 true 为可以，false 为不可以")
+    private Boolean canEdit = false;
+
+    @ApiModelProperty("能否可以添加用户 true 为可以，false 为不可以")
+    private Boolean canAddUser = false;
+
+    public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser, long joinCount) {
         this.setId(ordersLotteryActivity.getId());
         this.setNumber(ordersLotteryActivity.getNumber());
-        this.setJoinCount(joinCount+"");
+        this.setJoinCount(joinCount + "");
         if (winnerUser != null) {
-
             this.setWinnerUser(winnerUser.getPhone());
         }
-
 
         Date startTime = ordersLotteryActivity.getStartTime();
         this.setStartTime(DateUtil.formatDate(startTime, DateUtil.FormatType.MINUTE));
@@ -71,6 +76,25 @@ public class BigRichListVO {
         this.setEndTime(DateUtil.formatDate(endTime, DateUtil.FormatType.MINUTE));
         Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
         this.setStartLotteryTime(DateUtil.formatDate(startLotteryTime, DateUtil.FormatType.MINUTE));
-        this.setStatus(ordersLotteryActivity.getStatus());
+
+        int st = ordersLotteryActivity.getStatus();
+        OrdersLotteryActivity.statusEnum statusEnum = OrdersLotteryActivity.statusEnum.findByCode(st);
+        if (statusEnum != null) {
+            this.setStatus(statusEnum.getDesc());
+        }
+
+        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+            canBan = false;
+            canEdit = false;
+            canAddUser = false;
+        } else if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.BAN.getCode()) {
+            canBan = true;
+            canEdit = true;
+            canAddUser = false;
+        } else { //启用
+            canBan = false;
+            canEdit = false;
+            canAddUser = true;
+        }
     }
 }
