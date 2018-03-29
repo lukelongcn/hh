@@ -9,8 +9,15 @@ import lombok.Data;
 public class Test {
 
     public static void main(String[] args) {
-        Person p = new Person();
-        System.out.println(p);
+        int time = 60;
+
+        try {
+            Thread.sleep(time *1000);
+            System.out.println(time +"时间到了。");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Data

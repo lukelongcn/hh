@@ -5,6 +5,9 @@ import com.h9.admin.model.dto.AddWinnerUserDTO;
 import com.h9.admin.model.vo.BigRichListVO;
 import com.h9.admin.model.vo.JoinBigRichUser;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
+import com.h9.common.common.CommonService;
+import com.h9.common.common.MailService;
+import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.lottery.Lottery;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.lottery.WinnerOptRecord;
@@ -21,11 +24,13 @@ import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +63,10 @@ public class ActivityService {
     private WinnerOptRecordRep winnerOptRecordRep;
     @Resource
     private OrdersRepository ordersRepository;
+    @Resource
+    private MailService mailService;
+    @Resource
+    private CommonService commonService;
 
 
     public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO) {
@@ -146,7 +155,7 @@ public class ActivityService {
         PageResult<BigRichListVO> mapVO = new PageResult<>(page).map(activity -> {
             Long winnerUserId = activity.getWinnerUserId();
             User user = userRepository.findOne(winnerUserId);
-            int joinCount = (int) ordersRepository.findByCount(activity.getId());
+            long joinCount = (long) ordersRepository.findByCount(activity.getId());
             return new BigRichListVO(activity, user, joinCount);
         });
 
@@ -174,6 +183,13 @@ public class ActivityService {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
+    /**
+     * 添加中奖用户
+     *
+     * @param addWinnerUserDTO
+     * @param userId
+     * @return
+     */
     public Result addWinnerUser(AddWinnerUserDTO addWinnerUserDTO, Long userId) {
 
         String phone = addWinnerUserDTO.getPhone();
@@ -206,6 +222,14 @@ public class ActivityService {
         return Result.success();
     }
 
+    /**
+     * 参与用户列表
+     *
+     * @param id
+     * @param pageSize
+     * @param pageNumber
+     * @return
+     */
     public Result bigRichUsers(Long id, int pageSize, int pageNumber) {
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(id);
         if (ordersLotteryActivity == null) {
@@ -228,5 +252,52 @@ public class ActivityService {
             return joinBigRichUser;
         });
         return Result.success(mapVo);
+    }
+
+    /**
+     * 大富贵活动的抽奖
+     */
+    public void startBigRichLottery() {
+        Date now = new Date();
+        Date willDate = DateUtil.getDate(now, 5, Calendar.MINUTE);
+        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate);
+        if (CollectionUtils.isEmpty(lotteryActivityList)) {
+            return;
+        }
+
+        for (OrdersLotteryActivity ordersLotteryActivity : lotteryActivityList) {
+            Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
+            long millisecond = startLotteryTime.getTime() - new Date().getTime();
+            sleepTaskStartLottery(millisecond, ordersLotteryActivity);
+        }
+
+    }
+
+    @Async
+    public void sleepTaskStartLottery(long millisecond, OrdersLotteryActivity ordersLotteryActivity) {
+        try {
+            Thread.sleep(millisecond);
+            // 开奖
+            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+            if (winnerUserId == null) {
+                ordersLotteryActivity.setStatus(2);
+            }
+            User user = userRepository.findOne(winnerUserId);
+            BigDecimal money = ordersLotteryActivity.getMoney();
+            if (user != null) {
+                commonService.setBalance(winnerUserId, money,
+                        BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getId(),
+                        ordersLotteryActivity.getId(), "",
+                        BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getName());
+            } else {
+                logger.info("用户不存在 id: " + winnerUserId);
+            }
+            ordersLotteryActivityRep.save(ordersLotteryActivity);
+
+        } catch (InterruptedException e) {
+            logger.info("开奖失败啦!", e);
+            String content = "开奖失败,日志:" + ExceptionUtils.getStackTrace(e);
+            mailService.sendtMail("开奖失败邮件", content);
+        }
     }
 }
