@@ -13,7 +13,8 @@ import java.math.BigDecimal;
  */
 @Data
 public class UserBigRichRecordVO {
-    private String endTime;
+    private Long ordersId;
+    private String startLotteryTime;
     private String number;
     private String way;
     private Integer status;

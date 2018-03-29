@@ -2,11 +2,13 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
@@ -104,4 +106,10 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select o from Orders o where o.ordersLotteryId = ?1")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId,Pageable pageable);
 
+    @Query("select o from Orders o where o.user.id = ?1 and o.ordersLotteryId is not null order by o.createTime ")
+    Page<Orders> findByUserId(long userId, Pageable pageable);
+    default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit){
+        Page<Orders> list = findByUserId(userId, pageRequest(page,limit));
+        return new PageResult<>(list);
+    }
 }
