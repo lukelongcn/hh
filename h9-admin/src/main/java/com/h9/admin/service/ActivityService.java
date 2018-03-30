@@ -117,8 +117,8 @@ public class ActivityService {
             return Result.fail("请填写正确 开始-到结束 时间");
         }
 
-        List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDate(startTime);
-        List<OrdersLotteryActivity> byDate2 = ordersLotteryActivityRep.findByDate(endTime);
+        List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDateId(startTime, addBigRichDTO.getId());
+        List<OrdersLotteryActivity> byDate2 = ordersLotteryActivityRep.findByDateId(endTime, addBigRichDTO.getId());
 
         if (CollectionUtils.isNotEmpty(byDate1) || CollectionUtils.isNotEmpty(byDate2)) {
             return Result.fail("设置的活动区间不能与已有的时间区间重复");
@@ -193,7 +193,7 @@ public class ActivityService {
         if (activity == null) {
             ordersLotteryActivity = new OrdersLotteryActivity();
         } else {
-            ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivity.getId());
+            ordersLotteryActivity = ordersLotteryActivityRep.findOne(activity.getId());
         }
 
         ordersLotteryActivity.setStartTime(new Date(addBigRichDTO.getStartTime()));
@@ -218,11 +218,14 @@ public class ActivityService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersLotteryActivityRep.pageRequest(pageNumber, pageSize, sort);
 //        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findByStatus(1, pageRequest);
-        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findAll( pageRequest);
+        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findAll(pageRequest);
 
         PageResult<BigRichListVO> mapVO = new PageResult<>(page).map(activity -> {
             Long winnerUserId = activity.getWinnerUserId();
-            User user = userRepository.findOne(winnerUserId);
+            User user = null;
+            if (winnerUserId != null) {
+                user = userRepository.findOne(winnerUserId);
+            }
             long joinCount = (long) ordersRepository.findByCount(activity.getId());
             return new BigRichListVO(activity, user, joinCount);
         });
@@ -276,12 +279,11 @@ public class ActivityService {
             return Result.fail("期数不存在");
         }
 
-        Map<Long, BigDecimal> userMap = new HashMap<>();
 
         BigDecimal money = addWinnerUserDTO.getMoney();
 
-        userMap.put(user.getId(), money.abs());
-
+        activity.setMoney(money);
+        activity.setWinnerUserId(user.getId());
         ordersLotteryActivityRep.saveAndFlush(activity);
         //记录添加 中奖人 操作日志
         WinnerOptRecord winnerOptRecord = new WinnerOptRecord(null, activity.getId(), user.getId(), userId);

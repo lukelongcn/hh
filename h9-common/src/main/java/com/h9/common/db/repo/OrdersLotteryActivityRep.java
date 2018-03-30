@@ -14,8 +14,8 @@ import java.util.List;
  */
 public interface OrdersLotteryActivityRep extends BaseRepository<OrdersLotteryActivity> {
 
-    @Query("select o from OrdersLotteryActivity o where ?1>= o.startTime and ?1 < o.endTime and o.status = 1")
-    List<OrdersLotteryActivity> findByDate(Date date);
+    @Query("select o from OrdersLotteryActivity o where ?1>= o.startTime and ?1 < o.endTime and o.status = 1 and o.id <> ?2")
+    List<OrdersLotteryActivity> findByDateId(Date date,Long id);
 
     @Query("select o from OrdersLotteryActivity o where o.status =?1")
     Page<OrdersLotteryActivity> findByStatus(int status, Pageable pageable);
