@@ -16,6 +16,10 @@ import java.util.Date;
 @ApiModel(value = "新增参数")
 @Data
 public class AddBigRichDTO {
+
+    @ApiModelProperty("期数Id,编辑 不用填")
+    private Long id;
+
     @NotNull(message = "开始时间不能为空")
     @ApiModelProperty("开始时间")
     private Long startTime;
@@ -32,5 +36,6 @@ public class AddBigRichDTO {
     @NotNull(message = "开奖时间不能为空")
     @ApiModelProperty("开奖时间")
     private Long startLotteryTime;
+
 
 }

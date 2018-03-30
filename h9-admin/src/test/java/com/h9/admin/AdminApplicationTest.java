@@ -28,9 +28,10 @@ public class AdminApplicationTest {
         job.scan();
     }
 
+
     @Test
     public void start(){
-        activityService.startBigRichLottery();
+//        activityService.startBigRichLottery();
     }
 
     @Resource

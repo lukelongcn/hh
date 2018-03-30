@@ -13,10 +13,10 @@ import com.h9.admin.service.ActivityService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -59,21 +59,29 @@ public class ActivityController {
     @PostMapping(value = "/bigRich")
     @ApiOperation("新增大富贵期数")
     public Result addBigRichActivity(@Valid @RequestBody @ApiParam AddBigRichDTO addBigRichDTO) {
-        return activityService.addBigRichActivity(addBigRichDTO);
+        addBigRichDTO.setId(null);
+        return activityService.editBigRichActivity(addBigRichDTO);
+    }
+
+    @Secured
+    @PutMapping(value = "/bigRich")
+    @ApiOperation("编辑大富贵期数")
+    public Result editBigRichActivity(@Valid @RequestBody @ApiParam AddBigRichDTO addBigRichDTO) {
+        return activityService.editBigRichActivity(addBigRichDTO);
     }
 
     @Secured
     @GetMapping(value = "/bigRiches")
     @ApiOperation("大富贵期数列表")
     public Result<BigRichListVO> bigRichList(@RequestParam(defaultValue = "10") Integer pageSize,
-                                             @RequestParam Integer pageNumber) {
+                                             @RequestParam(defaultValue = "1") Integer pageNumber) {
         return activityService.bigRichList(pageNumber, pageSize);
     }
 
     @Secured
     @PostMapping(value = "/bigRich/user")
     @ApiOperation("添加中奖用户")
-    public Result addWinnerUser(@RequestBody @Valid@ApiParam AddWinnerUserDTO addWinnerUserDTO,
+    public Result addWinnerUser(@RequestBody @Valid @ApiParam AddWinnerUserDTO addWinnerUserDTO,
                                 @SessionAttribute("curUserId") Long userId) {
         return activityService.addWinnerUser(addWinnerUserDTO, userId);
     }
@@ -85,6 +93,15 @@ public class ActivityController {
     public Result<JoinBigRichUser> bigRichUsers(@ApiParam("期数Id") @PathVariable Long id,
                                                 @RequestParam(defaultValue = "10") Integer pageSize,
                                                 @RequestParam(defaultValue = "1") Integer pageNumber) {
-        return activityService.bigRichUsers(id,pageSize,pageNumber);
+        return activityService.bigRichUsers(id, pageSize, pageNumber);
+    }
+
+
+    @Secured
+    @PutMapping(value = "/bigRich/{id}/{status}")
+    @ApiOperation("启用/禁用")
+    public Result<JoinBigRichUser> modifyBigRichStatus(@ApiParam("期数Id") @PathVariable Long id,
+                                                       @Param("1 启用，0 禁用") @PathVariable Integer status) {
+        return activityService.modifyStatus(id, status);
     }
 }

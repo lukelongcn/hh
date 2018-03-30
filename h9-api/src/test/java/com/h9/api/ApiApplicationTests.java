@@ -478,12 +478,8 @@ public class ApiApplicationTests {
     private MobileRechargeService mobileRechargeService;
     @Test
     public void test2(){
-//724077033@qq.com
-        List<String> emailGroup = configService.getStringListConfig("MobileRechargeFailEmailGroup");
-        mailService.sendEmail("测试邮件"
-                , "原因: "+"测试邮件"
-                ,emailGroup);
-
+        int i = ordersRepository.updateOrdersLotteryId(6L);
+        System.out.println("更新 "+i+" 条记录");
     }
 }
 

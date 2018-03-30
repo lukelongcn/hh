@@ -34,6 +34,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.*;
+
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
@@ -96,12 +98,13 @@ public class ActivityService {
 
 
     /**
-     * 新增大富贵期数
+     * 新增/编辑 大富贵期数
      *
-     * @param addBigRichDTO
+     * @param addBigRichDTO id 为空时代表 新增，不为空代表 修改
      * @return
      */
-    public Result addBigRichActivity(AddBigRichDTO addBigRichDTO) {
+    @Transactional
+    public Result editBigRichActivity(AddBigRichDTO addBigRichDTO) {
         Date endTime = new Date(addBigRichDTO.getEndTime());
         Date startTime = new Date(addBigRichDTO.getStartTime());
         Date startLotteryTime = new Date(addBigRichDTO.getStartLotteryTime());
@@ -111,7 +114,7 @@ public class ActivityService {
         }
 
         if (endTime.getTime() < startTime.getTime()) {
-            return Result.fail("请填写正确时间");
+            return Result.fail("请填写正确 开始-到结束 时间");
         }
 
         List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDate(startTime);
@@ -120,15 +123,79 @@ public class ActivityService {
         if (CollectionUtils.isNotEmpty(byDate1) || CollectionUtils.isNotEmpty(byDate2)) {
             return Result.fail("设置的活动区间不能与已有的时间区间重复");
         }
+        OrdersLotteryActivity ordersLotteryActivity = null;
 
-        OrdersLotteryActivity ordersLotteryActivity = getOrdersLotteryActivity(addBigRichDTO);
+        if (addBigRichDTO.getId() == null) {
+            //新增
+            ordersLotteryActivity = getOrdersLotteryActivity(addBigRichDTO, null);
+        } else {
+            //修改
+            OrdersLotteryActivity activity = ordersLotteryActivityRep.findOne(addBigRichDTO.getId());
+            if (activity == null) {
+                return Result.fail("期号不存在");
+            }
+            if (activity.getStatus() == BAN.getCode()) {
+                ordersLotteryActivity = getOrdersLotteryActivity(addBigRichDTO, activity);
+                //调整参与人数
+                changeBigRichJoinUser(activity, addBigRichDTO);
+                ordersLotteryActivityRep.save(ordersLotteryActivity);
+                return Result.success();
+            } else {
+                return Result.fail("只有在禁用状态可以编辑");
+            }
+        }
+
         ordersLotteryActivityRep.save(ordersLotteryActivity);
         return Result.success();
     }
 
-    public OrdersLotteryActivity getOrdersLotteryActivity(AddBigRichDTO addBigRichDTO) {
+    /**
+     * 改变 参与活动的用户
+     *
+     * @param activity
+     * @param addBigRichDTO
+     */
+    private void changeBigRichJoinUser(OrdersLotteryActivity activity, AddBigRichDTO addBigRichDTO) {
+        boolean timeDurationChange1 = activity.getStartTime().getTime() == activity.getEndTime().getTime();
+        boolean timeDurationChange2 = activity.getStartTime().getTime() == activity.getEndTime().getTime();
 
-        OrdersLotteryActivity ordersLotteryActivity = new OrdersLotteryActivity();
+        if (timeDurationChange1 && timeDurationChange2) {
+            Date start = new Date(addBigRichDTO.getStartTime());
+            Date endDate = new Date(addBigRichDTO.getEndTime());
+            int i1 = ordersRepository.updateOrdersLotteryId(activity.getId());
+            logger.info("更新　" + i1 + " 条记录");
+            int i2 = ordersRepository.updateByDateAndStatus(start, endDate, 2, activity.getId());
+            logger.info("更新　" + i2 + " 条记录");
+        }
+    }
+
+
+    /**
+     * 验证是否可以修改
+     *
+     * @param addBigRichDTO         要修改的内容
+     * @param ordersLotteryActivity 修改的活动
+     * @return
+     */
+    private Result bigRichCanEdit(AddBigRichDTO addBigRichDTO, OrdersLotteryActivity ordersLotteryActivity) {
+        return null;
+    }
+
+
+    /**
+     * @param addBigRichDTO
+     * @param activity
+     * @return
+     */
+    public OrdersLotteryActivity getOrdersLotteryActivity(AddBigRichDTO addBigRichDTO, OrdersLotteryActivity activity) {
+        OrdersLotteryActivity ordersLotteryActivity = null;
+
+        if (activity == null) {
+            ordersLotteryActivity = new OrdersLotteryActivity();
+        } else {
+            ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivity.getId());
+        }
+
         ordersLotteryActivity.setStartTime(new Date(addBigRichDTO.getStartTime()));
         ordersLotteryActivity.setEndTime(new Date(addBigRichDTO.getEndTime()));
         Long startLotteryTime = addBigRichDTO.getStartLotteryTime();
@@ -150,7 +217,8 @@ public class ActivityService {
     public Result bigRichList(Integer pageNumber, Integer pageSize) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersLotteryActivityRep.pageRequest(pageNumber, pageSize, sort);
-        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findByStatus(1, pageRequest);
+//        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findByStatus(1, pageRequest);
+        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findAll( pageRequest);
 
         PageResult<BigRichListVO> mapVO = new PageResult<>(page).map(activity -> {
             Long winnerUserId = activity.getWinnerUserId();
@@ -236,8 +304,8 @@ public class ActivityService {
             return Result.fail("期数不存在");
         }
 
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
-        PageRequest pageRequest = ordersRepository.pageRequest(pageNumber,pageSize,  sort);
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        PageRequest pageRequest = ordersRepository.pageRequest(pageNumber, pageSize, sort);
         Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
         PageResult<JoinBigRichUser> mapVo = new PageResult<>(page).map(orders -> {
             User user = orders.getUser();
@@ -260,7 +328,7 @@ public class ActivityService {
     public void startBigRichLottery() {
         Date now = new Date();
         Date willDate = DateUtil.getDate(now, 5, Calendar.MINUTE);
-        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate,now);
+        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate, now);
         if (CollectionUtils.isEmpty(lotteryActivityList)) {
             return;
         }
@@ -278,9 +346,14 @@ public class ActivityService {
         try {
             Thread.sleep(millisecond);
             // 开奖
+            ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivity.getId());
+            if (ordersLotteryActivity.getStatus() != ENABLE.getCode()) {
+                logger.info("大富贵活动Id " + ordersLotteryActivity.getId() + " 已开奖");
+                return;
+            }
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (winnerUserId == null) {
-                logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: "+winnerUserId);
+                logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
                 return;
             }
             User user = userRepository.findOne(winnerUserId);
@@ -292,7 +365,8 @@ public class ActivityService {
                         BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getName());
             } else {
                 logger.info("用户不存在 id: " + winnerUserId);
-            }ordersLotteryActivity.setStatus(2);
+            }
+            ordersLotteryActivity.setStatus(2);
             ordersLotteryActivityRep.save(ordersLotteryActivity);
 
         } catch (InterruptedException e) {
@@ -301,4 +375,27 @@ public class ActivityService {
             mailService.sendtMail("开奖失败邮件", content);
         }
     }
+
+    public Result<JoinBigRichUser> modifyStatus(Long id, Integer status) {
+        OrdersLotteryActivity activity = ordersLotteryActivityRep.findOne(id);
+        if (activity == null) {
+            return Result.fail("期数不存在");
+        }
+
+        if (status != 1 && status != 0) {
+            return Result.fail("不能修改此活动的状态");
+        }
+
+        if (activity.getStatus() == FINISH.getCode()) {
+            return Result.fail("活动已结束");
+        }
+
+
+        activity.setStatus(status == 1 ? ENABLE.getCode() : BAN.getCode());
+
+        ordersLotteryActivityRep.save(activity);
+        return Result.success();
+    }
+
+
 }

@@ -11,8 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -104,12 +106,23 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     Object findByCount(Long id);
 
     @Query("select o from Orders o where o.ordersLotteryId = ?1")
-    Page<Orders> findByordersLotteryId(Long ordersLotteryId,Pageable pageable);
+    Page<Orders> findByordersLotteryId(Long ordersLotteryId, Pageable pageable);
 
     @Query("select o from Orders o where o.user.id = ?1 and o.ordersLotteryId is not null order by o.createTime ")
     Page<Orders> findByUserId(long userId, Pageable pageable);
-    default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit){
-        Page<Orders> list = findByUserId(userId, pageRequest(page,limit));
+
+    default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit) {
+        Page<Orders> list = findByUserId(userId, pageRequest(page, limit));
         return new PageResult<>(list);
     }
+
+    @Modifying
+    @Query("update Orders o set o.ordersLotteryId=?4 where o.createTime > ?1 and o.createTime < ?2 " +
+            "and o.payStatus = ?3 and o.orderFrom = 2")
+    int updateByDateAndStatus(Date start, Date end, Integer status, Long id);
+
+    @Modifying
+    @Query("update Orders o set o.ordersLotteryId = null where o.ordersLotteryId=?1")
+    @Transactional
+    int updateOrdersLotteryId(Long id);
 }
