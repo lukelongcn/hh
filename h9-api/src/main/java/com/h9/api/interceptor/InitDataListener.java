@@ -55,7 +55,7 @@ public class InitDataListener implements ApplicationListener<ApplicationReadyEve
         } catch (Exception e) {
             logger.info(e.getMessage(),e);
         }
-        this.initWXMenu();
+//        this.initWXMenu();
     }
 
     /**

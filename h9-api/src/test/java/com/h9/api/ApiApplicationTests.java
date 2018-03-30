@@ -429,7 +429,7 @@ public class ApiApplicationTests {
 
     @Test
     public void testCreateMenu() {
-        weChatProvider.createMenu();
+        weChatProvider.createMenu2();
     }
 
     @Resource
