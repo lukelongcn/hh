@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
  * Date: 2017/10/31
  * Time: 10:32
  */
+@SuppressWarnings("Duplicates")
 @Service
 public class WeChatProvider {
 
@@ -61,7 +62,7 @@ public class WeChatProvider {
         try {
             realUrl = URLEncoder.encode(redirectUrl, "utf-8");
         } catch (UnsupportedEncodingException e) {
-           logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
         }
         return MessageFormat.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=" +
                 "code&scope={2}&state={3}#wechat_redirect", appId, realUrl, "snsapi_userinfo", state);  //snsapi_base
@@ -316,6 +317,53 @@ public class WeChatProvider {
 
     }
 
+    public void createMenu2() {
+        MenuDTO.MenuDTOBuilder builder = MenuDTO.builder();
+        MenuDTO menuDTO = builder
+                .button(Arrays.asList(
+                        new MenuDTO.ButtonBean()
+//                                .setType("view")
+//                                .setKey("12")
+//                                .setUrl(host + "/h9-weixin/#/active/hongbao")
+//                                .setName("开盖扫红包")
+                                .setName("开盖扫红包")
+                                .setSub_button(
+                                        Arrays.asList(new MenuDTO.ButtonBean.SubButtonBean()
+                                                        .setName("为爱")
+                                                        .setType("view")
+                                                        .setUrl("https://weixin-h9.thy360.com/h9-photos/index.html"),
+                                                new MenuDTO.ButtonBean.SubButtonBean()
+                                                        .setName("开盖扫红包")
+                                                        .setType("view")
+                                                        .setUrl(host + "/h9-weixin/#/active/hongbao"))),
+                        new MenuDTO.ButtonBean()
+                                .setType("view")
+                                .setKey("23")
+                                .setUrl(host + "/h9-weixin/#/shop")
+                                .setName("徽酒商城"),
+                        new MenuDTO.ButtonBean()
+                                .setType("view")
+                                .setKey("31")
+                                .setUrl(host + "/h9-weixin/#/travel")
+                                .setName("旅游健康卡")
+                        )
+
+                ).build();
+
+//        String accessToken = getWeChatAccessToken();
+
+        String accessToken = "8_ACvBn0v-VTudHtRfAreqiT50IuXlEm_UtoAs6kndpFkzU3LrmNV25gD-OV7Z_YC6lKT-ZJj933TJ--vnvOr5_UIjR5pumWmKW" +
+                "eZTArjfxl5RZHgyEg9eJmnlRENHLkDTe3tL7wzb2gWQb5P4ZIFaADALUR";
+        logger.info("accessToken : " + accessToken);
+        String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
+
+        String json = JSONObject.toJSONString(menuDTO);
+        logger.info("request json : " + json);
+        Result4wx result = restTemplate.postForObject(createMenuUrl, menuDTO, Result4wx.class);
+        logger.info("创建菜单结果：" + JSONObject.toJSONString(result));
+
+    }
+
     @Deprecated
     public Result getTemplate(String accessToken) {
         if (StringUtils.isBlank(accessToken)) {
@@ -408,8 +456,8 @@ public class WeChatProvider {
         private String errcode = "";
         private String errmsg = "";
         private String template_id = "";
-        private String msgid= "";
-        private String ticket= "";
+        private String msgid = "";
+        private String ticket = "";
     }
 
 
