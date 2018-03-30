@@ -329,7 +329,7 @@ public class WeChatProvider {
                                 .setName("开盖扫红包")
                                 .setSub_button(
                                         Arrays.asList(new MenuDTO.ButtonBean.SubButtonBean()
-                                                        .setName("为爱")
+                                                        .setName("为爱可以贪杯")
                                                         .setType("view")
                                                         .setUrl("https://weixin-h9.thy360.com/h9-photos/index.html"),
                                                 new MenuDTO.ButtonBean.SubButtonBean()
