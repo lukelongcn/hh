@@ -1,7 +1,11 @@
 package com.h9.admin;
 
 import com.h9.admin.job.HotelOrderJob;
+import com.h9.admin.model.dto.AddBigRichDTO;
 import com.h9.admin.service.AccountService;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.repo.OrdersLotteryActivityRepository;
+import com.h9.common.utils.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,6 +69,35 @@ public class Test666 {
     @Test
     public void testTask(){
         job.scan();
+    }
+
+
+
+    @Resource
+    OrdersLotteryActivityRepository ordersLotteryActivityRepository;
+
+    @Test
+    public void addBigRichActivity() {
+        for (int i= 0;i<48;i++){
+            AddBigRichDTO addBigRichDTO1 = new AddBigRichDTO();
+            addBigRichDTO1.setEndTime(20180102L).setStartLotteryTime(20180102L).setStartTime(20180102L).setStatus(1);
+            OrdersLotteryActivity ordersLotteryActivity = getOrdersLotteryActivity(addBigRichDTO1);
+            ordersLotteryActivityRepository.save(ordersLotteryActivity);
+        }
+    }
+
+    public OrdersLotteryActivity getOrdersLotteryActivity(AddBigRichDTO addBigRichDTO) {
+
+        OrdersLotteryActivity ordersLotteryActivity = new OrdersLotteryActivity();
+        ordersLotteryActivity.setStartTime(new Date(addBigRichDTO.getStartTime()));
+        ordersLotteryActivity.setEndTime(new Date(addBigRichDTO.getEndTime()));
+        Long startLotteryTime = addBigRichDTO.getStartLotteryTime();
+        String number = DateUtil.formatDate(new Date(startLotteryTime), DateUtil.FormatType.NON_SEPARATOR_DAY);
+        ordersLotteryActivity.setNumber(number);
+        ordersLotteryActivity.setStatus(addBigRichDTO.getStatus());
+        ordersLotteryActivity.setStartLotteryTime(new Date(startLotteryTime));
+
+        return ordersLotteryActivity;
     }
 
 }

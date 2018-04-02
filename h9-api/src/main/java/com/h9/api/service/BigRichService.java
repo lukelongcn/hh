@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.model.vo.BigRichRecordVO;
 import com.h9.api.model.vo.BigRichVO;
 import com.h9.api.model.vo.UserBigRichRecordVO;
@@ -14,12 +15,15 @@ import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
+import org.apache.xmlbeans.impl.xb.xsdschema.LocalSimpleType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Title:h9-parent</p>
@@ -39,6 +43,9 @@ public class BigRichService {
     private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
     @Resource
     private OrdersRepository ordersRepository;
+
+
+    private Boolean chance = false;
 
     public Result getRecord(long userId, Integer page, Integer limit) {
         BigRichVO bigRichVO = new BigRichVO();
@@ -123,11 +130,22 @@ public class BigRichService {
 
     /**
      * 通过订单号参加大富贵活动
-     * @param orderId
+     * @param orders
      * @return
      */
-    public Result joinBigRich(Long orderId) {
-
-        return null;
+    @Transactional
+    public Orders joinBigRich(Orders orders) {
+        Date createTime = orders.getCreateTime();
+        List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+        lotteryTime.forEach(o -> {
+            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime(),orders.getUser().getId());
+            list.forEach(order ->{
+                if (order.getOrdersLotteryId() != null){
+                    return;
+                }
+            });
+            orders.setOrdersLotteryId(o.getId());
+        });
+        return orders;
     }
 }

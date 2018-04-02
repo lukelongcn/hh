@@ -35,5 +35,4 @@ public class BigRichController {
                                  @RequestParam(defaultValue = "10") Integer limit){
         return bigRichService.getUserRecord(userId,page,limit);
     }
-
 }
