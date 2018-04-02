@@ -14,7 +14,8 @@ public class Test {
 
     public static void main(String[] args) {
         System.out.println(new Date().getTime());
-        System.out.println(DateUtil.getDate(new Date(),1, Calendar.DAY_OF_YEAR).getTime());
+//        System.out.println(DateUtil.getDate(new Date(),1, Calendar.DAY_OF_YEAR).getTime());
+        System.out.println(DateUtil.getDate(new Date(),10, Calendar.MINUTE).getTime());
     }
 
 

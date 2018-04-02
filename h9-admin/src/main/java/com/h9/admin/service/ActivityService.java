@@ -5,6 +5,7 @@ import com.h9.admin.model.dto.AddWinnerUserDTO;
 import com.h9.admin.model.vo.BigRichListVO;
 import com.h9.admin.model.vo.JoinBigRichUser;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
+import com.h9.common.base.BaseRepository;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.entity.account.BalanceFlow;
@@ -32,6 +33,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.*;
@@ -317,7 +319,7 @@ public class ActivityService {
                 money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
             }
             JoinBigRichUser joinBigRichUser = new JoinBigRichUser(orders.getOrdersLotteryId(),
-                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber());
+                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(),orders.getId()+"");
 
             return joinBigRichUser;
         });
@@ -327,13 +329,17 @@ public class ActivityService {
     /**
      * 大富贵活动的抽奖
      */
+
     public void startBigRichLottery() {
+        logger.info("startBigRichLottery");
         Date now = new Date();
         Date willDate = DateUtil.getDate(now, 5, Calendar.MINUTE);
         List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate, now);
         if (CollectionUtils.isEmpty(lotteryActivityList)) {
+            logger.info("要处理的任务数 为空");
             return;
         }
+        logger.info("要处理的任务数：" + lotteryActivityList.size());
 
         for (OrdersLotteryActivity ordersLotteryActivity : lotteryActivityList) {
             Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
@@ -343,12 +349,25 @@ public class ActivityService {
 
     }
 
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    private <T> T findOneNewTransactional(BaseRepository<T> rep, Long id) {
+//        return rep.findOne(id);
+//    }
+
+    @Transactional(propagation = Propagation.NESTED)
+    private OrdersLotteryActivity findOneNewTransactional(Long id) {
+
+        return ordersLotteryActivityRep.findByIdFromDB(id);
+    }
+
     @Async
+    @Transactional
     public void sleepTaskStartLottery(long millisecond, OrdersLotteryActivity ordersLotteryActivity) {
         try {
+            logger.info("sleep " + millisecond + "毫秒");
             Thread.sleep(millisecond);
             // 开奖
-            ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivity.getId());
+            ordersLotteryActivity = findOneNewTransactional(ordersLotteryActivity.getId());
             if (ordersLotteryActivity.getStatus() != ENABLE.getCode()) {
                 logger.info("大富贵活动Id " + ordersLotteryActivity.getId() + " 已开奖");
                 return;
@@ -356,6 +375,8 @@ public class ActivityService {
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (winnerUserId == null) {
                 logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
+                ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.BAN.getCode());
+                ordersLotteryActivityRep.save(ordersLotteryActivity);
                 return;
             }
             User user = userRepository.findOne(winnerUserId);

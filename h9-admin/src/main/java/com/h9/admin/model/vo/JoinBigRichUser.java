@@ -25,4 +25,8 @@ public class JoinBigRichUser {
     private String money= "0.00";
     @ApiModelProperty("期号")
     private String activity_number= "";
+
+    @ApiModelProperty("参与大富贵的订单Id")
+    private String orderId;
+
 }

@@ -32,6 +32,8 @@ public class AdminApplicationTest {
     @Test
     public void start(){
 //        activityService.startBigRichLottery();
+
+        activityService.startBigRichLottery();
     }
 
     @Resource
