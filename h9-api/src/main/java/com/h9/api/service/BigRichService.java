@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.interceptor.Secured;
 import com.h9.api.model.vo.BigRichRecordVO;
 import com.h9.api.model.vo.BigRichVO;
 import com.h9.api.model.vo.UserBigRichRecordVO;
@@ -17,6 +18,7 @@ import com.h9.common.utils.DateUtil;
 import org.apache.xmlbeans.impl.xb.xsdschema.LocalSimpleType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -131,12 +133,13 @@ public class BigRichService {
      * @param orders
      * @return
      */
+    @Secured
     @Transactional
-    public Orders joinBigRich(Orders orders) {
+    public Orders joinBigRich(Orders orders,@SessionAttribute("curUserId")long userId) {
         Date createTime = orders.getCreateTime();
         List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         lotteryTime.forEach(o -> {
-            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime());
+            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime(),userId);
             list.forEach(order ->{
                 if (order.getOrdersLotteryId() != null){
                     return;

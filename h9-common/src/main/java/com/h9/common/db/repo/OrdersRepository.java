@@ -127,6 +127,6 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     int updateOrdersLotteryId(Long id);
 
 
-    @Query("select r FROM Orders r where r.createTime > ?1 and r.createTime < ?2 and r.status = 1")
-    List<Orders> findUserfulOrders(Date startTime, Date endTime);
+    @Query("select r FROM Orders r where r.createTime > ?1 and r.createTime < ?2 and r.user.id = ?3 and r.status = 1 ")
+    List<Orders> findUserfulOrders(Date startTime, Date endTime, long userId);
 }
