@@ -133,13 +133,12 @@ public class BigRichService {
      * @param orders
      * @return
      */
-    @Secured
     @Transactional
-    public Orders joinBigRich(Orders orders,@SessionAttribute("curUserId")long userId) {
+    public Orders joinBigRich(Orders orders) {
         Date createTime = orders.getCreateTime();
         List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         lotteryTime.forEach(o -> {
-            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime(),userId);
+            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime(),orders.getUser().getId());
             list.forEach(order ->{
                 if (order.getOrdersLotteryId() != null){
                     return;
