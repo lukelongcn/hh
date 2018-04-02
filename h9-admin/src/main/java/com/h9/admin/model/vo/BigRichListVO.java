@@ -54,7 +54,7 @@ public class BigRichListVO {
     private String status;
 
     @ApiModelProperty("状态值(数字类型)")
-    private String statusInt;
+    private int statusInt;
 
     @ApiModelProperty("待开始,进行中,已结束 ")
     private String activeStatus = "已结束";
@@ -106,10 +106,15 @@ public class BigRichListVO {
         Date now = new Date();
         if (startTime.getTime() < now.getTime() && endTime.getTime() > now.getTime()) {
             activeStatus = "进行中";
-        }else if(startTime.getTime()>now.getTime()){
+        } else if (startTime.getTime() > now.getTime()) {
             activeStatus = "未开始";
-        }else if(endTime.getTime()>now.getTime()){
+        } else if (endTime.getTime() > now.getTime()) {
             activeStatus = "已结束";
+        }
+        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
+            this.statusInt = 1;
+        } else {
+            this.statusInt = 0;
         }
     }
 }
