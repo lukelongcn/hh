@@ -40,17 +40,17 @@ public class BigRichService {
     @Resource
     private OrdersRepository ordersRepository;
 
-    public Result getRecord(long userId,Integer page, Integer limit) {
+    public Result getRecord(long userId, Integer page, Integer limit) {
         BigRichVO bigRichVO = new BigRichVO();
-        UserAccount userAccount= userAccountRepository.findByUserId(userId);
-        User user  = userRepository.findOne(userId);
-        PageResult<OrdersLotteryActivity> pageResult = ordersLotteryActivityRepository.findAllDetail(page,limit);
-        if (pageResult != null){
+        UserAccount userAccount = userAccountRepository.findByUserId(userId);
+        User user = userRepository.findOne(userId);
+        PageResult<OrdersLotteryActivity> pageResult = ordersLotteryActivityRepository.findAllDetail(page, limit);
+        if (pageResult != null) {
             PageResult<BigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToRecord);
             bigRichVO.setRecordList(pageResultRecord);
         }
         bigRichVO.setBigRichMoney(userAccount.getBigRichMoney());
-        if (user.getLotteryChance() == 1){
+        if (user.getLotteryChance() == 1) {
             bigRichVO.setLotteryChance(1);
         }
         return Result.success(bigRichVO);
@@ -61,11 +61,11 @@ public class BigRichService {
     public BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
-        if (e.getWinnerUserId() == null){
+        if (e.getWinnerUserId() == null) {
             return null;
         }
         User user = userRepository.findOne(e.getWinnerUserId());
-        if (user == null || e.getMoney() == null){
+        if (user == null || e.getMoney() == null) {
             return bigRichRecordVO;
         }
         bigRichRecordVO.setUserName(user.getNickName());
@@ -76,19 +76,20 @@ public class BigRichService {
 
 
     public Result getUserRecord(long userId, Integer page, Integer limit) {
-        PageResult<Orders> pageResult = ordersRepository.findByUserId(userId,page,limit);
-        if (pageResult == null){
+        PageResult<Orders> pageResult = ordersRepository.findByUserId(userId, page, limit);
+        if (pageResult == null) {
             return Result.fail("暂无记录");
         }
         PageResult<UserBigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToUserRecord);
         return Result.success(pageResultRecord);
     }
+
     @Transactional(rollbackFor = Exception.class)
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
-            if (ordersLotteryActivity == null){
+        if (ordersLotteryActivity == null) {
             return null;
         }
         // 订单id
@@ -98,8 +99,8 @@ public class BigRichService {
         // 期数
         userBigRichRecordVO.setNumber(ordersLotteryActivity.getNumber());
         // 状态
-        if (e.getUser().getId() .equals(ordersLotteryActivity.getWinnerUserId())
-                && ordersLotteryActivity.getStartLotteryTime().before(new Date())){
+        if (e.getUser().getId().equals(ordersLotteryActivity.getWinnerUserId())
+                && ordersLotteryActivity.getStartLotteryTime().before(new Date())) {
             // 已中奖
             userBigRichRecordVO.setStatus(1);
         }
@@ -115,9 +116,18 @@ public class BigRichService {
         // 获得方式
         userBigRichRecordVO.setWay("兑换商品");
         // 金额
-        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2,BigDecimal.ROUND_DOWN);
+        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2, BigDecimal.ROUND_DOWN);
         userBigRichRecordVO.setMoney(bigDecimal);
         return userBigRichRecordVO;
     }
 
+    /**
+     * 通过订单号参加大富贵活动
+     * @param orderId
+     * @return
+     */
+    public Result joinBigRich(Long orderId) {
+
+        return null;
+    }
 }

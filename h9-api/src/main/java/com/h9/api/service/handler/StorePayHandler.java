@@ -2,6 +2,7 @@ package com.h9.api.service.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.api.model.dto.PayNotifyVO;
+import com.h9.api.service.BigRichService;
 import com.h9.api.service.GoodService;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -43,6 +44,8 @@ public class StorePayHandler extends AbPayHandler{
     private OrderItemReposiroty orderItemReposiroty;
     @Resource
     private GoodService goodService;
+    @Resource
+    private BigRichService bigRichService;
     @Override
     public boolean callback(PayNotifyVO payNotifyVO, PayInfo payInfo) {
         logger.info("商城支付callBack: payNotifyVO : "+ JSONObject.toJSONString(payNotifyVO)
@@ -61,6 +64,8 @@ public class StorePayHandler extends AbPayHandler{
         orders.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         orders.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
         orders.setPayMethond(WX_PAY.getCode());
+        //TODO 参与大富贵活动
+        bigRichService.joinBigRich(orderId);
         ordersRepository.save(orders);
 
         //记录两条流水

@@ -53,6 +53,9 @@ public class BigRichListVO {
     @ApiModelProperty("状态 ")
     private String status;
 
+    @ApiModelProperty("待开始,进行中,已结束 ")
+    private String activeStatus = "已结束";
+
     @ApiModelProperty("能否能禁用 true 为可以，false 为不可以")
     private Boolean canBan = false;
 
@@ -72,7 +75,7 @@ public class BigRichListVO {
 
         Date startTime = ordersLotteryActivity.getStartTime();
         this.setStartTime(DateUtil.formatDate(startTime, DateUtil.FormatType.MINUTE));
-        Date endTime = ordersLotteryActivity.getStartTime();
+        Date endTime = ordersLotteryActivity.getEndTime();
         this.setEndTime(DateUtil.formatDate(endTime, DateUtil.FormatType.MINUTE));
         Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
         this.setStartLotteryTime(DateUtil.formatDate(startLotteryTime, DateUtil.FormatType.MINUTE));
@@ -95,6 +98,14 @@ public class BigRichListVO {
             canBan = false;
             canEdit = false;
             canAddUser = true;
+        }
+        Date now = new Date();
+        if (startTime.getTime() < now.getTime() && endTime.getTime() > now.getTime()) {
+            activeStatus = "进行中";
+        }else if(startTime.getTime()>now.getTime()){
+            activeStatus = "未开始";
+        }else if(endTime.getTime()>now.getTime()){
+            activeStatus = "已结束";
         }
     }
 }
