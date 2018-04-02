@@ -297,6 +297,12 @@ public class GoodService {
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
+
+        if (order.getOrdersLotteryId() != null){
+            mapVo.put("LotteryChance","true");
+        }else {
+            mapVo.put("LotteryChance","false");
+        }
         return Result.success(mapVo);
     }
 
@@ -317,13 +323,19 @@ public class GoodService {
             Orders order = ordersRepository.findOne(orderId);
             String payInfoId = redisBean.getStringValue("orderId:" + orderId);
             order.setPayInfoId(Long.valueOf(payInfoId));
-            ordersRepository.save(order);
+            ordersRepository.saveAndFlush(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);
             Map<String, Object> mapVO = new HashMap<>();
             mapVO.put("price", MoneyUtils.formatMoney(money));
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
+            order = ordersRepository.findOne(orderId);
+            if (order.getOrdersLotteryId() != null){
+                mapVO.put("LotteryChance","true");
+            } else {
+                mapVO.put("LotteryChance","false");
+            }
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
