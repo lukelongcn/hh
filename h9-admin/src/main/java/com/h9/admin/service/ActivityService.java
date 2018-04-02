@@ -47,7 +47,6 @@ import java.util.*;
  * @date: 2017/11/7 19:40
  */
 @Service
-@Transactional
 public class ActivityService {
     @Autowired
     private ActivityRepository activityRepository;
@@ -71,6 +70,8 @@ public class ActivityService {
     private MailService mailService;
     @Resource
     private CommonService commonService;
+    @Resource
+    private TransactionalService transactionalService;
 
 
     public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO) {
@@ -319,7 +320,7 @@ public class ActivityService {
                 money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
             }
             JoinBigRichUser joinBigRichUser = new JoinBigRichUser(orders.getOrdersLotteryId(),
-                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(),orders.getId()+"");
+                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), orders.getId() + "");
 
             return joinBigRichUser;
         });
@@ -329,7 +330,7 @@ public class ActivityService {
     /**
      * 大富贵活动的抽奖
      */
-
+    @Transactional
     public void startBigRichLottery() {
         logger.info("startBigRichLottery");
         Date now = new Date();
@@ -349,16 +350,9 @@ public class ActivityService {
 
     }
 
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    private <T> T findOneNewTransactional(BaseRepository<T> rep, Long id) {
-//        return rep.findOne(id);
-//    }
 
-    @Transactional(propagation = Propagation.NESTED)
-    private OrdersLotteryActivity findOneNewTransactional(Long id) {
 
-        return ordersLotteryActivityRep.findByIdFromDB(id);
-    }
+
 
     @Async
     @Transactional
@@ -367,7 +361,7 @@ public class ActivityService {
             logger.info("sleep " + millisecond + "毫秒");
             Thread.sleep(millisecond);
             // 开奖
-            ordersLotteryActivity = findOneNewTransactional(ordersLotteryActivity.getId());
+            ordersLotteryActivity = transactionalService.findOneNewTrans(ordersLotteryActivityRep,ordersLotteryActivity.getId());
             if (ordersLotteryActivity.getStatus() != ENABLE.getCode()) {
                 logger.info("大富贵活动Id " + ordersLotteryActivity.getId() + " 已开奖");
                 return;
@@ -391,12 +385,12 @@ public class ActivityService {
             }
             ordersLotteryActivity.setStatus(2);
             ordersLotteryActivityRep.save(ordersLotteryActivity);
-
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             logger.info("开奖失败啦!", e);
-            String content = "开奖失败,日志:" + ExceptionUtils.getStackTrace(e);
-            mailService.sendtMail("开奖失败邮件", content);
+            String content = "\n大富贵开奖失败,日志:" + ExceptionUtils.getStackTrace(e);
+            mailService.sendtMail("大富贵开奖失败邮件 id :" + ordersLotteryActivity.getId(), content);
         }
+//        int i = 1 / 0;
     }
 
     public Result<JoinBigRichUser> modifyStatus(Long id, Integer status) {
@@ -420,5 +414,16 @@ public class ActivityService {
         return Result.success();
     }
 
+
+
+    @Resource
+    private OrderService orderService;
+
+    @Transactional
+    public void method2() {
+        logger.info("method2");
+        activityRepository.findOne(1L);
+        orderService.method1();
+    }
 
 }

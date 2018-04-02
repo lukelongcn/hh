@@ -23,17 +23,25 @@ public class AdminApplicationTest {
     private ActivityService activityService;
     @Resource
     private HotelOrderJob job;
+
     @Test
-    public void test(){
+    public void test() {
         job.scan();
     }
 
 
     @Test
-    public void start(){
+    public void start() {
 //        activityService.startBigRichLottery();
 
         activityService.startBigRichLottery();
+    }
+
+    @Test
+    public void start2() {
+//        activityService.startBigRichLottery();
+
+        activityService.method2();
     }
 
     @Resource
