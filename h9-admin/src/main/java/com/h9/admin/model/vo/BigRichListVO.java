@@ -53,7 +53,7 @@ public class BigRichListVO {
     @ApiModelProperty("状态 ")
     private String status;
 
-    @ApiModelProperty("状态值(数字类型)")
+    @ApiModelProperty("状态值(数字类型) 1 为启用 0为禁用")
     private int statusInt;
 
     @ApiModelProperty("待开始,进行中,已结束 ")
