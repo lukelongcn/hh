@@ -53,6 +53,9 @@ public class BigRichListVO {
     @ApiModelProperty("状态 ")
     private String status;
 
+    @ApiModelProperty("状态值(数字类型)")
+    private String statusInt;
+
     @ApiModelProperty("待开始,进行中,已结束 ")
     private String activeStatus = "已结束";
 
@@ -64,6 +67,7 @@ public class BigRichListVO {
 
     @ApiModelProperty("能否可以添加用户 true 为可以，false 为不可以")
     private Boolean canAddUser = false;
+
 
     public BigRichListVO(OrdersLotteryActivity ordersLotteryActivity, User winnerUser, long joinCount) {
         this.setId(ordersLotteryActivity.getId());
