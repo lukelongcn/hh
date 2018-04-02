@@ -299,9 +299,8 @@ public class GoodService {
         mapVo.put("goodsName", goods.getName() + "*" + count);
 
         if (order.getOrdersLotteryId() != null){
-            mapVo.put("LotteryChance","true");
-        }else {
-            mapVo.put("LotteryChance","false");
+            mapVo.put("activityName","1号大富贵");
+            mapVo.put("lotteryChance","获得1次抽奖机会");
         }
         return Result.success(mapVo);
     }
@@ -332,9 +331,8 @@ public class GoodService {
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             order = ordersRepository.findOne(orderId);
             if (order.getOrdersLotteryId() != null){
-                mapVO.put("LotteryChance","true");
-            } else {
-                mapVO.put("LotteryChance","false");
+                mapVO.put("activityName","1号大富贵");
+                mapVO.put("lotteryChance","获得1次抽奖机会");
             }
             return Result.success(mapVO);
         } catch (RestClientException e) {
