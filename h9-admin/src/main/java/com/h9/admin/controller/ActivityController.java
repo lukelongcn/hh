@@ -59,7 +59,7 @@ public class ActivityController {
     @PostMapping(value = "/bigRich")
     @ApiOperation("新增大富贵期数")
     public Result addBigRichActivity(@Valid @RequestBody @ApiParam AddBigRichDTO addBigRichDTO) {
-        addBigRichDTO.setId(null);
+        addBigRichDTO.setId(-1L);
         return activityService.editBigRichActivity(addBigRichDTO);
     }
 

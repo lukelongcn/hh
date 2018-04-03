@@ -13,6 +13,7 @@ import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
@@ -33,11 +34,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
-import javax.transaction.Transactional;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -316,7 +319,7 @@ public class OrderService {
 
                 Date startTime = new Date(startTimeL);
                 int dayMi = 1000 * 60 * 60 * 24;
-                Date endTime = new Date(endTimeL+dayMi);
+                Date endTime = new Date(endTimeL + dayMi);
 
                 predicateList.add(builder.between(root.get("createTime"), startTime, endTime));
             }
@@ -395,7 +398,7 @@ public class OrderService {
         Result<PageResult<WxOrderListInfo>> pageResultResult = wxOrderList(null, null, wxOrderNo, orderType, startTime, endTime);
         PageResult<WxOrderListInfo> pageResult = pageResultResult.getData();
         List<WxOrderListInfo> wxOrderListInfoList = pageResult.getData();
-        if(wxOrderListInfoList.size() > 5000){
+        if (wxOrderListInfoList.size() > 5000) {
             return Result.fail("数据量过大，请增加筛选条件再导出");
         }
         //定义表的列名
@@ -427,5 +430,13 @@ public class OrderService {
         }
 
     }
+
+    @Transactional(propagation = Propagation.NEVER)
+    public void method1() {
+        logger.info("method1");
+    }
+
+    @Resource
+    private OrdersLotteryActivityRep ordersLotteryActivityRep;
 
 }
