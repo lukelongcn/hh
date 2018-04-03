@@ -19,7 +19,7 @@ import java.util.List;
  * @Date 2018/3/28
  */
 public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersLotteryActivity> {
-    @Query("select r from OrdersLotteryActivity r where r.status = 1 order by r.endTime DESC ")
+    @Query("select r from OrdersLotteryActivity r where r.status = 1 and r.winnerUserId is not null order by r.endTime DESC ")
     Page<OrdersLotteryActivity> findAllDetail(Pageable pageRequest);
     default PageResult<OrdersLotteryActivity> findAllDetail(Integer page, Integer limit){
         Page<OrdersLotteryActivity> List =  findAllDetail(pageRequest(page,limit));
