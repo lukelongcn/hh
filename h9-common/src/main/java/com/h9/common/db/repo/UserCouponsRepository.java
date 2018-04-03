@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 /**
  * <p>Title:h9-parent</p>
- * <p>Desription:</p>
+ * <p>Desription:用户优惠券库</p>
  *
  * @author LiYuan
  * @Date 2018/4/3
