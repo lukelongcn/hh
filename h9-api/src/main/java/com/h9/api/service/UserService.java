@@ -24,10 +24,7 @@ import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.Article;
 import com.h9.common.db.entity.config.ArticleType;
-import com.h9.common.db.entity.user.User;
-import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.entity.user.UserExtends;
-import com.h9.common.db.entity.user.UserRecord;
+import com.h9.common.db.entity.user.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
@@ -99,6 +96,8 @@ public class UserService {
     private UserExtendsRepository userExtendsRepository;
     @Resource
     private CommonService commonService;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
 
     @Resource
@@ -820,5 +819,16 @@ public class UserService {
         }
 
 
+    }
+
+    /**
+     * 用户优惠券
+     */
+    public Result getUserCoupons(Long userId, Integer state, Integer page, Integer limit) {
+        PageResult<UserCoupon> pageResult = userCouponsRepository.findByState(userId,state,page,limit);
+        if ( pageResult == null) {
+            return Result.fail("暂无优惠券");
+        }
+        return Result.success(pageResult.result2Result(UserCouponVO::new));
     }
 }
