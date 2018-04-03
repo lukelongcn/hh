@@ -34,8 +34,7 @@ public class UserCoupon  extends BaseEntity {
 
     /**
      * 使用状态 1未使用 2已使用 3已过期
-     *
-     * @see Coupon.statusEnum
+     * @see UserCoupon.statusEnum
      */
     @Column(name = "state", nullable = false, columnDefinition = "int default 1 COMMENT '使用状态 1未使用 2已使用 3已过期'")
     private Integer state = 1;
