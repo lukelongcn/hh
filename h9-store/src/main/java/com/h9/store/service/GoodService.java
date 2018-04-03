@@ -298,11 +298,10 @@ public class GoodService {
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
 
-        //TODO 暂时用于测试 测试完取消if注释
-        //if (order.getOrdersLotteryId() != null){
+        if (order.getOrdersLotteryId() != null){
             mapVo.put("activityName","1号大富贵");
             mapVo.put("lotteryChance","获得1次抽奖机会");
-        //}
+        }
         return Result.success(mapVo);
     }
 
