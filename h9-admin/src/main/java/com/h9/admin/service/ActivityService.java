@@ -120,6 +120,10 @@ public class ActivityService {
             return Result.fail("请填写正确 开始-到结束 时间");
         }
 
+        if(endTime.getTime() == startTime.getTime()){
+            return Result.fail("请选择正确的开始时间和结束时间");
+        }
+
         List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDateId(startTime, addBigRichDTO.getId());
         List<OrdersLotteryActivity> byDate2 = ordersLotteryActivityRep.findByDateId(endTime, addBigRichDTO.getId());
 
@@ -351,46 +355,42 @@ public class ActivityService {
     }
 
 
-
-
-
     @Async
     @Transactional
     public void sleepTaskStartLottery(long millisecond, OrdersLotteryActivity ordersLotteryActivity) {
         try {
             logger.info("sleep " + millisecond + "毫秒");
             Thread.sleep(millisecond);
-            // 开奖
-            ordersLotteryActivity = transactionalService.findOneNewTrans(ordersLotteryActivityRep,ordersLotteryActivity.getId());
-            if (ordersLotteryActivity.getStatus() != ENABLE.getCode()) {
-                logger.info("大富贵活动Id " + ordersLotteryActivity.getId() + " 已开奖");
-                return;
-            }
-            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
-            if (winnerUserId == null) {
-                logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
-                ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.BAN.getCode());
-                ordersLotteryActivityRep.save(ordersLotteryActivity);
-                return;
-            }
-            User user = userRepository.findOne(winnerUserId);
-            BigDecimal money = ordersLotteryActivity.getMoney();
-            if (user != null) {
-                commonService.setBalance(winnerUserId, money,
-                        BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getId(),
-                        ordersLotteryActivity.getId(), "",
-                        BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getName());
-            } else {
-                logger.info("用户不存在 id: " + winnerUserId);
-            }
-            ordersLotteryActivity.setStatus(2);
-            ordersLotteryActivityRep.save(ordersLotteryActivity);
         } catch (Exception e) {
             logger.info("开奖失败啦!", e);
-            String content = "\n大富贵开奖失败,日志:" + ExceptionUtils.getStackTrace(e);
-            mailService.sendtMail("大富贵开奖失败邮件 id :" + ordersLotteryActivity.getId(), content);
+//            String content = "\n大富贵开奖失败,日志:" + ExceptionUtils.getStackTrace(e);
+//            mailService.sendtMail("大富贵开奖失败邮件 id :" + ordersLotteryActivity.getId(), content);
         }
-//        int i = 1 / 0;
+        // 开奖
+        ordersLotteryActivity = transactionalService.findOneNewTrans(ordersLotteryActivityRep, ordersLotteryActivity.getId());
+        if (ordersLotteryActivity.getStatus() != ENABLE.getCode()) {
+            logger.info("大富贵活动Id " + ordersLotteryActivity.getId() + " 已开奖");
+            return;
+        }
+        Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+        if (winnerUserId == null) {
+            logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
+            ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.BAN.getCode());
+            ordersLotteryActivityRep.save(ordersLotteryActivity);
+            return;
+        }
+        User user = userRepository.findOne(winnerUserId);
+        BigDecimal money = ordersLotteryActivity.getMoney();
+        if (user != null) {
+            commonService.setBalance(winnerUserId, money,
+                    BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getId(),
+                    ordersLotteryActivity.getId(), "",
+                    BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getName());
+        } else {
+            logger.info("用户不存在 id: " + winnerUserId);
+        }
+        ordersLotteryActivity.setStatus(2);
+        ordersLotteryActivityRep.save(ordersLotteryActivity);
     }
 
     public Result<JoinBigRichUser> modifyStatus(Long id, Integer status) {
@@ -413,7 +413,6 @@ public class ActivityService {
         ordersLotteryActivityRep.save(activity);
         return Result.success();
     }
-
 
 
     @Resource
