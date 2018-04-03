@@ -30,7 +30,7 @@ public class Coupon extends BaseEntity {
 
     /**
      * 状态 1 未生效 0生效中 2已失效
-     * @see OrdersLotteryActivity.statusEnum
+     * @see Coupon.statusEnum
      */
     @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 未生效 0生效中 2已失效'")
     private int status;
@@ -50,11 +50,15 @@ public class Coupon extends BaseEntity {
     @Column(name = "left_count", columnDefinition = "int default 0 COMMENT '剩余张数'")
     private int leftCount;
 
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "goods_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '父级'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Goods goodsId;
+
     public enum statusEnum{
 
         ENABLE(1,"未生效"),
-        BAN(0,"0生效中"),
-        FINISH(2,"2已失效");
+        BAN(0,"生效中"),
+        FINISH(2,"已失效");
 
         private int code;
         private String desc;
