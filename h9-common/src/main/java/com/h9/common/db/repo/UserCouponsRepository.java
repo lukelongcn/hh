@@ -6,6 +6,7 @@ import com.h9.common.db.entity.user.UserCoupon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p>Title:h9-parent</p>
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
  * @author LiYuan
  * @Date 2018/4/3
  */
+@Repository
 public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
 
     @Query("select s from UserCoupon s where s.userId = ?1 and s.state = ?2  order by s.createTime DESC ")
