@@ -222,9 +222,12 @@ public class GoodService {
                 .stock(goods.getStock())
                 .balance(MoneyUtils.formatMoney(userAccount.getBalance()))
                 .build();
-
+        // 订单默认优惠券
+        // 取得用户有效优惠券
         List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
         listCoupon.forEach(userCoupon -> {
+            logger.debug(userCoupon.getCouponId().getId());
+            // 优惠券类别中商品id对应购买商品id
             Long goodId = userCoupon.getCouponId().getGoodsId().getId();
             if (id.equals(goodId)) {
                 vo.setUserCoupons("已选一张，省￥" + goods.getPrice());

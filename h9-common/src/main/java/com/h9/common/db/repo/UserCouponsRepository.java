@@ -28,6 +28,6 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
         return new PageResult(list);
     }
 
-    @Query("select u From UserCoupon u where u.userId =?1 order by u.id")
+    @Query("select u From UserCoupon u where u.userId =?1 and s.state=1 order by u.id")
     List<UserCoupon> findByUserId(Long userId);
 }
