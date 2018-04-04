@@ -236,7 +236,7 @@ public class GoodService {
         return Result.success(vo);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) throws ServiceException {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
@@ -375,13 +375,13 @@ public class GoodService {
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             // 大富贵参与机会获得
-            /*if (order.getOrdersLotteryId() != null){*/
+            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
+            if (ordersLotteryActivity != null){
                 mapVO.put("activityName", "1号大富贵");
                 mapVO.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
-/*
             }
-*/
+
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
