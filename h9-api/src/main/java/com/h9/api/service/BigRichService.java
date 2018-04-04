@@ -15,6 +15,7 @@ import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,25 +124,26 @@ public class BigRichService {
         return userBigRichRecordVO;
     }
 
+    private Logger logger = Logger.getLogger(this.getClass());
     /**
-     * 通过订单号参加大富贵活动
+     * 参与大富贵活动
      *
-     * @param orders
+     * @param orders 参与的 订单
      * @return
      */
-    @Transactional
+    @SuppressWarnings("Duplicates")
     public Orders joinBigRich(Orders orders) {
+        int orderFrom = orders.getOrderFrom();
+        if(orderFrom == 2){
+            return orders;
+        }
         Date createTime = orders.getCreateTime();
         List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         lotteryTime.forEach(o -> {
-            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(), o.getEndTime(), orders.getUser().getId());
-            list.forEach(order -> {
-                if (order.getOrdersLotteryId() != null) {
-                    return;
-                }
-            });
             orders.setOrdersLotteryId(o.getId());
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + o.getId());
         });
+        ordersRepository.saveAndFlush(orders);
         return orders;
     }
 }
