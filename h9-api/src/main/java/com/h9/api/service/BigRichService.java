@@ -54,9 +54,9 @@ public class BigRichService {
             bigRichVO.setRecordList(pageResultRecord);
         }
         bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
-        if (user.getLotteryChance() == 1) {
-            bigRichVO.setLotteryChance(1);
-        }
+
+        bigRichVO.setLotteryChance(user.getLotteryChance());
+
         return Result.success(bigRichVO);
     }
 
@@ -138,10 +138,12 @@ public class BigRichService {
         if(orderFrom == 2){
             return orders;
         }
+        User user = userRepository.findOne(orders.getUser().getId());
         Date createTime = orders.getCreateTime();
         OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         if (lotteryTime != null) {
             orders.setOrdersLotteryId(lotteryTime.getId());
+            user.setLotteryChance(user.getLotteryChance()+1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
             return orders;
         }
