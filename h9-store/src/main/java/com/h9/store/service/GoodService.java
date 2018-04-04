@@ -223,8 +223,8 @@ public class GoodService {
 
         List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
         listCoupon.forEach(userCoupon -> {
-            if (userCoupon.getCouponId().getGoodsId().equals(id)){
-                vo.setUserCoupons("已选一张，省￥"+goods.getPrice());
+            if (userCoupon.getCouponId().getGoodsId().equals(id)) {
+                vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
                 vo.setUserCouponsId(userCoupon.getId());
             }
         });
@@ -306,15 +306,19 @@ public class GoodService {
     @SuppressWarnings("Duplicates")
     public Orders joinBigRich(Orders orders) {
         int orderFrom = orders.getOrderFrom();
-        if(orderFrom == 2){
+        if (orderFrom == 2) {
             return orders;
         }
         Date createTime = orders.getCreateTime();
-        List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        lotteryTime.forEach(o -> {
-            orders.setOrdersLotteryId(o.getId());
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + o.getId());
-        });
+        User user = userRepository.findOne(orders.getUser().getId());
+        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+        if (lotteryTime != null) {
+            orders.setOrdersLotteryId(lotteryTime.getId());
+            user.setLotteryChance(user.getLotteryChance()+1);
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+            ordersRepository.saveAndFlush(orders);
+            userRepository.save(user);
+        }
         ordersRepository.saveAndFlush(orders);
         return orders;
     }
@@ -331,10 +335,9 @@ public class GoodService {
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
-
         if (order.getOrdersLotteryId() != null) {
-            mapVo.put("activityName", "1号大富贵");
-            mapVo.put("lotteryChance", "获得1次抽奖机会");
+        mapVo.put("activityName", "1号大富贵");
+        mapVo.put("lotteryChance", "获得1次抽奖机会");
         }
         return Result.success(mapVo);
     }

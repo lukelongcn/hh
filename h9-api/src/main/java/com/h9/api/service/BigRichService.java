@@ -15,6 +15,7 @@ import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,9 +54,9 @@ public class BigRichService {
             bigRichVO.setRecordList(pageResultRecord);
         }
         bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
-        if (user.getLotteryChance() == 1) {
-            bigRichVO.setLotteryChance(1);
-        }
+
+        bigRichVO.setLotteryChance(user.getLotteryChance());
+
         return Result.success(bigRichVO);
     }
 
@@ -93,7 +94,7 @@ public class BigRichService {
 
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
         if (ordersLotteryActivity == null) {
-            return null;
+            return userBigRichRecordVO;
         }
         // 订单id
         userBigRichRecordVO.setOrdersId(e.getId());
@@ -137,13 +138,16 @@ public class BigRichService {
         if(orderFrom == 2){
             return orders;
         }
+        User user = userRepository.findOne(orders.getUser().getId());
         Date createTime = orders.getCreateTime();
-        List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        lotteryTime.forEach(o -> {
-            orders.setOrdersLotteryId(o.getId());
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + o.getId());
-        });
-        ordersRepository.saveAndFlush(orders);
+        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+        if (lotteryTime != null) {
+            orders.setOrdersLotteryId(lotteryTime.getId());
+            user.setLotteryChance(user.getLotteryChance()+1);
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+            ordersRepository.saveAndFlush(orders);
+            userRepository.save(user);
+        }
         return orders;
     }
 }
