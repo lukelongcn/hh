@@ -229,9 +229,10 @@ public class GoodService {
             if (id.equals(goodId)) {
                 vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
                 vo.setUserCouponsId(userCoupon.getId());
+                logger.debug(id + "已选一张，省￥" + goods.getPrice());
             }
         });
-        logger.debug(id + "已选一张，省￥" + goods.getPrice());
+
         return Result.success(vo);
     }
 
@@ -342,11 +343,13 @@ public class GoodService {
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         // 大富贵参与机会获得
-        if (order.getOrdersLotteryId() != null){
+       /* if (order.getOrdersLotteryId() != null){*/
             mapVo.put("activityName", "1号大富贵");
             mapVo.put("lotteryChance", "获得1次抽奖机会");
             logger.debug("获得一次抽奖机会");
+/*
         }
+*/
         return Result.success(mapVo);
     }
 
@@ -375,11 +378,13 @@ public class GoodService {
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             // 大富贵参与机会获得
-            if (order.getOrdersLotteryId() != null){
+            /*if (order.getOrdersLotteryId() != null){*/
                 mapVO.put("activityName", "1号大富贵");
                 mapVO.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
+/*
             }
+*/
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
