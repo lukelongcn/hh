@@ -2,6 +2,7 @@ package com.h9.admin;
 
 import com.h9.admin.job.HotelOrderJob;
 import com.h9.admin.service.ActivityService;
+import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.utils.DateUtil;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,11 +32,14 @@ public class AdminApplicationTest {
     }
 
 
+    @Resource
+    private RedisBean redisBean;
     @Test
     public void start() {
 //        activityService.startBigRichLottery();
 
-        activityService.startBigRichLottery();
+//        activityService.startBigRichLottery();
+        redisBean.setStringValue("123", "", 1, TimeUnit.MICROSECONDS);
     }
 
     @Test
