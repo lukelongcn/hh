@@ -32,20 +32,20 @@ public class Coupon extends BaseEntity {
      * 状态 1 未生效 0生效中 2已失效
      * @see Coupon.statusEnum
      */
-    @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 未生效 0生效中 2已失效'")
+    @Column(name = "status",  columnDefinition = "int  COMMENT '状态 1 未生效 0生效中 2已失效'")
     private int status;
 
-    @Column(name = "start_time", nullable = false, columnDefinition = "datetime COMMENT '开始时间'")
+    @Column(name = "start_time",  columnDefinition = "datetime COMMENT '开始时间'")
     private Date startTime;
 
-    @Column(name = "end_time", nullable = false, columnDefinition = "datetime  COMMENT '结束时间'")
+    @Column(name = "end_time",  columnDefinition = "datetime  COMMENT '结束时间'")
     private Date endTime;
 
     @Column(name = "value", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '面值'")
     private BigDecimal value = new BigDecimal(0);
 
-    @Column(name = "condition", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '使用条件'")
-    private BigDecimal condition = new BigDecimal(0);
+    @Column(name = "use_condition", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '使用条件'")
+    private BigDecimal useCondition = new BigDecimal(0);
 
     @Column(name = "left_count", columnDefinition = "int default 0 COMMENT '剩余张数'")
     private int leftCount;
