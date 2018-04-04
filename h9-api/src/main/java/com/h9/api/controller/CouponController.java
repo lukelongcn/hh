@@ -26,6 +26,6 @@ public class CouponController {
                                 @PathVariable(value = "state") Integer state,
                                 @RequestParam(required = false,defaultValue = "1") Integer page,
                                 @RequestParam(required = false,defaultValue = "10") Integer limit){
-        return couponService.getUserCoupons(1L,state,page,limit);
+        return couponService.getUserCoupons(userId,state,page,limit);
     }
 }
