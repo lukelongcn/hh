@@ -19,6 +19,7 @@ import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
 import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.modle.vo.PayResultVO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -224,17 +225,14 @@ public class GoodService {
                 .build();
         // 订单默认优惠券
         // 取得用户有效优惠券
-        List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
-        listCoupon.forEach(userCoupon -> {
-            logger.debug(userCoupon.getCouponId().getId());
-            // 优惠券类别中商品id对应购买商品id
-            Long goodId = userCoupon.getCouponId().getGoodsId().getId();
-            if (id.equals(goodId)) {
-                vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
-                vo.setUserCouponsId(userCoupon.getId());
-                logger.debug(id + "已选一张，省￥" + goods.getPrice());
-            }
-        });
+        List<UserCoupon> userCoupon = userCouponsRepository.findByUserId(userId,id);
+        if (CollectionUtils.isNotEmpty(userCoupon)) {
+            vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
+            vo.setUserCouponsId(userCoupon.get(0).getId());
+            logger.debug(id + "已选一张，省￥" + goods.getPrice());
+        } else {
+            vo.setUserCoupons("暂无可用");
+        }
 
         return Result.success(vo);
     }
