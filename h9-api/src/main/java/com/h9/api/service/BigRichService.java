@@ -93,7 +93,7 @@ public class BigRichService {
 
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
         if (ordersLotteryActivity == null) {
-            return null;
+            return userBigRichRecordVO;
         }
         // 订单id
         userBigRichRecordVO.setOrdersId(e.getId());
