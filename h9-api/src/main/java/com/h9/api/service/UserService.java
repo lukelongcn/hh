@@ -96,9 +96,6 @@ public class UserService {
     private UserExtendsRepository userExtendsRepository;
     @Resource
     private CommonService commonService;
-    @Resource
-    private UserCouponsRepository userCouponsRepository;
-
 
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
@@ -116,6 +113,9 @@ public class UserService {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -824,6 +824,7 @@ public class UserService {
     /**
      * 用户优惠券
      */
+    @Transactional
     public Result getUserCoupons(Long userId, Integer state, Integer page, Integer limit) {
         PageResult<UserCoupon> pageResult = userCouponsRepository.findByState(userId,state,page,limit);
         if ( pageResult == null) {

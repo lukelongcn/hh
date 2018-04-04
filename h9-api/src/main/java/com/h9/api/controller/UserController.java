@@ -235,7 +235,7 @@ public class UserController {
 //    }
 
     @Secured
-    @GetMapping("user/coupon/{state}")
+    @GetMapping("/user/coupon/{state}")
     public Result getUserCoupon(@SessionAttribute("curUserId") Long userId,
                                 @PathVariable Integer state,
                                 @RequestParam(required = false,defaultValue = "1") Integer page,

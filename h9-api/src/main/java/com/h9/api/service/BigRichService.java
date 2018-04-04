@@ -50,8 +50,8 @@ public class BigRichService {
             bigRichVO.setRecordList(pageResultRecord);
         }
         bigRichVO.setBigRichMoney(userAccount.getBigRichMoney());
-        if (user.getLotteryChance() == 1) {
-            bigRichVO.setLotteryChance(1);
+        if (user.getLotteryChance() == null) {
+            bigRichVO.setLotteryChance(user.getLotteryChance());
         }
         return Result.success(bigRichVO);
     }
