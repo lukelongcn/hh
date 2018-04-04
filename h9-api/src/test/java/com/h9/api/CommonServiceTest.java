@@ -1,16 +1,17 @@
 package com.h9.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.model.vo.UserCouponVO;
 import com.h9.api.service.StickService;
+import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
-import com.h9.common.db.entity.order.Address;
+import com.h9.common.db.entity.user.UserCoupon;
+import com.h9.common.db.repo.UserCouponsRepository;
 import org.jboss.logging.Logger;
-import org.junit.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -46,5 +47,13 @@ public class CommonServiceTest {
     public void testHome() {
         Result home = stickService.home();
 
+    }
+
+    @Resource
+    UserCouponsRepository userCouponsRepository;
+    @Test
+    public void testUserCoupons() {
+        PageResult<UserCoupon> pageResult = userCouponsRepository.findState(1L,1,1,1);
+        System.out.println(pageResult.result2Result(UserCouponVO::new));
     }
 }

@@ -19,10 +19,10 @@ import org.springframework.stereotype.Repository;
 public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
 
     @Query("select s from UserCoupon s where s.userId = ?1 and s.state = ?2  order by s.id DESC ")
-    Page<UserCoupon> findByState(Long userId, Integer state, Pageable pageRequest);
+    Page<UserCoupon> findState(Long userId, Integer state, Pageable pageRequest);
 
-    default PageResult<UserCoupon> findByState(Long userId, Integer state,int page, int limit) {
-        Page<UserCoupon> list = findByState(userId, state,pageRequest(page, limit));
+    default PageResult<UserCoupon> findState(Long userId, Integer state,int page, int limit) {
+        Page<UserCoupon> list = findState(userId, state,pageRequest(page, limit));
         return new PageResult(list);
     }
 }

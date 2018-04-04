@@ -234,13 +234,5 @@ public class UserController {
 //        return userService.qrRecord(userId,page,limit);
 //    }
 
-    @Secured
-    @GetMapping("/user/coupon/{state}")
-    public Result getUserCoupon(@SessionAttribute("curUserId") Long userId,
-                                @PathVariable Integer state,
-                                @RequestParam(required = false,defaultValue = "1") Integer page,
-                                @RequestParam(required = false) Integer limit){
-        return userService.getUserCoupons(userId,state,page,limit);
-    }
 
 }

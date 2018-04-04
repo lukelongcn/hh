@@ -821,15 +821,4 @@ public class UserService {
 
     }
 
-    /**
-     * 用户优惠券
-     */
-    @Transactional
-    public Result getUserCoupons(Long userId, Integer state, Integer page, Integer limit) {
-        PageResult<UserCoupon> pageResult = userCouponsRepository.findByState(userId,state,page,limit);
-        if ( pageResult == null) {
-            return Result.fail("暂无优惠券");
-        }
-        return Result.success(pageResult.result2Result(UserCouponVO::new));
-    }
 }
