@@ -228,6 +228,7 @@ public class GoodService {
                 vo.setUserCouponsId(userCoupon.getId());
             }
         });
+        logger.debug(id + "已选一张，省￥" + goods.getPrice());
         return Result.success(vo);
     }
 
@@ -331,13 +332,15 @@ public class GoodService {
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-
+        order = ordersRepository.saveAndFlush(order);
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
-        if (order.getOrdersLotteryId() != null) {
+        // 大富贵参与机会获得
+        if (order.getOrdersLotteryId() != null){
             mapVo.put("activityName", "1号大富贵");
             mapVo.put("lotteryChance", "获得1次抽奖机会");
+            logger.debug("获得一次抽奖机会");
         }
         return Result.success(mapVo);
     }
@@ -359,17 +362,18 @@ public class GoodService {
             Orders order = ordersRepository.findOne(orderId);
             String payInfoId = redisBean.getStringValue("orderId:" + orderId);
             order.setPayInfoId(Long.valueOf(payInfoId));
-            ordersRepository.saveAndFlush(order);
+            order = ordersRepository.saveAndFlush(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);
             Map<String, Object> mapVO = new HashMap<>();
             mapVO.put("price", MoneyUtils.formatMoney(money));
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
-            order = ordersRepository.findOne(orderId);
-            if (order.getOrdersLotteryId() != null) {
+            // 大富贵参与机会获得
+            if (order.getOrdersLotteryId() != null){
                 mapVO.put("activityName", "1号大富贵");
                 mapVO.put("lotteryChance", "获得1次抽奖机会");
+                logger.debug("获得一次抽奖机会");
             }
             return Result.success(mapVO);
         } catch (RestClientException e) {
