@@ -14,8 +14,10 @@ import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -49,7 +51,7 @@ public class BigRichService {
             PageResult<BigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToRecord);
             bigRichVO.setRecordList(pageResultRecord);
         }
-        bigRichVO.setBigRichMoney(userAccount.getBigRichMoney());
+        bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
         if (user.getLotteryChance() == 1) {
             bigRichVO.setLotteryChance(1);
         }
@@ -69,7 +71,7 @@ public class BigRichService {
             return bigRichRecordVO;
         }
         bigRichRecordVO.setUserName(user.getNickName());
-        bigRichRecordVO.setLotteryMoney(e.getMoney());
+        bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
         bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
         return bigRichRecordVO;
     }
@@ -123,6 +125,7 @@ public class BigRichService {
 
     /**
      * 通过订单号参加大富贵活动
+     *
      * @param orders
      * @return
      */
@@ -131,9 +134,9 @@ public class BigRichService {
         Date createTime = orders.getCreateTime();
         List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         lotteryTime.forEach(o -> {
-            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime(),orders.getUser().getId());
-            list.forEach(order ->{
-                if (order.getOrdersLotteryId() != null){
+            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(), o.getEndTime(), orders.getUser().getId());
+            list.forEach(order -> {
+                if (order.getOrdersLotteryId() != null) {
                     return;
                 }
             });

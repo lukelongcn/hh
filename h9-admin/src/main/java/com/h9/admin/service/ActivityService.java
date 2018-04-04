@@ -14,6 +14,7 @@ import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.lottery.WinnerOptRecord;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
+import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.LotteryFlowActivityDTO;
 import com.h9.common.modle.dto.RewardQueryDTO;
@@ -72,6 +73,8 @@ public class ActivityService {
     private CommonService commonService;
     @Resource
     private TransactionalService transactionalService;
+    @Resource
+    private UserAccountRepository userAccountRepository;
 
 
     public Result<PageResult<RewardVO>> getRewards(RewardQueryDTO rewardQueryDTO) {
@@ -120,7 +123,7 @@ public class ActivityService {
             return Result.fail("请填写正确 开始-到结束 时间");
         }
 
-        if(endTime.getTime() == startTime.getTime()){
+        if (endTime.getTime() == startTime.getTime()) {
             return Result.fail("请选择正确的开始时间和结束时间");
         }
 
@@ -355,6 +358,12 @@ public class ActivityService {
     }
 
 
+    /**
+     * 异步调用开奖任务
+     *
+     * @param millisecond           暂停时间
+     * @param ordersLotteryActivity
+     */
     @Async
     @Transactional
     public void sleepTaskStartLottery(long millisecond, OrdersLotteryActivity ordersLotteryActivity) {
@@ -372,27 +381,56 @@ public class ActivityService {
             logger.info("大富贵活动Id " + ordersLotteryActivity.getId() + " 已开奖");
             return;
         }
+        handlerLotteryResultUser(ordersLotteryActivity);
+        ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.FINISH.getCode());
+        ordersLotteryActivityRep.save(ordersLotteryActivity);
+    }
+
+    /**
+     * 处理抽奖中奖用户
+     *
+     * @param ordersLotteryActivity
+     * @return
+     */
+    private Result handlerLotteryResultUser(OrdersLotteryActivity ordersLotteryActivity) {
+
         Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
         if (winnerUserId == null) {
             logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
-            ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.BAN.getCode());
-            ordersLotteryActivityRep.save(ordersLotteryActivity);
-            return;
+//            ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.FINISH.getCode());
+//            ordersLotteryActivityRep.save(ordersLotteryActivity);
+            return null;
         }
+
         User user = userRepository.findOne(winnerUserId);
         BigDecimal money = ordersLotteryActivity.getMoney();
         if (user != null) {
+
             commonService.setBalance(winnerUserId, money,
                     BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getId(),
                     ordersLotteryActivity.getId(), "",
                     BalanceFlow.BalanceFlowTypeEnum.BIG_RICH_BONUS.getName());
+
+            UserAccount userAccount = userAccountRepository.findByUserId(user.getId());
+            BigDecimal bigRichMoney = userAccount.getBigRichMoney();
+            if (bigRichMoney == null) bigRichMoney = BigDecimal.ZERO;
+            userAccount.setBigRichMoney(bigRichMoney.add(money));
+            userAccountRepository.save(userAccount);
+
         } else {
             logger.info("用户不存在 id: " + winnerUserId);
         }
-        ordersLotteryActivity.setStatus(2);
-        ordersLotteryActivityRep.save(ordersLotteryActivity);
+
+        return null;
     }
 
+    /**
+     * 修改状态
+     *
+     * @param id     id
+     * @param status 1 启用，0 禁用
+     * @return
+     */
     public Result<JoinBigRichUser> modifyStatus(Long id, Integer status) {
         OrdersLotteryActivity activity = ordersLotteryActivityRep.findOne(id);
         if (activity == null) {
