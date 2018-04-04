@@ -32,10 +32,12 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.security.acl.LastOwnerException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.spi.LocaleNameProvider;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -223,15 +225,18 @@ public class GoodService {
 
         List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
         listCoupon.forEach(userCoupon -> {
-            if (userCoupon.getCouponId().getGoodsId().equals(id)) {
+            Long goodId = userCoupon.getCouponId().getGoodsId().getId();
+            if (id.equals(goodId)) {
                 vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
                 vo.setUserCouponsId(userCoupon.getId());
+                logger.debug(id + "已选一张，省￥" + goods.getPrice());
             }
         });
+
         return Result.success(vo);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Result convertGoods(ConvertGoodsDTO convertGoodsDTO, Long userId) throws ServiceException {
         Long addressId = convertGoodsDTO.getAddressId();
         Address address = addressRepository.findOne(addressId);
@@ -288,8 +293,13 @@ public class GoodService {
                 return result;
             }
             Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
-            if (balancePayResult.getCode() == 1) {
+            if (balancePayResult.getCode() == 0) {
                 joinBigRich(order);
+                Map mapVo = (Map) balancePayResult.getData();
+                // 大富贵参与机会获得
+                mapVo.put("activityName", "1号大富贵");
+                mapVo.put("lotteryChance", "获得1次抽奖机会");
+                logger.debug("获得一次抽奖机会");
             }
             return balancePayResult;
         }
@@ -315,9 +325,11 @@ public class GoodService {
         if (lotteryTime != null) {
             orders.setOrdersLotteryId(lotteryTime.getId());
             user.setLotteryChance(user.getLotteryChance()+1);
+            lotteryTime.setJoinCount(lotteryTime.getJoinCount()+1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
             ordersRepository.saveAndFlush(orders);
             userRepository.save(user);
+            ordersLotteryActivityRepository.save(lotteryTime);
         }
         ordersRepository.saveAndFlush(orders);
         return orders;
@@ -331,14 +343,10 @@ public class GoodService {
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-
+        order = ordersRepository.saveAndFlush(order);
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
-        if (order.getOrdersLotteryId() != null) {
-        mapVo.put("activityName", "1号大富贵");
-        mapVo.put("lotteryChance", "获得1次抽奖机会");
-        }
         return Result.success(mapVo);
     }
 
@@ -359,18 +367,21 @@ public class GoodService {
             Orders order = ordersRepository.findOne(orderId);
             String payInfoId = redisBean.getStringValue("orderId:" + orderId);
             order.setPayInfoId(Long.valueOf(payInfoId));
-            ordersRepository.saveAndFlush(order);
+            order = ordersRepository.saveAndFlush(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);
             Map<String, Object> mapVO = new HashMap<>();
             mapVO.put("price", MoneyUtils.formatMoney(money));
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
-            order = ordersRepository.findOne(orderId);
-            if (order.getOrdersLotteryId() != null) {
+            // 大富贵参与机会获得
+            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
+            if (ordersLotteryActivity != null){
                 mapVO.put("activityName", "1号大富贵");
                 mapVO.put("lotteryChance", "获得1次抽奖机会");
+                logger.debug("获得一次抽奖机会");
             }
+
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");

@@ -143,10 +143,14 @@ public class BigRichService {
         OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         if (lotteryTime != null) {
             orders.setOrdersLotteryId(lotteryTime.getId());
+            // 用户参与机会+1
             user.setLotteryChance(user.getLotteryChance()+1);
+            // 活动参与人数+1
+            lotteryTime.setJoinCount(lotteryTime.getJoinCount()+1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
             ordersRepository.saveAndFlush(orders);
             userRepository.save(user);
+            ordersLotteryActivityRepository.save(lotteryTime);
         }
         return orders;
     }
