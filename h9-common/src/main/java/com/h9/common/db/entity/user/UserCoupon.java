@@ -25,11 +25,11 @@ public class UserCoupon  extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
+    @Column(name = "user_id",  columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
     private Long userId;
 
     @ManyToOne
-    @JoinColumn(name = "coupon_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20)  COMMENT '对应优惠券'", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "coupon_id",  referencedColumnName = "id", columnDefinition = "bigint(20)  COMMENT '对应优惠券'", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Coupon couponId;
 
     /**
