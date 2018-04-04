@@ -145,7 +145,8 @@ public class BigRichService {
             orders.setOrdersLotteryId(lotteryTime.getId());
             user.setLotteryChance(user.getLotteryChance()+1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
-            return orders;
+            ordersRepository.saveAndFlush(orders);
+            userRepository.save(user);
         }
         return orders;
     }
