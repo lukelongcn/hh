@@ -310,11 +310,11 @@ public class GoodService {
             return orders;
         }
         Date createTime = orders.getCreateTime();
-        List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        lotteryTime.forEach(o -> {
-            orders.setOrdersLotteryId(o.getId());
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + o.getId());
-        });
+        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+        if (lotteryTime != null){
+            orders.setOrdersLotteryId(lotteryTime.getId());
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+        }
         ordersRepository.saveAndFlush(orders);
         return orders;
     }
@@ -331,11 +331,10 @@ public class GoodService {
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
-        // Todo 测试完取消注释
-        /*if (order.getOrdersLotteryId() != null) {*/
+        if (order.getOrdersLotteryId() != null) {
         mapVo.put("activityName", "1号大富贵");
         mapVo.put("lotteryChance", "获得1次抽奖机会");
-        /*}*/
+        }
         return Result.success(mapVo);
     }
 
@@ -364,10 +363,10 @@ public class GoodService {
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             order = ordersRepository.findOne(orderId);
-            /*if (order.getOrdersLotteryId() != null) {*/
+            if (order.getOrdersLotteryId() != null) {
                 mapVO.put("activityName", "1号大富贵");
                 mapVO.put("lotteryChance", "获得1次抽奖机会");
-           /* }*/
+            }
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
