@@ -9,6 +9,7 @@ import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.hotel.HotelOrder;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -37,7 +38,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,6 +74,8 @@ public class GoodService {
     private PayInfoRepository payInfoRepository;
     @Resource
     private RestTemplate restTemplate;
+    @Resource
+    private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -245,7 +250,7 @@ public class GoodService {
         //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
         BigDecimal balance = userAccount.getBalance();
-        if ( convertGoodsDTO.getPayMethod() == 1 && balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
+        if (convertGoodsDTO.getPayMethod() == 1 && balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
             return Result.fail("余额不足");
         }
 
@@ -266,23 +271,49 @@ public class GoodService {
         int payMethod = convertGoodsDTO.getPayMethod();
         //订单项
         OrderItems orderItems = new OrderItems(goods, count, order);
-        ordersRepository.save(order);
+        ordersRepository.saveAndFlush(order);
         orderItems.setOrders(order);
         orderItemReposiroty.save(orderItems);
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
-            return getPayInfo(order.getId(), goodsPrice, userId, convertGoodsDTO.getPayPlatform(),count,goods);
+            return getPayInfo(order.getId(), goodsPrice, userId, convertGoodsDTO.getPayPlatform(), count, goods);
         } else {
             //余额支付
             Result result = changeStock(goods, count);
-            if(result.getCode() == 1){
+            if (result.getCode() == 1) {
                 return result;
             }
-            return balancePay(order, userId, goods, goodsPrice, count);
+            Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
+            if (balancePayResult.getCode() == 1) {
+                joinBigRich(order);
+            }
+            return balancePayResult;
         }
 
 
+    }
+
+    /**
+     * 参与大富贵活动
+     *
+     * @param orders 参与的 订单
+     * @return
+     */
+    @SuppressWarnings("Duplicates")
+    public Orders joinBigRich(Orders orders) {
+        int orderFrom = orders.getOrderFrom();
+        if(orderFrom == 2){
+            return orders;
+        }
+        Date createTime = orders.getCreateTime();
+        List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+        lotteryTime.forEach(o -> {
+            orders.setOrdersLotteryId(o.getId());
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + o.getId());
+        });
+        ordersRepository.saveAndFlush(orders);
+        return orders;
     }
 
     private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
@@ -298,9 +329,9 @@ public class GoodService {
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
 
-        if (order.getOrdersLotteryId() != null){
-            mapVo.put("activityName","1号大富贵");
-            mapVo.put("lotteryChance","获得1次抽奖机会");
+        if (order.getOrdersLotteryId() != null) {
+            mapVo.put("activityName", "1号大富贵");
+            mapVo.put("lotteryChance", "获得1次抽奖机会");
         }
         return Result.success(mapVo);
     }
@@ -310,13 +341,13 @@ public class GoodService {
     @Resource
     private RedisBean redisBean;
 
-    private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform,Integer count,Goods goods) {
+    private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform, Integer count, Goods goods) {
         String url = wxHost + "/h9/api/pay/payInfo";
         StorePayDTO payDTO = new StorePayDTO(orderId, money, userId, payPlatform);
         try {
             logger.info("access url : " + url);
             Result result = restTemplate.postForObject(url, payDTO, Result.class);
-            if(result.getCode() ==1){
+            if (result.getCode() == 1) {
                 return Result.fail("支付异常");
             }
             Orders order = ordersRepository.findOne(orderId);
@@ -330,9 +361,9 @@ public class GoodService {
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             order = ordersRepository.findOne(orderId);
-            if (order.getOrdersLotteryId() != null){
-                mapVO.put("activityName","1号大富贵");
-                mapVO.put("lotteryChance","获得1次抽奖机会");
+            if (order.getOrdersLotteryId() != null) {
+                mapVO.put("activityName", "1号大富贵");
+                mapVO.put("lotteryChance", "获得1次抽奖机会");
             }
             return Result.success(mapVO);
         } catch (RestClientException e) {

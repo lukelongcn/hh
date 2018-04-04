@@ -15,6 +15,6 @@ import java.util.Date;
 @Data
 public class BigRichRecordVO {
     private String userName;
-    private BigDecimal lotteryMoney;
+    private String lotteryMoney;
     private String startLotteryTime;
 }

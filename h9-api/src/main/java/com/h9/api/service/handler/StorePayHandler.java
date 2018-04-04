@@ -69,7 +69,6 @@ public class StorePayHandler extends AbPayHandler{
         orders = bigRichService.joinBigRich(orders);
         ordersRepository.saveAndFlush(orders);
 
-
         //记录两条流水
         commonService.setBalance(orders.getUser().getId(), payInfo.getMoney().abs(),
                 BalanceFlow.BalanceFlowTypeEnum.Recharge.getId(), orderId, "",

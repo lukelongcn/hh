@@ -15,6 +15,6 @@ import java.math.BigDecimal;
 @Data
 public class BigRichVO {
     private Integer lotteryChance;
-    private BigDecimal bigRichMoney;
+    private String bigRichMoney;
     private PageResult<BigRichRecordVO> recordList;
 }

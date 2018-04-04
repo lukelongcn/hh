@@ -14,8 +14,11 @@ import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -49,9 +52,9 @@ public class BigRichService {
             PageResult<BigRichRecordVO> pageResultRecord = pageResult.result2Result(this::activityToRecord);
             bigRichVO.setRecordList(pageResultRecord);
         }
-        bigRichVO.setBigRichMoney(userAccount.getBigRichMoney());
-        if (user.getLotteryChance() == null) {
-            bigRichVO.setLotteryChance(user.getLotteryChance());
+        bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
+        if (user.getLotteryChance() == 1) {
+            bigRichVO.setLotteryChance(1);
         }
         return Result.success(bigRichVO);
     }
@@ -69,7 +72,7 @@ public class BigRichService {
             return bigRichRecordVO;
         }
         bigRichRecordVO.setUserName(user.getNickName());
-        bigRichRecordVO.setLotteryMoney(e.getMoney());
+        bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
         bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
         return bigRichRecordVO;
     }
@@ -121,24 +124,26 @@ public class BigRichService {
         return userBigRichRecordVO;
     }
 
+    private Logger logger = Logger.getLogger(this.getClass());
     /**
-     * 通过订单号参加大富贵活动
-     * @param orders
+     * 参与大富贵活动
+     *
+     * @param orders 参与的 订单
      * @return
      */
-    @Transactional
+    @SuppressWarnings("Duplicates")
     public Orders joinBigRich(Orders orders) {
+        int orderFrom = orders.getOrderFrom();
+        if(orderFrom == 2){
+            return orders;
+        }
         Date createTime = orders.getCreateTime();
         List<OrdersLotteryActivity> lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         lotteryTime.forEach(o -> {
-            List<Orders> list = ordersRepository.findUserfulOrders(o.getStartTime(),o.getEndTime(),orders.getUser().getId());
-            list.forEach(order ->{
-                if (order.getOrdersLotteryId() != null){
-                    return;
-                }
-            });
             orders.setOrdersLotteryId(o.getId());
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + o.getId());
         });
+        ordersRepository.saveAndFlush(orders);
         return orders;
     }
 }
