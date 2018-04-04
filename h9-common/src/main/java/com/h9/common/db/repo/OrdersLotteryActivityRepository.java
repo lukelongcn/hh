@@ -30,6 +30,6 @@ public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersL
     @Query("select o from OrdersLotteryActivity o where o.id = ?1 and o.status <> 0")
     OrdersLotteryActivity findOneById(Long id);
 
-    @Query("SELECT r From OrdersLotteryActivity r where r.startTime < ?1 and r.endTime>?1 and r.status = 1 ORDER BY r.id desc ")
+    @Query("SELECT r From OrdersLotteryActivity r where r.startTime < ?1 and r.endTime > ?1 and r.status = 1 ORDER BY r.id desc ")
     List<OrdersLotteryActivity> findAllTime(Date createTime);
 }

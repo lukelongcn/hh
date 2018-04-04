@@ -223,8 +223,8 @@ public class GoodService {
 
         List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
         listCoupon.forEach(userCoupon -> {
-            if (userCoupon.getCouponId().getGoodsId().equals(id)){
-                vo.setUserCoupons("已选一张，省￥"+goods.getPrice());
+            if (userCoupon.getCouponId().getGoodsId().equals(id)) {
+                vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
                 vo.setUserCouponsId(userCoupon.getId());
             }
         });
@@ -306,7 +306,7 @@ public class GoodService {
     @SuppressWarnings("Duplicates")
     public Orders joinBigRich(Orders orders) {
         int orderFrom = orders.getOrderFrom();
-        if(orderFrom == 2){
+        if (orderFrom == 2) {
             return orders;
         }
         Date createTime = orders.getCreateTime();
@@ -331,11 +331,11 @@ public class GoodService {
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
-
-        if (order.getOrdersLotteryId() != null) {
-            mapVo.put("activityName", "1号大富贵");
-            mapVo.put("lotteryChance", "获得1次抽奖机会");
-        }
+        // Todo 测试完取消注释
+        /*if (order.getOrdersLotteryId() != null) {*/
+        mapVo.put("activityName", "1号大富贵");
+        mapVo.put("lotteryChance", "获得1次抽奖机会");
+        /*}*/
         return Result.success(mapVo);
     }
 
@@ -364,10 +364,10 @@ public class GoodService {
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             order = ordersRepository.findOne(orderId);
-            if (order.getOrdersLotteryId() != null) {
+            /*if (order.getOrdersLotteryId() != null) {*/
                 mapVO.put("activityName", "1号大富贵");
                 mapVO.put("lotteryChance", "获得1次抽奖机会");
-            }
+           /* }*/
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
