@@ -132,7 +132,7 @@ public class ActivityService {
         }
         OrdersLotteryActivity ordersLotteryActivity = null;
 
-        if (addBigRichDTO.getId() == null) {
+        if (addBigRichDTO.getId() == -1) {
             //新增
             ordersLotteryActivity = getOrdersLotteryActivity(addBigRichDTO, null);
         } else {
