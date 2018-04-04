@@ -209,6 +209,7 @@ public class EventService {
 
         String xml = CDataContentHandler.ojbectToXmlWithCDATA(Message4wx.class,obj);
         logger.info("回复的消息: "+xml);
+
         return xml;
     }
 }
