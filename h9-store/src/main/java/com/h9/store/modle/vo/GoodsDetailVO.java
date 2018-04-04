@@ -19,6 +19,8 @@ public class GoodsDetailVO {
     private int stock = 0;
     private String balance = "0";
     private String unit = "";
-
+    // 用戶优惠券
+    private String userCoupons;
+    private Long userCouponsId;
 
 }

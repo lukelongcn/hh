@@ -7,32 +7,26 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.entity.PayInfo;
-import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
+import com.h9.common.db.entity.user.UserCoupon;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.StorePayDTO;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
-import com.h9.store.modle.dto.OrderDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
 import com.h9.store.modle.vo.GoodsListVO;
-import com.h9.store.modle.vo.OrderVo;
 import com.h9.store.modle.vo.PayResultVO;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -76,6 +70,8 @@ public class GoodService {
     private RestTemplate restTemplate;
     @Resource
     private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -225,6 +221,13 @@ public class GoodService {
                 .balance(MoneyUtils.formatMoney(userAccount.getBalance()))
                 .build();
 
+        List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
+        listCoupon.forEach(userCoupon -> {
+            if (userCoupon.getCouponId().getGoodsId().equals(id)){
+                vo.setUserCoupons("已选一张，省￥"+goods.getPrice());
+                vo.setUserCouponsId(userCoupon.getId());
+            }
+        });
         return Result.success(vo);
     }
 

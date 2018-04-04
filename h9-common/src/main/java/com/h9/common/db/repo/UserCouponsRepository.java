@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <p>Title:h9-parent</p>
  * <p>Desription:用户优惠券库</p>
@@ -25,4 +27,7 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
         Page<UserCoupon> list = findState(userId, state,pageRequest(page, limit));
         return new PageResult(list);
     }
+
+    @Query("select u From UserCoupon u where u.userId =?1 order by u.id")
+    List<UserCoupon> findByUserId(Long userId);
 }
