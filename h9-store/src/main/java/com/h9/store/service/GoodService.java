@@ -295,6 +295,11 @@ public class GoodService {
             Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
             if (balancePayResult.getCode() == 0) {
                 joinBigRich(order);
+                Map mapVo = (Map) balancePayResult.getData();
+                // 大富贵参与机会获得
+                mapVo.put("activityName", "1号大富贵");
+                mapVo.put("lotteryChance", "获得1次抽奖机会");
+                logger.debug("获得一次抽奖机会");
             }
             return balancePayResult;
         }
@@ -342,14 +347,6 @@ public class GoodService {
         Map<String, String> mapVo = new HashMap<>();
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
-        // 大富贵参与机会获得
-       /* if (order.getOrdersLotteryId() != null){*/
-            mapVo.put("activityName", "1号大富贵");
-            mapVo.put("lotteryChance", "获得1次抽奖机会");
-            logger.debug("获得一次抽奖机会");
-/*
-        }
-*/
         return Result.success(mapVo);
     }
 
