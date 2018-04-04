@@ -3,6 +3,7 @@ package com.h9.admin.model.vo;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
+import com.h9.common.utils.MoneyUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -97,7 +98,7 @@ public class BigRichListVO {
             canBan = true;
             canEdit = true;
         } else { //启用
-            this.canAddUser = this.canAddUser && this.canAddUser;
+            this.canAddUser = true ;
             canBan = false;
             canEdit = false;
         }
@@ -116,5 +117,7 @@ public class BigRichListVO {
         } else {
             this.statusInt = 0;
         }
+
+        this.money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
     }
 }
