@@ -98,7 +98,7 @@ public class BigRichListVO {
             canBan = true;
             canEdit = true;
         } else { //启用
-            this.canAddUser = this.canAddUser && this.canAddUser;
+            this.canAddUser = true ;
             canBan = false;
             canEdit = false;
         }
