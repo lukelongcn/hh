@@ -316,9 +316,11 @@ public class GoodService {
         if (lotteryTime != null) {
             orders.setOrdersLotteryId(lotteryTime.getId());
             user.setLotteryChance(user.getLotteryChance()+1);
+            lotteryTime.setJoinCount(lotteryTime.getJoinCount()+1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
             ordersRepository.saveAndFlush(orders);
             userRepository.save(user);
+            ordersLotteryActivityRepository.save(lotteryTime);
         }
         ordersRepository.saveAndFlush(orders);
         return orders;
