@@ -32,10 +32,12 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.security.acl.LastOwnerException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.spi.LocaleNameProvider;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -223,7 +225,8 @@ public class GoodService {
 
         List<UserCoupon> listCoupon = userCouponsRepository.findByUserId(userId);
         listCoupon.forEach(userCoupon -> {
-            if (userCoupon.getCouponId().getGoodsId().equals(id)) {
+            Long goodId = userCoupon.getCouponId().getGoodsId().getId();
+            if (id.equals(goodId)) {
                 vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
                 vo.setUserCouponsId(userCoupon.getId());
             }
