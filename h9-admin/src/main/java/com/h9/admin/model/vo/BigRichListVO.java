@@ -93,19 +93,19 @@ public class BigRichListVO {
         if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
             canBan = false;
             canEdit = false;
-            canAddUser = false;
         } else if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.BAN.getCode()) {
             canBan = true;
             canEdit = true;
-            canAddUser = false;
         } else { //启用
+            this.canAddUser = this.canAddUser && this.canAddUser;
             canBan = false;
             canEdit = false;
-            canAddUser = true;
         }
+
         Date now = new Date();
         if (startTime.getTime() < now.getTime() && endTime.getTime() > now.getTime()) {
             activeStatus = "进行中";
+            this.canAddUser = this.canAddUser && this.canAddUser;
         } else if (startTime.getTime() > now.getTime()) {
             activeStatus = "未开始";
         } else if (endTime.getTime() > now.getTime()) {
