@@ -288,7 +288,7 @@ public class GoodService {
                 return result;
             }
             Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
-            if (balancePayResult.getCode() == 1) {
+            if (balancePayResult.getCode() == 0) {
                 joinBigRich(order);
             }
             return balancePayResult;
@@ -336,8 +336,8 @@ public class GoodService {
         mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         if (order.getOrdersLotteryId() != null) {
-        mapVo.put("activityName", "1号大富贵");
-        mapVo.put("lotteryChance", "获得1次抽奖机会");
+            mapVo.put("activityName", "1号大富贵");
+            mapVo.put("lotteryChance", "获得1次抽奖机会");
         }
         return Result.success(mapVo);
     }
