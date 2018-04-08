@@ -227,7 +227,7 @@ public class GoodService {
                 .build();
         // 订单默认优惠券
         // 取得用户有效优惠券
-        List<UserCoupon> userCoupon = userCouponsRepository.findByUserId(userId,id);
+        List<UserCoupon> userCoupon = userCouponsRepository.findByUserId(userId);
         if (CollectionUtils.isNotEmpty(userCoupon)) {
             vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
             vo.setUserCouponsId(userCoupon.get(0).getId());
