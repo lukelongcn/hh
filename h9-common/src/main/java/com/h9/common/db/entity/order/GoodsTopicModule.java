@@ -1,7 +1,9 @@
 package com.h9.common.db.entity.order;
 
 import com.h9.common.base.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -11,10 +13,12 @@ import static javax.persistence.GenerationType.IDENTITY;
  * Created by Ln on 2018/4/8.
  * 商品专题表
  */
-@Table(name = "goods_topic")
+@Table(name = "goods_topic_model")
 @Entity
 @Data
-public class GoodsTopic extends BaseEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+public class GoodsTopicModule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;

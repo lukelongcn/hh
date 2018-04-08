@@ -1,8 +1,7 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.order.GoodsTopic;
+import com.h9.common.db.entity.order.GoodsTopicModule;
 import com.h9.common.db.entity.order.GoodsTopicRelation;
-import com.h9.common.db.entity.order.GoodsTopicType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +21,7 @@ public class GoodsTopicVO {
     private List<GoodsInfo> goodsList = new ArrayList<>();
 
 
-    private static class GoodsInfo {
+    public static class GoodsInfo {
         private long id;
         private long relationId;
         private String name = "";
@@ -67,9 +66,9 @@ public class GoodsTopicVO {
         }
     }
 
-    public GoodsTopicVO(GoodsTopic goodsTopic, List<GoodsTopicRelation> goodsTopicRelations) {
-        this.img = goodsTopic.getImg();
-        this.sort = goodsTopic.getSort();
+    public GoodsTopicVO(GoodsTopicModule goodsTopicModule, List<GoodsTopicRelation> goodsTopicRelations) {
+        this.img = goodsTopicModule.getImg();
+        this.sort = goodsTopicModule.getSort();
 
         List<GoodsInfo> list = goodsTopicRelations.stream().map(goodsTopicRelation -> {
             GoodsInfo goodsInfo = new GoodsInfo(goodsTopicRelation.getGoodsId(),

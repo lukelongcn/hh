@@ -1,18 +1,20 @@
 package com.h9.admin.service;
 
-import com.h9.admin.model.dto.topic.EditGoodsTopicDTO;
+import com.h9.admin.model.dto.topic.EditGoodsTopicModuleDTO;
 import com.h9.admin.model.dto.topic.EditGoodsTopicTypeDTO;
+import com.h9.admin.model.vo.GoodsTopicModuleVO;
 import com.h9.admin.model.vo.GoodsTopicVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.order.Goods;
-import com.h9.common.db.entity.order.GoodsTopic;
+import com.h9.common.db.entity.order.GoodsTopicModule;
 import com.h9.common.db.entity.order.GoodsTopicRelation;
 import com.h9.common.db.entity.order.GoodsTopicType;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.GoodsTopicRelationRep;
-import com.h9.common.db.repo.GoodsTopicRep;
+import com.h9.common.db.repo.GoodsTopicModuleRep;
 import com.h9.common.db.repo.GoodsTopicTypeRep;
+import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
@@ -21,12 +23,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.text.CollatorUtilities;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Created by Ln on 2018/4/8.
@@ -40,7 +40,7 @@ public class GoodsTopicService {
     @Resource
     private GoodsTopicRelationRep goodsTopicRelationRep;
     @Resource
-    private GoodsTopicRep goodsTopicRep;
+    private GoodsTopicModuleRep goodsTopicModuleRep;
     @Resource
     private GoodsReposiroty goodsReposiroty;
 
@@ -72,23 +72,22 @@ public class GoodsTopicService {
 
     public Result topicDetail(Long topicId) {
 
-        GoodsTopic goodsTopic = goodsTopicRep.findOne(topicId);
-        if (goodsTopic == null) {
+        GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(topicId);
+        if (goodsTopicModule == null) {
             return Result.fail("此Id不存在数据");
         }
-        List<GoodsTopicRelation> goodsTopicRelations = goodsTopicRelationRep.findByGoodsTopicId(goodsTopic.getId());
-        GoodsTopicVO goodsTopicVO = new GoodsTopicVO(goodsTopic, goodsTopicRelations);
+        List<GoodsTopicRelation> goodsTopicRelations = goodsTopicRelationRep.findByGoodsTopicModuleId(goodsTopicModule.getId());
+        GoodsTopicVO goodsTopicVO = new GoodsTopicVO(goodsTopicModule, goodsTopicRelations);
         return Result.success(goodsTopicVO);
     }
 
     @Transactional
-    public Result editGoodsTopic(EditGoodsTopicDTO editGoodsTopicDTO) {
-        Map<Long, Integer> ids = editGoodsTopicDTO.getIds();
-        Long topicId = editGoodsTopicDTO.getTopicId();
+    public Result editGoodsTopicModule(EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
+        Map<Long, Integer> ids = editGoodsTopicModuleDTO.getIds();
+        Long topicId = editGoodsTopicModuleDTO.getTopicModuleId();
 
         //把此topic 的商品全部禁用
         Integer ints = goodsTopicRelationRep.updateStatus(topicId);
-
         logger.info("更新 " + ints + " 条记录");
 
         ids.forEach((goodsId, sort) -> {
@@ -116,4 +115,76 @@ public class GoodsTopicService {
 
         return Result.success();
     }
+
+    /**
+     * 专题模块列表
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
+    public Result goodsTopicModule(Integer pageNumber, Integer pageSize) {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+
+        PageRequest pageRequest = goodsTopicModuleRep.pageRequest(pageNumber, pageSize, sort);
+        Page<GoodsTopicModule> goodsTopicModulePage = goodsTopicModuleRep.findByDelFlag(0,pageRequest);
+        PageResult<GoodsTopicModule> pageResult = new PageResult<>(goodsTopicModulePage);
+
+        PageResult<GoodsTopicModuleVO> map = pageResult.map(goodsTopicModule -> {
+            Long id = goodsTopicModule.getId();
+            List<GoodsTopicRelation> byGoodsTopicIdList = goodsTopicRelationRep.findByGoodsTopicModuleId(id);
+            int goodsCount = 0;
+            if (CollectionUtils.isNotEmpty(byGoodsTopicIdList)) {
+                goodsCount = byGoodsTopicIdList.size();
+            }
+            GoodsTopicModuleVO vo = new GoodsTopicModuleVO(goodsTopicModule.getSort(),
+                    goodsTopicModule.getImg(), goodsCount + "",
+                    DateUtil.formatDate(goodsTopicModule.getCreateTime(), DateUtil.FormatType.MINUTE),
+                    goodsTopicModule.getId());
+            return vo;
+        });
+
+        return Result.success(map);
+    }
+
+    /**
+     * 增加 专题模块
+     *
+     * @param editGoodsTopicModuleDTO 参数
+     * @return result
+     */
+    public Result addGoodsTopicModule(EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
+        GoodsTopicModule module = new GoodsTopicModule(null,
+                editGoodsTopicModuleDTO.getSort(), editGoodsTopicModuleDTO.getImg(), 0,
+                editGoodsTopicModuleDTO.getTopicTypeId());
+        Map<Long, Integer> ids = editGoodsTopicModuleDTO.getIds();
+
+        ids.forEach((goodsId, sort) -> {
+            Goods goods = goodsReposiroty.findOne(goodsId);
+
+            if (goods != null) {
+                GoodsTopicRelation relation = new GoodsTopicRelation(null, goodsId, goods.getName(),
+                        editGoodsTopicModuleDTO.getTopicModuleId(), sort, 0);
+                goodsTopicRelationRep.save(relation);
+            }
+
+        });
+        goodsTopicModuleRep.save(module);
+        return Result.success();
+    }
+
+    /**
+     * 删除专题模块
+     * @param id
+     * @return
+     */
+    public Result<GoodsTopicModuleVO> delGoodsTopicModule(Long id) {
+        GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(id);
+        if(goodsTopicModule == null){
+            return Result.fail("模块不存在");
+        }
+        goodsTopicModule.setDelFlag(1);
+        goodsTopicModuleRep.save(goodsTopicModule);
+        return Result.success();
+    }
+
 }

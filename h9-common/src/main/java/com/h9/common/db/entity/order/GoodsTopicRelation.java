@@ -30,8 +30,8 @@ public class GoodsTopicRelation extends BaseEntity {
     @Column(name = "name", columnDefinition = "varchar(200) comment '商品名'")
     private String name;
 
-    @Column(name = "goods_topic_id", columnDefinition = "bigint(20) comment '商品专题Id'")
-    private Long goodsTopicId;
+    @Column(name = "goods_topic_module_id", columnDefinition = "bigint(20) comment '商品专题Id'")
+    private Long goodsTopicModuleId;
 
     @Column(name = "sort", columnDefinition = "int comment '排序'")
     private Integer sort;
