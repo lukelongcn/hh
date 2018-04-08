@@ -28,6 +28,7 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
         return new PageResult(list);
     }
 
-    @Query("select u From UserCoupon u where u.userId =?1 and u.state=1 and u.couponId.goodsId.id = ?2 order by u.createTime asc ")
-    List<UserCoupon> findByUserId(Long userId,Long goodId);
+    @Query(value = "SELECT u.* FROM `user_coupon` u,coupon where  u.user_id = ?1 and" +
+            " u.coupon_id=coupon.id and coupon.goods_id = ?2 order by u.create_time ASC LIMIT 1;",nativeQuery = true)
+    UserCoupon findByUserId(Long userId,Long goodId);
 }

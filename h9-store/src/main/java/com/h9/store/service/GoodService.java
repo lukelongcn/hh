@@ -227,15 +227,14 @@ public class GoodService {
                 .build();
         // 订单默认优惠券
         // 取得用户有效优惠券
-        List<UserCoupon> userCoupon = userCouponsRepository.findByUserId(userId,id);
-        if (CollectionUtils.isNotEmpty(userCoupon)) {
+        UserCoupon userCoupon = userCouponsRepository.findByUserId(userId,id);
+        if (userCoupon != null) {
             vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
-            vo.setUserCouponsId(userCoupon.get(0).getId());
-            vo.setEndTime(DateUtil.formatDate(userCoupon.get(0).getCouponId().getEndTime(), DateUtil.FormatType.MINUTE));
+            vo.setUserCouponsId(userCoupon.getId());
+            vo.setEndTime(DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE));
         } else {
             vo.setUserCoupons("暂无可用");
         }
-
         return Result.success(vo);
     }
 

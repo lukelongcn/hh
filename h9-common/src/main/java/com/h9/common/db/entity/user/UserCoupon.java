@@ -28,8 +28,8 @@ public class UserCoupon  extends BaseEntity {
     @Column(name = "user_id",  columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
     private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "coupon_id",  referencedColumnName = "id", columnDefinition = "bigint(20)  COMMENT '对应优惠券'", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "coupon_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Coupon couponId;
 
     /**
