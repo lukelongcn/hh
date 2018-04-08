@@ -28,6 +28,12 @@ public class Coupon extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
+    @Column(name = "title", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '标题'")
+    private String title;
+
+    @Column(name = "coupon_type", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '优惠券类型'")
+    private String couponType;
+
     /**
      * 状态 1 未生效 0生效中 2已失效
      * @see Coupon.statusEnum
@@ -53,6 +59,8 @@ public class Coupon extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "goods_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Goods goodsId;
+
+
 
     public enum statusEnum{
 

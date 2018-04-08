@@ -28,4 +28,13 @@ public class CouponController {
                                 @RequestParam(required = false,defaultValue = "10") Integer limit){
         return couponService.getUserCoupons(userId,state,page,limit);
     }
+
+    @Secured
+    @GetMapping("/order/userCoupon/{goodsId}")
+    public Result getOrderCoupons(@SessionAttribute("curUserId") Long userId,
+                                  @PathVariable(value = "goodsId") Long goodsId,
+                                  @RequestParam(required = false,defaultValue = "1") Integer page,
+                                  @RequestParam(required = false,defaultValue = "10") Integer limit){
+        return couponService.getOrderCoupons(userId,goodsId,page,limit);
+    }
 }
