@@ -30,6 +30,7 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber = "";
+    // 优惠信息
     private String couponMessage;
 
     /**
@@ -78,7 +79,7 @@ public class OrderDetailVO {
             vo.setPayMethod("余额支付");
             // 优惠券支付
             if (order.getUserCouponsId()!= null){
-                vo.setCouponMessage("优惠券抵扣￥"+orderItems.get(0).getGoods().getRealPrice());
+                vo.setCouponMessage("免单券抵扣￥"+orderItems.get(0).getGoods().getRealPrice());
             }
         }
         vo.setPayMoney(order.getPayMoney() + "");
