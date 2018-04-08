@@ -98,7 +98,7 @@ public class BigRichListVO {
             canBan = true;
             canEdit = true;
         } else { //启用
-            this.canAddUser = true ;
+            this.canAddUser = true;
             canBan = false;
             canEdit = false;
         }
@@ -111,6 +111,9 @@ public class BigRichListVO {
             activeStatus = "未开始";
         } else if (endTime.getTime() > now.getTime()) {
             activeStatus = "已结束";
+            this.canAddUser = false;
+            this.canBan = false;
+            this.canEdit = false;
         }
         if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
             this.statusInt = 1;
