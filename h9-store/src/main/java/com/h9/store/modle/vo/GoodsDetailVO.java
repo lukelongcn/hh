@@ -22,5 +22,6 @@ public class GoodsDetailVO {
     // 用戶优惠券
     private String userCoupons;
     private Long userCouponsId;
+    private String endTime;
 
 }

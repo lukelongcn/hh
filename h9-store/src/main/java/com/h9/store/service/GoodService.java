@@ -14,6 +14,7 @@ import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserCoupon;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.StorePayDTO;
+import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
@@ -21,6 +22,7 @@ import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.modle.vo.PayResultVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -229,7 +231,7 @@ public class GoodService {
         if (CollectionUtils.isNotEmpty(userCoupon)) {
             vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
             vo.setUserCouponsId(userCoupon.get(0).getId());
-            logger.debug(id + "已选一张，省￥" + goods.getPrice());
+            vo.setEndTime(DateUtil.formatDate(userCoupon.get(0).getCouponId().getEndTime(), DateUtil.FormatType.MINUTE));
         } else {
             vo.setUserCoupons("暂无可用");
         }
