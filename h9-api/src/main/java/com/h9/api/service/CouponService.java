@@ -1,5 +1,6 @@
 package com.h9.api.service;
 
+import com.h9.api.model.vo.OrderCouponsVO;
 import com.h9.api.model.vo.UserCouponVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
@@ -39,4 +40,12 @@ public class CouponService {
         return Result.success(pageResult.result2Result(UserCouponVO::new));
     }
 
+    @Transactional
+    public Result getOrderCoupons(Long userId, Long goodsId, Integer page, Integer limit) {
+        PageResult<UserCoupon> pageResult = userCouponsRepository.findOrderCoupons(userId,goodsId, page, limit);
+        if (pageResult == null) {
+            return Result.fail("暂无可用优惠券");
+        }
+        return Result.success(pageResult.result2Result(OrderCouponsVO::new));
+    }
 }

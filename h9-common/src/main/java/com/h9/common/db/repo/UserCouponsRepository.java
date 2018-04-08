@@ -4,6 +4,7 @@ import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.user.UserCoupon;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -31,4 +32,19 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
     @Query(value = "SELECT u.* FROM `user_coupon` u,coupon where  u.user_id = ?1 and" +
             " u.coupon_id=coupon.id and coupon.goods_id = ?2 order by u.create_time ASC LIMIT 1;",nativeQuery = true)
     UserCoupon findByUserId(Long userId,Long goodId);
+
+
+    /**
+     * 当前订单可用优惠券
+     * @param userId
+     * @param goodsId
+     * @return
+     */
+    default PageResult<UserCoupon> findOrderCoupons(Long userId, Long goodsId, Integer page, Integer limit){
+        Page<UserCoupon> list = findOrderCoupons(userId, goodsId,pageRequest(page, limit));
+        return new PageResult(list);
+    }
+    @Query("SELECT u FROM UserCoupon u where u.userId = ?1 and u.couponId.goodsId.id =?2")
+    Page<UserCoupon> findOrderCoupons(Long userId, Long goodsId, Pageable pageable);
+
 }
