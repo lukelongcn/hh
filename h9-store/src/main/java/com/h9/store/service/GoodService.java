@@ -353,6 +353,9 @@ public class GoodService {
             }
             userCoupon.setState(UserCoupon.statusEnum.BAN.getCode());
             userCouponsRepository.save(userCoupon);
+            // 优惠券+余额混合支付
+            commonService.setBalance(userId, goodsPrice.negate().add(userCoupon.getCouponId().getGoodsId().getRealPrice())
+                    , 12L, order.getId(), "", balanceFlowType);
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
