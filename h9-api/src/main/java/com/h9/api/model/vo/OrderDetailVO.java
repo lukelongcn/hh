@@ -3,6 +3,7 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.UserCoupon;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +30,8 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber = "";
+    // 优惠信息
+    private String couponMessage;
 
     /**
      * description:  充值面额
@@ -74,6 +77,10 @@ public class OrderDetailVO {
             vo.setPayMethod(byCode.getDesc());
         }else{
             vo.setPayMethod("余额支付");
+            // 优惠券支付
+            if (order.getUserCouponsId()!= null){
+                vo.setCouponMessage("免单券抵扣￥"+orderItems.get(0).getGoods().getRealPrice());
+            }
         }
         vo.setPayMoney(order.getPayMoney() + "");
         vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
@@ -241,5 +248,13 @@ public class OrderDetailVO {
 
     public void setCreateOrderDate(String createOrderDate) {
         this.createOrderDate = createOrderDate;
+    }
+
+    public String getCouponMessage() {
+        return couponMessage;
+    }
+
+    public void setCouponMessage(String couponMessage) {
+        this.couponMessage = couponMessage;
     }
 }
