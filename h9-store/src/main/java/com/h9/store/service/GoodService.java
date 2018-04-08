@@ -246,7 +246,6 @@ public class GoodService {
 
         if (address == null) return Result.fail("地址不存在");
 
-
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
         if (goods == null) return Result.fail("商品不存在");
@@ -295,7 +294,7 @@ public class GoodService {
             if (result.getCode() == 1) {
                 return result;
             }
-            Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
+            Result balancePayResult = balancePay(payMethod,order, userId, goods, goodsPrice, count);
             if (balancePayResult.getCode() == 0) {
                 joinBigRich(order);
                 Map mapVo = (Map) balancePayResult.getData();
@@ -338,11 +337,13 @@ public class GoodService {
         return orders;
     }
 
-    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
+    private Result balancePay(int payMethod, Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
-        if (!payResult.isSuccess()) {
-            throw new ServiceException(payResult);
+        if (payMethod != Orders.PayMethodEnum.COUPON_PAY.getCode()){
+            Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
+            if (!payResult.isSuccess()) {
+                throw new ServiceException(payResult);
+            }
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());

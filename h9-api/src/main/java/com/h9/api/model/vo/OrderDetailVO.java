@@ -29,6 +29,7 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber = "";
+    private String couponMessage;
 
     /**
      * description:  充值面额
@@ -74,6 +75,10 @@ public class OrderDetailVO {
             vo.setPayMethod(byCode.getDesc());
         }else{
             vo.setPayMethod("余额支付");
+            // 优惠券支付
+            if (payMethond == Orders.PayMethodEnum.COUPON_PAY.getCode()){
+                vo.setCouponMessage("优惠券抵扣￥"+orderItems.get(0).getGoods().getRealPrice());
+            }
         }
         vo.setPayMoney(order.getPayMoney() + "");
         vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
@@ -241,5 +246,13 @@ public class OrderDetailVO {
 
     public void setCreateOrderDate(String createOrderDate) {
         this.createOrderDate = createOrderDate;
+    }
+
+    public String getCouponMessage() {
+        return couponMessage;
+    }
+
+    public void setCouponMessage(String couponMessage) {
+        this.couponMessage = couponMessage;
     }
 }
