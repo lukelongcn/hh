@@ -346,13 +346,13 @@ public class ActivityService {
         logger.info("startBigRichLottery");
         Date now = new Date();
         Date willDate = DateUtil.getDate(now, 5, Calendar.MINUTE);
-        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate, now);
+        List<OrdersLotteryActivity> lotteryActivityList = ordersLotteryActivityRep.findByLotteryDate(willDate);
         if (CollectionUtils.isEmpty(lotteryActivityList)) {
             logger.info("要处理的任务数 为空");
             return;
         }
         logger.info("要处理的任务数：" + lotteryActivityList.size());
-
+        //TODO 查询开奖时间已过，但是却没有开奖的活动
         for (OrdersLotteryActivity ordersLotteryActivity : lotteryActivityList) {
             Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
             long millisecond = startLotteryTime.getTime() - new Date().getTime();
@@ -372,6 +372,9 @@ public class ActivityService {
     @Transactional
     public void sleepTaskStartLottery(long millisecond, OrdersLotteryActivity ordersLotteryActivity) {
         try {
+            if (millisecond < 0) {
+                millisecond = 0;
+            }
             logger.info("sleep " + millisecond + "毫秒");
             Thread.sleep(millisecond);
         } catch (Exception e) {

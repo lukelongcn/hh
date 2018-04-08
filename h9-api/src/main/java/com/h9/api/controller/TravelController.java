@@ -20,7 +20,6 @@ public class TravelController {
      * description: 旧版本使用
      * @param  tab 1 为旅游加体检，2为体检 ，3 为旅游
      */
-    @Secured
     @GetMapping("/travel/health/{tab}")
     public Result bannerList(@SessionAttribute("curUserId")long userId, @PathVariable Integer tab){
         return travelService.bannerList(userId,tab);
@@ -32,7 +31,7 @@ public class TravelController {
      * @param tab 1 为旅游加体检，2为体检 ，3 为旅游
      * @return
      */
-    @Secured
+
     @GetMapping("/travel/health")
     public Result bannerList2(@SessionAttribute("curUserId")long userId, @RequestParam(defaultValue = "1") Integer tab){
         return travelService.bannerList(userId,tab);

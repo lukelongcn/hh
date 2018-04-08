@@ -9,7 +9,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * <p>Title:h9-parent</p>
- * <p>Desription:专题表</p>
+ * <p>Desription: 专题表</p>
  *
  * @author LiYuan
  * @Date 2018/4/3
