@@ -109,7 +109,7 @@ public class BigRichListVO {
             this.canAddUser = this.canAddUser && this.canAddUser;
         } else if (startTime.getTime() > now.getTime()) {
             activeStatus = "未开始";
-        } else if (endTime.getTime() > now.getTime()) {
+        } else if (endTime.getTime() < now.getTime()) {
             activeStatus = "已结束";
             this.canAddUser = false;
             this.canBan = false;
