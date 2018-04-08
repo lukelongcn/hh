@@ -32,4 +32,7 @@ public class ConvertGoodsDTO {
      */
     @NotNull(message = "请选择支付方式")
     private Integer payMethod;
+
+    /** 用户优惠券id */
+    private Long userCouponsId;
 }

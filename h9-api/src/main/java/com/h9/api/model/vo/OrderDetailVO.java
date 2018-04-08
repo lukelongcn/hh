@@ -3,6 +3,7 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.UserCoupon;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.springframework.util.CollectionUtils;
@@ -76,7 +77,7 @@ public class OrderDetailVO {
         }else{
             vo.setPayMethod("余额支付");
             // 优惠券支付
-            if (payMethond == Orders.PayMethodEnum.COUPON_PAY.getCode()){
+            if (order.getUserCouponsId()!= null){
                 vo.setCouponMessage("优惠券抵扣￥"+orderItems.get(0).getGoods().getRealPrice());
             }
         }

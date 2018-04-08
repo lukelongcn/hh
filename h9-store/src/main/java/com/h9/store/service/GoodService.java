@@ -272,7 +272,8 @@ public class GoodService {
                 , user
                 , code
                 , address.getName());
-
+        // 设置用户优惠券id
+        order.setUserCouponsId(convertGoodsDTO.getUserCouponsId());
         order.setAddressId(addressId);
         order.setUserAddres(address.getProvince() + address.getCity() + address.getDistict() + address.getAddress());
         order.setOrderFrom(1);
@@ -294,7 +295,7 @@ public class GoodService {
             if (result.getCode() == 1) {
                 return result;
             }
-            Result balancePayResult = balancePay(payMethod,order, userId, goods, goodsPrice, count);
+            Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
             if (balancePayResult.getCode() == 0) {
                 joinBigRich(order);
                 Map mapVo = (Map) balancePayResult.getData();
@@ -337,13 +338,21 @@ public class GoodService {
         return orders;
     }
 
-    private Result balancePay(int payMethod, Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
+    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
-        if (payMethod != Orders.PayMethodEnum.COUPON_PAY.getCode()){
+        // 非优惠券支付 增加余额流水
+        if (order.getUserCouponsId() == null) {
             Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
             if (!payResult.isSuccess()) {
                 throw new ServiceException(payResult);
             }
+        } else {
+            UserCoupon userCoupon = userCouponsRepository.findOne(order.getUserCouponsId());
+            if (userCoupon == null){
+                return Result.fail("优惠券抵扣失败");
+            }
+            userCoupon.setState(UserCoupon.statusEnum.BAN.getCode());
+            userCouponsRepository.save(userCoupon);
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
