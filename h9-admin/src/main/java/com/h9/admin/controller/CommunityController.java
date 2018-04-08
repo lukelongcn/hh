@@ -154,6 +154,14 @@ public class CommunityController {
         return this.communityService.getGoods(pageDTO);
     }
 
+    @GetMapping(value="/goods/query")
+    @ApiOperation("分页、条件 获取商品")
+    public Result queryGoods(@RequestParam(defaultValue = "10") Integer pageSize,
+                             @RequestParam(defaultValue = "1") Integer pageNumber,
+                             @RequestParam(required = false) String key){
+        return this.communityService.queryKey(pageNumber,pageSize,key);
+    }
+
     @Secured(accessCode = "goods:status:change")
     @PutMapping(value="/goods/{id}/status")
     @ApiOperation("上架/下架商品")
