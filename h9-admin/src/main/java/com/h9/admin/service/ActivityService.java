@@ -123,6 +123,10 @@ public class ActivityService {
             return Result.fail("请填写正确 开始-到结束 时间");
         }
 
+        if (endTime.before(new Date())){
+            return Result.fail("不可以新增过去时间的期数，没有意义");
+        }
+
         if (endTime.getTime() == startTime.getTime()) {
             return Result.fail("请选择正确的开始时间和结束时间");
         }
