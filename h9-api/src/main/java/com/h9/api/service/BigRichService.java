@@ -65,11 +65,17 @@ public class BigRichService {
     public BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
+
         if (e.getWinnerUserId() == null) {
-            return null;
+            return bigRichRecordVO;
         }
+
         User user = userRepository.findOne(e.getWinnerUserId());
         if (user == null || e.getMoney() == null) {
+            return bigRichRecordVO;
+        }
+        // 如果开奖时间未到不显示
+        if (e.getStartLotteryTime().after(new Date())){
             return bigRichRecordVO;
         }
         bigRichRecordVO.setUserName(user.getNickName());

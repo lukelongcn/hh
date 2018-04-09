@@ -20,7 +20,9 @@ public class BigRichController {
 
     @Resource
     private BigRichService bigRichService;
-
+    /**
+     * 往期开奖记录
+     */
     @Secured
     @GetMapping("/bigrich/record")
     public Result getRecord(@SessionAttribute("curUserId")long userId,

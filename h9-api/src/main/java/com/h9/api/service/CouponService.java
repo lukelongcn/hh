@@ -35,7 +35,7 @@ public class CouponService {
     public Result getUserCoupons(Long userId, Integer state, Integer page, Integer limit) {
         PageResult<UserCoupon> pageResult = userCouponsRepository.findState(userId,state, page, limit);
         if (pageResult == null) {
-            return Result.fail("暂无记录");
+            return Result.fail("暂无可用优惠券");
         }
         return Result.success(pageResult.result2Result(UserCouponVO::new));
     }
