@@ -65,7 +65,6 @@ public class BigRichService {
     public BigRichRecordVO activityToRecord(OrdersLotteryActivity e) {
         // 创建记录对象
         BigRichRecordVO bigRichRecordVO = new BigRichRecordVO();
-
         if (e.getWinnerUserId() == null) {
             return bigRichRecordVO;
         }
@@ -98,7 +97,7 @@ public class BigRichService {
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
-        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId(),new Date());
         if (ordersLotteryActivity == null) {
             return userBigRichRecordVO;
         }

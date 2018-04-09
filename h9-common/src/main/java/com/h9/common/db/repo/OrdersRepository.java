@@ -105,10 +105,13 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1")
     Object findByCount(Long id);
 
-    @Query("select o from Orders o where o.ordersLotteryId = ?1")
+    @Query("select o from Orders o where o.ordersLotteryId = ?1 group by o.ordersLotteryId order by o.createTime DESC ")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId, Pageable pageable);
 
-    @Query("select o from Orders o where o.user.id = ?1 and o.ordersLotteryId is not null order by o.createTime ")
+    /**
+     * 用戶参与记录
+     */
+    @Query(value = "select  o from Orders o  where o.ordersLotteryId is not null and o.user.id = ?1 group by o.ordersLotteryId")
     Page<Orders> findByUserId(long userId, Pageable pageable);
 
     default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit) {
