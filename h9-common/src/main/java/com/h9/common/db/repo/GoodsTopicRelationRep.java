@@ -13,8 +13,8 @@ import java.util.List;
 public interface GoodsTopicRelationRep extends BaseRepository<GoodsTopicRelation> {
 
 
-
-    List<GoodsTopicRelation> findByGoodsTopicModuleId(Long topicId);
+    @Query("select o from GoodsTopicRelation o where o.goodsTopicModuleId = ?1 order by o.sort")
+    List<GoodsTopicRelation> findByGoodsTopicModuleId(Long topicModuleId);
 
     List<GoodsTopicRelation> findByGoodsId(Long goodsId);
 
@@ -24,4 +24,7 @@ public interface GoodsTopicRelationRep extends BaseRepository<GoodsTopicRelation
     @Modifying
     @Query("update GoodsTopicRelation o set o.del_flag = 1 where o.goodsTopicModuleId = ?1")
     Integer updateStatus(Long goodsTopicId);
+
+    @Query("select o from GoodsTopicRelation  o where o.del_flag  = ?1 and o.goodsTopicTypeId=?2")
+    List<GoodsTopicRelation> findByTypeId(Integer delFlag, Long typeId);
 }
