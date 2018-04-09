@@ -6,10 +6,13 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.order.Coupon;
 import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.user.UserCoupon;
 import com.h9.common.db.repo.CouponRespository;
 import com.h9.common.db.repo.GoodsReposiroty;
+import com.h9.common.db.repo.UserCouponsRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.BinaryClient;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -28,6 +31,8 @@ public class CouponService {
     private CouponRespository couponRespository;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
     public Result coupons(Integer page, Integer limit) {
         PageResult<Coupon> pageResult = couponRespository.findAll(page, limit);
@@ -107,5 +112,20 @@ public class CouponService {
         }
         couponRespository.saveAndFlush(coupon);
         return Result.success("编辑优惠券成功");
+    }
+
+    /**
+     * 定时任务 ：过期用户优惠券
+     */
+    public void startChangeStatusUserCoupon() {
+        Date crrentTime = new Date();
+        List<UserCoupon> userCoupons = userCouponsRepository.findAll();
+        userCoupons.forEach(userCoupon -> {
+            if (userCoupon.getCouponId().getEndTime().before(crrentTime)){
+                // 已过期
+                userCoupon.setState(2);
+                userCouponsRepository.saveAndFlush(userCoupon);
+            }
+        });
     }
 }
