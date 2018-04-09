@@ -65,16 +65,17 @@ public class GoodsTopicController {
 
     @PostMapping("/goodsTopic/module")
     @ApiOperation(value = "添加专题模块")
-    public Result addGoodsTopic( @RequestBody EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
+    public Result addGoodsTopic(@RequestBody EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
         return goodsTopicService.addGoodsTopicModule(editGoodsTopicModuleDTO);
     }
 
 
-    @GetMapping("/goodsTopic/module")
+    @GetMapping("/goodsTopic/type/module/{id}")
     @ApiOperation(value = "专题模快列表")
-    public Result<GoodsTopicModuleVO> goodsTopicModule(@RequestParam(defaultValue = "10") Integer pageSize,
-                                                       @RequestParam(defaultValue = "1") Integer pageNumber) {
-        return goodsTopicService.goodsTopicModule(pageNumber, pageSize);
+    public Result<GoodsTopicModuleVO> goodsTopicModule(
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "1") Integer pageNumber,@PathVariable Long id) {
+        return goodsTopicService.goodsTopicModule(pageNumber, pageSize,id);
     }
 
     @PutMapping("/goodsTopic/module/del/{id}")

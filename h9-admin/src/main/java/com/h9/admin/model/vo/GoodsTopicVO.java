@@ -2,6 +2,8 @@ package com.h9.admin.model.vo;
 
 import com.h9.common.db.entity.order.GoodsTopicModule;
 import com.h9.common.db.entity.order.GoodsTopicRelation;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,23 +16,31 @@ import java.util.stream.Collectors;
  */
 @Data
 @NoArgsConstructor
+@ApiModel
 public class GoodsTopicVO {
 
+    @ApiModelProperty("图片")
     private String img = "";
+    @ApiModelProperty("排序")
     private Integer sort = 0;
+    @ApiModelProperty("商品信息")
     private List<GoodsInfo> goodsList = new ArrayList<>();
 
 
+    @ApiModel
     public static class GoodsInfo {
         private long id;
+        @ApiModelProperty("")
         private long relationId;
+        @ApiModelProperty("关联Id")
         private String name = "";
+        @ApiModelProperty("排序")
         private int sort;
 
         public GoodsInfo() {
         }
 
-        public GoodsInfo(Long id, String name, int sort,Long relationId) {
+        public GoodsInfo(Long id, String name, int sort, Long relationId) {
             this.id = id;
             this.name = name;
             this.sort = sort;
@@ -73,7 +83,7 @@ public class GoodsTopicVO {
         List<GoodsInfo> list = goodsTopicRelations.stream().map(goodsTopicRelation -> {
             GoodsInfo goodsInfo = new GoodsInfo(goodsTopicRelation.getGoodsId(),
                     goodsTopicRelation.getName(),
-                    goodsTopicRelation.getSort(),goodsTopicRelation.getId());
+                    goodsTopicRelation.getSort(), goodsTopicRelation.getId());
 
             return goodsInfo;
         }).collect(Collectors.toList());

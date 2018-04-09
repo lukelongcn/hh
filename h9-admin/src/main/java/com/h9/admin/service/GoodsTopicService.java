@@ -122,11 +122,12 @@ public class GoodsTopicService {
      * @param pageSize
      * @return
      */
-    public Result goodsTopicModule(Integer pageNumber, Integer pageSize) {
+    public Result goodsTopicModule(Integer pageNumber, Integer pageSize,Long topicId) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
 
         PageRequest pageRequest = goodsTopicModuleRep.pageRequest(pageNumber, pageSize, sort);
-        Page<GoodsTopicModule> goodsTopicModulePage = goodsTopicModuleRep.findByDelFlag(0,pageRequest);
+        Page<GoodsTopicModule> goodsTopicModulePage = goodsTopicModuleRep.
+                findByDelFlagAndGoodsTopicTypeId(0,topicId,pageRequest);
         PageResult<GoodsTopicModule> pageResult = new PageResult<>(goodsTopicModulePage);
 
         PageResult<GoodsTopicModuleVO> map = pageResult.map(goodsTopicModule -> {

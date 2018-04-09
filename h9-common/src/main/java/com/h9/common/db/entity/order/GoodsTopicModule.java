@@ -33,5 +33,5 @@ public class GoodsTopicModule extends BaseEntity {
     private Integer delFlag;
 
     @Column(name = "goods_topic_type_id", columnDefinition = "bigint(20) comment '类型Id'")
-    private Long GoodsTopicTypeId;
+    private Long goodsTopicTypeId;
 }
