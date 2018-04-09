@@ -97,8 +97,8 @@ public class BigRichService {
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
-        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
-        if (ordersLotteryActivity == null || ordersLotteryActivity.getStartLotteryTime().after(new Date())) {
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId(),new Date());
+        if (ordersLotteryActivity == null) {
             return userBigRichRecordVO;
         }
         // 订单id
