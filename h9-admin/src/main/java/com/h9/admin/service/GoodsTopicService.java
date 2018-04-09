@@ -84,38 +84,31 @@ public class GoodsTopicService {
     @Transactional
     public Result editGoodsTopicModule(EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
         Map<Long, Integer> ids = editGoodsTopicModuleDTO.getIds();
-        Long topicId = editGoodsTopicModuleDTO.getTopicModuleId();
+        Long topicModuleId = editGoodsTopicModuleDTO.getTopicModuleId();
+
+        GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(topicModuleId);
+        if(goodsTopicModule == null) return Result.fail("模块不存在");
 
         //把此topic 的商品全部禁用
-        Integer ints = goodsTopicRelationRep.updateStatus(topicId);
+        Integer ints = goodsTopicRelationRep.updateStatus(topicModuleId);
         logger.info("更新 " + ints + " 条记录");
         Long topicTypeId = editGoodsTopicModuleDTO.getTopicTypeId();
         GoodsTopicType goodsTopicType = goodsTopicTypeRep.findOne(topicTypeId);
         if (goodsTopicType == null) return Result.fail("专题不存在");
 
         ids.forEach((goodsId, sort) -> {
-
-            List<GoodsTopicRelation> goodsTopicRelations = goodsTopicRelationRep.findByGoodsIdAndTopicId(goodsId, 1, topicId);
-
-            if (CollectionUtils.isNotEmpty(goodsTopicRelations)) {
-
-                GoodsTopicRelation goodsTopicRelation = goodsTopicRelations.get(0);
-                goodsTopicRelation.setDel_flag(0);
+            Goods goods = goodsReposiroty.findOne(goodsId);
+            if (goods != null) {
+                //新添加的数据
+                GoodsTopicRelation goodsTopicRelation = new GoodsTopicRelation(null, goodsId, goods.getName(),
+                        topicModuleId, sort, 0, goodsTopicType.getId());
                 goodsTopicRelationRep.save(goodsTopicRelation);
-
-            } else {
-                Goods goods = goodsReposiroty.findOne(goodsId);
-                if (goods != null) {
-                    //新添加的数据
-                    GoodsTopicRelation goodsTopicRelation = new GoodsTopicRelation(null, goodsId, goods.getName(),
-                            topicId, sort, 0, goodsTopicType.getId());
-                    goodsTopicRelationRep.save(goodsTopicRelation);
-                }
-
             }
 
         });
-
+        goodsTopicModule.setImg(editGoodsTopicModuleDTO.getImg());
+        goodsTopicModule.setSort(editGoodsTopicModuleDTO.getSort());
+        goodsTopicModuleRep.save(goodsTopicModule);
         return Result.success();
     }
 

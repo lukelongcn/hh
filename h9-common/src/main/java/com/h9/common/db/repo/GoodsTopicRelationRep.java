@@ -23,7 +23,7 @@ public interface GoodsTopicRelationRep extends BaseRepository<GoodsTopicRelation
 
     @Modifying
     @Query("update GoodsTopicRelation o set o.del_flag = 1 where o.goodsTopicModuleId = ?1")
-    Integer updateStatus(Long goodsTopicId);
+    Integer updateStatus(Long goodsTopicModuleId);
 
     @Query("select o from GoodsTopicRelation  o where o.del_flag  = ?1 and o.goodsTopicTypeId=?2")
     List<GoodsTopicRelation> findByTypeId(Integer delFlag, Long typeId);

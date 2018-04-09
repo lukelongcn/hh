@@ -34,7 +34,7 @@ public class TravelService {
     /**
      * description: tab 1 为旅游加体检，2为体检 ，3 为旅游
      */
-    public Result bannerList(long userId, Integer tab) {
+    public Result bannerList( Integer tab) {
         int location = tab2Location(tab);
         List<BannerType> bannerTypeList = bannerTypeRepository.findByLocation(location,new Date());
 

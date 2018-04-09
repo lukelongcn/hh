@@ -58,6 +58,12 @@ public class GoodsTopicService {
         List<GoodsTopicModule> goodsTopicModuleList = goodsTopicModuleRep.
                 findByDelFlagAndGoodsTopicTypeId(0, goodsTopicType.getId());
 
+        vo.setModules(map2ModulesList(goodsTopicModuleList));
+
+        return Result.success(vo);
+    }
+
+    private List<GoodsTopicDetailVO.Modules> map2ModulesList(List<GoodsTopicModule> goodsTopicModuleList) {
         List<GoodsTopicDetailVO.Modules> modulesList = goodsTopicModuleList.stream().map(module -> {
             List<GoodsTopicRelation> goodsTopicRelations = goodsTopicRelationRep.findByGoodsTopicModuleId(module.getId());
 
@@ -73,13 +79,11 @@ public class GoodsTopicService {
                 return null;
             }).filter(el -> el != null).collect(Collectors.toList());
 
-            GoodsTopicDetailVO.Modules modules = new GoodsTopicDetailVO.Modules(module.getImg(), mapList);
+            GoodsTopicDetailVO.Modules modules = new GoodsTopicDetailVO.Modules(module.getImg(),module.getId()+"", mapList);
 
             return modules;
         }).collect(Collectors.toList());
 
-        vo.setModules(modulesList);
-
-        return Result.success(vo);
+        return modulesList;
     }
 }
