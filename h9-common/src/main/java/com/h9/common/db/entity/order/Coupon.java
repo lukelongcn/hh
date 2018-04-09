@@ -56,6 +56,9 @@ public class Coupon extends BaseEntity {
     @Column(name = "left_count", columnDefinition = "int default 0 COMMENT '剩余张数'")
     private int leftCount;
 
+    @Column(name = "ask_count", columnDefinition = "int default 0 COMMENT '制券张数'")
+    private int askCount;
+
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "goods_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Goods goodsId;

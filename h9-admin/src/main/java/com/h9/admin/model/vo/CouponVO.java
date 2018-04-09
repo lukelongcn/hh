@@ -41,6 +41,8 @@ public class CouponVO {
 
     private String createTime;
 
+    private int askCount;
+
     public CouponVO(){
 
     }
@@ -56,6 +58,6 @@ public class CouponVO {
         this.endTime = DateUtil.formatDate(coupon.getEndTime(), DateUtil.FormatType.MINUTE);
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.goodsName = coupon.getGoodsId().getName();
-
+        this.askCount = coupon.getAskCount();
     }
 }

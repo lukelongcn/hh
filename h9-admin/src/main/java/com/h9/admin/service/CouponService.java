@@ -40,7 +40,7 @@ public class CouponService {
     public Result addCoupons(CouponsDTO couponsDTO) {
         List<Long> goodsIdList = couponsDTO.getGoodIdList();
         if (CollectionUtils.isEmpty(goodsIdList)){
-            return Result.fail("新增优惠券失败");
+            return Result.fail("选择商品列表不能为空");
         }
         goodsIdList.forEach(gid->{
             Coupon coupon = new Coupon();
@@ -52,8 +52,9 @@ public class CouponService {
             if (goods != null){
                 coupon.setGoodsId(goods);
             }
-            // 制券数
+            // 剩余数  制券数
             coupon.setLeftCount(couponsDTO.getAskCount());
+            coupon.setAskCount(couponsDTO.getAskCount());
             // 状态
             if (couponsDTO.getStartTime().after(new Date())){
                 coupon.setStatus(1);
@@ -65,5 +66,46 @@ public class CouponService {
             couponRespository.saveAndFlush(coupon);
         });
         return Result.success("新增优惠券成功");
+    }
+
+    public Result changeCouponState(Long id, Integer state) {
+        Coupon coupon = couponRespository.findOne(id);
+        if (coupon == null){
+            return Result.fail("修改状态失败");
+        }
+        coupon.setStatus(state);
+        couponRespository.saveAndFlush(coupon);
+        return Result.success("修改状态成功");
+    }
+
+    public Result updateCoupons(Long id, CouponsDTO couponsDTO) {
+        Coupon coupon = couponRespository.findOne(id);
+        if (coupon == null) {
+            return Result.fail("该优惠券不存在");
+        }
+
+        coupon.setTitle(couponsDTO.getTitle());
+        coupon.setCouponType(couponsDTO.getCouponType());
+        coupon.setStartTime(couponsDTO.getStartTime());
+        coupon.setEndTime(couponsDTO.getEndTime());
+        Goods goods = goodsReposiroty.findOne(couponsDTO.getGoodsId());
+        if (goods != null) {
+            coupon.setGoodsId(goods);
+        }
+        // 制券数
+        if (coupon.getAskCount()>couponsDTO.getAskCount()){
+            return Result.fail("新制券数必须大于原制券数");
+        }
+        coupon.setAskCount(couponsDTO.getAskCount());
+        // 状态改变
+        if (couponsDTO.getStartTime().after(new Date())) {
+            coupon.setStatus(1);
+        } else if (couponsDTO.getEndTime().after(new Date())) {
+            coupon.setStatus(2);
+        } else {
+            coupon.setStatus(3);
+        }
+        couponRespository.saveAndFlush(coupon);
+        return Result.success("编辑优惠券成功");
     }
 }

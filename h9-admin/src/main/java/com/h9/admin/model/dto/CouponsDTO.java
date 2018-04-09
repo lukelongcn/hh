@@ -33,7 +33,7 @@ public class CouponsDTO {
     @NotNull(message = "失效时间必填")
     private Date endTime;
 
-    @NotEmpty(message = "选择商品列表不能为空")
+    // 选择商品列表
     private List<Long> goodIdList;
 
     @NotNull(message = "制券张数必填")
@@ -42,4 +42,5 @@ public class CouponsDTO {
     @NotBlank(message = "发放方式必填")
     private String sentType;
 
+    private Long goodsId;
 }
