@@ -29,8 +29,9 @@ public class GoodsTopicDetailVO {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Modules{
+    public static class Modules {
         private String img;
+        private String moduleId;
         private List<Map<String, String>> goodsInfo = new ArrayList<>();
     }
 
