@@ -89,6 +89,9 @@ public class GoodsTopicService {
         //把此topic 的商品全部禁用
         Integer ints = goodsTopicRelationRep.updateStatus(topicId);
         logger.info("更新 " + ints + " 条记录");
+        Long topicTypeId = editGoodsTopicModuleDTO.getTopicTypeId();
+        GoodsTopicType goodsTopicType = goodsTopicTypeRep.findOne(topicTypeId);
+        if (goodsTopicType == null) return Result.fail("专题不存在");
 
         ids.forEach((goodsId, sort) -> {
 
@@ -104,8 +107,8 @@ public class GoodsTopicService {
                 Goods goods = goodsReposiroty.findOne(goodsId);
                 if (goods != null) {
                     //新添加的数据
-                    GoodsTopicRelation goodsTopicRelation = new GoodsTopicRelation(null
-                            , goodsId, goods.getName(), topicId, sort, 0);
+                    GoodsTopicRelation goodsTopicRelation = new GoodsTopicRelation(null, goodsId, goods.getName(),
+                            topicId, sort, 0, goodsTopicType.getId());
                     goodsTopicRelationRep.save(goodsTopicRelation);
                 }
 
@@ -118,16 +121,17 @@ public class GoodsTopicService {
 
     /**
      * 专题模块列表
+     *
      * @param pageNumber
      * @param pageSize
      * @return
      */
-    public Result goodsTopicModule(Integer pageNumber, Integer pageSize,Long topicId) {
+    public Result goodsTopicModule(Integer pageNumber, Integer pageSize, Long topicId) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
 
         PageRequest pageRequest = goodsTopicModuleRep.pageRequest(pageNumber, pageSize, sort);
         Page<GoodsTopicModule> goodsTopicModulePage = goodsTopicModuleRep.
-                findByDelFlagAndGoodsTopicTypeId(0,topicId,pageRequest);
+                findByDelFlagAndGoodsTopicTypeId(0, topicId, pageRequest);
         PageResult<GoodsTopicModule> pageResult = new PageResult<>(goodsTopicModulePage);
 
         PageResult<GoodsTopicModuleVO> map = pageResult.map(goodsTopicModule -> {
@@ -158,13 +162,17 @@ public class GoodsTopicService {
                 editGoodsTopicModuleDTO.getSort(), editGoodsTopicModuleDTO.getImg(), 0,
                 editGoodsTopicModuleDTO.getTopicTypeId());
         Map<Long, Integer> ids = editGoodsTopicModuleDTO.getIds();
-
+        Long topicTypeId = editGoodsTopicModuleDTO.getTopicTypeId();
+        GoodsTopicType goodsTopicType = goodsTopicTypeRep.findOne(topicTypeId);
+        if (goodsTopicType == null) {
+            return Result.fail("专题不存在");
+        }
         ids.forEach((goodsId, sort) -> {
             Goods goods = goodsReposiroty.findOne(goodsId);
 
             if (goods != null) {
                 GoodsTopicRelation relation = new GoodsTopicRelation(null, goodsId, goods.getName(),
-                        editGoodsTopicModuleDTO.getTopicModuleId(), sort, 0);
+                        editGoodsTopicModuleDTO.getTopicModuleId(), sort, 0, goodsTopicType.getId());
                 goodsTopicRelationRep.save(relation);
             }
 
@@ -175,12 +183,13 @@ public class GoodsTopicService {
 
     /**
      * 删除专题模块
+     *
      * @param id
      * @return
      */
     public Result<GoodsTopicModuleVO> delGoodsTopicModule(Long id) {
         GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(id);
-        if(goodsTopicModule == null){
+        if (goodsTopicModule == null) {
             return Result.fail("模块不存在");
         }
         goodsTopicModule.setDelFlag(1);

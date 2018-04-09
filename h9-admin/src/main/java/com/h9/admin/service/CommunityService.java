@@ -279,7 +279,7 @@ public class CommunityService {
      * @return
      */
     public Result queryKey(Integer pageNumber, Integer pageSize, String key) {
-        Sort sort = new Sort(Sort.Direction.DESC,"id");
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = goodsReposiroty.pageRequest(pageNumber, pageSize, sort);
 
         PageResult<Goods> pageResult = null;
@@ -296,7 +296,8 @@ public class CommunityService {
 
         PageResult<Map<String, String>> mapVo = pageResult.map(goods -> {
             Map<String, String> map = new HashMap<>();
-            map.put(goods.getId() + "", goods.getName());
+            map.put("name", goods.getName());
+            map.put("id", goods.getId() + "");
             return map;
         });
 

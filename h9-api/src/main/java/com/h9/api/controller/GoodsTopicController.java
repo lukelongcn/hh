@@ -1,7 +1,9 @@
 package com.h9.api.controller;
 
+import com.h9.api.model.vo.topic.GoodsTopicDetailVO;
 import com.h9.api.service.GoodsTopicService;
 import com.h9.common.base.Result;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +21,7 @@ public class GoodsTopicController {
     private GoodsTopicService goodsTopicService;
 
     @GetMapping("/goodsTopic/{id}")
-    public Result goodsTopicDetail(@PathVariable Long id){
+    public Result<GoodsTopicDetailVO> goodsTopicDetail(@ApiParam("专题类型Id") @PathVariable Long id){
         return goodsTopicService.topicDetail(id);
     }
 }
