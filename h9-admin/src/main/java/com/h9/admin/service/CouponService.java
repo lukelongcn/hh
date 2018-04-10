@@ -231,7 +231,7 @@ public class CouponService {
     public int sumCouponListCount(List<CouponUserRelationDTO> okList) {
         int sum = okList.stream().map(el -> {
             try {
-                Integer count = Integer.valueOf(el.getCount());
+                int count = Integer.valueOf(el.getCount());
                 return count;
             } catch (NumberFormatException e) {
                 logger.info(e.getMessage(), e);
@@ -239,7 +239,7 @@ public class CouponService {
             }
         }).reduce((e1, e2) -> {
             return e1 + e2;
-        }).get();
+        }).orElse(0);
 
         return sum;
     }

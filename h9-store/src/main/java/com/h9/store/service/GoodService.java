@@ -301,13 +301,14 @@ public class GoodService {
     }
 
     private Result validateBalance(UserAccount userAccount, BigDecimal payMoney, Integer payMethod, Long userCouponId, Goods goods) {
-        UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
         BigDecimal balance = userAccount.getBalance();
+
         if (userCouponId == null) {
             if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(payMoney) < 0) {
                 return Result.fail("余额不足");
             }
         } else {
+            UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
             int state = userCoupon.getState();
             if (state == UN_USE.getCode()) {
                 BigDecimal subPrice = payMoney.subtract(goods.getRealPrice());
