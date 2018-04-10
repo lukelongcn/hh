@@ -221,14 +221,14 @@ public class GoodService {
                 .build();
         // 订单默认优惠券
         // 取得用户有效优惠券
-        UserCoupon userCoupon = userCouponsRepository.findByUserId(userId,id);
-        if (userCoupon != null) {
-            vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
-            vo.setUserCouponsId(userCoupon.getId());
-            vo.setEndTime(DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE));
-        } else {
-            vo.setUserCoupons("暂无可用");
-        }
+//        UserCoupon userCoupon = userCouponsRepository.findByUserId(userId,id);
+//        if (userCoupon != null) {
+//            vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
+//            vo.setUserCouponsId(userCoupon.getId());
+//            vo.setEndTime(DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE));
+//        } else {
+//            vo.setUserCoupons("暂无可用");
+//        }
         return Result.success(vo);
     }
 

@@ -20,8 +20,8 @@ public class GoodsDetailVO {
     private String balance = "0";
     private String unit = "";
     // 用戶优惠券
-    private String userCoupons;
-    private Long userCouponsId;
-    private String endTime;
+//    private String userCoupons;
+//    private Long userCouponsId;
+//    private String endTime;
 
 }
