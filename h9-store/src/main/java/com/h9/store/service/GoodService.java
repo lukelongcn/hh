@@ -11,7 +11,7 @@ import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.entity.user.UserCoupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.StorePayDTO;
 import com.h9.common.utils.DateUtil;
@@ -20,27 +20,21 @@ import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
 import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.modle.vo.PayResultVO;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.security.acl.LastOwnerException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.spi.LocaleNameProvider;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -351,11 +345,12 @@ public class GoodService {
             if (userCoupon == null){
                 return Result.fail("优惠券抵扣失败");
             }
-            userCoupon.setState(UserCoupon.statusEnum.BAN.getCode());
+            userCoupon.setState(UserCoupon.statusEnum.USED.getCode());
             userCouponsRepository.save(userCoupon);
             // 优惠券+余额混合支付
-            commonService.setBalance(userId, goodsPrice.negate().add(userCoupon.getCouponId().getGoodsId().getRealPrice())
-                    , 12L, order.getId(), "", balanceFlowType);
+            //TODO 改
+//            commonService.setBalance(userId, goodsPrice.negate().add(userCoupon.getCouponId().getGoodsId().getRealPrice())
+//                    , 12L, order.getId(), "", balanceFlowType);
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());

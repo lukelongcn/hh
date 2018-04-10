@@ -356,7 +356,7 @@ public class ActivityService {
             return;
         }
         logger.info("要处理的任务数：" + lotteryActivityList.size());
-        //TODO 查询开奖时间已过，但是却没有开奖的活动
+        // 查询开奖时间已过，但是却没有开奖的活动
         for (OrdersLotteryActivity ordersLotteryActivity : lotteryActivityList) {
             Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
             long millisecond = startLotteryTime.getTime() - new Date().getTime();
@@ -408,7 +408,7 @@ public class ActivityService {
         Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
         if (winnerUserId == null) {
             logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
-//            ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.FINISH.getCode());
+//            ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.TIMEOUT.getCode());
 //            ordersLotteryActivityRep.save(ordersLotteryActivity);
             return null;
         }

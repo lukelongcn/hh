@@ -20,21 +20,37 @@ public class CouponController {
     @Resource
     private CouponService couponService;
 
+    /**
+     * 我的优惠劵列表
+     *
+     * @param userId userId
+     * @param state  使用状态 1未使用 2已使用 3已过期
+     * @param page   page
+     * @param limit  limit
+     * @return result
+     */
     @Secured
     @GetMapping("/user/coupon/{state}")
     public Result getUserCoupon(@SessionAttribute("curUserId") Long userId,
                                 @PathVariable(value = "state") Integer state,
-                                @RequestParam(required = false,defaultValue = "1") Integer page,
-                                @RequestParam(required = false,defaultValue = "10") Integer limit){
-        return couponService.getUserCoupons(userId,state,page,limit);
+                                @RequestParam(required = false, defaultValue = "1") Integer page,
+                                @RequestParam(required = false, defaultValue = "10") Integer limit) {
+        return couponService.getUserCoupons(userId, state, page, limit);
     }
 
+    /**
+     * @param userId  userId
+     * @param goodsId goodsId
+     * @param page    page
+     * @param limit   limit
+     * @return
+     */
     @Secured
     @GetMapping("/order/userCoupon/{goodsId}")
     public Result getOrderCoupons(@SessionAttribute("curUserId") Long userId,
                                   @PathVariable(value = "goodsId") Long goodsId,
-                                  @RequestParam(required = false,defaultValue = "1") Integer page,
-                                  @RequestParam(required = false,defaultValue = "10") Integer limit){
-        return couponService.getOrderCoupons(userId,goodsId,page,limit);
+                                  @RequestParam(required = false, defaultValue = "1") Integer page,
+                                  @RequestParam(required = false, defaultValue = "10") Integer limit) {
+        return couponService.getOrderCoupons(userId, goodsId, page, limit);
     }
 }

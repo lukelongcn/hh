@@ -51,8 +51,8 @@ public class WeChatProvider {
     private String jsSecret;
     @Value("${common.wechat.callback}")
     private String url;
-//    @Value("${path.app.wechat_host}")
-    private String host="https://weixin-h9.thy360.com";
+    //    @Value("${path.app.wechat_host}")
+    private String host = "https://weixin-h9.thy360.com";
     @Resource
     private RestTemplate restTemplate;
 
@@ -322,24 +322,26 @@ public class WeChatProvider {
         MenuDTO menuDTO = builder
                 .button(Arrays.asList(
                         new MenuDTO.ButtonBean()
-//                                .setType("view")
-//                                .setKey("12")
-//                                .setUrl(host + "/h9-weixin/#/active/hongbao")
-//                                .setName("开盖扫红包")
+                                .setType("view")
+                                .setKey("12")
+                                .setUrl(host + "/h9-weixin/#/active/hongbao")
                                 .setName("开盖扫红包")
-                                .setSub_button(
-                                        Arrays.asList(new MenuDTO.ButtonBean.SubButtonBean()
-                                                        .setName("为爱 可以贪杯")
-                                                        .setType("view")
-                                                        .setUrl("https://weixin-h9.thy360.com/h9-photos/index.html"),
-                                                new MenuDTO.ButtonBean.SubButtonBean()
-                                                        .setName("游学")
-                                                        .setType("view")
-                                                        .setUrl("http://u5202759.viewer.maka.im/pcviewer/UVCIEYC5"),
-                                                new MenuDTO.ButtonBean.SubButtonBean()
-                                                        .setName("开盖扫红包")
-                                                        .setType("view")
-                                                        .setUrl(host + "/h9-weixin/#/active/hongbao"))),
+
+//                                .setName("开盖扫红包")
+//                                .setSub_button(
+//                                        Arrays.asList(new MenuDTO.ButtonBean.SubButtonBean()
+//                                                        .setName("为爱 可以贪杯")
+//                                                        .setType("view")
+//                                                        .setUrl("https://weixin-h9.thy360.com/h9-photos/index.html"),
+//                                                new MenuDTO.ButtonBean.SubButtonBean()
+//                                                        .setName("游学")
+//                                                        .setType("view")
+//                                                        .setUrl("http://u5202759.viewer.maka.im/pcviewer/UVCIEYC5"),
+//                                                new MenuDTO.ButtonBean.SubButtonBean()
+//                                                        .setName("开盖扫红包")
+//                                                        .setType("view")
+//                                                        .setUrl(host + "/h9-weixin/#/active/hongbao")))
+                        ,
                         new MenuDTO.ButtonBean()
                                 .setType("view")
                                 .setKey("23")
@@ -356,8 +358,8 @@ public class WeChatProvider {
 
 //        String accessToken = getWeChatAccessToken();
 
-        String accessToken = "8_dRaEAFtciscu_iPWA2i7yvrTAPelqA9nRSDcLZAuauHg5kplvTNkSipQ2nERlekVKqUThakb84D6" +
-                "ECWTCtwfyFYmvZmtbl2C-GePRHGV1WeLX6Uo8OhaR2sCdgYNSWoRfztBeyN028WdR0gvVEBaAAAIRO";
+        String accessToken = "";
+
         logger.info("accessToken : " + accessToken);
         String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
 

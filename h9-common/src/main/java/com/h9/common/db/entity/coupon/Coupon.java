@@ -1,7 +1,7 @@
-package com.h9.common.db.entity.order;
+package com.h9.common.db.entity.coupon;
 
 import com.h9.common.base.BaseEntity;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.order.Goods;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -31,8 +31,8 @@ public class Coupon extends BaseEntity {
     @Column(name = "title", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '标题'")
     private String title;
 
-    @Column(name = "coupon_type", nullable = false, columnDefinition = "varchar(256) default '' COMMENT '优惠券类型'")
-    private String couponType;
+    @Column(name = "coupon_type", nullable = false, columnDefinition = "int  COMMENT '优惠券类型 1 免单劵'")
+    private Integer couponType = 1;
 
     /**
      * 状态 1 未生效 0生效中 2已失效
@@ -59,17 +59,13 @@ public class Coupon extends BaseEntity {
     @Column(name = "ask_count", columnDefinition = "int default 0 COMMENT '制券张数'")
     private int askCount;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "goods_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Goods goodsId;
-
 
 
     public enum statusEnum{
 
-        ENABLE(1,"未生效"),
-        BAN(0,"生效中"),
-        FINISH(2,"已失效");
+        UN_EFFECT(1,"未生效"),
+        EFFECT(0,"生效中"),
+        TIMEOUT(2,"已失效");
 
         private int code;
         private String desc;

@@ -1,4 +1,4 @@
-package com.h9.admin.model.dto;
+package com.h9.admin.model.dto.coupon;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
@@ -24,7 +24,7 @@ public class CouponsDTO {
     @Size(max = 20)
     private String title;
 
-    @NotBlank(message = "优惠券类型必填")
+
     private String couponType;
 
     @NotNull(message = "生效时间必填")
@@ -42,5 +42,4 @@ public class CouponsDTO {
     @NotBlank(message = "发放方式必填")
     private String sentType;
 
-    private Long goodsId;
 }

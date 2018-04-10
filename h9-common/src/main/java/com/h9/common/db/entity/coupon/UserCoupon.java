@@ -1,8 +1,9 @@
-package com.h9.common.db.entity.user;
+package com.h9.common.db.entity.coupon;
 
 import com.h9.common.base.BaseEntity;
-import com.h9.common.db.entity.order.Coupon;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -18,6 +19,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @Entity
 @Table(name = "user_coupon")
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserCoupon  extends BaseEntity {
 
     @Id
@@ -41,9 +44,9 @@ public class UserCoupon  extends BaseEntity {
 
     public enum statusEnum {
 
-        ENABLE(1, "未使用"),
-        BAN(0, "已使用"),
-        FINISH(2, "已过期");
+        UN_USE(1, "未使用"),
+        USED(0, "已使用"),
+        TIMEOUT(2, "已过期");
 
         private int code;
         private String desc;

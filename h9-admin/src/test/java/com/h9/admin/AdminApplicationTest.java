@@ -1,7 +1,9 @@
 package com.h9.admin;
 
 import com.h9.admin.job.HotelOrderJob;
+import com.h9.admin.model.dto.coupon.CouponUserRelationDTO;
 import com.h9.admin.service.ActivityService;
+import com.h9.admin.service.POIService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.utils.DateUtil;
@@ -11,9 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
@@ -33,13 +39,14 @@ public class AdminApplicationTest {
 
 
     @Resource
-    private RedisBean redisBean;
-    @Test
-    public void start() {
-//        activityService.startBigRichLottery();
+    private POIService poiService;
 
-//        activityService.startBigRichLottery();
-        redisBean.setStringValue("123", "", 1, TimeUnit.MICROSECONDS);
+    @Resource
+    private RedisBean redisBean;
+
+    @Test
+    public void start() throws FileNotFoundException {
+
     }
 
     @Test

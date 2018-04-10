@@ -3,7 +3,6 @@ package com.h9.api.model.vo;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
-import com.h9.common.db.entity.user.UserCoupon;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.springframework.util.CollectionUtils;

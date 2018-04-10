@@ -1,7 +1,7 @@
 package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.order.Coupon;
+import com.h9.common.db.entity.coupon.Coupon;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -1,12 +1,10 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.order.Coupon;
+import com.h9.common.db.entity.coupon.Coupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * <p>Title:h9-parent</p>
@@ -25,39 +23,42 @@ public class CouponVO {
      * 状态 1 未生效 0生效中 2已失效
      * @see Coupon.statusEnum
      */
-    private int status;
+    private String status = "";
 
-    private String startTime;
+    private String startTime = "";
 
-    private String endTime;
+    private String endTime = "";
 
-    private String wide;
+    private String wide= "";
 
     private int leftCount;
 
-    private String goodsName;
+    private String goodsName= "";
 
-    private String couponType;
+    private String couponType= "";
 
-    private String createTime;
+    private String createTime= "";
 
     private int askCount;
 
     public CouponVO(){
 
     }
-    public CouponVO(Coupon coupon){
+    public CouponVO(Coupon coupon, Goods goods){
 
         this.id = coupon.getId();
         this.title = coupon.getTitle();
-        this.couponType = coupon.getCouponType();
+        this.couponType = "免单劵";
         this.wide = "部分商品";
         this.leftCount = coupon.getLeftCount();
-        this.status = coupon.getStatus();
+        UserCoupon.statusEnum findEnum = UserCoupon.statusEnum.findByCode(coupon.getStatus());
+        if(findEnum  != null){
+            this.status = findEnum.getDesc();
+        }
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);
         this.endTime = DateUtil.formatDate(coupon.getEndTime(), DateUtil.FormatType.MINUTE);
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);
-        this.goodsName = coupon.getGoodsId().getName();
+        this.goodsName = goods.getName();
         this.askCount = coupon.getAskCount();
     }
 }

@@ -1,10 +1,8 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.user.UserCoupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
-
-import javax.print.DocFlavor;
 
 /**
  * <p>Title:h9-parent</p>
@@ -24,6 +22,7 @@ public class OrderCouponsVO {
 
     public OrderCouponsVO(UserCoupon userCoupon){
         this.endTime = DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE);
-        this.wide = userCoupon.getCouponId().getGoodsId().getName();
+        //TODO 改
+//        this.wide = userCoupon.getCouponId().getGoodsId().getName();
     }
 }
