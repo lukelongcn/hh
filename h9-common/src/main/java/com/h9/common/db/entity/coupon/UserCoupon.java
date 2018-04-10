@@ -21,22 +21,24 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "user_coupon")
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCoupon  extends BaseEntity {
+public class UserCoupon extends BaseEntity {
 
     @Id
     @SequenceGenerator(name = "h9-apiSeq", sequenceName = "h9-api_SEQ", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = IDENTITY, generator = "h9-apiSeq")
     private Long id;
 
-    @Column(name = "user_id",  columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
+    @Column(name = "user_id", columnDefinition = "bigint(20) default 0 COMMENT '用户id'")
     private Long userId;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "coupon_id",referencedColumnName="id",columnDefinition = "bigint(20) default 0 COMMENT '商品id'",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "coupon_id", referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '商品id'", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Coupon couponId;
+
 
     /**
      * 使用状态 1未使用 2已使用 3已过期
+     *
      * @see UserCoupon.statusEnum
      */
     @Column(name = "state", nullable = false, columnDefinition = "int default 1 COMMENT '使用状态 1未使用 2已使用 3已过期'")

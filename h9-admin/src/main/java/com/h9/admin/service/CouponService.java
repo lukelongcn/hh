@@ -65,9 +65,9 @@ public class CouponService {
         }
         return Result.success(pageResult.result2Result(el -> {
             List<CouponGoodsRelation> list = couponGoodsRelationRep.findByCouponId(el.getId(), 0);
-            CouponGoodsRelation couponGoodsRelation = couponGoodsRelationRep.findByCouponIdFirst(el.getId(),0);
+            CouponGoodsRelation couponGoodsRelation = couponGoodsRelationRep.findByCouponIdFirst(el.getId(), 0);
             Goods goods = goodsReposiroty.findOne(couponGoodsRelation.getGoodsId());
-            CouponVO couponVO = new CouponVO(el,goods);
+            CouponVO couponVO = new CouponVO(el, goods);
             return couponVO;
         }));
     }
@@ -118,6 +118,7 @@ public class CouponService {
      * @param coupon
      * @return
      */
+    @Deprecated
     private Result addGoods2Coupon(List<Long> goodsIdList, Coupon coupon) {
         if (CollectionUtils.isEmpty(goodsIdList)) {
             return Result.fail();
@@ -164,7 +165,15 @@ public class CouponService {
         logger.info("更新 " + ints + " 条记录");
 
         List<Long> goodIdList = couponsDTO.getGoodIdList();
-        addGoods2Coupon(goodIdList, coupon);
+        for (Long gid : goodIdList) {
+            Goods goods = goodsReposiroty.findOne(gid);
+            if (goods == null) {
+                return Result.fail("商品 " + goods.getId() + " 不存在");
+            }
+            CouponGoodsRelation relation = new CouponGoodsRelation(null, coupon.getId(), gid, 0);
+            couponGoodsRelationRep.save(relation);
+        }
+//        addGoods2Coupon(goodIdList, coupon);
         // 制券数
         if (coupon.getAskCount() > couponsDTO.getAskCount()) {
             return Result.fail("新制券数必须大于原制券数");
@@ -183,6 +192,9 @@ public class CouponService {
     }
 
     public Result handlerFile(MultipartFile file, Long couponId) {
+        if (file == null) {
+            return Result.fail("请选择文件");
+        }
         List<Object> list = new ArrayList<>();
         try {
             poiService.excel2Object(file.getInputStream(), list, CouponUserRelationDTO.class);
@@ -260,14 +272,22 @@ public class CouponService {
         List<CouponUserRelationDTO> couponUserRelationDTOS = JSONArray.parseArray(json, CouponUserRelationDTO.class);
 
         for (CouponUserRelationDTO couponUserRelationDTO : couponUserRelationDTOS) {
-            UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId(), coupon, UN_USE.getCode());
-            userCouponsRepository.save(userCoupon);
+            String count = couponUserRelationDTO.getCount();
+            Integer countInt = Integer.valueOf(count);
+            int leftCount = coupon.getLeftCount();
+            if(countInt>leftCount){
+                return Result.fail("优惠劵id: " + coupon.getId() + " 数量不够了，目前剩于数量为 " + leftCount);
+            }
+            for (int i = 0; i < countInt; i++) {
+                UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId(), coupon, UN_USE.getCode());
+                userCouponsRepository.save(userCoupon);
+            }
         }
         int leftCount = coupon.getLeftCount();
         int i = leftCount - couponUserRelationDTOS.size();
         coupon.setLeftCount(i);
         couponRespository.save(coupon);
-
+        redisBean.setStringValue("coupon:" + tempId, "", 1, TimeUnit.MICROSECONDS);
         return Result.success();
     }
 

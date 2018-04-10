@@ -21,6 +21,7 @@ public class CouponVO {
 
     /**
      * 状态 1 未生效 0生效中 2已失效
+     *
      * @see Coupon.statusEnum
      */
     private String status = "";
@@ -29,22 +30,26 @@ public class CouponVO {
 
     private String endTime = "";
 
-    private String wide= "";
+    private String wide = "";
 
     private int leftCount;
 
-    private String goodsName= "";
+    private String goodsName = "";
 
-    private String couponType= "";
+    private long goodsId;
 
-    private String createTime= "";
+    private String couponType = "";
+
+    private String createTime = "";
 
     private int askCount;
 
-    public CouponVO(){
+
+    public CouponVO() {
 
     }
-    public CouponVO(Coupon coupon, Goods goods){
+
+    public CouponVO(Coupon coupon, Goods goods) {
 
         this.id = coupon.getId();
         this.title = coupon.getTitle();
@@ -52,7 +57,7 @@ public class CouponVO {
         this.wide = "部分商品";
         this.leftCount = coupon.getLeftCount();
         UserCoupon.statusEnum findEnum = UserCoupon.statusEnum.findByCode(coupon.getStatus());
-        if(findEnum  != null){
+        if (findEnum != null) {
             this.status = findEnum.getDesc();
         }
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);
@@ -60,5 +65,6 @@ public class CouponVO {
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.goodsName = goods.getName();
         this.askCount = coupon.getAskCount();
+        this.goodsId = goods.getId();
     }
 }
