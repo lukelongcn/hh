@@ -22,11 +22,13 @@ public class UserCouponVO {
     private String endTime;
     private String couponType = "";
     private String useType = "";
+    private long goodsId ;
 
     public UserCouponVO(UserCoupon userCoupon, Goods goods) {
         this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.MINUTE);
         this.wide = "限 " + goods.getName() + " 适用";
         this.couponType = "免单劵";
         this.useType = "自营指定商品适用";
+        this.goodsId = goods.getId();
     }
 }
