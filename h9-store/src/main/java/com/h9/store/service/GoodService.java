@@ -385,8 +385,10 @@ public class GoodService {
     private Result handlerPay(int payMethod, Orders order, BigDecimal payMoney, Long userId, ConvertGoodsDTO convertGoodsDTO, Goods goods) {
         int count = convertGoodsDTO.getCount();
         Long couponsId = convertGoodsDTO.getCouponsId();
-        UserCoupon userCoupon = userCouponsRepository.findOne(couponsId);
-
+        UserCoupon userCoupon = null;
+        if (couponsId != null) {
+            userCoupon = userCouponsRepository.findOne(couponsId);
+        }
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
@@ -407,8 +409,10 @@ public class GoodService {
                 mapVo.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
             } else {
-                userCoupon.setState(UN_USE.getCode());
-                userCoupon.setOrderId(null);
+                if(userCoupon != null){
+                    userCoupon.setState(UN_USE.getCode());
+                    userCoupon.setOrderId(null);
+                }
                 userCouponsRepository.save(userCoupon);
             }
 
