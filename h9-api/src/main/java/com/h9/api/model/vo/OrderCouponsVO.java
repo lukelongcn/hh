@@ -19,16 +19,17 @@ public class OrderCouponsVO {
      */
     private String endTime;
     // 使用范围
-    private String wide = "";
+    private String couponType = "";
     private String useType = "";
     private long id;
     private Long goodsId;
 
     public OrderCouponsVO(UserCoupon userCoupon, Goods goods) {
         this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.MINUTE);
-        this.wide = goods.getName();
+        this.couponType = goods.getName();
         this.useType = "自营指定商品";
         this.id = userCoupon.getId();
         this.goodsId = goods.getId();
+        this.couponType = "免单劵";
     }
 }

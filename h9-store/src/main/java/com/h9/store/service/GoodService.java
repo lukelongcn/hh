@@ -40,6 +40,7 @@ import java.util.Map;
 
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.USED;
+import static com.h9.common.db.entity.order.Orders.PayMethodEnum.BALANCE_PAY;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -264,9 +265,10 @@ public class GoodService {
 
         //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        BigDecimal balance = userAccount.getBalance();
-        if (convertGoodsDTO.getPayMethod() == 1 && balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
-            return Result.fail("余额不足");
+
+        Result result = validateBalance(userAccount, payMoney, convertGoodsDTO.getPayMethod(), convertGoodsDTO.getCouponsId(), goods);
+        if (!result.isSuccess()) {
+            return result;
         }
 
         String code = goods.getGoodsType().getCode();
@@ -294,6 +296,25 @@ public class GoodService {
 
         return handlerPay(payMethod, order, payMoney, userId, convertGoodsDTO, goods);
 
+    }
+
+    private Result validateBalance(UserAccount userAccount, BigDecimal payMoney, Integer payMethod, Long userCouponId, Goods goods) {
+        UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
+        BigDecimal balance = userAccount.getBalance();
+        if (userCouponId == null) {
+            if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(payMoney) < 0) {
+                return Result.fail("余额不足");
+            }
+        } else {
+            int state = userCoupon.getState();
+            if (state == UN_USE.getCode()) {
+                BigDecimal subPrice = payMoney.subtract(goods.getRealPrice());
+                if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(subPrice) < 0) {
+                    return Result.fail("余额不足");
+                }
+            }
+        }
+        return Result.success();
     }
 
 
@@ -337,21 +358,12 @@ public class GoodService {
         Long couponsId = convertGoodsDTO.getCouponsId();
         UserCoupon userCoupon = userCouponsRepository.findOne(couponsId);
 
-        if (userCoupon != null) {
-
-            BigDecimal goodsPrice = goods.getRealPrice();
-            if (count > 1) {
-                payMoney = payMoney.subtract(goodsPrice);
-            }
-            userCoupon.setState(USED.getCode());
-            userCoupon.setOrderId(order.getId());
-            userCouponsRepository.save(userCoupon);
-        }
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
         } else {
+            payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
             //余额支付
             Result result = changeStock(goods, count);
             if (result.getCode() == 1) {
@@ -365,11 +377,29 @@ public class GoodService {
                 mapVo.put("activityName", "1号大富贵");
                 mapVo.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
+            } else {
+                userCoupon.setState(UN_USE.getCode());
+                userCouponsRepository.save(userCoupon);
             }
+
             return balancePayResult;
         }
     }
 
+    private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney, int count, Orders order) {
+        if (userCoupon != null) {
+
+            BigDecimal goodsPrice = goods.getRealPrice();
+            if (count > 1) {
+                payMoney = payMoney.subtract(goodsPrice);
+            }
+            userCoupon.setState(USED.getCode());
+            userCoupon.setOrderId(order.getId());
+            userCouponsRepository.save(userCoupon);
+            return payMoney;
+        }
+        return payMoney;
+    }
 
     /**
      * 检优惠劵与商品是否对应
