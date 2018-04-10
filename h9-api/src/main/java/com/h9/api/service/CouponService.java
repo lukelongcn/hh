@@ -4,6 +4,7 @@ import com.h9.api.model.vo.OrderCouponsVO;
 import com.h9.api.model.vo.UserCouponVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +60,7 @@ public class CouponService {
             Goods goods = null;
             if (couponGoodsRelation != null) {
                 Long goodsId = couponGoodsRelation.getGoodsId();
-                 goods = goodsReposiroty.findOne(goodsId);
+                goods = goodsReposiroty.findOne(goodsId);
             }
             UserCouponVO userCouponVO = new UserCouponVO(userCoupon, goods);
             return userCouponVO;
@@ -72,6 +74,16 @@ public class CouponService {
         List<UserCoupon> userCouponList = userCouponsRepository.findByUserId(userId, 1);
 
         userCouponList = userCouponList.stream().filter(userCoupon -> {
+            Coupon coupon = userCoupon.getCoupon();
+            Date startTime = coupon.getStartTime();
+            Date endTime = coupon.getEndTime();
+            Date now = new Date();
+            if (startTime.after(now)) {
+                return false;
+            }
+            if (now.after(endTime)) {
+                return false;
+            }
             List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCoupon().getId(), 0);
             if (CollectionUtils.isNotEmpty(relations)) {
                 Long gid = relations.get(0).getGoodsId();

@@ -77,11 +77,13 @@ public class OrderDetailVO {
             vo.setPayMethod(byCode.getDesc());
         } else {
             vo.setPayMethod("余额支付");
-            // 优惠券支付
-            if (userCoupon != null) {
-                vo.setCouponMessage("免单券抵扣￥" + orderItems.get(0).getGoods().getRealPrice());
-            }
+
         }
+
+        if (userCoupon != null) {
+            vo.setCouponMessage("免单券抵扣￥" + orderItems.get(0).getGoods().getRealPrice());
+        }
+
         vo.setPayMoney(order.getPayMoney() + "");
         vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         List<OrderItems> itemList = order.getOrderItems();

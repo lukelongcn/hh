@@ -26,7 +26,7 @@ public class UserCouponVO {
 
     public UserCouponVO(UserCoupon userCoupon, Goods goods) {
         this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.MINUTE);
-        this.wide = "限 " + goods.getName() + " 适用";
+        this.wide = "限 “" + goods.getName() + "” 适用";
         this.couponType = "免单劵";
         this.useType = "自营指定商品适用";
         if(goods != null){
