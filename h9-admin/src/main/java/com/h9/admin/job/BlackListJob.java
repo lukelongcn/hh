@@ -73,7 +73,8 @@ public class BlackListJob {
             }
         }
         // 定时过期用户优惠券
-        couponService.startChangeStatusUserCoupon();
+        //TODO
+//        couponService.startChangeStatusUserCoupon();
     }
 
 
