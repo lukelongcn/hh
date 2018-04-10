@@ -29,6 +29,8 @@ public class UserCouponVO {
         this.wide = "限 " + goods.getName() + " 适用";
         this.couponType = "免单劵";
         this.useType = "自营指定商品适用";
-        this.goodsId = goods.getId();
+        if(goods != null){
+            this.goodsId = goods.getId();
+        }
     }
 }

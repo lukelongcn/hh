@@ -55,8 +55,11 @@ public class CouponService {
         return Result.success(pageResult.result2Result(userCoupon -> {
 
             CouponGoodsRelation couponGoodsRelation = couponGoodsRelationRep.findByCouponIdFirst(userCoupon.getCoupon().getId(), 0);
-            Long goodsId = couponGoodsRelation.getGoodsId();
-            Goods goods = goodsReposiroty.findOne(goodsId);
+            Goods goods = null;
+            if (couponGoodsRelation != null) {
+                Long goodsId = couponGoodsRelation.getGoodsId();
+                 goods = goodsReposiroty.findOne(goodsId);
+            }
             UserCouponVO userCouponVO = new UserCouponVO(userCoupon, goods);
             return userCouponVO;
 
@@ -70,7 +73,7 @@ public class CouponService {
 
         userCouponList = userCouponList.stream().filter(userCoupon -> {
             List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCoupon().getId(), 0);
-            if(CollectionUtils.isNotEmpty(relations)){
+            if (CollectionUtils.isNotEmpty(relations)) {
                 Long gid = relations.get(0).getGoodsId();
                 return gid.equals(goodsId);
             }
