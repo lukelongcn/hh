@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.h9.common.db.entity.coupon.Coupon.statusEnum.*;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
 
 /**
@@ -94,13 +93,13 @@ public class CouponService {
             coupon.setLeftCount(couponsDTO.getAskCount());
             coupon.setAskCount(couponsDTO.getAskCount());
             // 状态
-            if (couponsDTO.getStartTime().after(new Date())) {
-                coupon.setStatus(UN_EFFECT.getCode());
-            } else if (couponsDTO.getEndTime().after(new Date()) && new Date().after(couponsDTO.getStartTime())) {
-                coupon.setStatus(EFFECT.getCode());
-            } else {
-                coupon.setStatus(TIMEOUT.getCode());
-            }
+//            if (couponsDTO.getStartTime().after(new Date())) {
+//                coupon.setStatus(UN_EFFECT.getCode());
+//            } else if (couponsDTO.getEndTime().after(new Date()) && new Date().after(couponsDTO.getStartTime())) {
+//                coupon.setStatus(EFFECT.getCode());
+//            } else {
+//                coupon.setStatus(TIMEOUT.getCode());
+//            }
             couponRespository.saveAndFlush(coupon);
 
             Goods goods = goodsReposiroty.findOne(gid);
@@ -137,19 +136,19 @@ public class CouponService {
         return Result.success();
     }
 
-    public Result changeCouponState(Long id, Integer state) {
-
-        if (state > 3 || state < 1) {
-            return Result.fail("请输入正确的状态 1 未生效 0生效中 2已失效");
-        }
-        Coupon coupon = couponRespository.findOne(id);
-        if (coupon == null) {
-            return Result.fail("修改状态失败");
-        }
-        coupon.setStatus(state);
-        couponRespository.saveAndFlush(coupon);
-        return Result.success("修改状态成功");
-    }
+//    public Result changeCouponState(Long id, Integer state) {
+//
+//        if (state > 3 || state < 1) {
+//            return Result.fail("请输入正确的状态 1 未生效 0生效中 2已失效");
+//        }
+//        Coupon coupon = couponRespository.findOne(id);
+//        if (coupon == null) {
+//            return Result.fail("修改状态失败");
+//        }
+////        coupon.setStatus(state);
+//        couponRespository.saveAndFlush(coupon);
+//        return Result.success("修改状态成功");
+//    }
 
     @Transactional
     public Result updateCoupons(Long id, CouponsDTO couponsDTO) {
@@ -182,14 +181,7 @@ public class CouponService {
             return Result.fail("新制券数必须大于原制券数");
         }
         coupon.setAskCount(couponsDTO.getAskCount());
-        // 状态改变
-        if (couponsDTO.getStartTime().after(new Date())) {
-            coupon.setStatus(1);
-        } else if (couponsDTO.getEndTime().after(new Date())) {
-            coupon.setStatus(2);
-        } else {
-            coupon.setStatus(3);
-        }
+
         couponRespository.saveAndFlush(coupon);
         return Result.success("编辑优惠券成功");
     }
@@ -205,10 +197,18 @@ public class CouponService {
             logger.info(e);
             return Result.fail("上传异常");
         }
-        //TODO 校验优惠劵总张数
+
+
         Map<Object, Object> mapVo = new HashMap<>();
 
         List<CouponUserRelationDTO> okList = new ArrayList<>();
+
+        Coupon coupon = couponRespository.findOne(couponId);
+        int leftCount = coupon.getLeftCount();
+        int sum = sumCouponListCount(okList);
+        if (sum > leftCount) {
+            return Result.fail("表格中所赠送的优惠劵大于优惠劵的剩于张数，目前剩于 " + leftCount);
+        }
 
         List<CouponUserRelationDTO> filterList = errorUser(list, okList);
 
@@ -225,6 +225,22 @@ public class CouponService {
         }
         mapVo.put("tempId", tempId);
         return Result.success(mapVo);
+    }
+
+    public int sumCouponListCount(List<CouponUserRelationDTO> okList) {
+        int sum = okList.stream().map(el -> {
+            try {
+                Integer count = Integer.valueOf(el.getCount());
+                return count;
+            } catch (NumberFormatException e) {
+                logger.info(e.getMessage(), e);
+                return 0;
+            }
+        }).reduce((e1, e2) -> {
+            return e1 + e2;
+        }).get();
+
+        return sum;
     }
 
     private List<CouponUserRelationDTO> errorUser(List<Object> srcList, List<CouponUserRelationDTO> okList) {

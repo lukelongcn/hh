@@ -7,6 +7,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.*;
@@ -33,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +81,8 @@ public class GoodService {
     private UserCouponsRepository userCouponsRepository;
     @Resource
     private CouponGoodsRelationRep couponGoodsRelationRep;
+    @Resource
+    private CouponRespository couponRespository;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -280,8 +284,6 @@ public class GoodService {
                 , code
                 , address.getName());
 
-        // 设置用户优惠券id
-        order.setUserCouponsId(convertGoodsDTO.getCouponsId());
         order.setAddressId(addressId);
         order.setUserAddres(address.getProvince() + address.getCity() + address.getDistict() + address.getAddress());
         order.setOrderFrom(1);
@@ -335,12 +337,38 @@ public class GoodService {
         if (!userCoupon.getState().equals(UN_USE.getCode())) {
             return Result.fail("此优惠劵已使用");
         }
+//        updateCouponStatus(userCoupon);
+        //判断是否在 有效期
+        Coupon coupon = userCoupon.getCoupon();
+        Date startTime = coupon.getStartTime();
+        Date endTime = coupon.getEndTime();
+        Date now = new Date();
+        if (startTime.after(now) || now.after(endTime)) {
+            return Result.fail("此优惠劵暂不能使用");
+        }
         boolean b = coupon4Goods(userCoupon, goodsId);
         if (!b) {
             return Result.fail("优惠劵与商品不对应");
         }
         return Result.success();
     }
+
+//    public void updateCouponStatus(UserCoupon userCoupon) {
+//        Coupon coupon = userCoupon.getCoupon();
+//        int status = coupon.getStatus();
+//
+//        if (coupon.getStartTime().after(new Date()) && new Date().after(coupon.getEndTime())) {
+//            if (status == UN_EFFECT.getCode()) {
+//                coupon.setStatus(EFFECT.getCode());
+//            }
+//        } else if (new Date().after(coupon.getEndTime())) {
+//
+//            if (status == UN_EFFECT.getCode()) {
+//                coupon.setStatus(EFFECT.getCode());
+//            }
+//        }
+//
+//    }
 
     /**
      * 处理支付
@@ -379,12 +407,14 @@ public class GoodService {
                 logger.debug("获得一次抽奖机会");
             } else {
                 userCoupon.setState(UN_USE.getCode());
+                userCoupon.setOrderId(null);
                 userCouponsRepository.save(userCoupon);
             }
 
             return balancePayResult;
         }
     }
+
 
     private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney, int count, Orders order) {
         if (userCoupon != null) {
@@ -395,6 +425,8 @@ public class GoodService {
             }
             userCoupon.setState(USED.getCode());
             userCoupon.setOrderId(order.getId());
+            userCoupon.setOrderId(order.getId());
+
             userCouponsRepository.save(userCoupon);
             return payMoney;
         }
@@ -452,22 +484,9 @@ public class GoodService {
     private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         // 非优惠券支付 增加余额流水
-        if (order.getUserCouponsId() == null) {
-            Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
-            if (!payResult.isSuccess()) {
-                throw new ServiceException(payResult);
-            }
-        } else {
-            UserCoupon userCoupon = userCouponsRepository.findOne(order.getUserCouponsId());
-            if (userCoupon == null) {
-                return Result.fail("优惠券抵扣失败");
-            }
-            userCoupon.setState(UserCoupon.statusEnum.USED.getCode());
-            userCouponsRepository.save(userCoupon);
-            // 优惠券+余额混合支付
-            //TODO 改
-//            commonService.setBalance(userId, goodsPrice.negate().add(userCoupon.getCoupon().getGoodsId().getRealPrice())
-//                    , 12L, order.getId(), "", balanceFlowType);
+        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
+        if (!payResult.isSuccess()) {
+            throw new ServiceException(payResult);
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());

@@ -45,16 +45,16 @@ public class CouponController {
         return couponService.addCoupons(couponsDTO);
     }
 
-    /**
-     * 改变优惠券状态
-     *
-     * @return result
-     */
-    @PostMapping("/changeCouponState/{id}/{state}")
-    public Result changeCouponState(@PathVariable Long id,
-                                    @PathVariable Integer state) {
-        return couponService.changeCouponState(id, state);
-    }
+//    /**
+//     * 改变优惠券状态
+//     *
+//     * @return result
+//     */
+//    @PostMapping("/changeCouponState/{id}/{state}")
+//    public Result changeCouponState(@PathVariable Long id,
+//                                    @PathVariable Integer state) {
+//        return couponService.changeCouponState(id, state);
+//    }
 
     /**
      * 编辑优惠券

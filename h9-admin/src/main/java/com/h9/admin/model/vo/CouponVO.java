@@ -6,6 +6,8 @@ import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * <p>Title:h9-parent</p>
  * <p>Desription:</p>
@@ -20,7 +22,6 @@ public class CouponVO {
     private String title;
 
     /**
-     * 状态 1 未生效 0生效中 2已失效
      *
      * @see Coupon.statusEnum
      */
@@ -56,17 +57,24 @@ public class CouponVO {
         this.couponType = "免单劵";
         this.wide = "部分商品";
         this.leftCount = coupon.getLeftCount();
-        UserCoupon.statusEnum findEnum = UserCoupon.statusEnum.findByCode(coupon.getStatus());
-        if (findEnum != null) {
-            this.status = findEnum.getDesc();
+
+        Date now = new Date();
+        Date startTime = coupon.getStartTime();
+        Date endTime = coupon.getEndTime();
+        if (startTime.after(now)) {
+            this.status = "未生效";
+        } else if (endTime.after(now)) {
+            this.status = "已失效";
+        } else {
+            this.status = "生效中";
         }
+
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);
         this.endTime = DateUtil.formatDate(coupon.getEndTime(), DateUtil.FormatType.MINUTE);
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);
         this.askCount = coupon.getAskCount();
-        if(goods != null){
+        if (goods != null) {
             this.goodsName = goods.getName();
-
             this.goodsId = goods.getId();
         }
     }

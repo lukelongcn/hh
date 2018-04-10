@@ -34,12 +34,6 @@ public class Coupon extends BaseEntity {
     @Column(name = "coupon_type", nullable = false, columnDefinition = "int  COMMENT '优惠券类型 1 免单劵'")
     private Integer couponType = 1;
 
-    /**
-     * 状态 1 未生效 0生效中 2已失效
-     * @see Coupon.statusEnum
-     */
-    @Column(name = "status",  columnDefinition = "int  COMMENT '状态 1 未生效 0生效中 2已失效'")
-    private int status;
 
     @Column(name = "start_time",  columnDefinition = "datetime COMMENT '开始时间'")
     private Date startTime;
@@ -61,44 +55,4 @@ public class Coupon extends BaseEntity {
 
 
 
-    public enum statusEnum{
-
-        UN_EFFECT(1,"未生效"),
-        EFFECT(0,"生效中"),
-        TIMEOUT(2,"已失效");
-
-        private int code;
-        private String desc;
-
-        statusEnum(int code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public void setCode(int code) {
-            this.code = code;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public void setDesc(String desc) {
-            this.desc = desc;
-        }
-
-        public static Coupon.statusEnum findByCode(int code){
-            Coupon.statusEnum[] values = values();
-            for(Coupon.statusEnum enumEl : values){
-                if(enumEl.code == code){
-                    return enumEl;
-                }
-            }
-            return null;
-        }
-    }
 }

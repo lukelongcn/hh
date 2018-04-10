@@ -32,7 +32,8 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
             " u.coupon_id=coupon.id and coupon.goods_id = ?2 order by u.create_time ASC LIMIT 1;", nativeQuery = true)
     UserCoupon findByUserId(Long userId, Long goodId);
 
-
+    @Query("select o from UserCoupon  o where o.orderId = ?1")
+    UserCoupon findByOrderId(Long OrderId);
 
 
 //    /**

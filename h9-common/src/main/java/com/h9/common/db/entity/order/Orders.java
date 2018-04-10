@@ -131,8 +131,7 @@ public class Orders extends BaseEntity {
     @Column(name = "orders_lottery_id",columnDefinition = "bigint COMMENT '大富贵Id'")
     private Long ordersLotteryId;
 
-    @Column(name = "user_coupons_id",columnDefinition = "bigint COMMENT '用户优惠券Id'")
-    private Long userCouponsId;
+
 
     public Long getOrdersLotteryId() {
         return ordersLotteryId;
@@ -502,11 +501,5 @@ public class Orders extends BaseEntity {
         }
     }
 
-    public Long getUserCouponsId() {
-        return userCouponsId;
-    }
 
-    public void setUserCouponsId(Long userCouponsId) {
-        this.userCouponsId = userCouponsId;
-    }
 }

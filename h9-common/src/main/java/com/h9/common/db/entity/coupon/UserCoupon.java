@@ -48,6 +48,7 @@ public class UserCoupon extends BaseEntity {
     @Column(name = "order_id", columnDefinition = "int  COMMENT '订单id'")
     private Long orderId;
 
+
     public enum statusEnum {
 
         UN_USE(1, "未使用"),
