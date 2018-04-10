@@ -63,7 +63,7 @@ public class CouponVO {
         Date endTime = coupon.getEndTime();
         if (startTime.after(now)) {
             this.status = "未生效";
-        } else if (endTime.after(now)) {
+        } else if (now.after(endTime)) {
             this.status = "已失效";
         } else {
             this.status = "生效中";
