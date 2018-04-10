@@ -36,6 +36,7 @@ public class UserCoupon extends BaseEntity {
     private Coupon coupon;
 
 
+
     /**
      * 使用状态 1未使用 2已使用 3已过期
      *
@@ -43,6 +44,9 @@ public class UserCoupon extends BaseEntity {
      */
     @Column(name = "state", nullable = false, columnDefinition = "int default 1 COMMENT '使用状态 1未使用 2已使用 3已过期'")
     private Integer state = 1;
+
+    @Column(name = "order_id", columnDefinition = "int  COMMENT '订单id'")
+    private Long orderId;
 
     public enum statusEnum {
 

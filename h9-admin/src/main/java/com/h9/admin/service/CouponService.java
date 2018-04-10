@@ -282,7 +282,7 @@ public class CouponService {
                 return Result.fail("优惠劵id: " + coupon.getId() + " 数量不够了，目前剩于数量为 " + leftCount);
             }
             for (int i = 0; i < countInt; i++) {
-                UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId(), coupon, UN_USE.getCode());
+                UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId(), coupon, UN_USE.getCode(), null);
                 userCouponsRepository.save(userCoupon);
             }
         }

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
+import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.USED;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -256,6 +257,10 @@ public class GoodService {
 
         if (!addressUserId.equals(userId)) return Result.fail("无效的地址");
 
+        Result validateCouponInfo = validateCouponInfo(convertGoodsDTO.getCouponsId(), convertGoodsDTO.getGoodsId());
+        if (!validateCouponInfo.isSuccess()) {
+            return validateCouponInfo;
+        }
 
         //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
@@ -291,6 +296,31 @@ public class GoodService {
 
     }
 
+
+    /**
+     * 检验优惠劵
+     *
+     * @param couponsId couponsId
+     * @return
+     */
+    public Result validateCouponInfo(Long couponsId, Long goodsId) {
+        if (couponsId == null) {
+            return Result.success();
+        }
+        UserCoupon userCoupon = userCouponsRepository.findOne(couponsId);
+        if (userCoupon == null) {
+            return Result.fail("优惠劵不存在");
+        }
+        if (!userCoupon.getState().equals(UN_USE.getCode())) {
+            return Result.fail("此优惠劵已使用");
+        }
+        boolean b = coupon4Goods(userCoupon, goodsId);
+        if (!b) {
+            return Result.fail("优惠劵与商品不对应");
+        }
+        return Result.success();
+    }
+
     /**
      * 处理支付
      *
@@ -308,13 +338,14 @@ public class GoodService {
         UserCoupon userCoupon = userCouponsRepository.findOne(couponsId);
 
         if (userCoupon != null) {
-            if (coupon4Goods(userCoupon, goods.getId())) {
 
-            }
             BigDecimal goodsPrice = goods.getRealPrice();
             if (count > 1) {
                 payMoney = payMoney.subtract(goodsPrice);
             }
+            userCoupon.setState(USED.getCode());
+            userCoupon.setOrderId(order.getId());
+            userCouponsRepository.save(userCoupon);
         }
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
@@ -339,16 +370,16 @@ public class GoodService {
         }
     }
 
-    private boolean coupon4Goods(Long couponsId, Long id) {
 
-
-        return false;
-    }
-
+    /**
+     * 检优惠劵与商品是否对应
+     *
+     * @param coupon coupon
+     * @param id     id
+     * @return result
+     */
     private boolean coupon4Goods(UserCoupon coupon, Long id) {
-        if (coupon.getState() != UN_USE.getCode()) {
-            return false;
-        }
+
         List<CouponGoodsRelation> couponGoodsRelationList = couponGoodsRelationRep.findByCouponId(coupon.getCoupon().getId(), 0);
 
         if (CollectionUtils.isNotEmpty(couponGoodsRelationList)) {

@@ -70,8 +70,11 @@ public class CouponService {
 
         userCouponList = userCouponList.stream().filter(userCoupon -> {
             List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCoupon().getId(), 0);
-            Long gid = relations.get(0).getGoodsId();
-            return gid.equals(goodsId);
+            if(CollectionUtils.isNotEmpty(relations)){
+                Long gid = relations.get(0).getGoodsId();
+                return gid.equals(goodsId);
+            }
+            return false;
         }).collect(Collectors.toList());
 
 
