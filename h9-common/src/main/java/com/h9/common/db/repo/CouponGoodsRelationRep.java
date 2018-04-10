@@ -24,6 +24,11 @@ public interface CouponGoodsRelationRep extends BaseRepository<CouponGoodsRelati
         return null;
     }
 
+    @Query("select o from CouponGoodsRelation  o where o.couponId = ?1 and o.goodsId = ?2")
+    List<CouponGoodsRelation> findByCouponIdAndGoodsId(Long couponId, Long goodsId);
+
+
+
     @Query("update CouponGoodsRelation o set o.delFlag = 1 where o.couponId = ?1 and o.delFlag = 0")
     @Modifying
     Integer removeAllByCouponId(Long couponId);

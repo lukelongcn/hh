@@ -4,6 +4,7 @@ import com.h9.api.model.vo.OrderCouponsVO;
 import com.h9.api.model.vo.UserCouponVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
@@ -11,11 +12,13 @@ import com.h9.common.db.repo.CouponGoodsRelationRep;
 import com.h9.common.db.repo.CouponRespository;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.UserCouponsRepository;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:h9-parent</p>
@@ -62,13 +65,27 @@ public class CouponService {
     }
 
     @Transactional
-    public Result getOrderCoupons(Long userId, Long goodsId, Integer page, Integer limit) {
-        //TODO 改
-        return null;
-//        PageResult<UserCoupon> pageResult = userCouponsRepository.findOrderCoupons(userId,goodsId, page, limit);
-//        if (pageResult == null) {
-//            return Result.fail("暂无可用优惠券");
-//        }
-//        return Result.success(pageResult.result2Result(OrderCouponsVO::new));
+    public Result getOrderCoupons(Long userId, Long goodsId) {
+
+        List<UserCoupon> userCouponList = userCouponsRepository.findByUserId(userId, 1);
+
+        userCouponList = userCouponList.stream().filter(userCoupon -> {
+            List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCouponId().getId(), 0);
+            Long gid = relations.get(0).getGoodsId();
+            return gid.equals(goodsId);
+        }).collect(Collectors.toList());
+
+
+        if (CollectionUtils.isEmpty(userCouponList)) {
+
+            return Result.fail("暂无可用优惠券");
+        }
+
+        List<OrderCouponsVO> vo = userCouponList.stream().map(userCoupon -> {
+            Goods goods = goodsReposiroty.findOne(goodsId);
+            return new OrderCouponsVO(userCoupon, goods);
+        }).collect(Collectors.toList());
+
+        return Result.success(vo);
     }
 }

@@ -32,4 +32,6 @@ public class CouponGoodsRelation extends BaseEntity {
 
     @Column(name = "del_flag",columnDefinition = "int comment '删除标记 1 删除 0 未删除'")
     private Integer delFlag = 0;
+
+
 }

@@ -39,18 +39,16 @@ public class CouponController {
     }
 
     /**
+     * 商品可用的优惠劵列表
+     *
      * @param userId  userId
      * @param goodsId goodsId
-     * @param page    page
-     * @param limit   limit
-     * @return
+     * @return result
      */
     @Secured
-    @GetMapping("/order/userCoupon/{goodsId}")
+    @GetMapping("/user/coupons")
     public Result getOrderCoupons(@SessionAttribute("curUserId") Long userId,
-                                  @PathVariable(value = "goodsId") Long goodsId,
-                                  @RequestParam(required = false, defaultValue = "1") Integer page,
-                                  @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        return couponService.getOrderCoupons(userId, goodsId, page, limit);
+                                  @RequestParam Long goodsId) {
+        return couponService.getOrderCoupons(userId, goodsId);
     }
 }

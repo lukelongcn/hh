@@ -1,6 +1,7 @@
 package com.h9.api.model.vo;
 
 import com.h9.common.db.entity.coupon.UserCoupon;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
 
@@ -14,15 +15,18 @@ import lombok.Data;
 @Data
 public class OrderCouponsVO {
     /**
-      优惠结束时间
-    */
+     * 优惠结束时间
+     */
     private String endTime;
     // 使用范围
-    private String wide;
+    private String wide = "";
+    private String useType = "";
+    private long id;
 
-    public OrderCouponsVO(UserCoupon userCoupon){
+    public OrderCouponsVO(UserCoupon userCoupon, Goods goods) {
         this.endTime = DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE);
-        //TODO 改
-//        this.wide = userCoupon.getCouponId().getGoodsId().getName();
+        this.wide = goods.getName();
+        this.useType = "自营指定商品";
+        this.id = userCoupon.getId();
     }
 }

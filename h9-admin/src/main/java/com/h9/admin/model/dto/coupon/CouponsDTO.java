@@ -40,6 +40,6 @@ public class CouponsDTO {
     private Integer askCount;
 
     @NotBlank(message = "发放方式必填")
-    private String sentType;
+    private Integer sentType = 1;
 
 }
