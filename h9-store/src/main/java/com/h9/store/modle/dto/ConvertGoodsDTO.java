@@ -34,5 +34,5 @@ public class ConvertGoodsDTO {
     private Integer payMethod;
 
     /** 用户优惠券id */
-    private Long userCouponsId;
+    private Long couponsId;
 }

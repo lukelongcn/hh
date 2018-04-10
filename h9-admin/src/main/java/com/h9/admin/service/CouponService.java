@@ -66,7 +66,10 @@ public class CouponService {
         return Result.success(pageResult.result2Result(el -> {
             List<CouponGoodsRelation> list = couponGoodsRelationRep.findByCouponId(el.getId(), 0);
             CouponGoodsRelation couponGoodsRelation = couponGoodsRelationRep.findByCouponIdFirst(el.getId(), 0);
-            Goods goods = goodsReposiroty.findOne(couponGoodsRelation.getGoodsId());
+            Goods goods = null;
+            if (couponGoodsRelation != null) {
+                goods = goodsReposiroty.findOne(couponGoodsRelation.getGoodsId());
+            }
             CouponVO couponVO = new CouponVO(el, goods);
             return couponVO;
         }));
@@ -275,7 +278,7 @@ public class CouponService {
             String count = couponUserRelationDTO.getCount();
             Integer countInt = Integer.valueOf(count);
             int leftCount = coupon.getLeftCount();
-            if(countInt>leftCount){
+            if (countInt > leftCount) {
                 return Result.fail("优惠劵id: " + coupon.getId() + " 数量不够了，目前剩于数量为 " + leftCount);
             }
             for (int i = 0; i < countInt; i++) {

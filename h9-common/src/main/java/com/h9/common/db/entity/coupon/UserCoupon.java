@@ -33,7 +33,7 @@ public class UserCoupon extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "coupon_id", referencedColumnName = "id", columnDefinition = "bigint(20) default 0 COMMENT '商品id'", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Coupon couponId;
+    private Coupon coupon;
 
 
     /**

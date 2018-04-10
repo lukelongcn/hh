@@ -187,8 +187,8 @@ public class Orders extends BaseEntity {
 
         BALANCE_PAY(1, "余额支付"),
         VBPAY(2, "vb支付"),
-        WX_PAY(3,"微信支付"),
-        COUPON_PAY(4,"优惠券支付");
+        WX_PAY(3,"微信支付");
+//        COUPON_PAY(4,"优惠券支付");
 
         private int code;
         private String desc;

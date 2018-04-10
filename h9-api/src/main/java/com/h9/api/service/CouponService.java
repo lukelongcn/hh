@@ -4,7 +4,6 @@ import com.h9.api.model.vo.OrderCouponsVO;
 import com.h9.api.model.vo.UserCouponVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
@@ -55,7 +54,7 @@ public class CouponService {
         }
         return Result.success(pageResult.result2Result(userCoupon -> {
 
-            CouponGoodsRelation couponGoodsRelation = couponGoodsRelationRep.findByCouponIdFirst(userCoupon.getCouponId().getId(), 0);
+            CouponGoodsRelation couponGoodsRelation = couponGoodsRelationRep.findByCouponIdFirst(userCoupon.getCoupon().getId(), 0);
             Long goodsId = couponGoodsRelation.getGoodsId();
             Goods goods = goodsReposiroty.findOne(goodsId);
             UserCouponVO userCouponVO = new UserCouponVO(userCoupon, goods);
@@ -70,7 +69,7 @@ public class CouponService {
         List<UserCoupon> userCouponList = userCouponsRepository.findByUserId(userId, 1);
 
         userCouponList = userCouponList.stream().filter(userCoupon -> {
-            List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCouponId().getId(), 0);
+            List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCoupon().getId(), 0);
             Long gid = relations.get(0).getGoodsId();
             return gid.equals(goodsId);
         }).collect(Collectors.toList());

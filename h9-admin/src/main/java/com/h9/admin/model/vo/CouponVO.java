@@ -63,8 +63,11 @@ public class CouponVO {
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);
         this.endTime = DateUtil.formatDate(coupon.getEndTime(), DateUtil.FormatType.MINUTE);
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);
-        this.goodsName = goods.getName();
         this.askCount = coupon.getAskCount();
-        this.goodsId = goods.getId();
+        if(goods != null){
+            this.goodsName = goods.getName();
+
+            this.goodsId = goods.getId();
+        }
     }
 }

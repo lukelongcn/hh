@@ -33,22 +33,22 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
     UserCoupon findByUserId(Long userId, Long goodId);
 
 
-    //TODO 改
 
-    /**
-     * 当前订单可用优惠券
-     *
-     * @param userId
-     * @param goodsId
-     * @return
-     */
-    default PageResult<UserCoupon> findOrderCoupons(Long userId, Long goodsId, Integer page, Integer limit) {
-        Page<UserCoupon> list = findOrderCoupons(userId, goodsId, pageRequest(page, limit));
-        return new PageResult(list);
-    }
 
-    @Query("select o from UserCoupon o,CouponGoodsRelation c where o.couponId = c.couponId and o.userId = ?1")
-    Page<UserCoupon> findOrderCoupons(Long userId, Long goodsId, Pageable pageable);
+//    /**
+//     * 当前订单可用优惠券
+//     *
+//     * @param userId
+//     * @param goodsId
+//     * @return
+//     */
+//    default PageResult<UserCoupon> findOrderCoupons(Long userId, Long goodsId, Integer page, Integer limit) {
+//        Page<UserCoupon> list = findOrderCoupons(userId, goodsId, pageRequest(page, limit));
+//        return new PageResult(list);
+//    }
+
+//    @Query("select o from UserCoupon o,CouponGoodsRelation c where o.couponId = c.couponId and o.userId = ?1")
+//    Page<UserCoupon> findOrderCoupons(Long userId, Long goodsId, Pageable pageable);
 
     @Query("select o from UserCoupon  o where o.userId = ?1 and o.state = ?2")
     List<UserCoupon> findByUserId(Long userId, Integer state);
