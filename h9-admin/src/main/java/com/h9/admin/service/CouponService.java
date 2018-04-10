@@ -162,19 +162,20 @@ public class CouponService {
         coupon.setStartTime(couponsDTO.getStartTime());
         coupon.setEndTime(couponsDTO.getEndTime());
 
-
         Integer ints = couponGoodsRelationRep.removeAllByCouponId(coupon.getId());
         logger.info("更新 " + ints + " 条记录");
 
         List<Long> goodIdList = couponsDTO.getGoodIdList();
-        for (Long gid : goodIdList) {
-            Goods goods = goodsReposiroty.findOne(gid);
-            if (goods == null) {
-                return Result.fail("商品 " + goods.getId() + " 不存在");
-            }
-            CouponGoodsRelation relation = new CouponGoodsRelation(null, coupon.getId(), gid, 0);
-            couponGoodsRelationRep.save(relation);
+        if (goodIdList.size() > 1) {
+            return Result.fail("只能关联一个商品");
         }
+        Long gid = goodIdList.get(0);
+        Goods goods = goodsReposiroty.findOne(gid);
+        if (goods == null) {
+            return Result.fail("商品 " + goods.getId() + " 不存在");
+        }
+        CouponGoodsRelation relation = new CouponGoodsRelation(null, coupon.getId(), gid, 0);
+        couponGoodsRelationRep.save(relation);
 //        addGoods2Coupon(goodIdList, coupon);
         // 制券数
         if (coupon.getAskCount() > couponsDTO.getAskCount()) {
