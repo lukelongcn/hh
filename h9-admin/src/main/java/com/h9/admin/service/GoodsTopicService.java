@@ -63,7 +63,12 @@ public class GoodsTopicService {
 
     public Result editGoodsTopicType(EditGoodsTopicTypeDTO editGoodsTopicTypeDTO) {
 
-        GoodsTopicType goodsTopicType = new GoodsTopicType();
+        Long id = editGoodsTopicTypeDTO.getId();
+
+        GoodsTopicType goodsTopicType = goodsTopicTypeRep.findOne(id);
+        if(goodsTopicType == null){
+            return Result.fail("专题类型不存在");
+        }
         BeanUtils.copyProperties(editGoodsTopicTypeDTO, goodsTopicType);
         goodsTopicTypeRep.save(goodsTopicType);
         return Result.success();
