@@ -4,6 +4,7 @@ import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -22,15 +23,18 @@ public class UserCouponVO {
     private String endTime;
     private String couponType = "";
     private String useType = "";
-    private long goodsId ;
+    private long goodsId;
 
     public UserCouponVO(UserCoupon userCoupon, Goods goods) {
         this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.MINUTE);
         this.couponType = "免单劵";
         this.useType = "自营指定商品适用";
-        if(goods != null){
+        if (goods != null) {
             this.wide = "限 “" + goods.getName() + "” 适用";
             this.goodsId = goods.getId();
+        }
+        if (StringUtils.isNotEmpty(userCoupon.getGoodsName())) {
+            this.wide = "限 “" + userCoupon.getGoodsName() + "” 适用";
         }
     }
 }

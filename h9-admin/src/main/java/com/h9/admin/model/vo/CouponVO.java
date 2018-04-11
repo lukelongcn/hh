@@ -21,10 +21,7 @@ public class CouponVO {
 
     private String title;
 
-    /**
-     *
-     * @see Coupon.statusEnum
-     */
+
     private String status = "";
 
     private String startTime = "";
@@ -45,6 +42,9 @@ public class CouponVO {
 
     private int askCount;
 
+    private boolean canSend = true;
+
+    private boolean canEdit = true;
 
     public CouponVO() {
 
@@ -63,8 +63,11 @@ public class CouponVO {
         Date endTime = coupon.getEndTime();
         if (startTime.after(now)) {
             this.status = "未生效";
+
         } else if (now.after(endTime)) {
             this.status = "已失效";
+            this.canSend = false;
+            this.canEdit = false;
         } else {
             this.status = "生效中";
         }

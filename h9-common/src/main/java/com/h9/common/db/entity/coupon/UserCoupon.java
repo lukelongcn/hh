@@ -48,6 +48,10 @@ public class UserCoupon extends BaseEntity {
     @Column(name = "order_id", columnDefinition = "int  COMMENT '订单id'")
     private Long orderId;
 
+    @Column(name = "goods_name", columnDefinition = "varchar(300)  COMMENT '记录 此劵使用 的具体商品名'")
+    private String goodsName;
+
+
 
     public enum statusEnum {
 

@@ -434,6 +434,7 @@ public class GoodService {
             userCoupon.setState(USED.getCode());
             userCoupon.setOrderId(order.getId());
             userCoupon.setOrderId(order.getId());
+            userCoupon.setGoodsName(order.getOrderItems().get(0).getName());
 
             userCouponsRepository.save(userCoupon);
             return payMoney;

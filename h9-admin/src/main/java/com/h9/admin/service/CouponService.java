@@ -157,6 +157,11 @@ public class CouponService {
             return Result.fail("该优惠券不存在");
         }
 
+        Date endTime = coupon.getEndTime();
+        if (new Date().after(endTime)) {
+            return Result.fail("优惠劵已失败");
+        }
+
         coupon.setTitle(couponsDTO.getTitle());
         coupon.setCouponType(1);
         coupon.setStartTime(couponsDTO.getStartTime());
@@ -283,6 +288,11 @@ public class CouponService {
 
         if (coupon == null) return Result.fail("优惠劵不存在");
 
+        Date endTime = coupon.getEndTime();
+        if (new Date().after(endTime)) {
+            return Result.fail("优惠劵已失败");
+        }
+
         String json = redisBean.getStringValue("coupon:" + tempId);
 
         if (StringUtils.isBlank(json)) {
@@ -299,7 +309,8 @@ public class CouponService {
                 return Result.fail("优惠劵id: " + coupon.getId() + " 数量不够了，目前剩于数量为 " + leftCount);
             }
             for (int i = 0; i < countInt; i++) {
-                UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId(), coupon, UN_USE.getCode(), null);
+                UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId()
+                        , coupon, UN_USE.getCode(), null,"");
                 userCouponsRepository.save(userCoupon);
             }
         }
