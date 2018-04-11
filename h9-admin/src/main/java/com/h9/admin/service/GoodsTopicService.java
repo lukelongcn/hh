@@ -64,9 +64,13 @@ public class GoodsTopicService {
     public Result editGoodsTopicType(EditGoodsTopicTypeDTO editGoodsTopicTypeDTO) {
 
         Long id = editGoodsTopicTypeDTO.getId();
-
-        GoodsTopicType goodsTopicType = goodsTopicTypeRep.findOne(id);
-        if(goodsTopicType == null){
+        GoodsTopicType goodsTopicType = null;
+        if (id == null) {
+            goodsTopicType = goodsTopicTypeRep.findOne(id);
+        }else{
+            goodsTopicType = new GoodsTopicType();
+        }
+        if (goodsTopicType == null) {
             return Result.fail("专题类型不存在");
         }
         BeanUtils.copyProperties(editGoodsTopicTypeDTO, goodsTopicType);
@@ -92,7 +96,7 @@ public class GoodsTopicService {
         Long topicModuleId = editGoodsTopicModuleDTO.getTopicModuleId();
 
         GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(topicModuleId);
-        if(goodsTopicModule == null) return Result.fail("模块不存在");
+        if (goodsTopicModule == null) return Result.fail("模块不存在");
 
         //把此topic 的商品全部禁用
         Integer ints = goodsTopicRelationRep.updateStatus(topicModuleId);

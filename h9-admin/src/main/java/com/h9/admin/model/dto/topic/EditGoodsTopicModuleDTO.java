@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -28,7 +29,7 @@ public class EditGoodsTopicModuleDTO {
 
 
 
-    @Min(value = 1, message = "最小值为1")
+    @Range(min = 1,message = "排序最小值为1")
     @ApiModelProperty("排序")
     private Integer sort = 1;
 
