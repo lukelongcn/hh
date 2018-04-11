@@ -267,7 +267,6 @@ public class GoodService {
             return validateCouponInfo;
         }
 
-        //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
 
         Result result = validateBalance(userAccount, payMoney, convertGoodsDTO.getPayMethod(), convertGoodsDTO.getCouponsId(), goods);
@@ -311,10 +310,14 @@ public class GoodService {
             UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
             int state = userCoupon.getState();
             if (state == UN_USE.getCode()) {
-                BigDecimal subPrice = payMoney.subtract(goods.getRealPrice());
-                if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(subPrice) < 0) {
+                payMoney = payMoney.subtract(goods.getRealPrice());
+                if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(payMoney) < 0) {
                     return Result.fail("余额不足");
                 }
+            } else if (state == USED.getCode()) {
+                return Result.fail("此优惠劵已使用");
+            } else {
+                return Result.fail("此优惠劵已过期");
             }
         }
         return Result.success();
@@ -409,7 +412,7 @@ public class GoodService {
                 mapVo.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
             } else {
-                if(userCoupon != null){
+                if (userCoupon != null) {
                     userCoupon.setState(UN_USE.getCode());
                     userCoupon.setOrderId(null);
                 }
@@ -425,7 +428,7 @@ public class GoodService {
         if (userCoupon != null) {
 
             BigDecimal goodsPrice = goods.getRealPrice();
-            if (count > 1) {
+            if (count >= 1) {
                 payMoney = payMoney.subtract(goodsPrice);
             }
             userCoupon.setState(USED.getCode());
