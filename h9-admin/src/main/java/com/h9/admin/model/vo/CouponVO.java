@@ -72,7 +72,7 @@ public class CouponVO {
         }
 
         int sendFlag = coupon.getSendFlag();
-        if (sendFlag == 1) {
+        if (sendFlag == 2) {
             this.canEdit = false;
         }
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);

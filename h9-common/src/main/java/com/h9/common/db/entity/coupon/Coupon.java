@@ -48,13 +48,13 @@ public class Coupon extends BaseEntity {
     private BigDecimal useCondition = new BigDecimal(0);
 
     @Column(name = "left_count", columnDefinition = "int default 0 COMMENT '剩余张数'")
-    private int leftCount;
+    private Integer leftCount;
 
     @Column(name = "ask_count", columnDefinition = "int default 0 COMMENT '制券张数'")
-    private int askCount;
+    private Integer askCount;
 
     @Column(name = "send_flag", columnDefinition = "int comment '1 为没有开始赠送，2 为已经赠送了部份'")
-    private int sendFlag;
+    private Integer sendFlag = 1;
 
 
 }

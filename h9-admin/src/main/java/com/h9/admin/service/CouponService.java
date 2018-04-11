@@ -162,7 +162,7 @@ public class CouponService {
             return Result.fail("优惠劵已失败");
         }
         int sendFlag = coupon.getSendFlag();
-        if(sendFlag == 1){
+        if(sendFlag == 2){
             return Result.fail("优惠已经赠送给用户，不能编辑");
         }
 
