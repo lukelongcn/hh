@@ -100,7 +100,7 @@ public class BigRichListVO {
 
         //添加用户按纽
         if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
-            if (now.after(startTime) && endTime.after(now)) {
+            if (now.after(startTime) && startLotteryTime.after(now)) {
                 canAddUser = true;
             }
         }
