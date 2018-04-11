@@ -1,5 +1,6 @@
 package com.h9.admin.model.dto.topic;
 
+import com.h9.common.common.ServiceException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,6 +24,16 @@ public class EditGoodsTopicModuleDTO {
 
     @ApiModelProperty("图片")
     private String img;
+
+    public void setIds(Map<Long, Integer> ids) {
+
+        this.ids = ids;
+        ids.forEach((k,v)->{
+            if(v<1){
+                throw new ServiceException(1, "商品的排序不能为小于1");
+            }
+        });
+    }
 
     @ApiModelProperty("{goodsId:sort} 此类型的Json对象")
     private Map<Long, Integer> ids;

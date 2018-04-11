@@ -392,12 +392,11 @@ public class GoodService {
         if (couponsId != null) {
             userCoupon = userCouponsRepository.findOne(couponsId);
         }
-
+        payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
         } else {
-            payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
             //余额支付
             Result result = changeStock(goods, count);
             if (result.getCode() == 1) {

@@ -65,7 +65,7 @@ public class GoodsTopicService {
 
         Long id = editGoodsTopicTypeDTO.getId();
         GoodsTopicType goodsTopicType = null;
-        if (id == null) {
+        if (id != null) {
             goodsTopicType = goodsTopicTypeRep.findOne(id);
         }else{
             goodsTopicType = new GoodsTopicType();
