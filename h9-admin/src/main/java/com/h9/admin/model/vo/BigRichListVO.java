@@ -93,12 +93,16 @@ public class BigRichListVO {
 
         //编辑按纽
         Date now = new Date();
-        if (endTime.after(now)) {
+
+        if (statusEnum.getCode() != OrdersLotteryActivity.statusEnum.BAN.getCode()) {
             canEdit = true;
         }
+
         //添加用户按纽
-        if (now.after(startTime) && endTime.after(now)) {
-            canAddUser = true;
+        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
+            if (now.after(startTime) && endTime.after(now)) {
+                canAddUser = true;
+            }
         }
 
         // 启用、禁用按纽
