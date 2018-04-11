@@ -91,35 +91,18 @@ public class BigRichListVO {
             this.setStatus(statusEnum.getDesc());
         }
 
-        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
-            canBan = false;
-            canEdit = false;
-        } else if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.BAN.getCode()) {
-            canBan = true;
+        //编辑按纽
+        Date now = new Date();
+        if (endTime.after(now)) {
             canEdit = true;
-        } else { //启用
-            this.canAddUser = true;
-            canBan = false;
-            canEdit = false;
+        }
+        //添加用户按纽
+        if (now.after(startTime) && endTime.after(now)) {
+            canAddUser = true;
         }
 
-        Date now = new Date();
-        if (startTime.getTime() < now.getTime() && endTime.getTime() > now.getTime()) {
-            activeStatus = "进行中";
-            this.canAddUser = this.canAddUser && this.canAddUser;
-        } else if (startTime.getTime() > now.getTime()) {
-            activeStatus = "未开始";
-        } else if (endTime.getTime() < now.getTime()) {
-            activeStatus = "已结束";
-            this.canAddUser = false;
-            this.canBan = false;
-            this.canEdit = false;
-        }
-        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
-            this.statusInt = 1;
-        } else {
-            this.statusInt = 0;
-        }
+        // 启用、禁用按纽
+        canBan = true;
 
         this.money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
     }

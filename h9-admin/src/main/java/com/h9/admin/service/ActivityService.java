@@ -295,7 +295,7 @@ public class ActivityService {
 
 
         BigDecimal money = addWinnerUserDTO.getMoney();
-        if (money.longValue() > 1 && money.longValue() < 99999.99) {
+        if (money.longValue() >= 1 && money.longValue() < 99999.99) {
             activity.setMoney(money);
             activity.setWinnerUserId(user.getId());
             ordersLotteryActivityRep.saveAndFlush(activity);
@@ -356,7 +356,7 @@ public class ActivityService {
             return;
         }
         logger.info("要处理的任务数：" + lotteryActivityList.size());
-        // 查询开奖时间已过，但是却没有开奖的活动
+
         for (OrdersLotteryActivity ordersLotteryActivity : lotteryActivityList) {
             Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
             long millisecond = startLotteryTime.getTime() - new Date().getTime();
@@ -393,6 +393,8 @@ public class ActivityService {
             return;
         }
         handlerLotteryResultUser(ordersLotteryActivity);
+        //擦除本次活动的所有用户抽奖机会。
+
         ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.FINISH.getCode());
         ordersLotteryActivityRep.save(ordersLotteryActivity);
     }

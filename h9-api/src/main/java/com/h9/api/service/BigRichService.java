@@ -74,7 +74,7 @@ public class BigRichService {
             return bigRichRecordVO;
         }
         // 如果开奖时间未到不显示
-        if (e.getStartLotteryTime().after(new Date())){
+        if (e.getStartLotteryTime().after(new Date())) {
             return bigRichRecordVO;
         }
         bigRichRecordVO.setUserName(user.getNickName());
@@ -97,7 +97,7 @@ public class BigRichService {
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
-        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId(),new Date());
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId(), new Date());
         if (ordersLotteryActivity == null) {
             return userBigRichRecordVO;
         }
@@ -131,6 +131,7 @@ public class BigRichService {
     }
 
     private Logger logger = Logger.getLogger(this.getClass());
+
     /**
      * 参与大富贵活动
      *
@@ -138,25 +139,29 @@ public class BigRichService {
      * @return
      */
     @SuppressWarnings("Duplicates")
-    public Orders joinBigRich(Orders orders) {
+    public boolean joinBigRich(Orders orders) {
         int orderFrom = orders.getOrderFrom();
-        if(orderFrom == 2){
-            return orders;
+        if (orderFrom == 2) {
+            return false;
         }
-        User user = userRepository.findOne(orders.getUser().getId());
         Date createTime = orders.getCreateTime();
+        User user = userRepository.findOne(orders.getUser().getId());
         OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
         if (lotteryTime != null) {
             orders.setOrdersLotteryId(lotteryTime.getId());
-            // 用户参与机会+1
-            user.setLotteryChance(user.getLotteryChance()+1);
-            // 活动参与人数+1
-            lotteryTime.setJoinCount(lotteryTime.getJoinCount()+1);
+            user.setLotteryChance(user.getLotteryChance() + 1);
+            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
             ordersRepository.saveAndFlush(orders);
             userRepository.save(user);
             ordersLotteryActivityRepository.save(lotteryTime);
+            ordersRepository.saveAndFlush(orders);
+            return true;
+        } else {
+            return false;
         }
-        return orders;
     }
+
+
+
 }

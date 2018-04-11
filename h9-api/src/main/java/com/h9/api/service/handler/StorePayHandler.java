@@ -64,10 +64,11 @@ public class StorePayHandler extends AbPayHandler{
         orders.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         orders.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
         orders.setPayMethond(WX_PAY.getCode());
+        ordersRepository.saveAndFlush(orders);
+
         // 参与大富贵活动
-        ordersRepository.saveAndFlush(orders);
-        orders = bigRichService.joinBigRich(orders);
-        ordersRepository.saveAndFlush(orders);
+       bigRichService.joinBigRich(orders);
+
 
         //记录两条流水
         commonService.setBalance(orders.getUser().getId(), payInfo.getMoney().abs(),
