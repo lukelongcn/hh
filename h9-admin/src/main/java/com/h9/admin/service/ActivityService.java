@@ -409,8 +409,6 @@ public class ActivityService {
         Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
         if (winnerUserId == null) {
             logger.info("期号id :" + ordersLotteryActivity.getId() + " 中奖用户不存在 userId: " + winnerUserId);
-//            ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.TIMEOUT.getCode());
-//            ordersLotteryActivityRep.save(ordersLotteryActivity);
             return null;
         }
 

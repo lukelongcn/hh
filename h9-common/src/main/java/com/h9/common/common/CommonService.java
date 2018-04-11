@@ -302,7 +302,6 @@ public class CommonService {
             }else{
                 map.put(lotteryTime.getId(), 1);
             }
-            //TODO
             user.setLotteryChance(map);
 //            user.setLotteryChance(user.getLotteryChance() + 1);
             lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);

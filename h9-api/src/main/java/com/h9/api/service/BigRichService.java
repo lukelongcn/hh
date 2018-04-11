@@ -66,7 +66,7 @@ public class BigRichService {
         List<Long> collect = ordersList.stream()
                 .map(orders -> orders.getOrdersLotteryId())
                 .distinct()
-                .filter(id ->{
+                .filter(id -> {
                     OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOne(id);
                     int status = ordersLotteryActivity.getStatus();
                     return status == ENABLE.getCode();
@@ -87,15 +87,18 @@ public class BigRichService {
             return bigRichRecordVO;
         }
 
-        User user = userRepository.findOne(e.getWinnerUserId());
-        if (user == null || e.getMoney() == null) {
-            return bigRichRecordVO;
+        if (e.getWinnerUserId() == null) {
+            //TODO 改
+            bigRichRecordVO.setUserName("");
+        }else{
+            User user = userRepository.findOne(e.getWinnerUserId());
+            bigRichRecordVO.setUserName(user.getNickName());
         }
+
         // 如果开奖时间未到不显示
         if (e.getStartLotteryTime().after(new Date())) {
             return bigRichRecordVO;
         }
-        bigRichRecordVO.setUserName(user.getNickName());
         bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
         bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
         return bigRichRecordVO;
@@ -176,7 +179,6 @@ public class BigRichService {
 //            }else{
 //                map.put(lotteryTime.getId(), 1);
 //            }
-//            //TODO
 //            user.setLotteryChance(map);
 ////            user.setLotteryChance(user.getLotteryChance() + 1);
 //            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);

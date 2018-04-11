@@ -491,7 +491,6 @@ public class GoodService {
 //        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
 //        if (lotteryTime != null) {
 //            orders.setOrdersLotteryId(lotteryTime.getId());
-//            //TODO
 //            Map<Long, Integer> map = user.getLotteryChance();
 //
 //            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);

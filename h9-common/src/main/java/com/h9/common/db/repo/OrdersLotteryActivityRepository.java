@@ -18,11 +18,12 @@ import java.util.List;
  * @author LiYuan
  * @Date 2018/3/28
  */
-public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersLotteryActivity> {
-    @Query("select r from OrdersLotteryActivity r where r.status = 1 and r.winnerUserId is not null  order by r.startLotteryTime DESC ")
-    Page<OrdersLotteryActivity> findAllDetail(Pageable pageRequest);
-    default PageResult<OrdersLotteryActivity> findAllDetail(Integer page, Integer limit){
-        Page<OrdersLotteryActivity> List =  findAllDetail(pageRequest(page,limit));
+public interface OrdersLotteryActivityRepository extends BaseRepository<OrdersLotteryActivity> {
+    @Query("select r from OrdersLotteryActivity r where r.status = ?1 and r.winnerUserId is not null  order by r.startLotteryTime DESC ")
+    Page<OrdersLotteryActivity> findAllDetail(Integer status, Pageable pageRequest);
+
+    default PageResult<OrdersLotteryActivity> findAllDetail(Integer page, Integer limit) {
+        Page<OrdersLotteryActivity> List = findAllDetail(OrdersLotteryActivity.statusEnum.FINISH.getCode(), pageRequest(page, limit));
         return new PageResult(List);
     }
 
@@ -30,6 +31,6 @@ public interface OrdersLotteryActivityRepository  extends BaseRepository<OrdersL
     @Query("select o from OrdersLotteryActivity o where o.id = ?1")
     OrdersLotteryActivity findOneById(Long id);
 
-    @Query(value = "SELECT * From orders_lottery  where start_time < ?1 and end_time > ?1 and status = 1 ORDER BY start_time desc limit 1",nativeQuery = true)
+    @Query(value = "SELECT * From orders_lottery  where start_time < ?1 and end_time > ?1 and status = 1 ORDER BY start_time desc limit 1", nativeQuery = true)
     OrdersLotteryActivity findAllTime(Date createTime);
 }
