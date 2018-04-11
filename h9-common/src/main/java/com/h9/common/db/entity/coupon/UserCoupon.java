@@ -51,8 +51,8 @@ public class UserCoupon extends BaseEntity {
 
     public enum statusEnum {
 
-        USED(1, "已使用"),
-        UN_USE(2, "未使用"),
+        UN_USE(1, "未使用"),
+        USED(2, "已使用"),
         TIMEOUT(3, "已过期");
 
         private int code;
