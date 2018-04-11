@@ -63,7 +63,6 @@ public class CouponVO {
         Date endTime = coupon.getEndTime();
         if (startTime.after(now)) {
             this.status = "未生效";
-
         } else if (now.after(endTime)) {
             this.status = "已失效";
             this.canSend = false;
@@ -72,6 +71,10 @@ public class CouponVO {
             this.status = "生效中";
         }
 
+        int sendFlag = coupon.getSendFlag();
+        if (sendFlag == 1) {
+            this.canEdit = false;
+        }
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);
         this.endTime = DateUtil.formatDate(coupon.getEndTime(), DateUtil.FormatType.MINUTE);
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);

@@ -35,10 +35,10 @@ public class Coupon extends BaseEntity {
     private Integer couponType = 1;
 
 
-    @Column(name = "start_time",  columnDefinition = "datetime COMMENT '开始时间'")
+    @Column(name = "start_time", columnDefinition = "datetime COMMENT '开始时间'")
     private Date startTime;
 
-    @Column(name = "end_time",  columnDefinition = "datetime  COMMENT '结束时间'")
+    @Column(name = "end_time", columnDefinition = "datetime  COMMENT '结束时间'")
     private Date endTime;
 
     @Column(name = "value", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '面值'")
@@ -53,6 +53,8 @@ public class Coupon extends BaseEntity {
     @Column(name = "ask_count", columnDefinition = "int default 0 COMMENT '制券张数'")
     private int askCount;
 
+    @Column(name = "send_flag", columnDefinition = "int comment '1 为没有开始赠送，2 为已经赠送了部份'")
+    private int sendFlag;
 
 
 }

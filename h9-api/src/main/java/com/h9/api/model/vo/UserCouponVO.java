@@ -33,8 +33,8 @@ public class UserCouponVO {
             this.wide = "限 “" + goods.getName() + "” 适用";
             this.goodsId = goods.getId();
         }
-        if (StringUtils.isNotEmpty(userCoupon.getGoodsName())) {
-            this.wide = "限 “" + userCoupon.getGoodsName() + "” 适用";
-        }
+//        if (StringUtils.isNotEmpty(userCoupon.getGoodsName())) {
+//            this.wide = "限 “" + userCoupon.getGoodsName() + "” 适用";
+//        }
     }
 }

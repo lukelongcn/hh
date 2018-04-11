@@ -395,7 +395,19 @@ public class GoodService {
         payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
-            return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
+            if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
+                Map<Object, Object> mapVo = new HashMap<>();
+                if (joinBigRich(order)) {
+                    mapVo.put("activityName", "1号大富贵");
+                    mapVo.put("lotteryChance", "获得1次抽奖机会");
+                    logger.debug("获得一次抽奖机会");
+                }
+                mapVo.put("price", MoneyUtils.formatMoney(payMoney));
+                mapVo.put("goodsName", goods.getName() + "*" + count);
+                return Result.success(mapVo);
+            }else{
+                return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
+            }
         } else {
             //余额支付
             Result result = changeStock(goods, count);
@@ -492,10 +504,10 @@ public class GoodService {
         }
     }
 
-    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
+    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal payMoney, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         // 非优惠券支付 增加余额流水
-        Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
+        Result payResult = commonService.setBalance(userId, payMoney.negate(), 12L, order.getId(), "", balanceFlowType);
         if (!payResult.isSuccess()) {
             throw new ServiceException(payResult);
         }
@@ -503,7 +515,7 @@ public class GoodService {
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
         order = ordersRepository.saveAndFlush(order);
         Map<String, String> mapVo = new HashMap<>();
-        mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
+        mapVo.put("price", MoneyUtils.formatMoney(payMoney));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         return Result.success(mapVo);
     }

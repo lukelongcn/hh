@@ -161,6 +161,10 @@ public class CouponService {
         if (new Date().after(endTime)) {
             return Result.fail("优惠劵已失败");
         }
+        int sendFlag = coupon.getSendFlag();
+        if(sendFlag == 1){
+            return Result.fail("优惠已经赠送给用户，不能编辑");
+        }
 
         coupon.setTitle(couponsDTO.getTitle());
         coupon.setCouponType(1);
@@ -317,7 +321,9 @@ public class CouponService {
         int leftCount = coupon.getLeftCount();
         int i = leftCount - couponUserRelationDTOS.size();
         coupon.setLeftCount(i);
+        coupon.setSendFlag(1);
         couponRespository.save(coupon);
+
         redisBean.setStringValue("coupon:" + tempId, "", 1, TimeUnit.MICROSECONDS);
         return Result.success();
     }
