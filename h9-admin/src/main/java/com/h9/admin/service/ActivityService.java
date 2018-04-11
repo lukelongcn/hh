@@ -393,7 +393,6 @@ public class ActivityService {
             return;
         }
         handlerLotteryResultUser(ordersLotteryActivity);
-        //擦除本次活动的所有用户抽奖机会。
 
         ordersLotteryActivity.setStatus(OrdersLotteryActivity.statusEnum.FINISH.getCode());
         ordersLotteryActivityRep.save(ordersLotteryActivity);

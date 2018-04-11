@@ -5,6 +5,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserRecord;
@@ -22,7 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -272,5 +276,44 @@ public class CommonService {
             }
         }
         return imagesList;
+    }
+
+    @Resource
+    private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
+    @Resource
+    private OrdersRepository ordersRepository;
+
+    public boolean joinBigRich(Orders orders) {
+        int orderFrom = orders.getOrderFrom();
+        if (orderFrom == 2) {
+            return false;
+        }
+        Date createTime = orders.getCreateTime();
+        User user = userRepository.findOne(orders.getUser().getId());
+        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+        if (lotteryTime != null) {
+            orders.setOrdersLotteryId(lotteryTime.getId());
+            Map<Long, Integer> map = user.getLotteryChance();
+            boolean containsKey = map.containsKey(lotteryTime.getId());
+            if (containsKey) {
+                Integer count = map.get(lotteryTime.getId());
+                count++;
+                map.put(lotteryTime.getId(), count);
+            }else{
+                map.put(lotteryTime.getId(), 1);
+            }
+            //TODO
+            user.setLotteryChance(map);
+//            user.setLotteryChance(user.getLotteryChance() + 1);
+            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+            ordersRepository.saveAndFlush(orders);
+            userRepository.save(user);
+            ordersLotteryActivityRepository.save(lotteryTime);
+            ordersRepository.saveAndFlush(orders);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -24,6 +24,9 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * <p>Title:h9-parent</p>
@@ -55,7 +58,14 @@ public class BigRichService {
         }
         bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
 
-        bigRichVO.setLotteryChance(user.getLotteryChance());
+        Map<Long, Integer> map = user.getLotteryChance();
+        int count = 0;
+        Set<Long> keySet = map.keySet();
+        for (Long l : keySet) {
+            count++;
+        }
+        //TODO
+        bigRichVO.setLotteryChance(count);
 
         return Result.success(bigRichVO);
     }
@@ -138,30 +148,40 @@ public class BigRichService {
      * @param orders 参与的 订单
      * @return
      */
-    @SuppressWarnings("Duplicates")
-    public boolean joinBigRich(Orders orders) {
-        int orderFrom = orders.getOrderFrom();
-        if (orderFrom == 2) {
-            return false;
-        }
-        Date createTime = orders.getCreateTime();
-        User user = userRepository.findOne(orders.getUser().getId());
-        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        if (lotteryTime != null) {
-            orders.setOrdersLotteryId(lotteryTime.getId());
-            user.setLotteryChance(user.getLotteryChance() + 1);
-            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
-            ordersRepository.saveAndFlush(orders);
-            userRepository.save(user);
-            ordersLotteryActivityRepository.save(lotteryTime);
-            ordersRepository.saveAndFlush(orders);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+//    @SuppressWarnings("Duplicates")
+//    public boolean joinBigRich(Orders orders) {
+//        int orderFrom = orders.getOrderFrom();
+//        if (orderFrom == 2) {
+//            return false;
+//        }
+//        Date createTime = orders.getCreateTime();
+//        User user = userRepository.findOne(orders.getUser().getId());
+//        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+//        if (lotteryTime != null) {
+//            orders.setOrdersLotteryId(lotteryTime.getId());
+//            Map<Long, Integer> map = user.getLotteryChance();
+//            boolean containsKey = map.containsKey(lotteryTime.getId());
+//            if (containsKey) {
+//                Integer count = map.get(lotteryTime.getId());
+//                count++;
+//                map.put(lotteryTime.getId(), count);
+//            }else{
+//                map.put(lotteryTime.getId(), 1);
+//            }
+//            //TODO
+//            user.setLotteryChance(map);
+////            user.setLotteryChance(user.getLotteryChance() + 1);
+//            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
+//            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+//            ordersRepository.saveAndFlush(orders);
+//            userRepository.save(user);
+//            ordersLotteryActivityRepository.save(lotteryTime);
+//            ordersRepository.saveAndFlush(orders);
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
 
 }

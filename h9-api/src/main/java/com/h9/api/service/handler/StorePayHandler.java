@@ -67,7 +67,8 @@ public class StorePayHandler extends AbPayHandler{
         ordersRepository.saveAndFlush(orders);
 
         // 参与大富贵活动
-       bigRichService.joinBigRich(orders);
+        commonService.joinBigRich(orders);
+//       bigRichService.joinBigRich(orders);
 
 
         //记录两条流水
