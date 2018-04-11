@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
+
 /**
  * <p>Title:h9-parent</p>
  * <p>Desription:优惠券相关</p>
@@ -82,6 +84,10 @@ public class CouponService {
                 return false;
             }
             if (now.after(endTime)) {
+                return false;
+            }
+            int state = userCoupon.getState();
+            if (state != UN_USE.getCode()) {
                 return false;
             }
             List<CouponGoodsRelation> relations = couponGoodsRelationRep.findByCouponId(userCoupon.getCoupon().getId(), 0);
