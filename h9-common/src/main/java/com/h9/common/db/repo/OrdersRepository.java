@@ -132,4 +132,8 @@ public interface OrdersRepository extends BaseRepository<Orders> {
 
     @Query("select r FROM Orders r where r.createTime > ?1 and r.createTime < ?2 and r.user.id = ?3 and r.status = 1 ")
     List<Orders> findUserfulOrders(Date startTime, Date endTime, long userId);
+
+
+    @Query("SELECT o from Orders o where o.user.id=?1 and o.ordersLotteryId is not null order by o.id desc")
+    List<Orders> findByUserAndOrdersLotteryId(Long userId);
 }

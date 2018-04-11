@@ -26,7 +26,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.ENABLE;
 
 /**
  * <p>Title:h9-parent</p>
@@ -58,14 +61,19 @@ public class BigRichService {
         }
         bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
 
-        Map<Long, Integer> map = user.getLotteryChance();
-        int count = 0;
-        Set<Long> keySet = map.keySet();
-        for (Long l : keySet) {
-            count++;
-        }
-        //TODO
-        bigRichVO.setLotteryChance(count);
+        List<Orders> ordersList = ordersRepository.findByUserAndOrdersLotteryId(userId);
+
+        List<Long> collect = ordersList.stream()
+                .map(orders -> orders.getOrdersLotteryId())
+                .distinct()
+                .filter(id ->{
+                    OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOne(id);
+                    int status = ordersLotteryActivity.getStatus();
+                    return status == ENABLE.getCode();
+                })
+                .collect(Collectors.toList());
+
+        bigRichVO.setLotteryChance(collect.size());
 
         return Result.success(bigRichVO);
     }

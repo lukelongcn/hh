@@ -4,7 +4,10 @@ import com.h9.admin.job.HotelOrderJob;
 import com.h9.admin.model.dto.coupon.CouponUserRelationDTO;
 import com.h9.admin.service.ActivityService;
 import com.h9.admin.service.POIService;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.utils.DateUtil;
 import org.junit.Test;
@@ -44,16 +47,20 @@ public class AdminApplicationTest {
     @Resource
     private RedisBean redisBean;
 
+    @Resource
+    private CommonService commonService;
     @Test
     public void start() throws FileNotFoundException {
 
     }
 
+    @Resource
+    private OrdersRepository ordersRepository;
     @Test
     public void start2() {
-//        activityService.startBigRichLottery();
 
-        activityService.method2();
+        Orders order = ordersRepository.findOne(403L);
+        commonService.joinBigRich(order);
     }
 
     @Resource

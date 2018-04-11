@@ -90,7 +90,7 @@ public class User extends BaseEntity {
 
     @Column(name = "lottery_chance", nullable = false,
             columnDefinition = "varchar(500)  COMMENT '抽奖机会 json 数据 {活动Id:次数}'")
-    private String lotteryChance;
+    private String lotteryChance = "{}";
 
     @Column(name = "client", columnDefinition = "int default 0 COMMENT '客户端'")
     private Integer client;
@@ -122,7 +122,7 @@ public class User extends BaseEntity {
 
     public Map<Long, Integer> getLotteryChance() {
         Map<Long, Integer> map = JSONObject.parseObject(lotteryChance, Map.class);
-        if(map == null){
+        if (map == null) {
             return new HashMap<>();
         }
         return map;
