@@ -47,6 +47,10 @@ public class PayProvider {
     @Value("${wx.pay.bid}")
     private String bid;
 
+    @Value("${h9.current.envir}")
+    private String env;
+
+
     @Resource
     private RestTemplate restTemplate;
     @Resource
@@ -81,7 +85,12 @@ public class PayProvider {
             mchId =environment.getProperty("wx.pay.mchid");
             appid = environment.getProperty("wx.pay.appid");
             payKey = environment.getProperty("wx.paykey");
-            is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
+
+            if (env.equals("product")) {
+                is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
+            }else{
+                is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wd_wxjs.p12");
+            }
         } else if (payMethod == 2) {
 
             mchId =environment.getProperty("client.pay.mchId");
