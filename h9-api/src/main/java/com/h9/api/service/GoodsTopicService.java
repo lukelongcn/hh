@@ -10,6 +10,7 @@ import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.GoodsTopicModuleRep;
 import com.h9.common.db.repo.GoodsTopicRelationRep;
 import com.h9.common.db.repo.GoodsTopicTypeRep;
+import com.h9.common.utils.MoneyUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -75,6 +76,8 @@ public class GoodsTopicService {
                     goodsMap.put("img", goods.getImg() + "");
                     goodsMap.put("name", goods.getName());
                     goodsMap.put("link", "goods:" + goodsTopicRelation.getGoodsId());
+                    goodsMap.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
+
                     return goodsMap;
                 }
                 return null;
