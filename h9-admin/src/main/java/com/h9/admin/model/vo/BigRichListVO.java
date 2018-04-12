@@ -123,7 +123,7 @@ public class BigRichListVO {
             activeStatus = "已结束";
         } else if (startLotteryTime.after(now)) {
             activeStatus = "进行中";
-        } else if (startTime.after(now)) {
+        } else {
             activeStatus = "未开始";
         }
 

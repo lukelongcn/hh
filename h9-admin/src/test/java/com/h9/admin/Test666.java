@@ -43,7 +43,7 @@ public class Test666 {
     }*/
     @Test
     public void testRefund() throws IOException {
-//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("test.txt");
 
 //        File file = new File("d://test/test.p12");

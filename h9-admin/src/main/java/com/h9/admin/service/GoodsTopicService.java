@@ -67,7 +67,7 @@ public class GoodsTopicService {
         GoodsTopicType goodsTopicType = null;
         if (id != null) {
             goodsTopicType = goodsTopicTypeRep.findOne(id);
-        }else{
+        } else {
             goodsTopicType = new GoodsTopicType();
         }
         if (goodsTopicType == null) {
@@ -93,6 +93,9 @@ public class GoodsTopicService {
     @Transactional
     public Result editGoodsTopicModule(EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
         Map<Long, Integer> ids = editGoodsTopicModuleDTO.getIds();
+        if (ids == null) {
+            return Result.fail("请上传商品数据");
+        }
         Long topicModuleId = editGoodsTopicModuleDTO.getTopicModuleId();
 
         GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(topicModuleId);
@@ -109,6 +112,9 @@ public class GoodsTopicService {
             Goods goods = goodsReposiroty.findOne(goodsId);
             if (goods != null) {
                 //新添加的数据
+                if (sort == null) {
+                    sort = 1;
+                }
                 GoodsTopicRelation goodsTopicRelation = new GoodsTopicRelation(null, goodsId, goods.getName(),
                         topicModuleId, sort, 0, goodsTopicType.getId());
                 goodsTopicRelationRep.save(goodsTopicRelation);

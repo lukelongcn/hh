@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.h9.admin.model.dto.hotel.RefundDTO;
+import com.h9.admin.model.dto.order.PayOrderDTO;
 import com.h9.common.base.Result;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
@@ -12,15 +13,12 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
- *
+ * <p>
  * PayProvider:刘敏华 shadow.liu@hey900.com
  * Date: 2018/1/11
  * Time: 16:51
@@ -56,27 +54,37 @@ public class PayProvider {
         return new HttpEntity<Object>(param, headers);
     }
 
+    public Result<PayOrderDTO> getPayOrderInfo(Long payInfId) {
+        Result<PayOrderDTO> result = restTemplate.getForObject(payHost + "/h9/pay/order/payinfo?id=" + payInfId + "&bid=" + bid, Result.class);
+        return result;
+    }
 
     /**
-     *
-     * @param id payInfo Id
+     * @param id              payInfo Id
      * @param payMoney4Wechat
      * @return
      */
-    public Result refundOrder(Long id, BigDecimal payMoney4Wechat) {
+    public Result refundOrder(Long id, BigDecimal payMoney4Wechat, int payMethod) {
 
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+        //WX(2, "wx"), WXJS(3, "wxjs"),
+        InputStream is = null;
+        if (payMethod == 3) {
+            is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
+        } else if (payMethod == 2) {
+            is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wx.p12");
+        } else {
+            is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
+        }
         byte[] bytes = null;
         try {
-//            InputStream is = new FileInputStream(new File("D:\\project\\h9-api\\h9-admin\\src\\main\\resources\\cert\\apiclient_cert.p12"));
             bytes = IOUtils.toByteArray(is);
             IOUtils.closeQuietly(is);
-        }catch (NullPointerException ne){
+        } catch (NullPointerException ne) {
             return Result.fail("证书不存在");
-        }catch (Exception e) {
+        } catch (Exception e) {
             return Result.fail("读取证书失败");
         }
-        RefundDTO refundDTO = new RefundDTO(payMoney4Wechat,mchId,appid,payKey,id+"",bid,bytes);
+        RefundDTO refundDTO = new RefundDTO(payMoney4Wechat, mchId, appid, payKey, id + "", bid, bytes);
 
         try {
             String url = payHost + "/h9/pay/order/refund";

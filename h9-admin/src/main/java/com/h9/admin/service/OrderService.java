@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.WxOrderListInfo;
 import com.h9.admin.model.dto.order.ExpressDTO;
+import com.h9.admin.model.dto.order.PayOrderDTO;
 import com.h9.admin.model.vo.OrderDetailVO;
 import com.h9.admin.model.vo.OrderItemVO;
 import com.h9.common.base.PageResult;
@@ -355,31 +356,44 @@ public class OrderService {
             order = ordersRepository.findOne(orderId);
             order.setStatus(Orders.statusEnum.CANCEL.getCode());
             ordersRepository.save(order);
+            refundCoupond(orderId);
+            return Result.success("退款成功");
         } else if (Orders.PayMethodEnum.WX_PAY.getCode() == payMethond) {
             Long payInfoId = order.getPayInfoId();
-            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney());
+
+            Result<PayOrderDTO> qresult = payProvider.getPayOrderInfo(payInfoId);
+            int payMethod = 3;
+            if (qresult.isSuccess()) {
+                PayOrderDTO payOrderDTO = qresult.getData();
+                //WX(2, "wx"), WXJS(3, "wxjs"),
+                payMethod = payOrderDTO.getPayMethod();
+            }
+            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney(),payMethod);
             if (result.getCode() == 1) {
                 return Result.fail(result.getMsg());
             } else {
                 order = ordersRepository.findOne(orderId);
                 order.setStatus(Orders.statusEnum.CANCEL.getCode());
                 ordersRepository.save(order);
-                //退优惠劵
-                UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
-                if(userCoupon != null){
-                    userCoupon.setState(UserCoupon.statusEnum.UN_USE.getCode());
-                    userCouponsRepository.save(userCoupon);
-                }else{
-                    logger.info("orderId :" + orderId + " 没有对应的优惠劵");
-                }
+                refundCoupond(orderId);
                 return Result.success("退款成功");
             }
         } else {
             logger.info("退款异常，没有匹配到支付方式");
             return Result.fail("退款异常");
         }
-        return Result.success("退款成功");
 
+    }
+
+    public void refundCoupond(Long orderId){
+        //退优惠劵
+        UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
+        if (userCoupon != null) {
+            userCoupon.setState(UserCoupon.statusEnum.UN_USE.getCode());
+            userCouponsRepository.save(userCoupon);
+        } else {
+            logger.info("orderId :" + orderId + " 没有对应的优惠劵");
+        }
     }
 
     /**
