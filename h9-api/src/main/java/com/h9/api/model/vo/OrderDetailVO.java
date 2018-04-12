@@ -82,6 +82,8 @@ public class OrderDetailVO {
 
         if (userCoupon != null) {
             vo.setCouponMessage("免单券抵扣￥" + orderItems.get(0).getGoods().getRealPrice());
+        } else {
+            vo.setCouponMessage("无优惠");
         }
 
         vo.setPayMoney(order.getPayMoney() + "");
