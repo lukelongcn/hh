@@ -396,12 +396,15 @@ public class GoodService {
             userCoupon = userCouponsRepository.findOne(couponsId);
         }
         payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
+
+
+
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
                 Map<Object, Object> showInfo = showJoinIn(order, user);
                 return Result.success(showInfo);
-            } else {
+            }else{
                 return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
             }
         } else {
@@ -532,9 +535,12 @@ public class GoodService {
     private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal payMoney, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         // 非优惠券支付 增加余额流水
-        Result payResult = commonService.setBalance(userId, payMoney.negate(), 12L, order.getId(), "", balanceFlowType);
-        if (!payResult.isSuccess()) {
-            throw new ServiceException(payResult);
+        if (payMoney.compareTo(BigDecimal.ZERO) > 0) {
+
+            Result payResult = commonService.setBalance(userId, payMoney.negate(), 12L, order.getId(), "", balanceFlowType);
+            if (!payResult.isSuccess()) {
+                throw new ServiceException(payResult);
+            }
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
