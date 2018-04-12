@@ -134,7 +134,12 @@ public class ActivityService {
         List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDateId(startTime, addBigRichDTO.getId());
         List<OrdersLotteryActivity> byDate2 = ordersLotteryActivityRep.findByDateId(endTime, addBigRichDTO.getId());
 
-        if (CollectionUtils.isNotEmpty(byDate1) || CollectionUtils.isNotEmpty(byDate2)) {
+        List<OrdersLotteryActivity> byDate3 = ordersLotteryActivityRep.findByDateId2(startTime, endTime, addBigRichDTO.getId());
+        List<OrdersLotteryActivity> byDate4 = ordersLotteryActivityRep.findByDateId3(startTime, endTime, addBigRichDTO.getId());
+
+        if (CollectionUtils.isNotEmpty(byDate1) || CollectionUtils.isNotEmpty(byDate2)
+                || CollectionUtils.isNotEmpty(byDate3)
+                || CollectionUtils.isNotEmpty(byDate4)) {
             return Result.fail("设置的活动区间不能与已有的时间区间重复");
         }
         OrdersLotteryActivity ordersLotteryActivity = null;

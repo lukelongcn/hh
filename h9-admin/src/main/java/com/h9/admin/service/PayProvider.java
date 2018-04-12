@@ -82,8 +82,8 @@ public class PayProvider {
             String url = payHost + "/h9/pay/order/refund";
             HttpEntity<Object> stringHttpEntity = getStringHttpEntity(refundDTO);
             Result result = restTemplate.exchange(url, HttpMethod.POST, stringHttpEntity, Result.class).getBody();
-
             logger.info("result : " + JSONObject.toJSONString(result));
+
             return result;
         } catch (RestClientException e) {
             logger.info(e.getMessage(), e);

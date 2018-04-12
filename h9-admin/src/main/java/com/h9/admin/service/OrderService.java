@@ -13,6 +13,7 @@ import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.GoodsType;
@@ -75,6 +76,8 @@ public class OrderService {
 
     @Resource
     private FileService fileService;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         long startTime = System.currentTimeMillis();
@@ -361,6 +364,14 @@ public class OrderService {
                 order = ordersRepository.findOne(orderId);
                 order.setStatus(Orders.statusEnum.CANCEL.getCode());
                 ordersRepository.save(order);
+                //退优惠劵
+                UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
+                if(userCoupon != null){
+                    userCoupon.setState(UserCoupon.statusEnum.UN_USE.getCode());
+                    userCouponsRepository.save(userCoupon);
+                }else{
+                    logger.info("orderId :" + orderId + " 没有对应的优惠劵");
+                }
                 return Result.success("退款成功");
             }
         } else {

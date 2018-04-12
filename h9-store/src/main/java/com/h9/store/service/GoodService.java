@@ -398,7 +398,6 @@ public class GoodService {
         payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
 
 
-
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
@@ -449,6 +448,9 @@ public class GoodService {
             }
 
         }
+        Goods goods = order.getOrderItems().get(0).getGoods();
+        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
+        mapVo.put("goodsName", goods.getName());
         return mapVo;
     }
 

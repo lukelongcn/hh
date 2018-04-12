@@ -165,7 +165,7 @@ public class CouponService {
 
         Date endTime = coupon.getEndTime();
         if (new Date().after(endTime)) {
-            return Result.fail("优惠劵已失败");
+            return Result.fail("优惠劵已失效");
         }
         int sendFlag = coupon.getSendFlag();
         if (sendFlag == 2) {
@@ -214,6 +214,9 @@ public class CouponService {
             return Result.fail("上传异常");
         }
 
+        if(list.size() == 0){
+            return Result.fail("请上传正确的表格,或下载模板表格后上传");
+        }
 
         Map<Object, Object> mapVo = new HashMap<>();
 
@@ -300,7 +303,7 @@ public class CouponService {
 
         Date endTime = coupon.getEndTime();
         if (new Date().after(endTime)) {
-            return Result.fail("优惠劵已失败");
+            return Result.fail("优惠劵已失效");
         }
 
         String json = redisBean.getStringValue("coupon:" + tempId);
@@ -311,21 +314,35 @@ public class CouponService {
 
         List<CouponUserRelationDTO> couponUserRelationDTOS = JSONArray.parseArray(json, CouponUserRelationDTO.class);
 
+        int countInts = couponUserRelationDTOS.stream().map(couponUserRelationDTO -> {
+            String count = couponUserRelationDTO.getCount();
+            Integer ints = null;
+            try {
+                ints = Integer.valueOf(count);
+            } catch (NumberFormatException e) {
+                logger.info(e.getMessage(), e);
+                return 0;
+            }
+            return ints;
+        }).reduce((x, y) -> x + y).orElse(0);
+
+        int leftCount = coupon.getLeftCount();
+        if (countInts > leftCount) {
+            return Result.fail("优惠劵id: " + coupon.getId() + " 数量不够了，目前剩于数量为 " + leftCount);
+        }
+
         for (CouponUserRelationDTO couponUserRelationDTO : couponUserRelationDTOS) {
             String count = couponUserRelationDTO.getCount();
             Integer countInt = Integer.valueOf(count);
-            int leftCount = coupon.getLeftCount();
-            if (countInt > leftCount) {
-                return Result.fail("优惠劵id: " + coupon.getId() + " 数量不够了，目前剩于数量为 " + leftCount);
-            }
+
+
             for (int i = 0; i < countInt; i++) {
                 UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId()
                         , coupon, UN_USE.getCode(), null, "");
                 userCouponsRepository.save(userCoupon);
             }
         }
-        int leftCount = coupon.getLeftCount();
-        int i = leftCount - couponUserRelationDTOS.size();
+        int i = leftCount - countInts;
         coupon.setLeftCount(i);
         coupon.setSendFlag(2);
         couponRespository.save(coupon);
