@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.GoodsTopicTypeVO;
 import com.h9.admin.model.dto.topic.EditGoodsTopicModuleDTO;
 import com.h9.admin.model.dto.topic.EditGoodsTopicTypeDTO;
 import com.h9.admin.model.vo.GoodsTopicModuleVO;
@@ -18,6 +19,7 @@ import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -43,6 +45,8 @@ public class GoodsTopicService {
     private GoodsTopicModuleRep goodsTopicModuleRep;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Value("${path.app.wechat_host}")
+    private String host;
 
     /**
      * 专题列表
@@ -56,7 +60,11 @@ public class GoodsTopicService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = goodsTopicTypeRep.pageRequest(pageNumber, pageSize, sort);
         Page<GoodsTopicType> page = goodsTopicTypeRep.findAll(pageRequest);
-        PageResult<GoodsTopicType> result = new PageResult<>(page);
+        Page<GoodsTopicType> GoodsTopicTypePage = page.map(goodsTopicType -> {
+            goodsTopicType.setUrl(host+"/h9-weixin/#/active/project?id="+goodsTopicType.getId());
+            return goodsTopicType;
+        });
+        PageResult<GoodsTopicType> result = new PageResult<>(GoodsTopicTypePage);
 
         return Result.success(result);
     }

@@ -124,12 +124,14 @@ public class ActivityService {
         }
 
         if (endTime.before(new Date())) {
-            return Result.fail("不可以新增过去时间的期数，没有意义");
+            return Result.fail("不可以新增过去时间的期数");
         }
 
         if (endTime.getTime() == startTime.getTime()) {
             return Result.fail("请选择正确的开始时间和结束时间");
         }
+
+
 
         List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDateId(startTime, addBigRichDTO.getId());
         List<OrdersLotteryActivity> byDate2 = ordersLotteryActivityRep.findByDateId(endTime, addBigRichDTO.getId());

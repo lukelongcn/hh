@@ -1,6 +1,7 @@
 package com.h9.admin.service;
 
 import com.h9.common.utils.POIUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -52,7 +53,6 @@ public class POIService {
                 POIUtils.RechargeBatchObject rechargeBatchObject = new POIUtils.RechargeBatchObject();
                 Row row = sheet.getRow(rowNum);
                 int columNumber = row.getPhysicalNumberOfCells();
-
                 Object obj = null;
                 try {
                     obj = clazz.newInstance();
@@ -64,6 +64,7 @@ public class POIService {
                     Cell cell = row.getCell(c);
                     XSSFCell xssfCell = (XSSFCell) cell;
                     String rawValue = xssfCell.getRawValue();
+
                     try {
                         Field[] declaredFields = clazz.getDeclaredFields();
                         Field field = declaredFields[c];
