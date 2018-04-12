@@ -116,7 +116,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     /**
      * 用戶参与记录
      */
-    @Query(value = "select  o from Orders o  where o.ordersLotteryId is not null and o.user.id = ?1 group by o.ordersLotteryId")
+    @Query(value = "select  o from Orders o  where o.ordersLotteryId is not null and o.user.id = ?1 group by o.ordersLotteryId order by o.id desc")
     Page<Orders> findByUserId(long userId, Pageable pageable);
 
     default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit) {
