@@ -90,17 +90,17 @@ public class BigRichService {
         if (e.getWinnerUserId() == null) {
             //TODO 改
             bigRichRecordVO.setUserName("");
-        }else{
+            bigRichRecordVO.setLotteryMoney("199.00");
+        } else {
             User user = userRepository.findOne(e.getWinnerUserId());
             bigRichRecordVO.setUserName(user.getNickName());
+            bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
         }
 
-        // 如果开奖时间未到不显示
-        if (e.getStartLotteryTime().after(new Date())) {
-            return bigRichRecordVO;
-        }
-        bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
+
         bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
+        bigRichRecordVO.setId(e.getId());
+
         return bigRichRecordVO;
     }
 

@@ -115,16 +115,16 @@ public class BigRichListVO {
         this.money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
 
 
-
         if (ordersLotteryActivity.getId().intValue() == 9) {
             System.out.println();
         }
-        if (startLotteryTime.after(now)) {
+
+        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+            activeStatus = "已结束";
+        } else if (startLotteryTime.after(now)) {
             activeStatus = "进行中";
         } else if (startTime.after(now)) {
             activeStatus = "未开始";
-        } else {
-            activeStatus = "已结束";
         }
 
     }

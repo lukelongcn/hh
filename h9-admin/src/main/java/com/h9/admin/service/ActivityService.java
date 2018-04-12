@@ -123,7 +123,7 @@ public class ActivityService {
             return Result.fail("请填写正确 开始-到结束 时间");
         }
 
-        if (endTime.before(new Date())){
+        if (endTime.before(new Date())) {
             return Result.fail("不可以新增过去时间的期数，没有意义");
         }
 
@@ -383,8 +383,6 @@ public class ActivityService {
             Thread.sleep(millisecond);
         } catch (Exception e) {
             logger.info("开奖失败啦!", e);
-//            String content = "\n大富贵开奖失败,日志:" + ExceptionUtils.getStackTrace(e);
-//            mailService.sendtMail("大富贵开奖失败邮件 id :" + ordersLotteryActivity.getId(), content);
         }
         // 开奖
         ordersLotteryActivity = transactionalService.findOneNewTrans(ordersLotteryActivityRep, ordersLotteryActivity.getId());
@@ -473,4 +471,14 @@ public class ActivityService {
         orderService.method1();
     }
 
+    public Result startBigRIchLotteryTest(Long id) {
+
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(id);
+
+        if (ordersLotteryActivity != null) {
+            sleepTaskStartLottery(1L, ordersLotteryActivity);
+            return Result.success();
+        }
+        return Result.fail();
+    }
 }
