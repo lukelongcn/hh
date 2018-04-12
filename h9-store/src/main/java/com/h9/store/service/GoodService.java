@@ -437,7 +437,7 @@ public class GoodService {
             List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
             if (CollectionUtils.isNotEmpty(ordersList)) {
                 logger.info("真实参与记录 " + ordersList.size());
-                if (ordersList.size() == 1) {
+                if (ordersList.size() == 0) {
                     mapVo.put("activityName", "1号大富贵");
                     mapVo.put("lotteryChance", "获得1次抽奖机会");
                     logger.debug("获得一次抽奖机会");

@@ -103,7 +103,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1 and o.createTime > ?2 and o.createTime < ?3")
     BigDecimal findWXPayMoneySumAndDate(Integer payMethod, Date startTime, Date endTime);
 
-    @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1 and o.status != 3")
+    @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1 and o.status <> 3")
     Object findByCount(Long id);
 
     @Query("select o from Orders o where o.ordersLotteryId = ?1  order by o.createTime DESC ")
