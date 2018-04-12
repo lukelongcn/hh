@@ -131,6 +131,9 @@ public class ActivityService {
             return Result.fail("请选择正确的开始时间和结束时间");
         }
 
+        if(startLotteryTime.getTime()<endTime.getTime()){
+            return Result.fail("开奖时间必需等于结束时间或之后");
+        }
 
 
         List<OrdersLotteryActivity> byDate1 = ordersLotteryActivityRep.findByDateId(startTime, addBigRichDTO.getId());
