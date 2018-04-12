@@ -56,7 +56,8 @@ public class CouponService {
         if (state > 3 || state < 1) {
             return Result.fail("请选择正确的状态");
         }
-        Integer ints = userCouponsRepository.updateTimeOut(userId, UserCoupon.statusEnum.TIMEOUT.getCode(), new Date());
+        Integer ints = userCouponsRepository.updateTimeOut(userId, UserCoupon.statusEnum.TIMEOUT.getCode(), new Date()
+                ,UserCoupon.statusEnum.UN_USE.getCode());
         logger.info("更新 " + ints + " 条记录");
         PageResult<UserCoupon> pageResult = userCouponsRepository.findState(userId, state, page, limit);
 

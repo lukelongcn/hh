@@ -31,9 +31,10 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
     }
 
     @Modifying
-    @Query(value = " update user_coupon u ,coupon c set u.state = ?2 where u.coupon_id = c.id and u.user_id = ?1 and c.end_time <= ?3"
+    @Query(value = " update user_coupon u ,coupon c set u.state = ?2 where u.coupon_id = c.id " +
+            "and u.user_id = ?1 and c.end_time <= ?3 and u.state = ?4"
             , nativeQuery = true)
-    Integer updateTimeOut(Long userId, Integer status, Date now);
+    Integer updateTimeOut(Long userId, Integer status, Date now,Integer nowStatus);
 
     @Query(value = "SELECT u.* FROM `user_coupon` u,coupon where  u.user_id = ?1 and" +
             " u.coupon_id=coupon.id and coupon.goods_id = ?2 order by u.create_time ASC LIMIT 1;", nativeQuery = true)

@@ -18,6 +18,9 @@ import com.h9.common.utils.CheckoutUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +61,10 @@ public class CouponService {
     private RedisBean redisBean;
 
     public Result coupons(Integer page, Integer limit) {
-        PageResult<Coupon> pageResult = couponRespository.findAll(page, limit);
+
+        PageRequest pageRequest = couponRespository.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
+        Page<Coupon> pageR = couponRespository.findAll(pageRequest);
+        PageResult<Coupon> pageResult = new PageResult<>(pageR);
         if (pageResult == null) {
             return Result.fail("暂无记录");
         }
@@ -162,7 +168,7 @@ public class CouponService {
             return Result.fail("优惠劵已失败");
         }
         int sendFlag = coupon.getSendFlag();
-        if(sendFlag == 2){
+        if (sendFlag == 2) {
             return Result.fail("优惠已经赠送给用户，不能编辑");
         }
 
@@ -314,7 +320,7 @@ public class CouponService {
             }
             for (int i = 0; i < countInt; i++) {
                 UserCoupon userCoupon = new UserCoupon(null, couponUserRelationDTO.getUserId()
-                        , coupon, UN_USE.getCode(), null,"");
+                        , coupon, UN_USE.getCode(), null, "");
                 userCouponsRepository.save(userCoupon);
             }
         }
