@@ -81,7 +81,7 @@ public class Orders extends BaseEntity {
      * description:
      * @see statusEnum
      */
-    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态,1:待发货,2:已发货,3:已完成'")
+    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT ''")
     private Integer status = 1;
 
     @ManyToOne
