@@ -61,7 +61,7 @@ public class GoodsTopicService {
         PageRequest pageRequest = goodsTopicTypeRep.pageRequest(pageNumber, pageSize, sort);
         Page<GoodsTopicType> page = goodsTopicTypeRep.findAll(pageRequest);
         Page<GoodsTopicType> GoodsTopicTypePage = page.map(goodsTopicType -> {
-            goodsTopicType.setUrl(host+"/h9-weixin/#/active/project?id="+goodsTopicType.getId());
+            goodsTopicType.setUrl(host + "/h9-weixin/#/active/project?id=" + goodsTopicType.getId());
             return goodsTopicType;
         });
         PageResult<GoodsTopicType> result = new PageResult<>(GoodsTopicTypePage);
@@ -183,17 +183,19 @@ public class GoodsTopicService {
         if (goodsTopicType == null) {
             return Result.fail("专题不存在");
         }
+        module = goodsTopicModuleRep.saveAndFlush(module);
+        Long mId = module.getId();
         ids.forEach((goodsId, sort) -> {
             Goods goods = goodsReposiroty.findOne(goodsId);
 
             if (goods != null) {
                 GoodsTopicRelation relation = new GoodsTopicRelation(null, goodsId, goods.getName(),
-                        editGoodsTopicModuleDTO.getTopicModuleId(), sort, 0, goodsTopicType.getId());
+                        mId, sort, 0, goodsTopicType.getId());
                 goodsTopicRelationRep.save(relation);
             }
 
         });
-        goodsTopicModuleRep.save(module);
+
         return Result.success();
     }
 
