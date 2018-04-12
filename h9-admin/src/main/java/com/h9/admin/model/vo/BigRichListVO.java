@@ -119,9 +119,9 @@ public class BigRichListVO {
             System.out.println();
         }
 
-        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+        if (now.after(startLotteryTime)) {
             activeStatus = "已结束";
-        } else if (startTime.after(now)) {
+        } else if (now.after(startTime) && startLotteryTime.after(now)) {
             activeStatus = "进行中";
         } else {
             activeStatus = "未开始";
