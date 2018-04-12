@@ -6,8 +6,10 @@ import com.h9.admin.service.ActivityService;
 import com.h9.admin.service.POIService;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.OrdersRepository;
+import com.h9.common.db.repo.UserCouponsRepository;
 import com.h9.common.db.repo.WithdrawalsRecordRepository;
 import com.h9.common.utils.DateUtil;
 import org.junit.Test;
@@ -49,6 +51,7 @@ public class AdminApplicationTest {
 
     @Resource
     private CommonService commonService;
+
     @Test
     public void start() throws FileNotFoundException {
 
@@ -56,11 +59,13 @@ public class AdminApplicationTest {
 
     @Resource
     private OrdersRepository ordersRepository;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
+
     @Test
     public void start2() {
 
-        Orders order = ordersRepository.findOne(403L);
-        commonService.joinBigRich(order);
+        userCouponsRepository.updateTimeOut(390933L, UserCoupon.statusEnum.TIMEOUT.getCode(), new Date());
     }
 
     @Resource

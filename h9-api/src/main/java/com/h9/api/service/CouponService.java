@@ -13,6 +13,7 @@ import com.h9.common.db.repo.CouponRespository;
 import com.h9.common.db.repo.GoodsReposiroty;
 import com.h9.common.db.repo.UserCouponsRepository;
 import org.apache.commons.collections.CollectionUtils;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,15 +45,21 @@ public class CouponService {
     @Resource
     private GoodsReposiroty goodsReposiroty;
 
+    private Logger logger = Logger.getLogger(this.getClass());
+
     /**
      * 用户优惠券
      */
     @Transactional
     public Result getUserCoupons(Long userId, Integer state, Integer page, Integer limit) {
+
         if (state > 3 || state < 1) {
             return Result.fail("请选择正确的状态");
         }
+        Integer ints = userCouponsRepository.updateTimeOut(userId, UserCoupon.statusEnum.TIMEOUT.getCode(), new Date());
+        logger.info("更新 " + ints + " 条记录");
         PageResult<UserCoupon> pageResult = userCouponsRepository.findState(userId, state, page, limit);
+
         if (pageResult == null) {
             return Result.fail("暂无可用优惠券");
         }
@@ -64,6 +71,7 @@ public class CouponService {
                 Long goodsId = couponGoodsRelation.getGoodsId();
                 goods = goodsReposiroty.findOne(goodsId);
             }
+
             UserCouponVO userCouponVO = new UserCouponVO(userCoupon, goods);
             return userCouponVO;
 

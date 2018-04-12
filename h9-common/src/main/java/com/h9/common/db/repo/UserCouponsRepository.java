@@ -5,9 +5,11 @@ import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +29,11 @@ public interface UserCouponsRepository extends BaseRepository<UserCoupon> {
         Page<UserCoupon> list = findState(userId, state, pageRequest(page, limit));
         return new PageResult(list);
     }
+
+    @Modifying
+    @Query(value = " update user_coupon u ,coupon c set u.state = ?2 where u.coupon_id = c.id and u.user_id = ?1 and c.end_time <= ?3"
+            , nativeQuery = true)
+    Integer updateTimeOut(Long userId, Integer status, Date now);
 
     @Query(value = "SELECT u.* FROM `user_coupon` u,coupon where  u.user_id = ?1 and" +
             " u.coupon_id=coupon.id and coupon.goods_id = ?2 order by u.create_time ASC LIMIT 1;", nativeQuery = true)

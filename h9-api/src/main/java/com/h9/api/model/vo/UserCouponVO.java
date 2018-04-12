@@ -26,7 +26,7 @@ public class UserCouponVO {
     private long goodsId;
 
     public UserCouponVO(UserCoupon userCoupon, Goods goods) {
-        this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.MINUTE);
+        this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE);
         this.couponType = "免单劵";
         this.useType = "自营指定商品适用";
         if (goods != null) {

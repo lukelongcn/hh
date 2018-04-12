@@ -105,9 +105,10 @@ public class ActivityController {
         return activityService.modifyStatus(id, status);
     }
 
+
+    @Secured
     @GetMapping("bigRich/startLottery")
     public Result startLottery(@RequestParam Long id){
-
         return activityService.startBigRIchLotteryTest(id);
     }
 }

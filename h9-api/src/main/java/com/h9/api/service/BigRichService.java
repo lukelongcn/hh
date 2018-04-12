@@ -88,7 +88,6 @@ public class BigRichService {
         }
 
         if (e.getWinnerUserId() == null) {
-            //TODO 改
             bigRichRecordVO.setUserName("");
             bigRichRecordVO.setLotteryMoney("199.00");
         } else {
@@ -98,7 +97,7 @@ public class BigRichService {
         }
 
 
-        bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
+        bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.DOT_MINUTE));
         bigRichRecordVO.setId(e.getId());
 
         return bigRichRecordVO;

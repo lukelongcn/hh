@@ -4,6 +4,7 @@ import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
 import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -107,6 +108,10 @@ public interface OrdersRepository extends BaseRepository<Orders> {
 
     @Query("select o from Orders o where o.ordersLotteryId = ?1  order by o.createTime DESC ")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId, Pageable pageable);
+
+    @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.user = ?2  order by o.createTime DESC ")
+    List<Orders> findByordersLotteryIdAndUser(Long ordersLotteryId,User user);
+
 
     /**
      * 用戶参与记录

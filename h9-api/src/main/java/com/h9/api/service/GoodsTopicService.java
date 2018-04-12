@@ -74,6 +74,7 @@ public class GoodsTopicService {
                     goodsMap.put("goodsId", goodsTopicRelation.getGoodsId() + "");
                     goodsMap.put("img", goods.getImg() + "");
                     goodsMap.put("name", goods.getName());
+                    goodsMap.put("link", "goods:" + goodsTopicRelation.getGoodsId());
                     return goodsMap;
                 }
                 return null;

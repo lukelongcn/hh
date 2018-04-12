@@ -39,11 +39,13 @@ public class DateUtil {
         SECOND("yyyy-MM-dd HH:mm:ss"),
         SECOND2("yyyyMMddHHmmss"),
         MINUTE("yyyy-MM-dd HH:mm"),
+        DOT_MINUTE("yyyy.MM.dd HH:mm"),
         HOUR("yyyy-MM-dd HH"),
         DAY("yyyy-MM-dd"),
         MONTH("yyyy-MM"),
         SINGLE_HOUR("HH:mm"),
         YEAR("yyyy");
+
 
 
         private String format;

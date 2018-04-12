@@ -83,6 +83,8 @@ public class GoodService {
     private CouponGoodsRelationRep couponGoodsRelationRep;
     @Resource
     private CouponRespository couponRespository;
+    @Resource
+    private OrdersLotteryActivityRep ordersLotteryActivityRep;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -291,9 +293,9 @@ public class GoodService {
         int payMethod = convertGoodsDTO.getPayMethod();
         //订单项
         OrderItems orderItems = new OrderItems(goods, count, order);
-        ordersRepository.saveAndFlush(order);
+        order = ordersRepository.saveAndFlush(order);
         orderItems.setOrders(order);
-        orderItemReposiroty.save(orderItems);
+        orderItemReposiroty.saveAndFlush(orderItems);
 
         return handlerPay(payMethod, order, payMoney, userId, convertGoodsDTO, goods);
 
@@ -387,6 +389,7 @@ public class GoodService {
      */
     private Result handlerPay(int payMethod, Orders order, BigDecimal payMoney, Long userId, ConvertGoodsDTO convertGoodsDTO, Goods goods) {
         int count = convertGoodsDTO.getCount();
+        User user = userRepository.findOne(userId);
         Long couponsId = convertGoodsDTO.getCouponsId();
         UserCoupon userCoupon = null;
         if (couponsId != null) {
@@ -396,16 +399,9 @@ public class GoodService {
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
-                Map<Object, Object> mapVo = new HashMap<>();
-                if (commonService.joinBigRich(order)) {
-                    mapVo.put("activityName", "1号大富贵");
-                    mapVo.put("lotteryChance", "获得1次抽奖机会");
-                    logger.debug("获得一次抽奖机会");
-                }
-                mapVo.put("price", MoneyUtils.formatMoney(payMoney));
-                mapVo.put("goodsName", goods.getName() + "*" + count);
-                return Result.success(mapVo);
-            }else{
+                Map<Object, Object> showInfo = showJoinIn(order, user);
+                return Result.success(showInfo);
+            } else {
                 return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
             }
         } else {
@@ -416,12 +412,8 @@ public class GoodService {
             }
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                if (commonService.joinBigRich(order)) {
-                    Map mapVo = (Map) balancePayResult.getData();
-                    mapVo.put("activityName", "1号大富贵");
-                    mapVo.put("lotteryChance", "获得1次抽奖机会");
-                    logger.debug("获得一次抽奖机会");
-                }
+                Map<Object, Object> showInfo = showJoinIn(order, user);
+                return Result.success(showInfo);
 
             } else {
                 if (userCoupon != null) {
@@ -435,7 +427,38 @@ public class GoodService {
         }
     }
 
+    private Map<Object, Object> showJoinIn(Orders order, User user) {
+        Map<Object, Object> mapVo = new HashMap<>();
+        OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
+        if (ordersLotteryActivity != null) {
+            //判断是否以前参与过此次活动
+            List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
+            if (CollectionUtils.isNotEmpty(ordersList)) {
+                logger.info("真实参与记录 " + ordersList.size());
+                if (ordersList.size() == 1) {
+                    mapVo.put("activityName", "1号大富贵");
+                    mapVo.put("lotteryChance", "获得1次抽奖机会");
+                    logger.debug("获得一次抽奖机会");
+                }
+            } else {
+                mapVo.put("activityName", "1号大富贵");
+                mapVo.put("lotteryChance", "获得1次抽奖机会");
+            }
 
+        }
+        return mapVo;
+    }
+
+    /**
+     * 使用优惠劵
+     *
+     * @param userCoupon
+     * @param goods
+     * @param payMoney
+     * @param count
+     * @param order
+     * @return
+     */
     private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney, int count, Orders order) {
         if (userCoupon != null) {
 
@@ -447,7 +470,8 @@ public class GoodService {
             userCoupon.setOrderId(order.getId());
             userCoupon.setOrderId(order.getId());
             userCoupon.setGoodsName(goods.getName());
-
+            order.setPayMoney(payMoney);
+            ordersRepository.saveAndFlush(order);
             userCouponsRepository.save(userCoupon);
             return payMoney;
         }
@@ -475,11 +499,12 @@ public class GoodService {
     }
 
     /**
-//     * 参与大富贵活动
-//     *
-//     * @param orders 参与的 订单
-//     * @return
-//     */
+     * //     * 参与大富贵活动
+     * //     *
+     * //     * @param orders 参与的 订单
+     * //     * @return
+     * //
+     */
 //    @SuppressWarnings("Duplicates")
 //    public boolean joinBigRich(Orders orders) {
 //        int orderFrom = orders.getOrderFrom();
@@ -504,7 +529,6 @@ public class GoodService {
 //            return false;
 //        }
 //    }
-
     private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal payMoney, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         // 非优惠券支付 增加余额流水

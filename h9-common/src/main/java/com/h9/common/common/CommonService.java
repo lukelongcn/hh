@@ -54,9 +54,9 @@ public class CommonService {
 
     @Transactional
     public Result setBalance(Long userId, BigDecimal money, Long typeId, Long orderId, String orderNo, String remarks) {
-        this.logger.infov("userId:{0}",userId);
+        this.logger.infov("userId:{0}", userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
-        this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
+        this.logger.infov("userAccount:{0}", JSONObject.toJSON(userAccount));
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
 
@@ -80,7 +80,6 @@ public class CommonService {
         balanceFlowRepository.save(balanceFlow);
         return Result.success();
     }
-
 
 
     /****
@@ -151,7 +150,7 @@ public class CommonService {
                     userRecord.setStreetNumber(data.getString("street_number"));
                     userRecord.setAddress(detailAddress);
 
-                    if(user != null){
+                    if (user != null) {
                         user.setLongitude(longitude);
                         user.setLatitude(latitude);
                         user.setCity(data.getString("city"));
@@ -184,7 +183,7 @@ public class CommonService {
                 AddressResult addressResult = new AddressResult();
                 JSONObject addressComponent = result.getJSONObject("addressComponent");
                 AddressResult addressResultFromNet = JSONObject.parseObject(addressComponent.toJSONString(), AddressResult.class);
-                BeanUtils.copyProperties(addressResultFromNet,addressResult);
+                BeanUtils.copyProperties(addressResultFromNet, addressResult);
                 addressResult.setDetailAddress(result.getString("formatted_address"));
                 return addressResult;
             } else {
@@ -198,7 +197,7 @@ public class CommonService {
     }
 
 
-    public static class AddressResult{
+    public static class AddressResult {
         private String province;
         private String city;
         private String district;
@@ -260,7 +259,7 @@ public class CommonService {
     /**
      * 根据内容匹配图片
      */
-    public List<String> image(String content){
+    public List<String> image(String content) {
         List<String> imagesList = new ArrayList<>();
         String img = "";
         String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
@@ -283,36 +282,35 @@ public class CommonService {
     @Resource
     private OrdersRepository ordersRepository;
 
-    public boolean joinBigRich(Orders orders) {
+    public OrdersLotteryActivity joinBigRich(Orders orders) {
         int orderFrom = orders.getOrderFrom();
         if (orderFrom == 2) {
-            return false;
+            return null;
         }
         Date createTime = orders.getCreateTime();
         User user = userRepository.findOne(orders.getUser().getId());
-        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        if (lotteryTime != null) {
-            orders.setOrdersLotteryId(lotteryTime.getId());
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(createTime);
+        if (ordersLotteryActivity != null) {
+            orders.setOrdersLotteryId(ordersLotteryActivity.getId());
             Map<Long, Integer> map = user.getLotteryChance();
-            boolean containsKey = map.containsKey(lotteryTime.getId());
+            boolean containsKey = map.containsKey(ordersLotteryActivity.getId());
             if (containsKey) {
-                Integer count = map.get(lotteryTime.getId());
+                Integer count = map.get(ordersLotteryActivity.getId());
                 count++;
-                map.put(lotteryTime.getId(), count);
-            }else{
-                map.put(lotteryTime.getId(), 1);
+                map.put(ordersLotteryActivity.getId(), count);
+            } else {
+                map.put(ordersLotteryActivity.getId(), 1);
             }
             user.setLotteryChance(map);
-//            user.setLotteryChance(user.getLotteryChance() + 1);
-            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+            ordersLotteryActivity.setJoinCount(ordersLotteryActivity.getJoinCount() + 1);
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + ordersLotteryActivity.getId());
             ordersRepository.saveAndFlush(orders);
             userRepository.save(user);
-            ordersLotteryActivityRepository.save(lotteryTime);
+            ordersLotteryActivityRepository.save(ordersLotteryActivity);
             ordersRepository.saveAndFlush(orders);
-            return true;
+            return ordersLotteryActivity;
         } else {
-            return false;
+            return null;
         }
     }
 }

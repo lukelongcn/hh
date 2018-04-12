@@ -327,13 +327,18 @@ public class ActivityService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersRepository.pageRequest(pageNumber, pageSize, sort);
         Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
+        List tempList = new ArrayList();
         PageResult<JoinBigRichUser> mapVo = new PageResult<>(page).map(orders -> {
             User user = orders.getUser();
             String money = null;
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (user.getId().equals(winnerUserId)) {
-                money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
+                if (tempList.size() <= 1) {
+                    money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
+                    tempList.add(new Object());
+                }
             }
+
             JoinBigRichUser joinBigRichUser = new JoinBigRichUser(orders.getOrdersLotteryId(),
                     user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), orders.getId() + "");
 

@@ -35,6 +35,7 @@ public class GoodsTopicDetailVO {
         private List<Map<String, String>> goodsInfo = new ArrayList<>();
     }
 
+
 //    public static void main(String[] args) {
 //        GoodsTopicDetailVO vo = new GoodsTopicDetailVO();
 //        Modules mo = new Modules("http://12.jpg","100");
