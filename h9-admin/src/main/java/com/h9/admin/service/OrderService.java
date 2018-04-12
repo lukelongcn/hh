@@ -361,14 +361,14 @@ public class OrderService {
         } else if (Orders.PayMethodEnum.WX_PAY.getCode() == payMethond) {
             Long payInfoId = order.getPayInfoId();
 
-            Result<PayOrderDTO> qresult = payProvider.getPayOrderInfo(payInfoId);
+            Result getResult = payProvider.getPayOrderInfo(payInfoId);
             int payMethod = 3;
-            if (qresult.isSuccess()) {
-                PayOrderDTO payOrderDTO = qresult.getData();
+            if (getResult.isSuccess()) {
+                Map<String, Integer> map = (Map<String, Integer>) getResult.getData();
+                payMethod = map.get("payMethod");
                 //WX(2, "wx"), WXJS(3, "wxjs"),
-                payMethod = payOrderDTO.getPayMethod();
             }
-            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney(),payMethod);
+            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney(), payMethod);
             if (result.getCode() == 1) {
                 return Result.fail(result.getMsg());
             } else {
@@ -385,7 +385,7 @@ public class OrderService {
 
     }
 
-    public void refundCoupond(Long orderId){
+    public void refundCoupond(Long orderId) {
         //退优惠劵
         UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
         if (userCoupon != null) {

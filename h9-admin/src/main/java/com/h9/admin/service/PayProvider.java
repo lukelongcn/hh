@@ -1,12 +1,15 @@
 package com.h9.admin.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.h9.admin.model.dto.hotel.RefundDTO;
 import com.h9.admin.model.dto.order.PayOrderDTO;
 import com.h9.common.base.Result;
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -15,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,6 +49,8 @@ public class PayProvider {
 
     @Resource
     private RestTemplate restTemplate;
+    @Resource
+    private Environment environment;
 
 
     private static HttpEntity<Object> getStringHttpEntity(Object param) {
@@ -54,9 +60,12 @@ public class PayProvider {
         return new HttpEntity<Object>(param, headers);
     }
 
-    public Result<PayOrderDTO> getPayOrderInfo(Long payInfId) {
-        Result<PayOrderDTO> result = restTemplate.getForObject(payHost + "/h9/pay/order/payinfo?id=" + payInfId + "&bid=" + bid, Result.class);
-        return result;
+    public Result getPayOrderInfo(Long payInfId) {
+//        payHost = "http://localhost:6311";
+        Result mapResult = restTemplate.getForObject(payHost + "/h9/pay/order/payinfo?id="
+                + payInfId + "&bid=" + bid, Result.class);
+        return mapResult;
+
     }
 
     /**
@@ -69,10 +78,21 @@ public class PayProvider {
         //WX(2, "wx"), WXJS(3, "wxjs"),
         InputStream is = null;
         if (payMethod == 3) {
+            mchId =environment.getProperty("wx.pay.mchid");
+            appid = environment.getProperty("wx.pay.appid");
+            payKey = environment.getProperty("wx.paykey");
             is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
         } else if (payMethod == 2) {
+
+            mchId =environment.getProperty("client.pay.mchId");
+            appid = environment.getProperty("client.pay.appId");
+            payKey = environment.getProperty("client.pay.apiKey");
+
             is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wx.p12");
         } else {
+            mchId =environment.getProperty("wx.pay.mchid");
+            appid = environment.getProperty("wx.pay.appid");
+            payKey = environment.getProperty("wx.paykey");
             is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
         }
         byte[] bytes = null;
