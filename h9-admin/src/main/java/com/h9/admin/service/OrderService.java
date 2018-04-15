@@ -407,7 +407,7 @@ public class OrderService {
 
         OrdersLotteryRelation or = ordersLotteryRelationRep.findByOrderId(order.getId());
 
-        if(or != null){
+        if (or != null && or.getMoney() != null) {
             Long ordersLotteryActivityId = or.getOrdersLotteryActivityId();
 
             OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivityId);
