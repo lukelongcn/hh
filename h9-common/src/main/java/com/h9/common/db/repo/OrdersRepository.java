@@ -106,7 +106,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1 and o.status <> 3")
     Object findByCount(Long id);
 
-    @Query("select o from Orders o where o.ordersLotteryId = ?1  order by o.createTime DESC ")
+    @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.status in (0,1,2,4)  order by o.createTime DESC ")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId, Pageable pageable);
 
     @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.user = ?2  order by o.createTime DESC ")

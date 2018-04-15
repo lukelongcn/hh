@@ -110,7 +110,7 @@ public class CouponService {
 
         if (CollectionUtils.isEmpty(userCouponList)) {
 
-            return Result.fail("暂无可用优惠券");
+            return Result.success("暂无可用优惠券");
         }
 
         List<OrderCouponsVO> vo = userCouponList.stream().map(userCoupon -> {
