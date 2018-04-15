@@ -5,7 +5,6 @@ import com.h9.admin.model.dto.AddWinnerUserDTO;
 import com.h9.admin.model.vo.BigRichListVO;
 import com.h9.admin.model.vo.JoinBigRichUser;
 import com.h9.admin.model.vo.LotteryFlowActivityVO;
-import com.h9.common.base.BaseRepository;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.entity.account.BalanceFlow;
@@ -26,7 +25,6 @@ import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,7 +32,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.*;
@@ -42,6 +39,7 @@ import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.*
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author: George
@@ -131,7 +129,7 @@ public class ActivityService {
             return Result.fail("请选择正确的开始时间和结束时间");
         }
 
-        if(startLotteryTime.getTime()<endTime.getTime()){
+        if (startLotteryTime.getTime() < endTime.getTime()) {
             return Result.fail("开奖时间必需等于结束时间或之后");
         }
 
@@ -338,6 +336,7 @@ public class ActivityService {
         PageRequest pageRequest = ordersRepository.pageRequest(pageNumber, pageSize, sort);
         Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
         List tempList = new ArrayList();
+        AtomicReference<Long> index = new AtomicReference<>(1L);
         PageResult<JoinBigRichUser> mapVo = new PageResult<>(page).map(orders -> {
 
             User user = orders.getUser();
@@ -350,9 +349,9 @@ public class ActivityService {
                 }
             }
 
-            JoinBigRichUser joinBigRichUser = new JoinBigRichUser(Long.valueOf(page.getNumber()),
+            JoinBigRichUser joinBigRichUser = new JoinBigRichUser(index.get(),
                     user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), orders.getId() + "");
-
+            index.getAndSet(index.get() + 1);
             return joinBigRichUser;
         });
         return Result.success(mapVo);
