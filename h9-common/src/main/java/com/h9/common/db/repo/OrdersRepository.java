@@ -48,7 +48,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     Page<Orders> findByUser(Long userId, int status, Pageable pageable);
 
     default PageResult<Orders> findByUser(Long userId, int status, int page, int limit) {
-        Page<Orders> byUser = findByUser(userId, status, pageRequest(page, limit));
+        Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));
         return new PageResult(byUser);
     }
 

@@ -403,6 +403,8 @@ public class GoodService {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
                 Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+                ordersRepository.save(order);
                 return Result.success(showInfo);
             } else {
                 return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
@@ -416,6 +418,9 @@ public class GoodService {
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
                 Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+                ordersRepository.save(order);
+
                 return Result.success(showInfo);
 
             } else {
