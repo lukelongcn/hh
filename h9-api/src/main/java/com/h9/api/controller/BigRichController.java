@@ -37,4 +37,13 @@ public class BigRichController {
                                  @RequestParam(defaultValue = "10") Integer limit){
         return bigRichService.getUserRecord(userId,page,limit);
     }
+
+
+//    @Secured
+//    @GetMapping("/bigrich/order")
+//    public Result getOrderBigrich(@RequestParam Long orderId,@SessionAttribute("curUserId")long userId) {
+//
+//        return bigRichService.orderBigRich(orderId,userId);
+//    }
+
 }

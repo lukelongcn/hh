@@ -7,12 +7,15 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.bigrich.OrdersLotteryActivity.statusEnum.ENABLE;
@@ -105,7 +110,7 @@ public class BigRichService {
 
     public Result getUserRecord(long userId, Integer page, Integer limit) {
 
-        PageRequest pageRequest = ordersLotteryRelationRep.pageRequest(page, limit,new Sort(Sort.Direction.DESC,"id"));
+        PageRequest pageRequest = ordersLotteryRelationRep.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
 //        Page<OrdersLotteryRelation> pageRe = ordersLotteryRelationRep.findByOrdersLotteryUserId(userId, pageRequest);
         PageResult<Orders> pageResult = ordersRepository.findByUserId(userId, page, limit);
         if (pageResult == null) {
@@ -153,6 +158,32 @@ public class BigRichService {
     }
 
     private Logger logger = Logger.getLogger(this.getClass());
+
+    public Result orderBigRich(Long orderId, long userId) {
+
+        Map<Object, Object> mapVO = new HashMap<>();
+
+        Orders order = ordersRepository.findOne(orderId);
+        if(order != null){
+            return Result.fail("订单不存在");
+        }
+
+        Long ordersLotteryId = order.getOrdersLotteryId();
+
+        if(ordersLotteryId != null){
+            mapVO.put("activityName", "1号大富贵");
+            mapVO.put("lotteryChance", "获得1次抽奖机会");
+        }
+        BigDecimal payMoney = order.getPayMoney();
+        List<OrderItems> orderItems = order.getOrderItems();
+        if (CollectionUtils.isNotEmpty(orderItems)) {
+            Goods goods = orderItems.get(0).getGoods();
+            mapVO.put("goodsName", goods.getName() + "*" + orderItems.get(0).getCount());
+        }
+        mapVO.put("price", MoneyUtils.formatMoney(payMoney));
+
+        return Result.success(mapVO);
+    }
 
     /**
      * 参与大富贵活动
