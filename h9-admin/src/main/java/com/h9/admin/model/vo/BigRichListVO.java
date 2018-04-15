@@ -107,7 +107,9 @@ public class BigRichListVO {
 
         //添加用户按纽
         if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
-            canAddUser = true;
+            if (now.after(startTime) && startLotteryTime.after(now)) {
+                canAddUser = true;
+            }
         }
 
         // 启用、禁用按纽
