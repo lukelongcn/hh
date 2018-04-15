@@ -182,36 +182,27 @@ public class CouponService {
 
         List<Long> goodIdList = couponsDTO.getGoodIdList();
         if (CollectionUtils.isEmpty(goodIdList)) {
-            CouponGoodsRelation relation = new CouponGoodsRelation(null, coupon.getId(), null, 0);
-            couponGoodsRelationRep.save(relation);
-            // 制券数
-            if (coupon.getAskCount() > couponsDTO.getAskCount()) {
-                return Result.fail("新制券数必须大于原制券数");
-            }
-            coupon.setAskCount(couponsDTO.getAskCount());
-            couponRespository.saveAndFlush(coupon);
-            return Result.success("编辑优惠券成功");
+            return Result.fail("必须选择一个商品");
         } else if (goodIdList.size() > 1) {
             return Result.fail("只能关联一个商品");
-        } else {
-            Long gid = goodIdList.get(0);
-            Goods goods = goodsReposiroty.findOne(gid);
-            if (goods == null) {
-                return Result.fail("商品 " + goods.getId() + " 不存在");
-            }
-            CouponGoodsRelation relation = new CouponGoodsRelation(null, coupon.getId(), gid, 0);
-            couponGoodsRelationRep.save(relation);
-//        addGoods2Coupon(goodIdList, coupon);
-            // 制券数
-            if (coupon.getAskCount() > couponsDTO.getAskCount()) {
-                return Result.fail("新制券数必须大于原制券数");
-            }
-            coupon.setAskCount(couponsDTO.getAskCount());
-
-            couponRespository.saveAndFlush(coupon);
-            return Result.success("编辑优惠券成功");
         }
 
+        Long gid = goodIdList.get(0);
+        Goods goods = goodsReposiroty.findOne(gid);
+        if (goods == null) {
+            return Result.fail("商品 " + goods.getId() + " 不存在");
+        }
+        CouponGoodsRelation relation = new CouponGoodsRelation(null, coupon.getId(), gid, 0);
+        couponGoodsRelationRep.save(relation);
+//        addGoods2Coupon(goodIdList, coupon);
+        // 制券数
+        if (coupon.getAskCount() > couponsDTO.getAskCount()) {
+            return Result.fail("新制券数必须大于原制券数");
+        }
+        coupon.setAskCount(couponsDTO.getAskCount());
+
+        couponRespository.saveAndFlush(coupon);
+        return Result.success("编辑优惠券成功");
     }
 
     public Result handlerFile(MultipartFile file, Long couponId) {
@@ -226,7 +217,7 @@ public class CouponService {
             return Result.fail("上传异常");
         }
 
-        if (list.size() == 0) {
+        if(list.size() == 0){
             return Result.fail("请上传正确的表格,或下载模板表格后上传");
         }
 
