@@ -306,14 +306,20 @@ public class ActivityService {
 
         BigDecimal money = addWinnerUserDTO.getMoney();
         if (money.longValue() >= 1 && money.longValue() < 99999.99) {
+
             activity.setMoney(money);
             activity.setWinnerUserId(user.getId());
             ordersLotteryActivityRep.saveAndFlush(activity);
             //记录添加 中奖人 操作日志
             WinnerOptRecord winnerOptRecord = new WinnerOptRecord(null, activity.getId(), user.getId(), userId);
             winnerOptRecordRep.save(winnerOptRecord);
-            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null,user.getId(),null,activityId,0);
-            ordersLotteryRelationRep.save(ordersLotteryRelation);
+
+            OrdersLotteryRelation findOrdersLotteryRelation = ordersLotteryRelationRep.findByOrdersLotteryUserIdAndActivityId(user.getId(), activityId);
+
+            if(findOrdersLotteryRelation == null){
+                OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null,user.getId(),null,activityId,0);
+                ordersLotteryRelationRep.save(ordersLotteryRelation);
+            }
 
             return Result.success();
         } else {

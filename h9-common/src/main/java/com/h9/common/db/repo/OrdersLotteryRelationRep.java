@@ -23,4 +23,7 @@ public interface OrdersLotteryRelationRep extends BaseRepository<OrdersLotteryRe
 
     @Query("select o from OrdersLotteryRelation  o where o.delFlag <> 1 and o.userId = ?1 group by o.orderId order by o.id desc ")
     Page<OrdersLotteryRelation> findByOrdersLotteryUserId(Long id, Pageable pageable);
+
+    @Query("select o from OrdersLotteryRelation  o where o.delFlag <> 1 and o.userId = ?1 group by o.orderId order by o.id desc ")
+    OrdersLotteryRelation findByOrdersLotteryUserIdAndActivityId(Long id,Long activityId);
 }
