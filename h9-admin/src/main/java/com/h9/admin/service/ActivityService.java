@@ -312,7 +312,7 @@ public class ActivityService {
             //记录添加 中奖人 操作日志
             WinnerOptRecord winnerOptRecord = new WinnerOptRecord(null, activity.getId(), user.getId(), userId);
             winnerOptRecordRep.save(winnerOptRecord);
-            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null,userId,null,activityId,0);
+            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null,user.getId(),null,activityId,0);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
 
             return Result.success();
