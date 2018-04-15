@@ -45,7 +45,7 @@ public class EditGoodsTopicModuleDTO {
     private Integer sort = 1;
 
     public void setSort(String sort) {
-        if (CheckoutUtil.isNumeric(sort)) {
+        if (!CheckoutUtil.isNumeric(sort)) {
             throw new ServiceException(1, "排序值请输入数字");
         }
         Integer ints = Integer.valueOf(sort);
