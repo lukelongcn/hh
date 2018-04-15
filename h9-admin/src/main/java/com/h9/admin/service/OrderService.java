@@ -404,10 +404,16 @@ public class OrderService {
             ordersLotteryRelationRep.save(ordersLotteryRelation);
         }
         //如果这个订单对应大富贵的中奖人 是此用户的话，清空中奖人。
-        Long ordersLotteryId = order.getOrdersLotteryId();
-        if (ordersLotteryId != null) {
-            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryId);
+
+        OrdersLotteryRelation or = ordersLotteryRelationRep.findByOrderId(order.getId());
+
+        if(or != null){
+            Long ordersLotteryActivityId = or.getOrdersLotteryActivityId();
+
+            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivityId);
+
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+
             if (order.getUser().getId().equals(winnerUserId)) {
                 if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
                     ordersLotteryActivity.setWinnerUserId(null);
@@ -415,7 +421,20 @@ public class OrderService {
                     ordersLotteryActivityRep.save(ordersLotteryActivity);
                 }
             }
+
         }
+//        Long ordersLotteryId = order.getOrdersLotteryId();
+//        if (ordersLotteryId != null) {
+//            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryId);
+//            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+//            if (order.getUser().getId().equals(winnerUserId)) {
+//                if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+//                    ordersLotteryActivity.setWinnerUserId(null);
+//                    ordersLotteryActivity.setMoney(null);
+//                    ordersLotteryActivityRep.save(ordersLotteryActivity);
+//                }
+//            }
+//        }
     }
 
     /**
