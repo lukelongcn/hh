@@ -8,6 +8,7 @@ import com.h9.admin.model.vo.LotteryFlowActivityVO;
 import com.h9.common.common.CommonService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
 import com.h9.common.db.entity.lottery.Lottery;
 import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.lottery.WinnerOptRecord;
@@ -318,6 +319,8 @@ public class ActivityService {
 
     }
 
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
     /**
      * 参与用户列表
      *
@@ -335,11 +338,15 @@ public class ActivityService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersRepository.pageRequest(pageNumber, pageSize, sort);
         Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
+        Page<OrdersLotteryRelation> ordersLotteryRelationPage = ordersLotteryRelationRep
+                .findByOrdersLotteryActivityId(ordersLotteryActivity.getId(), pageRequest);
+
         List tempList = new ArrayList();
         AtomicReference<Long> index = new AtomicReference<>(1L);
-        PageResult<JoinBigRichUser> mapVo = new PageResult<>(page).map(orders -> {
+        PageResult<JoinBigRichUser> mapVo = new PageResult<>(ordersLotteryRelationPage).map(el -> {
 
-            User user = orders.getUser();
+            Long userId = el.getUserId();
+            User user = userRepository.findOne(userId);
             String money = null;
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (user.getId().equals(winnerUserId)) {
@@ -350,8 +357,8 @@ public class ActivityService {
             }
 
             JoinBigRichUser joinBigRichUser = new JoinBigRichUser(index.get(),
-                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), orders.getId() + "");
-            index.getAndSet(index.get() + 1);
+                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), el.getOrderId() + "");
+            index.getAndSet(index.get() + 1+((pageNumber-1)*pageSize));
             return joinBigRichUser;
         });
         return Result.success(mapVo);
