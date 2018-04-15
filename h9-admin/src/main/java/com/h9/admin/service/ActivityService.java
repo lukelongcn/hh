@@ -344,7 +344,7 @@ public class ActivityService {
             return Result.fail("期数不存在");
         }
 
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Sort sort = new Sort(Sort.Direction.ASC, "id");
         PageRequest pageRequest = ordersRepository.pageRequest(pageNumber, pageSize, sort);
 //        Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
         Page<OrdersLotteryRelation> ordersLotteryRelationPage = ordersLotteryRelationRep
