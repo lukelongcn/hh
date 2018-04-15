@@ -40,7 +40,6 @@ public class UserCouponVO {
                 +DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY);
             }else{
                 this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE);
-
             }
             this.wide = "限 “" + goods.getName() + "” 适用";
             this.goodsId = goods.getId();
