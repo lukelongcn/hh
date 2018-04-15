@@ -249,7 +249,8 @@ public class ActivityService {
             if (winnerUserId != null) {
                 user = userRepository.findOne(winnerUserId);
             }
-            long joinCount = (long) ordersRepository.findByCount(activity.getId());
+            List<OrdersLotteryRelation> list = ordersLotteryRelationRep.findByOrdersLotteryActivityId(activity.getId());
+            long joinCount = list.size();
             return new BigRichListVO(activity, user, joinCount);
         });
 

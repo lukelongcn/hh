@@ -397,8 +397,7 @@ public class GoodService {
         if (couponsId != null) {
             userCoupon = userCouponsRepository.findOne(couponsId);
         }
-        payMoney = useCoupon(userCoupon, goods, payMoney, count, order);
-
+        payMoney = useCoupon(userCoupon, goods, payMoney, count, order,payMethod);
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
@@ -471,14 +470,22 @@ public class GoodService {
      * @param order
      * @return
      */
-    private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney, int count, Orders order) {
+    private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney
+            , int count, Orders order,int payMethod) {
         if (userCoupon != null) {
+
 
             BigDecimal goodsPrice = goods.getRealPrice();
             if (count >= 1) {
                 payMoney = payMoney.subtract(goodsPrice);
             }
-            userCoupon.setState(USED.getCode());
+
+            if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
+                //微信支付
+            }else{
+                //余额支付
+                userCoupon.setState(USED.getCode());
+            }
             userCoupon.setOrderId(order.getId());
             userCoupon.setOrderId(order.getId());
             userCoupon.setGoodsName(goods.getName());

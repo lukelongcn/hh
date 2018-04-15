@@ -8,14 +8,12 @@ import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
 import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.hotel.HotelOrder;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
-import com.h9.common.db.repo.HotelOrderRepository;
-import com.h9.common.db.repo.OrderItemReposiroty;
-import com.h9.common.db.repo.OrdersRepository;
-import com.h9.common.db.repo.PayInfoRepository;
+import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Component;
@@ -46,6 +44,8 @@ public class StorePayHandler extends AbPayHandler{
     private GoodService goodService;
     @Resource
     private BigRichService bigRichService;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
     @Override
     public boolean callback(PayNotifyVO payNotifyVO, PayInfo payInfo) {
         logger.info("商城支付callBack: payNotifyVO : "+ JSONObject.toJSONString(payNotifyVO)
@@ -59,6 +59,12 @@ public class StorePayHandler extends AbPayHandler{
 
         Long orderId = payInfo.getOrderId();
         Orders orders = ordersRepository.findOne(orderId);
+        //改变劵的状态
+        UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
+        if(userCoupon != null){
+            userCoupon.setState(UserCoupon.statusEnum.USED.getCode());
+            userCouponsRepository.save(userCoupon);
+        }
         BigDecimal payMoney4Wechat = payInfo.getMoney();
 //        payMoney4Wechat = payMoney4Wechat.add(payInfo.getMoney());
         orders.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
