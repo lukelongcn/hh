@@ -353,7 +353,7 @@ public class ActivityService {
             String money = "0.00";
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (user.getId().equals(winnerUserId)) {
-                if (tempList.size() == 1) {
+                if (tempList.size() == 0) {
                     money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
                     tempList.add(new Object());
                 }

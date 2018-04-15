@@ -408,7 +408,7 @@ public class OrderService {
         if (ordersLotteryId != null) {
             OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryId);
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
-            if (order.getUser().equals(winnerUserId)) {
+            if (order.getUser().getId().equals(winnerUserId)) {
                 if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
                     ordersLotteryActivity.setWinnerUserId(null);
                     ordersLotteryActivity.setMoney(null);
