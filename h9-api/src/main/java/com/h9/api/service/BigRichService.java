@@ -152,8 +152,8 @@ public class BigRichService {
         // 获得方式
         userBigRichRecordVO.setWay("兑换商品");
         // 金额
-        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2, BigDecimal.ROUND_DOWN);
-        userBigRichRecordVO.setMoney(bigDecimal);
+//        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2, BigDecimal.ROUND_DOWN);
+        userBigRichRecordVO.setMoney(MoneyUtils.formatMoney(ordersLotteryActivity.getMoney()));
         return userBigRichRecordVO;
     }
 
