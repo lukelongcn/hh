@@ -322,6 +322,7 @@ public class ActivityService {
             }else{
                 OrdersLotteryRelation ordersLotteryRelation = list.get(0);
                 ordersLotteryRelation.setMoney(money);
+                ordersLotteryRelationRep.save(ordersLotteryRelation);
             }
 
             return Result.success();
