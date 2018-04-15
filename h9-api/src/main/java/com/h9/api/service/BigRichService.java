@@ -110,7 +110,7 @@ public class BigRichService {
 
     public Result getUserRecord(long userId, Integer page, Integer limit) {
 
-        PageRequest pageRequest = ordersLotteryRelationRep.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
+        PageRequest pageRequest = ordersLotteryRelationRep.pageRequest(page, limit, new Sort(Sort.Direction.ASC, "id"));
 //        Page<OrdersLotteryRelation> pageRe = ordersLotteryRelationRep.findByOrdersLotteryUserId(userId, pageRequest);
         PageResult<Orders> pageResult = ordersRepository.findByUserId(userId, page, limit);
         if (pageResult == null) {
