@@ -37,7 +37,7 @@ public class UserCouponVO {
                 Coupon coupon = userCoupon.getCoupon();
                 Date startTime = coupon.getStartTime();
                 Date endTime = coupon.getEndTime();
-                this.wide = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY)
+                this.wide = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY)+"至"
                 +DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY);
 
             }else{
