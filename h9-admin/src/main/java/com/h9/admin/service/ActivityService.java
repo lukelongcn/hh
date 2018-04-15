@@ -314,10 +314,10 @@ public class ActivityService {
             WinnerOptRecord winnerOptRecord = new WinnerOptRecord(null, activity.getId(), user.getId(), userId);
             winnerOptRecordRep.save(winnerOptRecord);
 
-            OrdersLotteryRelation findOrdersLotteryRelation = ordersLotteryRelationRep.findByOrdersLotteryUserIdAndActivityId(user.getId(), activityId);
+            List<OrdersLotteryRelation> list = ordersLotteryRelationRep.findByOrdersLotteryUserIdAndActivityId(user.getId(), activityId);
 
-            if(findOrdersLotteryRelation == null){
-                OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null,user.getId(),null,activityId,0);
+            if (CollectionUtils.isEmpty(list)) {
+                OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(), null, activityId, 0);
                 ordersLotteryRelationRep.save(ordersLotteryRelation);
             }
 
