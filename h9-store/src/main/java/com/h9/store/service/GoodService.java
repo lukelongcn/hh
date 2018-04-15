@@ -443,7 +443,7 @@ public class GoodService {
             List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
 
             OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-                    order.getId(), ordersLotteryActivity.getId(), 0);
+                    order.getId(), ordersLotteryActivity.getId(), 0,null);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
 
             if (CollectionUtils.isNotEmpty(ordersList)) {
