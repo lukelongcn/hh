@@ -42,6 +42,7 @@ public class DateUtil {
         DOT_MINUTE("yyyy.MM.dd HH:mm"),
         HOUR("yyyy-MM-dd HH"),
         DAY("yyyy-MM-dd"),
+        DOT_DAY("yyyy.MM.dd"),
         MONTH("yyyy-MM"),
         SINGLE_HOUR("HH:mm"),
         YEAR("yyyy");
