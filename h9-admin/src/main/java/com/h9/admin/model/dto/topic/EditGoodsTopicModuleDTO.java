@@ -1,6 +1,8 @@
 package com.h9.admin.model.dto.topic;
 
+import com.h9.common.base.Result;
 import com.h9.common.common.ServiceException;
+import com.h9.common.utils.CheckoutUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,8 +30,8 @@ public class EditGoodsTopicModuleDTO {
     public void setIds(Map<Long, Integer> ids) {
 
         this.ids = ids;
-        ids.forEach((k,v)->{
-            if(v<1){
+        ids.forEach((k, v) -> {
+            if (v < 1) {
                 throw new ServiceException(1, "商品的排序不能为小于1");
             }
         });
@@ -39,11 +41,20 @@ public class EditGoodsTopicModuleDTO {
     private Map<Long, Integer> ids;
 
 
-
-    @Range(min = 1,message = "排序最小值为1")
     @ApiModelProperty("排序")
     private Integer sort = 1;
 
+    public void setSort(String sort) {
+        if (CheckoutUtil.isNumeric(sort)) {
+            throw new ServiceException(1, "排序值请输入数字");
+        }
+        Integer ints = Integer.valueOf(sort);
+        if (ints < 1) {
+            throw new ServiceException(1, "排序最小值为1");
+        }
+
+        this.sort = ints;
+    }
 
     @ApiModelProperty("专题Id")
     private Long topicTypeId;
