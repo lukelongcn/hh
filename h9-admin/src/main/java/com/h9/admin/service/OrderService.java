@@ -13,6 +13,7 @@ import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
@@ -383,6 +384,7 @@ public class OrderService {
 
     /**
      * 退优惠劵
+     *
      * @param
      */
     public void refundCoupond(Orders order) {
@@ -397,9 +399,21 @@ public class OrderService {
 
         //删除对应参与用户记录
         OrdersLotteryRelation ordersLotteryRelation = ordersLotteryRelationRep.findByOrderId(order.getId());
-        if(ordersLotteryRelation != null){
+        if (ordersLotteryRelation != null) {
             ordersLotteryRelation.setDelFlag(1);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
+        }
+        //如果这个订单对应大富贵的中奖人 是此用户的话，清空中奖人。
+        Long ordersLotteryId = order.getOrdersLotteryId();
+        if (ordersLotteryId != null) {
+            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryId);
+            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+            if (order.getUser().equals(winnerUserId)) {
+                if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+                    ordersLotteryActivity.setWinnerUserId(null);
+                    ordersLotteryActivityRep.save(ordersLotteryActivity);
+                }
+            }
         }
     }
 
