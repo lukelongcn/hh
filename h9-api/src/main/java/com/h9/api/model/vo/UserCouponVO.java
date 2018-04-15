@@ -29,7 +29,6 @@ public class UserCouponVO {
     private long goodsId;
 
     public UserCouponVO(UserCoupon userCoupon, Goods goods) {
-        this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE);
         this.couponType = "免单劵";
         this.useType = "自营指定商品适用";
         if (goods != null) {
@@ -37,12 +36,13 @@ public class UserCouponVO {
                 Coupon coupon = userCoupon.getCoupon();
                 Date startTime = coupon.getStartTime();
                 Date endTime = coupon.getEndTime();
-                this.wide = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY)+"至"
+                this.endTime = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY)+"至"
                 +DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY);
-
             }else{
-                this.wide = "限 “" + goods.getName() + "” 适用";
+                this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE);
+
             }
+            this.wide = "限 “" + goods.getName() + "” 适用";
             this.goodsId = goods.getId();
         }
 //        if (StringUtils.isNotEmpty(userCoupon.getGoodsName())) {
