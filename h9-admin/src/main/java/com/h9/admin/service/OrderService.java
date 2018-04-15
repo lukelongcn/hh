@@ -411,6 +411,7 @@ public class OrderService {
             if (order.getUser().equals(winnerUserId)) {
                 if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
                     ordersLotteryActivity.setWinnerUserId(null);
+                    ordersLotteryActivity.setMoney(null);
                     ordersLotteryActivityRep.save(ordersLotteryActivity);
                 }
             }
