@@ -113,7 +113,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
 //            , nativeQuery = true)
 //    Orders findLastOrdersLottery(Long userId, Date start, Date end);
 
-    @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.user = ?2  order by o.createTime DESC ")
+    @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.status in (0,1,2,4) and o.user = ?2  order by o.createTime DESC ")
     List<Orders> findByordersLotteryIdAndUser(Long ordersLotteryId, User user);
 
 
