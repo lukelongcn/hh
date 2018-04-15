@@ -1,7 +1,6 @@
 package com.h9.admin.service;
 
 import com.h9.common.base.BaseRepository;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

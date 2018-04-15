@@ -9,7 +9,7 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.MailService;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.lottery.Lottery;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.lottery.WinnerOptRecord;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
@@ -34,7 +34,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.*;
+import static com.h9.common.db.entity.bigrich.OrdersLotteryActivity.statusEnum.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;

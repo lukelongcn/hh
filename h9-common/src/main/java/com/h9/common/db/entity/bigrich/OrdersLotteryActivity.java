@@ -1,4 +1,4 @@
-package com.h9.common.db.entity.lottery;
+package com.h9.common.db.entity.bigrich;
 
 
 import com.h9.common.base.BaseEntity;

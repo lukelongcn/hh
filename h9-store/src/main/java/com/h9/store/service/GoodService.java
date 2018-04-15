@@ -7,9 +7,10 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
 import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -34,7 +35,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,6 +85,8 @@ public class GoodService {
     private CouponRespository couponRespository;
     @Resource
     private OrdersLotteryActivityRep ordersLotteryActivityRep;
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -401,9 +403,9 @@ public class GoodService {
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user,goods);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
                 return Result.success(showInfo);
-            }else{
+            } else {
                 return getPayInfo(order.getId(), payMoney, userId, convertGoodsDTO.getPayPlatform(), count, goods);
             }
         } else {
@@ -414,7 +416,7 @@ public class GoodService {
             }
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user,goods);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
                 return Result.success(showInfo);
 
             } else {
@@ -429,7 +431,7 @@ public class GoodService {
         }
     }
 
-    private Map<Object, Object> showJoinIn(Orders order, User user,Goods goods) {
+    private Map<Object, Object> showJoinIn(Orders order, User user, Goods goods) {
         Map<Object, Object> mapVo = new HashMap<>();
         OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
         if (ordersLotteryActivity != null) {
@@ -438,9 +440,18 @@ public class GoodService {
             if (CollectionUtils.isNotEmpty(ordersList)) {
                 logger.info("真实参与记录 " + ordersList.size());
                 if (ordersList.size() == 1) {
+
+                    OrdersLotteryRelation ordersLotteryRelation = ordersLotteryRelationRep.findByOrderId(order.getId());
+                    if (ordersLotteryRelation == null) {
+                        ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
+                                order.getId(), ordersLotteryActivity.getId());
+                        ordersLotteryRelationRep.save(ordersLotteryRelation);
+                    }
+
                     mapVo.put("activityName", "1号大富贵");
                     mapVo.put("lotteryChance", "获得1次抽奖机会");
                     logger.debug("获得一次抽奖机会");
+
                 }
             } else {
                 mapVo.put("activityName", "1号大富贵");

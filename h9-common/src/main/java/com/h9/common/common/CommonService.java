@@ -2,10 +2,10 @@ package com.h9.common.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.account.BalanceFlow;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;

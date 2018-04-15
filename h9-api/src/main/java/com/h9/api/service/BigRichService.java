@@ -5,7 +5,7 @@ import com.h9.api.model.vo.BigRichVO;
 import com.h9.api.model.vo.UserBigRichRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
@@ -15,7 +15,6 @@ import com.h9.common.db.repo.UserAccountRepository;
 import com.h9.common.db.repo.UserRepository;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,12 +23,9 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static com.h9.common.db.entity.lottery.OrdersLotteryActivity.statusEnum.ENABLE;
+import static com.h9.common.db.entity.bigrich.OrdersLotteryActivity.statusEnum.ENABLE;
 
 /**
  * <p>Title:h9-parent</p>

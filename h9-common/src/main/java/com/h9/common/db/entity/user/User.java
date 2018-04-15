@@ -88,9 +88,9 @@ public class User extends BaseEntity {
     @Column(name = "sign_days", nullable = false, columnDefinition = "tinyint default 0 COMMENT '连续签到天数'")
     private Integer signDays = 0;
 
-    @Column(name = "lottery_chance", nullable = false,
-            columnDefinition = "varchar(500)  COMMENT '抽奖机会 json 数据 {活动Id:次数}'")
-    private String lotteryChance = "{}";
+//    @Column(name = "lottery_chance",
+//            columnDefinition = "varchar(500)  COMMENT '抽奖机会 json 数据 {活动Id:次数}'")
+//    private String lotteryChance = "{}";
 
     @Column(name = "client", columnDefinition = "int default 0 COMMENT '客户端'")
     private Integer client;
@@ -114,19 +114,19 @@ public class User extends BaseEntity {
     @Column(name = "street_number", columnDefinition = "varchar(50) COMMENT '街道号'")
     private String streetNumber;
 
-    public void setLotteryChance(Map<Long, Integer> map) {
-        if (map != null) {
-            this.lotteryChance = JSONObject.toJSONString(map);
-        }
-    }
+//    public void setLotteryChance(Map<Long, Integer> map) {
+//        if (map != null) {
+//            this.lotteryChance = JSONObject.toJSONString(map);
+//        }
+//    }
 
-    public Map<Long, Integer> getLotteryChance() {
-        Map<Long, Integer> map = JSONObject.parseObject(lotteryChance, Map.class);
-        if (map == null) {
-            return new HashMap<>();
-        }
-        return map;
-    }
+//    public Map<Long, Integer> getLotteryChance() {
+//        Map<Long, Integer> map = JSONObject.parseObject(lotteryChance, Map.class);
+//        if (map == null) {
+//            return new HashMap<>();
+//        }
+//        return map;
+//    }
 
     public User() {
     }

@@ -1,6 +1,6 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -10,10 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Ln on 2018/3/28.
