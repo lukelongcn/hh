@@ -107,6 +107,12 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.status in (0,1,2,4)  order by o.createTime DESC ")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId, Pageable pageable);
 
+//    @Query(value = "select o from h9_main.orders o where o.orders_lottery_id = ?1 and o.status in (0,1,2,4) " +
+//            "and o.user_id = ?1 and ?1> o.create_time " +
+//            "and o.create_time<?2 and o.order_from = 2  order by o.id DESC"
+//            , nativeQuery = true)
+//    Orders findLastOrdersLottery(Long userId, Date start, Date end);
+
     @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.user = ?2  order by o.createTime DESC ")
     List<Orders> findByordersLotteryIdAndUser(Long ordersLotteryId, User user);
 

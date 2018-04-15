@@ -311,6 +311,8 @@ public class ActivityService {
             //记录添加 中奖人 操作日志
             WinnerOptRecord winnerOptRecord = new WinnerOptRecord(null, activity.getId(), user.getId(), userId);
             winnerOptRecordRep.save(winnerOptRecord);
+            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null,userId,null,activityId,0);
+            ordersLotteryRelationRep.save(ordersLotteryRelation);
 
             return Result.success();
         } else {
@@ -337,7 +339,7 @@ public class ActivityService {
 
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersRepository.pageRequest(pageNumber, pageSize, sort);
-        Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
+//        Page<Orders> page = ordersRepository.findByordersLotteryId(id, pageRequest);
         Page<OrdersLotteryRelation> ordersLotteryRelationPage = ordersLotteryRelationRep
                 .findByOrdersLotteryActivityId(ordersLotteryActivity.getId(), pageRequest);
 
@@ -347,7 +349,7 @@ public class ActivityService {
 
             Long userId = el.getUserId();
             User user = userRepository.findOne(userId);
-            String money = null;
+            String money = "0.00";
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (user.getId().equals(winnerUserId)) {
                 if (tempList.size() <= 1) {

@@ -292,16 +292,7 @@ public class CommonService {
         OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(createTime);
         if (ordersLotteryActivity != null) {
             orders.setOrdersLotteryId(ordersLotteryActivity.getId());
-//            Map<Long, Integer> map = user.getLotteryChance();
-//            boolean containsKey = map.containsKey(ordersLotteryActivity.getId());
-//            if (containsKey) {
-//                Integer count = map.get(ordersLotteryActivity.getId());
-//                count++;
-//                map.put(ordersLotteryActivity.getId(), count);
-//            } else {
-//                map.put(ordersLotteryActivity.getId(), 1);
-//            }
-//            user.setLotteryChance(map);
+
             ordersLotteryActivity.setJoinCount(ordersLotteryActivity.getJoinCount() + 1);
             logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + ordersLotteryActivity.getId());
             ordersRepository.saveAndFlush(orders);
@@ -313,4 +304,6 @@ public class CommonService {
             return null;
         }
     }
+
+
 }

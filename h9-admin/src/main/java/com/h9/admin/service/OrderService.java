@@ -13,6 +13,7 @@ import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.GoodsType;
@@ -72,6 +73,8 @@ public class OrderService {
     private FileService fileService;
     @Resource
     private UserCouponsRepository userCouponsRepository;
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         long startTime = System.currentTimeMillis();
@@ -349,7 +352,7 @@ public class OrderService {
             order = ordersRepository.findOne(orderId);
             order.setStatus(Orders.statusEnum.CANCEL.getCode());
             ordersRepository.save(order);
-            refundCoupond(orderId);
+            refundCoupond(order);
             return Result.success("退款成功");
         } else if (Orders.PayMethodEnum.WX_PAY.getCode() == payMethond) {
             Long payInfoId = order.getPayInfoId();
@@ -368,7 +371,7 @@ public class OrderService {
                 order = ordersRepository.findOne(orderId);
                 order.setStatus(Orders.statusEnum.CANCEL.getCode());
                 ordersRepository.save(order);
-                refundCoupond(orderId);
+                refundCoupond(order);
                 return Result.success("退款成功");
             }
         } else {
@@ -378,14 +381,25 @@ public class OrderService {
 
     }
 
-    public void refundCoupond(Long orderId) {
+    /**
+     * 退优惠劵
+     * @param
+     */
+    public void refundCoupond(Orders order) {
         //退优惠劵
-        UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
+        UserCoupon userCoupon = userCouponsRepository.findByOrderId(order.getId());
         if (userCoupon != null) {
             userCoupon.setState(UserCoupon.statusEnum.UN_USE.getCode());
             userCouponsRepository.save(userCoupon);
         } else {
-            logger.info("orderId :" + orderId + " 没有对应的优惠劵");
+            logger.info("orderId :" + order.getId() + " 没有对应的优惠劵");
+        }
+
+        //删除对应参与用户记录
+        OrdersLotteryRelation ordersLotteryRelation = ordersLotteryRelationRep.findByOrderId(order.getId());
+        if(ordersLotteryRelation != null){
+            ordersLotteryRelation.setDelFlag(1);
+            ordersLotteryRelationRep.save(ordersLotteryRelation);
         }
     }
 

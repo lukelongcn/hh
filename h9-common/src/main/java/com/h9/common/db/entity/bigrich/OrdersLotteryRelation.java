@@ -30,4 +30,7 @@ public class OrdersLotteryRelation {
 
     @Column(name = "orders_lottery_activity_id", columnDefinition = "bigint COMMENT ''")
     private Long ordersLotteryActivityId;
+
+    @Column(name = "del_flag", columnDefinition = "int COMMENT '删除标记 1 删除 0 未删除'")
+    private Integer delFlag=0;
 }

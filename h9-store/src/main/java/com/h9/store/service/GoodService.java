@@ -439,15 +439,12 @@ public class GoodService {
             List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
             if (CollectionUtils.isNotEmpty(ordersList)) {
                 logger.info("真实参与记录 " + ordersList.size());
+
+                OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
+                        order.getId(), ordersLotteryActivity.getId(), 0);
+                ordersLotteryRelationRep.save(ordersLotteryRelation);
+
                 if (ordersList.size() == 1) {
-
-                    OrdersLotteryRelation ordersLotteryRelation = ordersLotteryRelationRep.findByOrderId(order.getId());
-                    if (ordersLotteryRelation == null) {
-                        ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-                                order.getId(), ordersLotteryActivity.getId());
-                        ordersLotteryRelationRep.save(ordersLotteryRelation);
-                    }
-
                     mapVo.put("activityName", "1号大富贵");
                     mapVo.put("lotteryChance", "获得1次抽奖机会");
                     logger.debug("获得一次抽奖机会");
