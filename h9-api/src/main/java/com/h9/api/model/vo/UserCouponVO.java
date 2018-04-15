@@ -37,9 +37,9 @@ public class UserCouponVO {
                 Date startTime = coupon.getStartTime();
                 Date endTime = coupon.getEndTime();
                 this.endTime = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY)+"至"
-                +DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY);
+                +DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY) ;
             }else{
-                this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE);
+                this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE) + "到期";
             }
             this.wide = "限 “" + goods.getName() + "” 适用";
             this.goodsId = goods.getId();

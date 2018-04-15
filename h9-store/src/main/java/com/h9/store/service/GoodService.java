@@ -397,7 +397,7 @@ public class GoodService {
         if (couponsId != null) {
             userCoupon = userCouponsRepository.findOne(couponsId);
         }
-        payMoney = useCoupon(userCoupon, goods, payMoney, count, order,payMethod);
+        payMoney = useCoupon(userCoupon, goods, payMoney, count, order, payMethod);
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
@@ -462,6 +462,7 @@ public class GoodService {
         }
         mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
         mapVo.put("goodsName", goods.getName());
+        mapVo.put("resumePaywxjs",false);
         return mapVo;
     }
 
@@ -476,7 +477,7 @@ public class GoodService {
      * @return
      */
     private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney
-            , int count, Orders order,int payMethod) {
+            , int count, Orders order, int payMethod) {
         if (userCoupon != null) {
 
 
@@ -487,7 +488,7 @@ public class GoodService {
 
             if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
                 //微信支付
-            }else{
+            } else {
                 //余额支付
                 userCoupon.setState(USED.getCode());
             }
@@ -596,6 +597,7 @@ public class GoodService {
             mapVO.put("price", MoneyUtils.formatMoney(money));
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
+            mapVO.put("resumePaywxjs", true);
             // 大富贵参与机会获得
             OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
             if (ordersLotteryActivity != null) {
