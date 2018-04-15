@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.math.BigDecimal;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -35,4 +37,9 @@ public class OrdersLotteryRelation extends BaseEntity {
 
     @Column(name = "del_flag", columnDefinition = "int COMMENT '删除标记 1 删除 0 未删除'")
     private Integer delFlag=0;
+
+    @Column(name = "money")
+    private BigDecimal money;
+
+
 }

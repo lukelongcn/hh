@@ -317,8 +317,11 @@ public class ActivityService {
             List<OrdersLotteryRelation> list = ordersLotteryRelationRep.findByOrdersLotteryUserIdAndActivityId(user.getId(), activityId);
 
             if (CollectionUtils.isEmpty(list)) {
-                OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(), null, activityId, 0);
+                OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(), null, activityId, 0, money);
                 ordersLotteryRelationRep.save(ordersLotteryRelation);
+            }else{
+                OrdersLotteryRelation ordersLotteryRelation = list.get(0);
+                ordersLotteryRelation.setMoney(money);
             }
 
             return Result.success();
@@ -330,6 +333,7 @@ public class ActivityService {
 
     @Resource
     private OrdersLotteryRelationRep ordersLotteryRelationRep;
+
     /**
      * 参与用户列表
      *
@@ -350,7 +354,7 @@ public class ActivityService {
         Page<OrdersLotteryRelation> ordersLotteryRelationPage = ordersLotteryRelationRep
                 .findByOrdersLotteryActivityId(ordersLotteryActivity.getId(), pageRequest);
 
-        List tempList = new ArrayList();
+//        List tempList = new ArrayList();
         AtomicReference<Long> index = new AtomicReference<>(1L);
         PageResult<JoinBigRichUser> mapVo = new PageResult<>(ordersLotteryRelationPage).map(el -> {
 
@@ -359,15 +363,15 @@ public class ActivityService {
             String money = "0.00";
             Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
             if (user.getId().equals(winnerUserId)) {
-                if (tempList.size() == 0) {
-                    money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
-                    tempList.add(new Object());
-                }
+//                if (tempList.size() == 0) {
+                money = MoneyUtils.formatMoney(el.getMoney());
+//                tempList.add(new Object());
+//                }
             }
 
             JoinBigRichUser joinBigRichUser = new JoinBigRichUser(index.get(),
                     user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), el.getOrderId() + "");
-            index.getAndSet(index.get() + 1+((pageNumber-1)*pageSize));
+            index.getAndSet(index.get() + 1 + ((pageNumber - 1) * pageSize));
             return joinBigRichUser;
         });
         return Result.success(mapVo);
