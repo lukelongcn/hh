@@ -347,7 +347,9 @@ public class CouponService {
         }
         int i = leftCount - countInts;
         coupon.setLeftCount(i);
-        coupon.setSendFlag(2);
+        if (CollectionUtils.isNotEmpty(couponUserRelationDTOS)) {
+            coupon.setSendFlag(2);
+        }
         couponRespository.save(coupon);
 
         redisBean.setStringValue("coupon:" + tempId, "", 1, TimeUnit.MICROSECONDS);
