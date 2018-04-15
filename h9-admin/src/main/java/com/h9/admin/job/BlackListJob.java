@@ -1,5 +1,6 @@
 package com.h9.admin.job;
 
+import com.h9.admin.service.CouponService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.entity.config.SystemBlackList;
@@ -37,6 +38,8 @@ public class BlackListJob {
     @Resource
     private LotteryRepository lotteryRepository;
 
+    @Resource
+    private CouponService couponService;
     @Scheduled(cron = "0 0 1 * * *")
     public void scan() {
         logger.info("BlackListJob go.................");

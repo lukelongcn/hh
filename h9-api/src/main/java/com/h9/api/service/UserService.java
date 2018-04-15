@@ -24,10 +24,7 @@ import com.h9.common.db.entity.Transactions;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.config.Article;
 import com.h9.common.db.entity.config.ArticleType;
-import com.h9.common.db.entity.user.User;
-import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.entity.user.UserExtends;
-import com.h9.common.db.entity.user.UserRecord;
+import com.h9.common.db.entity.user.*;
 import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MobileUtils;
@@ -100,7 +97,6 @@ public class UserService {
     @Resource
     private CommonService commonService;
 
-
     @Resource
     private GlobalPropertyRepository globalPropertyRepository;
     @Resource
@@ -117,6 +113,9 @@ public class UserService {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -748,7 +747,9 @@ public class UserService {
     public static void main(String[] args) {
         BigDecimal b1 = new BigDecimal("0.001");
         BigDecimal b2 = new BigDecimal("0.01");
+        BigDecimal b3 = new BigDecimal("100");
         System.out.println(b1.compareTo(b2));
+        System.out.println(b3.negate().add(new BigDecimal(20)));
     }
 
     @Resource
@@ -821,4 +822,5 @@ public class UserService {
 
 
     }
+
 }

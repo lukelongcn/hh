@@ -13,6 +13,9 @@ import com.h9.common.db.entity.PayInfo;
 import com.h9.common.db.entity.RechargeOrder;
 import com.h9.common.db.entity.account.BalanceFlow;
 import com.h9.common.db.entity.account.RechargeRecord;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
@@ -20,11 +23,9 @@ import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
-import com.h9.common.utils.ExportExcel;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.common.utils.POIUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,17 +34,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
-import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.PayInfo.OrderTypeEnum.STORE_ORDER;
 import static com.h9.common.db.entity.account.BalanceFlow.BalanceFlowTypeEnum.REFUND;
@@ -72,6 +72,10 @@ public class OrderService {
 
     @Resource
     private FileService fileService;
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
     public Result<PageResult<OrderItemVO>> orderList(OrderDTO orderDTO) {
         long startTime = System.currentTimeMillis();
@@ -316,7 +320,7 @@ public class OrderService {
 
                 Date startTime = new Date(startTimeL);
                 int dayMi = 1000 * 60 * 60 * 24;
-                Date endTime = new Date(endTimeL+dayMi);
+                Date endTime = new Date(endTimeL + dayMi);
 
                 predicateList.add(builder.between(root.get("createTime"), startTime, endTime));
             }
@@ -349,23 +353,88 @@ public class OrderService {
             order = ordersRepository.findOne(orderId);
             order.setStatus(Orders.statusEnum.CANCEL.getCode());
             ordersRepository.save(order);
+            refundCoupond(order);
+            return Result.success("退款成功");
         } else if (Orders.PayMethodEnum.WX_PAY.getCode() == payMethond) {
             Long payInfoId = order.getPayInfoId();
-            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney());
+
+            Result getResult = payProvider.getPayOrderInfo(payInfoId);
+            int payMethod = 3;
+            if (getResult.isSuccess()) {
+                Map<String, Integer> map = (Map<String, Integer>) getResult.getData();
+                payMethod = map.get("payMethod");
+                //WX(2, "wx"), WXJS(3, "wxjs"),
+            }
+            Result result = payProvider.refundOrder(payInfoId, order.getPayMoney(), payMethod);
             if (result.getCode() == 1) {
                 return Result.fail(result.getMsg());
             } else {
                 order = ordersRepository.findOne(orderId);
                 order.setStatus(Orders.statusEnum.CANCEL.getCode());
                 ordersRepository.save(order);
+                refundCoupond(order);
                 return Result.success("退款成功");
             }
         } else {
             logger.info("退款异常，没有匹配到支付方式");
             return Result.fail("退款异常");
         }
-        return Result.success("退款成功");
 
+    }
+
+    /**
+     * 退优惠劵
+     *
+     * @param
+     */
+    public void refundCoupond(Orders order) {
+        //退优惠劵
+        UserCoupon userCoupon = userCouponsRepository.findByOrderId(order.getId());
+        if (userCoupon != null) {
+            userCoupon.setState(UserCoupon.statusEnum.UN_USE.getCode());
+            userCouponsRepository.save(userCoupon);
+        } else {
+            logger.info("orderId :" + order.getId() + " 没有对应的优惠劵");
+        }
+
+        //删除对应参与用户记录
+        OrdersLotteryRelation ordersLotteryRelation = ordersLotteryRelationRep.findByOrderId(order.getId());
+        if (ordersLotteryRelation != null) {
+            ordersLotteryRelation.setDelFlag(1);
+            ordersLotteryRelationRep.save(ordersLotteryRelation);
+        }
+        //如果这个订单对应大富贵的中奖人 是此用户的话，清空中奖人。
+
+        OrdersLotteryRelation or = ordersLotteryRelationRep.findByOrderId(order.getId());
+
+        if (or != null && or.getMoney() != null) {
+            Long ordersLotteryActivityId = or.getOrdersLotteryActivityId();
+
+            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryActivityId);
+
+            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+
+            if (order.getUser().getId().equals(winnerUserId)) {
+                if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+                    ordersLotteryActivity.setWinnerUserId(null);
+                    ordersLotteryActivity.setMoney(null);
+                    ordersLotteryActivityRep.save(ordersLotteryActivity);
+                }
+            }
+
+        }
+//        Long ordersLotteryId = order.getOrdersLotteryId();
+//        if (ordersLotteryId != null) {
+//            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRep.findOne(ordersLotteryId);
+//            Long winnerUserId = ordersLotteryActivity.getWinnerUserId();
+//            if (order.getUser().getId().equals(winnerUserId)) {
+//                if (ordersLotteryActivity.getStatus() != OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
+//                    ordersLotteryActivity.setWinnerUserId(null);
+//                    ordersLotteryActivity.setMoney(null);
+//                    ordersLotteryActivityRep.save(ordersLotteryActivity);
+//                }
+//            }
+//        }
     }
 
     /**
@@ -395,7 +464,7 @@ public class OrderService {
         Result<PageResult<WxOrderListInfo>> pageResultResult = wxOrderList(null, null, wxOrderNo, orderType, startTime, endTime);
         PageResult<WxOrderListInfo> pageResult = pageResultResult.getData();
         List<WxOrderListInfo> wxOrderListInfoList = pageResult.getData();
-        if(wxOrderListInfoList.size() > 5000){
+        if (wxOrderListInfoList.size() > 5000) {
             return Result.fail("数据量过大，请增加筛选条件再导出");
         }
         //定义表的列名
@@ -427,5 +496,13 @@ public class OrderService {
         }
 
     }
+
+    @Transactional(propagation = Propagation.NEVER)
+    public void method1() {
+        logger.info("method1");
+    }
+
+    @Resource
+    private OrdersLotteryActivityRep ordersLotteryActivityRep;
 
 }

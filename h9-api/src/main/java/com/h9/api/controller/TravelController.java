@@ -15,26 +15,26 @@ public class TravelController {
 
     @Resource
     private TravelService travelService;
+
     /**
-     *
      * description: 旧版本使用
-     * @param  tab 1 为旅游加体检，2为体检 ，3 为旅游
+     *
+     * @param tab 1 为旅游加体检，2为体检 ，3 为旅游
      */
-    @Secured
     @GetMapping("/travel/health/{tab}")
-    public Result bannerList(@SessionAttribute("curUserId")long userId, @PathVariable Integer tab){
-        return travelService.bannerList(userId,tab);
+    public Result bannerList(@PathVariable Integer tab) {
+        return travelService.bannerList(tab);
     }
 
     /**
      * 新版本使用此接口
-     * @param userId
+     *
      * @param tab 1 为旅游加体检，2为体检 ，3 为旅游
      * @return
      */
-    @Secured
+
     @GetMapping("/travel/health")
-    public Result bannerList2(@SessionAttribute("curUserId")long userId, @RequestParam(defaultValue = "1") Integer tab){
-        return travelService.bannerList(userId,tab);
+    public Result bannerList2(@RequestParam(defaultValue = "1") Integer tab) {
+        return travelService.bannerList(tab);
     }
 }

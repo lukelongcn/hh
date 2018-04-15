@@ -32,6 +32,9 @@ public class PayInfo extends BaseEntity {
     @Column(name = "order_id", columnDefinition = "bigint(20) default null COMMENT ''")
     private Long orderId;
 
+    /**
+     * @see OrderTypeEnum
+     */
     @Column(name = "order_type",nullable = false,columnDefinition = "int default 0 COMMENT '订单类型'")
     private Integer orderType;
 

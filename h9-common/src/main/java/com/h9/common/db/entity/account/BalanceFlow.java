@@ -144,6 +144,9 @@ public class BalanceFlow extends BaseEntity {
         this.orderNo = orderNo;
     }
 
+    /**
+     * 流水类型
+     */
     public  enum BalanceFlowTypeEnum {
         WITHDRAW(1,"提现"),
         RETURN(2,"银联退回"),
@@ -161,7 +164,8 @@ public class BalanceFlow extends BaseEntity {
         SIGN(16,"签到"),
         STICK_REWARD(17,"打赏"),
         USER_TRANSFER(20,"转账"),
-        RED_ENVELOPE(21,"红包推广");
+        RED_ENVELOPE(21,"红包推广"),
+        BIG_RICH_BONUS(22,"一号大富贵奖金");
 
         BalanceFlowTypeEnum(long id,String name){
             this.id = id;

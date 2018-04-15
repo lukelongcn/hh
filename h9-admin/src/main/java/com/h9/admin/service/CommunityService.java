@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.activity.ActivityEditDTO;
 import com.h9.admin.model.dto.community.*;
+import com.h9.admin.model.vo.GoodsTopicVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
@@ -14,6 +15,7 @@ import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.PageDTO;
 import com.h9.common.modle.vo.Config;
+import com.h9.common.utils.CheckoutUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +40,7 @@ public class CommunityService {
 
     private final String BANNER_TYPE_LOCATION = "bannerTypeLocation";
 
-    private final String BANNER_TYPE= "banner:type";
+    private final String BANNER_TYPE = "banner:type";
 
     @Autowired
     private BannerTypeRepository bannerTypeRepository;
@@ -73,9 +76,9 @@ public class CommunityService {
 
     public Result<PageResult<BannerType>> getBannerTypes(BannerTypeListDTO pageDTO) {
         PageRequest pageRequest = this.bannerTypeRepository.pageRequest(pageDTO.getPageNumber(), pageDTO.getPageSize());
-        Page<BannerType> bannerTypes = this.bannerTypeRepository.findAll4Page(pageDTO.getLocaltion(),pageRequest);
+        Page<BannerType> bannerTypes = this.bannerTypeRepository.findAll4Page(pageDTO.getLocaltion(), pageRequest);
         List<Config> configList = this.configService.getMapListConfig(BANNER_TYPE_LOCATION);
-        bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList,item));
+        bannerTypes.forEach(item -> this.setBannerTypeLocationDesc(configList, item));
         PageResult<BannerType> pageResult = new PageResult<>(bannerTypes);
         return Result.success(pageResult);
     }
@@ -262,8 +265,55 @@ public class CommunityService {
         }
     }
 
-    private void setBannerTypeLocationDesc(List<Config> configList,BannerType bannerType) {
-        bannerType.setLocationDesc(configList == null || configList.size() == 0 ? null:this.configService
-                .getConfigVal(configList,bannerType.getLocation().toString()));
+    private void setBannerTypeLocationDesc(List<Config> configList, BannerType bannerType) {
+        bannerType.setLocationDesc(configList == null || configList.size() == 0 ? null : this.configService
+                .getConfigVal(configList, bannerType.getLocation().toString()));
     }
+
+    /**
+     * 条件、分页 查询商品
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param key
+     * @return
+     */
+    public Result queryKey(Integer pageNumber, Integer pageSize, String key) {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        PageRequest pageRequest = goodsReposiroty.pageRequest(pageNumber, pageSize, sort);
+
+        PageResult<Goods> pageResult = null;
+        if (StringUtils.isNotEmpty(key)) {
+
+            pageResult = queryByIdAndName(key, pageRequest);
+
+        } else {
+
+            Page<Goods> page = goodsReposiroty.findByStatus(1, pageRequest);
+            pageResult = new PageResult<>(page);
+
+        }
+
+        PageResult<Map<String, String>> mapVo = pageResult.map(goods -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("name", goods.getName());
+            map.put("id", goods.getId() + "");
+            return map;
+        });
+
+        return Result.success(mapVo);
+    }
+
+    private PageResult<Goods> queryByIdAndName(String key, PageRequest pageRequest) {
+        boolean isNumber = CheckoutUtil.isNumeric(key);
+        if (isNumber) {
+            Page<Goods> pageGoods = goodsReposiroty.findByGoodsId(Long.valueOf(key), pageRequest);
+            return new PageResult<>(pageGoods);
+        } else {
+            Page<Goods> pageGoods = goodsReposiroty.findByGoodsNameAndStatus("%" + key + "%", 1,
+                    pageRequest);
+            return new PageResult<>(pageGoods);
+        }
+    }
+
 }

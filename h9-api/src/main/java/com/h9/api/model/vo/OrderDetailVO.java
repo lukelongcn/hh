@@ -1,5 +1,6 @@
 package com.h9.api.model.vo;
 
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.GoodsType;
 import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
@@ -29,6 +30,8 @@ public class OrderDetailVO {
     private String couponsNumber = "";
     private String companyIcon = "";
     private String logisticsNumber = "";
+    // 优惠信息
+    private String couponMessage = "";
 
     /**
      * description:  充值面额
@@ -36,7 +39,7 @@ public class OrderDetailVO {
     private String rechargeMoney = "";
 
 
-    public static OrderDetailVO convert(Orders order) {
+    public static OrderDetailVO convert(Orders order, UserCoupon userCoupon) {
         OrderDetailVO vo = new OrderDetailVO();
         vo.setCompany(order.getSupplierName());
 
@@ -46,7 +49,7 @@ public class OrderDetailVO {
 
         if (order.getOrderItems().get(0).getGoods().getGoodsType().getReality() == 1) {
             vo.setOrderType("3");
-        }else if(GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode().equals(order.getOrderItems().get(0).getGoods().getGoodsType().getCode())){
+        } else if (GoodsType.GoodsTypeEnum.MOBILE_RECHARGE.getCode().equals(order.getOrderItems().get(0).getGoods().getGoodsType().getCode())) {
             vo.setOrderType("1");
         } else {
             vo.setOrderType("2");
@@ -70,11 +73,19 @@ public class OrderDetailVO {
         vo.setOrderId(order.getId() + "");
         int payMethond = order.getPayMethond();
         Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(payMethond);
-        if(byCode != null){
+        if (byCode != null) {
             vo.setPayMethod(byCode.getDesc());
-        }else{
+        } else {
             vo.setPayMethod("余额支付");
+
         }
+
+        if (userCoupon != null) {
+            vo.setCouponMessage("免单券抵扣￥" + orderItems.get(0).getGoods().getRealPrice());
+        } else {
+            vo.setCouponMessage("无优惠");
+        }
+
         vo.setPayMoney(order.getPayMoney() + "");
         vo.setCreateOrderDate(DateUtil.formatDate(order.getCreateTime(), DateUtil.FormatType.GBK_MINUTE));
         List<OrderItems> itemList = order.getOrderItems();
@@ -82,14 +93,13 @@ public class OrderDetailVO {
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setGoodsName(item.getName());
             goodsInfo.setImgUrl(item.getImage());
-            goodsInfo.setCount(item.getCount()+"");
+            goodsInfo.setCount(item.getCount() + "");
             return goodsInfo;
         }).collect(Collectors.toList());
 
         vo.setGoodsInfoList(goodsInfos);
         return vo;
     }
-
 
 
     public String getRechargeMoney() {
@@ -241,5 +251,13 @@ public class OrderDetailVO {
 
     public void setCreateOrderDate(String createOrderDate) {
         this.createOrderDate = createOrderDate;
+    }
+
+    public String getCouponMessage() {
+        return couponMessage;
+    }
+
+    public void setCouponMessage(String couponMessage) {
+        this.couponMessage = couponMessage;
     }
 }

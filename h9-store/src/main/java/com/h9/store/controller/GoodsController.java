@@ -31,7 +31,7 @@ public class GoodsController {
     public Result goodsList(@RequestParam(defaultValue = "o_all") String type,
                             @RequestParam(defaultValue = "1") Integer page,
                             @RequestParam(defaultValue = "10") Integer limit) {
-        return goodService.goodsList(type,page,limit);
+        return goodService.goodsList(type, page, limit);
     }
 
     /**
@@ -39,21 +39,24 @@ public class GoodsController {
      */
     @Secured
     @GetMapping("/goods/{id}")
-    public Result goodsDetail(@PathVariable Long id,@SessionAttribute("curUserId") Long userId){
-        return goodService.goodsDetail(id,userId);
+    public Result goodsDetail(@PathVariable Long id, @SessionAttribute("curUserId") Long userId) {
+        return goodService.goodsDetail(id, userId);
     }
 
 
     /**
      * description: 兑换商品
-     *     WX(2, "wx"), WXJS(3, "wxjs")
-     *     @see com.h9.common.db.entity.order.Orders.PayMethodEnum
+     * WX(2, "wx"), WXJS(3, "wxjs")
+     *
+     * @see com.h9.common.db.entity.order.Orders.PayMethodEnum
      */
     @Secured
     @PostMapping("/goods/convert")
-    public Result convertGoods(@Valid@RequestBody ConvertGoodsDTO convertGoodsDTO, @SessionAttribute("curUserId") Long userId) throws ServiceException {
-            return goodService.convertGoods(convertGoodsDTO,userId);
+    public Result convertGoods(@Valid @RequestBody ConvertGoodsDTO convertGoodsDTO
+            , @SessionAttribute("curUserId") Long userId) {
+        return goodService.convertGoods(convertGoodsDTO, userId);
     }
+
 
 
 }

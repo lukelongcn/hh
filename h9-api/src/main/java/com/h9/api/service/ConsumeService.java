@@ -505,7 +505,7 @@ public class ConsumeService {
 //            if (result.getData().toString().contains("stat=s")) {
 //                //转账成功
 //                commonService.setBalance(userId, canWithdrawMoney.negate(), 1L, withdrawalsRecord.getId(), "", "提现");
-//                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.FINISH.getCode());
+//                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.TIMEOUT.getCode());
 //            } else {
 //                //转账尚未到用户卡上
 //                withdrawalsRecord.setStatus(WithdrawalsRecord.statusEnum.BANK_HANDLER.getCode());

@@ -4,9 +4,11 @@ import com.h9.api.model.vo.OrderDetailVO;
 import com.h9.api.model.vo.OrderListVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.PayInfoRepository;
+import com.h9.common.db.repo.UserCouponsRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +34,9 @@ public class OrderService {
     private UserService userService;
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private UserCouponsRepository userCouponsRepository;
 
     public Orders initOrder(String nickName, BigDecimal money, String tel, String type, String supplierName) {
         Orders order = new Orders();
@@ -71,7 +76,8 @@ public class OrderService {
         }
         if (orders == null) return Result.fail("订单不存在");
 
-        OrderDetailVO vo = OrderDetailVO.convert(orders);
+        UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
+        OrderDetailVO vo = OrderDetailVO.convert(orders,userCoupon);
         return Result.success(vo);
     }
 

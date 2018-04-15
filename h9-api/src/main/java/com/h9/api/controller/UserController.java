@@ -234,4 +234,5 @@ public class UserController {
 //        return userService.qrRecord(userId,page,limit);
 //    }
 
+
 }

@@ -81,7 +81,7 @@ public class Orders extends BaseEntity {
      * description:
      * @see statusEnum
      */
-    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT '订单状态,1:待发货,2:已发货,3:已完成'")
+    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT ''")
     private Integer status = 1;
 
     @ManyToOne
@@ -125,9 +125,21 @@ public class Orders extends BaseEntity {
     @Column(name = "city",columnDefinition = "varchar(50) default '' COMMENT ''")
     private String city;
 
-
     @Column(name="pay_info_id")
     private Long payInfoId;
+
+    @Column(name = "orders_lottery_id",columnDefinition = "bigint COMMENT '大富贵Id'")
+    private Long ordersLotteryId;
+
+
+
+    public Long getOrdersLotteryId() {
+        return ordersLotteryId;
+    }
+
+    public void setOrdersLotteryId(Long ordersLotteryId) {
+        this.ordersLotteryId = ordersLotteryId;
+    }
 
     public Long getPayInfoId() {
         return payInfoId;
@@ -175,6 +187,7 @@ public class Orders extends BaseEntity {
         BALANCE_PAY(1, "余额支付"),
         VBPAY(2, "vb支付"),
         WX_PAY(3,"微信支付");
+//        COUPON_PAY(4,"优惠券支付");
 
         private int code;
         private String desc;
@@ -487,4 +500,6 @@ public class Orders extends BaseEntity {
             return null;
         }
     }
+
+
 }
