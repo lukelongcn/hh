@@ -6,16 +6,17 @@ import com.h9.api.model.vo.UserBigRichRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.repo.OrdersLotteryActivityRepository;
-import com.h9.common.db.repo.OrdersRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.db.repo.UserRepository;
+import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,8 @@ public class BigRichService {
     private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
     @Resource
     private OrdersRepository ordersRepository;
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
     public Result getRecord(long userId, Integer page, Integer limit) {
         BigRichVO bigRichVO = new BigRichVO();
@@ -101,6 +104,9 @@ public class BigRichService {
 
 
     public Result getUserRecord(long userId, Integer page, Integer limit) {
+
+        PageRequest pageRequest = ordersLotteryRelationRep.pageRequest(page, limit,new Sort(Sort.Direction.DESC,"id"));
+//        Page<OrdersLotteryRelation> pageRe = ordersLotteryRelationRep.findByOrdersLotteryUserId(userId, pageRequest);
         PageResult<Orders> pageResult = ordersRepository.findByUserId(userId, page, limit);
         if (pageResult == null) {
             return Result.fail("暂无记录");

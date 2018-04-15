@@ -1,5 +1,7 @@
 package com.h9.common.db.entity.bigrich;
 
+import com.h9.common.base.BaseEntity;
+import com.h9.common.base.BaseRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrdersLotteryRelation {
+public class OrdersLotteryRelation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
