@@ -6,6 +6,7 @@ import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.utils.MoneyUtils;
 import io.swagger.annotations.ApiModelProperty;
+import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
@@ -23,36 +24,36 @@ public class OrderItemVO {
     @ApiModelProperty(value = "订单编号")
     private String no;
 
-    @ApiModelProperty(value ="收货人姓名")
+    @ApiModelProperty(value = "收货人姓名")
     private String userName;
 
-    @ApiModelProperty(value ="收货人号码")
+    @ApiModelProperty(value = "收货人号码")
     private String userPhone;
 
-    @ApiModelProperty(value ="用户收货地址")
+    @ApiModelProperty(value = "用户收货地址")
     private String userAddres;
 
-    @ApiModelProperty(value ="订单状态")
+    @ApiModelProperty(value = "订单状态")
     private Integer status;
 
-    @ApiModelProperty(value ="订单状态描述")
+    @ApiModelProperty(value = "订单状态描述")
     private String statusDesc;
 
-    @ApiModelProperty(value ="用户id")
+    @ApiModelProperty(value = "用户id")
     private Long userId;
-    
-    @ApiModelProperty(value ="商品")
-    private String goods;
-    
 
-    @ApiModelProperty(value ="快递公司名")
+    @ApiModelProperty(value = "商品")
+    private String goods;
+
+
+    @ApiModelProperty(value = "快递公司名")
     private String expressName;
 
     @ApiModelProperty(value = "商品数量")
     private Long count;
 
     @ApiModelProperty(value = "创建时间")
-    private Date createTime ;
+    private Date createTime;
 
     @ApiModelProperty(value = "微信支付金额")
     private String payMoney4wx = "0.00";
@@ -63,13 +64,17 @@ public class OrderItemVO {
     @ApiModelProperty(value = "能否退款")
     private boolean canRefund = false;
 
-
     @SuppressWarnings("Duplicates")
-    public static OrderItemVO toOrderItemVO(Orders orders){
+    public static OrderItemVO toOrderItemVO(Orders orders) {
+         Logger logger = Logger.getLogger(OrderItemVO.class);
+
         OrderItemVO orderItemVO = new OrderItemVO();
-        BeanUtils.copyProperties(orders,orderItemVO);
+        BeanUtils.copyProperties(orders, orderItemVO);
         orderItemVO.setUserId(orders.getUser().getId());
+        long start = new Date().getTime();
         List<OrderItems> orderItems = orders.getOrderItems();
+        long end = new Date().getTime();
+        logger.info("订单项时间 "+(end-start));
         String collect = orderItems.stream()
                 .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
                 .collect(Collectors.joining(","));
@@ -82,12 +87,12 @@ public class OrderItemVO {
         long sum = orderItems.stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderItemVO.setCount(sum);
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
-        orderItemVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
+        orderItemVO.setStatusDesc(statusEnum == null ? null : statusEnum.getDesc());
         BigDecimal payMoney = orders.getPayMoney();
         int payMethond = orders.getPayMethond();
-        if(payMethond == Orders.PayMethodEnum.WX_PAY.getCode()){
+        if (payMethond == Orders.PayMethodEnum.WX_PAY.getCode()) {
             orderItemVO.setPayMoney4wx(MoneyUtils.formatMoney(payMoney));
-        }else{
+        } else {
             orderItemVO.setPayMoney4balance(MoneyUtils.formatMoney(payMoney));
         }
 
@@ -103,7 +108,7 @@ public class OrderItemVO {
         });
 
         int status = orders.getStatus();
-        if(status == Orders.statusEnum.WAIT_SEND.getCode()  ){
+        if (status == Orders.statusEnum.WAIT_SEND.getCode()) {
             orderItemVO.setCanRefund(!find);
         }
         return orderItemVO;
