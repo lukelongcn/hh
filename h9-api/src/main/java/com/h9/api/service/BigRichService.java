@@ -5,25 +5,33 @@ import com.h9.api.model.vo.BigRichVO;
 import com.h9.api.model.vo.UserBigRichRecordVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
+import com.h9.common.db.entity.order.Goods;
+import com.h9.common.db.entity.order.OrderItems;
 import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.repo.OrdersLotteryActivityRepository;
-import com.h9.common.db.repo.OrdersRepository;
-import com.h9.common.db.repo.UserAccountRepository;
-import com.h9.common.db.repo.UserRepository;
+import com.h9.common.db.repo.*;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.h9.common.db.entity.bigrich.OrdersLotteryActivity.statusEnum.ENABLE;
 
 /**
  * <p>Title:h9-parent</p>
@@ -43,6 +51,8 @@ public class BigRichService {
     private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
     @Resource
     private OrdersRepository ordersRepository;
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
     public Result getRecord(long userId, Integer page, Integer limit) {
         BigRichVO bigRichVO = new BigRichVO();
@@ -55,7 +65,19 @@ public class BigRichService {
         }
         bigRichVO.setBigRichMoney(MoneyUtils.formatMoney(userAccount.getBigRichMoney()));
 
-        bigRichVO.setLotteryChance(user.getLotteryChance());
+        List<Orders> ordersList = ordersRepository.findByUserAndOrdersLotteryId(userId);
+
+        List<Long> collect = ordersList.stream()
+                .map(orders -> orders.getOrdersLotteryId())
+                .distinct()
+                .filter(id -> {
+                    OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOne(id);
+                    int status = ordersLotteryActivity.getStatus();
+                    return status == ENABLE.getCode();
+                })
+                .collect(Collectors.toList());
+
+        bigRichVO.setLotteryChance(collect.size());
 
         return Result.success(bigRichVO);
     }
@@ -69,22 +91,27 @@ public class BigRichService {
             return bigRichRecordVO;
         }
 
-        User user = userRepository.findOne(e.getWinnerUserId());
-        if (user == null || e.getMoney() == null) {
-            return bigRichRecordVO;
+        if (e.getWinnerUserId() == null) {
+            bigRichRecordVO.setUserName("");
+            bigRichRecordVO.setLotteryMoney("199.00");
+        } else {
+            User user = userRepository.findOne(e.getWinnerUserId());
+            bigRichRecordVO.setUserName(user.getNickName());
+            bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
         }
-        // 如果开奖时间未到不显示
-        if (e.getStartLotteryTime().after(new Date())){
-            return bigRichRecordVO;
-        }
-        bigRichRecordVO.setUserName(user.getNickName());
-        bigRichRecordVO.setLotteryMoney(MoneyUtils.formatMoney(e.getMoney()));
-        bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.MINUTE));
+
+
+        bigRichRecordVO.setStartLotteryTime(DateUtil.formatDate(e.getStartLotteryTime(), DateUtil.FormatType.DOT_MINUTE));
+        bigRichRecordVO.setId(e.getId());
+
         return bigRichRecordVO;
     }
 
 
     public Result getUserRecord(long userId, Integer page, Integer limit) {
+
+        PageRequest pageRequest = ordersLotteryRelationRep.pageRequest(page, limit, new Sort(Sort.Direction.DESC, "id"));
+//        Page<OrdersLotteryRelation> pageRe = ordersLotteryRelationRep.findByOrdersLotteryUserId(userId, pageRequest);
         PageResult<Orders> pageResult = ordersRepository.findByUserId(userId, page, limit);
         if (pageResult == null) {
             return Result.fail("暂无记录");
@@ -97,7 +124,7 @@ public class BigRichService {
     public UserBigRichRecordVO activityToUserRecord(Orders e) {
         UserBigRichRecordVO userBigRichRecordVO = new UserBigRichRecordVO();
 
-        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId(),new Date());
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findOneById(e.getOrdersLotteryId());
         if (ordersLotteryActivity == null) {
             return userBigRichRecordVO;
         }
@@ -125,38 +152,78 @@ public class BigRichService {
         // 获得方式
         userBigRichRecordVO.setWay("兑换商品");
         // 金额
-        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2, BigDecimal.ROUND_DOWN);
-        userBigRichRecordVO.setMoney(bigDecimal);
+//        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2, BigDecimal.ROUND_DOWN);
+        userBigRichRecordVO.setMoney(MoneyUtils.formatMoney(ordersLotteryActivity.getMoney()));
         return userBigRichRecordVO;
     }
 
     private Logger logger = Logger.getLogger(this.getClass());
+
+    public Result orderBigRich(Long orderId, long userId) {
+
+        Map<Object, Object> mapVO = new HashMap<>();
+
+        Orders order = ordersRepository.findOne(orderId);
+        if(order != null){
+            return Result.fail("订单不存在");
+        }
+
+        Long ordersLotteryId = order.getOrdersLotteryId();
+
+        if(ordersLotteryId != null){
+            mapVO.put("activityName", "1号大富贵");
+            mapVO.put("lotteryChance", "获得1次抽奖机会");
+        }
+        BigDecimal payMoney = order.getPayMoney();
+        List<OrderItems> orderItems = order.getOrderItems();
+        if (CollectionUtils.isNotEmpty(orderItems)) {
+            Goods goods = orderItems.get(0).getGoods();
+            mapVO.put("goodsName", goods.getName() + "*" + orderItems.get(0).getCount());
+        }
+        mapVO.put("price", MoneyUtils.formatMoney(payMoney));
+
+        return Result.success(mapVO);
+    }
+
     /**
      * 参与大富贵活动
      *
      * @param orders 参与的 订单
      * @return
      */
-    @SuppressWarnings("Duplicates")
-    public Orders joinBigRich(Orders orders) {
-        int orderFrom = orders.getOrderFrom();
-        if(orderFrom == 2){
-            return orders;
-        }
-        User user = userRepository.findOne(orders.getUser().getId());
-        Date createTime = orders.getCreateTime();
-        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        if (lotteryTime != null) {
-            orders.setOrdersLotteryId(lotteryTime.getId());
-            // 用户参与机会+1
-            user.setLotteryChance(user.getLotteryChance()+1);
-            // 活动参与人数+1
-            lotteryTime.setJoinCount(lotteryTime.getJoinCount()+1);
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
-            ordersRepository.saveAndFlush(orders);
-            userRepository.save(user);
-            ordersLotteryActivityRepository.save(lotteryTime);
-        }
-        return orders;
-    }
+//    @SuppressWarnings("Duplicates")
+//    public boolean joinBigRich(Orders orders) {
+//        int orderFrom = orders.getOrderFrom();
+//        if (orderFrom == 2) {
+//            return false;
+//        }
+//        Date createTime = orders.getCreateTime();
+//        User user = userRepository.findOne(orders.getUser().getId());
+//        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+//        if (lotteryTime != null) {
+//            orders.setOrdersLotteryId(lotteryTime.getId());
+//            Map<Long, Integer> map = user.getLotteryChance();
+//            boolean containsKey = map.containsKey(lotteryTime.getId());
+//            if (containsKey) {
+//                Integer count = map.get(lotteryTime.getId());
+//                count++;
+//                map.put(lotteryTime.getId(), count);
+//            }else{
+//                map.put(lotteryTime.getId(), 1);
+//            }
+//            user.setLotteryChance(map);
+////            user.setLotteryChance(user.getLotteryChance() + 1);
+//            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
+//            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+//            ordersRepository.saveAndFlush(orders);
+//            userRepository.save(user);
+//            ordersLotteryActivityRepository.save(lotteryTime);
+//            ordersRepository.saveAndFlush(orders);
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+
+
 }

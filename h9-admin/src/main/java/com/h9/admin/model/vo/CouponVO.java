@@ -1,11 +1,11 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.order.Coupon;
+import com.h9.common.db.entity.coupon.Coupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -21,43 +21,67 @@ public class CouponVO {
 
     private String title;
 
-    /**
-     * 状态 1 未生效 0生效中 2已失效
-     * @see Coupon.statusEnum
-     */
-    private int status;
 
-    private String startTime;
+    private String status = "";
 
-    private String endTime;
+    private String startTime = "";
 
-    private String wide;
+    private String endTime = "";
+
+    private String wide = "";
 
     private int leftCount;
 
-    private String goodsName;
+    private String goodsName = "";
 
-    private String couponType;
+    private long goodsId;
 
-    private String createTime;
+    private String couponType = "";
+
+    private String createTime = "";
 
     private int askCount;
 
-    public CouponVO(){
+    private boolean canSend = true;
+
+    private boolean canEdit = true;
+
+    public CouponVO() {
 
     }
-    public CouponVO(Coupon coupon){
+
+    public CouponVO(Coupon coupon, Goods goods) {
 
         this.id = coupon.getId();
         this.title = coupon.getTitle();
-        this.couponType = coupon.getCouponType();
+        this.couponType = "免单劵";
         this.wide = "部分商品";
         this.leftCount = coupon.getLeftCount();
-        this.status = coupon.getStatus();
+
+        Date now = new Date();
+        Date startTime = coupon.getStartTime();
+        Date endTime = coupon.getEndTime();
+        if (startTime.after(now)) {
+            this.status = "未生效";
+        } else if (now.after(endTime)) {
+            this.status = "已失效";
+            this.canSend = false;
+            this.canEdit = false;
+        } else {
+            this.status = "生效中";
+        }
+
+        int sendFlag = coupon.getSendFlag();
+        if (sendFlag == 2) {
+            this.canEdit = false;
+        }
         this.startTime = DateUtil.formatDate(coupon.getStartTime(), DateUtil.FormatType.MINUTE);
         this.endTime = DateUtil.formatDate(coupon.getEndTime(), DateUtil.FormatType.MINUTE);
         this.createTime = DateUtil.formatDate(coupon.getCreateTime(), DateUtil.FormatType.MINUTE);
-        this.goodsName = coupon.getGoodsId().getName();
         this.askCount = coupon.getAskCount();
+        if (goods != null) {
+            this.goodsName = goods.getName();
+            this.goodsId = goods.getId();
+        }
     }
 }

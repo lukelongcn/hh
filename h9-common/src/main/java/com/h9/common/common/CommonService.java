@@ -2,9 +2,11 @@ package com.h9.common.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.account.BalanceFlow;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
+import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.user.UserRecord;
@@ -22,7 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,9 +54,9 @@ public class CommonService {
 
     @Transactional
     public Result setBalance(Long userId, BigDecimal money, Long typeId, Long orderId, String orderNo, String remarks) {
-        this.logger.infov("userId:{0}",userId);
+        this.logger.infov("userId:{0}", userId);
         UserAccount userAccount = userAccountRepository.findByUserIdLock(userId);
-        this.logger.infov("userAccount:{0}",JSONObject.toJSON(userAccount));
+        this.logger.infov("userAccount:{0}", JSONObject.toJSON(userAccount));
         BigDecimal balance = userAccount.getBalance();
         BigDecimal newbalance = balance.add(money);
 
@@ -76,7 +80,6 @@ public class CommonService {
         balanceFlowRepository.save(balanceFlow);
         return Result.success();
     }
-
 
 
     /****
@@ -147,7 +150,7 @@ public class CommonService {
                     userRecord.setStreetNumber(data.getString("street_number"));
                     userRecord.setAddress(detailAddress);
 
-                    if(user != null){
+                    if (user != null) {
                         user.setLongitude(longitude);
                         user.setLatitude(latitude);
                         user.setCity(data.getString("city"));
@@ -180,7 +183,7 @@ public class CommonService {
                 AddressResult addressResult = new AddressResult();
                 JSONObject addressComponent = result.getJSONObject("addressComponent");
                 AddressResult addressResultFromNet = JSONObject.parseObject(addressComponent.toJSONString(), AddressResult.class);
-                BeanUtils.copyProperties(addressResultFromNet,addressResult);
+                BeanUtils.copyProperties(addressResultFromNet, addressResult);
                 addressResult.setDetailAddress(result.getString("formatted_address"));
                 return addressResult;
             } else {
@@ -194,7 +197,7 @@ public class CommonService {
     }
 
 
-    public static class AddressResult{
+    public static class AddressResult {
         private String province;
         private String city;
         private String district;
@@ -256,7 +259,7 @@ public class CommonService {
     /**
      * 根据内容匹配图片
      */
-    public List<String> image(String content){
+    public List<String> image(String content) {
         List<String> imagesList = new ArrayList<>();
         String img = "";
         String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
@@ -273,4 +276,34 @@ public class CommonService {
         }
         return imagesList;
     }
+
+    @Resource
+    private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
+    @Resource
+    private OrdersRepository ordersRepository;
+
+    public OrdersLotteryActivity joinBigRich(Orders orders) {
+        int orderFrom = orders.getOrderFrom();
+        if (orderFrom == 2) {
+            return null;
+        }
+        Date createTime = orders.getCreateTime();
+        User user = userRepository.findOne(orders.getUser().getId());
+        OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(createTime);
+        if (ordersLotteryActivity != null) {
+            orders.setOrdersLotteryId(ordersLotteryActivity.getId());
+
+            ordersLotteryActivity.setJoinCount(ordersLotteryActivity.getJoinCount() + 1);
+            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + ordersLotteryActivity.getId());
+            ordersRepository.saveAndFlush(orders);
+            userRepository.save(user);
+            ordersLotteryActivityRepository.save(ordersLotteryActivity);
+            ordersRepository.saveAndFlush(orders);
+            return ordersLotteryActivity;
+        } else {
+            return null;
+        }
+    }
+
+
 }

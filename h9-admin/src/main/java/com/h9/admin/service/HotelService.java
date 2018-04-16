@@ -334,7 +334,7 @@ public class HotelService {
                 return Result.fail("预支付记录不存在");
             }
             PayInfo payInfo = payInfoList.get(0);
-            Result result = payProvider.refundOrder(payInfo.getId(), payMoney4Wechat);
+            Result result = payProvider.refundOrder(payInfo.getId(), payMoney4Wechat,3);
             if (result.getCode() == 1) {
                 return result;
             }

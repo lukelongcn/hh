@@ -13,7 +13,7 @@ import java.util.List;
 public interface GoodsTopicRelationRep extends BaseRepository<GoodsTopicRelation> {
 
 
-    @Query("select o from GoodsTopicRelation o where o.goodsTopicModuleId = ?1 order by o.sort")
+    @Query("select o from GoodsTopicRelation o where o.goodsTopicModuleId = ?1 and o.del_flag = 0 order by o.sort")
     List<GoodsTopicRelation> findByGoodsTopicModuleId(Long topicModuleId);
 
     List<GoodsTopicRelation> findByGoodsId(Long goodsId);

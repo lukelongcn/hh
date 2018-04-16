@@ -1,6 +1,6 @@
 package com.h9.admin.model.vo;
 
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
@@ -10,10 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Ln on 2018/3/28.
@@ -58,7 +55,7 @@ public class BigRichListVO {
     private int statusInt;
 
     @ApiModelProperty("待开始,进行中,已结束 ")
-    private String activeStatus = "已结束";
+    private String activeStatus = "";
 
     @ApiModelProperty("能否能禁用 true 为可以，false 为不可以")
     private Boolean canBan = false;
@@ -88,39 +85,46 @@ public class BigRichListVO {
         int st = ordersLotteryActivity.getStatus();
         OrdersLotteryActivity.statusEnum statusEnum = OrdersLotteryActivity.statusEnum.findByCode(st);
         if (statusEnum != null) {
-            this.setStatus(statusEnum.getDesc());
+
+            if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
+                statusInt = 1;
+                this.setStatus("启用");
+            } else {
+                this.setStatus("禁用");
+                statusInt = 0;
+            }
         }
 
-        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.FINISH.getCode()) {
-            canBan = false;
-            canEdit = false;
-        } else if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.BAN.getCode()) {
-            canBan = true;
-            canEdit = true;
-        } else { //启用
-            this.canAddUser = true;
-            canBan = false;
-            canEdit = false;
-        }
-
+        //编辑按纽
         Date now = new Date();
-        if (startTime.getTime() < now.getTime() && endTime.getTime() > now.getTime()) {
-            activeStatus = "进行中";
-            this.canAddUser = this.canAddUser && this.canAddUser;
-        } else if (startTime.getTime() > now.getTime()) {
-            activeStatus = "未开始";
-        } else if (endTime.getTime() < now.getTime()) {
-            activeStatus = "已结束";
-            this.canAddUser = false;
-            this.canBan = false;
-            this.canEdit = false;
-        }
-        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
-            this.statusInt = 1;
-        } else {
-            this.statusInt = 0;
+
+        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.BAN.getCode()) {
+            canEdit = true;
         }
 
+        //添加用户按纽
+        if (statusEnum.getCode() == OrdersLotteryActivity.statusEnum.ENABLE.getCode()) {
+            if (now.after(startTime) && startLotteryTime.after(now)) {
+                canAddUser = true;
+            }
+        }
+
+        // 启用、禁用按纽
+        canBan = true;
         this.money = MoneyUtils.formatMoney(ordersLotteryActivity.getMoney());
+
+
+        if (ordersLotteryActivity.getId().intValue() == 9) {
+            System.out.println();
+        }
+
+        if (now.after(startLotteryTime)) {
+            activeStatus = "已结束";
+        } else if (now.after(startTime) && startLotteryTime.after(now)) {
+            activeStatus = "进行中";
+        } else {
+            activeStatus = "未开始";
+        }
+
     }
 }

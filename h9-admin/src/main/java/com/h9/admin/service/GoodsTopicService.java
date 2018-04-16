@@ -1,5 +1,6 @@
 package com.h9.admin.service;
 
+import com.h9.admin.model.dto.GoodsTopicTypeVO;
 import com.h9.admin.model.dto.topic.EditGoodsTopicModuleDTO;
 import com.h9.admin.model.dto.topic.EditGoodsTopicTypeDTO;
 import com.h9.admin.model.vo.GoodsTopicModuleVO;
@@ -18,6 +19,7 @@ import com.h9.common.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -43,6 +45,8 @@ public class GoodsTopicService {
     private GoodsTopicModuleRep goodsTopicModuleRep;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Value("${path.app.wechat_host}")
+    private String host;
 
     /**
      * 专题列表
@@ -56,14 +60,27 @@ public class GoodsTopicService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = goodsTopicTypeRep.pageRequest(pageNumber, pageSize, sort);
         Page<GoodsTopicType> page = goodsTopicTypeRep.findAll(pageRequest);
-        PageResult<GoodsTopicType> result = new PageResult<>(page);
+        Page<GoodsTopicType> GoodsTopicTypePage = page.map(goodsTopicType -> {
+            goodsTopicType.setUrl(host + "/h9-weixin/#/active/project?id=" + goodsTopicType.getId());
+            return goodsTopicType;
+        });
+        PageResult<GoodsTopicType> result = new PageResult<>(GoodsTopicTypePage);
 
         return Result.success(result);
     }
 
     public Result editGoodsTopicType(EditGoodsTopicTypeDTO editGoodsTopicTypeDTO) {
 
-        GoodsTopicType goodsTopicType = new GoodsTopicType();
+        Long id = editGoodsTopicTypeDTO.getId();
+        GoodsTopicType goodsTopicType = null;
+        if (id != null) {
+            goodsTopicType = goodsTopicTypeRep.findOne(id);
+        } else {
+            goodsTopicType = new GoodsTopicType();
+        }
+        if (goodsTopicType == null) {
+            return Result.fail("专题类型不存在");
+        }
         BeanUtils.copyProperties(editGoodsTopicTypeDTO, goodsTopicType);
         goodsTopicTypeRep.save(goodsTopicType);
         return Result.success();
@@ -84,10 +101,13 @@ public class GoodsTopicService {
     @Transactional
     public Result editGoodsTopicModule(EditGoodsTopicModuleDTO editGoodsTopicModuleDTO) {
         Map<Long, Integer> ids = editGoodsTopicModuleDTO.getIds();
+        if (ids == null) {
+            return Result.fail("请上传商品数据");
+        }
         Long topicModuleId = editGoodsTopicModuleDTO.getTopicModuleId();
 
         GoodsTopicModule goodsTopicModule = goodsTopicModuleRep.findOne(topicModuleId);
-        if(goodsTopicModule == null) return Result.fail("模块不存在");
+        if (goodsTopicModule == null) return Result.fail("模块不存在");
 
         //把此topic 的商品全部禁用
         Integer ints = goodsTopicRelationRep.updateStatus(topicModuleId);
@@ -100,6 +120,9 @@ public class GoodsTopicService {
             Goods goods = goodsReposiroty.findOne(goodsId);
             if (goods != null) {
                 //新添加的数据
+                if (sort == null) {
+                    sort = 1;
+                }
                 GoodsTopicRelation goodsTopicRelation = new GoodsTopicRelation(null, goodsId, goods.getName(),
                         topicModuleId, sort, 0, goodsTopicType.getId());
                 goodsTopicRelationRep.save(goodsTopicRelation);
@@ -160,17 +183,19 @@ public class GoodsTopicService {
         if (goodsTopicType == null) {
             return Result.fail("专题不存在");
         }
+        module = goodsTopicModuleRep.saveAndFlush(module);
+        Long mId = module.getId();
         ids.forEach((goodsId, sort) -> {
             Goods goods = goodsReposiroty.findOne(goodsId);
 
             if (goods != null) {
                 GoodsTopicRelation relation = new GoodsTopicRelation(null, goodsId, goods.getName(),
-                        editGoodsTopicModuleDTO.getTopicModuleId(), sort, 0, goodsTopicType.getId());
+                        mId, sort, 0, goodsTopicType.getId());
                 goodsTopicRelationRep.save(relation);
             }
 
         });
-        goodsTopicModuleRep.save(module);
+
         return Result.success();
     }
 

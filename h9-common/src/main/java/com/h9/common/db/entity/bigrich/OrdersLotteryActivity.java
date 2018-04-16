@@ -1,4 +1,4 @@
-package com.h9.common.db.entity.lottery;
+package com.h9.common.db.entity.bigrich;
 
 
 import com.h9.common.base.BaseEntity;
@@ -37,6 +37,7 @@ public class OrdersLotteryActivity extends BaseEntity {
 
     /**
      * 状态 1 启用 0禁用 2结束
+     *
      * @see statusEnum
      */
     @Column(name = "status", nullable = false, columnDefinition = "int  COMMENT '状态 1 启用 0禁用 2结束'")
@@ -51,17 +52,15 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "money", columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '金额'")
     private BigDecimal money = new BigDecimal(0);
 
-    @Column(name = "winner_user_id",columnDefinition = "bigint COMMENT '中奖人Id'")
+    @Column(name = "winner_user_id", columnDefinition = "bigint COMMENT '中奖人Id'")
     private Long winnerUserId;
 
 
+    public enum statusEnum {
 
-
-    public enum statusEnum{
-
-        ENABLE(1,"启用"),
-        BAN(0,"禁用"),
-        FINISH(2,"结束");
+        ENABLE(1, "启用"),
+        BAN(0, "禁用"),
+        FINISH(2, "已开奖");
 
         private int code;
         private String desc;
@@ -87,10 +86,10 @@ public class OrdersLotteryActivity extends BaseEntity {
             this.desc = desc;
         }
 
-        public static statusEnum findByCode(int code){
+        public static statusEnum findByCode(int code) {
             statusEnum[] values = values();
-            for(statusEnum enumEl : values){
-                if(enumEl.code == code){
+            for (statusEnum enumEl : values) {
+                if (enumEl.code == code) {
 
                     return enumEl;
                 }

@@ -13,8 +13,8 @@ import java.util.List;
  */
 public interface GoodsTopicModuleRep extends BaseRepository<GoodsTopicModule> {
 
-    @Query("select o from GoodsTopicModule  o where o.delFlag = ?1 and o.goodsTopicTypeId = ?2 ")
-    Page<GoodsTopicModule> findByDelFlagAndGoodsTopicTypeId(Integer delFlag,Long topicTypeId,Pageable pageable);
+    @Query("select o from GoodsTopicModule  o where o.delFlag = ?1 and o.goodsTopicTypeId = ?2 order by o.sort")
+    Page<GoodsTopicModule> findByDelFlagAndGoodsTopicTypeId(Integer delFlag, Long topicTypeId, Pageable pageable);
 
     @Query("select o from GoodsTopicModule  o where o.delFlag = ?1 and o.goodsTopicTypeId = ?2 order by o.sort")
     List<GoodsTopicModule> findByDelFlagAndGoodsTopicTypeId(Integer delFlag, Long topicTypeId);

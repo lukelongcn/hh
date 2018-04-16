@@ -6,7 +6,7 @@ import com.h9.api.service.StickService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
-import com.h9.common.db.entity.user.UserCoupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.repo.UserCouponsRepository;
 import org.jboss.logging.Logger;
 import org.junit.Test;
@@ -53,7 +53,6 @@ public class CommonServiceTest {
     UserCouponsRepository userCouponsRepository;
     @Test
     public void testUserCoupons() {
-        PageResult<UserCoupon> pageResult = userCouponsRepository.findState(1L,1,1,1);
-        System.out.println(pageResult.result2Result(UserCouponVO::new));
+
     }
 }

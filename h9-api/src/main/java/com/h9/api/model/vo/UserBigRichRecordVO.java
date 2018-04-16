@@ -18,5 +18,5 @@ public class UserBigRichRecordVO {
     private String number;
     private String way;
     private Integer status;
-    private BigDecimal money;
+    private String money;
 }

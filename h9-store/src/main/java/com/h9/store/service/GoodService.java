@@ -7,14 +7,16 @@ import com.h9.common.common.CommonService;
 import com.h9.common.common.ConfigService;
 import com.h9.common.common.ServiceException;
 import com.h9.common.db.bean.RedisBean;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryRelation;
+import com.h9.common.db.entity.coupon.Coupon;
+import com.h9.common.db.entity.coupon.CouponGoodsRelation;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.*;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
-import com.h9.common.db.entity.user.UserCoupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.StorePayDTO;
-import com.h9.common.utils.DateUtil;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
@@ -22,25 +24,25 @@ import com.h9.store.modle.vo.GoodsListVO;
 import com.h9.store.modle.vo.PayResultVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.security.acl.LastOwnerException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.spi.LocaleNameProvider;
+
+import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
+import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.USED;
+import static com.h9.common.db.entity.order.Orders.PayMethodEnum.BALANCE_PAY;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -77,6 +79,14 @@ public class GoodService {
     private OrdersLotteryActivityRepository ordersLotteryActivityRepository;
     @Resource
     private UserCouponsRepository userCouponsRepository;
+    @Resource
+    private CouponGoodsRelationRep couponGoodsRelationRep;
+    @Resource
+    private CouponRespository couponRespository;
+    @Resource
+    private OrdersLotteryActivityRep ordersLotteryActivityRep;
+    @Resource
+    private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -227,14 +237,14 @@ public class GoodService {
                 .build();
         // 订单默认优惠券
         // 取得用户有效优惠券
-        UserCoupon userCoupon = userCouponsRepository.findByUserId(userId,id);
-        if (userCoupon != null) {
-            vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
-            vo.setUserCouponsId(userCoupon.getId());
-            vo.setEndTime(DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE));
-        } else {
-            vo.setUserCoupons("暂无可用");
-        }
+//        UserCoupon userCoupon = userCouponsRepository.findByUserId(userId,id);
+//        if (userCoupon != null) {
+//            vo.setUserCoupons("已选一张，省￥" + goods.getPrice());
+//            vo.setUserCouponsId(userCoupon.getId());
+//            vo.setEndTime(DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.MINUTE));
+//        } else {
+//            vo.setUserCoupons("暂无可用");
+//        }
         return Result.success(vo);
     }
 
@@ -249,31 +259,34 @@ public class GoodService {
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
         if (goods == null) return Result.fail("商品不存在");
-        BigDecimal goodsPrice = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
+        BigDecimal payMoney = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
 
         User user = userRepository.findOne(userId);
         Long addressUserId = address.getUserId();
 
         if (!addressUserId.equals(userId)) return Result.fail("无效的地址");
 
+        Result validateCouponInfo = validateCouponInfo(convertGoodsDTO.getCouponsId(), convertGoodsDTO.getGoodsId());
+        if (!validateCouponInfo.isSuccess()) {
+            return validateCouponInfo;
+        }
 
-        //单独判断下余额是否 足够
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        BigDecimal balance = userAccount.getBalance();
-        if (convertGoodsDTO.getPayMethod() == 1 && balance.compareTo(goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()))) < 0) {
-            return Result.fail("余额不足");
+
+        Result result = validateBalance(userAccount, payMoney, convertGoodsDTO.getPayMethod(), convertGoodsDTO.getCouponsId(), goods);
+        if (!result.isSuccess()) {
+            return result;
         }
 
         String code = goods.getGoodsType().getCode();
 
-        Orders order = orderService.initOrder(goodsPrice, address.getPhone()
+        Orders order = orderService.initOrder(payMoney, address.getPhone()
                 , Orders.orderTypeEnum.MATERIAL_GOODS.getCode() + ""
                 , "徽酒"
                 , user
                 , code
                 , address.getName());
-        // 设置用户优惠券id
-        order.setUserCouponsId(convertGoodsDTO.getUserCouponsId());
+
         order.setAddressId(addressId);
         order.setUserAddres(address.getProvince() + address.getCity() + address.getDistict() + address.getAddress());
         order.setOrderFrom(1);
@@ -282,86 +295,276 @@ public class GoodService {
         int payMethod = convertGoodsDTO.getPayMethod();
         //订单项
         OrderItems orderItems = new OrderItems(goods, count, order);
-        ordersRepository.saveAndFlush(order);
+        order = ordersRepository.saveAndFlush(order);
         orderItems.setOrders(order);
-        orderItemReposiroty.save(orderItems);
+        orderItemReposiroty.saveAndFlush(orderItems);
+
+        return handlerPay(payMethod, order, payMoney, userId, convertGoodsDTO, goods);
+
+    }
+
+    private Result validateBalance(UserAccount userAccount, BigDecimal payMoney, Integer payMethod, Long userCouponId, Goods goods) {
+        BigDecimal balance = userAccount.getBalance();
+
+        if (userCouponId == null) {
+            if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(payMoney) < 0) {
+                return Result.fail("余额不足");
+            }
+        } else {
+            UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
+            int state = userCoupon.getState();
+            if (state == UN_USE.getCode()) {
+                payMoney = payMoney.subtract(goods.getRealPrice());
+                if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(payMoney) < 0) {
+                    return Result.fail("余额不足");
+                }
+            } else if (state == USED.getCode()) {
+                return Result.fail("此优惠劵已使用");
+            } else {
+                return Result.fail("此优惠劵已过期");
+            }
+        }
+        return Result.success();
+    }
+
+
+    /**
+     * 检验优惠劵
+     *
+     * @param couponsId couponsId
+     * @return
+     */
+    public Result validateCouponInfo(Long couponsId, Long goodsId) {
+        if (couponsId == null) {
+            return Result.success();
+        }
+        UserCoupon userCoupon = userCouponsRepository.findOne(couponsId);
+        if (userCoupon == null) {
+            return Result.fail("优惠劵不存在");
+        }
+        if (!userCoupon.getState().equals(UN_USE.getCode())) {
+            return Result.fail("此优惠劵已使用");
+        }
+//        updateCouponStatus(userCoupon);
+        //判断是否在 有效期
+        Coupon coupon = userCoupon.getCoupon();
+        Date startTime = coupon.getStartTime();
+        Date endTime = coupon.getEndTime();
+        Date now = new Date();
+        if (startTime.after(now) || now.after(endTime)) {
+            return Result.fail("此优惠劵暂不能使用");
+        }
+        boolean b = coupon4Goods(userCoupon, goodsId);
+        if (!b) {
+            return Result.fail("优惠劵与商品不对应");
+        }
+        return Result.success();
+    }
+
+//    public void updateCouponStatus(UserCoupon userCoupon) {
+//        Coupon coupon = userCoupon.getCoupon();
+//        int status = coupon.getStatus();
+//
+//        if (coupon.getStartTime().after(new Date()) && new Date().after(coupon.getEndTime())) {
+//            if (status == UN_EFFECT.getCode()) {
+//                coupon.setStatus(EFFECT.getCode());
+//            }
+//        } else if (new Date().after(coupon.getEndTime())) {
+//
+//            if (status == UN_EFFECT.getCode()) {
+//                coupon.setStatus(EFFECT.getCode());
+//            }
+//        }
+//
+//    }
+
+    /**
+     * 处理支付
+     *
+     * @param payMethod
+     * @param order
+     * @param payMoney
+     * @param userId
+     * @param convertGoodsDTO
+     * @param goods
+     * @return
+     */
+    private Result handlerPay(int payMethod, Orders order, BigDecimal payMoney, Long userId, ConvertGoodsDTO convertGoodsDTO, Goods goods) {
+        int count = convertGoodsDTO.getCount();
+        User user = userRepository.findOne(userId);
+        Long couponsId = convertGoodsDTO.getCouponsId();
+        UserCoupon userCoupon = null;
+        if (couponsId != null) {
+            userCoupon = userCouponsRepository.findOne(couponsId);
+        }
+        payMoney = useCoupon(userCoupon, goods, payMoney, count, order, payMethod);
 
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
-            return getPayInfo(order.getId(), goodsPrice, userId, convertGoodsDTO.getPayPlatform(), count, goods);
+            if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+                ordersRepository.save(order);
+                return Result.success(showInfo);
+            } else {
+                return getPayInfo(order.getId(), payMoney, user, convertGoodsDTO.getPayPlatform(), count, goods);
+            }
         } else {
             //余额支付
             Result result = changeStock(goods, count);
             if (result.getCode() == 1) {
                 return result;
             }
-            Result balancePayResult = balancePay(order, userId, goods, goodsPrice, count);
+            Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                joinBigRich(order);
-                Map mapVo = (Map) balancePayResult.getData();
-                // 大富贵参与机会获得
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+                ordersRepository.save(order);
+
+                return Result.success(showInfo);
+
+            } else {
+                if (userCoupon != null) {
+                    userCoupon.setState(UN_USE.getCode());
+                    userCoupon.setOrderId(null);
+                }
+                userCouponsRepository.save(userCoupon);
+            }
+
+            return balancePayResult;
+        }
+    }
+
+    private Map<Object, Object> showJoinIn(Orders order, User user, Goods goods) {
+        Map<Object, Object> mapVo = new HashMap<>();
+        OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
+        if (ordersLotteryActivity != null) {
+            //判断是否以前参与过此次活动
+            List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
+
+            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
+                    order.getId(), ordersLotteryActivity.getId(), 0, null);
+            ordersLotteryRelationRep.save(ordersLotteryRelation);
+
+            if (CollectionUtils.isEmpty(ordersList)) {
+                logger.info("真实参与记录 " + ordersList.size());
+
                 mapVo.put("activityName", "1号大富贵");
                 mapVo.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
+
             }
-            return balancePayResult;
+
         }
-
-
+        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
+        mapVo.put("goodsName", goods.getName());
+        mapVo.put("resumePaywxjs", false);
+        return mapVo;
     }
 
     /**
-     * 参与大富贵活动
+     * 使用优惠劵
      *
-     * @param orders 参与的 订单
+     * @param userCoupon
+     * @param goods
+     * @param payMoney
+     * @param count
+     * @param order
      * @return
      */
-    @SuppressWarnings("Duplicates")
-    public Orders joinBigRich(Orders orders) {
-        int orderFrom = orders.getOrderFrom();
-        if (orderFrom == 2) {
-            return orders;
+    private BigDecimal useCoupon(UserCoupon userCoupon, Goods goods, BigDecimal payMoney
+            , int count, Orders order, int payMethod) {
+        if (userCoupon != null) {
+
+
+            BigDecimal goodsPrice = goods.getRealPrice();
+            if (count >= 1) {
+                payMoney = payMoney.subtract(goodsPrice);
+            }
+
+            if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
+                //微信支付
+            } else {
+                //余额支付
+                userCoupon.setState(USED.getCode());
+            }
+            userCoupon.setOrderId(order.getId());
+            userCoupon.setOrderId(order.getId());
+            userCoupon.setGoodsName(goods.getName());
+            order.setPayMoney(payMoney);
+            ordersRepository.saveAndFlush(order);
+            userCouponsRepository.save(userCoupon);
+            return payMoney;
         }
-        Date createTime = orders.getCreateTime();
-        User user = userRepository.findOne(orders.getUser().getId());
-        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
-        if (lotteryTime != null) {
-            orders.setOrdersLotteryId(lotteryTime.getId());
-            user.setLotteryChance(user.getLotteryChance()+1);
-            lotteryTime.setJoinCount(lotteryTime.getJoinCount()+1);
-            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
-            ordersRepository.saveAndFlush(orders);
-            userRepository.save(user);
-            ordersLotteryActivityRepository.save(lotteryTime);
-        }
-        ordersRepository.saveAndFlush(orders);
-        return orders;
+        return payMoney;
     }
 
-    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal goodsPrice, Integer count) {
+    /**
+     * 检优惠劵与商品是否对应
+     *
+     * @param coupon coupon
+     * @param id     id
+     * @return result
+     */
+    private boolean coupon4Goods(UserCoupon coupon, Long id) {
+
+        List<CouponGoodsRelation> couponGoodsRelationList = couponGoodsRelationRep.findByCouponId(coupon.getCoupon().getId(), 0);
+
+        if (CollectionUtils.isNotEmpty(couponGoodsRelationList)) {
+
+            CouponGoodsRelation couponGoodsRelation = couponGoodsRelationList.get(0);
+            Long goodsId = couponGoodsRelation.getGoodsId();
+            return id.equals(goodsId);
+        }
+        return false;
+    }
+
+    /**
+     * //     * 参与大富贵活动
+     * //     *
+     * //     * @param orders 参与的 订单
+     * //     * @return
+     * //
+     */
+//    @SuppressWarnings("Duplicates")
+//    public boolean joinBigRich(Orders orders) {
+//        int orderFrom = orders.getOrderFrom();
+//        if (orderFrom == 2) {
+//            return false;
+//        }
+//        Date createTime = orders.getCreateTime();
+//        User user = userRepository.findOne(orders.getUser().getId());
+//        OrdersLotteryActivity lotteryTime = ordersLotteryActivityRepository.findAllTime(createTime);
+//        if (lotteryTime != null) {
+//            orders.setOrdersLotteryId(lotteryTime.getId());
+//            Map<Long, Integer> map = user.getLotteryChance();
+//
+//            lotteryTime.setJoinCount(lotteryTime.getJoinCount() + 1);
+//            logger.info("订单号 " + orders.getId() + " 参与大富贵活动成功 活动id " + lotteryTime.getId());
+//            ordersRepository.saveAndFlush(orders);
+//            userRepository.save(user);
+//            ordersLotteryActivityRepository.save(lotteryTime);
+//            ordersRepository.saveAndFlush(orders);
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal payMoney, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         // 非优惠券支付 增加余额流水
-        if (order.getUserCouponsId() == null) {
-            Result payResult = commonService.setBalance(userId, goodsPrice.negate(), 12L, order.getId(), "", balanceFlowType);
+        if (payMoney.compareTo(BigDecimal.ZERO) > 0) {
+
+            Result payResult = commonService.setBalance(userId, payMoney.negate(), 12L, order.getId(), "", balanceFlowType);
             if (!payResult.isSuccess()) {
                 throw new ServiceException(payResult);
             }
-        } else {
-            UserCoupon userCoupon = userCouponsRepository.findOne(order.getUserCouponsId());
-            if (userCoupon == null){
-                return Result.fail("优惠券抵扣失败");
-            }
-            userCoupon.setState(UserCoupon.statusEnum.BAN.getCode());
-            userCouponsRepository.save(userCoupon);
-            // 优惠券+余额混合支付
-            commonService.setBalance(userId, goodsPrice.negate().add(userCoupon.getCouponId().getGoodsId().getRealPrice())
-                    , 12L, order.getId(), "", balanceFlowType);
         }
         order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
         order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
         order = ordersRepository.saveAndFlush(order);
         Map<String, String> mapVo = new HashMap<>();
-        mapVo.put("price", MoneyUtils.formatMoney(goodsPrice));
+        mapVo.put("price", MoneyUtils.formatMoney(payMoney));
         mapVo.put("goodsName", goods.getName() + "*" + count);
         return Result.success(mapVo);
     }
@@ -371,9 +574,9 @@ public class GoodService {
     @Resource
     private RedisBean redisBean;
 
-    private Result getPayInfo(Long orderId, BigDecimal money, Long userId, String payPlatform, Integer count, Goods goods) {
+    private Result getPayInfo(Long orderId, BigDecimal money, User user, String payPlatform, Integer count, Goods goods) {
         String url = wxHost + "/h9/api/pay/payInfo";
-        StorePayDTO payDTO = new StorePayDTO(orderId, money, userId, payPlatform);
+        StorePayDTO payDTO = new StorePayDTO(orderId, money, user.getId(), payPlatform);
         try {
             logger.info("access url : " + url);
             Result result = restTemplate.postForObject(url, payDTO, Result.class);
@@ -390,13 +593,32 @@ public class GoodService {
             mapVO.put("price", MoneyUtils.formatMoney(money));
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
+            mapVO.put("resumePaywxjs", true);
             // 大富贵参与机会获得
-            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
-            if (ordersLotteryActivity != null){
-                mapVO.put("activityName", "1号大富贵");
-                mapVO.put("lotteryChance", "获得1次抽奖机会");
-                logger.debug("获得一次抽奖机会");
+//            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
+
+//            if (ordersLotteryActivity != null) {
+//                mapVO.put("activityName", "1号大富贵");
+//                mapVO.put("lotteryChance", "获得1次抽奖机会");
+//                logger.info("获得一次抽奖机会");
+//            }
+
+
+            OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
+            if (ordersLotteryActivity != null) {
+                //判断是否以前参与过此次活动
+                List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
+                if (CollectionUtils.isEmpty(ordersList)) {
+                    logger.info("真实参与记录 " + ordersList.size());
+
+                    mapVO.put("activityName", "1号大富贵");
+                    mapVO.put("lotteryChance", "获得1次抽奖机会");
+                    logger.debug("获得一次抽奖机会");
+
+                }
+
             }
+
 
             return Result.success(mapVO);
         } catch (RestClientException e) {

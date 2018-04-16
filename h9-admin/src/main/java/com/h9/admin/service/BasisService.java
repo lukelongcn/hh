@@ -2,6 +2,7 @@ package com.h9.admin.service;
 
 import com.h9.admin.model.dto.basis.*;
 import com.h9.admin.model.vo.FundsInfo;
+import com.h9.common.common.CommonService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.account.BankType;
@@ -14,6 +15,7 @@ import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.entity.user.User;
 import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.withdrawals.WithdrawalsRecord;
+import com.h9.common.modle.vo.Config;
 import com.h9.common.modle.vo.admin.basis.*;
 import com.h9.admin.model.vo.StatisticsItemVO;
 import com.h9.common.common.ConfigService;
@@ -41,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.h9.common.db.entity.order.Orders.PayMethodEnum.*;
 import static com.h9.common.db.entity.withdrawals.WithdrawalsRecord.statusEnum.FINISH;
@@ -390,11 +393,11 @@ public class BasisService {
         if (startTime != null && endTime != null) {
             startTimeDate = new Date(startTime);
             endTimeDate = new Date(endTime + 1000 * 60 * 60 * 24);
-            withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCountAndDate(FINISH.getCode(),startTimeDate,endTimeDate);
-            payOrderMoneySum = ordersRepository.findPayMoneySumAndDate(startTimeDate,endTimeDate);
-            wxPayMoneySum = ordersRepository.findWXPayMoneySumAndDate(WX_PAY.getCode(),startTimeDate,endTimeDate);
-            PayMoneyBalance = ordersRepository.findWXPayMoneySumAndDate(BALANCE_PAY.getCode(),startTimeDate,endTimeDate);
-            rechargeMoneySum = rechargeRecordRepository.findRecharMoneySumAndDate(startTimeDate,endTimeDate);
+            withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCountAndDate(FINISH.getCode(), startTimeDate, endTimeDate);
+            payOrderMoneySum = ordersRepository.findPayMoneySumAndDate(startTimeDate, endTimeDate);
+            wxPayMoneySum = ordersRepository.findWXPayMoneySumAndDate(WX_PAY.getCode(), startTimeDate, endTimeDate);
+            PayMoneyBalance = ordersRepository.findWXPayMoneySumAndDate(BALANCE_PAY.getCode(), startTimeDate, endTimeDate);
+            rechargeMoneySum = rechargeRecordRepository.findRecharMoneySumAndDate(startTimeDate, endTimeDate);
         } else {
             withdrawalsCount = withdrawalsRecordRepository.getWithdrawalsCount(FINISH.getCode());
             payOrderMoneySum = ordersRepository.findPayMoneySum();
@@ -412,6 +415,32 @@ public class BasisService {
                 , MoneyUtils.formatMoney(balanceSum));
 
         return Result.success(fundsInfo);
+    }
+
+    @Resource
+    private CommonService commonService;
+
+
+    public Result globalConfig(Integer type, String code) {
+        if (type < 1 || type > 3) {
+            return Result.fail("type 范围在 1-3");
+        }
+        Result result = new Result(0,"");
+        switch (type) {
+            case 1:
+                String value = configService.getStringConfig(code);
+                result.setData(value);
+               break;
+            case 2:
+                Map<String, String> valueMap = configService.getMapConfig(code);
+                result.setData(valueMap);
+                break;
+            default:
+                List<Config> configValue = configService.getMapListConfig(code);
+                result.setData(configValue);
+                break;
+        }
+        return result;
     }
 
 }

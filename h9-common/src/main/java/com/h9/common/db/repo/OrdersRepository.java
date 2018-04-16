@@ -2,13 +2,12 @@ package com.h9.common.db.repo;
 
 import com.h9.common.base.BaseRepository;
 import com.h9.common.base.PageResult;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.modle.dto.transaction.OrderDTO;
 import com.h9.common.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Modifying;
@@ -49,7 +48,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     Page<Orders> findByUser(Long userId, int status, Pageable pageable);
 
     default PageResult<Orders> findByUser(Long userId, int status, int page, int limit) {
-        Page<Orders> byUser = findByUser(userId, status, pageRequest(page, limit));
+        Page<Orders> byUser = findByUser(userId, pageRequest(page, limit));
         return new PageResult(byUser);
     }
 
@@ -64,7 +63,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
             public Predicate toPredicate(Root<Orders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (orderDTO.getNo() != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("no").as(String.class), orderDTO.getNo()));
+                    predicateList.add(criteriaBuilder.equal(root.get("id").as(String.class), orderDTO.getNo()));
                 }
                 if (StringUtils.isNotBlank(orderDTO.getPhone())) {
                     predicateList.add(criteriaBuilder.equal(root.get("userPhone").as(String.class), orderDTO.getPhone()));
@@ -102,16 +101,26 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     @Query("select sum(o.payMoney) from Orders o where o.payMethond =?1 and o.createTime > ?2 and o.createTime < ?3")
     BigDecimal findWXPayMoneySumAndDate(Integer payMethod, Date startTime, Date endTime);
 
-    @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1")
+    @Query("select count(o.id) from Orders o where o.ordersLotteryId =?1 and o.status <> 3")
     Object findByCount(Long id);
 
-    @Query("select o from Orders o where o.ordersLotteryId = ?1 group by o.ordersLotteryId order by o.createTime DESC ")
+    @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.status in (0,1,2,4)  order by o.createTime DESC ")
     Page<Orders> findByordersLotteryId(Long ordersLotteryId, Pageable pageable);
+
+//    @Query(value = "select o from h9_main.orders o where o.orders_lottery_id = ?1 and o.status in (0,1,2,4) " +
+//            "and o.user_id = ?1 and ?1> o.create_time " +
+//            "and o.create_time<?2 and o.order_from = 2  order by o.id DESC"
+//            , nativeQuery = true)
+//    Orders findLastOrdersLottery(Long userId, Date start, Date end);
+
+    @Query("select o from Orders o where o.ordersLotteryId = ?1 and o.status in (0,1,2,4) and o.user = ?2  order by o.createTime DESC ")
+    List<Orders> findByordersLotteryIdAndUser(Long ordersLotteryId, User user);
+
 
     /**
      * 用戶参与记录
      */
-    @Query(value = "select  o from Orders o  where o.ordersLotteryId is not null and o.user.id = ?1 group by o.ordersLotteryId")
+    @Query(value = "select  o from Orders o  where o.ordersLotteryId is not null and  o.user.id = ?1 and o.status in (0,1,2,4) group by o.ordersLotteryId order by o.id desc")
     Page<Orders> findByUserId(long userId, Pageable pageable);
 
     default PageResult<Orders> findByUserId(long userId, Integer page, Integer limit) {
@@ -132,4 +141,8 @@ public interface OrdersRepository extends BaseRepository<Orders> {
 
     @Query("select r FROM Orders r where r.createTime > ?1 and r.createTime < ?2 and r.user.id = ?3 and r.status = 1 ")
     List<Orders> findUserfulOrders(Date startTime, Date endTime, long userId);
+
+
+    @Query("SELECT o from Orders o where o.user.id=?1 and o.status in (0,1,2,4) and o.ordersLotteryId is not null order by o.id desc")
+    List<Orders> findByUserAndOrdersLotteryId(Long userId);
 }

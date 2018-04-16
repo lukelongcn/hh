@@ -1,5 +1,7 @@
 package com.h9.common.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
@@ -18,7 +20,7 @@ public class CheckoutUtil {
      * @return
      */
     public static boolean checkSignature(String signature, String timestamp, String nonce) {
-        String[] arr = new String[] { token, timestamp, nonce };
+        String[] arr = new String[]{token, timestamp, nonce};
         // 将token、timestamp、nonce三个参数进行字典序排序
         // Arrays.sort(arr);
         sort(arr);
@@ -63,13 +65,14 @@ public class CheckoutUtil {
      * @return
      */
     private static String byteToHexStr(byte mByte) {
-        char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        char[] Digit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         char[] tempArr = new char[2];
         tempArr[0] = Digit[(mByte >>> 4) & 0X0F];
         tempArr[1] = Digit[mByte & 0X0F];
         String s = new String(tempArr);
         return s;
     }
+
     public static void sort(String a[]) {
         for (int i = 0; i < a.length - 1; i++) {
             for (int j = i + 1; j < a.length; j++) {
@@ -84,13 +87,17 @@ public class CheckoutUtil {
 
     /**
      * 利用正则表达式判断字符串是否是数字
+     *
      * @param str
      * @return
      */
-    public static boolean isNumeric(String str){
+    public static boolean isNumeric(String str) {
+        if (StringUtils.isBlank(str)) {
+            return false;
+        }
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher isNum = pattern.matcher(str);
-        if( !isNum.matches() ){
+        if (!isNum.matches()) {
             return false;
         }
         return true;

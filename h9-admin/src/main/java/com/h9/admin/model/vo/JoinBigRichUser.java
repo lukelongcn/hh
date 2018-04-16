@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @ApiModel
 public class JoinBigRichUser {
 
-    @ApiModelProperty("id")
+    @ApiModelProperty("序号")
     private Long id;
     @ApiModelProperty("手机号")
     private String phone = "";
@@ -27,6 +27,6 @@ public class JoinBigRichUser {
     private String activity_number= "";
 
     @ApiModelProperty("参与大富贵的订单Id")
-    private String orderId;
+    private String orderId ="";
 
 }

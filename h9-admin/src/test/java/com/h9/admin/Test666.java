@@ -3,7 +3,7 @@ package com.h9.admin;
 import com.h9.admin.job.HotelOrderJob;
 import com.h9.admin.model.dto.AddBigRichDTO;
 import com.h9.admin.service.AccountService;
-import com.h9.common.db.entity.lottery.OrdersLotteryActivity;
+import com.h9.common.db.entity.bigrich.OrdersLotteryActivity;
 import com.h9.common.db.repo.OrdersLotteryActivityRepository;
 import com.h9.common.utils.DateUtil;
 import org.junit.Test;
@@ -13,9 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Gonyb on 2017/11/11.
@@ -43,7 +41,7 @@ public class Test666 {
     }*/
     @Test
     public void testRefund() throws IOException {
-//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert.p12");
+//        InputStream is = this.getClass().getClassLoader().getResourceAsStream("apiclient_cert_wxjs.p12");
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("test.txt");
 
 //        File file = new File("d://test/test.p12");

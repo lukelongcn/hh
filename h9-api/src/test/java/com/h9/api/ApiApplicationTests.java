@@ -478,8 +478,7 @@ public class ApiApplicationTests {
     private MobileRechargeService mobileRechargeService;
     @Test
     public void test2(){
-        int i = ordersRepository.updateOrdersLotteryId(6L);
-        System.out.println("更新 "+i+" 条记录");
+
     }
 }
 

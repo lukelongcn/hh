@@ -104,4 +104,11 @@ public class ActivityController {
                                                        @Param("1 启用，0 禁用") @PathVariable Integer status) {
         return activityService.modifyStatus(id, status);
     }
+
+
+    @Secured
+    @GetMapping("bigRich/startLottery")
+    public Result startLottery(@RequestParam Long id){
+        return activityService.startBigRIchLotteryTest(id);
+    }
 }

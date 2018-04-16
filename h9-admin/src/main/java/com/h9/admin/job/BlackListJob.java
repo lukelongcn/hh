@@ -72,8 +72,6 @@ public class BlackListJob {
                 systemBlackListRepository.save(blackList);
             }
         }
-        // 定时过期用户优惠券
-        couponService.startChangeStatusUserCoupon();
     }
 
 

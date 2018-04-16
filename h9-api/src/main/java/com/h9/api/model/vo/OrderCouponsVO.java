@@ -1,10 +1,9 @@
 package com.h9.api.model.vo;
 
-import com.h9.common.db.entity.user.UserCoupon;
+import com.h9.common.db.entity.coupon.UserCoupon;
+import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
 import lombok.Data;
-
-import javax.print.DocFlavor;
 
 /**
  * <p>Title:h9-parent</p>
@@ -16,14 +15,21 @@ import javax.print.DocFlavor;
 @Data
 public class OrderCouponsVO {
     /**
-      优惠结束时间
-    */
+     * 优惠结束时间
+     */
     private String endTime;
     // 使用范围
-    private String wide;
+    private String couponType = "";
+    private String useType = "";
+    private long id;
+    private Long goodsId;
 
-    public OrderCouponsVO(UserCoupon userCoupon){
-        this.endTime = DateUtil.formatDate(userCoupon.getCouponId().getEndTime(), DateUtil.FormatType.MINUTE);
-        this.wide = userCoupon.getCouponId().getGoodsId().getName();
+    public OrderCouponsVO(UserCoupon userCoupon, Goods goods) {
+        this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE);
+        this.couponType = goods.getName();
+        this.useType = "自营指定商品";
+        this.id = userCoupon.getId();
+        this.goodsId = goods.getId();
+        this.couponType = "免单劵";
     }
 }
