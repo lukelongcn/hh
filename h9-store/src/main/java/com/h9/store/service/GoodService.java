@@ -622,9 +622,6 @@ public class GoodService {
                         logger.debug("获得一次抽奖机会");
 
                     }
-                } else {
-                    mapVO.put("activityName", "1号大富贵");
-                    mapVO.put("lotteryChance", "获得1次抽奖机会");
                 }
 
             }
