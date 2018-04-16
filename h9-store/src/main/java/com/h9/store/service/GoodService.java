@@ -613,7 +613,7 @@ public class GoodService {
             if (ordersLotteryActivity != null) {
                 //判断是否以前参与过此次活动
                 List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
-                if (CollectionUtils.isNotEmpty(ordersList) && ordersList.size() == 0) {
+                if (CollectionUtils.isEmpty(ordersList) ) {
                     logger.info("真实参与记录 " + ordersList.size());
 
                     if (ordersList.size() == 1) {
