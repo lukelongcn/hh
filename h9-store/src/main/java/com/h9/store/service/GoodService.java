@@ -441,6 +441,7 @@ public class GoodService {
     }
 
 
+    @Transactional
     public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods) {
         Map<Object, Object> mapVo = new HashMap<>();
         OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
@@ -456,8 +457,7 @@ public class GoodService {
                 mapVo.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
             }else{
-                logger.info("此时没有活动");
-
+                logger.info("没有参与活动");
             }
 
         }

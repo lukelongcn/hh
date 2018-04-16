@@ -282,6 +282,7 @@ public class CommonService {
     @Resource
     private OrdersRepository ordersRepository;
 
+    @Transactional
     public OrdersLotteryActivity joinBigRich(Orders orders) {
         int orderFrom = orders.getOrderFrom();
         if (orderFrom == 2) {
