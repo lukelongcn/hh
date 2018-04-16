@@ -76,7 +76,7 @@ public class OrderService {
                 case 0:
                     PageRequest pageRequest = ordersReposiroty.pageRequest(page, size, new Sort(Sort.Direction.DESC, "id"));
                     User user = userRepository.findOne(userId);
-                    Page<Orders> waitPayOrder = ordersReposiroty.findWaitPayOrder(status, user, pageRequest);
+                    Page<Orders> waitPayOrder = ordersReposiroty.findWaitPayOrder(Orders.PayStatusEnum.UNPAID.getCode(), user, pageRequest);
                     pageResult = new PageResult<>(waitPayOrder);
                     break;
                 //待发货
