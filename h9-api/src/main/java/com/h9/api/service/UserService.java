@@ -145,8 +145,13 @@ public class UserService {
 
 //            Boolean aBoolean = sysConfig.getBoolean("h9.sendMessage");
             String sendSms = configService.getStringConfig("sendSms");
-            if("1".equals(sendSms)){
-                if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+            if ("1".equals(sendSms)) {
+                if (!code.equals(redisCode)) {
+                    return Result.fail("验证码不正确");
+                } else {
+                    //验证码正确
+                    redisBean.setStringValue(String.format(RedisKey.getSmsCodeKey(phone, SMSTypeEnum.REGISTER.getCode()), phone), "");
+                }
             }
 //            if (!"dev".equals(currentEnvironment)) {
 //                if (!code.equals(redisCode)) return Result.fail("验证码不正确");
@@ -180,7 +185,7 @@ public class UserService {
             user = userRepository.saveAndFlush(user);
         }
         LoginResultVO vo = getLoginResult(user);
-        redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
+//        redisBean.expire(redisCode, 1, TimeUnit.SECONDS);
         String smsCodeCountDown = RedisKey.getSmsCodeCountDown(user.getPhone(), SMSTypeEnum.REGISTER.getCode());
         redisBean.expire(smsCodeCountDown, 1, TimeUnit.SECONDS);
 
@@ -516,7 +521,7 @@ public class UserService {
         User user = userRepository.findOne(userId);
         if (user == null) return Result.fail("账号不存在");
 
-        if(transferDTO.getTransferMoney().doubleValue() < 0.01D){
+        if (transferDTO.getTransferMoney().doubleValue() < 0.01D) {
             return Result.fail("最小金额为0.01");
         }
 
@@ -614,7 +619,6 @@ public class UserService {
 
     @Resource
     private SequenceUtil sequenceUtil;
-
 
 
     public Result getRedEnvelope(HttpServletRequest request, HttpServletResponse response, Long userId, BigDecimal money) {
@@ -739,7 +743,7 @@ public class UserService {
             String link = host + "/h9/api/user/temp/redirect?id=" + tempId;
 //            tempId = "hlzj://tempId="+tempId;
             ServletOutputStream outputStream = response.getOutputStream();
-            logger.info("二维码内容："+link);
+            logger.info("二维码内容：" + link);
             BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(link, 300, 300);
             Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(bufferedImage);
             String url = configService.getConfig("hlzjIcon").toString();
@@ -774,9 +778,9 @@ public class UserService {
 
         //tempId 存放的是url ,需要进行url 解码
         try {
-             tempId = URLDecoder.decode(tempId, "UTF-8");
+            tempId = URLDecoder.decode(tempId, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.info("解码失败,"+tempId);
+            logger.info("解码失败," + tempId);
             return Result.fail("领取异常");
         }
         if (tempId.contains("id=")) {
@@ -793,41 +797,41 @@ public class UserService {
     }
 
 
-    public void addUserCount(String userId){
+    public void addUserCount(String userId) {
         try {
             Long userIdLong = Long.valueOf(userId);
-            logger.info("userIdLong : "+userIdLong);
+            logger.info("userIdLong : " + userIdLong);
 
 
             String day = DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY);
-            redisBean.getValueOps().setBit("h9:user:count:"+day,userIdLong,true);
+            redisBean.getValueOps().setBit("h9:user:count:" + day, userIdLong, true);
             redisBean.getValueOps().setBit(RedisKey.getUserCountKey(new Date()), userIdLong, true);
             Long userCount = redisBean.getStringTemplate()
                     .execute((RedisCallback<Long>) connection ->
                             connection.bitCount(((RedisSerializer<String>) redisBean.getStringTemplate()
                                     .getKeySerializer())
                                     .serialize(DateUtil.formatDate(new Date(), DateUtil.FormatType.DAY))));
-            logger.info("userCount: "+userCount);
+            logger.info("userCount: " + userCount);
         } catch (NumberFormatException e) {
             logger.info("解析UserId 出错: " + userId);
         }
     }
 
-    public void addUserCount(Long userId){
+    public void addUserCount(Long userId) {
         addUserCount(userId);
     }
 
     public void tempRedirect(HttpServletResponse response, String tempId) {
         try {
             //https://weixin-dev-h9.thy360.com/h9-weixin/#/account/hongbao/result?id=1
-            String url = host+"/h9-weixin/#/account/hongbao/result?id="+tempId;
-            logger.info("tempId : "+tempId);
-            logger.info("url : "+url);
+            String url = host + "/h9-weixin/#/account/hongbao/result?id=" + tempId;
+            logger.info("tempId : " + tempId);
+            logger.info("url : " + url);
 //            String decode = URLDecoder.decode(tempId, "UTF-8");
             response.sendRedirect(url);
 
         } catch (Exception e) {
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
             logger.info("解码失败");
         }
 
