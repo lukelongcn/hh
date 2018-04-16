@@ -13,7 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * Created with IntelliJ IDEA.
  * Description:
- * SwaggerConfig:刘敏华 shadow.liu@hey900.com
+ * SwaggerConfig:李圆
  * Date: 2017/10/26
  * Time: 16:12
  */

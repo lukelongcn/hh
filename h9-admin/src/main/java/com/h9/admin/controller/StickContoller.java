@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * Created with IntelliJ IDEA.
  *
- * CommunityContoller:刘敏华 shadow.liu@hey900.com
+ * CommunityContoller:liyuan
  * Date: 2017/12/29
  * Time: 17:13
  */
