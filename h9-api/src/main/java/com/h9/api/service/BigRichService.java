@@ -138,9 +138,8 @@ public class BigRichService {
         if (e.getUser().getId().equals(ordersLotteryActivity.getWinnerUserId())
                 && ordersLotteryActivity.getStartLotteryTime().before(new Date())) {
             //判断是否开奖
-            Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
-            Date now = new Date();
-            if (now.after(startLotteryTime)) {
+            int status = ordersLotteryActivity.getStatus();
+            if (OrdersLotteryActivity.statusEnum.FINISH.equals(status)) {
                 // 已中奖
                 userBigRichRecordVO.setStatus(1);
                 userBigRichRecordVO.setMoney(MoneyUtils.formatMoney(ordersLotteryActivity.getMoney()));
