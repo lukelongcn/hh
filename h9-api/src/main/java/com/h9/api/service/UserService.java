@@ -1,6 +1,7 @@
 package com.h9.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.config.SysConfig;
 import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.model.dto.*;
 import com.h9.api.model.vo.*;
@@ -117,6 +118,10 @@ public class UserService {
     @Resource
     private UserCouponsRepository userCouponsRepository;
 
+    @Resource
+    private SysConfig sysConfig;
+
+
     private Logger logger = Logger.getLogger(this.getClass());
 
     public Result loginFromPhone(UserLoginDTO userLoginDTO, Integer client) {
@@ -137,9 +142,15 @@ public class UserService {
         if (!phone.equals("12345678909")) {
 
             if (StringUtils.isBlank(redisCode)) return Result.fail("验证码不正确");
-            if (!"dev".equals(currentEnvironment)) {
+
+//            Boolean aBoolean = sysConfig.getBoolean("h9.sendMessage");
+            String sendSms = configService.getStringConfig("sendSms");
+            if("1".equals(sendSms)){
                 if (!code.equals(redisCode)) return Result.fail("验证码不正确");
             }
+//            if (!"dev".equals(currentEnvironment)) {
+//                if (!code.equals(redisCode)) return Result.fail("验证码不正确");
+//            }
         } else {
             redisCode = "0000";
         }

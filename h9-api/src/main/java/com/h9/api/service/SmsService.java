@@ -4,6 +4,7 @@ import com.h9.api.enums.SMSTypeEnum;
 import com.h9.api.provider.SMSProvide;
 import com.h9.common.base.Result;
 import com.h9.common.common.ConfigHanler;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.config.SMSLog;
@@ -52,6 +53,8 @@ public class SmsService {
     private UserAccountRepository userAccountRepository;
     @Resource
     private ConsumeService consumeService;
+    @Resource
+    private ConfigService configService;
 
 
     /**
@@ -231,7 +234,8 @@ public class SmsService {
         String content = getContent(SMSTypeEnum.REGISTER.getCode(), code);
         Result returnMsg = null;
         logger.debugv("sendMessage=" + sendMessage);
-        if (sendMessage) {
+        String sendSms = configService.getStringConfig("sendSms");
+        if ("1".equals(sendSms)) {
             returnMsg = smsProvide.sendSMS(phone, content);
         } else {
             code = "0000";
