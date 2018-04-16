@@ -69,7 +69,8 @@ public class OrderItemVO {
         OrderItemVO orderItemVO = new OrderItemVO();
         BeanUtils.copyProperties(orders,orderItemVO);
         orderItemVO.setUserId(orders.getUser().getId());
-        String collect = orders.getOrderItems().stream()
+        List<OrderItems> orderItems = orders.getOrderItems();
+        String collect = orderItems.stream()
                 .map(orderItem -> orderItem.getName() + " *" + orderItem.getCount())
                 .collect(Collectors.joining(","));
         orderItemVO.setGoods(collect);
@@ -78,7 +79,7 @@ public class OrderItemVO {
                 .collect(Collectors.joining(","));
         Orders.PayMethodEnum byCode = Orders.PayMethodEnum.findByCode(orders.getPayMethond());*/
         //统计订单商品数量
-        long sum = orders.getOrderItems().stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
+        long sum = orderItems.stream().parallel().mapToInt(OrderItems::getCount).summaryStatistics().getSum();
         orderItemVO.setCount(sum);
         Orders.statusEnum statusEnum = Orders.statusEnum.findByCode(orders.getStatus());
         orderItemVO.setStatusDesc(statusEnum==null?null:statusEnum.getDesc());
@@ -90,7 +91,7 @@ public class OrderItemVO {
             orderItemVO.setPayMoney4balance(MoneyUtils.formatMoney(payMoney));
         }
 
-        List<OrderItems> orderItems = orders.getOrderItems();
+
         boolean find = orderItems.stream().anyMatch(item -> {
             Goods goods = item.getGoods();
             GoodsType goodsType = goods.getGoodsType();
