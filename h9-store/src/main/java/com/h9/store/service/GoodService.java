@@ -445,14 +445,11 @@ public class GoodService {
             OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
                     order.getId(), ordersLotteryActivity.getId(), 0, null);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
-
             if (CollectionUtils.isEmpty(ordersList)) {
                 logger.info("真实参与记录 " + ordersList.size());
-
                 mapVo.put("activityName", "1号大富贵");
                 mapVo.put("lotteryChance", "获得1次抽奖机会");
                 logger.debug("获得一次抽奖机会");
-
             }
 
         }
@@ -594,15 +591,6 @@ public class GoodService {
             mapVO.put("goodsName", goods.getName() + "*" + count);
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             mapVO.put("resumePaywxjs", true);
-            // 大富贵参与机会获得
-//            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
-
-//            if (ordersLotteryActivity != null) {
-//                mapVO.put("activityName", "1号大富贵");
-//                mapVO.put("lotteryChance", "获得1次抽奖机会");
-//                logger.info("获得一次抽奖机会");
-//            }
-
 
             OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
             if (ordersLotteryActivity != null) {
@@ -610,13 +598,10 @@ public class GoodService {
                 List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
                 if (CollectionUtils.isEmpty(ordersList)) {
                     logger.info("真实参与记录 " + ordersList.size());
-
                     mapVO.put("activityName", "1号大富贵");
                     mapVO.put("lotteryChance", "获得1次抽奖机会");
                     logger.debug("获得一次抽奖机会");
-
                 }
-
             }
 
 

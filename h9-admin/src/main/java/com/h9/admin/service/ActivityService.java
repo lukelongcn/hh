@@ -241,7 +241,7 @@ public class ActivityService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersLotteryActivityRep.pageRequest(pageNumber, pageSize, sort);
 //        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findByStatus(1, pageRequest);
-        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findAll(pageRequest);
+        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findPageByDelFlag(0,pageRequest);
 
         PageResult<BigRichListVO> mapVO = new PageResult<>(page).map(activity -> {
             Long winnerUserId = activity.getWinnerUserId();

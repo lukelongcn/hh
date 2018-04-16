@@ -55,6 +55,8 @@ public class OrdersLotteryActivity extends BaseEntity {
     @Column(name = "winner_user_id", columnDefinition = "bigint COMMENT '中奖人Id'")
     private Long winnerUserId;
 
+    @Column(name = "del_flag", columnDefinition = "int COMMENT '删除标记 1 删除 0 未删除'")
+    private Integer delFlag=0;
 
     public enum statusEnum {
 

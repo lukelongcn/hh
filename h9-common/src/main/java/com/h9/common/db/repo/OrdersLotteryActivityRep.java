@@ -20,10 +20,10 @@ public interface OrdersLotteryActivityRep extends BaseRepository<OrdersLotteryAc
     List<OrdersLotteryActivity> findByDateId(Date date, Long id);
 
     @Query("select o from OrdersLotteryActivity o where ?1< o.startTime and ?2 > o.startTime and o.status = 1 and  o.id is not null and id<>?3")
-    List<OrdersLotteryActivity> findByDateId2(Date date1,Date date2, Long id);
+    List<OrdersLotteryActivity> findByDateId2(Date date1, Date date2, Long id);
 
     @Query("select o from OrdersLotteryActivity o where ?1<= o.endTime and ?2 > o.endTime and o.status = 1 and  o.id is not null and id<>?3")
-    List<OrdersLotteryActivity> findByDateId3(Date date1,Date date2, Long id);
+    List<OrdersLotteryActivity> findByDateId3(Date date1, Date date2, Long id);
 
     @Query("select o from OrdersLotteryActivity o where ?1>= o.startTime and ?1 < o.endTime and o.status = 1 and o.id <> id")
     List<OrdersLotteryActivity> findByDate(Date date, Long id);
@@ -37,6 +37,9 @@ public interface OrdersLotteryActivityRep extends BaseRepository<OrdersLotteryAc
     @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "false")})
     @Query("select o from OrdersLotteryActivity o where id = ?1")
     OrdersLotteryActivity findByIdFromDB(Long id);
+
+    @Query("select o from OrdersLotteryActivity  o where o.delFlag = ?1")
+    Page<OrdersLotteryActivity> findPageByDelFlag(int delFlag, Pageable pageable);
 
 
 }
