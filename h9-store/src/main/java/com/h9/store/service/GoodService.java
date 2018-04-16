@@ -407,7 +407,7 @@ public class GoodService {
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods,1);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 ordersRepository.save(order);
                 return Result.success(showInfo);
@@ -422,7 +422,7 @@ public class GoodService {
             }
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods,2);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 ordersRepository.save(order);
 
@@ -442,23 +442,37 @@ public class GoodService {
 
 
     @Transactional
-    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods) {
+    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods, int type) {
         Map<Object, Object> mapVo = new HashMap<>();
         OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
         if (ordersLotteryActivity != null) {
             //判断是否以前参与过此次活动
-            List<Orders> ordersList = transactionalService.findByLotteryActivityId(ordersLotteryActivity.getId(), user);
+            List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
             OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
                     order.getId(), ordersLotteryActivity.getId(), 0, null);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
-            if (CollectionUtils.isNotEmpty(ordersList) && ordersList.size() ==1) {
-                logger.info("真实参与记录 " + ordersList.size());
-                mapVo.put("activityName", "1号大富贵");
-                mapVo.put("lotteryChance", "获得1次抽奖机会");
-                logger.debug("获得一次抽奖机会");
+            if(type ==1){
+                //微信支付
+                if (CollectionUtils.isEmpty(ordersList)) {
+                    logger.info("真实参与记录 " + ordersList.size());
+                    mapVo.put("activityName", "1号大富贵");
+                    mapVo.put("lotteryChance", "获得1次抽奖机会");
+                    logger.debug("获得一次抽奖机会");
+                }else{
+                    logger.info("没有参与活动");
+                }
             }else{
-                logger.info("没有参与活动");
+                if (CollectionUtils.isNotEmpty(ordersList) && ordersList.size() == 1) {
+                    logger.info("真实参与记录 " + ordersList.size());
+                    mapVo.put("activityName", "1号大富贵");
+                    mapVo.put("lotteryChance", "获得1次抽奖机会");
+                    logger.debug("获得一次抽奖机会");
+                }else{
+                    logger.info("没有参与活动");
+                }
+
             }
+
 
         }
         mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
