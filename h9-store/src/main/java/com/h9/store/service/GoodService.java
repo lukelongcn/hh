@@ -443,7 +443,7 @@ public class GoodService {
             List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
 
             OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-                    order.getId(), ordersLotteryActivity.getId(), 0,null);
+                    order.getId(), ordersLotteryActivity.getId(), 0, null);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
 
             if (CollectionUtils.isNotEmpty(ordersList)) {
@@ -463,7 +463,7 @@ public class GoodService {
         }
         mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
         mapVo.put("goodsName", goods.getName());
-        mapVo.put("resumePaywxjs",false);
+        mapVo.put("resumePaywxjs", false);
         return mapVo;
     }
 
@@ -613,7 +613,7 @@ public class GoodService {
             if (ordersLotteryActivity != null) {
                 //判断是否以前参与过此次活动
                 List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
-                if (CollectionUtils.isNotEmpty(ordersList)) {
+                if (CollectionUtils.isNotEmpty(ordersList) && ordersList.size() == 0) {
                     logger.info("真实参与记录 " + ordersList.size());
 
                     if (ordersList.size() == 1) {
