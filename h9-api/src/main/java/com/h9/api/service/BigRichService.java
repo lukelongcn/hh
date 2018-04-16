@@ -137,8 +137,14 @@ public class BigRichService {
         // 状态
         if (e.getUser().getId().equals(ordersLotteryActivity.getWinnerUserId())
                 && ordersLotteryActivity.getStartLotteryTime().before(new Date())) {
-            // 已中奖
-            userBigRichRecordVO.setStatus(1);
+            //判断是否开奖
+            Date startLotteryTime = ordersLotteryActivity.getStartLotteryTime();
+            Date now = new Date();
+            if (now.after(startLotteryTime)) {
+                // 已中奖
+                userBigRichRecordVO.setStatus(1);
+                userBigRichRecordVO.setMoney(MoneyUtils.formatMoney(ordersLotteryActivity.getMoney()));
+            }
         }
         // 待开奖
         else if (ordersLotteryActivity.getStartLotteryTime().after(new Date())) {
@@ -153,7 +159,6 @@ public class BigRichService {
         userBigRichRecordVO.setWay("兑换商品");
         // 金额
 //        BigDecimal bigDecimal = ordersLotteryActivity.getMoney().setScale(2, BigDecimal.ROUND_DOWN);
-        userBigRichRecordVO.setMoney(MoneyUtils.formatMoney(ordersLotteryActivity.getMoney()));
         return userBigRichRecordVO;
     }
 
