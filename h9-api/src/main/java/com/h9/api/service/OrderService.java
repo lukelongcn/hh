@@ -6,9 +6,11 @@ import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Orders;
+import com.h9.common.db.entity.user.User;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.UserCouponsRepository;
+import com.h9.common.db.repo.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -61,6 +63,8 @@ public class OrderService {
         return order;
     }
 
+    @Resource
+    private UserRepository userRepository;
     public Result orderList(int status, Long userId, Integer page, Integer size) {
         PageResult<Orders> pageResult = null;
         if (status == -1) {
@@ -71,7 +75,8 @@ public class OrderService {
                 //待付款
                 case 0:
                     PageRequest pageRequest = ordersReposiroty.pageRequest(page, size, new Sort(Sort.Direction.DESC, "id"));
-                    Page<Orders> waitPayOrder = ordersReposiroty.findWaitPayOrder(status, userId, pageRequest);
+                    User user = userRepository.findOne(userId);
+                    Page<Orders> waitPayOrder = ordersReposiroty.findWaitPayOrder(status, user, pageRequest);
                     pageResult = new PageResult<>(waitPayOrder);
                     break;
                 //待发货

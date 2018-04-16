@@ -56,7 +56,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     }
 
     @Query("select o from Orders o where o.payStatus =?1 and o.user = ?2")
-    Page<Orders> findWaitPayOrder(Integer payStatus,Long userId,Pageable pageable);
+    Page<Orders> findWaitPayOrder(Integer payStatus,User user,Pageable pageable);
 
     @Async
     @Query("select o from Orders o")
