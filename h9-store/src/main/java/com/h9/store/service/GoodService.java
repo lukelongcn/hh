@@ -613,15 +613,13 @@ public class GoodService {
             if (ordersLotteryActivity != null) {
                 //判断是否以前参与过此次活动
                 List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
-                if (CollectionUtils.isEmpty(ordersList) ) {
+                if (CollectionUtils.isEmpty(ordersList)) {
                     logger.info("真实参与记录 " + ordersList.size());
 
-                    if (ordersList.size() == 1) {
-                        mapVO.put("activityName", "1号大富贵");
-                        mapVO.put("lotteryChance", "获得1次抽奖机会");
-                        logger.debug("获得一次抽奖机会");
+                    mapVO.put("activityName", "1号大富贵");
+                    mapVO.put("lotteryChance", "获得1次抽奖机会");
+                    logger.debug("获得一次抽奖机会");
 
-                    }
                 }
 
             }
