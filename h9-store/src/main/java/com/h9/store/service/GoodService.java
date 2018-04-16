@@ -25,6 +25,7 @@ import com.h9.store.modle.vo.PayResultVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.omg.IOP.TransactionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -87,6 +88,8 @@ public class GoodService {
     private OrdersLotteryActivityRep ordersLotteryActivityRep;
     @Resource
     private OrdersLotteryRelationRep ordersLotteryRelationRep;
+    @Resource
+    private TransactionalService transactionalService;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -389,7 +392,8 @@ public class GoodService {
      * @param goods
      * @return
      */
-    private Result handlerPay(int payMethod, Orders order, BigDecimal payMoney, Long userId, ConvertGoodsDTO convertGoodsDTO, Goods goods) {
+    @Transactional
+    public Result handlerPay(int payMethod, Orders order, BigDecimal payMoney, Long userId, ConvertGoodsDTO convertGoodsDTO, Goods goods) {
         int count = convertGoodsDTO.getCount();
         User user = userRepository.findOne(userId);
         Long couponsId = convertGoodsDTO.getCouponsId();
@@ -402,7 +406,7 @@ public class GoodService {
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                Map<Object, Object> showInfo = transactionalService.showJoinIn(order, user, goods);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 ordersRepository.save(order);
                 return Result.success(showInfo);
@@ -417,7 +421,7 @@ public class GoodService {
             }
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods);
+                Map<Object, Object> showInfo = transactionalService.showJoinIn(order, user, goods);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 ordersRepository.save(order);
 
@@ -435,29 +439,7 @@ public class GoodService {
         }
     }
 
-    private Map<Object, Object> showJoinIn(Orders order, User user, Goods goods) {
-        Map<Object, Object> mapVo = new HashMap<>();
-        OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
-        if (ordersLotteryActivity != null) {
-            //判断是否以前参与过此次活动
-            List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
 
-            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-                    order.getId(), ordersLotteryActivity.getId(), 0, null);
-            ordersLotteryRelationRep.save(ordersLotteryRelation);
-            if (CollectionUtils.isEmpty(ordersList)) {
-                logger.info("真实参与记录 " + ordersList.size());
-                mapVo.put("activityName", "1号大富贵");
-                mapVo.put("lotteryChance", "获得1次抽奖机会");
-                logger.debug("获得一次抽奖机会");
-            }
-
-        }
-        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
-        mapVo.put("goodsName", goods.getName());
-        mapVo.put("resumePaywxjs", false);
-        return mapVo;
-    }
 
     /**
      * 使用优惠劵
