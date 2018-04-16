@@ -59,6 +59,9 @@ public class User extends BaseEntity {
     @Column(name = "login_count", nullable = false, columnDefinition = "int default 0 COMMENT '登录次数'")
     private Integer loginCount;
 
+    /**
+     * @see  StatusEnum
+     */
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT ' 1 正常 2禁用 3失效'")
     private Integer status = 1;
 
