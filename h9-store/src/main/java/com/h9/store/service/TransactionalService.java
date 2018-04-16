@@ -27,11 +27,13 @@ import java.util.Map;
 @Service
 public class TransactionalService {
     private Logger logger = Logger.getLogger(this.getClass());
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public <T> T findOneNewTrans(BaseRepository<T> rep,Long id) {
+    public <T> T findOneNewTrans(BaseRepository<T> rep, Long id) {
 
         return rep.findOne(id);
     }
+
     @Resource
     private CommonService commonService;
 
@@ -41,27 +43,10 @@ public class TransactionalService {
     private OrdersLotteryRelationRep ordersLotteryRelationRep;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods) {
-        Map<Object, Object> mapVo = new HashMap<>();
-        OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
-        if (ordersLotteryActivity != null) {
-            //判断是否以前参与过此次活动
-            List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
+    public List<Orders> findByLotteryActivityId(Long id,User user) {
+        List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(id, user);
 
-            OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-                    order.getId(), ordersLotteryActivity.getId(), 0, null);
-            ordersLotteryRelationRep.save(ordersLotteryRelation);
-            if (CollectionUtils.isNotEmpty(ordersList) && ordersList.size() ==1) {
-                logger.info("真实参与记录 " + ordersList.size());
-                mapVo.put("activityName", "1号大富贵");
-                mapVo.put("lotteryChance", "获得1次抽奖机会");
-                logger.debug("获得一次抽奖机会");
-            }
-
-        }
-        mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
-        mapVo.put("goodsName", goods.getName());
-        mapVo.put("resumePaywxjs", false);
-        return mapVo;
+        return ordersList;
     }
+
 }
