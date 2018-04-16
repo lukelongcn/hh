@@ -241,7 +241,7 @@ public class ActivityService {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pageRequest = ordersLotteryActivityRep.pageRequest(pageNumber, pageSize, sort);
 //        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findByStatus(1, pageRequest);
-        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findPageByDelFlag(0,pageRequest);
+        Page<OrdersLotteryActivity> page = ordersLotteryActivityRep.findPageByDelFlag(0, pageRequest);
 
         PageResult<BigRichListVO> mapVO = new PageResult<>(page).map(activity -> {
             Long winnerUserId = activity.getWinnerUserId();
@@ -319,7 +319,7 @@ public class ActivityService {
             if (CollectionUtils.isEmpty(list)) {
                 OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(), null, activityId, 0, money);
                 ordersLotteryRelationRep.save(ordersLotteryRelation);
-            }else{
+            } else {
                 OrdersLotteryRelation ordersLotteryRelation = list.get(0);
                 ordersLotteryRelation.setMoney(money);
                 ordersLotteryRelationRep.save(ordersLotteryRelation);
@@ -371,7 +371,7 @@ public class ActivityService {
             }
 
             JoinBigRichUser joinBigRichUser = new JoinBigRichUser(index.get(),
-                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), el.getOrderId() + "");
+                    user.getPhone(), user.getNickName(), money, ordersLotteryActivity.getNumber(), el.getOrderId() == null ? "" : el.getOrderId()+"");
             index.getAndSet(index.get() + 1 + ((pageNumber - 1) * pageSize));
             return joinBigRichUser;
         });
