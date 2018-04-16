@@ -33,7 +33,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     Page<Orders> findByUser(Long userId, Pageable pageable);
 
     @Query("SELECT o from Orders o where o.user.id=?1 and o.status = ?2order by o.id desc")
-    Page<Orders> findByUserStatus(Long userId,int status, Pageable pageable);
+    Page<Orders> findByUserStatus(Long userId,Integer status, Pageable pageable);
 
     @Query("SELECT o from Orders o where o.user.id=?1 and o.orderFrom = ?2 order by o.id desc")
     Page<Orders> findByUser(Long userId, Integer orderFrom, Pageable pageable);
@@ -56,7 +56,7 @@ public interface OrdersRepository extends BaseRepository<Orders> {
     }
 
     @Query("select o from Orders o where o.payStatus =?1 and o.user = ?2")
-    Page<Orders> findWaitPayOrder(int payStatus,Long userId,Pageable pageable);
+    Page<Orders> findWaitPayOrder(Integer payStatus,Long userId,Pageable pageable);
 
     @Async
     @Query("select o from Orders o")
