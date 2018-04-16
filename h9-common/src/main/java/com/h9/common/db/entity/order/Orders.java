@@ -84,7 +84,7 @@ public class Orders extends BaseEntity {
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 1 COMMENT ''")
     private Integer status = 1;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id", columnDefinition = "bigint(20) COMMENT ''")
     private User user;
 
