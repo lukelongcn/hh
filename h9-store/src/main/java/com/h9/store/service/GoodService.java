@@ -600,38 +600,34 @@ public class GoodService {
             mapVO.put("wxPayInfo", payResultVO.getWxPayInfo());
             mapVO.put("resumePaywxjs", true);
             // 大富贵参与机会获得
-            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
+//            OrdersLotteryActivity ordersLotteryActivity = ordersLotteryActivityRepository.findAllTime(new Date());
 
-            if (ordersLotteryActivity != null) {
-                mapVO.put("activityName", "1号大富贵");
-                mapVO.put("lotteryChance", "获得1次抽奖机会");
-                logger.info("获得一次抽奖机会");
-            }
-
-
-//            OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
 //            if (ordersLotteryActivity != null) {
-//                //判断是否以前参与过此次活动
-//                List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
-//                if (CollectionUtils.isNotEmpty(ordersList)) {
-//                    logger.info("真实参与记录 " + ordersList.size());
-//
-//                    OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-//                            order.getId(), ordersLotteryActivity.getId(), 0);
-//                    ordersLotteryRelationRep.save(ordersLotteryRelation);
-//
-//                    if (ordersList.size() == 1) {
-//                        mapVO.put("activityName", "1号大富贵");
-//                        mapVO.put("lotteryChance", "获得1次抽奖机会");
-//                        logger.debug("获得一次抽奖机会");
-//
-//                    }
-//                } else {
-//                    mapVO.put("activityName", "1号大富贵");
-//                    mapVO.put("lotteryChance", "获得1次抽奖机会");
-//                }
-//
+//                mapVO.put("activityName", "1号大富贵");
+//                mapVO.put("lotteryChance", "获得1次抽奖机会");
+//                logger.info("获得一次抽奖机会");
 //            }
+
+
+            OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
+            if (ordersLotteryActivity != null) {
+                //判断是否以前参与过此次活动
+                List<Orders> ordersList = ordersRepository.findByordersLotteryIdAndUser(ordersLotteryActivity.getId(), user);
+                if (CollectionUtils.isNotEmpty(ordersList)) {
+                    logger.info("真实参与记录 " + ordersList.size());
+
+                    if (ordersList.size() == 1) {
+                        mapVO.put("activityName", "1号大富贵");
+                        mapVO.put("lotteryChance", "获得1次抽奖机会");
+                        logger.debug("获得一次抽奖机会");
+
+                    }
+                } else {
+                    mapVO.put("activityName", "1号大富贵");
+                    mapVO.put("lotteryChance", "获得1次抽奖机会");
+                }
+
+            }
 
 
             return Result.success(mapVO);

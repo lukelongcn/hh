@@ -89,7 +89,7 @@ public class StorePayHandler extends AbPayHandler {
                 logger.info("真实参与记录 " + ordersList.size());
 
                 OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
-                        orders.getId(), ordersLotteryActivity.getId(), 0,null);
+                        orders.getId(), ordersLotteryActivity.getId(), 0, null);
                 ordersLotteryRelationRep.save(ordersLotteryRelation);
             }
         }
