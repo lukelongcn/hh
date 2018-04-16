@@ -409,6 +409,8 @@ public class GoodService {
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
                 Map<Object, Object> showInfo = showJoinIn(order, user, goods,1,count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+                order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
+                order.setPayMethond(Orders.PayMethodEnum.WX_PAY.getCode());
                 ordersRepository.save(order);
                 return Result.success(showInfo);
             } else {
@@ -424,6 +426,8 @@ public class GoodService {
             if (balancePayResult.getCode() == 0) {
                 Map<Object, Object> showInfo = showJoinIn(order, user, goods,2,count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
+                order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+                order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
                 ordersRepository.save(order);
 
                 return Result.success(showInfo);
