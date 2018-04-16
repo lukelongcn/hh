@@ -407,7 +407,7 @@ public class GoodService {
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods,1);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods,1,count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 ordersRepository.save(order);
                 return Result.success(showInfo);
@@ -422,7 +422,7 @@ public class GoodService {
             }
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods,2);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods,2,count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 ordersRepository.save(order);
 
@@ -442,7 +442,7 @@ public class GoodService {
 
 
     @Transactional
-    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods, int type) {
+    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods, int type,int count) {
         Map<Object, Object> mapVo = new HashMap<>();
         OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
         if (ordersLotteryActivity != null) {
@@ -476,7 +476,8 @@ public class GoodService {
 
         }
         mapVo.put("price", MoneyUtils.formatMoney(goods.getRealPrice()));
-        mapVo.put("goodsName", goods.getName());
+//        mapVo.put("goodsName", goods.getName());
+        mapVo.put("goodsName", goods.getName() + "*" + count);
         mapVo.put("resumePaywxjs", false);
         return mapVo;
     }
