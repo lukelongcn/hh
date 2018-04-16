@@ -410,7 +410,7 @@ public class GoodService {
                 Map<Object, Object> showInfo = showJoinIn(order, user, goods,1,count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-                order.setPayMethond(Orders.PayMethodEnum.WX_PAY.getCode());
+                order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
                 ordersRepository.save(order);
                 return Result.success(showInfo);
             } else {
