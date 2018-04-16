@@ -9,6 +9,9 @@ import com.h9.common.db.entity.order.Orders;
 import com.h9.common.db.repo.OrdersRepository;
 import com.h9.common.db.repo.PayInfoRepository;
 import com.h9.common.db.repo.UserCouponsRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -58,18 +61,40 @@ public class OrderService {
         return order;
     }
 
-    public Result orderList(int status,Long userId, Integer page, Integer size) {
+    public Result orderList(int status, Long userId, Integer page, Integer size) {
         PageResult<Orders> pageResult = null;
-        if(status == -1){
+        if (status == -1) {
             pageResult = ordersReposiroty.findByUser(userId, page, size);
-        }else{
-            pageResult = ordersReposiroty.findByUser(userId,status, page, size);
+        } else {
+
+            switch (status) {
+                //待付款
+                case 0:
+                    PageRequest pageRequest = ordersReposiroty.pageRequest(page, size, new Sort(Sort.Direction.DESC, "id"));
+                    Page<Orders> waitPayOrder = ordersReposiroty.findWaitPayOrder(status, userId, pageRequest);
+                    pageResult = new PageResult<>(waitPayOrder);
+                    break;
+                //待发货
+                case 1:
+                    pageResult = ordersReposiroty.findByUser(userId, Orders.statusEnum.WAIT_SEND.getCode(), page, size);
+                    break;
+                //待收货
+                case 2:
+                    pageResult = ordersReposiroty.findByUser(userId, Orders.statusEnum.DELIVER.getCode(), page, size);
+                    break;
+
+                default:
+                    pageResult = ordersReposiroty.findByUser(userId, status, page, size);
+
+            }
+
+
         }
 
         return Result.success(pageResult.result2Result(OrderListVO::convert));
     }
 
-    public Result orderDetail(Long orderId,Long userId) {
+    public Result orderDetail(Long orderId, Long userId) {
         Orders orders = ordersReposiroty.findOne(orderId);
         if (!orders.getUser().getId().equals(userId)) {
             return Result.fail("无权查看");
@@ -77,11 +102,9 @@ public class OrderService {
         if (orders == null) return Result.fail("订单不存在");
 
         UserCoupon userCoupon = userCouponsRepository.findByOrderId(orderId);
-        OrderDetailVO vo = OrderDetailVO.convert(orders,userCoupon);
+        OrderDetailVO vo = OrderDetailVO.convert(orders, userCoupon);
         return Result.success(vo);
     }
-
-
 
 
 }
