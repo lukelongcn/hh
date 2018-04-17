@@ -144,7 +144,7 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
-        order.setPayStatus(2);
+        order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
         order.setUser(user);
         order.setOrderFrom(2);
         orderItems.setOrders(order);
@@ -187,6 +187,8 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
+            order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
+            order.setStatus(Orders.statusEnum.FINISH.getCode());
             orderItemReposiroty.saveAndFlush(orderItems);
             saveRechargeRecord(user, goods.getRealPrice(), rechargeId, orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
@@ -197,8 +199,9 @@ public class ConsumeService {
 
             return Result.success("充值成功", map);
         } else {
-//            order.setStatus(Orders.statusEnum.FAIL.getCode());
-//            ordersReposiroty.save(order);
+            order.setStatus(Orders.statusEnum.FAIL.getCode());
+            order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
+            ordersReposiroty.saveAndFlush(order);
             return Result.fail("充值失败");
         }
     }
