@@ -168,7 +168,8 @@ public class ConsumeService {
             result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
         } else {
             logger.info("调用 rechargeTest method");
-            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
+//            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
+            result = Result.fail();
         }
 
         //保存充值记录（包括失败成功）
