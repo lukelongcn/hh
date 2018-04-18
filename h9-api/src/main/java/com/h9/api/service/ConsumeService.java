@@ -144,7 +144,7 @@ public class ConsumeService {
         redisBean.expire(smsCodeCount, 1, TimeUnit.SECONDS);
 
         Orders order = orderService.initOrder(user.getNickName(), goods.getRealPrice(), mobileRechargeDTO.getTel() + "", VIRTUAL_GOODS.getCode() + "", "徽酒");
-        order.setPayStatus(2);
+        order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
         order.setUser(user);
         order.setOrderFrom(2);
         orderItems.setOrders(order);
@@ -192,13 +192,17 @@ public class ConsumeService {
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
 
+            order.setStatus(Orders.statusEnum.FINISH.getCode());
+            order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
+            ordersReposiroty.save(order);
             //减库存
 //            Result changeStockResult = goodService.changeStock(goods);
 
             return Result.success("充值成功", map);
         } else {
-//            order.setStatus(Orders.statusEnum.FAIL.getCode());
-//            ordersReposiroty.save(order);
+            order.setStatus(Orders.statusEnum.FAIL.getCode());
+            order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
+            ordersReposiroty.save(order);
             return Result.fail("充值失败");
         }
     }
