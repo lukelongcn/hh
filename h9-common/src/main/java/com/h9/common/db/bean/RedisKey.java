@@ -31,24 +31,22 @@ public class RedisKey {
      */
     private static String errorCodeCountKey = "h9:sms:code:errorCount:userId:%s:type:%s";
 
-
-
     /**
      * description: 用户人数
      */
-    public static String userCountKey ="h9:user:count:";
+    public static String userCountKey = "h9:user:count:";
 
     public static String getUserCountKey(Date date) {
-        if(date == null) return "";
-        return userCountKey+ DateUtil.formatDate(date, DateUtil.FormatType.MONTH);
+        if (date == null) return "";
+        return userCountKey + DateUtil.formatDate(date, DateUtil.FormatType.MONTH);
     }
 
-    public static String getTokenUserIdKey(String token){
-        return String.format(tokenUserIdKey,token);
+    public static String getTokenUserIdKey(String token) {
+        return String.format(tokenUserIdKey, token);
     }
 
-    public static String getWeChatUserId(String token){
-        return String.format("h9:wechat:userId:%s",token);
+    public static String getWeChatUserId(String token) {
+        return String.format("h9:wechat:userId:%s", token);
     }
 
 
@@ -72,26 +70,26 @@ public class RedisKey {
      * description: 二维码对应的 临时 UUID，码和 红包二维码 共存亡
      * value 对应 userId
      */
-    public static String  QR_CODE_TEMP_ID = "h9:qr:code:tempId:";
+    public static String QR_CODE_TEMP_ID = "h9:qr:code:tempId:";
 
     public static String getQrCodeTempId(String tempId) {
-        return QR_CODE_TEMP_ID+tempId;
+        return QR_CODE_TEMP_ID + tempId;
     }
 
     public static String getQrCode(Long sequenceId) {
-        return QR_CODE+""+sequenceId;
+        return QR_CODE + "" + sequenceId;
     }
 
     public static String getQrCode(String sequenceId) {
-        return QR_CODE+""+sequenceId;
+        return QR_CODE + "" + sequenceId;
     }
 
     public static String getTodayRechargeMoney(Long userId) {
-        return todayRechargeMoney+userId;
+        return todayRechargeMoney + userId;
     }
 
     public static String getBatchRechargeCacheId() {
-        return batchRechargeCacheId+ UUID.randomUUID().toString();
+        return batchRechargeCacheId + UUID.randomUUID().toString();
     }
 
     public static String getWithdrawSuccessCountKey(Long userId) {
@@ -105,8 +103,8 @@ public class RedisKey {
     }
 
 
-    public static String getAdminTokenUserIdKey(String token){
-        return String.format("h9:admin:userId:%s",token);
+    public static String getAdminTokenUserIdKey(String token) {
+        return String.format("h9:admin:userId:%s", token);
     }
 
     /***
@@ -115,40 +113,45 @@ public class RedisKey {
      * @param code
      * @return
      */
-    public static String getConfigValue(String code){
-        return MessageFormat.format("config:{0}",code);
+    public static String getConfigValue(String code) {
+        return MessageFormat.format("config:{0}", code);
     }
-    public static String getConfigType(String code){
-        return MessageFormat.format("config:{0}:type",code);
+
+    public static String getConfigType(String code) {
+        return MessageFormat.format("config:{0}:type", code);
     }
 
     public static String wechatAccessToken = "wechat:accesstoken";
     public static String wechatTicket = "wechat:ticket";
 
     //短信一分钟控制
-    public static String getSmsCodeCountDown(String phone,int type){
-        return MessageFormat.format("sms:code:countdown:{0}:{1}",type,phone);
+    public static String getSmsCodeCountDown(String phone, int type) {
+        return MessageFormat.format("sms:code:countdown:{0}:{1}", type, phone);
     }
 
     //短信一分钟控制
-    public static String getSmsCodeCount(String phone,int type){
-        return MessageFormat.format("sms:code:count:{0}:{1}",type,phone);
+    public static String getSmsCodeCount(String phone, int type) {
+        return MessageFormat.format("sms:code:count:{0}:{1}", type, phone);
     }
 
-    public static String getSmsCodeKey(String phone,int type) {
-        return MessageFormat.format("sms:code:{0}:{1}",type,phone);
+    public static String getSmsCodeKey(String phone, int type) {
+        return MessageFormat.format("sms:code:{0}:{1}", type, phone);
     }
 
-    public static String getErrorCodeCountKey(Long userId,int type) {
+    public static String getErrorCodeCountKey(Long userId, int type) {
 
-        return String.format(errorCodeCountKey,userId,type);
+        return String.format(errorCodeCountKey, userId, type);
     }
 
-    public static String getLotteryBefore(Long userId,Long rewardId){
-        return String.format("lottery:%d:%d:before",userId,rewardId);
+    public static String getLotteryBefore(Long userId, Long rewardId) {
+        return String.format("lottery:%d:%d:before", userId, rewardId);
     }
 
+    private static String uuid2couponIdKey = "send:couponId:";
 
+    public static String getUuid2couponIdKey(String uuid) {
+        return uuid2couponIdKey + uuid;
+    }
 }
 
 

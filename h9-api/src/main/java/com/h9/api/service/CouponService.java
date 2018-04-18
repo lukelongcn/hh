@@ -1,9 +1,13 @@
 package com.h9.api.service;
 
+import com.h9.api.config.SysConfig;
 import com.h9.api.model.vo.OrderCouponsVO;
 import com.h9.api.model.vo.UserCouponVO;
+import com.h9.api.model.vo.coupon.ShareVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.db.bean.RedisBean;
+import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
 import com.h9.common.db.entity.coupon.UserCoupon;
@@ -18,8 +22,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.validation.groups.ConvertGroup;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
@@ -45,7 +55,14 @@ public class CouponService {
     @Resource
     private GoodsReposiroty goodsReposiroty;
 
+    @Resource
+    private SysConfig sysConfig;
+
+    @Resource
+    private RedisBean redisBean;
+
     private Logger logger = Logger.getLogger(this.getClass());
+
 
     /**
      * 用户优惠券
@@ -57,7 +74,7 @@ public class CouponService {
             return Result.fail("请选择正确的状态");
         }
         Integer ints = userCouponsRepository.updateTimeOut(userId, UserCoupon.statusEnum.TIMEOUT.getCode(), new Date()
-                ,UserCoupon.statusEnum.UN_USE.getCode());
+                , UserCoupon.statusEnum.UN_USE.getCode());
         logger.info("更新 " + ints + " 条记录");
         PageResult<UserCoupon> pageResult = userCouponsRepository.findState(userId, state, page, limit);
 
@@ -119,5 +136,82 @@ public class CouponService {
         }).collect(Collectors.toList());
 
         return Result.success(vo);
+    }
+
+    public Result sendCoupon(Long userId, Long userCouponId) {
+        UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
+        if (userCoupon == null) {
+            return Result.fail("优惠劵不存在");
+        }
+        List<CouponGoodsRelation> couponGoodsRelations = couponGoodsRelationRep.findByCouponId(userCoupon.getCoupon().getId(), 0);
+        if (CollectionUtils.isNotEmpty(couponGoodsRelations)) {
+            CouponGoodsRelation couponGoodsRelation = couponGoodsRelations.get(0);
+            if (!couponCanUse(userCoupon)) {
+                return Result.fail("此优惠劵不能使用");
+            }
+            if (!userId.equals(userCoupon.getUserId())) {
+                return Result.fail("无权操作");
+            }
+            String host = sysConfig.getString("path.app.wechat_host");
+            Goods goods = goodsReposiroty.findOne(couponGoodsRelation.getGoodsId());
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            String key = RedisKey.getUuid2couponIdKey(uuid);
+            redisBean.setStringValue(key, userCouponId + "", 3, TimeUnit.DAYS);
+            String url = "/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid + "&goodsName=" + userCoupon.getGoodsName();
+
+            try {
+                url = URLEncoder.encode(url, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                logger.info(e.getMessage(), e);
+            }
+            url = host + url;
+            ShareVO vo = new ShareVO(userCoupon, goods, url, "");
+            return Result.success(vo);
+        } else {
+            return Result.fail("商品异常");
+        }
+
+    }
+
+    /**
+     * 优惠劵能否被使用
+     *
+     * @return
+     */
+    public boolean couponCanUse(Long userCouponId) {
+
+        UserCoupon userCoupon = userCouponsRepository.findOne(userCouponId);
+        if (userCoupon == null) {
+            return false;
+        }
+        return couponCanUse(userCoupon);
+    }
+
+    /**
+     * 优惠劵能否被使用
+     *
+     * @return
+     */
+    public boolean couponCanUse(UserCoupon userCoupon) {
+        if (userCoupon == null) {
+            return false;
+        }
+        Integer state = userCoupon.getState();
+
+        if (state == UserCoupon.statusEnum.UN_USE.getCode()) {
+            Coupon coupon = userCoupon.getCoupon();
+            Date endTime = coupon.getEndTime();
+            Date startTime = coupon.getStartTime();
+            Date now = new Date();
+            if (startTime.after(now)) {
+                return false;
+            }
+
+            if (now.after(endTime)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

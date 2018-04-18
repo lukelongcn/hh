@@ -20,6 +20,14 @@ public class SysConfig {
         return environment.getProperty(key);
     }
 
+    public String getString(String key) {
+        String value = environment.getProperty(key);
+        if (value == null) {
+            return "";
+        }
+        return  value;
+    }
+
     public Boolean getBoolean(String key) {
         Object obj = getObj(key);
 

@@ -29,6 +29,8 @@ public class BaseEntity implements Serializable {
     @UpdateTimestamp
     protected Date updateTime;//更新时间
 
+//
+
     public Date getCreateTime() {
         return createTime;
     }

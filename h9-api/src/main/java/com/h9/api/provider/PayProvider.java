@@ -81,7 +81,6 @@ public class PayProvider {
             return new Result<OrderVo>(result.getCode(),result.getMsg(),orderVo);
         } catch (RestClientException e) {
             logger.debug(e.getMessage(),e);
-            e.printStackTrace();
         }
         return Result.fail("支付失败");
     }

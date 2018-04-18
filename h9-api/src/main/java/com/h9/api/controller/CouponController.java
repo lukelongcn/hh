@@ -51,4 +51,19 @@ public class CouponController {
                                   @RequestParam Long goodsId) {
         return couponService.getOrderCoupons(userId, goodsId);
     }
+
+    /**
+     * 赠送优惠劵接口
+     *
+     * @param userId
+     * @param userCouponId
+     * @return
+     */
+    @Secured
+    @GetMapping("/user/coupons/send")
+    public Result sendCoupon(@SessionAttribute("curUserId") Long userId,
+                             @RequestParam Long userCouponId) {
+        return couponService.sendCoupon(userId, userCouponId);
+    }
+
 }

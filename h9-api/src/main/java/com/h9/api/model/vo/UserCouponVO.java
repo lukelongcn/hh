@@ -4,8 +4,9 @@ import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.utils.DateUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -27,6 +28,9 @@ public class UserCouponVO {
     private String couponType = "";
     private String useType = "";
     private long goodsId;
+    private long userCouponId;
+
+
 
     public UserCouponVO(UserCoupon userCoupon, Goods goods) {
         this.couponType = "免单劵";
@@ -36,16 +40,19 @@ public class UserCouponVO {
                 Coupon coupon = userCoupon.getCoupon();
                 Date startTime = coupon.getStartTime();
                 Date endTime = coupon.getEndTime();
-                this.endTime = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY)+"至"
-                +DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY) ;
-            }else{
+                this.endTime = DateUtil.formatDate(startTime, DateUtil.FormatType.DOT_DAY) + "至"
+                        + DateUtil.formatDate(endTime, DateUtil.FormatType.DOT_DAY);
+            } else {
                 this.endTime = DateUtil.formatDate(userCoupon.getCoupon().getEndTime(), DateUtil.FormatType.DOT_MINUTE) + "到期";
             }
             this.wide = "限 “" + goods.getName() + "” 适用";
             this.goodsId = goods.getId();
         }
+        this.userCouponId = userCoupon.getId();
 //        if (StringUtils.isNotEmpty(userCoupon.getGoodsName())) {
 //            this.wide = "限 “" + userCoupon.getGoodsName() + "” 适用";
 //        }
     }
+
+
 }
