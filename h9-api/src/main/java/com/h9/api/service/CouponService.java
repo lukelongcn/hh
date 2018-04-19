@@ -6,7 +6,7 @@ import com.h9.api.model.vo.UserCouponVO;
 import com.h9.api.model.vo.coupon.ShareVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.common.Lock;
+import com.h9.common.common.MyLock;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.coupon.Coupon;
@@ -23,10 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.validation.groups.ConvertGroup;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -67,7 +65,7 @@ public class CouponService {
     @Resource
     private CouponSendRecordRep couponSendRecordRep;
     @Resource
-    private Lock lock;
+    private MyLock myLock;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -212,7 +210,7 @@ public class CouponService {
         }
         Integer state = userCoupon.getState();
         String locKey = "coupon:lock:id:" + userCoupon.getId();
-        String lockValue = this.lock.getLock(locKey);
+        String lockValue = this.myLock.getLock(locKey);
         if (StringUtils.isNotEmpty(lockValue)) {
             // 有人在操作这张劵
             return false;
@@ -257,11 +255,11 @@ public class CouponService {
         }
         //对优惠劵加锁
         String locKey = "coupon:lock:id:" + userCouponId;
-        lock.lock(locKey, 1, TimeUnit.MINUTES);
+        myLock.lock(locKey, 1, TimeUnit.MINUTES);
 
         userCoupon.setUserId(userId);
         userCouponsRepository.save(userCoupon);
-        lock.unLock(locKey);
+        myLock.unLock(locKey);
 
         return Result.success();
     }

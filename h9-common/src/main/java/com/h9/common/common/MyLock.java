@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by itservice on 2018/1/24.
  */
 @Component
-public class Lock {
+public class MyLock {
 
     @Resource
     private RedisBean redisBean;
