@@ -45,6 +45,7 @@ import java.util.Map;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.USED;
 import static com.h9.common.db.entity.order.Orders.PayMethodEnum.BALANCE_PAY;
+import static com.h9.common.db.entity.order.Orders.PayMethodEnum.WX_PAY;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -613,6 +614,7 @@ public class GoodService {
             Orders order = ordersRepository.findOne(orderId);
             String payInfoId = redisBean.getStringValue("orderId:" + orderId);
             order.setPayInfoId(Long.valueOf(payInfoId));
+            order.setPayMethond(WX_PAY.getCode());
             order = ordersRepository.saveAndFlush(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);
