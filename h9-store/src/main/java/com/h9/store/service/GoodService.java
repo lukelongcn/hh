@@ -500,7 +500,6 @@ public class GoodService {
             , int count, Orders order, int payMethod) {
         if (userCoupon != null) {
 
-
             BigDecimal goodsPrice = goods.getRealPrice();
             if (count >= 1) {
                 payMoney = payMoney.subtract(goodsPrice);

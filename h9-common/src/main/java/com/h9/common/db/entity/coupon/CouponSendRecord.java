@@ -42,4 +42,7 @@ public class CouponSendRecord extends BaseEntity {
 
     @Column(name = "receive_date",columnDefinition = "datetime comment '领取时间'")
     private Date receiveDate;
+
+    @Column(name = "uuid",columnDefinition = "varchar(200) comment 'uuid 赠送时生成的UUID'")
+    private String uuid;
 }

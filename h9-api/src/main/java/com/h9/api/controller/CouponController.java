@@ -60,10 +60,24 @@ public class CouponController {
      * @return
      */
     @Secured
-    @GetMapping("/user/coupons/send")
+    @PostMapping("/user/coupons/send/{userCouponId}")
     public Result sendCoupon(@SessionAttribute("curUserId") Long userId,
-                             @RequestParam Long userCouponId) {
+                             @PathVariable Long userCouponId) {
         return couponService.sendCoupon(userId, userCouponId);
+    }
+
+    /**
+     * 领取优惠劵
+     *
+     * @param userId
+     * @param uuid
+     * @return
+     */
+    @Secured
+    @PutMapping("/user/coupons/send/{uuid}")
+    public Result receiveCoupon(@SessionAttribute("curUserId") Long userId,
+                                @PathVariable String uuid) {
+        return couponService.receiveCoupon(userId, uuid);
     }
 
 }

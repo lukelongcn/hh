@@ -6,17 +6,18 @@ import com.h9.api.model.vo.UserCouponVO;
 import com.h9.api.model.vo.coupon.ShareVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.Lock;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.coupon.Coupon;
 import com.h9.common.db.entity.coupon.CouponGoodsRelation;
+import com.h9.common.db.entity.coupon.CouponSendRecord;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.order.Goods;
-import com.h9.common.db.repo.CouponGoodsRelationRep;
-import com.h9.common.db.repo.CouponRespository;
-import com.h9.common.db.repo.GoodsReposiroty;
-import com.h9.common.db.repo.UserCouponsRepository;
+import com.h9.common.db.entity.user.User;
+import com.h9.common.db.repo.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,13 @@ public class CouponService {
 
     @Resource
     private RedisBean redisBean;
+
+    @Resource
+    private UserRepository userRepository;
+    @Resource
+    private CouponSendRecordRep couponSendRecordRep;
+    @Resource
+    private Lock lock;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -165,6 +173,12 @@ public class CouponService {
                 logger.info(e.getMessage(), e);
             }
             url = host + url;
+            User user = userRepository.findOne(userId);
+
+            CouponSendRecord couponSendRecord = new CouponSendRecord(null, user, null,
+                    userCoupon, 0, null, null);
+
+            couponSendRecordRep.save(couponSendRecord);
             ShareVO vo = new ShareVO(userCoupon, goods, url, "");
             return Result.success(vo);
         } else {
@@ -213,5 +227,37 @@ public class CouponService {
         }
 
         return true;
+    }
+
+    public Result receiveCoupon(Long userId, String uuid) {
+
+        String key = RedisKey.getUuid2couponIdKey(uuid);
+        String userCouponId = redisBean.getStringValue(key);
+        if (StringUtils.isEmpty(userCouponId)) {
+            logger.info("key : " + key + " 在redis 中为空");
+            return Result.fail("此优惠劵已被领取");
+        }
+        redisBean.setStringValue(key, "", 1, TimeUnit.MICROSECONDS);
+
+        Long userCoupondIdLong = Long.valueOf(userCouponId);
+        UserCoupon userCoupon = userCouponsRepository.findOne(userCoupondIdLong);
+        if (userCoupon == null) {
+            logger.info("userCouponId : " + userCouponId + " 在数据库中没有找对应记录");
+            return Result.fail("此优惠劵已被领取");
+        }
+
+        if (!couponCanUse(userCoupon)) {
+            logger.info("优惠劵Id " + userCoupon.getId() + " 不能使用,已过期或者已使用");
+            return Result.fail("此优惠劵已被领取");
+        }
+        //对优惠劵加锁
+        String locKey = "coupon:lock:id:" + userCouponId;
+        lock.lock(locKey);
+
+        userCoupon.setUserId(userId);
+        userCouponsRepository.save(userCoupon);
+        lock.unLock(locKey);
+
+        return Result.success();
     }
 }
