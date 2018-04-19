@@ -508,6 +508,9 @@ public class GoodService {
 
             if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
                 //微信支付
+                if (payMoney.equals(BigDecimal.ZERO)) {
+                    userCoupon.setState(USED.getCode());
+                }
             } else {
                 //余额支付
                 userCoupon.setState(USED.getCode());
