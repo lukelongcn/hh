@@ -193,7 +193,7 @@ public class ConsumeService {
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
 
             order.setStatus(Orders.statusEnum.FINISH.getCode());
-            order.setPayStatus(Orders.PayStatusEnum.UNPAID.getCode());
+            order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
             ordersReposiroty.save(order);
             //减库存
 //            Result changeStockResult = goodService.changeStock(goods);
