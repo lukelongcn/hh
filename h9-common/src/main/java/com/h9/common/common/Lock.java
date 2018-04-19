@@ -21,7 +21,7 @@ public class Lock {
     /**
      * description: 获取redis 定时任务锁
      */
-    public boolean getLock(String lockKey) {
+    public boolean getLockAndRelease(String lockKey) {
 
         String value = redisBean.getStringValue(lockKey);
 
@@ -42,7 +42,7 @@ public class Lock {
      * @param timeUnit
      * @return
      */
-    public boolean getLock(String lockKey, int timeOut, TimeUnit timeUnit) {
+    public boolean getLockAndRelease(String lockKey, int timeOut, TimeUnit timeUnit) {
 
         String value = redisBean.getStringValue(lockKey);
 
@@ -55,23 +55,32 @@ public class Lock {
         return false;
     }
 
-    public void lock(String key){
+    public void lock(String key) {
         redisBean.setStringValue(key, "lock");
     }
-    public void lock(String key,int nTime,TimeUnit timeUnit){
-        redisBean.setStringValue(key, "lock",nTime,timeUnit);
+
+    public void lock(String key, int nTime, TimeUnit timeUnit) {
+        redisBean.setStringValue(key, "lock", nTime, timeUnit);
     }
 
 
-    public void lock(String key,String value){
+    public void lock(String key, String value) {
         redisBean.setStringValue(key, value);
     }
 
-    public void lock(String key,String value,int nTime,TimeUnit timeUnit){
-        redisBean.setStringValue(key, value,nTime,timeUnit);
+    public void lock(String key, String value, int nTime, TimeUnit timeUnit) {
+        redisBean.setStringValue(key, value, nTime, timeUnit);
     }
 
     public void unLock(String key) {
         redisBean.setStringValue(key, "", 1, TimeUnit.MILLISECONDS);
+    }
+
+    public String getLock(String key) {
+        if (StringUtils.isEmpty(key)) {
+            return "";
+        }
+        String stringValue = redisBean.getStringValue(key);
+        return stringValue;
     }
 }

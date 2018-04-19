@@ -211,7 +211,12 @@ public class CouponService {
             return false;
         }
         Integer state = userCoupon.getState();
-
+        String locKey = "coupon:lock:id:" + userCoupon.getId();
+        String lockValue = this.lock.getLock(locKey);
+        if (StringUtils.isNotEmpty(lockValue)) {
+            // 有人在操作这张劵
+            return false;
+        }
         if (state == UserCoupon.statusEnum.UN_USE.getCode()) {
             Coupon coupon = userCoupon.getCoupon();
             Date endTime = coupon.getEndTime();
@@ -252,7 +257,7 @@ public class CouponService {
         }
         //对优惠劵加锁
         String locKey = "coupon:lock:id:" + userCouponId;
-        lock.lock(locKey);
+        lock.lock(locKey, 1, TimeUnit.MINUTES);
 
         userCoupon.setUserId(userId);
         userCouponsRepository.save(userCoupon);

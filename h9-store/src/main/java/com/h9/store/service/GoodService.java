@@ -1,6 +1,7 @@
 package com.h9.store.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.h9.api.service.CouponService;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
 import com.h9.common.common.CommonService;
@@ -91,6 +92,8 @@ public class GoodService {
     private OrdersLotteryRelationRep ordersLotteryRelationRep;
     @Resource
     private TransactionalService transactionalService;
+    @Resource
+    private CouponService couponService;
 
 
     private Logger logger = Logger.getLogger(this.getClass());
