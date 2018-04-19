@@ -168,8 +168,7 @@ public class ConsumeService {
             result = mobileRechargeService.recharge(mobileRechargeDTO, rechargeId, realPrice);
         } else {
             logger.info("调用 rechargeTest method");
-//            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
-            result = Result.fail();
+            result = mobileRechargeService.rechargeTest(mobileRechargeDTO, rechargeId, realPrice);
         }
 
         //保存充值记录（包括失败成功）
@@ -188,12 +187,13 @@ public class ConsumeService {
             Map<String, String> map = new HashMap<>();
             map.put("time", DateUtil.formatDate(new Date(), DateUtil.FormatType.SECOND));
             map.put("money", MoneyUtils.formatMoney(realPrice));
-            order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
-            order.setStatus(Orders.statusEnum.FINISH.getCode());
             orderItemReposiroty.saveAndFlush(orderItems);
             saveRechargeRecord(user, goods.getRealPrice(), rechargeId, orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
+
+            order.setStatus(Orders.statusEnum.FINISH.getCode());
+            order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
             ordersReposiroty.save(order);
             //减库存
 //            Result changeStockResult = goodService.changeStock(goods);
