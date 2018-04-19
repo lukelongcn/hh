@@ -46,6 +46,7 @@ import java.util.Map;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.USED;
 import static com.h9.common.db.entity.order.Orders.PayMethodEnum.BALANCE_PAY;
+import static com.h9.common.db.entity.order.Orders.PayMethodEnum.WX_PAY;
 
 /**
  * Created by itservice on 2017/11/20.
@@ -410,7 +411,7 @@ public class GoodService {
         if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
             // 微信支付
             if (payMoney.compareTo(BigDecimal.ZERO) == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods,1,count);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods, 1, count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
                 order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
@@ -427,7 +428,7 @@ public class GoodService {
             }
             Result balancePayResult = balancePay(order, userId, goods, payMoney, count);
             if (balancePayResult.getCode() == 0) {
-                Map<Object, Object> showInfo = showJoinIn(order, user, goods,2,count);
+                Map<Object, Object> showInfo = showJoinIn(order, user, goods, 2, count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
                 order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
@@ -449,7 +450,7 @@ public class GoodService {
 
 
     @Transactional
-    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods, int type,int count) {
+    public Map<Object, Object> showJoinIn(Orders order, User user, Goods goods, int type, int count) {
         Map<Object, Object> mapVo = new HashMap<>();
         OrdersLotteryActivity ordersLotteryActivity = commonService.joinBigRich(order);
         if (ordersLotteryActivity != null) {
@@ -458,23 +459,23 @@ public class GoodService {
             OrdersLotteryRelation ordersLotteryRelation = new OrdersLotteryRelation(null, user.getId(),
                     order.getId(), ordersLotteryActivity.getId(), 0, null);
             ordersLotteryRelationRep.save(ordersLotteryRelation);
-            if(type ==1){
+            if (type == 1) {
                 //微信支付
                 if (CollectionUtils.isEmpty(ordersList)) {
                     logger.info("真实参与记录 " + ordersList.size());
                     mapVo.put("activityName", "1号大富贵");
                     mapVo.put("lotteryChance", "获得1次抽奖机会");
                     logger.debug("获得一次抽奖机会");
-                }else{
+                } else {
                     logger.info("没有参与活动");
                 }
-            }else{
+            } else {
                 if (CollectionUtils.isNotEmpty(ordersList) && ordersList.size() == 1) {
                     logger.info("真实参与记录 " + ordersList.size());
                     mapVo.put("activityName", "1号大富贵");
                     mapVo.put("lotteryChance", "获得1次抽奖机会");
                     logger.debug("获得一次抽奖机会");
-                }else{
+                } else {
                     logger.info("没有参与活动");
                 }
 
@@ -510,6 +511,9 @@ public class GoodService {
 
             if (payMethod == Orders.PayMethodEnum.WX_PAY.getCode()) {
                 //微信支付
+                if (payMoney.compareTo(BigDecimal.ZERO) <= 0) {
+                    userCoupon.setState(USED.getCode());
+                }
             } else {
                 //余额支付
                 userCoupon.setState(USED.getCode());
@@ -612,6 +616,7 @@ public class GoodService {
             Orders order = ordersRepository.findOne(orderId);
             String payInfoId = redisBean.getStringValue("orderId:" + orderId);
             order.setPayInfoId(Long.valueOf(payInfoId));
+            order.setPayMethond(WX_PAY.getCode());
             order = ordersRepository.saveAndFlush(order);
             Object data = result.getData();
             PayResultVO payResultVO = JSONObject.parseObject(JSONObject.toJSONString(data), PayResultVO.class);

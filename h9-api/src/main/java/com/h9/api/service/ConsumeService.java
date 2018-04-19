@@ -194,7 +194,7 @@ public class ConsumeService {
             saveRechargeRecord(user, goods.getRealPrice(), rechargeId, orderItems.getOrders().getId());
             addEveryDayRechargeMoney(userId, realPrice);
             commonService.setBalance(userId, order.getPayMoney().negate(), BalanceFlow.BalanceFlowTypeEnum.RECHARGE_PHONE_FARE.getId(), order.getId(), "", balanceFlowType);
-
+            ordersReposiroty.save(order);
             //减库存
 //            Result changeStockResult = goodService.changeStock(goods);
 
