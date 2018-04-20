@@ -161,6 +161,7 @@ public class CouponService {
             String host = sysConfig.getString("path.app.wechat_host");
             Goods goods = goodsReposiroty.findOne(couponGoodsRelation.getGoodsId());
             String uuid = UUID.randomUUID().toString().replace("-", "");
+            logger.info("uuid :"+uuid);
             String key = RedisKey.getUuid2couponIdKey(uuid);
             redisBean.setStringValue(key, userCouponId + "", 3, TimeUnit.DAYS);
             String url = "/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid + "&goodsName=" + userCoupon.getGoodsName();
@@ -240,19 +241,30 @@ public class CouponService {
             logger.info("key : " + key + " 在redis 中为空");
             return Result.fail("此优惠劵已被领取");
         }
-        redisBean.setStringValue(key, "", 1, TimeUnit.MICROSECONDS);
+
 
         Long userCoupondIdLong = Long.valueOf(userCouponId);
         UserCoupon userCoupon = userCouponsRepository.findOne(userCoupondIdLong);
+
         if (userCoupon == null) {
             logger.info("userCouponId : " + userCouponId + " 在数据库中没有找对应记录");
             return Result.fail("此优惠劵已被领取");
         }
-
+        if (userCoupon.getUserId().equals(userId)) {
+            return Result.fail("自己不能领取自己的优惠劵");
+        }
         if (!couponCanUse(userCoupon)) {
             logger.info("优惠劵Id " + userCoupon.getId() + " 不能使用,已过期或者已使用");
             return Result.fail("此优惠劵已被领取");
         }
+
+        userCouponId = redisBean.getStringValue(key);
+        if (StringUtils.isEmpty(userCouponId)) {
+            logger.info("key : " + key + " 在redis 中为空");
+            return Result.fail("此优惠劵已被领取");
+        }
+        redisBean.setStringValue(key, "", 1, TimeUnit.MICROSECONDS);
+
         //对优惠劵加锁
         String locKey = "coupon:lock:id:" + userCouponId;
         myLock.lock(locKey, 1, TimeUnit.MINUTES);

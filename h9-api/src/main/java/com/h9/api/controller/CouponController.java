@@ -74,7 +74,7 @@ public class CouponController {
      * @return
      */
     @Secured
-    @PutMapping("/user/coupons/send/{uuid}")
+    @PutMapping("/user/coupons/receive/{uuid}")
     public Result receiveCoupon(@SessionAttribute("curUserId") Long userId,
                                 @PathVariable String uuid) {
         return couponService.receiveCoupon(userId, uuid);
