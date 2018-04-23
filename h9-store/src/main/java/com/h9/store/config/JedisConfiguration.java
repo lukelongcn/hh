@@ -1,4 +1,4 @@
-package com.h9.config;
+package com.h9.store.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
