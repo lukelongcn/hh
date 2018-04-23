@@ -173,8 +173,8 @@ public class CouponService {
             url = host + url;
             User user = userRepository.findOne(userId);
 
-            CouponSendRecord couponSendRecord = new CouponSendRecord(null, user, null,
-                    userCoupon, 0, null, uuid);
+            CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
+                    userCoupon.getId()+"",uuid,1);
 
             couponSendRecordRep.save(couponSendRecord);
             ShareVO vo = new ShareVO(userCoupon, goods, url, "");
@@ -254,6 +254,11 @@ public class CouponService {
         User user = userRepository.findOne(userId);
         String key = RedisKey.getUuid2couponIdKey(uuid);
         String userCouponId = redisBean.getStringValue(key);
+
+        CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
+                userCouponId,uuid,2);
+
+        couponSendRecordRep.save(couponSendRecord);
         if (StringUtils.isEmpty(userCouponId)) {
             logger.info("key : " + key + " 在redis 中为空");
             return Result.success(new PopupWindowVO( 2, "已被领走啦~"));
@@ -261,6 +266,8 @@ public class CouponService {
 
         Long userCoupondIdLong = Long.valueOf(userCouponId);
         UserCoupon userCoupon = userCouponsRepository.findOne(userCoupondIdLong);
+
+
 
         if (userCoupon == null) {
             logger.info("userCouponId : " + userCouponId + " 在数据库中没有找对应记录");
@@ -281,6 +288,8 @@ public class CouponService {
             return Result.success(new PopupWindowVO(2, "已被领走啦~"));
         }
 
+
+
         //对优惠劵加锁
         String locKey = "coupon:lock:id:" + uuid;
         String requestId = "LOCK_BY_" + userId + "_" + System.currentTimeMillis();
@@ -289,11 +298,7 @@ public class CouponService {
         if (!lockResult) {
             return Result.fail("请稍后再试");
         }
-        CouponSendRecord couponSendRecord = couponSendRecordRep.findByUuid(uuid);
-        couponSendRecord.setReceiveUser(user);
-        couponSendRecord.setStatus(1);
-        couponSendRecord.setReceiveDate(new Date());
-        couponSendRecordRep.save(couponSendRecord);
+
 
         userCoupon.setUserId(userId);
         userCouponsRepository.save(userCoupon);
