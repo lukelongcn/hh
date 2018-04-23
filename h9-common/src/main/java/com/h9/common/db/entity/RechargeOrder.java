@@ -34,7 +34,7 @@ public class RechargeOrder extends BaseEntity {
     @Column(name = "money",columnDefinition = "DECIMAL(10,2) default 0.00 COMMENT '充值金额'")
     private BigDecimal money = new BigDecimal(0);
     
-    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 0 待充值 1 充值成功 2 充值失败'")
+    @Column(name = "status",nullable = false,columnDefinition = "tinyint default 1 COMMENT '订单状态 0 待充值 1 充值失败， 2 充值成功'")
     private Integer status = 1;
 
     @Temporal(DATE)

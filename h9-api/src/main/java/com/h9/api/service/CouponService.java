@@ -2,11 +2,12 @@ package com.h9.api.service;
 
 import com.h9.api.config.SysConfig;
 import com.h9.api.model.vo.OrderCouponsVO;
+import com.h9.api.model.vo.PopupWindowVO;
 import com.h9.api.model.vo.UserCouponVO;
 import com.h9.api.model.vo.coupon.ShareVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
-import com.h9.common.common.MyLock;
+import com.h9.common.db.bean.JedisTool;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
 import com.h9.common.db.entity.coupon.Coupon;
@@ -25,9 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -65,7 +64,7 @@ public class CouponService {
     @Resource
     private CouponSendRecordRep couponSendRecordRep;
     @Resource
-    private MyLock myLock;
+    private JedisTool jedisTool;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -161,7 +160,7 @@ public class CouponService {
             String host = sysConfig.getString("path.app.wechat_host");
             Goods goods = goodsReposiroty.findOne(couponGoodsRelation.getGoodsId());
             String uuid = UUID.randomUUID().toString().replace("-", "");
-            logger.info("uuid :"+uuid);
+            logger.info("uuid :" + uuid);
             String key = RedisKey.getUuid2couponIdKey(uuid);
             redisBean.setStringValue(key, userCouponId + "", 3, TimeUnit.DAYS);
             String url = "/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid + "&goodsName=" + userCoupon.getGoodsName();
@@ -175,7 +174,7 @@ public class CouponService {
             User user = userRepository.findOne(userId);
 
             CouponSendRecord couponSendRecord = new CouponSendRecord(null, user, null,
-                    userCoupon, 0, null, null);
+                    userCoupon, 0, null, uuid);
 
             couponSendRecordRep.save(couponSendRecord);
             ShareVO vo = new ShareVO(userCoupon, goods, url, "");
@@ -210,12 +209,12 @@ public class CouponService {
             return false;
         }
         Integer state = userCoupon.getState();
-        String locKey = "coupon:lock:id:" + userCoupon.getId();
-        String lockValue = this.myLock.getLock(locKey);
-        if (StringUtils.isNotEmpty(lockValue)) {
-            // 有人在操作这张劵
-            return false;
-        }
+//        String locKey = "coupon:lock:id:" + userCoupon.getId();
+//        String lockValue = this.myLock.getLock(locKey);
+//        if (StringUtils.isNotEmpty(lockValue)) {
+//            // 有人在操作这张劵
+//            return false;
+//        }
         if (state == UserCoupon.statusEnum.UN_USE.getCode()) {
             Coupon coupon = userCoupon.getCoupon();
             Date endTime = coupon.getEndTime();
@@ -233,46 +232,78 @@ public class CouponService {
         return true;
     }
 
-    public Result receiveCoupon(Long userId, String uuid) {
+    public Result couponCanReceiveAndResult(UserCoupon userCoupon) {
+        if (userCoupon == null) {
+            return Result.fail("优惠劵不存在");
+        }
+        Integer state = userCoupon.getState();
+        if (state == UserCoupon.statusEnum.UN_USE.getCode()) {
+            Coupon coupon = userCoupon.getCoupon();
+            Date endTime = coupon.getEndTime();
+            Date now = new Date();
 
+            if (now.after(endTime)) {
+                return Result.fail("已过期");
+            }
+        }
+
+        return Result.success();
+    }
+
+    public Result receiveCoupon(Long userId, String uuid) {
+        User user = userRepository.findOne(userId);
         String key = RedisKey.getUuid2couponIdKey(uuid);
         String userCouponId = redisBean.getStringValue(key);
         if (StringUtils.isEmpty(userCouponId)) {
             logger.info("key : " + key + " 在redis 中为空");
-            return Result.fail("此优惠劵已被领取");
+            return Result.success(new PopupWindowVO( 2, "已被领走啦~"));
         }
-
 
         Long userCoupondIdLong = Long.valueOf(userCouponId);
         UserCoupon userCoupon = userCouponsRepository.findOne(userCoupondIdLong);
 
         if (userCoupon == null) {
             logger.info("userCouponId : " + userCouponId + " 在数据库中没有找对应记录");
-            return Result.fail("此优惠劵已被领取");
+            return Result.success(new PopupWindowVO(2, "已被领走啦~"));
         }
         if (userCoupon.getUserId().equals(userId)) {
             return Result.fail("自己不能领取自己的优惠劵");
         }
-        if (!couponCanUse(userCoupon)) {
+        Result result = couponCanReceiveAndResult(userCoupon);
+        if (!result.isSuccess()) {
             logger.info("优惠劵Id " + userCoupon.getId() + " 不能使用,已过期或者已使用");
-            return Result.fail("此优惠劵已被领取");
+            return Result.success(new PopupWindowVO( 0, "已过期"));
         }
 
         userCouponId = redisBean.getStringValue(key);
         if (StringUtils.isEmpty(userCouponId)) {
             logger.info("key : " + key + " 在redis 中为空");
-            return Result.fail("此优惠劵已被领取");
+            return Result.success(new PopupWindowVO(2, "已被领走啦~"));
         }
-        redisBean.setStringValue(key, "", 1, TimeUnit.MICROSECONDS);
 
         //对优惠劵加锁
-        String locKey = "coupon:lock:id:" + userCouponId;
-        myLock.lock(locKey, 1, TimeUnit.MINUTES);
+        String locKey = "coupon:lock:id:" + uuid;
+        String requestId = "LOCK_BY_" + userId + "_" + System.currentTimeMillis();
+        boolean lockResult = jedisTool.tryGetDistributedLock(locKey, requestId, 1000L);
+        logger.info("lock result : " + lockResult);
+        if (!lockResult) {
+            return Result.fail("请稍后再试");
+        }
+        CouponSendRecord couponSendRecord = couponSendRecordRep.findByUuid(uuid);
+        couponSendRecord.setReceiveUser(user);
+        couponSendRecord.setStatus(1);
+        couponSendRecord.setReceiveDate(new Date());
+        couponSendRecordRep.save(couponSendRecord);
 
         userCoupon.setUserId(userId);
         userCouponsRepository.save(userCoupon);
-        myLock.unLock(locKey);
 
-        return Result.success();
+        boolean releaseResult = jedisTool.releaseDistributedLock(locKey, requestId);
+        if (releaseResult) {
+            //释放锁成功，说明流程正常，当前用户领取成功
+            redisBean.setStringValue(key, "", 1, TimeUnit.MICROSECONDS);
+        }
+        logger.info("releaseResult : " + releaseResult);
+        return Result.success(new PopupWindowVO(1, "立即使用"));
     }
 }

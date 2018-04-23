@@ -358,8 +358,8 @@ public class WeChatProvider {
 
 //        String accessToken = getWeChatAccessToken();
 
-        String accessToken = "8_QlOlSp8itpv_BY91qm4GwQ0BbJNwRVVdx_u4zLPDerf08OGV-tUfetr0icP" +
-                "f3RwVSI813JDqOOEAjRnRNJ95ehyatD50AB-zAssQZon9TADz_wX7ZFXq-Q1JKLLCaAIASSJ";
+        String accessToken = "8_VrVYTJemfRzg2Kj6GfIiJRd0fnsJ8Yqil6QPyv2LLjQoAreDBLvIBYDsw4XQoDD6td9IgZebgAbS6Xxz3d8Bb_" +
+                "tgGz80xopIcLcpab2iaqOaD5HTGTGgNTeXQUiMS0jAU2xAPUR8cWYGOYmyPPKjACACCX";
 
         logger.info("accessToken : " + accessToken);
         String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;
