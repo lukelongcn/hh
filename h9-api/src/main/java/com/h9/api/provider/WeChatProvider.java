@@ -327,7 +327,7 @@ public class WeChatProvider {
 //                                .setUrl(host + "/h9-weixin/#/active/hongbao")
 //                                .setName("开盖扫红包")
 
-                                .setName("开盖扫红包")
+                                .setName("扫码领红包")
                                 .setSub_button(
                                         Arrays.asList(new MenuDTO.ButtonBean.SubButtonBean()
                                                         .setName("为爱 可以贪杯")
@@ -338,7 +338,7 @@ public class WeChatProvider {
                                                         .setType("view")
                                                         .setUrl("http://u5202759.viewer.maka.im/pcviewer/UVCIEYC5"),
                                                 new MenuDTO.ButtonBean.SubButtonBean()
-                                                        .setName("开盖扫红包")
+                                                        .setName("扫码领红包")
                                                         .setType("view")
                                                         .setUrl(host + "/h9-weixin/#/active/hongbao")))
                         ,
@@ -358,8 +358,8 @@ public class WeChatProvider {
 
 //        String accessToken = getWeChatAccessToken();
 
-        String accessToken = "8_VrVYTJemfRzg2Kj6GfIiJRd0fnsJ8Yqil6QPyv2LLjQoAreDBLvIBYDsw4XQoDD6td9IgZebgAbS6Xxz3d8Bb_" +
-                "tgGz80xopIcLcpab2iaqOaD5HTGTGgNTeXQUiMS0jAU2xAPUR8cWYGOYmyPPKjACACCX";
+        String accessToken = "9_Z7Q0dv_vtWatlgQf7K4D7txKoQ22RZR9n2Kq3sKikZsVf7A0XX2wPbU18T_E9XbvZ21SnvNP0VuJ-wutvMhUejdd" +
+                "o83UvmnPG67OG67Lx0dtW0-GW35xtq8D3lShcLy_GkfyiAGXePSG1ZBYKEFdAHADXY";
 
         logger.info("accessToken : " + accessToken);
         String createMenuUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken;

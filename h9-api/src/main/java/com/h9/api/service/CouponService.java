@@ -7,6 +7,7 @@ import com.h9.api.model.vo.UserCouponVO;
 import com.h9.api.model.vo.coupon.ShareVO;
 import com.h9.common.base.PageResult;
 import com.h9.common.base.Result;
+import com.h9.common.common.ConfigService;
 import com.h9.common.db.bean.JedisTool;
 import com.h9.common.db.bean.RedisBean;
 import com.h9.common.db.bean.RedisKey;
@@ -65,6 +66,8 @@ public class CouponService {
     private CouponSendRecordRep couponSendRecordRep;
     @Resource
     private JedisTool jedisTool;
+    @Resource
+    private ConfigService configService;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -174,10 +177,11 @@ public class CouponService {
             User user = userRepository.findOne(userId);
 
             CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
-                    userCoupon.getId()+"",uuid,1);
+                    userCoupon.getId() + "", uuid, 1);
 
             couponSendRecordRep.save(couponSendRecord);
-            ShareVO vo = new ShareVO(userCoupon, goods, url, "");
+            String shareImg = configService.getStringConfig("shareImg");
+            ShareVO vo = new ShareVO(userCoupon, goods, url, shareImg);
             return Result.success(vo);
         } else {
             return Result.fail("商品异常");
@@ -256,17 +260,16 @@ public class CouponService {
         String userCouponId = redisBean.getStringValue(key);
 
         CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
-                userCouponId,uuid,2);
+                userCouponId, uuid, 2);
 
         couponSendRecordRep.save(couponSendRecord);
         if (StringUtils.isEmpty(userCouponId)) {
             logger.info("key : " + key + " 在redis 中为空");
-            return Result.success(new PopupWindowVO( 2, "已被领走啦~"));
+            return Result.success(new PopupWindowVO(2, "已被领走啦~"));
         }
 
         Long userCoupondIdLong = Long.valueOf(userCouponId);
         UserCoupon userCoupon = userCouponsRepository.findOne(userCoupondIdLong);
-
 
 
         if (userCoupon == null) {
@@ -279,7 +282,7 @@ public class CouponService {
         Result result = couponCanReceiveAndResult(userCoupon);
         if (!result.isSuccess()) {
             logger.info("优惠劵Id " + userCoupon.getId() + " 不能使用,已过期或者已使用");
-            return Result.success(new PopupWindowVO( 0, "已过期"));
+            return Result.success(new PopupWindowVO(0, "已过期"));
         }
 
         userCouponId = redisBean.getStringValue(key);
@@ -287,7 +290,6 @@ public class CouponService {
             logger.info("key : " + key + " 在redis 中为空");
             return Result.success(new PopupWindowVO(2, "已被领走啦~"));
         }
-
 
 
         //对优惠劵加锁

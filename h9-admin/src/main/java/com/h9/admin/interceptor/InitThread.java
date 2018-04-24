@@ -8,12 +8,9 @@ import com.h9.common.db.entity.config.GlobalProperty;
 import com.h9.common.db.entity.user.Permission;
 import com.h9.common.db.repo.ArticleTypeRepository;
 import com.h9.common.db.repo.BannerTypeRepository;
-
 import com.h9.common.db.repo.GlobalPropertyRepository;
 import com.h9.common.db.repo.PermissionRepository;
 import org.jboss.logging.Logger;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -21,14 +18,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * Description:权限初始化监听器
- * User:刘敏华 shadow.liu@hey900.com
- * Date: 2017-08-09
- * Time: 15:47
+ * Created by Ln on 2018/4/24.
  */
 @Component
-public class InitListener implements ApplicationListener<ApplicationReadyEvent> {
+public class InitThread extends Thread {
+
     private Logger logger = Logger.getLogger(InitListener.class);
     @Resource
     private BannerTypeRepository bannerTypeRepository;
@@ -41,18 +35,12 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
     @Resource
     private PermissionRepository permissionRepository;
 
-    @Resource
-    private InitThread initThread;
-
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-
-       this.initBannerType();
-       this.initArticleType();
-       this.initCache();
-//        initThread.start();
+    public void run() {
+        this.initBannerType();
+        this.initArticleType();
+        this.initCache();
     }
-
     private void initBannerType(){
         this.saveBannerType("顶部banner","topBanner",1);
         this.saveBannerType("功能banner","navigationBanner",1);
@@ -121,9 +109,4 @@ public class InitListener implements ApplicationListener<ApplicationReadyEvent> 
         this.createPermission(99,0,1,"workbench:statistics:lottery","数据统计","我的工作台-数据统计",990000L);
 
     }
-
-    private void createRole() {
-
-    }
-
 }

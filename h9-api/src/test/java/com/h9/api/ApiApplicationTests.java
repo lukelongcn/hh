@@ -72,13 +72,12 @@ public class ApiApplicationTests {
 
     @Resource
     private JedisTool jedisTool;
+    @Resource
+    private WeChatProvider weChatProvider;
 
     @Test
     public void contextLoads() {
-        boolean b = jedisTool.tryGetDistributedLock("name", "ldh", 10);
-
-        boolean b2 = jedisTool.tryGetDistributedLock("name", "ldh", 10);
-        System.out.println(b+","+b2);
+        weChatProvider.createMenu2();
     }
 
 }

@@ -40,10 +40,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.h9.common.db.entity.order.Orders.PayMethodEnum.*;
 import static com.h9.common.db.entity.withdrawals.WithdrawalsRecord.statusEnum.FINISH;
@@ -433,7 +430,14 @@ public class BasisService {
                break;
             case 2:
                 Map<String, String> valueMap = configService.getMapConfig(code);
-                result.setData(valueMap);
+                List list = new ArrayList();
+                valueMap.forEach((k,v) -> {
+                    Map newMap = new HashMap();
+                    newMap.put("key", k);
+                    newMap.put("value",v);
+                    list.add(newMap);
+                });
+                result.setData(list);
                 break;
             default:
                 List<Config> configValue = configService.getMapListConfig(code);

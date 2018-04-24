@@ -36,6 +36,9 @@ public class Result<T> {
         return code == 0;
     }
 
+    public boolean isFail(){
+        return code ==1;
+    }
 
     public static <T>Result<T> success() {
         return success("成功");

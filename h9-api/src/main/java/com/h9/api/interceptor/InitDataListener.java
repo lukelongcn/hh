@@ -14,6 +14,7 @@ import org.jboss.logging.Logger;
 import com.h9.common.db.repo.UserRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.logging.Logger;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -82,12 +83,7 @@ logger.info("初始化数据中0.0");
         logger.info("初始化数据完成，消费时间: "+initDateTime +" 秒");
     }
 
-    /*****
-     * 初始化用户信息
-     */
-    private void initTestUserService() {
-//   12345678909
 
-    }
+
 
 }
