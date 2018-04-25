@@ -127,13 +127,25 @@ public class CustomModuleService {
 
     public Result addUserCustom(List<AddUserCustomDTO> addUserCustomDTOs, Long userId) {
 
-        if (CollectionUtils.isNotEmpty(addUserCustomDTOs)) {
 
-            List<Long> collect = addUserCustomDTOs.stream().map(addUserCustomDTO -> {
+        if (CollectionUtils.isNotEmpty(addUserCustomDTOs)) {
+            List listVO = new ArrayList();
+            for (AddUserCustomDTO addUserCustomDTO : addUserCustomDTOs) {
                 List<String> images = addUserCustomDTO.getImages();
                 List<String> texts = addUserCustomDTO.getTexts();
                 Long id = addUserCustomDTO.getId();
                 CustomModuleItems customModuleItems = customModuleItmesRep.findOne(id);
+
+                if(customModuleItems == null){
+                    return Result.fail("id " + id + " 定制项不存在");
+                }
+                if (customModuleItems.getTextCount() < addUserCustomDTO.getTexts().size()) {
+                    return Result.fail("定制的文本数量应为 " + customModuleItems.getTextCount());
+                }
+
+                if (customModuleItems.getCustomImagesCount() < addUserCustomDTO.getImages().size()) {
+                    return Result.fail("定制的图片数量应为 " + customModuleItems.getTextCount());
+                }
                 if (customModuleItems != null) {
                     UserCustomItems userCustomItems = new UserCustomItems();
                     userCustomItems.setCustomModuleItemsId(customModuleItems.getId());
@@ -142,11 +154,10 @@ public class CustomModuleService {
                     userCustomItems.setUserId(userId);
                     userCustomItems.setType(addUserCustomDTO.getType());
                     userCustomItemsRep.saveAndFlush(userCustomItems);
-                    return userCustomItems.getId();
+                    listVO.add(userCustomItems.getId());
                 }
-                return null;
-            }).filter(el -> el != null).collect(Collectors.toList());
-            return Result.success(collect);
+            }
+            return Result.success(listVO);
         }
         return Result.fail();
     }
@@ -273,15 +284,15 @@ public class CustomModuleService {
 
     public Result modelGoods(long userId, Long id) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
-        List<CustomModuleGoods> customModuleGoods = customModuleGoodsRep.findByCustomModuleId(0,id);
-        if (CollectionUtils.isEmpty(customModuleGoods)){
+        List<CustomModuleGoods> customModuleGoods = customModuleGoodsRep.findByCustomModuleId(0, id);
+        if (CollectionUtils.isEmpty(customModuleGoods)) {
             return Result.fail("暂无可选订制商品");
         }
         List<ModelGoodsVO> modelGoodsVOS = new ArrayList<>();
-        customModuleGoods.forEach(c->{
+        customModuleGoods.forEach(c -> {
             Long goodsId = c.getGoodsId();
             Goods goods = goodsReposiroty.findOne(goodsId);
-            if (goods == null){
+            if (goods == null) {
                 return;
             }
             ModelGoodsVO vo = ModelGoodsVO.builder()
