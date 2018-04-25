@@ -10,6 +10,9 @@ import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+/**
+ * 订制模板表
+ */
 @Entity
 @Table(name = "custom_module_goods")
 @Data
