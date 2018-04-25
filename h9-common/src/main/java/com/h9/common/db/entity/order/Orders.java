@@ -137,7 +137,7 @@ public class Orders extends BaseEntity {
     @Column(name = "customTexts",columnDefinition = "bigint COMMENT '订制文本'")
     private String customTexts;
 
-    @Column(name = "custom_images")
+    @Column(name = "custom_images",columnDefinition = "bigint COMMENT '订制图片'")
     private String customImages;
 
 
