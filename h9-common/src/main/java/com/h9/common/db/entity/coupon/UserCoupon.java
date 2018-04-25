@@ -11,7 +11,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * <p>Title:h9-parent</p>
- * <p>Desription:</p>
+ * <p>Desription:用户优惠券表</p>
  *
  * @author LiYuan
  * @Date 2018/4/3
