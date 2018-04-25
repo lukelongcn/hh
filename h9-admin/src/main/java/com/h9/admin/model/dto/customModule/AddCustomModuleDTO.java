@@ -18,7 +18,7 @@ import java.util.Map;
 @ApiModel
 public class AddCustomModuleDTO {
     @NotNull(message = "type 不能为空")
-    @ApiModelProperty("类型")
+    @ApiModelProperty("模板类型")
     private Long type;
 
     @ApiModelProperty("名字")

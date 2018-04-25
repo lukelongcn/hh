@@ -14,6 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created by Ln on 2018/4/23.
+ *
  */
 @Entity
 @Table(name = "custom_module_items")
@@ -29,14 +30,19 @@ public class CustomModuleItems {
     @JoinColumn(name = "custom_module_id", referencedColumnName = "id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CustomModule customModule;
 
-    @Column(name = "main_images")
+    @Column(name = "main_images", columnDefinition = "varchar(300) comment '主图'")
     private String mainImages;
 
+    /**
+     * 图片框数量
+     */
     @Column(name = "custom_image_count")
     private Integer customImagesCount;
 
+
+
     @Column(name = "text_count")
-    private Integer textCount;
+    private Integer textCount = 0;
 
     @Column(name = "del_flag")
     private Integer delFlag = 0;
@@ -66,6 +72,8 @@ public class CustomModuleItems {
             this.mainImages = JSONObject.toJSONString(mainImages);
         }
     }
+
+
 
 
 }
