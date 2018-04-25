@@ -245,22 +245,15 @@ public class CustomModuleService {
                 order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
                 Orders orders = ordersRepository.saveAndFlush(order);
                 // 订单关联用户模板
-                List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
-                userModelMessage.forEach(u->{
-                    UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
-                    userCustomItems.setOrderId(orders.getId());
-                    userCustomItemsRep.save(userCustomItems);
-                });
+                orderLinkUserCustomItems(customModuleDTO,orders);
                 return Result.success(showInfo);
             } else {
-                // 订单关联用户模板
-                List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
-                userModelMessage.forEach(u->{
-                    UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
-                    userCustomItems.setOrderId(order.getId());
-                    userCustomItemsRep.save(userCustomItems);
-                });
-                return goodService.getPayInfo(order.getId(), payMoney, user, customModuleDTO.getPayPlatform(), count, goods);
+                Result  payResult = goodService.getPayInfo(order.getId(), payMoney, user, customModuleDTO.getPayPlatform(), count, goods);
+                if (payResult.getCode() == 0 ){
+                    // 订单关联用户模板
+                    orderLinkUserCustomItems(customModuleDTO,order);
+                }
+                return payResult;
             }
         } else {
             //余额支付
@@ -276,18 +269,22 @@ public class CustomModuleService {
                 order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
                 Orders orders = ordersRepository.saveAndFlush(order);
                 // 订单关联用户模板
-                List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
-                userModelMessage.forEach(u->{
-                    UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
-                    userCustomItems.setOrderId(orders.getId());
-                    userCustomItemsRep.save(userCustomItems);
-                });
+                orderLinkUserCustomItems(customModuleDTO,orders);
                 return Result.success(showInfo);
             }
             return balancePayResult;
         }
     }
 
+    @Transactional
+    public void  orderLinkUserCustomItems(CustomModuleDTO customModuleDTO,Orders orders){
+        List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
+        userModelMessage.forEach(u->{
+            UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
+            userCustomItems.setOrderId(orders.getId());
+            userCustomItemsRep.save(userCustomItems);
+        });
+    }
 
     public Result modelGoods(long userId, Long id) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId);
