@@ -177,7 +177,7 @@ public class CouponService {
             User user = userRepository.findOne(userId);
 
             CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
-                    userCoupon.getId() + "", uuid, 1);
+                    userCoupon.getId() + "", uuid, 1,1);
 
             couponSendRecordRep.save(couponSendRecord);
             String shareImg = configService.getStringConfig("shareImg");
@@ -260,9 +260,9 @@ public class CouponService {
         String userCouponId = redisBean.getStringValue(key);
 
         CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
-                userCouponId, uuid, 2);
+                userCouponId, uuid, 2,0);
 
-        couponSendRecordRep.save(couponSendRecord);
+        couponSendRecordRep.saveAndFlush(couponSendRecord);
         if (StringUtils.isEmpty(userCouponId)) {
             logger.info("key : " + key + " 在redis 中为空");
             return Result.success(new PopupWindowVO(2, "已被领走啦~"));
@@ -301,8 +301,9 @@ public class CouponService {
             return Result.fail("请稍后再试");
         }
 
-
         userCoupon.setUserId(userId);
+        couponSendRecord.setStatus(1);
+        couponSendRecordRep.saveAndFlush(couponSendRecord);
         userCouponsRepository.save(userCoupon);
 
         boolean releaseResult = jedisTool.releaseDistributedLock(locKey, requestId);

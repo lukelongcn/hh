@@ -48,4 +48,10 @@ public class CouponSendRecord extends BaseEntity {
      */
     @Column(name = "opt_type")
     private Integer optType;
+
+    /**
+     * 1 为成功
+     */
+    @Column(name = "status")
+    private Integer status = 0;
 }
