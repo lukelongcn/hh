@@ -72,6 +72,7 @@ public class CustomModuleController {
     /**
      * 私人订制立即订购
      */
+    @Secured
     @PostMapping("/custom/modules/pay")
     public  Result modelPay(@Valid @RequestBody CustomModuleDTO customModuleDTO
             , @SessionAttribute("curUserId") Long userId){
