@@ -249,6 +249,7 @@ public class CustomModuleService {
                 return Result.success(showInfo);
             } else {
                 Result  payResult = goodService.getPayInfo(order.getId(), payMoney, user, customModuleDTO.getPayPlatform(), count, goods);
+                // 如微信支付成功
                 if (payResult.getCode() == 0 ){
                     // 订单关联用户模板
                     orderLinkUserCustomItems(customModuleDTO,order);
@@ -262,6 +263,7 @@ public class CustomModuleService {
                 return result;
             }
             Result balancePayResult = goodService.balancePay(order, userId, goods, payMoney, count);
+            // 如余额支付成功
             if (balancePayResult.getCode() == 0) {
                 Map<Object, Object> showInfo = goodService.showJoinIn(order, user, goods, 2, count);
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());

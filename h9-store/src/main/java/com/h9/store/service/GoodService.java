@@ -639,7 +639,6 @@ public class GoodService {
                 }
             }
 
-
             return Result.success(mapVO);
         } catch (RestClientException e) {
             logger.info("调用 出现异常");
