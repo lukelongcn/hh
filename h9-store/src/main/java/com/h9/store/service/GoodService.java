@@ -581,7 +581,7 @@ public class GoodService {
 //            return false;
 //        }
 //    }
-    private Result balancePay(Orders order, Long userId, Goods goods, BigDecimal payMoney, Integer count) {
+    public Result balancePay(Orders order, Long userId, Goods goods, BigDecimal payMoney, Integer count) {
         String balanceFlowType = configService.getValueFromMap("balanceFlowType", "12");
         // 非优惠券支付 增加余额流水
         if (payMoney.compareTo(BigDecimal.ZERO) > 0) {
@@ -605,7 +605,7 @@ public class GoodService {
     @Resource
     private RedisBean redisBean;
 
-    private Result getPayInfo(Long orderId, BigDecimal money, User user, String payPlatform, Integer count, Goods goods) {
+    public Result getPayInfo(Long orderId, BigDecimal money, User user, String payPlatform, Integer count, Goods goods) {
         String url = wxHost + "/h9/api/pay/payInfo";
         StorePayDTO payDTO = new StorePayDTO(orderId, money, user.getId(), payPlatform);
         try {
