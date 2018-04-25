@@ -32,11 +32,13 @@ public class CustomModuleItems {
     @Column(name = "main_images", columnDefinition = "varchar(300) comment '主图'")
     private String mainImages;
 
-    @Column(name = "custom_image_count", columnDefinition = "varchar(300) comment '图片框数量'")
-    private Integer customImagesCount;
+    /** 图片框数量*/
+    @Column(name = "custom_image_count")
+    private Integer customImagesCount = 0;
 
-    @Column(name = "text_count", columnDefinition = "varchar(300) comment '文本框数量'")
-    private Integer textCount;
+    /** 文本框数量*/
+    @Column(name = "text_count")
+    private Integer textCount = 0;
 
     @Column(name = "del_flag")
     private Integer delFlag = 0;
