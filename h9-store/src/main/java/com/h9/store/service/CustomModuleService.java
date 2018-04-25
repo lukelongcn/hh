@@ -7,6 +7,9 @@ import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.entity.custom.CustomModule;
 import com.h9.common.db.entity.custom.CustomModuleGoods;
 import com.h9.common.db.entity.custom.CustomModuleItems;
+import com.h9.common.db.entity.custom.UserCustomItems;
+import com.h9.common.db.repo.*;
+import com.h9.store.modle.dto.AddUserCustomDTO;
 import com.h9.common.db.entity.order.Address;
 import com.h9.common.db.entity.order.Goods;
 import com.h9.common.db.entity.order.OrderItems;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.UN_USE;
 import static com.h9.common.db.entity.coupon.UserCoupon.statusEnum.USED;
@@ -55,6 +59,8 @@ public class CustomModuleService {
     private CustomModuleItmesRep customModuleItmesRep;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private UserCustomItemsRep userCustomItemsRep;
     @Resource
     private UserAccountRepository userAccountRepository;
     @Resource
@@ -101,13 +107,51 @@ public class CustomModuleService {
 
     public Result modulesDetail(Long id) {
         CustomModule customModule = customModuleRep.findOne(id);
-        if(customModule == null){
+        if (customModule == null) {
             return Result.fail("模块不存在");
         }
         List<CustomModuleItems> customModuleItems = customModuleItmesRep.findByCustomModule(customModule);
+        if (CollectionUtils.isNotEmpty(customModuleItems)) {
 
-        CustomModuleDetailVO VO = new CustomModuleDetailVO();
-        return null;
+            List<CustomModuleDetailVO> customModuleDetailVOList = customModuleItems.stream().map(ci -> {
+                Integer textCount = ci.getTextCount();
+                Integer customImagesCount = ci.getCustomImagesCount();
+                List<String> mainImages = ci.getMainImages();
+                CustomModuleDetailVO vo = new CustomModuleDetailVO(mainImages, customImagesCount, textCount, ci.getId(), ci.getType());
+                return vo;
+            }).collect(Collectors.toList());
+//            Map map = new HashMap();
+//            map.put("infos", customModuleDetailVOList);
+//            map.put("id", customModule.getId());
+            return Result.success(customModuleDetailVOList);
+        }
+        return Result.fail();
+    }
+
+    public Result addUserCustom(List<AddUserCustomDTO> addUserCustomDTOs, Long userId) {
+
+        if (CollectionUtils.isNotEmpty(addUserCustomDTOs)) {
+
+            List<Long> collect = addUserCustomDTOs.stream().map(addUserCustomDTO -> {
+                List<String> images = addUserCustomDTO.getImages();
+                List<String> texts = addUserCustomDTO.getTexts();
+                Long id = addUserCustomDTO.getId();
+                CustomModuleItems customModuleItems = customModuleItmesRep.findOne(id);
+                if (customModuleItems != null) {
+                    UserCustomItems userCustomItems = new UserCustomItems();
+                    userCustomItems.setCustomModuleItemsId(customModuleItems.getId());
+                    userCustomItems.setCustomImages(images);
+                    userCustomItems.setTexts(texts);
+                    userCustomItems.setUserId(userId);
+                    userCustomItems.setType(addUserCustomDTO.getType());
+                    userCustomItemsRep.saveAndFlush(userCustomItems);
+                    return userCustomItems.getId();
+                }
+                return null;
+            }).filter(el -> el != null).collect(Collectors.toList());
+            return Result.success(collect);
+        }
+        return Result.fail();
     }
 
     public Result modelPay(CustomModuleDTO customModuleDTO, Long userId) {

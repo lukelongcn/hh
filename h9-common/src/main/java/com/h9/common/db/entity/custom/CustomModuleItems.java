@@ -53,11 +53,12 @@ public class CustomModuleItems {
     @Column(name = "type")
     private Integer type;
 
-    public CustomModuleItems(List<String> mainImages, Integer textCount, Integer customImagesCount, CustomModule customModule) {
+    public CustomModuleItems(List<String> mainImages, Integer textCount, Integer customImagesCount, CustomModule customModule,Integer itemType) {
         this.setMainImages(mainImages);
         this.textCount = textCount;
         this.customImagesCount = customImagesCount;
         this.customModule = customModule;
+        this.type = itemType;
     }
 
     public List<String> getMainImages() {
