@@ -1,17 +1,11 @@
 package com.h9.common.db.entity.custom;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +31,12 @@ public class CustomModuleItems {
     @Column(name = "main_images")
     private String mainImages;
 
-    @Column(name = "custom_images")
-    private String customImages;
+
 
     @Column(name = "custom_image_count")
     private Integer customImagesCount;
 
-    @Column(name = "texts")
-    private String texts;
+
 
     @Column(name = "text_count")
     private Integer textCount;
@@ -72,29 +64,7 @@ public class CustomModuleItems {
         }
     }
 
-    public List<String> getCustomImages() {
-        if (customImages == null) {
-            return new ArrayList<>();
-        }
-        return JSONObject.parseObject(customImages, List.class);
-    }
 
-    public void setCustomImages(List<String> customImages) {
-        if (CollectionUtils.isNotEmpty(customImages)) {
-            this.customImages = JSONObject.toJSONString(mainImages);
-        }
-    }
 
-    public List<String> getTexts() {
-        if (texts == null) {
-            return new ArrayList<>();
-        }
-        return JSONObject.parseObject(texts, List.class);
-    }
 
-    public void setTexts(List<String> texts) {
-        if (CollectionUtils.isNotEmpty(texts)) {
-            this.texts = JSONObject.toJSONString(mainImages);
-        }
-    }
 }
