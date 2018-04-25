@@ -43,7 +43,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         startTimeThreadLocal.set(beginTime);
 
         String token = httpServletRequest.getHeader("token");
-        if (StringUtils.isNotEmpty(token)) MDC.put("token", token.substring(0, 8));
+        MDC.put("token", token.substring(0, 8));
         String method = httpServletRequest.getMethod();
         if (HttpMethod.OPTIONS.name().equals(method)) {
             return false;

@@ -1,7 +1,9 @@
 package com.h9.common.db.entity.order;
 
+import com.alibaba.fastjson.JSONObject;
 import com.h9.common.base.BaseEntity;
 import com.h9.common.db.entity.user.User;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -132,6 +134,38 @@ public class Orders extends BaseEntity {
     private Long ordersLotteryId;
 
 
+    @Column(name = "customTexts")
+    private String customTexts;
+
+    @Column(name = "custom_images")
+    private String customImages;
+
+
+    public List<String> getCustomImages() {
+        if (customImages == null) {
+            return new ArrayList<>();
+        }
+        return JSONObject.parseObject(customImages, List.class);
+    }
+
+    public void setCustomImages(List<String> customImages) {
+        if (CollectionUtils.isNotEmpty(customImages)) {
+            this.customImages = JSONObject.toJSONString(customImages);
+        }
+    }
+
+    public List<String> getTexts() {
+        if (customTexts == null) {
+            return new ArrayList<>();
+        }
+        return JSONObject.parseObject(customTexts, List.class);
+    }
+
+    public void setTexts(List<String> texts) {
+        if (CollectionUtils.isNotEmpty(texts)) {
+            this.customTexts = JSONObject.toJSONString(texts);
+        }
+    }
 
     public Long getOrdersLotteryId() {
         return ordersLotteryId;
