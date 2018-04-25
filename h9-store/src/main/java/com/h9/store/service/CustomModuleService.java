@@ -253,6 +253,13 @@ public class CustomModuleService {
                 });
                 return Result.success(showInfo);
             } else {
+                // 订单关联用户模板
+                List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
+                userModelMessage.forEach(u->{
+                    UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
+                    userCustomItems.setOrderId(order.getId());
+                    userCustomItemsRep.save(userCustomItems);
+                });
                 return goodService.getPayInfo(order.getId(), payMoney, user, customModuleDTO.getPayPlatform(), count, goods);
             }
         } else {
