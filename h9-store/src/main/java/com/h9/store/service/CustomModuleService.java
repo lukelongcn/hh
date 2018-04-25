@@ -86,7 +86,7 @@ public class CustomModuleService {
         return null;
     }
 
-    public Result modelPay(CustomModuleDTO customModuleDTO) {
+    public Result modelPay(CustomModuleDTO customModuleDTO, Long userId) {
         return null;
     }
 

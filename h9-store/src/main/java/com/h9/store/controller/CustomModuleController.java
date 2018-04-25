@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * Created by Ln on 2018/4/24.
@@ -48,11 +49,12 @@ public class CustomModuleController {
 
 
     /**
-     * 立即订购订制
+     * 私人订制立即订购
      */
     @PostMapping("/custom/modules/pay")
-    public  Result modelPay(@RequestBody CustomModuleDTO customModuleDTO){
-        return customModuleService.modelPay(customModuleDTO);
+    public  Result modelPay(@Valid @RequestBody CustomModuleDTO customModuleDTO
+            , @SessionAttribute("curUserId") Long userId){
+        return customModuleService.modelPay(customModuleDTO,userId);
     }
 
     /**
