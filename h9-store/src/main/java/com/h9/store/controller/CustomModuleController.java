@@ -3,12 +3,19 @@ package com.h9.store.controller;
 import com.h9.common.base.Result;
 import com.h9.store.interceptor.Secured;
 import com.h9.store.modle.dto.AddUserCustomDTO;
+import com.h9.store.modle.dto.CustomModuleDTO;
+import com.h9.store.modle.dto.AddUserCustomDTO;
 import com.h9.store.service.CustomModuleService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import javax.validation.Valid;
+import java.util.List;
+import javax.validation.Valid;
 
 /**
  * Created by Ln on 2018/4/24.
@@ -61,4 +68,22 @@ public class CustomModuleController {
         return customModuleService.addUserCustom(addUserCustomDTOs, userId);
     }
 
+
+    /**
+     * 私人订制立即订购
+     */
+    @PostMapping("/custom/modules/pay")
+    public  Result modelPay(@Valid @RequestBody CustomModuleDTO customModuleDTO
+            , @SessionAttribute("curUserId") Long userId){
+        return customModuleService.modelPay(customModuleDTO,userId);
+    }
+
+    /**
+     * 订制可选商品
+     */
+    @Secured
+    @GetMapping("/custom/modules/goods/{id}")
+    public Result modelGoods(@SessionAttribute("curUserId")long userId, @PathVariable Long id){
+        return customModuleService.modelGoods(userId,id);
+    }
 }
