@@ -2,11 +2,10 @@ package com.h9.store.controller;
 
 import com.h9.common.base.Result;
 import com.h9.store.interceptor.Secured;
+import com.h9.store.modle.dto.CustomModuleDTO;
 import com.h9.store.service.CustomModuleService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -47,4 +46,21 @@ public class CustomModuleController {
         return customModuleService.modulesDetail(id);
     }
 
+
+    /**
+     * 立即订购订制
+     */
+    @PostMapping("/custom/modules/pay")
+    public  Result modelPay(@RequestBody CustomModuleDTO customModuleDTO){
+        return customModuleService.modelPay(customModuleDTO);
+    }
+
+    /**
+     * 订制可选商品
+     */
+    @Secured
+    @GetMapping("/custom/modules/goods/{id}")
+    public Result modelGoods(@SessionAttribute("curUserId")long userId, @PathVariable Long id){
+        return customModuleService.modelGoods(userId,id);
+    }
 }
