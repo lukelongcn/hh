@@ -95,7 +95,6 @@ public class GoodService {
     private TransactionalService transactionalService;
 
 
-
     private Logger logger = Logger.getLogger(this.getClass());
 
     /**
@@ -266,6 +265,9 @@ public class GoodService {
         Integer count = convertGoodsDTO.getCount();
         Goods goods = goodsReposiroty.findOne(convertGoodsDTO.getGoodsId());
         if (goods == null) return Result.fail("商品不存在");
+        if (goods.getStatus() == 2) {
+            return Result.fail("商品已下架");
+        }
         BigDecimal payMoney = goods.getRealPrice().multiply(new BigDecimal(convertGoodsDTO.getCount()));
 
         User user = userRepository.findOne(userId);

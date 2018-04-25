@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,24 +26,26 @@ public class CustomModuleItems {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "custom_module_id", referencedColumnName = "id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "custom_module_id", referencedColumnName = "id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CustomModule customModule;
 
     @Column(name = "main_images")
     private String mainImages;
 
-
-
     @Column(name = "custom_image_count")
     private Integer customImagesCount;
-
-
 
     @Column(name = "text_count")
     private Integer textCount;
 
     @Column(name = "del_flag")
     private Integer delFlag = 0;
+
+    /**
+     * 1 为 瓶身，2为其他
+     */
+    @Column(name = "type")
+    private Integer type;
 
     public CustomModuleItems(List<String> mainImages, Integer textCount, Integer customImagesCount, CustomModule customModule) {
         this.setMainImages(mainImages);
@@ -63,8 +66,6 @@ public class CustomModuleItems {
             this.mainImages = JSONObject.toJSONString(mainImages);
         }
     }
-
-
 
 
 }
