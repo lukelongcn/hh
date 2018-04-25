@@ -134,7 +134,7 @@ public class Orders extends BaseEntity {
     private Long ordersLotteryId;
 
 
-    @Column(name = "customTexts")
+    @Column(name = "customTexts",columnDefinition = "bigint COMMENT '订制文本'")
     private String customTexts;
 
     @Column(name = "custom_images")

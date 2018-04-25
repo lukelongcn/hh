@@ -13,6 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created by Ln on 2018/4/23.
+ *
  */
 @Entity
 @Table(name = "custom_module_items")
@@ -28,17 +29,13 @@ public class CustomModuleItems {
     @JoinColumn(name = "custom_module_id", referencedColumnName = "id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CustomModule customModule;
 
-    @Column(name = "main_images")
+    @Column(name = "main_images", columnDefinition = "varchar(300) comment '主图'")
     private String mainImages;
 
-
-
-    @Column(name = "custom_image_count")
+    @Column(name = "custom_image_count", columnDefinition = "varchar(300) comment '图片框数量'")
     private Integer customImagesCount;
 
-
-
-    @Column(name = "text_count")
+    @Column(name = "text_count", columnDefinition = "varchar(300) comment '文本框数量'")
     private Integer textCount;
 
     @Column(name = "del_flag")
