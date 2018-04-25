@@ -63,7 +63,7 @@ public class CustomModuleController {
      */
     @Secured
     @PostMapping("/custom/modules/user")
-    public Result addUserModules(@RequestBody @Valid List<AddUserCustomDTO> addUserCustomDTOs,
+    public Result addUserModules(@RequestBody  List<AddUserCustomDTO> addUserCustomDTOs,
                                  @SessionAttribute("curUserId") Long userId) {
         return customModuleService.addUserCustom(addUserCustomDTOs, userId);
     }

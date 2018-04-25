@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -29,6 +30,7 @@ public class AddCustomModuleDTO {
 
     @ApiModelProperty("组件信息")
     @Size(max = 2, min = 2, message = "请传入组件信息")
+    @Valid
     private List<Info> infos;
 
     @ApiModel("组件信息,第一个无素为瓶身定制信息,第二个为瓶箱定制信息")
@@ -46,8 +48,9 @@ public class AddCustomModuleDTO {
         @ApiModelProperty("定制化文本组件数量")
         private Integer textCount;
         @ApiModelProperty("1 为瓶身，2为其他")
-        @Max(value = 2,message = "itemType 不能大余2")
-        @Min(value = 1,message = "itemType 不能小余1")
+        @Max(value = 2, message = "itemType 不能大余2")
+        @Min(value = 1, message = "itemType 不能小余1")
+        @NotNull(message = "请传入itemType参数")
         private Integer itemType;
     }
 
