@@ -17,4 +17,6 @@ public class CustomModuleDetailVO {
     private List<String> mainImages = new ArrayList<>();
     private int customImageNumber;
     private int customTextNumber;
+    private long id;
+    private Integer type;
 }

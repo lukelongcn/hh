@@ -1,7 +1,9 @@
 package com.h9.common.db.entity.custom;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 
 import javax.persistence.*;
@@ -17,6 +19,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "user_custom_items")
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserCustomItems {
     @Id
     @GeneratedValue(strategy = IDENTITY)

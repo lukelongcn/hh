@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -43,6 +45,10 @@ public class AddCustomModuleDTO {
 
         @ApiModelProperty("定制化文本组件数量")
         private Integer textCount;
+        @ApiModelProperty("1 为瓶身，2为其他")
+        @Max(value = 2,message = "itemType 不能大余2")
+        @Min(value = 1,message = "itemType 不能小余1")
+        private Integer itemType;
     }
 
     @ApiModelProperty("商品信息,请传入 {goodsId:number} 此格式，eg: {3:100}")

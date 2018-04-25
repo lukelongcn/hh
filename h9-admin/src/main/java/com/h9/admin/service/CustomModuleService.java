@@ -59,7 +59,6 @@ public class CustomModuleService {
                 return Result.fail("请传组件信息");
             }
         }
-
         if (type == 1) {
             //新增
             customModule = new CustomModule(null, addCustomModuleDTO.getType(), 0, addCustomModuleDTO.getName());
@@ -68,7 +67,7 @@ public class CustomModuleService {
             for (AddCustomModuleDTO.Info info : infos) {
 
                 customModuleItmes = new CustomModuleItems(info.getMainImages(),
-                        info.getTextCount(), info.getCustomImagesCount(), customModule);
+                        info.getTextCount(), info.getCustomImagesCount(), customModule,info.getItemType());
                 customModuleItmesRep.saveAndFlush(customModuleItmes);
             }
 
@@ -116,7 +115,7 @@ public class CustomModuleService {
             for (AddCustomModuleDTO.Info info : infos) {
 
                 customModuleItmes = new CustomModuleItems(info.getMainImages(),
-                        info.getTextCount(), info.getCustomImagesCount(), customModule);
+                        info.getTextCount(), info.getCustomImagesCount(), customModule,info.getItemType());
                 customModuleItmesRep.save(customModuleItmes);
             }
         } else {

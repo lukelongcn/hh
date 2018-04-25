@@ -5,10 +5,9 @@ import com.h9.common.base.Result;
 import com.h9.common.common.ConfigService;
 import com.h9.common.db.entity.custom.CustomModule;
 import com.h9.common.db.entity.custom.CustomModuleItems;
-import com.h9.common.db.repo.CustomModuleGoodsRep;
-import com.h9.common.db.repo.CustomModuleItmesRep;
-import com.h9.common.db.repo.CustomModuleRep;
-import com.h9.common.db.repo.GoodsReposiroty;
+import com.h9.common.db.entity.custom.UserCustomItems;
+import com.h9.common.db.repo.*;
+import com.h9.store.modle.dto.AddUserCustomDTO;
 import com.h9.store.modle.vo.CustomModuleDetailVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
@@ -20,6 +19,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ln on 2018/4/24.
@@ -36,6 +36,8 @@ public class CustomModuleService {
     private CustomModuleItmesRep customModuleItmesRep;
     @Resource
     private GoodsReposiroty goodsReposiroty;
+    @Resource
+    private UserCustomItemsRep userCustomItemsRep;
 
     public Result types() {
         List<String> list = configService.getStringListConfig("customType");
@@ -68,12 +70,50 @@ public class CustomModuleService {
 
     public Result modulesDetail(Long id) {
         CustomModule customModule = customModuleRep.findOne(id);
-        if(customModule == null){
+        if (customModule == null) {
             return Result.fail("模块不存在");
         }
         List<CustomModuleItems> customModuleItems = customModuleItmesRep.findByCustomModule(customModule);
+        if (CollectionUtils.isNotEmpty(customModuleItems)) {
 
-        CustomModuleDetailVO VO = new CustomModuleDetailVO();
-        return null;
+            List<CustomModuleDetailVO> customModuleDetailVOList = customModuleItems.stream().map(ci -> {
+                Integer textCount = ci.getTextCount();
+                Integer customImagesCount = ci.getCustomImagesCount();
+                List<String> mainImages = ci.getMainImages();
+                CustomModuleDetailVO vo = new CustomModuleDetailVO(mainImages, customImagesCount, textCount, ci.getId(), ci.getType());
+                return vo;
+            }).collect(Collectors.toList());
+//            Map map = new HashMap();
+//            map.put("infos", customModuleDetailVOList);
+//            map.put("id", customModule.getId());
+            return Result.success(customModuleDetailVOList);
+        }
+        return Result.fail();
+    }
+
+    public Result addUserCustom(List<AddUserCustomDTO> addUserCustomDTOs, Long userId) {
+
+        if (CollectionUtils.isNotEmpty(addUserCustomDTOs)) {
+
+            List<Long> collect = addUserCustomDTOs.stream().map(addUserCustomDTO -> {
+                List<String> images = addUserCustomDTO.getImages();
+                List<String> texts = addUserCustomDTO.getTexts();
+                Long id = addUserCustomDTO.getId();
+                CustomModuleItems customModuleItems = customModuleItmesRep.findOne(id);
+                if (customModuleItems != null) {
+                    UserCustomItems userCustomItems = new UserCustomItems();
+                    userCustomItems.setCustomModuleItemsId(customModuleItems.getId());
+                    userCustomItems.setCustomImages(images);
+                    userCustomItems.setTexts(texts);
+                    userCustomItems.setUserId(userId);
+                    userCustomItems.setType(addUserCustomDTO.getType());
+                    userCustomItemsRep.saveAndFlush(userCustomItems);
+                    return userCustomItems.getId();
+                }
+                return null;
+            }).filter(el -> el != null).collect(Collectors.toList());
+            return Result.success(collect);
+        }
+        return Result.fail();
     }
 }
