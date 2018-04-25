@@ -39,4 +39,5 @@ public class CustomModuleDTO {
      */
     @NotNull(message = "请选择支付方式")
     private Integer payMethod;
+
 }

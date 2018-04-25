@@ -120,9 +120,6 @@ public class CustomModuleService {
                 CustomModuleDetailVO vo = new CustomModuleDetailVO(mainImages, customImagesCount, textCount, ci.getId(), ci.getType());
                 return vo;
             }).collect(Collectors.toList());
-//            Map map = new HashMap();
-//            map.put("infos", customModuleDetailVOList);
-//            map.put("id", customModule.getId());
             return Result.success(customModuleDetailVOList);
         }
         return Result.fail();
@@ -210,7 +207,7 @@ public class CustomModuleService {
     }
 
     @Transactional
-    private Result validateBalance(UserAccount userAccount, BigDecimal payMoney, Integer payMethod, Goods goods) {
+    public Result validateBalance(UserAccount userAccount, BigDecimal payMoney, Integer payMethod, Goods goods) {
         BigDecimal balance = userAccount.getBalance();
         if (payMethod == BALANCE_PAY.getCode() && balance.compareTo(payMoney) < 0) {
                 return Result.fail("余额不足");
@@ -235,7 +232,14 @@ public class CustomModuleService {
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
                 order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
-                ordersRepository.save(order);
+                Orders orders = ordersRepository.saveAndFlush(order);
+                // 订单关联用户模板
+                List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
+                userModelMessage.forEach(u->{
+                    UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
+                    userCustomItems.setOrderId(orders.getId());
+                    userCustomItemsRep.save(userCustomItems);
+                });
                 return Result.success(showInfo);
             } else {
                 return goodService.getPayInfo(order.getId(), payMoney, user, customModuleDTO.getPayPlatform(), count, goods);
@@ -252,7 +256,14 @@ public class CustomModuleService {
                 order.setStatus(Orders.statusEnum.WAIT_SEND.getCode());
                 order.setPayStatus(Orders.PayStatusEnum.PAID.getCode());
                 order.setPayMethond(Orders.PayMethodEnum.BALANCE_PAY.getCode());
-                ordersRepository.save(order);
+                Orders orders = ordersRepository.saveAndFlush(order);
+                // 订单关联用户模板
+                List<Long> userModelMessage = customModuleDTO.getUserCustomItemsId();
+                userModelMessage.forEach(u->{
+                    UserCustomItems userCustomItems = userCustomItemsRep.findOne(u);
+                    userCustomItems.setOrderId(orders.getId());
+                    userCustomItemsRep.save(userCustomItems);
+                });
                 return Result.success(showInfo);
             }
             return balancePayResult;
