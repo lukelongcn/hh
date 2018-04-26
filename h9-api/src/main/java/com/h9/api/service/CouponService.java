@@ -167,12 +167,8 @@ public class CouponService {
             String key = RedisKey.getUuid2couponIdKey(uuid);
             redisBean.setStringValue(key, userCouponId + "", 3, TimeUnit.DAYS);
             String name = goods.getName();
-            try {
-                name = URLEncoder.encode(name, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                logger.info(e.getMessage(), e);
-            }
-            String url = "/h9-weixin/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid + "&goodsName=" + name;
+
+            String url = "/h9-weixin/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid ;
             url = host + url;
             User user = userRepository.findOne(userId);
 
