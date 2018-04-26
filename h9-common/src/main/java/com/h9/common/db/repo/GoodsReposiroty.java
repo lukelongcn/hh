@@ -68,4 +68,5 @@ public interface GoodsReposiroty extends BaseRepository<Goods> {
     @Query("select o from Goods o where o.id = ?1")
     Page<Goods> findByGoodsId(Long id, Pageable pageable);
 
+
 }

@@ -27,6 +27,7 @@ public class JedisTool {
         Jedis jedis = jedisPool.getResource();
         String result = null;
         try {
+
             result = jedis.set(lockKey, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
 //            result = jedis.set(lockKey, requestId, SET_IF_NOT_EXIST);
         } catch (Exception e) {

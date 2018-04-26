@@ -18,6 +18,7 @@ import com.h9.common.db.entity.user.UserAccount;
 import com.h9.common.db.entity.coupon.UserCoupon;
 import com.h9.common.db.repo.*;
 import com.h9.common.modle.dto.StorePayDTO;
+import com.h9.common.utils.CheckoutUtil;
 import com.h9.common.utils.MoneyUtils;
 import com.h9.store.modle.dto.ConvertGoodsDTO;
 import com.h9.store.modle.vo.GoodsDetailVO;
@@ -165,6 +166,7 @@ public class GoodService {
      * FOODS("foods", "食物，饮料"),
      * EVERYDAY_GOODS("everyday_goods", "日常家居"),
      * VB("vb", "V币");
+     *
      */
     public Result goodsList(String type, int page, int size) {
         if (StringUtils.isEmpty(type)) {
