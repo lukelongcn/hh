@@ -166,18 +166,18 @@ public class CouponService {
             logger.info("uuid :" + uuid);
             String key = RedisKey.getUuid2couponIdKey(uuid);
             redisBean.setStringValue(key, userCouponId + "", 3, TimeUnit.DAYS);
-            String url = "/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid + "&goodsName=" + userCoupon.getGoodsName();
-
+            String name = goods.getName();
             try {
-                url = URLEncoder.encode(url, "utf-8");
+                name = URLEncoder.encode(name, "utf-8");
             } catch (UnsupportedEncodingException e) {
                 logger.info(e.getMessage(), e);
             }
+            String url = "/h9-weixin/#/shopDataile?id=" + goods.getId() + "&coupon=" + uuid + "&goodsName=" + name;
             url = host + url;
             User user = userRepository.findOne(userId);
 
             CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
-                    userCoupon.getId() + "", uuid, 1,1);
+                    userCoupon.getId() + "", uuid, 1, 1);
 
             couponSendRecordRep.save(couponSendRecord);
             String shareImg = configService.getStringConfig("shareImg");
@@ -260,7 +260,7 @@ public class CouponService {
         String userCouponId = redisBean.getStringValue(key);
 
         CouponSendRecord couponSendRecord = new CouponSendRecord(null, user,
-                userCouponId, uuid, 2,0);
+                userCouponId, uuid, 2, 0);
 
         couponSendRecordRep.saveAndFlush(couponSendRecord);
         if (StringUtils.isEmpty(userCouponId)) {
