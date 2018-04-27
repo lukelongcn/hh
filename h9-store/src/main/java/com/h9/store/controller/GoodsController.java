@@ -37,7 +37,7 @@ public class GoodsController {
     /**
      * description: 商品详情
      */
-    @Secured
+    @Secured(bindPhone = false)
     @GetMapping("/goods/{id}")
     public Result goodsDetail(@PathVariable Long id, @SessionAttribute("curUserId") Long userId) {
         return goodService.goodsDetail(id, userId);
@@ -56,7 +56,6 @@ public class GoodsController {
             , @SessionAttribute("curUserId") Long userId) {
         return goodService.convertGoods(convertGoodsDTO, userId);
     }
-
 
 
 }
